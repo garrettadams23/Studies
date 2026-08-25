@@ -10747,3 +10747,660 @@ it as a check.
 `IR` and `SMB` are now multi-meaning entries with exhaustive `byDomain` maps, which brings
 them under the ratchet: **83 recorded decisions**, up from 81. Site total unchanged at
 **1,432**. Smoke **135/135** · axe **6/6** · visual **2/2**.
+
+
+---
+
+# Phase 8 — the depth problem, measured
+
+Phase 7 asks what is missing. This asks a question the file has never asked: **how good is
+what is already there?** The answer is uncomfortable and it is the most useful number in this
+document.
+
+## 1. The measurement
+
+Every topic on the site, measured by plain-text length with markup stripped, and by how many
+`.concept-card` blocks it contains.
+
+```
+concept-cards per topic, site-wide (1,432 topics)
+  0 cards:     6      ← malformed or reference-only
+  1 card:    470      ← the early style
+  2 cards:   189
+  3 cards:   409      ← the current style
+  4 cards:   252
+  5 cards:    75
+  6+ cards:   31
+```
+
+**330 topics — 23% of the site — have a single concept card *and* fewer than 1,800 plain
+characters.** Excluding the 22 in the generated `acronym` domain, **308 are hand-written**.
+Sampling twenty of them at random returned twenty of the same shape: one concept card, one
+reference table, one closing sentence. Not bad cards. *Early* cards, written before the
+current form existed.
+
+## 2. Where it is concentrated
+
+| Domain | Thin | % of domain | Reading |
+|---|---|---|---|
+| `data` | 40 | **93%** thin by length | Written as a database course in one early pass, and almost untouched since |
+| `web` | 35 | 85% | Same, plus six deep cards added this session that drag the mean up and leave the median at 1,415 |
+| `redteam` | 40 | 77% | A tooling catalogue. Each tool got a paragraph and a table |
+| `blueteam` | 36 | 67% | Same shape for the first 37; the detection-engineering track added later is deep |
+| `cloud` | 40 | 62% | Service documentation, three providers, one card each |
+| `shortcut` | 20 | 62% | Reference domain — **legitimately short**, see §4 |
+| `devops` | 20 | 45% | The platform-engineering track is deep; the original tool cards are not |
+| `eng` | 33 | 43% | The management track is deep; the early technical cards are not |
+| `cs`, `infra`, `hw`, `m365`, `math` | 0 | 0% | Written entirely in the current style |
+
+The pattern is chronological, not topical. **Domains written early are thin; domains and
+tracks written after the form settled are not.** Nothing was done badly — the house style
+changed and nobody went back.
+
+## 3. Why this outranks Phase 7
+
+A new card costs a permalink, a related-topics entry, an entry in every learning path that
+should mention it, and a slot in a reader's attention. A deepened card costs none of those:
+the id already exists, the links already point at it, search already finds it, and a reader
+who bookmarked it gets more for free.
+
+| | New card | Deepened card |
+|---|---|---|
+| Permalink | New id, new alias risk | Unchanged |
+| Related map | Needs 2–3 new bidirectional pairs | Already wired |
+| Learning paths | May need inserting | Already placed |
+| Reader who already found it | Has to find it | Gets more, silently |
+| Page budget | Adds a topic to the index and the search payload | Adds bytes only |
+| Risk of duplication | Real, and the audit exists to manage it | **Zero** |
+
+That last row is the argument. Every new card carries a duplication risk that costs an audit
+to manage; deepening carries none, because the subject is already claimed.
+
+## 4. What is legitimately short, and must be left alone
+
+Not every short card is thin. Three populations are correct as they are, and a deepening
+pass that does not exclude them will do damage.
+
+| Population | Why it is fine |
+|---|---|
+| `shortcut` — keyboard and command references | The entire value is that it is scannable. Prose would ruin it |
+| `acronym` — the generated domain | Emitted from `data/acronyms.json`. Editing the output is a bug, not an improvement |
+| Genuine one-idea cards | Some subjects are one table. *Common Ports*, *RAID Levels*, *Beep Codes* — a verdict sentence is the most they need |
+
+**The test for whether a short card is thin:** can you name, in one sentence, an argument the
+card is making that the table does not already state? If no, it is a reference card and it is
+finished. If yes, that sentence is the missing concept card.
+
+## 5. The deepening pass, specified
+
+Not a rewrite. A card is deepened by adding what the current form has and the early form
+did not, in this order — and stopping at whichever step runs out of genuine material.
+
+| Step | Add | Test that it earned its place |
+|---|---|---|
+| 1 | **A verdict** on the existing table | Says what the table *means*, not what it contains. If it restates a row, delete it |
+| 2 | **The failure mode** | What goes wrong with this in practice, and what it looks like from outside |
+| 3 | **The decision** | When you would choose this over the alternative, and what you give up |
+| 4 | **The trap** | The thing that is true and surprising — the reason a reader would send this card to a colleague |
+| 5 | Cross-references | Two or three, to cards that genuinely continue the argument |
+
+A card that reaches step 3 is done. **Steps 4 and 5 are what make it worth reading twice**,
+and a card with nothing to say at step 4 should stop at three rather than pad.
+
+## 6. The queue, by leverage
+
+Ordered by how much the domain's readers gain per hour of work — which is thin count
+weighted by how central the domain is to why anyone visits.
+
+| Wave | Domain | Cards | Why this position |
+|---|---|---|---|
+| **D1** | `data` | 40 | Worst ratio on the site, and the subject rewards depth: every one of these is a decision with a trade-off that the table does not state |
+| **D2** | `redteam` | 40 | The tooling catalogue is the domain's identity. Each card needs the same addition — *when would you not use this*, and *what does it look like to the defender* |
+| **D3** | `cloud` | 40 | Three providers, one card each. The deepening is provider-neutral: what the service is actually for, and the failure mode that is the same on all three |
+| **D4** | `blueteam` | 36 | The first 37 cards predate the detection-engineering track that follows them and now reads as a different domain |
+| **D5** | `web` | 35 | Median 1,415 characters against a mean of 2,622 — the clearest case of a bimodal domain in the file |
+| **D6** | `eng` | 33 | The early technical cards sit beside a management track written to a much higher standard |
+| **D7** | `devops` | 20 | Platform track deep, tool cards thin. Same shape as `blueteam` |
+| — | `shortcut` | 20 | **Excluded.** Reference domain, see §4 |
+
+**244 cards across seven waves**, before counting the tail in `script`, `linux` and `ops`.
+
+## 7. The trap in this plan
+
+A deepening programme is exactly the kind of work that feels productive and can produce
+nothing. Three specific ways it fails, and the guard for each.
+
+| Failure | Guard |
+|---|---|
+| **Padding** — words added, nothing said | The step-4 test. If you cannot name the trap, stop at three cards. A padded card is worse than a short one, because it now costs the reader time to discover there is nothing there |
+| **Rewriting instead of extending** | The existing table is usually correct and was checked. Add around it. Rewriting invites new errors into content that was already verified |
+| **Losing the title** | Deepening must not retitle, because the id is a permalink and five `localStorage` prefixes key on it. If a better title genuinely emerges, it goes through `data/renames.json` and `slug-aliases.json` like any rename |
+
+## 8. How to measure whether it worked
+
+The measurement in §1 is a script, not a judgement, so it can be re-run. The honest success
+criteria:
+
+```
+before:  330 topics single-concept and under 1,800 chars   (23% of site)
+target:  under 150, with the remainder audited and confirmed as reference cards
+```
+
+And the counter-metric, because §7's first failure mode is invisible in a length number:
+**mean characters per concept card should not rise.** If cards get longer and the number of
+concept cards per topic does not, the pass is padding rather than deepening — and that is
+detectable in the same script that produced this section.
+
+
+---
+
+# Worked specifications — four sessions, startable without designing
+
+> §4–§7 of the original handbook specified ten sessions to this standard, and those are the
+> ten that got built. Everything specified only as a title has a much worse record. So four
+> of Phase 7's first ten, and one Phase 8 wave, are written out here to the same depth: the
+> concept cards, the tables, the verdict each table needs, and the cross-references.
+
+## W1 — `cs`: *Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full*
+
+**Badge** `CS • Systems` · **Icon** ⏳ · **Position** after *Percentiles &amp; Latency*, which
+it explains from underneath.
+
+| Concept card | Content |
+|---|---|
+| 1 — *One Equation, and What It Refuses to Let You Believe* | `L = λW`. Items in the system equals arrival rate times time in the system. It holds for any stable system regardless of distribution, which is unusual and is why it is worth memorising. The immediate use: two of the three are always measurable, so the third is never a guess |
+| 2 — *Utilisation and Latency Are Not Linear* | The table of wait multiplier against utilisation — 50%, 70%, 80%, 90%, 95%, 99% — with the knee visible. **Verdict:** running a system at 90% is not efficiency, it is a decision about latency that somebody should have made on purpose |
+| 3 — *Why Adding One Worker Sometimes Fixes Everything* | Because you moved back down the curve, not because you added 10% capacity. Explains the support queue that collapses when one person joins, and the API that recovers from a two-instance increase |
+| 4 — *Variability Is the Hidden Term* | The equation says nothing about variance, and variance is what makes a queue at 60% utilisation still spike. Batch arrivals, slow outliers, and the single long job that blocks everything behind it |
+| 5 — *Where This Shows Up* | Table across four domains: a support queue (`ops`), a thread pool (`cs`), a database connection pool (`data`), a checkout line. **Verdict:** it is the same equation each time, which is the argument for learning it once |
+
+**Cross-references** *Percentiles &amp; Latency*, *Working a Queue — Prioritisation, Batching &amp;
+Not Drowning*, *Connection Pooling — Surviving Many Clients*, *Capacity Planning*.
+
+**The trap to land** the intuition that a system at 80% has 20% headroom. It has roughly a
+quarter of the headroom it had at 50%, and the reader should leave unable to unsee that.
+
+---
+
+## W2 — `sec`: *Asset Discovery — You Cannot Protect What Nobody Listed*
+
+**Badge** `SEC • Programme` · **Icon** 🗺️ · **Position** near *Mapping Your Own Attack
+Surface*, which it generalises inward.
+
+| Concept card | Content |
+|---|---|
+| 1 — *Every Coverage Metric Has an Unknown Denominator* | "98% of endpoints have the agent" is a claim about the machines you know. The interesting machines are in the other set by definition, and the sentence is unfalsifiable until the estate is enumerated |
+| 2 — *Six Sources, and Why No Single One Is Enough* | Table: directory objects · DHCP leases · network scans · cloud APIs · agent inventories · finance's purchase records. Each has a characteristic blind spot — **the last one finds what IT never provisioned**, which is why it is on the list |
+| 3 — *Reconciliation Is the Work* | Six sources produce six overlapping lists with different identifiers. The card's practical core: choose a primary key, decide what "the same machine" means, and record what each source uniquely contributed. **Verdict:** the reconciliation rules are the asset inventory; the list is its output |
+| 4 — *The Categories That Are Always Missing* | Contractor devices · test systems that became production · lab equipment · cloud accounts opened on a card · things with an IP and no owner. Each with the source that would have found it |
+| 5 — *Keeping It True* | An inventory decays from the day it is finished. The only durable version is derived — provisioning writes to it, decommissioning removes from it, and a weekly diff is reviewed by a person. **Verdict:** a hand-maintained inventory is a snapshot with a date on it, and should be labelled as one |
+
+**Cross-references** *Asset &amp; Configuration Management — A CMDB That Stays True*,
+*Mapping Your Own Attack Surface*, *Shadow IT* (Phase 7, CN), *Vulnerability Management
+Lifecycle*.
+
+**The trap to land** the finance record. Nearly every organisation can find unmanaged cloud
+spend and unknown SaaS from an expenses export in an afternoon, and almost nobody has tried.
+
+---
+
+## W3 — `cloud`: *Multi-Cloud — The Four Reasons, and Which Ones Survive Contact*
+
+**Badge** `Cloud • Strategy` · **Icon** 🧭 · **Position** beside *Landing Zones &amp;
+Multi-Account Structure*.
+
+| Concept card | Content |
+|---|---|
+| 1 — *Four Reasons, and Two of Them Are Real* | Regulatory requirement · acquisition · deliberate best-of-breed · fear of lock-in. The first two are facts you inherit; the third is defensible per workload; **the fourth buys an abstraction layer that usually costs more than the lock-in it avoids** |
+| 2 — *What Multi-Cloud Actually Costs* | Table: two sets of IAM models, two networking models, two billing models, two on-call knowledge bases, and every engineer half as deep in each. **Verdict:** the cost is not the infrastructure, it is that expertise does not divide |
+| 3 — *The Abstraction Trap* | A layer that hides both providers gives you the intersection of their features and the union of their failure modes, plus a component only you maintain. Where it is genuinely right: a small, stable surface — object storage, DNS, secrets — chosen deliberately |
+| 4 — *The Version That Works* | Per-workload placement with a common identity and a common observability plane. Each workload lives entirely in one provider; the things that must be shared are the things that are boring in both |
+| 5 — *Asking the Question Properly* | Not "should we be multi-cloud" but: which workload, moved to which provider, for which specific capability, at what cost in expertise? **Verdict:** a question nobody can answer in that form is a strategy nobody has |
+
+**Cross-references** *Landing Zones &amp; Multi-Account Structure*, *Well-Architected*, *Exit
+Planning &amp; Lock-In* (Phase 7, CD), *Cloud Rosetta Stone*.
+
+---
+
+## W4 — Phase 8 wave **D1**, `data`: the deepening pass, worked
+
+Not one card — a session. `data` has 40 thin topics; a session takes eight of them and
+applies §5's steps. The eight, and the one thing each is missing:
+
+| Card | Add |
+|---|---|
+| *Locking &amp; MVCC* | The failure mode: what a lock wait looks like from the application (a timeout, not an error), and why the query that is *blocked* is rarely the query that is *wrong* |
+| *Connection Pooling* | The decision: pool size against database max connections, and the arithmetic that makes a small pool faster than a large one. Cross-reference W1 |
+| *ER Modeling* | The trap: modelling the current process rather than the invariant, which is why the schema needs changing every time the business does |
+| *The Semantic Layer &amp; Metrics* | The decision: where the definition lives when the warehouse, the dashboard and the application each have one |
+| *Normalization — 1NF Through BCNF* | The verdict the table lacks: when to stop, and the honest note that analytical schemas denormalise on purpose |
+| *Backups &amp; Point-in-Time Recovery* | The failure mode: the restore that has never been run, and the recovery-time number nobody has measured |
+| *Replication &amp; High Availability* | The decision: synchronous against asynchronous, expressed as what you lose in each failure |
+| *Monitoring a Database* | The trap: averages hiding the p99, which is the same argument as W1 arriving from a different direction |
+
+**Session shape** eight cards, roughly two hours, one commit. Re-run the §1 measurement
+afterwards and record both numbers — thin count *and* mean characters per concept card, so
+§7's padding failure is visible if it happened.
+
+
+---
+
+# The card rubric — what the good ones have, measured from what shipped
+
+> Written after roughly forty cards in one session, by looking at which ones came out well
+> and asking what they had in common. Not a style guide — the conventions live in
+> `CONTRIBUTING.md`. This is about **what makes a card worth reading**, which no file here
+> has ever stated, and which is the thing a future session most needs and is least likely to
+> reconstruct.
+
+## 1. The one test
+
+**A card earns its place when it says something the reader could not have assembled from the
+table alone.**
+
+Every good card this session has one sentence that is the reason it exists:
+
+| Card | The sentence |
+|---|---|
+| BEC | Every control you bought looks for a payload, and there isn't one |
+| MFA Bypass | MFA authenticates a login, not a session |
+| Infostealers | Revoke before reset, or the reset locks the door behind the intruder |
+| Spanning Tree | An IP packet has a time-to-live; an Ethernet frame has nothing |
+| MTU | Small things work and large things hang |
+| Mainframe | The specification is the code |
+| i18n | It is not translation, it is removing the assumptions that make translation impossible |
+| Hallucination | A fabricated citation is formatted exactly as carefully as a real one |
+| Anxiety | Avoidance is what keeps it alive |
+| Risk register | The test is whether the entry can be wrong |
+| Typography | Amateur design is usually not ugly — it is undecided |
+
+If you cannot write that sentence for the card you are about to write, **you do not yet know
+what the card is**, and writing it will produce a summary of the subject rather than a
+contribution to it.
+
+## 2. The five that all the good ones do
+
+| | Property | What it looks like |
+|---|---|---|
+| 1 | **Names the inversion** | Says the thing that is true and contrary to instinct. "Call the bank before touching the mailbox." "Security advises and never approves." "A takedown is a window, not a fix" |
+| 2 | **Gives the failure a fingerprint** | One-way audio. Solid port lights. Small things work, large things hang. A reader who meets the symptom recognises it, which is the whole return on reading |
+| 3 | **Ranks honestly, with the limits** | Not a list of mitigations but a ranked one, each with what it does *not* do. The ranking is the content; an unranked list is a search result |
+| 4 | **Says what it is not** | The scope sentence. "This is not a diagnosis." "DMARC is worth doing and is not a BEC control." Naming the boundary is what makes the rest trustworthy |
+| 5 | **Ends on a decision** | The verdict is an instruction or a judgement, never a summary. If the last sentence restates the card, delete it and promote the second-to-last |
+
+## 3. The failure modes, with their tells
+
+| Failure | Tell | Fix |
+|---|---|---|
+| **Encyclopaedia card** | Reads like a definition. Could have been written without ever having used the thing | Find the failure mode. Every subject has one and it is always more interesting than the definition |
+| **Listicle** | Seven items, none ranked, no verdict | Rank them. If they cannot be ranked they are not comparable and the table is wrong |
+| **Restated verdict** | The closing sentence says what the table said | Cut it. A missing verdict is better than a redundant one |
+| **Borrowed authority** | Cites a framework instead of making an argument | Say what the framework is *for*, and when it does not apply |
+| **Padding** | Longer, and the concept-card count did not change | Phase 8 §7. Stop at three cards and ship |
+| **Invented cross-reference** | A title reconstructed from memory | The linter catches it every time and names the correction. It caught five this session |
+
+## 4. Length, honestly
+
+The good cards this session ran **6,000 to 15,000 characters of source**, four to six concept
+cards. That is not a target. The relationship runs the other way: a subject with four real
+arguments produces four concept cards, and one with a single argument produces one and is
+finished.
+
+**Write until the material runs out, then stop.** The 330 thin cards in Phase 8 are not thin
+because someone stopped early — they are thin because they were written to a form that only
+had room for one idea.
+
+## 5. What the tooling checks, and what it cannot
+
+Worth stating so nobody assumes a green build means a good card.
+
+| Checked mechanically | Not checked, ever |
+|---|---|
+| Markup, nesting, duplicate slugs | Whether the card is interesting |
+| Cross-reference targets exist | Whether the cross-reference is apt |
+| Acronym expansions match the dictionary | Whether the expansion is right *here* — six were wrong this session |
+| No hard-coded colours; the verdict class is used | Whether the verdict says anything |
+| Contradictions against other cards | Whether the claim is true |
+| Freshness stamps, volatile claims dated | Whether the claim was ever verified |
+
+**The checks protect the conventions. Nothing protects the content except the writing.** That
+asymmetry is the reason this rubric exists in the same file as the tooling record.
+
+
+---
+
+# Phase 9 — the duplication problem, measured
+
+Phase 7 asks what is missing. Phase 8 asks how good what is there is. This asks the third
+question: **how much of it is the same thing twice?**
+
+## 1. The measurement
+
+Every pair of topic titles, compared by token overlap with stop-words and acronym expansions
+removed. `acronym` excluded, since it is generated.
+
+**36 pairs share 50% or more of their meaningful tokens.** The top of the list is not
+ambiguous:
+
+| Overlap | Pair |
+|---|---|
+| 0.86 | `script` *Web Scraping — Extracting Data From Websites* · `script` *Web Scraping – Extracting Data from Websites with Python* |
+| 0.83 | `net` *Wireless — 802.11 Standards &amp; Security* · `net` *Wireless Networking — 802.11 Standards &amp; Security* · `net` *Wireless Security – 802.11 Standards &amp; Wi-Fi Hardening* (three of them) |
+| 0.80 | `script` *WebAssembly (WASM)* · `web` *WebAssembly — Native Speed in the Browser* |
+| 0.71 | `sec` *Zero Trust — Never Trust, Always Verify* · `sec` *Zero Trust – "Never Trust, Always Verify" Explained* |
+| 0.71 | `script` *Object-Oriented Programming — Classes, Objects &amp; Inheritance* · `script` *Object-Oriented Programming — Classes &amp; Objects* |
+| 0.71 | `script` *Design Patterns — Reusable Solutions* · `script` *Design Patterns — Named Solutions* |
+| 0.60 | Kubernetes, three times: `devops` ×2 and `linux` ×1 |
+| 0.62 | `shortcut` *tmux — Never Lose a Session Again* · `shortcut` *Tmux Survival Kit – Never Lose a Terminal Session* |
+
+Concentration by domain pair: `script`↔`script` 6, `net`↔`net` 5, `script`↔`shortcut` 5,
+`eng`↔`script` 3.
+
+**Two `script` cards on regular expressions. Two on Git. Two on files. Three on Kubernetes
+across two domains. Three on wireless in one domain.**
+
+## 2. Why this happened, precisely
+
+Not carelessness — a missing check. The audit method that governs new content
+(*probe titles, verify the zeros*) was invented partway through this file's history and has
+only ever been applied to cards being written **now**. Nothing has ever looked backwards, so
+every session that wrote a card on a subject an earlier session had already covered added a
+second one, and the site kept both.
+
+The dash tells the story: several pairs differ only in whether the title uses an em dash or
+an en dash, which means they were written by different sessions using different conventions
+and neither session saw the other's card.
+
+## 3. Legitimate duplication, which must not be consolidated
+
+Some of this is deliberate and correct. The site teaches at two levels, and the same subject
+appears once for a beginner and once in depth **on purpose**.
+
+| Pattern | Verdict |
+|---|---|
+| A *Beginner*-badged card and a deep card on the same subject | **Keep both.** This is the site's teaching model, and collapsing it makes the beginner layer disappear |
+| A *Reference* card (a table) and a *Concept* card | **Keep both.** Different jobs; the reference card is looked up, the concept card is read |
+| The same subject from two *perspectives* — an attacker's and a defender's | **Keep both.** `pentest`↔`redteam` and `threat`↔`blueteam` pairs are usually this |
+| Two cards with the same badge, the same depth, and no stated difference | **Consolidate.** This is the real population |
+
+**The test:** open both, and write one sentence saying who each is for. If the sentence is
+the same, one of them should not exist.
+
+## 4. What consolidation costs, and the rule that follows
+
+Deleting a topic is not free, and this file has established exactly how not free.
+
+| Cost | Detail |
+|---|---|
+| The permalink dies | The id is a URL somebody may have bookmarked. `data/slug-aliases.json` exists for this and must be updated |
+| Five `localStorage` prefixes orphan | `reviewed:` `bookmark:` `known:` `srs:` `note:` — a reader's note on the deleted card becomes unreachable |
+| Related-map edges break | `suggest_related.py --check` will catch it; the fix is to repoint, not to delete the pair |
+| Learning-path steps break | `check_paths.py` catches it; same fix |
+
+**So the rule is: merge, never delete.** The surviving card absorbs whatever the other had
+that it lacked, the retired id goes into `slug-aliases.json` pointing at the survivor, and
+`renames.json` records why. A reader following an old link lands on the better card. Nobody
+loses a note.
+
+## 5. The queue
+
+| Wave | Pairs | Notes |
+|---|---|---|
+| **C1** — `script` internal | 6 | Web Scraping, OOP, Design Patterns, Regular Expressions, Git, Files. The largest domain and the worst offender, which is not a coincidence — 145 topics written across many sessions |
+| **C2** — `net` wireless and cloud | 5 | Three wireless cards is the clearest case on the site. Likely outcome: one beginner card, one deep card, one retired into them |
+| **C3** — `script`↔`shortcut` | 5 | Genuinely ambiguous: `shortcut` is a reference domain, so several of these may be §3's reference-plus-concept pattern. **Check before merging** |
+| **C4** — Kubernetes across `devops` and `linux` | 3 | Cross-domain, so the question is which domain owns the subject. Probably `devops`, with `linux` keeping a container-internals card that is genuinely its own |
+| **C5** — `sec` Zero Trust, `web`↔`script` WebAssembly and TypeScript | 4 | Small and clean |
+| **C6** — the tail | ~13 | Mostly below 0.6 overlap and mostly legitimate. Audit, expect to keep most |
+
+**About 23 merges**, of which perhaps 15 are unambiguous.
+
+## 6. The check that should have existed
+
+A near-duplicate report is mechanical and cheap: tokenise titles, strip stop-words and
+acronym expansions, compare pairwise, report above a threshold. 1,432 titles is a million
+comparisons and runs in under a second.
+
+It cannot be a gate — legitimate duplication exists and §3 says why — so it is a **census**,
+like the acronym-breadth report added earlier this session. Its job is to make a session
+writing a new card notice that a similar one already exists, which is exactly the failure
+that produced this list.
+
+**And it should run at write time, not at review time.** A new card that overlaps an existing
+one by 50% should be caught before the session builds a related-topics entry for it.
+
+
+---
+
+# Phase 10 — the tooling that makes Phases 8 and 9 real
+
+Every item here exists because something in this session could not be measured, or was
+measured by a throwaway script that nobody will find again. The rule this file has arrived at
+several times over: **a number stated in a plan and not produced by a committed script is a
+claim with a shelf life.**
+
+## T1 — `tools/depth_report.py`
+
+Phase 8's entire argument rests on a measurement that currently lives in this document and
+nowhere else. The script emits both numbers §8 asks for:
+
+```
+1,432 topics · 330 single-concept and under 1,800 chars (23%)
+mean chars per concept card: 1,118        ← the padding counter-metric
+by domain, worst first: data 93% · web 85% · redteam 77% · blueteam 67% · cloud 62%
+```
+
+**Why both numbers:** thin count alone rewards padding, which is Phase 8's first failure
+mode. Chars-per-concept-card rising while topic count holds is the fingerprint of a
+deepening pass that added words and no ideas.
+
+Not a gate. A census, printed by `make check` beside the acronym-breadth one.
+
+## T2 — `tools/near_duplicates.py`
+
+Phase 9 §6. Tokenise titles, strip stop-words and acronym expansions, compare pairwise,
+report above 0.5 overlap. Runs in under a second on 1,432 titles.
+
+**The design decision that matters:** it must be runnable on a *candidate title* before the
+card is written — `near_duplicates.py --title "Spanning Tree — …"` — because the failure it
+prevents is a session writing a card that already exists, and by review time the cost is
+already sunk. The full pairwise report is the secondary mode.
+
+## T3 — The verdict check, which is the rubric made mechanical
+
+Measured this session: **2,098 tables across the site, and 565 of them (27%) are followed by
+nothing at all.** No verdict, no prose, straight into the next block.
+
+`style.css` already asserts the house rule — *every table gets a verdict* — and nothing has
+ever checked it. Worst offenders: `script` 69, `shortcut` 51, `net` 46, `sec` 39.
+
+| Decision | Reasoning |
+|---|---|
+| Warning, with a ceiling — not an error | 565 is too many to fix in one pass, and some are legitimate: a reference table in `shortcut` genuinely needs no verdict |
+| Ceiling at the current count | Same ratchet as `inline style attribute`. It can fall and cannot rise, so no new table ships without a sentence saying what it means |
+| Exclude `shortcut` and `acronym` | Reference domains, per Phase 8 §4 |
+
+This is the highest-leverage check in the phase, because it enforces the one property §1 of
+the rubric identifies as the difference between a card and a search result.
+
+## T4 — The related-map orphan report
+
+**902 of 1,432 topics (63%) have no related-topic link at all.** That is not automatically
+wrong — the map was built by hand and hand-built things are partial — but the interesting
+subset is:
+
+**159 topics with three or more concept cards and over 3,000 characters have no links in or
+out.** These are *good* cards that are dead ends. The worst are startling:
+
+```
+7 cards, 7,137 chars   Note-Taking for Learning — Notes You Never Reopen Are Theatre
+7 cards, 6,538 chars   The Japanese Mastery Loop — Kata, Poka-Yoke, Hansei, Kaizen
+6 cards, 6,222 chars   The Memory Palace — Method of Loci for Ordered Lists
+6 cards, 6,028 chars   Study Systems That Survive a Brain That Won't Cooperate
+6 cards, 5,584 chars   Microsoft Endpoint Configuration Manager (MECM)
+```
+
+The `productivity` domain is almost entirely unlinked, which explains something the reader
+would notice: its cards are among the best on the site and are reachable only by browsing to
+them.
+
+**The report ranks orphans by depth**, so the work queue is "good cards nobody can reach
+from anywhere else" rather than "topics missing metadata". Roughly 159 topics × 2 pairs is a
+few sessions of genuinely high-return work.
+
+## T5 — A search-quality harness
+
+The site has search, acronym-aware search and a quiz built on the same index, and **nothing
+tests whether searching for a thing finds it**. Every other user-facing behaviour has a
+smoke test.
+
+The shape is a fixture file of realistic queries and their expected topic:
+
+```
+"one way audio"          → voice-real-time-traffic-…
+"page loads halfway"     → mtu-fragmentation-…
+"revoke before reset"    → infostealers-…
+"why is my laptop slow"  → laptops-batteries-thermals-…
+"POAM"                   → the-risk-register-… or the acronym card
+```
+
+Score is *expected topic in the top three*. It fails when a content change quietly breaks
+retrieval — for example when two near-duplicate cards (Phase 9) both match a query and
+neither ranks first, which is a duplication symptom the title report cannot see.
+
+## T6 — Reading time on the topic header
+
+Derived at build time from character count, stamped as an attribute, rendered small beside
+the badge. Costs nothing and sets an expectation, which matters on a site where cards range
+from 900 to 15,000 characters with no outward sign of which is which.
+
+**The honest caveat:** reading time is a proxy for length, not difficulty, and labelling a
+dense 2,000-character card "2 min" is a small lie. Worth it, but the plan should say so.
+
+## T7 — A difficulty attribute, and a filter for it
+
+The site teaches at two levels — Phase 9 §3 says so explicitly — and the only outward sign is
+a badge that sometimes reads *Beginner*. A `data-level` attribute with three values, stamped
+from the badge where one exists and by hand elsewhere, would make the beginner layer
+**filterable** rather than discoverable by accident.
+
+This also fixes something Phase 9 exposed: three wireless cards are confusing without levels
+and are a sensible progression with them.
+
+## T8 — "New since you last visited"
+
+The changelog exists and is generated. A per-reader version is a timestamp in `localStorage`
+and a diff against the changelog's own dates — no new data, no server, one small view.
+
+**Why it is worth the code:** the site adds thirty topics in a session and a returning reader
+has no way to find them. The changelog answers "what changed"; this answers "what changed
+*for me*", which is the question people actually have.
+
+## T9 — A contradiction check across near-duplicates
+
+`check_contradictions.py` already compares claims across the site. Phase 9's pairs are the
+highest-probability place for two cards to disagree, because they were written by different
+sessions months apart. Running the existing checker **restricted to the 36 near-duplicate
+pairs** is a cheap, targeted pass — and any disagreement it finds is a bug in one of them,
+not a stylistic difference.
+
+## Ordering
+
+| # | Item | Why here |
+|---|---|---|
+| 1 | **T3** verdict check | Highest leverage, enforces the rubric, and the ratchet stops the number growing while the rest happens |
+| 2 | **T1** depth report | Phase 8 cannot start honestly without it |
+| 3 | **T2** near-duplicates | Phase 9 needs it, and the `--title` mode prevents the next instance |
+| 4 | **T4** orphan report | Turns a vague "the related map is partial" into 159 named cards |
+| 5 | **T9** contradiction pass | Ten minutes, reuses an existing tool, and finds real bugs if any exist |
+| 6 | **T5** search harness | The last untested user-facing behaviour |
+| 7–9 | T6, T7, T8 | Reader-facing; genuinely nice, and none of them is load-bearing |
+
+
+---
+
+# Domain shape — the connectivity measurement, and what it says
+
+Phases 7–10 treat the site as a set of cards. This treats it as a **graph**, which is what a
+reader actually moves through. Two numbers per domain: cross-domain cross-references out and
+in, and steps in a learning path.
+
+```
+domain        xref-out xref-in  self  path        domain        xref-out xref-in  self  path
+sec                 15      27    19     3        cs                 15       1     6     0
+ops                  9      20    12     8        m365               21       1    10     1
+script               4      14     3     1        web                 4       0     8     0
+grc                  1      10     9     0        hw                  9       0     4     2
+blueteam             2       9     7     3        philosophy          3       0     0     0
+devops               0       8     0     2        math                0       0     0     0
+career               4       8    12     7        quotes              0       0     0     0
+net                  3       5    10    25        shortcut            0       0     0     1
+```
+
+## 1. Three shapes, and what each means
+
+| Shape | Domains | Reading |
+|---|---|---|
+| **Hub** — high in, moderate out | `sec` 27 in · `ops` 20 in · `script` 14 in | The site's centres of gravity. Other domains reach for them, which is correct: they are the shared vocabulary |
+| **Broadcaster** — high out, near-zero in | `m365` 21 out / 1 in · `cs` 15 out / 1 in · `hw` 9 out / 0 in | These reference the rest of the site and nothing references them back. Not wrong, but it means a reader arriving anywhere else never learns they exist |
+| **Island** — near-zero both ways | `math`, `quotes`, `philosophy`, `productivity`, `web` (0 in) | Reachable only by clicking the chip. `web` at **8 self-references and 0 inbound** is the surprising one: a large technical domain nothing else points at |
+
+## 2. The finding worth acting on
+
+`cs` sends fifteen cross-references outward and receives **one**. It is the domain that
+explains *why* things work — hash collisions, percentiles, consensus, memory hierarchy — and
+almost nothing in the operational domains says "the reason is in `cs`".
+
+That is a one-line fix per card and it is the highest-value linking work available:
+**an inbound reference from an operational card to the theory card underneath it** teaches
+something the operational card cannot. Phase 7's W1 (Little's Law) was chosen partly for
+this reason — `ops`, `data` and `cs` all need it and none of them currently connects.
+
+The mirror finding: `m365` at 21 out and 1 in is the most self-sufficient domain on the site,
+and the least discoverable from anywhere else.
+
+## 3. Learning paths are one domain's story
+
+**`net` holds 25 of the 75 path steps.** `cs`, `eng`, `grc`, `web`, `ai`, `data`,
+`philosophy`, `mind` and `productivity` hold **none**.
+
+Six paths exist and they are, in effect, network-and-operations paths. That is a legitimate
+first cut and it is now the constraint: a reader whose interest is data, security governance
+or frontend has no path at all. Two or three new paths — **a data path, a defender path, a
+"learning how to learn" path drawing on `productivity` and `mind`** — would use the existing
+machinery to reach the parts of the site that currently have no entry point.
+
+## 4. What this does not mean
+
+Connectivity is not quality. `philosophy`, `mind` and `productivity` are among the
+best-written domains and are the least connected, because their subjects genuinely sit apart
+from the technical graph. The action for them is a **path**, not forced cross-references —
+manufacturing a link from a Kubernetes card to Stoicism would be worse than the island.
+
+---
+
+# Closing note for Phase 7–10
+
+Four phases, and they are not alternatives — they are the same site measured four ways.
+
+| Phase | Question | Size | Cost per unit |
+|---|---|---|---|
+| **7** — the gaps | What is missing? | 96 cards | High. New id, new links, duplication risk |
+| **8** — the depth | How good is what is there? | 330 thin, ~244 queued | Medium. No new ids, no duplication risk |
+| **9** — the duplication | How much is here twice? | 36 pairs, ~23 merges | Low, and it *reduces* the site |
+| **10** — the tooling | Can any of this be measured next time? | 9 tools | Lowest, and it is what makes the other three verifiable |
+
+**The recommended order is 10, 9, 8, 7 — the reverse of how they were written.** The tooling
+makes the numbers reproducible; consolidation shrinks the surface before anyone invests in
+it; deepening improves what survives; and new cards go last, onto a site that has been
+measured, cleaned and improved rather than onto one that has not.
+
+That order is also the least appealing, because writing new cards is the enjoyable part and
+running a duplicate report is not. This file has made that observation before, about a
+different backlog, and it was right then: **the reason the queue never shrinks is that the
+enjoyable work is always available.**
+
+One honest caveat on all four phases. The site moved from 1,401 to 1,432 topics in a single
+session, and eleven domains changed. Every number in Phases 7–10 was measured on **1,432
+topics, 30 domains, at the end of that session**. They will be wrong soon, and the scripts in
+Phase 10 exist precisely so that being wrong is a one-command problem rather than a rewrite.
