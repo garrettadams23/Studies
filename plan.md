@@ -9911,3 +9911,73 @@ and that is the repair most likely to be skipped because "slow" sounds like age.
 
 `hw` 24 → **26**. Site total 1,410 → **1,412**. Smoke **135/135** · axe **6/6** · visual
 **2/2**.
+
+
+## Session record — `mind`: anxiety, motivation, and the card about getting help
+
+`mind` had 17 topics covering the psychology of an IT career well — imposter syndrome,
+burnout, on-call, layoffs, comparison, asking for help — and three gaps that a domain about
+minds should not have. The audit also killed a fourth candidate before it was written:
+ADHD-style working, because `productivity`'s *Study Systems That Survive a Brain That Won't
+Cooperate* already carries "design for the bad day", the five structural moves, and body
+doubling. Checking the concept-card titles inside the adjacent card, rather than only its
+title, is what caught that.
+
+**Anxiety — What Keeps It Going, and What Actually Shrinks It.** Opens by saying what it is
+not: no diagnosis, no treatment plan, and the last section is the one that matters if things
+are severe. Then two mechanisms.
+
+The first is ordering: the threat response runs before the reasoning finishes, which is why
+*knowing* a fear is disproportionate changes nothing in the moment. People conclude they are
+irrational; they are experiencing a system working as designed on the wrong input. The
+symptom table ends on the row worth sitting with — the dread arrives before a reason and the
+mind supplies one afterwards, which is why arguing with the reason rarely helps and why the
+same feeling attaches to a different worry next week.
+
+The second is the one the card is built around: **avoidance is what keeps it alive**. Every
+avoidance produces relief, and relief teaches two false things — that the situation was
+dangerous, and that avoiding works. The diagram shows the circle getting smaller. Then the
+term worth knowing, *safety behaviour*: the small thing that gets you through, which feels
+like the reason you coped and is the reason the fear survived intact. The what-helps table
+is ranked by evidence rather than appeal, and says plainly that graded approach and dropping
+safety behaviours are the treatment while breathing, sleep and exercise are maintenance —
+and that alcohol works for two hours and worsens tomorrow's baseline.
+
+**Motivation — Why Waiting For It Fails.** The thesis is that motivation is largely a
+consequence of engagement rather than a prerequisite, so treating it as a prerequisite
+guarantees the wait. The card's real contribution is the diagnostic: **low motivation is a
+symptom with four common causes** — depleted, unclear, powerless, misaligned — which want
+completely different responses, and applying discipline to the first is how people arrive at
+burnout. The question that separates them is what happens on a good day: if a rested
+Saturday makes the task feel possible it is depletion or ambiguity; if it feels exactly as
+unappealing, it is agency or alignment, and no technique addresses those. Then autonomy,
+competence and relatedness as the conditions that actually produce sustained effort, with
+willpower listed fourth and described as real, small, and the least reliable of the four.
+
+**Getting Professional Help.** Written because the delay is real and the reasons are
+practical rather than philosophical — not knowing what it involves, not knowing how to
+start, and above all believing you are not struggling *enough*. The card argues with that
+directly: there is no threshold, and "struggling enough" is a bar people set above wherever
+they currently are, so it never gets cleared however bad things become. Then the routes in
+(with the two facts people do not know: an employee assistance programme does not tell your
+manager, and using a private session while on a public waiting list is normal), what modern
+therapy actually involves — closer to structured problem-solving with homework than to the
+version in films — and the objections answered plainly, including the career one, since
+clinical records are separate from employment and clearance processes generally treat
+seeking help as a positive.
+
+It ends on the section for the reader who is not the one struggling: what to do when a
+colleague tells you. Listen without solving, take it at face value, say what you can
+actually do rather than "anything you need", and — if they mention harming themselves — ask
+directly. **Asking does not plant the idea.** That myth is persistent and it stops people
+asking the question that most often turns things.
+
+### On writing this domain
+
+These three are the most careful cards in the file, and the care shows in what they refuse
+to do: no diagnosis, no promises, no technique offered where the honest answer is a
+professional. The register the domain already had — practical, specific, unsentimental —
+turned out to be exactly right for the subject, which is the argument for writing new
+material *in* an established voice rather than adopting a new one for a sensitive topic.
+
+9 bidirectional related pairs. `mind` 17 → **20**. Site total 1,412 → **1,415**.
