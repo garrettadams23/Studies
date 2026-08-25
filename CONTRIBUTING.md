@@ -120,6 +120,23 @@ domains, and the linter reports it as a census line rather than a warning. Use
 `ref-table` for new content because it is the house style; do not convert existing
 tables, because that is a redesign.
 
+### Acronyms with more than one meaning
+
+`data/acronyms.json` is the single source of expansions, and the annotator applies one
+meaning everywhere unless told otherwise. For an entry with several meanings, `byDomain`
+is **exhaustive**: every domain where the acronym actually renders carries a decision,
+including the ones that only confirm the default.
+
+```json
+"byDomain": { "hw": "Error-Correcting Code", "sec": "Elliptic Curve Cryptography" }
+```
+
+Use `null` for "do not annotate in this domain". `lint_content.py` fails the build on a
+rendering with no decision, which is a ratchet at zero — the check was introduced with six
+live wrong expansions, including `ECC` as Elliptic Curve Cryptography in a memory card and
+`DC` as Domain Controller beside a voltage rail. A wrong expansion is well-formed markup,
+so nothing else can see it.
+
 ### Colours
 
 **Never write a hex literal in content.** `lint_content.py` fails the build on one in a

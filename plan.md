@@ -9695,3 +9695,69 @@ inventing one.
 
 Site total unchanged at **1,405**; dictionary 1,094 → **1,095** entries. Smoke **135/135** ·
 axe **6/6** · visual **2/2**.
+
+
+## Session record — six wrong acronym expansions, and the ratchet that closes the class
+
+§4d ended by saying the ambiguous-acronym counter measures **exposure, not debt** — four
+acronyms a future card could plausibly get wrong — and that all 49 annotations of them had
+been checked by hand. That was true for the shape it checked: single-meaning entries whose
+*note* mentions a second meaning. It said nothing about the other shape, which is the
+common one: an entry with **several structured meanings**, an `annotate` default, and a
+`byDomain` map covering some domains and not others.
+
+Found while auditing `hw` for content gaps, in a **topic title**:
+
+> Memory Deep — Channels, Ranks, Timings, **ECC (Elliptic Curve Cryptography)** & Diagnosing Bad RAM
+
+The dictionary already knew Error-Correcting Code. `byDomain` had `linux` and not `hw`.
+
+### Six, all live
+
+| Acronym | Domain | Rendered as | Should be | The giveaway |
+|---|---|---|---|---|
+| `ECC` | `hw` | Elliptic Curve Cryptography | Error-Correcting Code | in the card title, beside "Diagnosing Bad RAM" |
+| `DC` | `hw` | Domain Controller | Direct Current | "Watch out for **DC** voltage — is the rail present?" |
+| `IPS` | `hw` | Intrusion Prevention System | In-Plane Switching | a table of *display panels*: "wide viewing angles, consistent colour" |
+| `KVM` | `net` | Kernel-based Virtual Machine | Keyboard, Video, Mouse | "two PDUs… switches, appliances and the **KVM**" |
+| `SSG` | `shortcut` | Static Site Generation | Staff Sergeant | "E-6 Staff Sergeant **SSG**" |
+| `DORA` | `grc` | DevOps Research and Assessment | Digital Operational Resilience Act | "The Regulatory Landscape — **DORA**, NIS2 & Cyber Disclosure Rules" |
+
+Two of the six needed a meaning the dictionary did not have at all (`Staff Sergeant`,
+`Digital Operational Resilience Act`), so they could not have been fixed by an override
+alone. A seventh was found in passing and is a different shape: **`PDU` rendered as
+Protocol Data Unit in a rack-power sentence** — correct elsewhere in the same file, and
+`byDomain` is per-domain, so no override can separate them. Fixed in the content by
+spelling out "power distribution units", and the meaning added to the dictionary for the
+reference domain.
+
+`SSG` is worth one more line, because the fix is invisible: it is now **not annotated at
+all**, and that is right. The annotator skips an expansion already spelled out within ~250
+characters, and "Staff Sergeant" was three words to its left the whole time. The wrong
+expansion was the only reason anything rendered.
+
+### The ratchet
+
+`byDomain` is now **exhaustive** rather than exceptional: **81 decisions**, one for every
+domain where a multi-meaning acronym actually renders, including the 75 that only confirm
+the default. `lint_content.py` errors on a rendering with no decision, naming the acronym,
+the domain, what it would annotate as, and every meaning available — so a new card in a new
+domain surfaces the choice once, before it ships. Verified by deleting `ECC`'s `hw` key:
+one error, exit 1.
+
+### The regex that audited itself
+
+The first pass reported **28** uncovered pairs. The second reported **77** — and the
+difference was not new content. The audit matched acronyms with a plain `\b`, so it was
+finding `DP` inside `UDP`, `RA` inside `YARA` and `DORA`, `SCP` inside `OSCP`, `TS` inside
+`HSTS`, and `MAC` inside `HMAC`. Roughly half of the first list was the regex looking at
+itself.
+
+That is the same failure as the `Viva`/"sur**viva**l" audit and the `POA&M` token split,
+three sessions running: **a token boundary is not a word boundary when the tokens are
+acronyms**, because acronyms are made of the same characters as the words they hide in. The
+lookbehind `(?<![A-Za-z0-9])` is in the shipped check with the four false matches named
+beside it.
+
+Site total unchanged at **1,405**; dictionary 1,095 → **1,095** entries with three new
+meanings. Smoke **135/135** · axe **6/6** · visual **2/2**.

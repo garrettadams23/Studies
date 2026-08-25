@@ -285,8 +285,54 @@ def ambiguous_acronyms(files):
         text = path.read_text(encoding="utf-8")
         for a in candidates:
             if re.search(rf'\b{re.escape(a)} <span class="acro-exp">', text):
-                seen[a].add(path.stem)
+                seen[a].add(domain_of(path))
     return sorted((a, candidates[a], len(d)) for a, d in seen.items() if len(d) > 1)
+
+
+# An acronym is only the tail of a longer one often enough to ruin an audit:
+# a bare \b matched `DP` inside `UDP`, `RA` inside `YARA`, `SCP` inside `OSCP`
+# and `TS` inside `HSTS`, which turned a 28-row finding into a 77-row one that
+# was mostly the regex looking at itself. The lookbehind is the whole fix.
+def _rendered_re(acronym):
+    return re.compile(r'(?<![A-Za-z0-9])' + re.escape(acronym) +
+                      r'e?s? <span class="acro-exp">')
+
+
+def undecided_meanings(files):
+    """(acronym, domain, default, meanings) for a rendering nobody decided.
+
+    A dictionary entry with several meanings annotates one of them everywhere
+    unless `byDomain` says otherwise, and a wrong expansion is well-formed
+    markup that no other check can see. Six were live when this was written:
+    ECC as Elliptic Curve Cryptography in a memory card, DC as Domain
+    Controller beside a voltage rail, IPS as Intrusion Prevention System in a
+    display-panel table, KVM as Kernel-based Virtual Machine among rack
+    appliances, SSG as Static Site Generation next to "E-6 Staff Sergeant", and
+    DORA as DevOps Research and Assessment in a list of EU regulations.
+
+    So `byDomain` is now exhaustive rather than exceptional: every domain where
+    a multi-meaning acronym renders carries a decision, including the ones that
+    simply confirm the default. That makes this a ratchet at zero — a new
+    domain picking one up shows here, once, before it ships.
+    """
+    import json
+    entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
+    multi = [e for e in entries if len(e.get("m", [])) > 1]
+    by_domain = collections.defaultdict(str)
+    for path in files:
+        by_domain[domain_of(path)] += path.read_text(encoding="utf-8")
+    out = []
+    for domain, text in sorted(by_domain.items()):
+        if domain == "acronym":
+            continue
+        for e in multi:
+            if domain in e.get("byDomain", {}):
+                continue
+            if _rendered_re(e["a"]).search(text):
+                out.append((e["a"], domain,
+                            e.get("annotate", e["m"][0]["e"]),
+                            [m["e"] for m in e["m"]]))
+    return out
 
 
 def topic_label(block):
@@ -417,6 +463,14 @@ def main():
 
     # Advisory, not blocking: each needs a human to say which meaning belongs
     # where, and the count is small enough to read.
+    for acro, domain, default, meanings in undecided_meanings(files):
+        errors.append(
+            f"acronyms.json: {acro} renders in '{domain}' with no byDomain "
+            f"decision, so it annotates as '{default}'. Meanings: "
+            f"{' | '.join(meanings)}. Add \"{domain}\" to that entry's "
+            f"byDomain — the right expansion, or null not to annotate there."
+        )
+
     ambiguous = ambiguous_acronyms(files)
     warns["ambiguous acronym rendered in 2+ domains"] += len(ambiguous)
 
