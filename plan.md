@@ -9844,3 +9844,70 @@ is exploited, patching does not help, and the only tell is process lineage.
 
 `threat` 31 → **36**. Site total 1,405 → **1,410**. Smoke **135/135** · axe **6/6** ·
 visual **2/2** · gzip headroom 28%.
+
+
+## Session record — `hw`: the two cards a hardware domain should not have been missing
+
+A broad title probe across seven domains — testing for specific subjects rather than
+frameworks — returned a mixed result worth recording, because **half the "gaps" were
+phrasing misses**. `pentest` came back with zeros for "report writing" and "cloud pentest";
+it has *Pentest Reporting – The Skill That Makes or Breaks Your Career* and *Cloud
+Penetration Testing — What You May Test, and What You Are Actually Testing*. `math` came
+back with zeros for statistics and linear algebra, which is correct and irrelevant: that
+domain is a calculus course, not a mathematics library, and widening it would be a decision
+about scope rather than a gap.
+
+That leaves the probe useful only when the zero is checked against the domain's actual
+title list. Doing that for `hw` left two that were genuinely absent, and both are core
+material rather than exotica.
+
+**Static, Handling & the Bench** — the card exists because the usual ESD briefing does not
+survive contact with experience: everybody has handled memory carelessly and seen nothing
+die, and that observation is true. The framing that works is the distinction between
+destroying and **degrading**: a discharge you can feel is far more than a modern gate needs,
+the ones below that threshold produce no symptom at all, and the resulting fault surfaces
+weeks later as an intermittent that nobody attributes to the person who installed it. So "I
+have never damaged anything" is evidence about attribution, not about practice.
+
+The precautions are ranked rather than listed, because the ranking is the content: touching
+the chassis and holding boards by the edges carry most of the value and cost nothing, a
+wrist strap has to reach the same ground as the board, an antistatic bag shields on the
+*outside* so a board resting on one is unprotected, and antistatic sprays and lead-less
+bracelets are sold as protection and provide none. Then the honest note that the dangerous
+moment is not the work — it is carrying the part across a carpeted office and setting it on
+a plastic desk.
+
+A second concept card says the thing the safety briefing never does: **more parts die on a
+bench from force than from static**. Bent pins from a cold cooler twisted off an unlatched
+socket, a cracked board from pressing a connector home unsupported, and the standoff in a
+hole the board does not have — which shorts the underside and kills motherboards silently.
+
+**Laptops — Batteries, Thermals & What Is Actually Replaceable** — organised around the
+fact that every desktop-repair assumption is deliberately inverted, so *the diagnosis
+matters more precisely because half the repairs are not economically available*. The
+battery section corrects folklore that was true of nickel chemistry decades ago: deep
+discharges accelerate lithium ageing rather than preventing memory effect, overcharging is
+prevented in hardware so what ages a cell is sitting full and warm, and calibration re-syncs
+the gauge without changing capacity. Swelling gets a red flag, because the visible symptom —
+a trackpad that clicks oddly, a case that will not sit flat — arrives well before anything
+dramatic.
+
+The thermal section exists because "it got slow" is usually a cooling story, and it ends on
+a measurement rather than a symptom: **log clock speed under sustained load**, since a
+processor holding its clock at 95°C is fine and one dropping to a third of rated speed after
+ninety seconds is not, and the difference is invisible from outside the chassis. The
+repair-or-replace table closes on the row that changes the most outcomes — a machine that is
+slow because of a mechanical drive and too little memory is under-specified rather than old,
+and that is the repair most likely to be skipped because "slow" sounds like age.
+
+### Two catches by the tooling, both by name
+
+- A cross-reference to *Media Sanitisation & Disposal — What "Wiped" **Has to Mean**"* when
+  the real title ends *"Actually Means"*. The linter printed the correction.
+- `check_renames.py` rejected **"some vendors whitelist which cards will boot"** — house
+  style is allowlist. Reworded to "will only boot cards from an approved list", which is
+  better English anyway. That check has been in `make check` for many sessions and this is
+  the first time it has caught something written in the same session.
+
+`hw` 24 → **26**. Site total 1,410 → **1,412**. Smoke **135/135** · axe **6/6** · visual
+**2/2**.

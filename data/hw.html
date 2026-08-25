@@ -2352,3 +2352,264 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
     </div>
   </div>
 </div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚡</span>
+    <span class="topic-name">Static, Handling &amp; the Bench — What Actually Kills Components</span>
+    <span class="topic-badge">PC Hardware</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Damage You Cause Is Usually the Damage You Do Not See</div>
+      <div class="concept-desc">
+        Electrostatic discharge has a credibility problem, and it is easy to see why: most people
+        have handled memory carelessly for years and nothing died. That experience is real, and it
+        is also the reason the subject is misunderstood. A discharge large enough to <em>destroy</em>
+        a component outright is rare. A discharge large enough to <strong>degrade</strong> one is
+        routine, produces no symptom on the day, and turns into an intermittent fault weeks later
+        that nobody will ever connect to the person who installed it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Level</th><th>What you notice</th><th>What happened</th></tr></thead>
+          <tbody>
+            <tr><td>Around 3,000 volts</td><td>The smallest discharge a person can feel</td><td>Many times more than a modern chip's gate needs to be damaged</td></tr>
+            <tr><td>Below that</td><td><strong>Nothing at all</strong></td><td>Still enough to weaken a junction. This is the entire problem</td></tr>
+            <tr><td>Catastrophic damage</td><td>The part is dead on arrival</td><td>The lucky outcome — it is diagnosed immediately and replaced</td></tr>
+            <tr><td>Latent damage</td><td>Works now, fails in weeks</td><td>The expensive outcome, and it presents as an unrelated intermittent fault</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          So "I have never damaged anything" is not evidence of safe practice. It is evidence that
+          the failures were attributed to something else, which is exactly what latent damage looks
+          like from the inside. <span class="xref">Intermittent Faults — Heat, Vibration, Marginal Power &amp; How to Reproduce Them</span>
+          is where these eventually turn up, wearing a different name.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Precautions, Ranked by What They Are Worth</div>
+      <div class="concept-desc">
+        Ranked honestly rather than as a checklist, because the ranking is the useful part — most
+        of the protection comes from the first two rows, which cost nothing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Practice</th><th>Worth</th><th>Detail people get wrong</th></tr></thead>
+          <tbody>
+            <tr><td>Touch bare metal on the chassis before touching a component</td><td>High</td><td>Do it <em>again</em> after walking across the room — the walk is what recharges you</td></tr>
+            <tr><td>Hold boards by the edges, cards by the bracket</td><td>High</td><td>Never the gold contacts, never the chips. Skin oil on contacts is a separate, slower problem</td></tr>
+            <tr><td>Wrist strap clipped to the chassis</td><td>High on a bench</td><td>It must be a <strong>path to the same ground as the board</strong>. A strap clipped to nothing is theatre</td></tr>
+            <tr><td>Antistatic bags for transport and storage</td><td>High</td><td>The shielding is the <em>outside</em>. A board resting <em>on</em> a bag is unprotected — it goes inside</td></tr>
+            <tr><td>Leave the power supply connected but switched off</td><td>Moderate</td><td>Common advice for grounding, and the caveat matters: modern boards keep rails live, so unplug before removing anything</td></tr>
+            <tr><td>Antistatic mat</td><td>Moderate</td><td>Only if grounded. Ungrounded, it is a place to put things</td></tr>
+            <tr><td>Humidity above roughly 40%</td><td>Moderate, invisible</td><td>Dry winter air with carpet is the classic combination that ruins parts in one particular office and nowhere else</td></tr>
+            <tr><td>Antistatic spray, "grounding" bracelets with no lead</td><td>None</td><td>Sold as protection; provide none</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">The most dangerous moment is not the work.</strong> It is carrying a
+          part across a carpeted office in your hand, or setting it on a plastic desk, or pulling it
+          from a bag and putting it down. Discipline while the case is open is common; discipline
+          for the ten seconds either side is not.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Mechanical Damage Costs More Than Static, and Nobody Mentions It</div>
+      <div class="concept-desc">
+        Static gets the safety briefing. In practice, more parts are killed on a bench by force,
+        leverage and dropped screws than by discharge — and unlike static, these leave marks that
+        will be found later.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Failure</th><th>How it happens</th><th>Avoided by</th></tr></thead>
+          <tbody>
+            <tr><td>Bent processor pins or pads</td><td>A cooler removed with a twist while cold, lifting the chip out of an unlatched socket</td><td>Warm the machine first, twist gently, and open the latch <em>before</em> assuming it is free</td></tr>
+            <tr><td>Cracked board</td><td>Pressing a stiff connector home with the board unsupported</td><td>Support directly underneath the connector, not at the edges</td></tr>
+            <tr><td>Stripped standoff or a screw in the wrong hole</td><td>A standoff where the board has no hole shorts the underside</td><td>Count standoffs against the board before it goes in. This one kills motherboards silently</td></tr>
+            <tr><td>Torn ribbon or antenna cable</td><td>Lifting a panel that is still connected</td><td>Assume every panel is tethered until you have seen otherwise</td></tr>
+            <tr><td>The dropped screw</td><td>Landing under a board and shorting on power-up</td><td>Account for every screw before closing. A magnetic tray is worth more than most tools on the bench</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Bench Worth Working At</div>
+      <div class="concept-desc">
+        The setup is not about tidiness. Each item removes a specific failure that is otherwise a
+        matter of luck.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Item</th><th>The failure it removes</th></tr></thead>
+          <tbody>
+            <tr><td>Hard, non-carpeted surface with room to lay parts flat</td><td>Charge build-up, and boards balanced on other boards</td></tr>
+            <tr><td>Light from in front, not overhead behind you</td><td>Working in your own shadow, which is how pins get bent</td></tr>
+            <tr><td>Magnetic tray or a screw mat with labelled cells</td><td>The screw that ends up under the board, and the reassembly with three left over</td></tr>
+            <tr><td>Photographs before disassembly</td><td>Cable routing you will not remember, on a machine you see once a year</td></tr>
+            <tr><td>The right screwdriver, seated fully</td><td>Cammed-out, rounded screws — the single most common way a simple job becomes a long one</td></tr>
+            <tr><td>Somewhere to put the old part immediately</td><td>Rebuilding with the failed component, which happens more often than anyone admits</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Photographs are the highest-value habit here</strong> and cost
+          three seconds. They also survive an interruption, which the memory of a cable route does
+          not — and interruption is the normal condition of anyone doing this in a working office
+          rather than a workshop.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💻</span>
+    <span class="topic-name">Laptops — Batteries, Thermals &amp; What Is Actually Replaceable</span>
+    <span class="topic-badge">PC Hardware</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Laptop Is a Desktop With Every Trade-off Made Against You</div>
+      <div class="concept-desc">
+        Everything that makes desktop repair straightforward is deliberately absent. Components are
+        soldered rather than socketed, so an upgrade is a replacement of the whole board. Cooling is
+        sized for a chassis rather than for the processor, so sustained load is a design decision
+        made by the manufacturer and not by you. And the parts most likely to fail — battery,
+        keyboard, hinge, screen — are the ones the user touches, which is not a coincidence.
+      </div>
+      <div class="dw">
+        <div class="concept-desc">
+          The practical consequence is that <strong>the diagnosis matters more than on a
+          desktop</strong>, because half the repairs are not economically available. Establishing
+          which of the four failure families you are looking at, before ordering anything, is most
+          of the job.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What You Can Change, and What You Cannot</div>
+      <div class="concept-desc">
+        Varies by model and generation, so this is the shape of the answer rather than the answer.
+        Check the manufacturer's own service manual — most publish one, and it is the fastest way to
+        find out whether a job is fifteen minutes or impossible.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Part</th><th>Usually</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Storage</td><td>Replaceable</td><td>Almost always an M.2 slot; check length and whether the slot is PCIe <span class="acro-exp">(Peripheral Component Interconnect Express)</span>, SATA <span class="acro-exp">(Serial Advanced Technology Attachment)</span> or both</td></tr>
+            <tr><td>Memory</td><td>Sometimes</td><td>Increasingly soldered, occasionally one socket plus soldered memory — buy the configuration you need</td></tr>
+            <tr><td>Battery</td><td>Replaceable</td><td>Internal on nearly everything modern; adhesive strips rather than a latch</td></tr>
+            <tr><td>Keyboard</td><td>Model-dependent</td><td>Either a service part or bonded into the top case, which changes the cost by an order of magnitude</td></tr>
+            <tr><td>Screen</td><td>Replaceable</td><td>Match panel size, resolution, refresh rate, touch and the connector — "it fits" is not enough</td></tr>
+            <tr><td>Fan and thermal paste</td><td>Serviceable</td><td>The highest-value maintenance available on an older machine, by a wide margin</td></tr>
+            <tr><td>Processor and graphics</td><td>Soldered</td><td>Not an upgrade path. This is a board-level repair or a new machine</td></tr>
+            <tr><td>Wireless card</td><td>Sometimes</td><td>Sometimes an M.2 card, sometimes soldered; some vendors will only boot cards from an approved list</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Batteries: What Wears Them Out, and the Advice That Is Out of Date</div>
+      <div class="concept-desc">
+        Lithium-ion cells age on two clocks at once — cycles used, and time spent at a high state of
+        charge and temperature. Most of the folklore in circulation was true of nickel chemistry
+        decades ago and is wrong now.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Belief</th><th>Reality</th></tr></thead>
+          <tbody>
+            <tr><td>"Fully discharge it regularly to stop memory effect"</td><td>Nickel-cadmium behaviour. Deep discharges <em>accelerate</em> lithium ageing</td></tr>
+            <tr><td>"Leaving it plugged in ruins the battery"</td><td>Overcharging is prevented in hardware. What ages it is sitting at 100% and warm — which is why vendors ship charge limits</td></tr>
+            <tr><td>"Calibrating restores capacity"</td><td>It re-syncs the <em>gauge</em>, so the percentage becomes honest again. The capacity does not change</td></tr>
+            <tr><td>"Swelling means it is faulty"</td><td>Swelling is normal end-of-life gassing. It is also a <strong>safety issue</strong> — stop using it, do not puncture it, do not put it in general waste</td></tr>
+            <tr><td>"Any replacement will do"</td><td>Cheap cells are a genuine fire risk. This is the component where the brand of the spare matters most</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">A swollen battery lifting a trackpad or splitting a case is the one
+          fault to act on the same day.</strong> The visible symptom — a trackpad that clicks oddly,
+          a case that will not sit flat, a screen with a growing gap — arrives well before anything
+          dramatic, and it is the reason to open the machine rather than to keep using it.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">"It Got Slow" Is Usually a Thermal Story</div>
+      <div class="concept-desc">
+        A three-year-old laptop that feels slow under load, runs its fan constantly, and is fine
+        when idle is describing a cooling problem, not an ageing processor.
+        <span class="xref">CPU &amp; Cooling — Sockets, TDP, Thermal Paste &amp; Throttling Diagnosis</span>
+        has the mechanism; this is what it looks like in a chassis.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause</th><th>Sign</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Dust mat across the heatsink fins</td><td>Fan loud, air barely moving, exhaust cool</td><td>Open it and clear the fins. Blowing into the vent packs it tighter</td></tr>
+            <tr><td>Dried thermal compound</td><td>Temperature spikes in seconds under load</td><td>Repaste, with the fan clean and the pads checked</td></tr>
+            <tr><td>Vents blocked by the surface</td><td>Fine at a desk, throttles on a bed or sofa</td><td>Not a fault. Worth telling the user, kindly</td></tr>
+            <tr><td>Failing fan bearing</td><td>Rattle, or silence where there should be noise</td><td>Replace the fan; it is usually a cheap service part</td></tr>
+            <tr><td>Deliberately conservative firmware</td><td>Throttles at a low temperature by design</td><td>Nothing to fix — thin chassis, sustained load, choose a different machine for that workload</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Log the temperature and clock speed under a sustained load</strong>
+          rather than reading the fan. A processor holding a high clock at 95°C is behaving
+          normally; one dropping to a third of its rated speed after ninety seconds has a cooling
+          fault, and the difference is invisible from the outside.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">The Repair-or-Replace Conversation, With Numbers</div>
+      <div class="concept-desc">
+        This decision gets made badly in both directions — expensive repairs to machines that owed
+        nothing, and replacements for faults that cost twenty units of currency to fix. A short list
+        of questions settles nearly all of them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>Weight</th></tr></thead>
+          <tbody>
+            <tr><td>Is it in warranty?</td><td>Ends the conversation. Opening it may end the warranty instead — check before the screwdriver</td></tr>
+            <tr><td>Is the part a service part or bonded to an assembly?</td><td>A bonded keyboard can cost more than half a replacement machine</td></tr>
+            <tr><td>Will the operating system still be supported for the life you are buying?</td><td>A perfect repair on a machine that loses updates in six months is a six-month repair</td></tr>
+            <tr><td>Is this the second failure?</td><td>Two unrelated failures on an old chassis usually predicts a third</td></tr>
+            <tr><td>What is the user's actual workload?</td><td>Storage and memory fix "slow" far more often than a new machine does — and cost a tenth as much</td></tr>
+            <tr><td>What happens to the data?</td><td>Plan the migration and the wipe before ordering. See <span class="xref">Media Sanitisation &amp; Disposal — What "Wiped" Actually Means</span></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The row that changes the most outcomes is the second-to-last. A machine that is slow
+          because it has a mechanical drive and too little memory is not old — it is
+          under-specified, and two cheap parts buy two more years. That is also the repair most
+          likely to be skipped, because "slow" sounds like age rather than like a component.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
