@@ -9761,3 +9761,86 @@ beside it.
 
 Site total unchanged at **1,405**; dictionary 1,095 → **1,095** entries with three new
 meanings. Smoke **135/135** · axe **6/6** · visual **2/2**.
+
+
+## Session record — the `threat` wave: five attacks the site had never described
+
+`threat` sat at 31 topics with a solid framework layer — kill chain, ATT&CK, Diamond,
+threat intel, malware analysis, ransomware, supply chain, the criminal economy. The audit
+probed **topic titles** for specific attack techniques rather than for frameworks, and the
+zero-coverage list was startling for a security site:
+
+```
+business email      0     credential stuffing   0     watering hole   0
+invoice fraud       0     password spray        0     drive-by        0
+botnet              0     account takeover      0     malvertising    0
+infostealer         0     MFA fatigue           0     SIM swap        0
+```
+
+Five cards, chosen so each one says something the site could not say before rather than
+restating a taxonomy it already had.
+
+**Business Email Compromise** — the framing is that every control in the stack looks for a
+payload and there isn't one: no attachment, no link, no code, and the only indicator is a
+sentence about urgency. So it consistently outranks ransomware in reported losses while
+barely registering in security tooling, because it is a *payment process failure* that
+arrives by email. Three delivery routes, and only the third matters — a genuinely
+compromised mailbox replying inside a real thread, which authentication cannot touch, and
+the card says plainly that a DMARC rollout is worth doing and is not a BEC control. The
+inbox rule gets its own section because it is the whole trick and the best artefact in the
+investigation: it hides the supplier's "we did not change our details" reply, and it
+survives a password reset. The response section inverts the usual runbook — **call the bank
+before touching the mailbox**, because the mailbox will still be compromised in an hour and
+the money will not still be recoverable.
+
+**MFA Bypass in Practice** — one sentence carries the card: *MFA authenticates a login, not
+a session*. Everything current follows from that gap, so the techniques are ranked by how
+much they care about your factors, with adversary-in-the-middle first. The relay diagram
+makes the necessity visible: any factor whose proof is a value a human can read out and
+type in can be relayed live by something in the middle, which is a property of the design
+and not a bug to be patched. That puts phishing-resistant authentication in its own row —
+not "stronger MFA" but the only category structurally immune, because the browser tells the
+authenticator which origin is asking and it refuses to lie. The post-login sequence is
+included because two of its six steps — registering a new factor, granting an application
+consent — are what outlive the response, and are also the two most alertable events.
+
+**Infostealers** — a business model disguised as a malware family. It runs once, takes
+everything, deletes itself: no persistence, no beacon, no encryption event, and the only
+surviving artefact is a file on someone else's server. The log contents table leads with
+session cookies rather than passwords, because a cookie is a completed login with MFA
+already satisfied, and includes the machine fingerprint row that explains why replayed
+sessions do not trigger impossible-travel logic. The response section exists to correct one
+ordering people get wrong under pressure: **revoke sessions before resetting the password**,
+or the reset locks the door behind the intruder.
+
+**Attack Infrastructure** — the layer under the techniques, and the reason infrastructure
+indicators age better than file indicators: hosting and proxy pools are reused across
+campaigns while payloads are not. Bulletproof hosting, residential proxies, fast flux,
+domain generation, booter services — and the honest note that booters put denial-of-service
+capability behind a card payment, which retires "who would bother attacking us" as a threat
+model. The living-off-trusted-services section is the structural one: when command traffic
+runs through a mainstream cloud service, blocklists, certificate scrutiny, reputation and
+geography all fail simultaneously and correctly, which is the argument for detections built
+on regularity and process lineage instead. Takedowns get a table that says plainly they are
+a window, not a fix — and that the window is a good time to hunt.
+
+**Watering Holes, Drive-Bys & Malvertising** — the delivery routes that need no message, and
+the card opens by saying the thing an incident review needs to hear: *the absence of a
+phishing email is not evidence of an insider or a lie*. The profiling-step diagram explains
+why these are so hard to reproduce — the site looks clean when you check it because you are
+not in the profile and have already been seen — which relocates the investigation to your
+own proxy logs. It ends on the technique that has largely replaced browser exploitation:
+the page puts a command on the clipboard and talks the user through pasting it, so nothing
+is exploited, patching does not help, and the only tell is process lineage.
+
+### Notes from the build
+
+- The linter caught the one mistake, by name: a cross-reference to *Email Authentication —
+  SPF, DKIM **&** DMARC* when the real title uses commas. It printed the correction.
+- The `undecided_meanings` ratchet added an hour earlier stayed silent through five new
+  security cards full of ambiguous acronyms — the first evidence that the 81 recorded
+  decisions actually cover the domains content is written in.
+- 17 bidirectional related-topic pairs, hand-picked again.
+
+`threat` 31 → **36**. Site total 1,405 → **1,410**. Smoke **135/135** · axe **6/6** ·
+visual **2/2** · gzip headroom 28%.
