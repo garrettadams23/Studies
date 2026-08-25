@@ -9981,3 +9981,73 @@ turned out to be exactly right for the subject, which is the argument for writin
 material *in* an established voice rather than adopting a new one for a sensitive topic.
 
 9 bidirectional related pairs. `mind` 17 → **20**. Site total 1,412 → **1,415**.
+
+
+## Session record — `philosophy` clears its own bar, with the three cards it was missing
+
+§3's Phase-4 rule says a domain needs ≥15 cards to justify a chip. `philosophy` sat at 14 and
+had been left there twice, on the reasonable grounds that it is a coherent subject rather
+than a bag. This session added the three cards that make it clear the bar honestly — chosen
+because they were genuinely absent, not to reach a number.
+
+The domain's existing shape explains the gaps. It covers **traditions** thoroughly —
+Stoicism, Buddhism, Taoism, Existentialism, Machiavelli, three earth-based practices — and
+carries three short cards of folk wisdom and decision heuristics. What it had none of was
+the machinery: how to reason about right action, how arguments work, and how you know
+anything. For a reader who spends their working life debugging and evaluating claims, those
+are the three most directly usable parts of the subject.
+
+**Ethics — The Three Families.** Deliberately not framed as a contest with a winner, because
+nobody reasons from a single theory and the framing is why most people find the subject
+useless. Consequentialism, deontology and virtue ethics as **three questions to ask about
+the same decision**, where disagreement between them is information: where all three agree
+you did not need the framework, and where they conflict is where the hard cases are. Each
+gets the case that makes it obviously right and the case that makes it obviously monstrous,
+so the reader is not captured by whichever they read last. Contractualism is named as the
+fourth because it is the one people already use without knowing it — *could I justify this
+to everyone affected?*
+
+The worked example is a disclosure decision with a ninety-day silence from a vendor whose
+product is in hospitals, run through all four lenses. The point of the exercise is stated
+plainly: the lenses do not deliver an answer, they generate the considerations you would
+otherwise skip. Then three traps that look like ethical reasoning — "it's legal", "everyone
+does it", "I only built the tool", "I have no choice" — and the habit worth more than
+picking a theory: **noticing when you have switched lenses mid-argument**, arguing
+consequences while they favour you and rights the moment they do not.
+
+**Arguments & Fallacies.** Opens on validity versus soundness, and the case that matters is
+the third one in the code block: every sentence true, and the conclusion still unearned.
+"Which are you disputing — the structure or a premise?" ends a lot of circular
+disagreements. Then deduction, induction and abduction with what each is entitled to, and
+the honest note that **abduction is the one people mistake for proof** — "the deploy went out
+at 14:00 and errors started at 14:02" is a good hypothesis and not a finding, which is how a
+team spends a day rolling back an innocent release. The fallacy list skips the Latin in
+favour of the nine that actually turn up in a design review, and ends by saying that
+**naming a fallacy is not an argument either**. The last concept card is the one nobody
+teaches: burden of proof, absence of evidence being weak evidence only *if you looked*, and
+the single most useful question in a stuck technical argument — what would change your mind?
+
+**How You Know.** Starts from an honest accounting: most of what anyone knows is testimony,
+so the practical question is almost never "is this true" but "how much weight does this
+source deserve on this subject". Confidence as a number rather than a mood, with the
+discipline that makes it real — write it down *before* the outcome, because remembered
+confidence is reliably revised. Then two failures that look like rigour and are worse than
+credulity because they come with a sense of being the sceptic in the room: **isolated demand
+for rigour** (the standard moved with the conclusion, so it is not a standard) and
+**symmetric doubt** ("nobody really knows", which is a way of keeping your prior). It ends on
+the four states of knowing, and on why imposter syndrome is so often a good sign: the
+discomfort is what moving out of *not knowing that you do not know* feels like, and the
+people who never feel it are frequently still there.
+
+### Two self-caught mistakes
+
+A cross-reference to a *Root Cause Analysis* card that does not exist — invented from
+memory, checked against the title index before splicing, and replaced with the `script`
+debugging card that actually carries the argument. And a stray
+`<div class="topic-icon-none"></div>` written into the third card's header, which is the
+second time in this file's history that an invented placeholder div has been typed out and
+removed. Both were caught before the build; the first would have been caught by the linter,
+the second by nothing.
+
+`philosophy` 14 → **17**, above the ≥15 bar for the first time. 9 bidirectional related
+pairs. Site total 1,415 → **1,418**.
