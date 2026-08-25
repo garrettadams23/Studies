@@ -10302,3 +10302,59 @@ degrade and nothing else has, the network changed and the calls noticed first.
 
 9 bidirectional related pairs. `net` 70 → **73**. Site total 1,426 → **1,429**. Smoke
 **135/135** · axe **6/6** · visual **2/2**.
+
+
+## Session record — `web`: the craft cards, and an `ops` probe that found nothing
+
+Two probes this round, and the negative one is worth recording first. **`ops` returned four
+apparent gaps — change advisory, problem management, knowledge base, handover — and has all
+four**, as *Incident vs Problem vs Change vs Request*, *Knowledge Management — KCS in
+Practice*, and *Escalation — Functional vs Hierarchical, and Handing Over Without Losing
+Context*. That domain is 76 topics and genuinely finished for now. Four zeros, four phrasing
+misses, no work: the probe is a filter, never a finding.
+
+`web` was the opposite. Its CSS coverage is layout and features — Grid, Flexbox, custom
+properties, `:has()`, layers, design tokens — and it had nothing on the craft of making
+something look deliberate, nothing on theming as a practice, and no card on forms at all,
+which for the part of the web where users actually leave is a strange omission.
+
+**Typography & Visual Hierarchy.** Built on a diagnosis rather than a style guide: amateur
+design is usually not ugly, it is *undecided* — nine font sizes, margins picked by eye,
+four greys that are almost the same. The eye detects near-misses and reads them as
+carelessness. So the fix is constraint rather than taste, and the card is a set of
+constraints: a ratio-based type scale to choose from and never between, a spacing scale used
+everywhere, two or three text colours, one accent. The verdict singles out line length —
+`max-width: 65ch` is one declaration and the most common damaging mistake in developer-built
+pages. It ends on the squint test, which is the discipline in one action: squinting removes
+detail and leaves hierarchy, and if the most prominent thing on the page is a border or a
+stray bold label, the hierarchy is arguing with the content.
+
+**Theming & Dark Mode.** The thesis is that dark mode is hard because of the *names*, not the
+colours: `--grey-100` and `--light-border` are descriptions of appearance, so in a second
+theme they are wrong or lying, and a codebase full of them cannot be themed without reading
+every usage. Hence role names, and the retrofit test that is one grep — which is why "we will
+add dark mode later" is a much larger promise than it sounds.
+
+Then the mistake that produces most theming bugs: treating it as a boolean when there are
+**three states**, and the `:not([data-theme="light"])` guard that is always missing from the
+first attempt — without it a user who chose light gets dark after sunset when their OS
+switches, which is a memorable afternoon. The flash gets its own card as a sequencing
+problem with the inline pre-stylesheet script, including the `try/catch` (storage throws
+outright in some privacy modes) and `color-scheme` (skip it and the scrollbars stay bright).
+The what-breaks list is the same every time — shadows, pure black and white, saturated
+accents, baked-in white in images, inline SVG, and contrast checked once in light mode and
+never again.
+
+**Forms.** Opens where the losses are: the form is where users leave, and the failures are
+not aesthetic. The centre is validation *timing*, with a two-line policy that removes most
+complaints — **blur to show, input to clear** — and the note that validating while typing
+before the first blur is correct and feels like being interrupted mid-sentence. Then error
+messages that say what would be valid rather than that this is not, the platform attributes
+that are free quality (`autocomplete` named as the highest-value attribute on any form, and
+a placeholder explicitly not a label), and the assumptions worth removing, each of which
+rejects real people. It closes on long forms, where the highest-value single change is not
+clearing the form on a failed submit — a user who loses twenty minutes of answers rarely
+returns, and unlike everything else on the card it costs one decision rather than a redesign.
+
+9 bidirectional related pairs. `web` 38 → **41**. Site total 1,429 → **1,432**. Smoke
+**135/135** · axe **6/6** · visual **2/2**.

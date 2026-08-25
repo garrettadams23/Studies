@@ -1829,4 +1829,466 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
             </div>
           </div>
 
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔠</span>
+              <span class="topic-name">Typography &amp; Visual Hierarchy — Making It Look Deliberate Without a Designer</span>
+              <span class="topic-badge">CSS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Amateur Design Is Usually Not Ugly — It Is Undecided</div>
+                <div class="concept-desc">
+                  Look at an interface that feels unpolished and the problem is rarely a bad colour
+                  or a bad font. It is that <strong>nothing has a consistent reason for the size it
+                  is</strong>. Nine different font sizes, margins of 12, 14, 15 and 18 pixels chosen
+                  by eye, and four greys that are almost the same. Each decision was reasonable in
+                  isolation, and together they read as noise, because the eye is very good at
+                  detecting near-misses and interprets them as carelessness.
+                </div>
+                <div class="dw">
+                  <div class="concept-desc">
+                    The fix is not taste. It is <strong>constraint</strong>: pick a small set of
+                    values and use only those. A developer who commits to five sizes, one scale of
+                    spacing and three text colours will produce something that looks considered,
+                    because it is.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Type Scale, and Why Ratios Beat Guessing</div>
+                <div class="concept-desc">
+                  Sizes chosen by multiplying a base by a fixed ratio look related to each other,
+                  which is the whole effect people describe as "designed".
+                </div>
+                <div class="dw">
+                  <pre class="code-block">base 16px, ratio ≈ 1.25          base 16px, ratio ≈ 1.33 (more dramatic)
+  12  small print                    12
+  16  body            ← anchor       16
+  20  lead / large                   21
+  25  h3                             28
+  31  h2                             37
+  39  h1                             50
+
+Five or six steps is enough for almost any interface.
+Pick from the scale, never between it.</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Rule</th><th>Why</th></tr></thead>
+                    <tbody>
+                      <tr><td>Body text 16px or larger</td><td>Smaller is a readability problem before it is a style choice, and it is the most common single defect on developer-built pages</td></tr>
+                      <tr><td>Line height around 1.5 for body</td><td>Tight leading is what makes a paragraph feel like a wall. Headings want less — around 1.2</td></tr>
+                      <tr><td>Line length 45–75 characters</td><td>Long lines lose the reader at the wrap. <code>max-width: 65ch</code> is one declaration and a visible improvement</td></tr>
+                      <tr><td>Two typefaces at most</td><td>One is fine. The system font stack is fast, familiar and free</td></tr>
+                      <tr><td>Weight, not size, for emphasis in body text</td><td>Changing size mid-paragraph breaks the rhythm; changing weight does not</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">If you change one thing, change the line length.</strong>
+                    Full-width paragraphs on a wide monitor are the most common and most damaging
+                    typographic mistake in developer-built pages, and a single <code>max-width</code>
+                    fixes every page at once.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Spacing Carries the Structure</div>
+                <div class="concept-desc">
+                  Readers group things by proximity before they read a word. Which means spacing is
+                  not decoration — it is the diagram of how the content is organised, and getting it
+                  wrong actively misinforms.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">Scale:  4  8  12  16  24  32  48  64      (choose from these only)
+
+Wrong                                Right
+  Label                                Label
+                                       Value        ← close: they belong together
+  Value
+                                                    ← gap: new group
+  Label                                Label
+                                       Value
+  Value</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Principle</th><th>In practice</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Related things sit closer than unrelated things</strong></td><td>A label nearer its own field than the one above it. This single rule fixes most confusing forms</td></tr>
+                      <tr><td>Space above a heading exceeds space below it</td><td>The heading belongs to what follows. Equal spacing makes it float ambiguously between sections</td></tr>
+                      <tr><td>One scale, used everywhere</td><td>Values off the scale are the visual equivalent of a typo — individually invisible, collectively obvious</td></tr>
+                      <tr><td>Whitespace is not wasted</td><td>Cramming more in lowers how much is read, not how much is available</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Colour: Fewer Than You Think, and Contrast Is Not Optional</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Role</th><th>How many</th><th>Note</th></tr></thead>
+                    <tbody>
+                      <tr><td>Text</td><td>Two or three</td><td>Primary, muted, and possibly a de-emphasised third. Four greys that are nearly identical is the classic tell</td></tr>
+                      <tr><td>Surfaces</td><td>Two or three</td><td>Page, card, and something raised or inset</td></tr>
+                      <tr><td>Accent</td><td>One</td><td>The interactive colour. If everything is accented, nothing is</td></tr>
+                      <tr><td>Status</td><td>Three or four</td><td>Success, warning, error, information — and never colour alone, since a colour-blind reader sees an unlabelled shape</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Check contrast with a tool, not with your eyes.</strong>
+                    A designer's mid-grey on white is frequently below the accessibility threshold,
+                    and it looks fine on a good monitor in a bright room — which is exactly the
+                    condition under which the problem is invisible to the person making it. See
+                    <span class="xref">Web Accessibility (a11y) — WCAG &amp; ARIA</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Ten-Minute Pass That Fixes Most Pages</div>
+                <div class="concept-desc">
+                  In order, because each step makes the next easier to judge.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Step</th><th>Do</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td>Constrain line length — <code>max-width: 65ch</code> on text containers</td></tr>
+                      <tr><td>2</td><td>Set body to 16px and line height 1.5</td></tr>
+                      <tr><td>3</td><td>Replace every font size with the nearest value from a five-step scale</td></tr>
+                      <tr><td>4</td><td>Replace every margin and padding with the nearest value from the spacing scale</td></tr>
+                      <tr><td>5</td><td>Cut the greys down to two, and check both against the background</td></tr>
+                      <tr><td>6</td><td>Increase the space above headings until each section reads as one block</td></tr>
+                      <tr><td>7</td><td>Squint at it. Whatever stands out is what a first-time visitor will look at — check that is what you wanted</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Step 7 is the whole discipline in one action.</strong>
+                    Squinting removes detail and leaves hierarchy, which is the thing being designed.
+                    If the most prominent element on the page is a border, a badge or a stray bold
+                    label, the hierarchy is arguing with the content — and that is a fixable
+                    structural problem rather than a matter of taste.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌗</span>
+              <span class="topic-name">Theming &amp; Dark Mode — Semantic Tokens, the Flash, and the Parts That Break</span>
+              <span class="topic-badge">CSS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Name Colours by Role, Never by Appearance</div>
+                <div class="concept-desc">
+                  Dark mode is not hard because of the colours. It is hard because of the
+                  <em>names</em>. A variable called <code>--grey-100</code> or
+                  <code>--light-border</code> is a description of how it looks, so in a dark theme it
+                  is either wrong or a lie — and a codebase full of them cannot be themed without
+                  reading every usage to work out what each one meant.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">/* Appearance names — untenable in two themes */
+--white  --grey-100  --dark-text  --light-border
+
+/* Role names — one definition per theme, no usage changes */
+--bg  --bg-raised  --text  --text-muted  --border  --accent  --danger
+
+:root                     { --bg: #fff;    --text: #16181d; --border: #e3e6ea; }
+:root[data-theme="dark"]  { --bg: #0b0d12; --text: #e8eaee; --border: #262b33; }</pre>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The retrofit test is one grep.</strong> If every colour
+                    in the codebase already comes from a variable, adding a theme is one block of
+                    declarations. If colours are written inline, the work is proportional to the
+                    codebase and no framework shortens it — which is why "we will add dark mode
+                    later" is a much larger promise than it sounds.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Three States, Not Two</div>
+                <div class="concept-desc">
+                  The mistake that produces most theming bugs is treating this as a boolean. There
+                  are three states, and the third is the default.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>State</th><th>Means</th><th>Source</th></tr></thead>
+                    <tbody>
+                      <tr><td>Light, chosen</td><td>The user picked it, and it must win even at night</td><td>Stored preference</td></tr>
+                      <tr><td>Dark, chosen</td><td>Same, in the other direction</td><td>Stored preference</td></tr>
+                      <tr><td><strong>System</strong></td><td>Follow the device, and change when the device changes</td><td><code>prefers-color-scheme</code></td></tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-block">/* Light is the base. Dark applies under system preference… */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { /* dark tokens */ }
+}
+/* …and again under an explicit choice, so the toggle wins both ways. */
+:root[data-theme="dark"] { /* the same dark tokens */ }</pre>
+                  <div class="concept-desc verdict">
+                    The <code>:not([data-theme="light"])</code> guard is the part that is always
+                    missing from the first attempt. Without it, a user who explicitly chose light
+                    still gets dark after sunset when their operating system switches — a bug that
+                    only appears at a particular time of day on a particular machine, which is a
+                    memorable afternoon to spend.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Flash, and Why It Is a Sequencing Problem</div>
+                <div class="concept-desc">
+                  A white page appearing for 100 milliseconds before the dark theme applies is the
+                  most-reported theming defect, and it is not a CSS <span class="acro-exp">(Cascading Style Sheets)</span> problem. The stored preference
+                  lives in JavaScript-readable storage, and the browser paints before the framework
+                  has run.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">&lt;head&gt;
+  &lt;script&gt;                     ← inline, blocking, before any stylesheet
+    try {
+      var t = localStorage.getItem("theme");
+      if (t) document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}             ← storage can throw in private modes
+  &lt;/script&gt;
+  &lt;link rel="stylesheet" …&gt;
+&lt;/head&gt;</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Detail</th><th>Why</th></tr></thead>
+                    <tbody>
+                      <tr><td>Inline, not a separate file</td><td>A request would be one more thing to wait for, which is the problem you are solving</td></tr>
+                      <tr><td>Before the stylesheet</td><td>The attribute must exist when the CSS is first applied</td></tr>
+                      <tr><td>Wrapped in try/catch</td><td>Storage access throws outright in some privacy modes — an unhandled error here breaks the whole page</td></tr>
+                      <tr><td>Set on the root element</td><td><code>body</code> is too late for the page background</td></tr>
+                      <tr><td>Also set <code>color-scheme</code></td><td>It makes form controls, scrollbars and the browser's own surfaces match. Skipping it leaves bright scrollbars on a dark page</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What Actually Breaks in the Second Theme</div>
+                <div class="concept-desc">
+                  The layout survives. These do not, and they are the same list every time.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Thing</th><th>Problem</th><th>Fix</th></tr></thead>
+                    <tbody>
+                      <tr><td><strong>Shadows</strong></td><td>A black shadow on a dark surface is invisible, so depth disappears entirely</td><td>Convey elevation with a lighter surface colour, or a subtle border, instead of a shadow</td></tr>
+                      <tr><td>Pure black and pure white</td><td>Maximum contrast is harsh and causes halation on dark backgrounds</td><td>Very dark grey and very light grey. Nearly every good dark theme avoids both extremes</td></tr>
+                      <tr><td>Saturated accent colours</td><td>Vibrate uncomfortably against dark backgrounds and often fail contrast</td><td>Desaturate and lighten the accent for the dark theme — it is a different value, not the same one</td></tr>
+                      <tr><td>Images and logos with baked-in white</td><td>A white rectangle on a dark page</td><td>Transparent assets, a per-theme variant, or a container that keeps a light surface deliberately</td></tr>
+                      <tr><td>Charts and diagrams</td><td>Hard-coded stroke and fill colours, often inside inline SVG <span class="acro-exp">(Scalable Vector Graphics)</span></td><td>Use <code>currentColor</code> and variables. This is the single most-forgotten surface</td></tr>
+                      <tr><td>Syntax highlighting and code blocks</td><td>A theme within a theme, usually shipped by a library</td><td>Pick a pair of themes and switch them with the same attribute</td></tr>
+                      <tr><td>Contrast ratios</td><td>A palette that passes in light can fail in dark, and nobody re-checks</td><td>Test both. The colours are different, so the results are different</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The last row is where most dark themes quietly fail
+                    accessibility.</strong> Contrast is checked once, during the light-mode design,
+                    and the dark palette is derived by eye afterwards.
+                    <span class="xref">Accessibility Remediation — Working Through an Audit Backlog</span>
+                    is the process for when that has been true for two years.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Testing It Without Doubling the Work</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Check</th><th>Catches</th></tr></thead>
+                    <tbody>
+                      <tr><td>Toggle on every screen once, by hand</td><td>Baked-in whites, invisible shadows, unthemed third-party components — most of it, in one pass</td></tr>
+                      <tr><td>Automated contrast scan in both themes</td><td>The failures nobody sees, and it is the same tooling run twice with one attribute changed</td></tr>
+                      <tr><td>A screenshot diff of one representative view per theme</td><td>Accidental colour regressions, cheaply. Narrow it or it fails on every content change</td></tr>
+                      <tr><td>Grep for hex literals in components</td><td>The values that will not follow the theme. This is the check worth making a build failure</td></tr>
+                      <tr><td>Print preview</td><td>Dark themes print as large black rectangles unless a print stylesheet says otherwise</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The grep is the highest-value gate</strong>, and it
+                    generalises past theming: a hard-coded colour in a component is a value that
+                    cannot participate in any future change of appearance, whether that is a second
+                    theme, a rebrand, or a high-contrast mode. Catching it at write time costs
+                    nothing; finding it later costs a codebase sweep.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📝</span>
+              <span class="topic-name">Forms — Validation Timing, Autofill &amp; the Details That Decide Completion</span>
+              <span class="topic-badge">Quality</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">The Form Is Where Users Leave</div>
+                <div class="concept-desc">
+                  Almost every consequential thing a user does on the web happens in a form —
+                  signing up, paying, booking, reporting a fault. It is also the part of the
+                  interface most often built quickly and never revisited, which is why abandonment
+                  concentrates there. <strong>The failures are rarely aesthetic.</strong> They are a
+                  field that rejects a valid phone number, an error that appears while you are still
+                  typing, a page that discards forty answers because one was wrong, and a password
+                  box that fights the password manager.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Validation Timing Is the Whole Experience</div>
+                <div class="concept-desc">
+                  Most validation complaints are not about the rules. They are about <em>when</em>
+                  the rules fired, and there is a well-established answer that almost nobody
+                  implements by default.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>When</th><th>Effect</th></tr></thead>
+                    <tbody>
+                      <tr><td>While typing, before the first blur</td><td><strong>The worst option.</strong> Tells someone their email is invalid after two characters. It is correct and it feels like being interrupted mid-sentence</td></tr>
+                      <tr><td>On blur, after leaving the field</td><td>The right default. The user has finished their thought and is ready to hear about it</td></tr>
+                      <tr><td>While typing, <em>after</em> an error is shown</td><td>The right complement — once a field is known bad, live feedback shows the fix landing and the error clears the moment it is right</td></tr>
+                      <tr><td>On submit only</td><td>Acceptable for short forms, punishing for long ones: the user learns about six problems at once, having thought they were finished</td></tr>
+                      <tr><td>Server-side, always</td><td>Not a UX <span class="acro-exp">(User Experience)</span> choice. Client validation is a convenience; the server is the only place a rule is actually enforced</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Blur to show, input to clear.</strong> Two lines of
+                    policy that remove most validation complaints, and the combination is what makes
+                    a form feel like it is helping rather than marking your work.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Error Messages That Do Something</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Instead of</th><th>Write</th></tr></thead>
+                    <tbody>
+                      <tr><td>"Invalid input"</td><td>"Enter a date in the past" — say what would be valid, not that this is not</td></tr>
+                      <tr><td>"Password does not meet requirements"</td><td>Show the requirements, live, with the ones already met marked. The rules should never have been a secret</td></tr>
+                      <tr><td>"An error occurred"</td><td>What failed, whether their data was kept, and what to do now</td></tr>
+                      <tr><td>A red border alone</td><td>Border, icon, and text — colour alone is invisible to a colour-blind user and to a screen reader</td></tr>
+                      <tr><td>An error summary at the top only</td><td>Summary <em>and</em> per-field messages, with the summary linking to each field. Long forms need both</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two things make errors reach everyone: associate the message with its input
+                    (<code>aria-describedby</code>) so a screen reader announces it on focus, and put
+                    the error summary in a live region so it is announced when it appears. Both are
+                    small, and without them a blind user gets a form that silently refuses to submit
+                    — see <span class="xref">Web Accessibility (a11y) — WCAG &amp; ARIA</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Let the Browser Help — It Is Better at This Than You Are</div>
+                <div class="concept-desc">
+                  A great deal of form quality is free, and is lost by re-implementing things the
+                  platform already does well.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">&lt;label for="email"&gt;Email&lt;/label&gt;
+&lt;input id="email" name="email" type="email"
+       autocomplete="email" inputmode="email" required&gt;
+
+&lt;input type="password" autocomplete="current-password"&gt;   &lt;!-- sign in --&gt;
+&lt;input type="password" autocomplete="new-password"&gt;       &lt;!-- sign up --&gt;</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Attribute</th><th>What it buys</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>&lt;label for&gt;</code></td><td>A larger tap target, screen-reader association, and voice control. A placeholder is <strong>not</strong> a label — it disappears exactly when the user needs it</td></tr>
+                      <tr><td><code>autocomplete</code></td><td>The single highest-value attribute on a form. It fills addresses and cards in one tap and is required by accessibility guidance</td></tr>
+                      <tr><td><code>inputmode</code></td><td>The right mobile keyboard without changing the field's semantics — <code>numeric</code> for a code, without the arrows and locale rules of a number input</td></tr>
+                      <tr><td><code>type</code></td><td>Free validation, the right keyboard, and native pickers</td></tr>
+                      <tr><td>A real <code>&lt;form&gt;</code> with a submit button</td><td>Enter submits, browsers offer to save credentials, and it works before JavaScript loads</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">Blocking paste in a password field is the clearest
+                    example of a well-meant rule that reduces security</strong>: it defeats password
+                    managers, so users type something memorable instead. The same goes for splitting
+                    a one-time code into six separate boxes without handling a pasted string.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Assumptions Worth Removing</div>
+                <div class="concept-desc">
+                  Each of these rejects real people, and each is written by someone reasoning from
+                  their own data.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Rule</th><th>Who it excludes</th></tr></thead>
+                    <tbody>
+                      <tr><td>A clever email regular expression</td><td>Valid addresses with apostrophes, plus-signs and new top-level domains. Check for an <code>@</code> and send a confirmation — delivery is the only real test</td></tr>
+                      <tr><td>Phone numbers must be ten digits</td><td>Most of the world. Accept spaces and <code>+</code>, and normalise server-side</td></tr>
+                      <tr><td>Names must be alphabetic, two parts, no punctuation</td><td>Hyphenated names, apostrophes, accents, single names, and anyone whose family name comes first</td></tr>
+                      <tr><td>A maximum password length of 16</td><td>Password managers, passphrases, and any user with good habits. A hash is fixed-length whatever the input</td></tr>
+                      <tr><td>A postcode pattern</td><td>Every country but yours. Validate per country or not at all — see <span class="xref">Internationalization (i18n) — Designing for Languages You Do Not Speak</span></td></tr>
+                      <tr><td>Required fields you do not need</td><td>Everyone, a little. Every mandatory field costs completions; ask why each one is required and delete the ones with no answer</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Long Forms, Where the Losses Are Largest</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Technique</th><th>Why</th></tr></thead>
+                    <tbody>
+                      <tr><td>Save progress as they go</td><td>Sessions expire, tabs close, phones ring. Losing twenty minutes of answers is the most expensive thing a form can do to someone</td></tr>
+                      <tr><td>Preserve everything on a failed submit</td><td>Clearing a form on validation failure is unforgivable and is still a default in some stacks</td></tr>
+                      <tr><td>One question per screen, on mobile</td><td>Reduces cognitive load and makes each error unmissable; costs taps, which is the right trade on a phone</td></tr>
+                      <tr><td>Show progress honestly</td><td>"Step 2 of 4" sets an expectation. A progress bar that stalls at 90% destroys the trust it was there to build</td></tr>
+                      <tr><td>Disable the submit button only <em>after</em> a click</td><td>Prevents double submission. Disabling it until the form is valid hides <em>why</em> it cannot be submitted, which is the more common failure</td></tr>
+                      <tr><td>Ask the cheap questions first</td><td>Sunk cost is real and works in your favour; the invasive question lands better on screen three than on screen one</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The highest-value single change in most long forms is
+                    the second row.</strong> A user who loses their answers rarely tries again, and
+                    unlike almost everything else on this card it costs one decision rather than a
+                    redesign.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body web -->
