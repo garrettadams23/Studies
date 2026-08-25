@@ -10180,3 +10180,63 @@ activity, it is an input to somebody else's decision.
 
 9 bidirectional related pairs. `grc` 45 → **48**. Site total 1,421 → **1,424**. Smoke
 **135/135** · axe **6/6** · visual **2/2**.
+
+
+## Session record — `ai`: hallucination and multimodal, the two gaps in a dense domain
+
+`ai` was the hardest domain to find a gap in — 49 topics covering transformers, training
+pipeline, inference internals, RAG, fine-tuning, agents, MLOps, governance, shadow AI and
+acceptable use. Two things were genuinely missing, and the first is conspicuous.
+
+**Hallucination had no card.** The word appears thirteen times across the domain's prose and
+once as a table row inside a 1,491-character card that also covers guardrails *and* diffusion
+models. For the single most-asked question about these systems, that is a gap.
+
+The card refuses the framing that it is a defect. A model produces plausible continuations;
+where the data supports a fact the plausible continuation is the true one, which is why any
+of this works; where it does not, the model still produces a plausible continuation, because
+that is the only thing it does. Two consequences explain why "just tell it not to make things
+up" fails: there is no separate fact store to consult and no internal flag distinguishing
+recall from construction, so it cannot report a difference that does not exist from the
+inside — and **a fabricated citation is formatted exactly as carefully as a real one**,
+because fluency was never conditional on truth.
+
+Then six *shapes*, because lumping them together is why mitigations get chosen badly, and
+the one flagged as most expensive for technical readers is the invented interface: a function
+or flag that *should* exist given the naming conventions around it, so the reader's own
+knowledge argues in its favour. The mitigation table is ranked with honest limits, and the
+verdict is that the top two — retrieval, and mechanical verification — share a shape: **both
+replace the model's memory with something checkable.** Everything below is a percentage
+improvement on an unreliable process; those two change what the process is. The card ends on
+a design frame (what does a wrong answer cost, and who finds out) and on measurement, where
+the row that gets skipped is tracking refusal rate beside error rate — a change that halves
+errors by refusing a third of questions has not improved the product, and only the pair shows
+it.
+
+**Multimodal Models.** Built on the implementation fact that predicts everything surprising:
+the image becomes tokens in the same context as the text. So images consume context budget by
+size, fine detail can be lost before reasoning starts, and **an instruction written inside an
+image is just more tokens** — which is why it can be obeyed. The capability table draws the
+useful boundary not between images and text but between interpretation and precision, with
+counting called out for its own warning because the failure is so counter-intuitive: a model
+that describes a complex scene in detail will still miscount the chairs in it.
+
+The document section is the one with a real engineering consequence. Passing page images
+often beats text extraction because layout survives — and introduces a failure the old
+pipelines did not have: **no intermediate artefact to audit**. Traditional extraction failed
+loudly and left evidence; a model reading a page fails quietly and leaves an answer. For
+anything financial or contractual, keep something you can point at when asked where the
+number came from, which is the same argument the `data` lineage card makes about pipelines
+and is now cross-referenced to it.
+
+### The linter, again, by name
+
+Two invented cross-references, both plausible and both wrong: *Embeddings & RAG — Giving AI
+**Long-Term Memory*** (actual: *Access to Your Own Data*) and *Prompt Injection – The "SQL
+Injection" of the AI **Era*** (actual: *World*). Both were reconstructed from memory of the
+domain rather than copied, and the linter named both with the correction. That is now five
+xref corrections it has supplied in this session, all of the same kind: a title remembered
+approximately.
+
+7 bidirectional related pairs. `ai` 49 → **51**. Site total 1,424 → **1,426**. Smoke
+**135/135** · axe **6/6** · visual **2/2**.
