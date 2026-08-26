@@ -107,6 +107,24 @@ const KNOWN_MISSES = [
   ["POAM",                  "the dictionary entry is 'POA&M' and the map keys on that"],
 ];
 
+// Queries with no single right answer that must simply stay narrow. These are
+// the index-hygiene guard: chrome rendered into a topic — a badge, a reading
+// time, a tooltip — becomes searchable text if the index is built from the raw
+// block, and the symptom is one common word matching the whole site. Stamping
+// reading times (T6) did exactly that: "min" went from 27 topics to 1,337.
+//
+// A probe has to be a string that appears *only* in markup. `"class"` was the
+// first attempt and is not one: it is an English word, it is over the
+// four-character substring threshold, and it legitimately matches 275 topics
+// through "classes", "classic" and "classification". A ceiling that fails on
+// correct behaviour teaches people to raise ceilings.
+const CEILINGS = [
+  ["min",           40, "reading-time chrome leaking into the index"],
+  ["concept-desc",   0, "card markup leaking into the index"],
+  ["topic-header",   0, "header markup leaking into the index"],
+  ["data-read",      0, "the T6 attribute itself leaking into the index"],
+];
+
 const browser = await chromium.launch();
 const page = await (await browser.newContext()).newPage();
 await page.goto(PAGE, { waitUntil: "load" });
@@ -131,6 +149,16 @@ for (const [q, want, ceiling] of FIXTURES) {
               `${String(hits.length).padStart(4)} result(s)${why ? "  — " + why : ""}`);
 }
 
+console.log("\nindex hygiene — a common word must not match the whole site\n");
+for (const [q, ceiling, why] of CEILINGS) {
+  const hits = await hitsFor(q);
+  const ok = hits.length <= ceiling;
+  if (!ok) failed++;
+  console.log(`${ok ? "ok  " : "FAIL"} : ${JSON.stringify(q).padEnd(24)} ` +
+              `${String(hits.length).padStart(4)} result(s)` +
+              (ok ? "" : `  — over ceiling ${ceiling}: ${why}`));
+}
+
 console.log("\nknown misses — the backlog, reported and not gated\n");
 let promoted = 0;
 for (const [q, why] of KNOWN_MISSES) {
@@ -146,6 +174,7 @@ for (const [q, why] of KNOWN_MISSES) {
 
 await browser.close();
 
-console.log(`\n${FIXTURES.length - failed}/${FIXTURES.length} search fixtures passed · ` +
+const total = FIXTURES.length + CEILINGS.length;
+console.log(`\n${total - failed}/${total} search checks passed · ` +
             `${KNOWN_MISSES.length - promoted} known miss(es) still missing.`);
 process.exit(failed ? 1 : 0);

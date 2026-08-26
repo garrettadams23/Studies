@@ -644,6 +644,8 @@ function plainLabel(html) {
   return plainText(html.replace(RE_ACRO_SPAN, ""));
 }
 
+const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
+
 const _domainTopics = new Map();
 
 /**
@@ -670,7 +672,11 @@ function domainTopics(domainId) {
       title: plainText(firstInner(chunk, RE_CONCEPT_TITLE)),
       desc: plainText(firstInner(chunk, RE_CONCEPT_DESC)),
       badge: plainText(firstInner(chunk, RE_TOPIC_BADGE)),
-      text: plainText(chunk).toLowerCase(),
+      // The build stamps a reading-time span into every header (plan.md T6).
+      // It is chrome, not content: leaving it in made "min" match 1,337 of
+      // 1,367 topics, which is the same failure the acronym-alternate bug
+      // produced and would have been just as invisible.
+      text: plainText(chunk.replace(RE_TOPIC_READ, "")).toLowerCase(),
     });
     start = next;
   }

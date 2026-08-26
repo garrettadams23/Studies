@@ -159,6 +159,51 @@ def assign_topic_ids(body, used):
     return "".join(out), ids
 
 
+CHARS_PER_MINUTE = 1000        # ~200 words a minute at ~5 characters a word
+_CHEV_RE = re.compile(r'(\s*)<span class="topic-chev">')
+
+
+def stamp_reading_time(body):
+    """Stamp `data-read` on every topic and render it beside the badge.
+
+    plan.md Phase 10 T6. Cards on this site run from 900 to 15,000 characters
+    with no outward sign of which is which, so a reader deciding whether to
+    open one is guessing. Derived at build time from the plain-text length,
+    because the length is already known here and nothing about it needs to be
+    computed in the browser.
+
+    **The caveat the plan asked for, kept next to the code:** this is a proxy
+    for *length*, not for *difficulty*. A dense 2,000-character card marked
+    "2 min" is a small lie, and the honest defence is that the alternative —
+    no signal at all — is a larger one. T7's `data-level` is the axis that
+    would carry difficulty; this is not it.
+    """
+    starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
+    out, prev, stamped = [], 0, 0
+    for n, start in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(body)
+        block = body[start:end]
+        minutes = max(1, round(len(_TAG_RE.sub("", block)) / CHARS_PER_MINUTE))
+        cut = start + len(TOPIC_OPEN)
+        chev = _CHEV_RE.search(block)
+        out.append(body[prev:cut])
+        out.append(f' data-read="{minutes}"')
+        if chev:
+            # Before the chevron, after the badge: the chevron is the affordance
+            # and stays rightmost.
+            at = start + chev.start()
+            out.append(body[cut:at])
+            out.append(f'{chev.group(1)}<span class="topic-read" '
+                       f'title="Rough reading time, estimated from length">'
+                       f'{minutes} min</span>')
+            prev = start + chev.start()
+            stamped += 1
+        else:
+            prev = cut
+    out.append(body[prev:])
+    return "".join(out), stamped
+
+
 def topic_titles(body, ids):
     """The title of each topic in one body, paired with the id just stamped."""
     starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
@@ -473,6 +518,7 @@ def main():
             chunks.append(text)
         body = "".join(chunks)
         body, ids = assign_topic_ids(body, used_slugs)
+        body, _read = stamp_reading_time(body)
         topic_index[domain["id"]] = ids
         by_title.update(topic_titles(body, ids))
         recent = recent_topics(body, ids)

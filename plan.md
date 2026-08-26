@@ -11435,7 +11435,7 @@ Score is *expected topic in the top three*. It fails when a content change quiet
 retrieval — for example when two near-duplicate cards (Phase 9) both match a query and
 neither ranks first, which is a duplication symptom the title report cannot see.
 
-## T6 — Reading time on the topic header
+## ✅ T6 — Reading time on the topic header
 
 Derived at build time from character count, stamped as an attribute, rendered small beside
 the badge. Costs nothing and sets an expectation, which matters on a site where cards range
@@ -11481,7 +11481,8 @@ not a stylistic difference.
 | 4 | **T4** orphan report | Turns a vague "the related map is partial" into 159 named cards |
 | 5 | ✅ **T9** contradiction pass | Ten minutes, reuses an existing tool, and finds real bugs if any exist. **It found two — in the tool** |
 | 6 | ✅ **T5** search harness | The last untested user-facing behaviour. **21 fixtures, 6 known misses, and one query that returned 90% of the site** |
-| 7–9 | T6, T7, T8 | Reader-facing; genuinely nice, and none of them is load-bearing |
+| 7 | ✅ **T6** reading time | Shipped, and it broke both contrast and the search index on the way in |
+| 8–9 | T7, T8 | Reader-facing; genuinely nice, and neither is load-bearing |
 
 
 ---
@@ -12599,3 +12600,70 @@ the page rebuilt, and the fixture went `FAIL … 0 result(s) — NOT FOUND`. Res
 returned to 21/21. That is the failure T5 exists to catch, demonstrated rather than asserted.
 
 `make search` and a CI step run it. `make test` is unchanged at **138/138**.
+
+---
+
+## Session record — Phase 10 T6: reading time, and the two things it broke
+
+T6 is the smallest item in Phase 10 and the one that broke the most. The feature itself is
+twelve lines: `stamp_reading_time()` in `build.py` walks each topic, divides the plain-text
+length by 1,000 characters a minute, stamps `data-read` on the `.topic` and renders a
+`<span class="topic-read">` before the chevron. It shipped with the caveat the plan asked for
+written next to the code rather than only here — **this is a proxy for length, not difficulty**,
+and a dense 2,000-character card marked "2 min" is a small lie that a total absence of signal
+would have been a larger one.
+
+Then two checks that already existed caught two failures neither of which was in the feature.
+
+### axe: 62 elements failing contrast, in both themes
+
+The first CSS was `color: var(--muted); opacity: 0.75` — quieter than the badge on purpose,
+since a size estimate should not compete with a title. `--muted` is already the quietest colour
+in the palette that passes contrast, so dimming it to three-quarters put 62 elements under the
+threshold in dark *and* light.
+
+The fix is a deletion, and the comment left in `style.css` says why so nobody re-adds it:
+**quieter than passing is not a design choice that exists.** If a thing must be visually
+subordinate beyond what colour allows, the lever is size or position, not opacity.
+
+### Search: `"min"` matched 1,337 of 1,367 topics
+
+The search index is built by `plainText()` over the raw topic block, so anything *rendered* into
+a topic is searchable — and the reading time is rendered into every one of them. One
+build-time addition turned a common English word into a query that returns the entire site.
+
+This is the same failure as T5's acronym-alternate bug, one day later and from the opposite
+direction: there, a short *term* matched everything; here, a short *string in the content*
+matched everything. `domainTopics()` now strips `.topic-read` before indexing, on the principle
+that **chrome is not content** — the index should carry what an author wrote, never what the
+build added.
+
+```
+"min"     1,337 → 27
+"3 min"     359 → 4
+```
+
+### The check that should have caught it, added
+
+T5's harness passed 21/21 through both of these, because every fixture asks *does this query
+find its card* and neither bug broke a fixture's card. So T5 gained a second section:
+**index hygiene** — a handful of strings that must stay narrow or return nothing at all.
+
+The first attempt got it wrong in the way this repo keeps getting it wrong. `"class"` looked
+like a markup probe and is not one: it is an English word, above the four-character substring
+threshold, and it legitimately matches 275 topics through *classes*, *classic* and
+*classification*. A ceiling that fails on correct behaviour teaches people to raise ceilings, so
+it was replaced with strings that appear **only** in markup — `concept-desc`, `topic-header`,
+`data-read` — each with a ceiling of zero.
+
+`make search` is now **25/25**: 21 retrieval fixtures, 4 hygiene ceilings, 6 known misses
+reported and gating nothing.
+
+### What this item is really evidence of
+
+Three separate checks — axe, the search harness, and the fixtures added because the harness did
+not catch it — each caught something a twelve-line feature broke somewhere else entirely. None
+of them was written for this feature. That is the argument for the checks being where the
+investment goes: the cost of adding a small visible thing to 1,426 cards is not in writing it.
+
+Site **1,426 topics**. Check PASS · smoke **138/138** · search **25/25** · axe **6/6** · visual **2/2**.

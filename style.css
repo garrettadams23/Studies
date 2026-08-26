@@ -856,6 +856,22 @@ header p {
   border-radius: 2px;
   white-space: nowrap;
 }
+/* Reading time, stamped at build time from the card's length (plan.md T6).
+   Quieter than the badge on purpose: the badge is a claim about the card's
+   subject and this is only a rough size, so it must not compete with the
+   title. Hidden on narrow screens, where the title needs the width more.
+
+   No `opacity` here, deliberately: the first version dimmed --muted to 0.75
+   and axe failed it for contrast in both themes, on 62 elements. --muted is
+   already the quietest colour that passes, and quieter than passing is not a
+   design choice available. */
+.topic-read {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 .topic-chev {
   font-size: 14px;
   color: var(--muted);
@@ -2082,6 +2098,11 @@ header p {
     transform 0.08s,
     opacity 0.08s;
 }
+/* The title needs the width more than the size estimate does. */
+@media (max-width: 600px) {
+  .topic-read { display: none; }
+}
+
 @media (max-width: 600px) {
   header {
     padding: 22px 16px 18px;
@@ -2527,6 +2548,7 @@ mark.sh {
   .notepad-panel,
   #back-to-top,
   .topic-tools,
+  .topic-read,
   .topic-chev,
   .chevron,
   #snap-quote { display: none !important; }
