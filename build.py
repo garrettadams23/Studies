@@ -204,6 +204,48 @@ def stamp_reading_time(body):
     return "".join(out), stamped
 
 
+_BADGE_RE = re.compile(r'<span class="topic-badge">(.*?)</span>', re.S)
+_BEGINNER_RE = re.compile(r"\bbeginner\b", re.I)
+_ADVANCED_RE = re.compile(r"\b(advanced|expert|deep)\b", re.I)
+
+
+def stamp_level(body):
+    """Stamp `data-level` on every topic, read from its badge.
+
+    plan.md Phase 10 T7. The site teaches at two levels and the only outward
+    sign is a badge that sometimes reads *Beginner*, so the beginner layer is
+    discoverable by accident rather than filterable.
+
+    **The rule is deliberately mechanical and it does not guess.** A badge that
+    says Beginner means beginner; one that says Advanced, Expert or Deep means
+    advanced; everything else is `core`, which is a statement that the card is
+    *not marked* as either — not a claim that it sits in the middle. T7 as
+    written suggested stamping the rest "by hand", and hand-labelling 1,300
+    cards' difficulty in one pass would produce a confident number nobody had
+    actually assessed. Three honest values beat three invented ones.
+    """
+    starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
+    out, prev = [], 0
+    counts = {"beginner": 0, "advanced": 0, "core": 0}
+    for n, start in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(body)
+        badge = _BADGE_RE.search(body[start:end])
+        text = _TAG_RE.sub("", badge.group(1)) if badge else ""
+        if _BEGINNER_RE.search(text):
+            level = "beginner"
+        elif _ADVANCED_RE.search(text):
+            level = "advanced"
+        else:
+            level = "core"
+        counts[level] += 1
+        cut = start + len(TOPIC_OPEN)
+        out.append(body[prev:cut])
+        out.append(f' data-level="{level}"')
+        prev = cut
+    out.append(body[prev:])
+    return "".join(out), counts
+
+
 def topic_titles(body, ids):
     """The title of each topic in one body, paired with the id just stamped."""
     starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
@@ -497,6 +539,7 @@ def main():
     used_slugs = set()
     topic_index = {}
     by_title = {}
+    level_counts = {}
     changelog = {}
     for domain in domains:
         # One file, or an ordered set of parts concatenated in filename order.
@@ -519,6 +562,9 @@ def main():
         body = "".join(chunks)
         body, ids = assign_topic_ids(body, used_slugs)
         body, _read = stamp_reading_time(body)
+        body, lv = stamp_level(body)
+        for k, v in lv.items():
+            level_counts[k] = level_counts.get(k, 0) + v
         topic_index[domain["id"]] = ids
         by_title.update(topic_titles(body, ids))
         recent = recent_topics(body, ids)
@@ -536,6 +582,8 @@ def main():
         sections.append(build_domain_section(domain, body))
         print(f"  + {domain['id']} ({len(body):,} chars, {len(ids)} topics)")
     print(f"  + {xref_total} cross-references linked")
+    print("  + levels: " + ", ".join(f"{k} {v}" for k, v in
+                                     sorted(level_counts.items(), key=lambda r: -r[1])))
 
     domains_html = "\n\n".join(sections)
     output = shell.replace("<!-- DOMAINS_CONTENT -->", domains_html)

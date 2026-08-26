@@ -11444,7 +11444,7 @@ from 900 to 15,000 characters with no outward sign of which is which.
 **The honest caveat:** reading time is a proxy for length, not difficulty, and labelling a
 dense 2,000-character card "2 min" is a small lie. Worth it, but the plan should say so.
 
-## T7 — A difficulty attribute, and a filter for it
+## ✅ T7 — A difficulty attribute, and a filter for it
 
 The site teaches at two levels — Phase 9 §3 says so explicitly — and the only outward sign is
 a badge that sometimes reads *Beginner*. A `data-level` attribute with three values, stamped
@@ -11482,7 +11482,8 @@ not a stylistic difference.
 | 5 | ✅ **T9** contradiction pass | Ten minutes, reuses an existing tool, and finds real bugs if any exist. **It found two — in the tool** |
 | 6 | ✅ **T5** search harness | The last untested user-facing behaviour. **21 fixtures, 6 known misses, and one query that returned 90% of the site** |
 | 7 | ✅ **T6** reading time | Shipped, and it broke both contrast and the search index on the way in |
-| 8–9 | T7, T8 | Reader-facing; genuinely nice, and neither is load-bearing |
+| 8 | ✅ **T7** difficulty attribute | Shipped as `data-level` plus a `level:` search operator. 121 beginner, 8 advanced, 1,297 core |
+| 9 | T8 | Reader-facing; genuinely nice, and not load-bearing |
 
 
 ---
@@ -12667,3 +12668,55 @@ of them was written for this feature. That is the argument for the checks being 
 investment goes: the cost of adding a small visible thing to 1,426 cards is not in writing it.
 
 Site **1,426 topics**. Check PASS · smoke **138/138** · search **25/25** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 10 T7: three honest levels beat three invented ones
+
+T7 asked for `data-level` with three values, "stamped from the badge where one exists and by
+hand elsewhere". The first half is mechanical. **The second half is where the item would have
+gone wrong**, and it was not done as written.
+
+Hand-labelling the difficulty of 1,300 cards in one pass does not produce an assessment; it
+produces a confident-looking attribute that nobody actually evaluated, on a site whose whole
+argument is that its claims are checkable. So the rule stamps only what the badge says and
+labels the rest `core` — which is a statement that **the card is not marked as either**, not a
+claim that it sits in the middle:
+
+```
+core      1,297
+beginner    121   ← badge contains "Beginner"
+advanced      8   ← badge contains "Advanced", "Expert" or "Deep"
+```
+
+Eight advanced cards is a thin layer and it is reported as eight rather than padded out.
+`level:beginner` is the filter that carries this item; `level:advanced` is a byproduct that is
+honest about how small it is.
+
+### An operator, not a chip
+
+The plan implied a filter control. It shipped as a search operator instead — `level:beginner`,
+composing with `domain:` and with free text — for three reasons, in descending order of weight:
+
+| Reason | |
+|---|---|
+| It composes | `level:beginner domain:net` is ten cards, and no chip design gives you that intersection without a second row of controls |
+| The filter bar is full | Thirty domain chips in four labelled groups. A level control would either crowd it or hide below the fold, and `visual_test.mjs` pixel-diffs that bar for exactly this reason |
+| It lands where readers already look | `domain:` is documented in the search box's own tooltip. `level:` is now on the line beneath it, in the same place, learned the same way |
+
+An unknown level yields no matches rather than being silently ignored — the same rule
+`domain:` follows, and for the same reason: quietly dropping an operator answers a different
+question than the one asked. `level:nonsense` is a search-harness fixture with a ceiling of zero
+so it stays that way.
+
+### What T6 made possible here
+
+T7 took about a third of the effort it would have a day earlier, because T6 had already
+established the pattern: a build-time pass that walks topics, derives something from the block,
+and stamps an attribute on the `.topic`. `stamp_level()` is `stamp_reading_time()` with a
+different derivation, and `domainTopics()` already had the shape for indexing an attribute off
+the open tag. Two reader-facing features, one mechanism.
+
+`make search` is now **28/28** — 23 retrieval fixtures, 5 hygiene ceilings.
+
+Site **1,426 topics**. Check PASS · smoke **138/138** · search **28/28** · axe **6/6** · visual **2/2**.

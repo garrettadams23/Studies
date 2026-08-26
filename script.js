@@ -645,6 +645,7 @@ function plainLabel(html) {
 }
 
 const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
+const RE_TOPIC_LEVEL = /data-level="([a-z]+)"/;
 
 const _domainTopics = new Map();
 
@@ -668,6 +669,7 @@ function domainTopics(domainId) {
     const openTag = chunk.slice(0, chunk.indexOf(">") + 1);
     rows.push({
       id: (RE_TOPIC_ID.exec(openTag) || ["", ""])[1],
+      level: (RE_TOPIC_LEVEL.exec(openTag) || ["", "core"])[1],
       name: plainLabel(firstInner(chunk, RE_TOPIC_NAME)),
       title: plainText(firstInner(chunk, RE_CONCEPT_TITLE)),
       desc: plainText(firstInner(chunk, RE_CONCEPT_DESC)),
@@ -1551,6 +1553,13 @@ function matcher(lowered) {
  * dropping an operator would answer a different question than the one asked.
  */
 const RE_DOMAIN_OP = /(?:^|\s)domain:([a-z0-9_-]+)/gi;
+// plan.md Phase 10 T7. `data-level` is stamped at build time from the badge —
+// beginner, advanced, or core meaning "not marked as either". An operator
+// rather than a chip: it composes with `domain:`, needs no room in a filter bar
+// that is already full, and lands in the same place readers already look for
+// `domain:`. A level that does not exist yields no matches rather than being
+// ignored, for the reason the domain operator does.
+const RE_LEVEL_OP = /(?:^|\s)level:([a-z]+)/gi;
 const RE_PHRASE = /"([^"]+)"/g;
 
 function parseQuery(raw) {
@@ -1565,7 +1574,12 @@ function parseQuery(raw) {
     domains.push(d.toLowerCase());
     return " ";
   });
-  return { domains, phrases, text: rest.replace(/\s+/g, " ").trim() };
+  const levels = [];
+  rest = rest.replace(RE_LEVEL_OP, (_, l) => {
+    levels.push(l.toLowerCase());
+    return " ";
+  });
+  return { domains, levels, phrases, text: rest.replace(/\s+/g, " ").trim() };
 }
 
 // ── SEARCH STATE ────────────────────────────────────────────────────────────
@@ -1655,7 +1669,8 @@ function runSearch(raw) {
   // reads as a result rather than as a rejected query.
   const tooShort = q.text.length > 0 && q.text.length < 2;
   const usable = !tooShort
-    && (q.text.length >= 2 || q.phrases.length > 0 || q.domains.length > 0);
+    && (q.text.length >= 2 || q.phrases.length > 0 || q.domains.length > 0
+        || q.levels.length > 0);
   _searchTerm = usable ? term : "";
   if (!_searchTerm) {
     _searchTermList = [];
@@ -1685,6 +1700,7 @@ function runSearch(raw) {
       // Phrases are required, all of them; the free text is satisfied by the
       // query or any of its acronym equivalents. A query that is only
       // operators and phrases matches on the phrases alone.
+      if (q.levels.length && !q.levels.includes(t.level)) return;
       if (!loweredPhrases.every(p => t.text.includes(p))) return;
       if (loweredText.length && !loweredText.some(m => m(t.text))) return;
       hits.add(t.id);
@@ -1715,7 +1731,10 @@ function runSearch(raw) {
       ? ` · also matching ${textTerms.slice(1).map(t => `“${t}”`).join(", ")}` : "";
     // Say when an operator narrowed the search, so "no matches" is never
     // ambiguous between "nothing on the site" and "nothing in that domain".
-    const scope = q.domains.length ? ` · in ${q.domains.join(", ")}` : "";
+    const parts = [];
+    if (q.domains.length) parts.push(`in ${q.domains.join(", ")}`);
+    if (q.levels.length) parts.push(`at ${q.levels.join(", ")} level`);
+    const scope = parts.length ? ` · ${parts.join(" · ")}` : "";
     countEl.textContent = matchCount
       ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${via}`
       : `no matches${scope}`;

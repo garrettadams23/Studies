@@ -93,6 +93,10 @@ const FIXTURES = [
   ["zero trust",           "sec/zero-trust-never-trust-always-verify", 32],
   ["sql injection",        "pentest/sqlmap-sql-injection-tool-reference", 40],
   ["incident response",    "ops/incident-response-lifecycle-picerl", 110],
+  // T7's level operator. The counts are the point: `beginner` is a real layer
+  // of the site and `advanced` is eight cards, because eight badges say so.
+  ["level:beginner domain:net", "net/wireless-security-80211-standards-wi-fi-hardening", 20],
+  ["level:beginner subnetting", "net/subnetting-without-the-headache-cidr-notation-made-practical", 10],
 ];
 
 // Queries a reader plausibly types that find nothing today. Not failures — the
@@ -123,6 +127,7 @@ const CEILINGS = [
   ["concept-desc",   0, "card markup leaking into the index"],
   ["topic-header",   0, "header markup leaking into the index"],
   ["data-read",      0, "the T6 attribute itself leaking into the index"],
+  ["level:nonsense", 0, "an unknown level must match nothing, not everything"],
 ];
 
 const browser = await chromium.launch();
