@@ -1501,6 +1501,47 @@ await step("the alias map migrates progress onto the current id", async () => {
     outcome.secondRun === 0 && outcome.flags === 1, `${outcome.secondRun} moved, ${outcome.flags} flag(s)`);
 });
 
+// ── what's new since your last visit ────────────────────────────────────────
+// plan.md Phase 10 T8. Four behaviours, and the first is the one most likely to
+// be got wrong: a reader with nothing stored must be told nothing at all.
+await step("what's new stays quiet on a first visit and records the month", async () => {
+  const first = await page.evaluate(() => {
+    localStorage.removeItem("seen-through");
+    initWhatsNew();
+    return { hidden: document.getElementById("whatsnew").hidden,
+             seen: localStorage.getItem("seen-through") };
+  });
+  check("a first-time reader is not told the whole site is new",
+    first.hidden === true && /^\d{4}-\d{2}$/.test(first.seen || ""),
+    `hidden ${first.hidden}, stored ${first.seen}`);
+
+  const back = await page.evaluate(() => {
+    localStorage.setItem("seen-through", "2026-06");
+    document.getElementById("whatsnew").hidden = true;
+    initWhatsNew();
+    return { hidden: document.getElementById("whatsnew").hidden,
+             text: document.getElementById("whatsnew-text").textContent };
+  });
+  check("a returning reader is told how many topics changed",
+    back.hidden === false && /\d+ topics? updated since /.test(back.text), back.text);
+
+  const shown = await page.evaluate(() => {
+    document.getElementById("whatsnew-show").click();
+    return document.getElementById("search-input").value;
+  });
+  check("'show them' puts an editable query in the search box",
+    shown === "since:2026-06", shown);
+
+  const seen = await page.evaluate(() => {
+    document.getElementById("whatsnew-seen").click();
+    const s = localStorage.getItem("seen-through");
+    localStorage.removeItem("seen-through");
+    return { hidden: document.getElementById("whatsnew").hidden, seen: s };
+  });
+  check("'mark as seen' advances the stored month and hides the banner",
+    seen.hidden === true && seen.seen > "2026-06", `stored ${seen.seen}`);
+});
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

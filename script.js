@@ -646,6 +646,7 @@ function plainLabel(html) {
 
 const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
 const RE_TOPIC_LEVEL = /data-level="([a-z]+)"/;
+const RE_TOPIC_REVIEWED = /data-reviewed="(\d{4}-\d{2})"/;
 
 const _domainTopics = new Map();
 
@@ -670,6 +671,7 @@ function domainTopics(domainId) {
     rows.push({
       id: (RE_TOPIC_ID.exec(openTag) || ["", ""])[1],
       level: (RE_TOPIC_LEVEL.exec(openTag) || ["", "core"])[1],
+      reviewed: (RE_TOPIC_REVIEWED.exec(openTag) || ["", ""])[1],
       name: plainLabel(firstInner(chunk, RE_TOPIC_NAME)),
       title: plainText(firstInner(chunk, RE_CONCEPT_TITLE)),
       desc: plainText(firstInner(chunk, RE_CONCEPT_DESC)),
@@ -798,11 +800,83 @@ function updateThemeUI(theme) {
 })();
 
 // ── DOM READY ──────────────────────────────────────────────────────────────
+
+// ── WHAT'S NEW SINCE YOUR LAST VISIT ────────────────────────────────────────
+// plan.md Phase 10 T8. The changelog answers "what changed"; this answers "what
+// changed *for me*", which is the question people actually have. No new data:
+// every topic already carries `data-reviewed`, and the reader's side is one
+// month string in localStorage.
+const SEEN_KEY = "seen-through";
+
+/** The newest freshness stamp anywhere on the site, or "" if there are none. */
+function newestReviewedMonth() {
+  let newest = "";
+  Object.keys(topicIndex()).forEach(d => {
+    domainTopics(d).forEach(t => { if (t.reviewed > newest) newest = t.reviewed; });
+  });
+  return newest;
+}
+
+function countUpdatedSince(month) {
+  let n = 0;
+  Object.keys(topicIndex()).forEach(d => {
+    domainTopics(d).forEach(t => { if (t.reviewed && t.reviewed > month) n++; });
+  });
+  return n;
+}
+
+/**
+ * Show the banner, or silently record where a first-time reader is starting.
+ *
+ * A reader with nothing stored is **not** told that 1,426 topics are new —
+ * they are all new, the statement is useless, and it would train people to
+ * dismiss the banner before it ever says anything. Their first visit just
+ * records the newest month and shows nothing.
+ */
+function initWhatsNew() {
+  const bar = document.getElementById("whatsnew");
+  if (!bar) return;
+  const newest = newestReviewedMonth();
+  if (!newest) return;
+
+  let seen = null;
+  try { seen = localStorage.getItem(SEEN_KEY); } catch { return; }
+  const markSeen = () => {
+    try { localStorage.setItem(SEEN_KEY, newest); } catch { /* full or blocked */ }
+  };
+  if (!seen || !/^\d{4}-\d{2}$/.test(seen)) { markSeen(); return; }
+
+  const n = countUpdatedSince(seen);
+  if (!n) return;
+
+  document.getElementById("whatsnew-text").textContent =
+    `${n} topic${n === 1 ? "" : "s"} updated since ${monthLabel(seen)}`;
+  bar.hidden = false;
+
+  document.getElementById("whatsnew-show")?.addEventListener("click", () => {
+    const input = document.getElementById("search-input");
+    if (!input) return;
+    // Route it through the search box rather than a private code path: the
+    // reader can then see the query, edit it, add `domain:` to it, or clear it
+    // with Esc like any other search.
+    input.value = `since:${seen}`;
+    runSearch(input.value);
+    input.focus();
+  });
+  document.getElementById("whatsnew-seen")?.addEventListener("click", () => {
+    markSeen();
+    bar.hidden = true;
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   updateThemeUI(document.documentElement.getAttribute("data-theme"));
   initSnapQuote();
   initCloudStack();
   initTouchFeedback();
+  // After the content index is warm enough to answer; it parses on demand, so
+  // this is correct at load and costs one pass over the already-parsed rows.
+  initWhatsNew();
 
   // Filter chips — event delegation on the filter bar
   document.querySelector(".filter-bar")?.addEventListener("click", e => {
@@ -1560,6 +1634,11 @@ const RE_DOMAIN_OP = /(?:^|\s)domain:([a-z0-9_-]+)/gi;
 // `domain:`. A level that does not exist yields no matches rather than being
 // ignored, for the reason the domain operator does.
 const RE_LEVEL_OP = /(?:^|\s)level:([a-z]+)/gi;
+// plan.md Phase 10 T8. `since:2026-06` is *strictly after* that month, which is
+// what "since" means in English and what the what's-new banner needs: it passes
+// the last month this reader acknowledged, and wants what landed afterwards.
+// Month strings compare correctly as strings because they are zero-padded.
+const RE_SINCE_OP = /(?:^|\s)since:(\d{4}-\d{2})/gi;
 const RE_PHRASE = /"([^"]+)"/g;
 
 function parseQuery(raw) {
@@ -1579,7 +1658,9 @@ function parseQuery(raw) {
     levels.push(l.toLowerCase());
     return " ";
   });
-  return { domains, levels, phrases, text: rest.replace(/\s+/g, " ").trim() };
+  let since = "";
+  rest = rest.replace(RE_SINCE_OP, (_, m) => { since = m; return " "; });
+  return { domains, levels, since, phrases, text: rest.replace(/\s+/g, " ").trim() };
 }
 
 // ── SEARCH STATE ────────────────────────────────────────────────────────────
@@ -1670,7 +1751,7 @@ function runSearch(raw) {
   const tooShort = q.text.length > 0 && q.text.length < 2;
   const usable = !tooShort
     && (q.text.length >= 2 || q.phrases.length > 0 || q.domains.length > 0
-        || q.levels.length > 0);
+        || q.levels.length > 0 || q.since);
   _searchTerm = usable ? term : "";
   if (!_searchTerm) {
     _searchTermList = [];
@@ -1701,6 +1782,7 @@ function runSearch(raw) {
       // query or any of its acronym equivalents. A query that is only
       // operators and phrases matches on the phrases alone.
       if (q.levels.length && !q.levels.includes(t.level)) return;
+      if (q.since && !(t.reviewed && t.reviewed > q.since)) return;
       if (!loweredPhrases.every(p => t.text.includes(p))) return;
       if (loweredText.length && !loweredText.some(m => m(t.text))) return;
       hits.add(t.id);
@@ -1734,6 +1816,7 @@ function runSearch(raw) {
     const parts = [];
     if (q.domains.length) parts.push(`in ${q.domains.join(", ")}`);
     if (q.levels.length) parts.push(`at ${q.levels.join(", ")} level`);
+    if (q.since) parts.push(`updated after ${monthLabel(q.since)}`);
     const scope = parts.length ? ` · ${parts.join(" · ")}` : "";
     countEl.textContent = matchCount
       ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${via}`

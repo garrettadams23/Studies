@@ -97,6 +97,9 @@ const FIXTURES = [
   // of the site and `advanced` is eight cards, because eight badges say so.
   ["level:beginner domain:net", "net/wireless-security-80211-standards-wi-fi-hardening", 20],
   ["level:beginner subnetting", "net/subnetting-without-the-headache-cidr-notation-made-practical", 10],
+  // T8's since: operator, which the what's-new banner drives through the
+  // search box rather than a private code path.
+  ["since:2026-07 domain:net", "net/network-topologies", 60],
 ];
 
 // Queries a reader plausibly types that find nothing today. Not failures — the
@@ -128,6 +131,7 @@ const CEILINGS = [
   ["topic-header",   0, "header markup leaking into the index"],
   ["data-read",      0, "the T6 attribute itself leaking into the index"],
   ["level:nonsense", 0, "an unknown level must match nothing, not everything"],
+  ["since:2099-01",  0, "a future month must match nothing, not everything"],
 ];
 
 const browser = await chromium.launch();

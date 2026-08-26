@@ -11454,7 +11454,7 @@ from the badge where one exists and by hand elsewhere, would make the beginner l
 This also fixes something Phase 9 exposed: three wireless cards are confusing without levels
 and are a sensible progression with them.
 
-## T8 — "New since you last visited"
+## ✅ T8 — "New since you last visited"
 
 The changelog exists and is generated. A per-reader version is a timestamp in `localStorage`
 and a diff against the changelog's own dates — no new data, no server, one small view.
@@ -11483,7 +11483,7 @@ not a stylistic difference.
 | 6 | ✅ **T5** search harness | The last untested user-facing behaviour. **21 fixtures, 6 known misses, and one query that returned 90% of the site** |
 | 7 | ✅ **T6** reading time | Shipped, and it broke both contrast and the search index on the way in |
 | 8 | ✅ **T7** difficulty attribute | Shipped as `data-level` plus a `level:` search operator. 121 beginner, 8 advanced, 1,297 core |
-| 9 | T8 | Reader-facing; genuinely nice, and not load-bearing |
+| 9 | ✅ **T8** new since last visit | Shipped as a banner plus a `since:` operator. **Phase 10 is complete — all nine items** |
 
 
 ---
@@ -12720,3 +12720,75 @@ the open tag. Two reader-facing features, one mechanism.
 `make search` is now **28/28** — 23 retrieval fixtures, 5 hygiene ceilings.
 
 Site **1,426 topics**. Check PASS · smoke **138/138** · search **28/28** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 10 T8: what changed *for me*, and Phase 10 closes
+
+T8 needed no new data, exactly as the plan predicted, but not from the source it named. The
+changelog holds only each domain's most recent month and at most three topic ids — enough for
+the "Updated" row on a domain intro card, far too little for a per-reader diff. The data that
+was already sufficient is **`data-reviewed`, which every one of the 1,426 topics carries**.
+`domainTopics()` now indexes it off the open tag, exactly as it indexes T7's `data-level`.
+
+### The operator is the feature; the banner is the doorway
+
+```
+since:2026-06                 → everything reviewed after June 2026
+since:2026-07 domain:net      → 31 topics
+since:2099-01                 → nothing, and a harness fixture pins it there
+```
+
+`since:` is *strictly after*, because that is what the English word means and it is what the
+banner needs — it passes the last month this reader acknowledged and wants what landed
+afterwards. Month strings compare correctly as strings because they are zero-padded, so the
+whole comparison is `t.reviewed > q.since`.
+
+The banner does not have a private code path. "Show them" **puts the query in the search box
+and runs it**, so the reader can see it, edit it, add `domain:` to it, or clear it with Esc like
+any other search. A feature that produces a view you cannot reach any other way is a feature you
+have to maintain twice.
+
+### The behaviour most likely to have been got wrong
+
+A reader with nothing stored must be told **nothing**. Every topic is new to them, the statement
+is useless, and a banner that opens by saying "1,426 topics updated" teaches people to dismiss
+it before it ever says anything worth reading. So a first visit records the newest month
+silently and shows no banner.
+
+That is the first of four new smoke checks, and it is the one worth having:
+
+```
+ok : a first-time reader is not told the whole site is new       — hidden true, stored 2026-08
+ok : a returning reader is told how many topics changed          — 1367 topics updated since June 2026
+ok : 'show them' puts an editable query in the search box        — since:2026-06
+ok : 'mark as seen' advances the stored month and hides the banner — stored 2026-08
+```
+
+Every `localStorage` access is inside `try/catch` and the banner simply never appears when
+storage throws — a private window must not be a broken page.
+
+### Phase 10 is complete
+
+Nine items, all shipped, and the pattern across them is worth stating once. **Five of the nine
+found a defect in something other than themselves**: T2's own first version measured the wrong
+thing; T9 found two long-standing bugs in the checker it was extending; T5 found a query
+returning 90% of the site; T6 broke contrast and the search index and was caught by axe and by
+T5's harness; T8 was clean only because T6 and T7 had already paid for the mechanism it used.
+
+The tooling items were justified as making the content phases honest. What they actually did as
+often was catch each other.
+
+| Item | | Shipped as |
+|---|---|---|
+| T1 | depth report | `tools/depth_report.py` — thin count and the padding counter-metric |
+| T2 | near-duplicates | `tools/near_duplicates.py` — census, and a `--title` pre-flight |
+| T3 | verdict check | A ceiling in `lint_content.py`, ratcheted |
+| T4 | orphan report | `tools/orphan_report.py` |
+| T5 | search harness | `tools/search_test.mjs` — 25 checks, 6 known misses |
+| T6 | reading time | `data-read` and a header span |
+| T7 | difficulty | `data-level` and the `level:` operator |
+| T8 | new since last visit | The banner and the `since:` operator |
+| T9 | contradiction pass | `--pairs` and `--self-test` in `check_contradictions.py` |
+
+Site **1,426 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
