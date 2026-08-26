@@ -11215,7 +11215,7 @@ measured by a throwaway script that nobody will find again. The rule this file h
 several times over: **a number stated in a plan and not produced by a committed script is a
 claim with a shelf life.**
 
-## T1 — `tools/depth_report.py`
+## ✅ T1 — `tools/depth_report.py` — shipped
 
 Phase 8's entire argument rests on a measurement that currently lives in this document and
 nowhere else. The script emits both numbers §8 asks for:
@@ -11232,7 +11232,7 @@ deepening pass that added words and no ideas.
 
 Not a gate. A census, printed by `make check` beside the acronym-breadth one.
 
-## T2 — `tools/near_duplicates.py`
+## ✅ T2 — `tools/near_duplicates.py` — shipped
 
 Phase 9 §6. Tokenise titles, strip stop-words and acronym expansions, compare pairwise,
 report above 0.5 overlap. Runs in under a second on 1,432 titles.
@@ -11242,7 +11242,7 @@ card is written — `near_duplicates.py --title "Spanning Tree — …"` — bec
 prevents is a session writing a card that already exists, and by review time the cost is
 already sunk. The full pairwise report is the secondary mode.
 
-## T3 — The verdict check, which is the rubric made mechanical
+## ✅ T3 — The verdict check, which is the rubric made mechanical — shipped
 
 Measured this session: **2,098 tables across the site, and 565 of them (27%) are followed by
 nothing at all.** No verdict, no prose, straight into the next block.
@@ -11259,7 +11259,7 @@ ever checked it. Worst offenders: `script` 69, `shortcut` 51, `net` 46, `sec` 39
 This is the highest-leverage check in the phase, because it enforces the one property §1 of
 the rubric identifies as the difference between a card and a search result.
 
-## T4 — The related-map orphan report
+## ✅ T4 — The related-map orphan report — shipped
 
 **902 of 1,432 topics (63%) have no related-topic link at all.** That is not automatically
 wrong — the map was built by hand and hand-built things are partial — but the interesting
@@ -11708,3 +11708,81 @@ Three honest options, and the file has already picked one before:
 **Option 3 first, then option 1 when the live queue next empties.** Deleting is the option
 that loses the record of *why* things were decided, and this file's most-quoted sections are
 the ones explaining why something was rejected — which nobody would have written twice.
+
+
+## Session record — Phase 10, items T1–T4 shipped, and four numbers that moved
+
+The plan's own recommended order is **10, 9, 8, 7**, so this session started with the
+tooling. Four tools, three of them censuses, and every one of them disagreed with the number
+`plan.md` quoted — which is the entire argument for committing the script rather than the
+figure.
+
+| Number | Plan said | Tool says | Why they differ |
+|---|---|---|---|
+| Thin topics | 330 (23%) | **288 (20%)** | The plan counted `shortcut` and `acronym`; the tool excludes them, per Phase 8 §4's own rule about reference domains. Same population, honest denominator |
+| Tables with no verdict | 565 | **513** | Same exclusion, same reason |
+| Near-duplicate pairs | 36 | **54** | The tool folds plurals. "Regular Expressions" and "Regular Expression" were being counted as different subjects by the throwaway script that produced 36 |
+| Deep orphans | 159 | **158** | The tool counts a resolved `data-xref` as a link, because a reader can follow one. One card was reachable that way |
+
+Three of the four corrections make the site look *better* and one makes it look worse. That
+distribution is roughly what an honest instrument should produce, and it is the reason the
+plan's numbers are now marked as superseded rather than quietly edited.
+
+### T3 — the verdict check, and why it is a ceiling
+
+`style.css` has asserted *every table gets a verdict* since the `.verdict` class was
+introduced, and nothing had ever checked it. **513 tables are followed by no prose at all**,
+across every domain except the two reference ones.
+
+A ceiling rather than an error, for exactly the reason the inline-style counter is one: 513
+cannot be cleared in a pass, and a handful are legitimate. What the ceiling buys is that
+**no new table ships without a sentence saying what it means** — which is the single property
+the card rubric identifies as the difference between a card and a search result.
+
+### T2 — the mode that matters, and the version of it that was wrong
+
+`--title` is the point of the tool: run it *before* writing, because by review time the cost
+is sunk. The first version used Jaccard overlap and reported this:
+
+```
+$ near_duplicates.py --title "Spanning Tree Protocol — Loops and Convergence"
+  0.25  [net] Spanning Tree — Why a Loop Is Catastrophic, and What STP Does…
+  Nothing at or above 0.50; closest shown. Clear to write.
+```
+
+**"Clear to write", against a card the same session had written.** Jaccard is symmetric and
+punishes a short candidate against a long existing title, however completely the subject is
+covered. The measure for `--title` is *containment* — what share of the candidate's tokens
+already exist — which scores the same pair at 0.60 and refuses. Plural folding was needed
+too: `loops` against `loop`.
+
+That is the fifth check in this file whose first version measured something adjacent to the
+claim. The pattern is now reliable enough to plan around: **write the check, then run it
+against a case you already know the answer to**, before trusting a single number it produces.
+
+### T4 — what the orphan report actually found
+
+902 topics have no related link and no cross-reference pointing at them. The useful slice is
+the 158 that are deep, and the domain concentration is stark:
+
+```
+7 cards  7,137 chars  [productivity] Note-Taking for Learning
+7 cards  6,538 chars  [productivity] The Japanese Mastery Loop
+6 cards  6,222 chars  [productivity] The Memory Palace
+6 cards  6,028 chars  [productivity] Study Systems That Survive a Brain That Won't Cooperate
+6 cards  4,946 chars  [productivity] Attention — Task Switching, Residue
+```
+
+**Five of the top seven are `productivity`**, which the connectivity measurement already
+flagged as an island. The domain is among the best-written on the site and is reachable only
+by clicking its chip. That is now a named, ranked work queue rather than an impression.
+
+### Wiring
+
+`make census` runs all three; CI prints them in the log as a reports-only step, so the
+numbers move visibly in a pull request without gating it. `make check` gained the verdict
+ceiling. All three tools guard `SIGPIPE`, because a census is a thing people pipe into
+`head` and a `BrokenPipeError` traceback looks like a crash.
+
+**Remaining in Phase 10:** T5 search harness, T9 contradiction pass over the duplicate pairs,
+and the three reader-facing items T6–T8.

@@ -46,7 +46,7 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 
 # Counts that may fall and may not rise. Lower a number here in the same commit
 # that earns it; raising one needs a reason written beside it.
-CEILINGS = {"inline style attribute": 1565}
+CEILINGS = {"inline style attribute": 1565, "table with no verdict": 513}
 
 
 class Nesting(HTMLParser):
@@ -211,6 +211,26 @@ def verdict_margins(text):
     """Line numbers where a .concept-desc sets its top margin inline."""
     for m in VERDICT_MARGIN_RE.finditer(text):
         yield text[: m.start()].count("\n") + 1
+
+
+# Phase 10 T3. `style.css` has asserted "every table gets a verdict" since the
+# `.verdict` class was introduced, and nothing has ever checked it. Measured at
+# introduction: 2,098 tables site-wide, 565 followed by nothing at all.
+#
+# A warning with a ceiling rather than an error, for the same reason the inline
+# style count is: the number is too large to clear in one pass, and a few are
+# legitimate — a reference table in `shortcut` needs no verdict, which is why
+# that domain and the generated `acronym` domain are excluded outright.
+VERDICT_EXEMPT = {"shortcut", "acronym"}
+_AFTER_TABLE_WINDOW = 260
+
+
+def tables_without_verdict(text):
+    """Line numbers where a table is followed by no prose at all."""
+    for m in re.finditer(r"</table\s*>", text):
+        tail = text[m.end():m.end() + _AFTER_TABLE_WINDOW]
+        if "concept-desc" not in tail:
+            yield text[: m.start()].count("\n") + 1
 
 
 def volatile_problems(text, today):
@@ -481,6 +501,10 @@ def main():
                 f"verdict sentence after a table — use "
                 f'class="concept-desc verdict" instead of an inline style'
             )
+
+        if domain_of(path) not in VERDICT_EXEMPT:
+            warns["table with no verdict"] += sum(
+                1 for _ in tables_without_verdict(text))
 
         warns["inline style attribute"] += len(re.findall(r'\bstyle="', text))
         ai_tables += text.count('class="ai-table"')

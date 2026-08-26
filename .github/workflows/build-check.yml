@@ -72,6 +72,16 @@ jobs:
       - name: Check for contradicted acronym expansions
         run: python tools/check_contradictions.py --strict
 
+      # The three content censuses. None of them gates — they measure what the
+      # gates cannot: how deep the cards are, whether a subject exists twice, and
+      # which good cards nothing links to. Printed in the log so a reviewer sees
+      # the numbers move. See plan.md Phases 8-10.
+      - name: Content census (reports only)
+        run: |
+          python tools/depth_report.py
+          python tools/near_duplicates.py
+          python tools/orphan_report.py
+
       # Volatile spans and fact anchors: a malformed or future date, or an
       # anchor missing its source, fails. The vendor-console queue only reports.
       # The self-test guards the console regex, which was narrowed on measured
