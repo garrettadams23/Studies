@@ -1127,6 +1127,33 @@ stored payment information, formatted as JSON.
       gotten 90% of the way there for a fraction of the cost and complexity. Before committing to the most expensive
       option, it's worth actually testing whether the cheaper ones fail — rather than assuming they will.</p>
     </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The Rule</div>
+      <div class="concept-title">Reach for the Cheapest Thing That Works, in Order</div>
+      <div class="concept-desc">
+        Prompt first. Add retrieval when the model needs knowledge it does not have. Fine-tune
+        only when you need a consistent format, style or skill at a scale that prompting cannot
+        hold. Almost every problem stops at one of the first two.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Approach</th><th>Right for</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Prompting</td><td>Behaviour or format the base model already knows</td><td>Lowest — just words</td></tr>
+            <tr><td>Retrieval</td><td>Injecting fresh or private knowledge at query time</td><td>Medium — a retrieval pipeline to build and keep correct</td></tr>
+            <tr><td>Fine-tuning</td><td>Teaching a style, skill or format — <em>not</em> new facts</td><td>Highest — data, training, and a model you now own</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">The classic mistake is fine-tuning to add knowledge.</strong>
+          Fine-tuning changes behaviour; "know our latest documents" is a retrieval problem, and
+          a model fine-tuned on last quarter's documents is wrong in a way that is expensive to
+          notice. The three are not exclusive either — a fine-tuned model with retrieval in
+          front of it is a common and sensible combination.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1547,39 +1574,6 @@ prompts = [
                     <tr><td>Versioning everything</td><td>Data, features, models, and code all get versions — you can roll back a model like code.</td></tr>
                     <tr><td>Continuous monitoring</td><td>Serving metrics + drift detection, because "deployed" isn't "done."</td></tr>
                   </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="topic" data-reviewed="2026-08">
-            <div class="topic-header">
-              <span class="topic-icon">🎛️</span>
-              <span class="topic-name">Fine-Tuning vs RAG <span class="acro-exp">(Retrieval-Augmented Generation)</span> vs Prompting — When to Use Which</span>
-              <span class="topic-badge">LLM Ops</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
-              <div class="concept-card">
-                <div class="concept-label">Concept</div>
-                <div class="concept-title">Three Ways to Make an LLM <span class="acro-exp">(Large Language Model)</span> Do What You Want</div>
-                <div class="concept-desc">
-                  The most common architecture question with LLMs. Reach for the cheapest tool that
-                  works, in order — most problems are solved by prompting or RAG, not fine-tuning.
-                </div>
-                <div class="dw">
-                  <table class="ref-table">
-                    <tr><th>Approach</th><th>Best for</th><th>Cost</th></tr>
-                    <tr><td>Prompting</td><td>Behavior/format the base model already knows</td><td>Lowest — just words</td></tr>
-                    <tr><td>RAG</td><td>Injecting fresh/private <em>knowledge</em> at query time</td><td>Medium — a retrieval pipeline</td></tr>
-                    <tr><td>Fine-tuning</td><td>Teaching a <em>style/skill/format</em>, not new facts</td><td>Highest — data + training</td></tr>
-                  </table>
-                  <div class="concept-desc verdict">
-                    <strong class="c-amber">The classic mistake:</strong> fine-tuning to add knowledge.
-                    Fine-tuning changes <em>behavior</em>; for "know our latest docs," use RAG. Rule of
-                    thumb: prompt first, add RAG for knowledge, fine-tune only when you need consistent
-                    format/tone at scale. They combine — a fine-tuned model with RAG is common.
-                  </div>
                 </div>
               </div>
             </div>
@@ -2208,7 +2202,7 @@ print(u.cache_creation_input_tokens,   <span class="com"># written this request<
                 <div class="concept-desc">
                   "The model doesn't know our product" is a knowledge problem, and retrieval fixes
                   it far more cheaply than training — see
-                  <span class="xref">Fine-Tuning vs RAG vs Prompting — When to Use Which</span>.
+                  <span class="xref">Fine-Tuning vs. Prompting vs. RAG – Picking the Right Tool</span>.
                   "The model won't reliably output our format" is a behaviour problem, and it is
                   usually a schema-constrained output away from solved, not a fine-tune. Fine-tuning
                   earns its keep only when you need consistent specialist behaviour at volume, and

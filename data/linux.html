@@ -2212,63 +2212,6 @@ sudo systemctl enable --now myapp</div>
 <!-- ── TOPIC: DISK MANAGEMENT & STORAGE ──────────────────── -->
 <div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
-    <span class="topic-icon">💾</span>
-    <span class="topic-name">Disk Management — Partitions, Filesystems &amp; LVM <span class="acro-exp">(Logical Volume Manager)</span></span>
-    <span class="topic-badge">LINUX • Foundation</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">CHECK DISK USAGE</div>
-      <div class="concept-title">df and du — Your First Diagnostic</div>
-      <div class="code-block"><span class="com"># Disk space by filesystem</span>
-df -h
-
-<span class="com"># Where is space being used in a directory?</span>
-du -sh /var/log/*          <span class="com"># sizes in human readable</span>
-du -sh /* 2>/dev/null      <span class="com"># top-level dirs</span>
-
-<span class="com"># Find the 10 largest files</span>
-find / -type f -printf '%s %p
-' 2>/dev/null   | sort -rn | head -10
-
-<span class="com"># What files are open (and may not show freed space)</span>
-lsof +L1 | grep deleted</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">PARTITIONS</div>
-      <div class="concept-title">Dividing Physical Disks</div>
-      <div class="concept-desc">A partition divides a physical disk into logical sections. Common layout:<br>
-      <code>/boot</code> — kernel and boot files (~500MB)<br>
-      <code>/</code> — root filesystem (everything else)<br>
-      <code>/home</code> — user data (separate so OS reinstall preserves data)<br>
-      <code>swap</code> — overflow memory (RAM extension on disk; slow)<br>
-      Tools: <code>fdisk</code> (MBR), <code>gdisk</code> (GPT), <code>parted</code> (both)</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">FILESYSTEMS</div>
-      <div class="concept-title">How Data Is Organized on Disk</div>
-      <table class="ai-table">
-        <thead><tr><th>Filesystem</th><th>OS <span class="acro-exp">(Operating System)</span></th><th>Strengths</th></tr></thead>
-        <tbody>
-          <tr><td>ext4</td><td>Linux</td><td>Default Linux; journaled; stable; 16TB max file</td></tr>
-          <tr><td>xfs</td><td>Linux</td><td>High-performance; great for large files; RHEL <span class="acro-exp">(Red Hat Enterprise Linux)</span> default</td></tr>
-          <tr><td>btrfs</td><td>Linux</td><td>Copy-on-write; snapshots; checksums; still maturing</td></tr>
-          <tr><td>NTFS <span class="acro-exp">(New Technology File System)</span></td><td>Windows</td><td>Windows default; full permissions; mountable on Linux</td></tr>
-          <tr><td>FAT32/exFAT</td><td>Universal</td><td>USB <span class="acro-exp">(Universal Serial Bus)</span> drives; read/write anywhere; no permissions</td></tr>
-          <tr><td>APFS</td><td>macOS</td><td>Apple default; encrypted; snapshot support</td></tr>
-          <tr><td>ZFS <span class="acro-exp">(Zettabyte File System)</span></td><td>BSD/Linux</td><td>Enterprise; built-in RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span>; checksums; snapshots</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-
-<!-- BEGINNER10-LINUX v1 -->
-<!-- ── TOPIC: DOCKER & CONTAINERS ────────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
-  <div class="topic-header">
     <span class="topic-icon">🐳</span>
     <span class="topic-name">Docker &amp; Containers — Package Once, Run Anywhere</span>
     <span class="topic-badge">LINUX • Modern Ops</span>
@@ -3021,7 +2964,21 @@ fdisk -l                       <span class="com"># detailed partition tables</sp
 df -h                          <span class="com"># free space per filesystem</span>
 df -i                          <span class="com"># inode usage (can fill before space!)</span>
 du -sh /var/*                  <span class="com"># what's eating space in /var</span>
-du -h --max-depth=1 / | sort -h   <span class="com"># biggest dirs</span></div>
+du -h --max-depth=1 / | sort -h   <span class="com"># biggest dirs</span>
+
+<span class="com"># The ten largest files anywhere</span>
+find / -type f -printf '%s %p\n' 2>/dev/null | sort -rn | head -10
+<span class="com"># Deleted but still held open — space df counts and du cannot see</span>
+lsof +L1 | grep deleted</div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">When <code>df</code> and <code>du</code> disagree, the last
+          command is the answer.</strong> <code>df</code> reports the disk full,
+          <code>du</code> adds up to far less, and the difference is a deleted file that some
+          process still has open — a log rotated out from under a service that never reopened
+          it. The space returns when that process restarts, not when the file is removed,
+          because it already was. <code>df -i</code> covers the other confusing case: inodes
+          exhausted while space remains, which is a directory full of tiny files.
+        </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">PARTITION → FORMAT → MOUNT</div>

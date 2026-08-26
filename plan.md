@@ -11889,3 +11889,69 @@ deleting rather than after, and the merge helper should do it.
 
 Site total **1,432 → 1,428**. Smoke **138/138** · axe **6/6** · visual **2/2**. This is the
 only phase whose success makes the site smaller.
+
+
+## Session record — Phase 9 wave two, and the guard earning its place on first use
+
+Wave one ended on a note: *"`make check` passed with no repointing needed, which was luck
+rather than design — the merge helper should check `related.json` and `paths.json` before
+deleting, not after."*
+
+So the throwaway script became `tools/retire_topic.py`, with the check in front of the
+delete. **It refused the first merge it was asked to do.**
+
+```
+$ retire_topic.py ai --retire "Fine-Tuning vs RAG" --into "Fine-Tuning vs. Prompting"
+REFUSED — 3 reference(s) would break:
+  related.json has fine-tuning-vs-rag-vs-prompting-when-to-use-which as a source with 1 link(s)
+  related.json: training-pipeline-pretraining-sft-rlhf-dpo -> fine-tuning-vs-rag-…
+  ai.html cross-references it by title
+```
+
+Three real references, on the very next merge after the wave that got away with it. The
+repointing took two minutes with the list in front of me; finding them after the block was
+gone would have meant reading a failing lint run and reconstructing what had been deleted.
+
+The tool also refuses an ambiguous fragment — `"Zero Trust — Never Trust"` matched three
+topics, because one card's title contains another's — and it follows existing aliases
+forward, so no alias is left pointing at a topic that no longer exists.
+
+### Two more merges
+
+| Retired | Into | Absorbed |
+|---|---|---|
+| `ai` *Fine-Tuning vs RAG vs Prompting* | *…Picking the Right Tool* | The cost-ordered table and the rule underneath it: prompt, then retrieve, then fine-tune — plus the classic mistake, which is **fine-tuning to add knowledge** |
+| `linux` *Disk Management* | *Storage Management* | The two commands the survivor lacked, and a verdict it never had |
+
+The `linux` absorption is the one worth recording, because it nearly went wrong. The
+absorption edit missed its anchor — the file uses a literal `→`, not `&rarr;` — and printed
+an error, **but the retire ran anyway**, because they were two separate commands in one
+shell line. For a few minutes the `df`/`du` content existed only in Git.
+
+Recovering it turned out to improve the result. Reading the survivor properly showed it
+already had `df -h`, `df -i` and two forms of `du`; what it genuinely lacked was the
+largest-files command, `lsof +L1 | grep deleted`, and a verdict. So the absorbed content is
+three lines rather than a duplicated block:
+
+> When `df` and `du` disagree, the difference is a deleted file some process still has open —
+> a log rotated out from under a service that never reopened it. The space returns when that
+> process restarts, not when the file is removed, because it already was.
+
+**The lesson is about sequencing, not about the tool:** absorb first, verify the absorption
+landed, and only then retire. `retire_topic.py` cannot check that, because whether the
+survivor absorbed the right thing is a judgement.
+
+### Where the numbers are
+
+```
+topics        1,432 → 1,428 → 1,426     six merges
+duplicates       54 →    48 →    46
+thin topics     288 →   287              one survivor crossed the line by absorbing
+mean chars/card 1,196 → 1,198            the padding counter-metric, holding
+```
+
+`slug-aliases.json` 103 → **109**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+That thin-count line is the first evidence Phase 8's counter-metric works as designed:
+absorbing content into a survivor moved a card off the thin list and moved the mean by two
+characters. A padding pass would have moved the mean by a great deal more.
