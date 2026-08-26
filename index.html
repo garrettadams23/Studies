@@ -26667,8 +26667,8 @@ The professional-judgement side of this is in
 <span class="ctag ctag-general">CKA</span>
 </div>
 <span class="domain-sub">CI/CD · IaC · Containers · Kubernetes · GitOps · Secrets · Supply Chain · Serverless · Architecture</span>
-<span class="domain-meta" aria-label="43 topics, about 1h 20m to read"
->43 topics · ~1h 20m</span>
+<span class="domain-meta" aria-label="43 topics, about 1h 30m to read"
+>43 topics · ~1h 30m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -28093,6 +28093,32 @@ Tools in the space: Backstage (developer portal), Crossplane/Terraform
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Day two</div>
+<div class="concept-title">The Platform Team Becomes the Ticket Queue It Was Built to Abolish</div>
+<div class="concept-desc">
+Internal platforms are built to remove a bottleneck and, done wrong, relocate it. The
+golden path covers the common case; everything else needs the platform team; requests queue; and
+<strong class="c-amber">the team that was created to unblock delivery is now the thing delivery
+waits on</strong> &mdash; with the added twist that they are also on call for it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+<tr><td>Every non-standard need is a ticket</td><td>A <strong>paved road, not a walled garden</strong> &mdash; there must be a supported way to step off it</td></tr>
+<tr><td>Adoption is mandated</td><td>Measure voluntary adoption. A platform teams choose is working; one they are ordered onto is a tax</td></tr>
+<tr><td>The abstraction leaks under pressure</td><td>Expose the layer beneath. Hiding Kubernetes is fine until the incident, and then it must be reachable</td></tr>
+<tr><td>Platform team owns everyone's incidents</td><td>The platform owns the platform; teams own their services. Blur this and the platform team is on call for the company</td></tr>
+<tr><td>Nobody knows what it costs</td><td>Track the time saved per team, or the platform is unarguable in either direction at budget time</td></tr>
+</table>
+<div class="concept-desc verdict">
+The healthy test is whether a team <em>could</em> leave and chooses not to. If leaving is
+impossible, the platform's adoption number means nothing, and the feedback that would have
+improved it never arrives &mdash; users who cannot leave complain instead of switching, and
+complaints are a much weaker signal than departures.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="cicd-pipeline-design-stages-gates-artifacts" data-reviewed="2026-08">
@@ -28127,6 +28153,33 @@ you're testing something different than you ship.
 <strong class="c-green">CD</strong> = that artifact is always deployable
 (Continuous Delivery) or actually auto-deployed (Continuous Deployment). Keep
 pipelines fast — a 40-minute pipeline kills the feedback loop.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Day two</div>
+<div class="concept-title">A Slow Pipeline Makes Batches Bigger, and Bigger Batches Are Harder to Fix</div>
+<div class="concept-desc">
+Pipeline duration is not a convenience metric. Once a build takes forty-five minutes,
+people stop pushing small changes and start batching &mdash; and a batch of eight changes that
+fails tells you far less than eight changes that failed individually.
+<strong class="c-amber">The flywheel runs backwards</strong>: slower feedback, bigger batches,
+harder debugging, more caution, slower still.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+<tr><td>45-minute pipeline</td><td>Treat build time as a bug with an owner and a budget &mdash; ten minutes to a deployable signal is the usual target</td></tr>
+<tr><td>Everything runs on every commit</td><td>Split fast checks from slow ones; run the full matrix on merge, not on every push</td></tr>
+<tr><td>Flaky tests retried automatically</td><td>A test that fails 1 in 20 times is describing a real race. Retries turn the signal off</td></tr>
+<tr><td>Nobody trusts a red build</td><td>Red on the default branch stops other work. It only works if it is rare, and it is only rare if it means something</td></tr>
+<tr><td>Deploys are a separate manual ritual</td><td>The pipeline that builds should be the pipeline that deploys &mdash; two systems means two truths</td></tr>
+</table>
+<div class="concept-desc verdict">
+Measure the number that matters: <strong>commit to deployable signal</strong>, not total
+job time. Caching dependencies, parallelising the test matrix, and moving the slowest suite
+behind a merge gate usually recover most of it without deleting a single test &mdash; which
+matters, because deleting tests to go faster is how a pipeline stops being evidence.
 </div>
 </div>
 </div>
@@ -28171,6 +28224,32 @@ workflow has <strong>jobs</strong> (run in parallel by default) made of
 <tr><td>Reusable/composite</td><td>Factor shared steps into called workflows/actions</td></tr>
 <tr><td>OIDC <span class="acro-exp">(OpenID Connect)</span></td><td>Assume a cloud role with no stored keys (ties to IAM)</td></tr>
 </table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Day two</div>
+<div class="concept-title">Forty Copy-Pasted Workflows and Third-Party Actions Nobody Pinned</div>
+<div class="concept-desc">
+Workflows multiply because copying one is faster than factoring it, and each copy quietly
+takes a dependency on strangers' code that runs with access to your repository. The end state is
+a directory nobody owns, where <strong class="c-amber">a change to a third-party action's
+<code>v3</code> tag runs in your pipeline tomorrow without anyone approving anything</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+<tr><td>Third-party actions on floating tags</td><td><strong>Pin by commit SHA <span class="acro-exp">(Secure Hash Algorithm)</span>.</strong> A tag is mutable; a SHA is not. Dependabot can still bump them</td></tr>
+<tr><td>Forty near-identical workflows</td><td>Reusable workflows and composite actions early, while there are three to factor rather than forty</td></tr>
+<tr><td>Every job has write access to everything</td><td>Set <code>permissions:</code> explicitly at the top &mdash; default to <code>contents: read</code> and add what a job needs</td></tr>
+<tr><td><code>pull_request_target</code> used for convenience</td><td>It runs with secrets and repo write on a fork's proposed code. Use <code>pull_request</code> unless you can explain why not</td></tr>
+<tr><td>Secrets available to every job</td><td>Environment-scoped secrets with required reviewers on the environments that deploy</td></tr>
+</table>
+<div class="concept-desc verdict">
+SHA-pinning is the item to do first, because it is the only one on the list where the
+failure is somebody else's decision rather than your own drift. It is a fifteen-minute change
+today across three workflows, and a research project once forty of them reference two dozen
+actions.
+</div>
 </div>
 </div>
 </div>
@@ -28307,6 +28386,32 @@ cache across builds).
 </table>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Day two</div>
+<div class="concept-title">The Image You Cannot Rebuild, Still Running as Root</div>
+<div class="concept-desc">
+An image that built reproducibly in week one usually cannot be rebuilt in year two: the
+base tag moved, an <code>apt</code> mirror dropped a version, a package pulled from a URL <span class="acro-exp">(Uniform Resource Locator)</span> that
+now 404s. What is deployed becomes <strong class="c-amber">an artefact nobody can reproduce and
+nobody dares rebuild</strong>, which is also why it is still on a base with known CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+<tr><td><code>FROM node:latest</code></td><td>Pin the base by <strong>digest</strong>, not tag. A tag moves; <code>@sha256:…</code> does not</td></tr>
+<tr><td>Cannot reproduce last year's build</td><td>Lockfiles committed, and no <code>curl | sh</code> of an unversioned URL in the Dockerfile</td></tr>
+<tr><td>Everything runs as root</td><td>A <code>USER</code> line and a non-root filesystem, from the first version &mdash; retrofitting means fixing every permission at once</td></tr>
+<tr><td>2 GB images</td><td>Multi-stage: build tooling in one stage, only the artefact in the final. Distroless or Alpine where the runtime allows</td></tr>
+<tr><td>Nobody knows what is inside</td><td>Generate an SBOM <span class="acro-exp">(Software Bill of Materials)</span> at build time and store it with the image, so a CVE announcement is a query rather than a project</td></tr>
+</table>
+<div class="concept-desc verdict">
+Digest pinning and a <code>USER</code> line are each a one-line change on day one and a
+month of archaeology later. The tell that an estate is past the point: somebody proposes
+rebuilding an image to patch it, and the honest answer is <strong>&ldquo;we are not sure it
+still builds&rdquo;</strong>.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="kubernetes-objects-the-ones-you-actually-use" data-reviewed="2026-08">
@@ -28372,6 +28477,33 @@ layers <em>overlays</em> that patch a common base — no templating language.
 </table>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Day two</div>
+<div class="concept-title">A Chart Becomes a Templating Language Nobody Can Diff</div>
+<div class="concept-desc">
+Helm starts as a way to install someone else's software and ends, in most estates, as a
+Go-template program that emits YAML. There is no type checking, the errors point at line
+numbers in generated output, and <strong class="c-amber">nobody can tell you what an upgrade
+will change before it changes it</strong> &mdash; which is when a templating convenience becomes
+a production risk.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+<tr><td>Conditionals nested three deep in templates</td><td>Keep templating shallow. A values file that turns things on and off, not a language</td></tr>
+<tr><td>Nobody knows what <code>helm upgrade</code> will do</td><td>Render and diff in CI: <code>helm template</code> piped to <code>kubectl diff</code>, on every PR</td></tr>
+<tr><td>Values files copied per environment, drifting</td><td>One base plus per-environment overlays &mdash; this is what Kustomize is genuinely better at</td></tr>
+<tr><td>A chart nobody dares bump</td><td>Pin the chart version and treat bumps as normal PRs with a rendered diff attached</td></tr>
+<tr><td>Release state lives only in the cluster</td><td>GitOps <span class="acro-exp">(Git Operations)</span> &mdash; the desired state is a file in a repo, and the cluster reconciles to it</td></tr>
+</table>
+<div class="concept-desc verdict">
+The rendered diff is the whole preventive measure and it costs one CI step. Once every
+change to a chart shows up in review as <em>the actual Kubernetes objects that will change</em>,
+templating complexity stops being invisible &mdash; and the reviewer who cannot read the diff
+is the signal that the chart has become a program.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="kubernetes-security-rbac-network-policies-pod-security" data-reviewed="2026-08">
@@ -28403,6 +28535,33 @@ cluster needs.
 <div class="concept-desc verdict">
 This is where the Red Team's "Kubernetes attacks" meet defense — RBAC abuse and
 container escape are exactly what these controls stop.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Day two</div>
+<div class="concept-title">Everyone Is cluster-admin and the Network Is Flat</div>
+<div class="concept-desc">
+Both defaults decay in the same direction, for the same reason: the secure option is
+slightly inconvenient exactly once, and the workaround is permanent. A Role was fiddly during an
+outage, so someone was granted <code>cluster-admin</code> &ldquo;temporarily&rdquo;. No
+NetworkPolicy existed, so <strong class="c-amber">every pod can reach every other pod</strong>,
+and by year two something depends on that.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+<tr><td>A dozen cluster-admin bindings</td><td>Namespace-scoped Roles from the start; audit bindings on a schedule and require a ticket for cluster-wide</td></tr>
+<tr><td>Flat pod network</td><td><strong>A default-deny NetworkPolicy per namespace on day one.</strong> This is the retrofit that never happens</td></tr>
+<tr><td>Default ServiceAccount tokens mounted everywhere</td><td><code>automountServiceAccountToken: false</code> unless the workload calls the API <span class="acro-exp">(Application Programming Interface)</span></td></tr>
+<tr><td>Containers running as root</td><td>Pod Security Admission at <code>restricted</code> for new namespaces, before anything is deployed into them</td></tr>
+<tr><td>Nobody knows who can do what</td><td><code>kubectl auth can-i --list</code> as a periodic review, not a thing you run during an incident</td></tr>
+</table>
+<div class="concept-desc verdict">
+Default-deny networking is the one item here with a genuine expiry date. Adding it to an
+empty namespace costs one manifest; adding it to a namespace with thirty running services means
+discovering every undocumented dependency at once, under load, which is why the ticket stays
+open for years. <strong>Do it before there is anything to break.</strong>
 </div>
 </div>
 </div>
@@ -28481,6 +28640,34 @@ prefer a real manager. Dynamic short-TTL creds beat static ones every time.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Day two</div>
+<div class="concept-title">Nothing Can Be Rotated, Because Rotation Was Never Once Performed</div>
+<div class="concept-desc">
+Every secrets deployment is capable of rotation and almost none have done it. The secret
+gets written once, applications read it at startup, and two years later
+<strong class="c-amber">nobody knows which of eleven services would break if it
+changed</strong>. At that point the secret is not managed; it is stored, and the difference only
+shows up during an incident when it must change today.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Belief</th><th>Reality</th></tr>
+<tr><td>&ldquo;We can rotate whenever we need to&rdquo;</td><td>Untested. A rotation path that has never run is a plan, not a capability</td></tr>
+<tr><td>&ldquo;Kubernetes Secrets are encrypted&rdquo;</td><td>Base64 at rest by default &mdash; enable encryption at rest, and remember etcd backups contain them</td></tr>
+<tr><td>&ldquo;Env vars are safe enough&rdquo;</td><td>They land in crash dumps, <code>/proc</code>, child processes and any log line that prints the environment</td></tr>
+<tr><td>&ldquo;Only the app can read it&rdquo;</td><td>Anyone who can <code>exec</code> into the pod or read the ServiceAccount token usually can too</td></tr>
+<tr><td>&ldquo;It is not in Git&rdquo;</td><td>Check the history, not the tip. Removing a file does not remove the commit</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong>Rotate one real secret in the first week</strong>, deliberately, in working hours,
+and watch what breaks. That single exercise converts rotation from a documented feature into a
+tested one and usually finds two services reading the value at startup and never again. Prefer
+short-lived dynamic credentials where the tool supports them &mdash; a credential that expires in
+an hour cannot be a secret nobody dares change.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="software-supply-chain-security-sbom-slsa-sigstore" data-reviewed="2026-08">
@@ -28548,6 +28735,33 @@ becomes a test that fails, not a review someone forgets.
 <strong class="c-amber">Where to enforce:</strong> shift left (CI catches it before
 merge) <em>and</em> defense in depth (admission control catches it at runtime).
 Ties directly to the CIS <span class="acro-exp">(Center for Internet Security)</span> Benchmarks and cloud-security cards.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Day two</div>
+<div class="concept-title">Two Hundred Policies, All in Audit Mode</div>
+<div class="concept-desc">
+Policy engines ship with an audit mode so you can see what would be blocked before you
+block it, which is correct and is also the trap. Enforcing one policy broke a deploy at 5pm
+once; after that everything new is written as audit-only,
+<strong class="c-amber">the violation count becomes a dashboard nobody acts on</strong>, and the
+control that was purchased is a report.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+<tr><td>Every policy in audit mode</td><td>Ship each policy with an <strong>enforcement date in the same PR</strong>. Audit is a migration window, not a setting</td></tr>
+<tr><td>Violation count only ever grows</td><td>Enforce for <em>new</em> resources immediately; grandfather existing ones with an explicit exception list</td></tr>
+<tr><td>Exceptions are undocumented</td><td>Exceptions expire. An exception with no owner and no end date is a policy you deleted slowly</td></tr>
+<tr><td>Policies duplicate admission defaults</td><td>Use Pod Security Admission for the standard cases and save the engine for rules only you have</td></tr>
+<tr><td>Rego nobody can read</td><td>Test files alongside every policy &mdash; both engines support unit tests, and a policy without one is untested code in the admission path</td></tr>
+</table>
+<div class="concept-desc verdict">
+The enforcement date is the whole discipline. It converts &ldquo;we will turn it on when
+things are cleaner&rdquo; &mdash; which never arrives, because the violation list grows faster
+than anyone cleans it &mdash; into a dated commitment somebody has to actively push back on.
+<strong>A policy engine that blocks nothing is an expensive linter.</strong>
 </div>
 </div>
 </div>

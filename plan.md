@@ -10896,10 +10896,15 @@ weighted by how central the domain is to why anyone visits.
 | ✅ **D4** | `blueteam` | ~~36~~ → **28** | The first 37 cards predate the detection-engineering track that follows them. **Eight shipped**, all with the same addition: *what this tool cannot see, and what you pair it with*. 67% thin → 52% |
 | ✅ **D5** | `web` | ~~35~~ → **27** | Median 1,415 against a mean of 2,622 — the clearest bimodal domain in the file, and it is bimodal because of *where it was written*. **Eight shipped**, each naming an instrument. 85% thin → 66% |
 | ✅ **D6** | `eng` | ~~33~~ → **25** | The architecture cards sat beside a management track that had no choice but to be about trade-offs. **Eight shipped**, each naming a bill and a threshold. 43% thin → 32% |
-| **D7** | `devops` | 20 | Platform track deep, tool cards thin. Same shape as `blueteam` |
+| ✅ **D7** | `devops` | ~~20~~ → **12** | Platform track deep, tool cards thin. **Eight shipped**, each on day two rather than day one. 47% thin → 28% |
 | — | `shortcut` | 20 | **Excluded.** Reference domain, see §4 |
 
 **244 cards across seven waves**, before counting the tail in `script`, `linux` and `ops`.
+
+**Status: all seven waves shipped — 56 cards, 288 thin → 231.** The queue as written is
+finished; the remaining 231 are the tail this table deliberately did not name, and they need
+a fresh census before anyone writes a wave D8. See the closing record for what that census
+should ask.
 
 ### The D4 spec — written before the cards, like D1's, D2's and D3's
 
@@ -10996,6 +11001,36 @@ Eight chosen so the *kind* of bill differs each time — a wave of eight cards a
 | Resilience Patterns | Load amplification — retries cause the outage they were added to survive |
 | Event-Driven | Observability — you trade the stack trace for a correlation ID |
 | SOLID | Speculative generality — an interface with one implementation is a guess about the future |
+
+### The D7 spec — day two, not day one
+
+`devops`'s thin cards all describe adoption: what the tool is, how you set it up, the commands.
+Not one of them describes what the thing **becomes**. That is the whole gap, because in this
+domain nothing fails at adoption — every tool here installs fine and demos well. They fail two
+years later, quietly, in a shape that was decided by one choice made in week one.
+
+> **What this looks like two years in, and the one decision now that prevents it.**
+
+This is deliberately *not* D6's bill-and-threshold, and the difference is worth stating because
+the two are easy to blur. D6 asks **whether to adopt at all** — a trade you make once, with a
+size below which it is a loss. D7 assumes adoption already happened and asks **what it decays
+into** — a failure that has no threshold, arrives on schedule, and is cheap to prevent and
+expensive to reverse.
+
+The preventive decision must be **something you can do this week**, and it must be genuinely
+cheaper now than later. If the fix is equally easy in year two, there is nothing to warn about
+and the card is not a D7 card.
+
+| Card | The decay |
+|---|---|
+| Helm & Kustomize | Charts become a templating language nobody can diff |
+| GitHub Actions | Forty copy-pasted workflows and unpinned third-party actions |
+| Secrets Management | Nothing can be rotated, because rotation was never once performed |
+| Kubernetes Security | Everyone is cluster-admin and the network is flat |
+| Policy as Code | Two hundred policies, all in audit mode |
+| CI/CD Pipeline | A slow pipeline makes batches bigger, which makes failures harder — the flywheel in reverse |
+| Docker | Images that cannot be rebuilt, running as root |
+| Platform Engineering | The platform team becomes the ticket queue it was built to abolish |
 
 ## 7. The trap in this plan
 
@@ -12362,5 +12397,76 @@ mean chars/concept card 1,200  1,201  1,202  1,203  1,204  1,205
 Forty-eight cards, six waves, **five characters** of movement. One card per wave, on average,
 is now being rewritten for failing its own spec's test rather than for being wrong — which is
 the sign the specs are doing more work than the drafting.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D7: `devops`, and the seven-wave queue closes
+
+D7's spec is the only one in the phase that assumes the decision has already been made.
+D1–D6 all ask some version of *should you, and at what size* — D7 asks what happens after you
+did. That distinction is the wave's whole content, because nothing in `devops` fails at
+adoption. Every tool in the domain installs cleanly and demos well. They fail two years later,
+quietly, in a shape decided by one choice made in week one.
+
+| Tool | Two years in | The week-one decision |
+|---|---|---|
+| Helm & Kustomize | A chart nobody can diff | Render and diff in CI on every PR |
+| GitHub Actions | Forty copy-pasted workflows, unpinned third-party actions | **Pin by commit SHA** — a tag is mutable |
+| Secrets Management | Nothing can be rotated | Rotate one real secret in the first week and watch what breaks |
+| Kubernetes Security | cluster-admin everywhere, flat network | **Default-deny NetworkPolicy before there is anything to break** |
+| Policy as Code | Two hundred policies, all in audit | Ship every policy with an enforcement date in the same PR |
+| CI/CD Pipeline | 45 minutes, so batches get bigger | Build time is a bug with an owner and a budget |
+| Docker | An image nobody can rebuild, running as root | Pin the base by digest; add the `USER` line now |
+| Platform Engineering | The platform team is the new ticket queue | A paved road, not a walled garden — there must be a way off it |
+
+### The one test that made this spec work
+
+*The preventive decision must be cheaper now than later.* If a fix is equally easy in year two,
+there is nothing to warn about and the card is not a D7 card — it is advice, and advice with no
+expiry date does not need a table. Two candidates were cut on exactly that: both were sensible
+practices that could be adopted at any point, which meant the card had no reason to be about
+time.
+
+The item that best survives the test is the default-deny NetworkPolicy. In an empty namespace it
+is one manifest. In a namespace with thirty running services it means discovering every
+undocumented dependency simultaneously, under load — which is precisely why that ticket is open
+in so many estates and closed in so few.
+
+### The counter-metric moved two, and that is worth saying
+
+```
+                          D1     D2     D3     D4     D5     D6     D7
+thin topics              279    271    263    255    247    239    231
+devops                                                       20 →  12  (47% → 28%)
+mean chars/concept card 1,200  1,201  1,202  1,203  1,204  1,205  1,207
+```
+
+Every previous wave moved the mean by exactly one. D7 moved it by two, because these cards
+carry five-row tables *and* a substantial verdict, which is a slightly heavier shape than D3's
+or D4's. It is still well inside noise, and it is recorded rather than smoothed over: the point
+of a counter-metric is that you report it when it moves the wrong way, otherwise it is
+decoration.
+
+### The queue is finished; the phase is not
+
+**Seven waves, 56 cards, 288 thin → 231.** §6's table is complete and every row is ticked. The
+target in §8 was *under 150*, so the honest position is that the plan's queue got 40% of the way
+there and the remaining 81 cards live in the tail the table never named — `script`, `linux`,
+`ops`, `sec`, and the long thin middle of a dozen smaller domains.
+
+Anyone writing a wave D8 should not extend this table by guessing. The census to run first:
+
+| Question | Why it changes the answer |
+|---|---|
+| Which domains are thin *and* frequently visited? | Six waves were chosen by thin count alone. Thin-and-unread is the cheapest thing on this list to leave alone |
+| Which thin topics are also **orphans**? | `orphan_report.py` already exists. A thin topic with no inbound link may want retiring rather than deepening |
+| Which are thin because they are **reference**, like `shortcut`? | §4 excluded two domains by hand. That judgement should be a rule by now, not a list |
+| Has the median moved, or only the mean? | The counter-metric watches the mean. A wave that deepened only the easiest cards would not show up in it |
+
+The last of those is the real risk in what has just been done: seven waves each picked eight
+cards, and *nothing forced them to be the eight hardest*. That is the honest limitation of this
+phase, written down at the point where it is still cheap to fix.
 
 Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
