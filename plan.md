@@ -10893,13 +10893,47 @@ weighted by how central the domain is to why anyone visits.
 | ✅ **D1** | `data` | ~~40~~ → **32** | Worst ratio on the site, and the subject rewards depth. **Eight shipped** — the W4 spec's exact list. 93% thin → 74% |
 | ✅ **D2** | `redteam` | ~~40~~ → **32** | The tooling catalogue is the domain's identity. **Eight shipped**, all with the same addition: *what it leaves behind* and *what the defender sees*. 77% thin → 62% |
 | ✅ **D3** | `cloud` | ~~40~~ → **32** | Three providers, one card each. **Eight shipped**, all provider-neutral: the failure mode that is the same on all three. 63% thin → 50% |
-| **D4** | `blueteam` | 36 | The first 37 cards predate the detection-engineering track that follows them and now reads as a different domain |
+| ✅ **D4** | `blueteam` | ~~36~~ → **28** | The first 37 cards predate the detection-engineering track that follows them. **Eight shipped**, all with the same addition: *what this tool cannot see, and what you pair it with*. 67% thin → 52% |
 | **D5** | `web` | 35 | Median 1,415 characters against a mean of 2,622 — the clearest case of a bimodal domain in the file |
 | **D6** | `eng` | 33 | The early technical cards sit beside a management track written to a much higher standard |
 | **D7** | `devops` | 20 | Platform track deep, tool cards thin. Same shape as `blueteam` |
 | — | `shortcut` | 20 | **Excluded.** Reference domain, see §4 |
 
 **244 cards across seven waves**, before counting the tail in `script`, `linux` and `ops`.
+
+### The D4 spec — written before the cards, like D1's, D2's and D3's
+
+`blueteam`'s thin cards share one structural gap and it is the mirror image of `redteam`'s.
+The offensive catalogue documented what a tool does and never what using it costs; the
+defensive catalogue documents what a tool **sees** and never what it **misses**. That gap is
+worse on this side, because a list of capabilities with no coverage gaps produces exactly the
+failure the domain exists to prevent: believing you have visibility you do not have.
+
+So the D4 addition is uniform, one card per topic:
+
+> **What this tool cannot see, and what you pair it with to cover the gap.**
+
+Three tests a D4 addition has to pass, all of which failed at least once while drafting:
+
+| Test | Why |
+|---|---|
+| The blind spot must be **structural**, not a configuration mistake | "You forgot to enable it" is a checklist item. "It sits at the perimeter and lateral movement never crosses the perimeter" is a property of where the sensor is |
+| It must name **what covers the gap** | A blind spot with no pairing is discouragement. The point is a defender who now knows which second source to go add |
+| It must not be **the same blind spot eight times** | "Encrypted traffic" is true of three network tools and would be lazy on the other five. If two cards want the same sentence, one of them is the wrong card to deepen |
+
+Eight chosen for the wave, each with a blind spot of a different *kind* — placement, retention,
+acquisition, translation, attribution, coverage-by-selection:
+
+| Card | The kind of blindness |
+|---|---|
+| Zeek | Placement — a sensor sees what crosses it, and less crosses it every year |
+| Wireshark | Retroactivity — it cannot analyse a capture nobody took |
+| Suricata & Snort | Prior knowledge — a signature is a description of something already named |
+| Windows Event Logs | Retention and defaults — the event you need is off, or already rolled over |
+| auditd | Attribution — syscalls are not intent, and containers muddy whose syscall it was |
+| Volatility | Acquisition — memory is gone the moment the machine is |
+| Sigma | Translation — portable rule, non-portable field names |
+| Honeypots | Selection — deception is silent against an attacker who does not look |
 
 ## 7. The trap in this plan
 
@@ -12101,5 +12135,64 @@ Twenty-four cards across three waves and the padding counter-metric has moved **
 characters**. That number is the whole argument that this pass is adding content rather than
 inflating it, and it only holds because every addition arrives as a new concept card with a
 claim of its own rather than as extra sentences bolted onto an existing one.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D4: `blueteam`, and the mirror of D2
+
+D2 gave the offensive catalogue the sentence it was missing — *what using this costs you*.
+D4 gives the defensive catalogue the mirror of it, and the mirror turns out to matter more.
+A red-team card that omits its cost makes an operator careless. **A blue-team card that omits
+its blind spot makes a defender confident**, and confidence about coverage you do not have is
+the specific failure the whole domain exists to prevent.
+
+| Tool | What it cannot see |
+|---|---|
+| Zeek | A sensor sees what crosses it, and less crosses it every year — split-tunnel laptops, east-west inside a subnet, cloud-to-cloud that has no on-premise path |
+| Wireshark | **You cannot analyse a capture nobody took.** By the time an incident is declared the packets are gone; only what was already being written down survives |
+| Suricata & Snort | A signature is a description of something already named — the rule has to exist before the traffic does |
+| Windows Event Logs | The event you need is off (4688 command line, 4104) or already rolled over. **Local retention is not retention** |
+| auditd | Syscalls are not intent, and on a container host they arrive attributed to the host namespace unless something maps them back |
+| Volatility | Memory is gone the moment the machine is. Every plugin is downstream of one decision made by whoever touched the box first |
+| Sigma | Portable rule, non-portable field names — **a rule that converts cleanly and matches nothing looks identical to one that works** |
+| Honeypots | Deception is silent against an attacker who does not look. Silence from a canary is not evidence of absence |
+
+### The test that did the most work
+
+Of D4's three tests, *"not the same blind spot eight times"* rejected the most drafts.
+"Encrypted traffic" is a true and interesting limitation of Zeek, Suricata, Wireshark and
+Arkime, and writing it four times would have produced four cards that each said the same thing
+and a wave that added one idea rather than eight. Forcing a different **kind** of blindness per
+card — placement, retroactivity, prior knowledge, retention, attribution, acquisition,
+translation, selection — is what made the set worth eight cards instead of one.
+
+That taxonomy is now the reusable part. It is a checklist for any detection tool this site
+adds later: *which of these eight kinds of blind does it have?* Most tools have two, and the
+one they do not advertise is usually the one worth writing down.
+
+### Two additions that are load-bearing beyond their own card
+
+- **Zeek's coverage question.** "What percentage of your hosts' traffic physically traverses
+  this sensor?" — if nobody knows, that is the finding. It converts a vague unease into a
+  number somebody has to go get.
+- **Sigma's deployment test.** Fire the behaviour, confirm the rule alerts. Untested imported
+  rules are the most convincing coverage theatre in the domain, because the rule count rises
+  and the detection does not.
+
+### The measurement
+
+```
+                          D1     D2     D3     D4
+thin topics              279    271    263    255     ← eight, exactly, four times
+blueteam                                 36 →  28  (67% → 52%)
+mean chars/concept card 1,200  1,201  1,202  1,203    ← +1, every wave
+```
+
+Thirty-two cards, four waves, and the padding counter-metric has moved **three characters**.
+The regularity is not luck: the discipline is that a deepening arrives as a *new concept card
+with its own claim*, never as extra sentences inside an existing one, and a new card that says
+something carries roughly the domain mean by construction.
 
 Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
