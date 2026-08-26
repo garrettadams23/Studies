@@ -11324,7 +11324,7 @@ loses a note.
 | ✅ **C3** — `script`↔`shortcut` | 5 | Checked before merging, and the check was right: **2 merged, 4 refused**. The pair that mattered most was not on the list — two `script` PowerShell cards scoring 0.25 on titles and nearly identical in content |
 | ✅ **C4** — Kubernetes across `devops` and `linux` | 3 | The guess was right and the action was not a merge. `devops` owns Kubernetes; `linux` owns container internals. **Moved, not merged** — §3 says keep both, and the card was in the wrong domain, not duplicated |
 | ✅ **C5** — `sec` Zero Trust, `web`↔`script` WebAssembly and TypeScript | 4 | Small and clean, and it turned out to overlap Phase 8: both `web` cards retired were on the **thin** list. **2 merged, 1 refused** |
-| **C6** — the tail | ~13 | Mostly below 0.6 overlap and mostly legitimate. Audit, expect to keep most |
+| ✅ **C6** — the tail | ~13 | Audited. The expectation held — **2 merged, the rest kept** — and the audit found a wrong acronym expansion that no check could see. **Phase 9's queue is complete** |
 
 **About 23 merges**, of which perhaps 15 are unambiguous.
 
@@ -13000,3 +13000,90 @@ aliases        111 → 113
 ```
 
 Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 9 wave C6: the tail, and the ninth wrong acronym
+
+C6 was scoped as *"audit, expect to keep most"* and that expectation was correct. The wave's
+value is not in its two merges; it is in what auditing forty pairs turned up on the way.
+
+### The two merges, both found by C5's rule
+
+C5's finding was that **a thin card is a duplicate-shaped thing**, so this wave started by
+cross-referencing `depth_report.py --thin` against `near_duplicates.py` rather than reading the
+list top-down. Six of forty pairs had a thin side. Two were real:
+
+| Retired | Into | What was absorbed |
+|---|---|---|
+| `eng` **Testing Strategy — The Test Pyramid** (1 card) | `script` **Testing Strategy — Why and How to Test** (4 cards) | BDD and *given/when/then* — the survivor already had the pyramid, TDD, the ice-cream cone, and "test behaviour not implementation" |
+| `data` **Vector Databases — Embeddings & Similarity Search** (1 card) | `ai` **Vector Databases — Similarity Search at Scale** (4 cards) | **Nothing.** The survivor already covered pgvector, hybrid search, HNSW/IVF, cosine and the vendor list |
+
+That second row is the cleanest possible case for this phase: a card whose entire content
+already existed, better, one domain away — and whose own text said *"Direct bridge to the AI
+domain's RAG cards"*, which is a card describing itself as a pointer.
+
+### The ninth wrong acronym expansion, and why nothing could have caught it
+
+Reading both Vector Databases cards side by side surfaced this, in both of them:
+
+```
+ANN (Artificial Neural Network) index    HNSW/IVF — approximate nearest-neighbor for speed
+```
+
+**The row states the correct expansion in its own second column** and the annotator stamped the
+wrong one beside it. In a vector database, ANN is *Approximate Nearest Neighbour*. The
+dictionary held one meaning, the neural-network one, so every use on the site was annotated
+wrong — and there were exactly two uses, both in this sense.
+
+No check on this site could have found it. `check_contradictions.py` compares hand-written
+expansions against the dictionary; this expansion *came from* the dictionary. The
+`--pairs` mode compares two cards' claims; both cards agreed, and both were wrong. **A
+dictionary with one meaning cannot disagree with itself**, which is the shape of this whole
+class of error and the reason all nine were found by reading rather than by tooling.
+
+Fixed as a multi-meaning entry with `byDomain` for `ai` and `data`. The residual risk is
+recorded rather than hidden: if a future `ai` card writes ANN meaning a neural network, it will
+now be annotated wrong in the other direction. Every current use is the vector sense, and the
+neural-network cards spell the words out.
+
+### The refusal that became a link
+
+`data` **ER Modeling — Designing the Schema** and `data` **Designing a Schema From
+Requirements** score 0.50, and one is thin — which by this wave's own rule made it a merge
+candidate. Reading them says otherwise: one is entities, relationships and cardinality; the
+other is a six-step walkthrough from *"we sell stuff"* to tables, ending on the price-snapshot
+insight. Theory and process, two different sentences, **keep both**.
+
+So the constructive action was a related edge in both directions rather than a merge. That is
+worth naming as a third outcome alongside *merge* and *move*: **when two cards are genuinely
+adjacent rather than duplicated, link them.** A reader who lands on the theory should be one
+click from the walkthrough, and the near-duplicate census is a good place to find pairs that
+deserve an edge.
+
+### Phase 9's queue is complete
+
+| Wave | Merged | Refused |
+|---|---|---|
+| C1 `script` internal | 4 | 4 |
+| C2 `net` wireless and cloud | 2 | — |
+| C3 `script`↔`shortcut` | 2 | 4 |
+| C4 Kubernetes cross-domain | 0 (**1 moved**) | 1 |
+| C5 Zero Trust, WASM, TypeScript | 2 | 1 |
+| C6 the tail | 2 | the rest, one of them **linked** |
+
+**12 merges, one move, one new link, and roughly a dozen documented refusals.** §5 estimated
+"about 23 merges, of which perhaps 15 are unambiguous". The real number is half that, and the
+gap is the point: **the estimate was made from titles, and titles overstate duplication.**
+Every refusal above was a pair whose titles matched and whose cards did not — a beginner card
+beside a deep one, a reference beside a concept, a one-word `shortcut` title inflating overlap,
+theory beside a walkthrough.
+
+```
+topics       1,426 → 1,420   (six retired across C3–C6, one moved)
+thin           231 → 227     (four of them left by retirement)
+pairs ≥ 0.50    46 → 40
+aliases        109 → 115
+```
+
+Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2** · related **882 links, 0 one-way**.
