@@ -11463,7 +11463,7 @@ and a diff against the changelog's own dates — no new data, no server, one sma
 has no way to find them. The changelog answers "what changed"; this answers "what changed
 *for me*", which is the question people actually have.
 
-## T9 — A contradiction check across near-duplicates
+## ✅ T9 — A contradiction check across near-duplicates
 
 `check_contradictions.py` already compares claims across the site. Phase 9's pairs are the
 highest-probability place for two cards to disagree, because they were written by different
@@ -11479,7 +11479,7 @@ not a stylistic difference.
 | 2 | **T1** depth report | Phase 8 cannot start honestly without it |
 | 3 | **T2** near-duplicates | Phase 9 needs it, and the `--title` mode prevents the next instance |
 | 4 | **T4** orphan report | Turns a vague "the related map is partial" into 159 named cards |
-| 5 | **T9** contradiction pass | Ten minutes, reuses an existing tool, and finds real bugs if any exist |
+| 5 | ✅ **T9** contradiction pass | Ten minutes, reuses an existing tool, and finds real bugs if any exist. **It found two — in the tool** |
 | 6 | **T5** search harness | The last untested user-facing behaviour |
 | 7–9 | T6, T7, T8 | Reader-facing; genuinely nice, and none of them is load-bearing |
 
@@ -12470,3 +12470,64 @@ cards, and *nothing forced them to be the eight hardest*. That is the honest lim
 phase, written down at the point where it is still cheap to fix.
 
 Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 10 T9: the pass found nothing, and the checker was why
+
+T9 was scoped as ten minutes of work: `check_contradictions.py` already compares claims across
+the site, so restrict it to the near-duplicate pairs and read what falls out. The restriction
+went in as a `--pairs` mode reusing `near_duplicates.py`'s own topic splitter and title regexes
+— deliberately importing them rather than growing a second splitter, because two splitters drift
+and the pair check would then quietly compare the wrong text.
+
+It reported **zero disagreements across 46 pairs**, first run.
+
+Zero is the right answer and is indistinguishable from a check that cannot find anything. So,
+per the rule this repo has now paid for five times, the next step was not to believe it.
+
+### What the two proofs found
+
+A `--self-test` with seven fixtures passed cleanly. That was not enough: fixtures test the
+comparison, not the plumbing that feeds it. The second proof was to **inject a known
+contradiction into a real pair** — `SSH on port 22` into one Zero Trust card, `SSH on port 2200`
+into the other — and re-run.
+
+It still reported zero. Two separate bugs, both in the checker, both older than T9:
+
+| Bug | What it meant |
+|---|---|
+| The port regex keyed on the **first** capitalised word before `port`, not the nearest | `In this estate SSH on port 22` was recorded as a claim about a service called `IN`. Quieter on real prose, but this is why the site's port table listed CAPTURE, DEFAULT, PRIVACY and SECURE as services |
+| `PRE_RE` strips `<pre>` and `<code>` — and the house style also writes code as **`div.code-block`** | Every shell sample written as a div has been read as prose by this checker since it was written. `# Default port 22` in a comment was a claim |
+
+Both are fixed: the gap between service and port must now contain no other capitalised word, and
+a nesting-aware `strip_code_divs()` removes the div form before anything else runs. A short
+`NOT_SERVICE` list handles the residue — `Ticket-Based Authentication (port 88)` and `Web pages
+use port 80/443` are not claims about services named AUTHENTICATION and WEB.
+
+### The measurement
+
+```
+                        before   after
+services keyed              27      15   ← 12 of the 27 were not services
+of which real protocols     15      14   + BB, from a MAC address "AA:BB on port 1"
+conflicts surfaced           0       1   ← DNS on 53 and 853, which is DNS-over-TLS
+```
+
+The conflict count going **up** is the point. The old table's zero was not a clean site; it was
+a table so noisy that a real pair of ports could not surface in it. DNS on 53 and 853 is exactly
+the legitimate case the tool's own text says to read rather than automate, and it is now visible
+enough to read.
+
+### What T9 actually delivered
+
+Not a content fix — after the repairs, the pair pass still reports zero, and that zero now means
+something. What it delivered is **two long-standing defects in a check that gates every build**,
+found by taking its clean result seriously enough to disbelieve it. Nine fixtures now stand
+guard, two of them regression tests written directly from the bugs.
+
+The reusable rule, which is now stated as a rule rather than re-derived each time: **a new check
+that passes on first run has not been tested. Fixtures prove the comparison; only injecting a
+known-bad case into real data proves the plumbing.**
+
+`make check` and CI both run `--self-test`, `--strict` and `--pairs --strict`.
