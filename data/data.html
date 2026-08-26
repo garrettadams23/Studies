@@ -169,10 +169,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Read, Modify, Write — and Lose the Other Update</div>
+                <div class="concept-desc">
+                  Wrapping two statements in a transaction does not make them atomic in the way people
+                  assume. At <code>READ COMMITTED</code>, the default in PostgreSQL, SQL <span class="acro-exp">(Structured Query Language)</span> Server and Oracle, two
+                  sessions can both read a balance of 100, both subtract 10, and both write 90.
+                  <strong class="c-amber">One update is gone, both transactions committed, and no error was
+                  raised</strong> &mdash; the database did exactly what each session asked.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Isolation level</th><th>What it still permits</th></tr>
+                    <tr><td><code>READ UNCOMMITTED</code></td><td>Dirty reads &mdash; other sessions' uncommitted values</td></tr>
+                    <tr><td><code>READ COMMITTED</code> (common default)</td><td>Non-repeatable reads, and <strong>lost updates</strong> on read-modify-write</td></tr>
+                    <tr><td><code>REPEATABLE READ</code> (MySQL default)</td><td>Phantom rows in some engines; MySQL uses gap locks to reduce them</td></tr>
+                    <tr><td><code>SERIALIZABLE</code></td><td>Nothing &mdash; but expect serialisation failures you must retry</td></tr>
+                    <tr><td><code>SELECT … FOR UPDATE</code></td><td>Locks the row now, at any level. The targeted fix for exactly this</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> you usually do not, which is why this is the entry
+                  worth remembering. It shows up as a balance, a stock count or a counter that drifts under
+                  concurrency and reconciles fine in testing, where nothing runs at the same time. Two reliable
+                  fixes: <strong>do the arithmetic in the database</strong>
+                  (<code>UPDATE … SET n = n - 10</code>, which is atomic), or take the row lock with
+                  <code>SELECT … FOR UPDATE</code> before reading.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🕸️</span>
               <span class="topic-name">ER Modeling — Designing the Schema</span>
@@ -273,10 +301,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">A WHERE on the Right-Hand Table Undoes Your LEFT JOIN</div>
+                <div class="concept-desc">
+                  This is the most common wrong answer in SQL and it produces no error at all. A
+                  <code>LEFT JOIN</code> keeps unmatched left rows and fills the right side with NULLs. Then a
+                  <code>WHERE</code> clause tests one of those NULL columns, NULL is not <em>true</em>, and
+                  <strong class="c-amber">every unmatched row is filtered straight back out</strong> &mdash;
+                  leaving you with an inner join wearing a left join's syntax.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Written</th><th>What you actually get</th></tr>
+                    <tr><td><code>LEFT JOIN o ON …<br>WHERE o.status = 'paid'</code></td><td><strong>Inner join.</strong> Customers with no order are gone</td></tr>
+                    <tr><td><code>LEFT JOIN o ON … AND o.status = 'paid'</code></td><td>Correct &mdash; the filter is part of the match, not applied after</td></tr>
+                    <tr><td><code>WHERE o.id IS NULL</code></td><td>Deliberate anti-join: rows on the left with nothing on the right. This one is on purpose</td></tr>
+                    <tr><td><code>WHERE o.total &gt; 100</code></td><td>Same trap. Any comparison against NULL drops the row</td></tr>
+                    <tr><td><code>COUNT(o.id)</code> vs <code>COUNT(*)</code></td><td>After a LEFT JOIN these differ, and the difference <em>is</em> the unmatched count</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> run the join with no <code>WHERE</code> and compare
+                  row counts. If adding the filter drops your row count to exactly the inner-join count, the
+                  <code>LEFT</code> is decorative. The habit that avoids it entirely: <strong>filters on the
+                  right-hand table belong in <code>ON</code>; filters on the left-hand table belong in
+                  <code>WHERE</code></strong>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🪟</span>
               <span class="topic-name">Window Functions — Analytics Without Collapsing Rows</span>
@@ -311,10 +366,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">The Default Frame Is RANGE, and Ties Collapse Into One Bucket</div>
+                <div class="concept-desc">
+                  <code>SUM(x) OVER (ORDER BY d)</code> looks like a running total and usually is one
+                  &mdash; until the <code>ORDER BY</code> column has duplicates. The default frame is
+                  <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>, and <em>RANGE</em> means
+                  &ldquo;all rows with the same ordering value&rdquo;, so
+                  <strong class="c-amber">every tied row gets the same total &mdash; the total after all of
+                  them</strong>. Two sales on the same date both show the day&rsquo;s closing figure.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Frame</th><th>Meaning</th></tr>
+                    <tr><td><code>RANGE … CURRENT ROW</code> (the default)</td><td>All peer rows sharing the current ordering value are included</td></tr>
+                    <tr><td><code>ROWS … CURRENT ROW</code></td><td>Exactly the rows up to this one. This is the running total people mean</td></tr>
+                    <tr><td>No <code>ORDER BY</code> in the OVER</td><td>The frame is the whole partition &mdash; a group total, not a running one</td></tr>
+                    <tr><td><code>ROW_NUMBER</code> vs <code>RANK</code> vs <code>DENSE_RANK</code></td><td>Ties: arbitrary distinct numbers, gaps after ties, no gaps</td></tr>
+                    <tr><td><code>LAG(x)</code> across a partition boundary</td><td>NULL, not the previous partition's last value &mdash; usually what you want, occasionally not</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> look for repeated values in a running-total
+                  column. Identical consecutive totals for rows with different amounts is the signature. Write
+                  <strong><code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> explicitly</strong>
+                  whenever you mean a running total &mdash; it costs eight words and removes the entire class of
+                  error.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🧱</span>
               <span class="topic-name">CTEs <span class="acro-exp">(Common Table Expression)</span> &amp; Recursion — Readable, Composable Queries</span>
@@ -387,10 +470,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Join First, Aggregate Second, and SUM Cannot Tell</div>
+                <div class="concept-desc">
+                  If a query joins a one-to-many relationship and then aggregates, the &ldquo;one&rdquo;
+                  side is duplicated once per matching row before <code>SUM</code> ever sees it. The total comes
+                  back larger, in a way that looks entirely plausible, and
+                  <strong class="c-amber">no error is raised because nothing is wrong with the SQL <span class="acro-exp">(Structured Query Language)</span></strong>. An
+                  order joined to three shipments has its value counted three times.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>What it does to the number</th></tr>
+                    <tr><td>One join, one-to-many, then <code>SUM</code></td><td>Multiplies by the number of matches per row</td></tr>
+                    <tr><td><em>Two</em> such joins</td><td>Multiplies by the product &mdash; 3 shipments &times; 2 discounts = 6&times;</td></tr>
+                    <tr><td><code>COUNT(col)</code> vs <code>COUNT(*)</code></td><td><code>COUNT(col)</code> skips NULLs. On an outer join that is often the point, and often the bug</td></tr>
+                    <tr><td><code>AVG(col)</code> with NULLs</td><td>NULLs are excluded from both the total <em>and</em> the divisor &mdash; not treated as zero</td></tr>
+                    <tr><td><code>SUM</code> over an empty set</td><td>NULL, not 0. <code>COALESCE(SUM(x), 0)</code> if a caller will do arithmetic on it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> aggregate the fact table alone first and compare
+                  the total to the joined query&rsquo;s. If they differ, the join is fanning out. The fix is to
+                  <strong>aggregate in a subquery or CTE <span class="acro-exp">(Common Table Expression)</span> and join to the result</strong>, so each row arrives
+                  pre-summed &mdash; or use <code>SUM(DISTINCT …)</code> only when you can prove the duplicates
+                  are exact, which is rarely.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎯</span>
               <span class="topic-name">Subqueries, EXISTS &amp; Set Operations</span>
@@ -425,10 +535,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">NOT IN Against One NULL Returns Zero Rows</div>
+                <div class="concept-desc">
+                  <code>WHERE id NOT IN (SELECT customer_id FROM orders)</code> is the single most
+                  destructive NULL behaviour in SQL <span class="acro-exp">(Structured Query Language)</span>. If that subquery returns even one NULL, the comparison
+                  becomes <em>unknown</em> for every row, no row satisfies the predicate, and
+                  <strong class="c-amber">the query returns nothing at all</strong>. Not an error &mdash; an empty
+                  result, which reads as &ldquo;there are none&rdquo;.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Written</th><th>With a NULL in the subquery</th></tr>
+                    <tr><td><code>x NOT IN (1, 2, NULL)</code></td><td><strong>Never true.</strong> <code>x &lt;&gt; NULL</code> is unknown, and unknown fails the WHERE</td></tr>
+                    <tr><td><code>x IN (1, 2, NULL)</code></td><td>True if x is 1 or 2 &mdash; the NULL is harmless here, which is why the asymmetry surprises people</td></tr>
+                    <tr><td><code>NOT EXISTS (SELECT 1 …)</code></td><td><strong>Correct.</strong> Cares whether a row exists, not what is in it</td></tr>
+                    <tr><td><code>LEFT JOIN … WHERE right.id IS NULL</code></td><td>Also correct, and often the faster plan on large tables</td></tr>
+                    <tr><td><code>EXCEPT</code> / <code>MINUS</code></td><td>Correct, and treats NULLs as equal &mdash; different semantics again</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> an anti-join that returns exactly zero rows when
+                  you expected some is this bug until proven otherwise &mdash; check with
+                  <code>SELECT COUNT(*) FROM orders WHERE customer_id IS NULL</code>. The habit worth adopting
+                  outright: <strong>use <code>NOT EXISTS</code> and never <code>NOT IN</code> on a
+                  subquery</strong>. It is correct whether or not NULLs are present, so you never have to know.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📇</span>
               <span class="topic-name">Indexes Explained — B-tree, Hash &amp; Covering</span>
@@ -461,10 +598,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">A UNIQUE Index Does Not Stop Duplicate NULLs</div>
+                <div class="concept-desc">
+                  <code>UNIQUE</code> is the constraint people trust most and it has a gap wide enough to
+                  drive a data-quality incident through: in standard SQL <span class="acro-exp">(Structured Query Language)</span>, and in PostgreSQL, MySQL and SQLite,
+                  <strong class="c-amber">NULL is not equal to NULL, so any number of NULL rows satisfy a unique
+                  index</strong>. A nullable <code>email</code> column with a unique index will happily hold ten
+                  thousand rows with no email.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>What actually happens</th></tr>
+                    <tr><td><code>UNIQUE(email)</code>, email nullable</td><td>Unlimited NULL rows. Duplicates only blocked between non-NULL values</td></tr>
+                    <tr><td>SQL Server</td><td>The exception &mdash; it permits only <em>one</em> NULL, which surprises people moving the other way</td></tr>
+                    <tr><td>Composite <code>UNIQUE(a, b)</code> with b NULL</td><td>Same gap, one column further in</td></tr>
+                    <tr><td>The fix</td><td><code>NOT NULL</code>, or a partial index: <code>UNIQUE … WHERE email IS NOT NULL</code> plus a check</td></tr>
+                    <tr><td>Related trap</td><td>A function on the column (<code>WHERE lower(email) = …</code>) skips a plain index &mdash; slow, not wrong</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> one query, and it is worth running against any
+                  nullable column you believed was unique:
+                  <code>SELECT COUNT(*) FROM t WHERE email IS NULL</code>. If the answer is not zero and you
+                  thought the index guaranteed uniqueness, it never did. The general lesson is broader than
+                  indexes: <strong>every constraint in SQL has a NULL-shaped hole, and the constraint will not
+                  tell you.</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔍</span>
               <span class="topic-name">Reading Query Plans — EXPLAIN ANALYZE</span>
@@ -497,10 +662,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">EXPLAIN Without ANALYZE Prints the Estimate That Was Wrong</div>
+                <div class="concept-desc">
+                  A plan is a prediction, and a slow query is usually slow <em>because the prediction was
+                  wrong</em>. Plain <code>EXPLAIN</code> shows you the planner's estimated row counts &mdash; the
+                  very numbers that produced the bad plan &mdash; and nothing about what really happened.
+                  Reading it and concluding the plan looks reasonable is
+                  <strong class="c-amber">agreeing with the mistake</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What to run</th><th>What it tells you</th></tr>
+                    <tr><td><code>EXPLAIN</code></td><td>The plan and the <em>estimates</em>. No execution, no reality</td></tr>
+                    <tr><td><code>EXPLAIN ANALYZE</code></td><td>Runs it, and prints estimated <em>vs</em> actual rows per node</td></tr>
+                    <tr><td><code>EXPLAIN (ANALYZE, BUFFERS)</code></td><td>Adds pages read from cache vs disk &mdash; where the time actually went</td></tr>
+                    <tr><td>estimate 12, actual 1,240,000</td><td><strong>This is the finding.</strong> Stale statistics, or a correlation the planner cannot see</td></tr>
+                    <tr><td>Nested Loop over a large actual row count</td><td>The classic consequence of that estimate, and the reason it is slow</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> read the plan bottom-up and look only for the
+                  largest ratio between estimated and actual rows. That node is the problem; everything above it
+                  is a consequence. Then fix the estimate rather than the query &mdash;
+                  <code>ANALYZE</code> the table, add extended statistics for correlated columns, or index the
+                  predicate the planner is guessing about. <strong>An <code>EXPLAIN ANALYZE</code> on production-
+                  sized data is worth more than any amount of reading the query.</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🚀</span>
               <span class="topic-name">Query Optimization — Sargability &amp; N+1</span>
@@ -1611,10 +1804,39 @@ p99                 =  4,000 ms  ← this is what a user experiences
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Yesterday's Number Changes, and Nobody Reruns the Report</div>
+                <div class="concept-desc">
+                  Two things make time-series totals quietly wrong, and both look like correct queries. The
+                  first is the time zone: grouping by day in UTC <span class="acro-exp">(Coordinated Universal Time)</span> when the business means local time
+                  <strong class="c-amber">moves every event near midnight into the wrong day</strong>, and the
+                  daily total is off by hours of traffic. The second is late arrival &mdash; a mobile client that
+                  was offline uploads yesterday's events today, so a number that was right when it was computed
+                  is no longer right, and nothing recomputes it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Cause</th><th>Effect on the number</th></tr>
+                    <tr><td><code>date_trunc('day', ts)</code> on a UTC column</td><td>Days boundaries in UTC. For UTC&minus;8 that is 4pm to 4pm local</td></tr>
+                    <tr><td>Daylight saving transitions</td><td>One local day has 23 hours and another 25. A fixed offset gets both wrong</td></tr>
+                    <tr><td>Late-arriving events</td><td>Yesterday's total rises after it was reported. The report does not know</td></tr>
+                    <tr><td>Retries and at-least-once delivery</td><td>The same event counted twice unless something de-duplicates on an event id</td></tr>
+                    <tr><td>Clock skew on the producer</td><td>Events with timestamps in the future, which land in a bucket nobody looks at yet</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> recompute a day that is already a week old and
+                  compare it to what was reported at the time. If the two differ, you have late arrivals and no
+                  restatement policy. Two habits fix most of it: <strong>store UTC, convert at query time with a
+                  named zone</strong> (<code>AT TIME ZONE 'America/Los_Angeles'</code>, never a fixed offset), and
+                  <strong>keep both an event time and an ingest time</strong> so &ldquo;what did we know
+                  then&rdquo; and &ldquo;what is true now&rdquo; are separate, answerable questions.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎓</span>
               <span class="topic-name">The Data Interview</span>

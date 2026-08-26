@@ -11032,6 +11032,41 @@ and the card is not a D7 card.
 | Docker | Images that cannot be rebuilt, running as root |
 | Platform Engineering | The platform team becomes the ticket queue it was built to abolish |
 
+### The D8 spec — the query that runs, returns a number, and is wrong
+
+The census that Phase 8's closing record asked for has now been run, and it changed the queue:
+184 of 227 remaining thin cards are inside the seven domains D1–D7 already worked, because each
+wave took eight and no domain was finished. So D8 goes back to `data` — worst ratio on the site
+at 74%, and the same domain D1 started with.
+
+`data` is unlike every other domain here in one specific way, and it is the way that makes it
+worth a second wave. **Everywhere else on this site, a mistake produces an error.** A misconfigured
+sensor logs nothing, a bad Dockerfile fails to build, a wrong subnet mask drops the packet. In a
+database, the overwhelmingly common failure is a query that runs to completion, returns a
+plausible number, and is wrong — and nobody finds out until the number reaches a meeting.
+
+> **The addition: name the silent wrong answer, and say how you would notice.**
+
+Both halves are required. A card that names a trap without a detection is a warning nobody can
+act on; the detection is what makes it a working card rather than a piece of folklore.
+
+The eight are chosen so the *mechanism* of wrongness differs each time — a wave of eight cards
+all about NULLs would be one idea in eight places, even though NULL is genuinely responsible for
+three of them:
+
+| Card | The silent wrong answer |
+|---|---|
+| SQL Joins | A `WHERE` on the right-hand table turns a LEFT JOIN back into an INNER JOIN |
+| Aggregation | Joining before aggregating multiplies rows, and `SUM` cannot tell |
+| Window Functions | The default frame is `RANGE`, and ties collapse into one bucket |
+| Subqueries & EXISTS | `NOT IN` against a subquery containing one NULL returns **zero rows** |
+| ACID & Transactions | Read-modify-write without a lock loses an update at any isolation level below `SERIALIZABLE` |
+| Reading Query Plans | `EXPLAIN` without `ANALYZE` prints an estimate, and the estimate is the thing that was wrong |
+| Indexes | A `UNIQUE` index does not prevent duplicate NULLs |
+| Time-Series | Grouping by day in the wrong time zone moves rows between days, and late arrivals change yesterday |
+
+**✅ D8 shipped** — 8 cards, `data` 31 → 23 thin (74% → 55%).
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13094,3 +13129,73 @@ aliases        109 → 115
 ```
 
 Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2** · related **882 links, 0 one-way**.
+
+---
+
+## Session record — Phase 8 wave D8: the domain where mistakes do not raise errors
+
+D8 is the first wave chosen by census rather than by the queue, and the census sent it back to
+where D1 started. `data` was still the worst ratio on the site at 74%, because D1 took eight
+cards out of forty and stopped — which is the finding that corrected Phase 8's closing record
+higher up this file.
+
+The spec is the sharpest one in the phase, and it is specific to this domain in a way the others
+were not:
+
+> **Everywhere else on this site, a mistake produces an error.** A misconfigured sensor logs
+> nothing; a bad Dockerfile fails to build; a wrong subnet mask drops the packet. In a database,
+> the common failure is a query that runs to completion, returns a plausible number, and is
+> wrong.
+
+| Card | The silent wrong answer |
+|---|---|
+| SQL Joins | A `WHERE` on the right-hand table turns a LEFT JOIN back into an INNER JOIN — **filters on the right belong in `ON`** |
+| Aggregation | Join first, aggregate second, and `SUM` cannot tell. Two one-to-many joins multiply by the *product* |
+| Window Functions | The default frame is `RANGE`, so tied rows all get the total *after* all of them. Write `ROWS` explicitly |
+| Subqueries & EXISTS | **`NOT IN` against a subquery holding one NULL returns zero rows.** Use `NOT EXISTS` and never have to know |
+| ACID & Transactions | Read-modify-write loses an update at `READ COMMITTED`, which is the default in three of the big four |
+| Reading Query Plans | `EXPLAIN` prints the estimate that *was* the mistake. The finding is the largest estimated-to-actual ratio |
+| Indexes | A `UNIQUE` index does not stop duplicate NULLs — every constraint in SQL has a NULL-shaped hole |
+| Time-Series | Yesterday's number changes when late events arrive, and nobody reruns the report |
+
+### The second half of the spec did the work
+
+*Name the silent wrong answer, and say how you would notice.* The detection clause is what
+separates these from folklore, and writing it forced each card to be concrete:
+
+- Joins — run it without the `WHERE` and compare row counts; if the filter drops you to exactly
+  the inner-join count, the `LEFT` is decorative.
+- Aggregation — aggregate the fact table alone and compare totals.
+- Window functions — look for identical consecutive running totals on rows with different
+  amounts.
+- Indexes — `SELECT COUNT(*) FROM t WHERE email IS NULL`, one query, on any nullable column you
+  believed was unique.
+- Time-series — recompute a week-old day and compare it to what was reported at the time.
+
+**ACID is the honest exception and says so**: you usually do *not* notice, which is precisely
+why it is the entry worth remembering. A card that claimed a detection there would have been
+inventing one.
+
+### The median's first reading
+
+```
+                        before   after
+thin topics                227     219
+data                 31 (74%)  23 (55%)
+mean chars/card          1,207   1,209
+median topic             2,948   2,965      ← +17
+10th percentile          1,362   1,364      ← +2
+```
+
+The new metric behaves exactly as it should and the reading needs stating plainly: **eight cards
+out of 1,420 cannot move a median far.** Seventeen characters is the arithmetic, not a
+disappointment. What the number is for is the shape over many waves — a programme that only ever
+deepened easy cards would hold the median flat while the thin count fell, and that divergence is
+visible over ten waves and invisible over one.
+
+The 10th percentile moving by two is the more interesting reading: cards leaving the bottom
+decile are replaced by the next ones up, so **the floor barely rises until the tail is genuinely
+worked**. That is the number to watch, and it is the number this phase has least right to feel
+good about yet.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
