@@ -83178,18 +83178,18 @@ moved the thing that was costing you.
 <span class="ctag ctag-general">JS</span>
 </div>
 <span class="domain-sub">Browser · CSS · JS · Frameworks · Performance · A11y</span>
-<span class="domain-meta" aria-label="39 topics, about 1h 20m to read"
->39 topics · ~1h 20m</span>
+<span class="domain-meta" aria-label="39 topics, about 1h 35m to read"
+>39 topics · ~1h 35m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
 <script type="text/html" class="domain-src" data-domain="web">
-<div class="topic" id="how-the-browser-renders-a-page" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="how-the-browser-renders-a-page" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖼️</span>
 <span class="topic-name">How the Browser Renders a Page</span>
 <span class="topic-badge">Browser</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83216,6 +83216,34 @@ fixed sequence of steps.
 won't paint unstyled content); a plain <code>&lt;script&gt;</code> blocks parsing.
 Use <code>defer</code>/<code>async</code> and keep critical CSS small so the page
 paints fast.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bug that sent you here</div>
+<div class="concept-title">The Text Jumps When the Font Loads, and the Page Is Blank Until the CSS Arrives</div>
+<div class="concept-desc">
+Two of the three most-reported &ldquo;the page feels broken&rdquo; symptoms are direct
+consequences of the render pipeline, and both are fixable in the head of the document.
+<strong class="c-amber">CSS is render-blocking by design</strong> &mdash; nothing paints until
+it arrives, because painting first would mean painting wrong. Fonts then arrive later still, and
+swapping them reflows text that was already on screen.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+<tr><td>Blank screen, then everything at once</td><td>Render-blocking CSS. Inline the critical rules; load the rest with <code>media</code> or asynchronously</td></tr>
+<tr><td>Text appears, then jumps as the font loads</td><td><code>font-display: swap</code> without matched metrics. Add <code>size-adjust</code> / <code>ascent-override</code> on a fallback, or <code>font-display: optional</code></td></tr>
+<tr><td>Layout shifts as images arrive</td><td>No reserved space. <code>width</code> and <code>height</code> attributes, or <code>aspect-ratio</code></td></tr>
+<tr><td>A synchronous <code>&lt;script&gt;</code> stalls first paint</td><td>Parser-blocking. <code>defer</code> for order-dependent scripts, <code>async</code> for independent ones</td></tr>
+<tr><td>The page paints and then freezes</td><td>A long task on the main thread after paint &mdash; hydration, or a large JSON <span class="acro-exp">(JavaScript Object Notation)</span> parse</td></tr>
+</table>
+<div class="concept-desc verdict">
+The order is the thing to hold: <strong>HTML parses, CSS blocks the first paint, layout
+computes geometry, paint fills pixels, compositing puts layers on screen</strong>. Every symptom
+above is one stage being made to wait or repeat. And the reason <code>transform</code> and
+<code>opacity</code> are the animation-safe properties is exactly this: they touch only the last
+stage.
 </div>
 </div>
 </div>
@@ -83283,12 +83311,12 @@ existence</strong>, and it costs one dropdown.
 </div>
 </div>
 </div>
-<div class="topic" id="the-dom-events-bubbling-delegation" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="the-dom-events-bubbling-delegation" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌳</span>
 <span class="topic-name">The DOM <span class="acro-exp">(Document Object Model)</span> &amp; Events — Bubbling &amp; Delegation</span>
 <span class="topic-badge">Browser</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83316,6 +83344,33 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
 uses bubbling to handle any child — essential for dynamic lists (no re-binding on
 add/remove). <code>stopPropagation()</code> halts bubbling;
 <code>preventDefault()</code> stops the browser's default action.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bug that sent you here</div>
+<div class="concept-title">The Click Handler Works, Until the Row Was Added After Page Load</div>
+<div class="concept-desc">
+The most common DOM bug in existence: handlers attached in a loop at load time, and any
+element created afterwards &mdash; by a fetch, a framework render, a &ldquo;load more&rdquo;
+button &mdash; has none. <strong class="c-amber">The element looks identical and does
+nothing</strong>, which is why the first instinct is usually to blame the CSS <span class="acro-exp">(Cascading Style Sheets)</span> or the framework
+rather than the listener that was never attached.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+<tr><td>New rows are dead, original rows work</td><td>Listeners were attached to elements that existed then. <strong>Delegate to a parent that always exists</strong> and check <code>e.target.closest('.row')</code></td></tr>
+<tr><td>A handler fires twice</td><td>It was attached twice &mdash; often a re-render that never removed the first. Same function reference or an <code>AbortController</code> signal to remove it</td></tr>
+<tr><td>Someone else's handler stopped firing</td><td><code>stopPropagation()</code> upstream. It is not a local decision: it silences every ancestor, including analytics and framework roots</td></tr>
+<tr><td>The form reloads the page</td><td>The <code>submit</code> handler threw before <code>preventDefault()</code>, or never called it</td></tr>
+<tr><td>A scroll or touch handler is janky</td><td>It is blocking. <code>{ passive: true }</code> tells the browser it will not call <code>preventDefault</code></td></tr>
+</table>
+<div class="concept-desc verdict">
+Delegation is the habit that removes the first two rows entirely: <strong>one listener on
+a container that outlives its children</strong> handles every present and future row, survives
+re-renders, and costs one listener instead of N. It is also why frameworks attach at the root
+rather than per element.
 </div>
 </div>
 </div>
@@ -83418,12 +83473,12 @@ your frame budget.
 </div>
 </div>
 </div>
-<div class="topic" id="flexbox-one-dimensional-layout" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="flexbox-one-dimensional-layout" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📏</span>
 <span class="topic-name">Flexbox — One-Dimensional Layout</span>
 <span class="topic-badge">CSS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83457,14 +83512,41 @@ justify-content:center; align-items:center</code> — the answer to a decade of
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The bug that sent you here</div>
+<div class="concept-title">The Flex Item Refuses to Shrink and Pushes the Page Wider Than the Screen</div>
+<div class="concept-desc">
+A long URL <span class="acro-exp">(Uniform Resource Locator)</span>, a wide table or a `pre` block inside a flex item makes the whole layout
+overflow horizontally, and no amount of <code>width: 100%</code> or <code>overflow: hidden</code>
+on the child fixes it. The cause is one line in the spec that nobody meets until it bites:
+<strong class="c-amber">a flex item's default <code>min-width</code> is <code>auto</code>, not
+<code>0</code></strong> &mdash; it will not shrink below its content's intrinsic size.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+<tr><td>Horizontal scrollbar caused by one long word or table</td><td><code>min-width: 0</code> on the flex item (or <code>min-height: 0</code> in a column)</td></tr>
+<tr><td><code>overflow-x: auto</code> on the child does nothing</td><td>The child is not too wide &mdash; the <em>item</em> refuses to shrink. Fix the item, then scroll inside the child</td></tr>
+<tr><td><code>flex: 1</code> items are not equal widths</td><td><code>flex: 1</code> is <code>1 1 0%</code>; <code>flex-grow: 1</code> alone leaves <code>flex-basis: auto</code>, which is content-sized</td></tr>
+<tr><td><code>gap</code> makes items overflow their container</td><td>Gaps are added after basis is computed. Let items shrink, or subtract the gap from the basis</td></tr>
+<tr><td>Text truncation with <code>text-overflow: ellipsis</code> never triggers</td><td>Same root cause. The ellipsis needs a constrained box, which <code>min-width: auto</code> prevents</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong><code>min-width: 0</code> is the single most useful line of CSS <span class="acro-exp">(Cascading Style Sheets)</span> in a flex
+layout</strong>, and it looks like it should do nothing. If a flex container is overflowing and
+you cannot see why, set it on the item before investigating anything else &mdash; it resolves
+this whole table's first, second and fifth rows at once.
 </div>
 </div>
-<div class="topic" id="css-grid-two-dimensional-layout" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="css-grid-two-dimensional-layout" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔲</span>
 <span class="topic-name">CSS <span class="acro-exp">(Cascading Style Sheets)</span> Grid — Two-Dimensional Layout</span>
 <span class="topic-badge">CSS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83494,6 +83576,34 @@ Grid is layout-driven: you define the structure, items flow in.
 layout, Flexbox for the components inside it. The
 <code>auto-fit + minmax</code> one-liner gives a fully responsive card grid with
 zero media queries.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bug that sent you here</div>
+<div class="concept-title">One Long Word Blows the Column Out Past 1fr</div>
+<div class="concept-desc">
+Grid has the same intrinsic-minimum rule as flexbox, wearing different syntax.
+<code>1fr</code> is shorthand for <code>minmax(auto, 1fr)</code>, and that <code>auto</code>
+minimum is the content's intrinsic size &mdash; so
+<strong class="c-amber">a wide table, a long URL <span class="acro-exp">(Uniform Resource Locator)</span> or a <code>pre</code> block makes a
+&ldquo;flexible&rdquo; column wider than its share</strong>, and the other columns shrink to
+compensate.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+<tr><td>A <code>1fr</code> column is far wider than the others</td><td>Its content will not fit. <strong><code>minmax(0, 1fr)</code></strong> lets it actually shrink</td></tr>
+<tr><td>The grid overflows its container horizontally</td><td>Same rule. Fix the track, then let the child scroll with <code>overflow-x: auto</code></td></tr>
+<tr><td><code>auto-fit</code> collapses to one column</td><td>No items, or a <code>minmax()</code> minimum larger than the container. <code>auto-fill</code> keeps empty tracks</td></tr>
+<tr><td>Items land in the wrong cells after one is hidden</td><td>Auto-placement re-flows. Name the areas, or place explicitly, if position must be stable</td></tr>
+<tr><td><code>grid-template-areas</code> silently does nothing</td><td>Every row string must have the same number of columns, or the whole declaration is invalid</td></tr>
+</table>
+<div class="concept-desc verdict">
+The pair to remember together: <strong><code>minmax(0, 1fr)</code> in Grid is
+<code>min-width: 0</code> in Flexbox</strong>. Both exist because both layout models default to
+&ldquo;never smaller than the content&rdquo;, which is the right default for text and the wrong
+one for anything that can be arbitrarily wide.
 </div>
 </div>
 </div>
@@ -83562,12 +83672,12 @@ Android over USB <span class="acro-exp">(Universal Serial Bus)</span> covers mos
 </div>
 </div>
 </div>
-<div class="topic" id="modern-css-custom-properties-has-layers" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="modern-css-custom-properties-has-layers" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">✨</span>
 <span class="topic-name">Modern CSS <span class="acro-exp">(Cascading Style Sheets)</span> — Custom Properties, :has() &amp; Layers</span>
 <span class="topic-badge">CSS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83595,6 +83705,34 @@ knowing because they simplify code you may still be writing the old way.
 <strong class="c-green">Custom properties + <code>prefers-color-scheme</code></strong>
 is how modern dark mode works — swap variable values, not whole stylesheets (exactly
 how this site themes itself).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bug that sent you here</div>
+<div class="concept-title">The var() Fallback Did Not Apply, and the Property Came Out Unset</div>
+<div class="concept-desc">
+Custom properties do not behave like the rest of CSS and the difference only shows up when
+something is wrong. They are substituted at computed-value time, which means a syntactically
+valid-looking value can be garbage by the time it is used &mdash; and when that happens the
+property becomes <strong class="c-amber">unset (inherited or initial), not the declaration you
+wrote before it</strong>. The usual cascade fallback does not save you.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Cause</th></tr>
+<tr><td>A property vanishes instead of using the earlier declaration</td><td><em>Invalid at computed-value time</em>. A bad <code>var()</code> makes the property <code>unset</code>, and an earlier valid declaration is <strong>not</strong> used</td></tr>
+<tr><td><code>var(--x, red)</code> ignored the fallback</td><td>The fallback applies when <code>--x</code> is <em>undefined</em>, not when it holds an invalid value</td></tr>
+<tr><td>A theme variable leaks into a component</td><td>Custom properties inherit. Set them on the element that owns the scope, not on <code>:root</code> by default</td></tr>
+<tr><td><code>--gap: 10</code> then <code>padding: var(--gap)px</code> fails</td><td>Substitution is textual and happens too late. Use <code>calc(var(--gap) * 1px)</code></td></tr>
+<tr><td><code>:has()</code> works in one browser and not the build</td><td>It is widely supported now, but a build-time CSS parser that predates it can drop the whole rule</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two habits make the whole class of bug visible. <strong>Type your custom properties with
+<code>@property</code></strong> where the browser supports it &mdash; it gives them a syntax, an
+initial value, and real invalid-value behaviour instead of silent unsetting. And
+<strong>register fallbacks at the point of use</strong>, because a <code>var()</code> that
+resolves to nothing is a very quiet way to lose a colour.
 </div>
 </div>
 </div>
@@ -83636,12 +83774,12 @@ palette of choices keeps a big UI <span class="acro-exp">(User Interface)</span>
 </div>
 </div>
 </div>
-<div class="topic" id="closures-scope-this" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="closures-scope-this" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔒</span>
 <span class="topic-name">Closures, Scope &amp; <code>this</code></span>
 <span class="topic-badge">JavaScript</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83673,14 +83811,41 @@ it. Closures power data privacy, memoization, and every event handler that
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The bug that sent you here</div>
+<div class="concept-title">The Loop Printed 5 Five Times, and This Became Undefined</div>
+<div class="concept-desc">
+Two symptoms bring people to this card, and neither of them sounds like
+&ldquo;closures&rdquo;. One: a loop that schedules something prints the <em>final</em> value
+every time instead of 0, 1, 2, 3, 4. Two: a method that works as <code>obj.save()</code> throws
+<strong class="c-amber">&ldquo;Cannot read properties of undefined&rdquo;</strong> the moment
+you pass it somewhere as <code>obj.save</code>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+<tr><td><code>for (var i…) setTimeout(() =&gt; log(i))</code> prints 5, 5, 5, 5, 5</td><td><code>var</code> is function-scoped &mdash; one <code>i</code>, shared. <strong><code>let</code> makes one binding per iteration</strong></td></tr>
+<tr><td>A callback reads a stale value from an earlier render</td><td>It closed over that render's variable. In React, that is the dependency array's job</td></tr>
+<tr><td><code>this</code> is undefined inside a passed method</td><td><code>this</code> is decided by <em>how the function is called</em>, not where it was written</td></tr>
+<tr><td>Fix for that</td><td><code>obj.save.bind(obj)</code>, an arrow wrapper <code>() =&gt; obj.save()</code>, or make it a class field</td></tr>
+<tr><td>An arrow function inside a method sees the right <code>this</code></td><td>Arrows have no <code>this</code> of their own &mdash; they take the enclosing one. This is why they fixed the 2010s callback mess</td></tr>
+</table>
+<div class="concept-desc verdict">
+The single sentence that resolves both symptoms: <strong>a closure captures the variable,
+not its value at the time</strong>, and <code>this</code> is not part of the closure at all. Once
+those are separated, the <code>var</code>/<code>let</code> loop and the detached-method error stop
+looking like the same mystery, which is how most people first meet them.
 </div>
 </div>
-<div class="topic" id="async-deep-promises-await-the-event-loop" data-reviewed="2026-08" data-read="2" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="async-deep-promises-await-the-event-loop" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⏳</span>
 <span class="topic-name">Async Deep — Promises, await &amp; the Event Loop</span>
 <span class="topic-badge">JavaScript</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83715,14 +83880,42 @@ independent.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The bug that sent you here</div>
+<div class="concept-title">forEach Returned Immediately and Nothing Was Saved</div>
+<div class="concept-desc">
+Two opposite symptoms, both from the same misunderstanding of what <code>await</code>
+does. One: an <code>async</code> callback inside <code>forEach</code> &mdash; the loop finishes
+instantly, the function returns, and <strong class="c-amber">the writes land after the caller has
+already moved on</strong>, or not at all. Two: a <code>for</code> loop with <code>await</code>
+inside takes thirty seconds for thirty requests that could have taken one.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+<tr><td><code>arr.forEach(async x =&gt; await save(x))</code> completes instantly</td><td><code>forEach</code> ignores the returned promise. Use <code>for…of</code> with <code>await</code>, or <code>Promise.all(arr.map(save))</code></td></tr>
+<tr><td>Thirty sequential requests take thirty seconds</td><td><code>await</code> inside a loop serialises. <code>Promise.all</code> when they are independent</td></tr>
+<tr><td>&ldquo;UnhandledPromiseRejection&rdquo; with no stack you recognise</td><td>A promise nobody awaited threw. <code>Promise.allSettled</code> when partial failure is acceptable</td></tr>
+<tr><td>One failure loses all the successes</td><td><code>Promise.all</code> rejects on the first failure. <code>allSettled</code> returns every outcome</td></tr>
+<tr><td>A <code>setTimeout(…, 0)</code> runs after a resolved promise</td><td>Microtasks (promises) drain before the next macrotask (timers). That ordering is the event loop</td></tr>
+</table>
+<div class="concept-desc verdict">
+The sentence that covers all five: <strong><code>await</code> pauses the function it is
+in, and nothing else.</strong> It does not pause a loop that never looked at the promise, does not
+make independent work parallel, and does not stop the rest of the program. Deciding whether calls
+are independent is the whole design question &mdash; <code>Promise.all</code> when they are,
+<code>for…of</code> with <code>await</code> when each depends on the last.
 </div>
 </div>
-<div class="topic" id="prototypes-modern-classes" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="prototypes-modern-classes" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧬</span>
 <span class="topic-name">Prototypes &amp; Modern Classes</span>
 <span class="topic-badge">JavaScript</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83746,6 +83939,34 @@ how method lookup and <code>class</code> actually work.
 <strong class="c-amber">Modern advice:</strong> favor composition and plain objects
 /modules over deep class hierarchies. But you must understand prototypes to debug
 "why is this method undefined?" and to read library code.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bug that sent you here</div>
+<div class="concept-title">It Worked as obj.method() and Broke as setTimeout(obj.method)</div>
+<div class="concept-desc">
+<code>class</code> syntax hides prototypes well enough that people meet them only when
+something breaks. The usual entry point: a method works when called on the object and throws when
+passed as a reference, because <strong class="c-amber">a class method lives on the prototype and
+is not bound to the instance</strong>. Detach it and it arrives with no
+<code>this</code>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>What is actually happening</th></tr>
+<tr><td><code>setTimeout(obj.tick, 100)</code> throws</td><td>The function was extracted from the prototype; <code>this</code> is now undefined (class bodies are strict mode)</td></tr>
+<tr><td><code>tick = () =&gt; {…}</code> as a class field works</td><td>A field is per-instance and the arrow captures <code>this</code>. Costs one function per instance</td></tr>
+<tr><td><code>instanceof</code> false for an object that clearly is one</td><td>Two copies of the library, or a different realm (iframe, worker) &mdash; different prototype objects</td></tr>
+<tr><td>A property appears on every instance you never set</td><td>Something wrote to the prototype. <code>Object.hasOwn(obj, k)</code> distinguishes own from inherited</td></tr>
+<tr><td><code>JSON.stringify</code> drops the methods</td><td>Methods are on the prototype and are not own enumerable properties. Nothing is wrong</td></tr>
+</table>
+<div class="concept-desc verdict">
+The mental model that makes all five predictable: <strong>a class is a function with an
+object hanging off it</strong>, instances hold data and delegate behaviour up the prototype chain,
+and <code>this</code> is supplied by the call rather than the definition. Prefer prototype methods
+by default, and reach for a bound class field only for the callbacks you actually pass
+around.
 </div>
 </div>
 </div>

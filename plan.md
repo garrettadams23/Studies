@@ -11067,6 +11067,39 @@ three of them:
 
 **✅ D8 shipped** — 8 cards, `data` 31 → 23 thin (74% → 55%).
 
+### The D9 spec — the bug that sent you here
+
+`web`'s second wave takes the other half of the domain. D5 worked the tooling and performance
+cards, where the gap was the developer's own machine. What is left in the thin list splits
+cleanly into framework cards and **fundamentals** — Closures, Prototypes, the DOM and events,
+Promises, Flexbox, Grid, custom properties, how a page renders — and those have a different
+problem entirely.
+
+Nobody reads a closures card out of curiosity. They read it because a loop printed the same
+number five times, or a value went stale inside a callback, and something sent them looking.
+The thin fundamentals cards explain the mechanism and never name the symptom, which means
+**the reader who needs the card most cannot recognise that this is the card**.
+
+> **The addition: the bug that sent you here.** Symptom first, in the words someone would use
+> before they knew the cause; mechanism second.
+
+One test, and it is strict: the symptom has to be **recognisable without knowing the
+answer**. "You misunderstand the event loop" is not a symptom. "Your `forEach` finished
+instantly and nothing was saved" is.
+
+| Card | The symptom |
+|---|---|
+| Closures, Scope & `this` | The loop printed `5` five times; `this` became undefined when you passed the method somewhere |
+| Prototypes & Modern Classes | It worked as `obj.method()` and broke as `setTimeout(obj.method)` |
+| The DOM & Events | The click handler works, until the row was added after page load |
+| Async Deep | `forEach` returned immediately and nothing was saved; a loop of `await` took thirty seconds |
+| Flexbox | The flex item refuses to shrink and pushes the layout wider than the screen |
+| CSS Grid | One long word or a wide table blows the column out past `1fr` |
+| Modern CSS | A `var()` fallback did not apply, and the property came out `unset` rather than inherited |
+| How the Browser Renders a Page | The text jumps when the font loads, and the page is blank until the stylesheet arrives |
+
+**✅ D9 shipped** — 8 cards, `web` 25 → 17 thin (64% → 44%).
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13197,5 +13230,73 @@ The 10th percentile moving by two is the more interesting reading: cards leaving
 decile are replaced by the next ones up, so **the floor barely rises until the tail is genuinely
 worked**. That is the number to watch, and it is the number this phase has least right to feel
 good about yet.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D9: the card the reader cannot recognise
+
+D5 worked `web`'s tooling and performance cards. What was left was the fundamentals —
+closures, prototypes, events, promises, Flexbox, Grid, custom properties, the render pipeline —
+and they were thin for a reason none of the earlier specs would have caught.
+
+**Nobody reads a closures card out of curiosity.** They read it because a loop printed the same
+number five times. The thin fundamentals cards explain the mechanism correctly and never name
+the symptom, which means the reader who needs the card most has no way to tell that this is the
+card. The page is searchable by cause and the reader only has the effect.
+
+| Card | The symptom, in the words used before the cause is known |
+|---|---|
+| Closures, Scope & `this` | The loop printed `5` five times; `this` went undefined when the method was passed somewhere |
+| Prototypes & Modern Classes | It worked as `obj.method()` and broke as `setTimeout(obj.method)` |
+| The DOM & Events | The click handler works, until the row was added after page load |
+| Async Deep | **`forEach` returned immediately and nothing was saved**; thirty `await`s took thirty seconds |
+| Flexbox | The flex item refuses to shrink and pushes the page wider than the screen |
+| CSS Grid | One long word blows a `1fr` column out past its share |
+| Modern CSS | A `var()` fallback did not apply, and the property came out `unset` |
+| How the Browser Renders a Page | The text jumps when the font loads; the page is blank until the CSS arrives |
+
+### The test that kept this honest
+
+*The symptom has to be recognisable without knowing the answer.* That rejected four first
+drafts, all of which had written the symptom from the far side of the explanation — "you have
+misunderstood the event loop" describes a reader who already knows what is wrong. It is
+surprisingly hard to write, because by the time you can explain a bug you have forgotten what it
+looked like before you could.
+
+The best evidence the constraint worked: **two pairs of cards turned out to share a root
+cause**, and neither would have surfaced without symptom-first writing. Flexbox's
+`min-width: auto` and Grid's `minmax(auto, 1fr)` are the same rule in two syntaxes, and both
+cards now say so explicitly:
+
+> `minmax(0, 1fr)` in Grid is `min-width: 0` in Flexbox. Both exist because both layout models
+> default to "never smaller than the content" — the right default for text, the wrong one for
+> anything that can be arbitrarily wide.
+
+And Closures and Prototypes both produce the same "`this` is undefined" error from two different
+directions, which is exactly why it confuses people: the two cards now separate *a closure
+captures the variable, not its value* from *`this` is supplied by the call, not the definition*.
+
+### The measurement
+
+```
+                        D8 end   D9 end
+thin topics                219      211
+web                                25 →  17   (64% → 44%)
+mean chars/concept card  1,209    1,210
+median topic             2,965    2,996      ← +31, the largest move yet
+10th percentile          1,364    1,365      ← +1
+```
+
+The median moved 31 this wave against 17 last, because `web`'s fundamentals cards were sitting
+just below it rather than at the very bottom — deepening a card at the 55th percentile does more
+to the median than deepening one at the 5th. **The 10th percentile moved by one**, which
+continues to be the honest number: nine waves in, the actual floor of this site has not moved,
+and it will not until a wave deliberately targets the shortest cards rather than the ones with
+the most to say.
+
+That is now a named commitment rather than an observation: **D10 goes to the bottom decile by
+character count, across whatever domains it falls in.**
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
