@@ -184,10 +184,15 @@ def stamp_reading_time(body):
         end = starts[n + 1] if n + 1 < len(starts) else len(body)
         block = body[start:end]
         minutes = max(1, round(len(_TAG_RE.sub("", block)) / CHARS_PER_MINUTE))
-        cut = start + len(TOPIC_OPEN)
+        # At the *end* of the open tag, not straight after `class="topic"`.
+        # The first version inserted here and pushed `id` rightwards, which
+        # silently broke orphan_report.py's `<div class="topic" id="..."`
+        # regex — it reported "0 of 0 topics" and read like a clean result.
+        cut = start + block.index(">") + 1
         chev = _CHEV_RE.search(block)
-        out.append(body[prev:cut])
+        out.append(body[prev:cut - 1])
         out.append(f' data-read="{minutes}"')
+        out.append(">")
         if chev:
             # Before the chevron, after the badge: the chevron is the affordance
             # and stays rightmost.
@@ -238,9 +243,9 @@ def stamp_level(body):
         else:
             level = "core"
         counts[level] += 1
-        cut = start + len(TOPIC_OPEN)
-        out.append(body[prev:cut])
-        out.append(f' data-level="{level}"')
+        cut = start + body[start:end].index(">") + 1     # end of the open tag
+        out.append(body[prev:cut - 1])
+        out.append(f' data-level="{level}">')
         prev = cut
     out.append(body[prev:])
     return "".join(out), counts

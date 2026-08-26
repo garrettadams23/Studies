@@ -12461,8 +12461,15 @@ decoration.
 
 **Seven waves, 56 cards, 288 thin → 231.** §6's table is complete and every row is ticked. The
 target in §8 was *under 150*, so the honest position is that the plan's queue got 40% of the way
-there and the remaining 81 cards live in the tail the table never named — `script`, `linux`,
-`ops`, `sec`, and the long thin middle of a dozen smaller domains.
+there and 81 cards still stand between here and it.
+
+> **Correction, made when the D8 census was actually run.** The sentence that followed this one
+> said those 81 cards "live in the tail the table never named — `script`, `linux`, `ops`,
+> `sec`". That was a guess and it was wrong. The census puts **184 of the 227 remaining thin
+> cards inside the seven domains the queue already worked** — `data` 31, `redteam` 32, `cloud`
+> 32, `blueteam` 28, `web` 25, `eng` 24, `devops` 12 — because each wave took eight and the
+> domains were never finished. The unnamed tail is 43 cards, not 81. The queue's shape was
+> right and its depth per domain was not.
 
 Anyone writing a wave D8 should not extend this table by guessing. The census to run first:
 

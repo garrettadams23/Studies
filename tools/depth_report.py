@@ -66,7 +66,7 @@ def main():
     if "--domain" in args:
         only = args[args.index("--domain") + 1]
 
-    rows, thin_rows = [], []
+    rows, thin_rows, lengths = [], [], []
     total = thin = chars = cards = 0
     for dom in json.loads((DATA / "domains.json").read_text(encoding="utf-8")):
         did = dom["id"]
@@ -78,6 +78,8 @@ def main():
             n += 1
             chars += length
             cards += cc
+            if did not in REFERENCE_DOMAINS:
+                lengths.append(length)
             if cc <= 1 and length < THIN_CHARS and did not in REFERENCE_DOMAINS:
                 thin += 1
                 t += 1
@@ -102,7 +104,22 @@ def main():
     print(f"{total:,} topics · {thin} single-concept and under {THIN_CHARS:,} plain "
           f"chars ({round(100 * thin / total)}%)")
     print(f"mean chars per concept card: {round(chars / max(cards, 1)):,}   "
-          f"← the padding counter-metric: it must not rise\n")
+          f"← the padding counter-metric: it must not rise")
+    # The mean is not enough on its own, and Phase 8's closing record said so
+    # before this line existed: seven waves each picked eight cards and nothing
+    # forced them to be the eight hardest. A programme that only ever deepened
+    # the easiest cards would leave the mean flat and the **median** flat too —
+    # while a programme reaching the real tail moves the median up, because the
+    # cards it lifts are the ones sitting below it.
+    if lengths:
+        lengths.sort()
+        mid = len(lengths) // 2
+        median = lengths[mid] if len(lengths) % 2 else (lengths[mid - 1] + lengths[mid]) // 2
+        p10 = lengths[len(lengths) // 10]
+        print(f"median topic: {median:,} plain chars · 10th percentile: {p10:,}   "
+              f"← the tail: this is what a deepening wave has to move\n")
+    else:
+        print()
     print(f"{'domain':<13}{'thin':>6}{'topics':>8}{'thin %':>8}")
     for pct, t, n, did in rows:
         note = "  (reference — excluded)" if did in REFERENCE_DOMAINS else ""

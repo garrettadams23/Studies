@@ -37,7 +37,12 @@ DEEP_CARDS = 3
 DEEP_CHARS = 3000
 
 TAG_RE = re.compile(r"<[^>]+>")
-TOPIC_RE = re.compile(r'<div class="topic" id="([^"]+)"')
+# Order-independent on purpose. The first version required `id` immediately
+# after `class="topic"`, and a later build change that stamped `data-read` and
+# `data-level` into the same tag pushed `id` rightwards — this tool then found
+# no topics at all and printed "0 of 0", which reads exactly like a clean
+# result. See the zero-topic guard in main().
+TOPIC_RE = re.compile(r'<div class="topic"[^>]*?\sid="([^"]+)"')
 DOMAIN_RE = re.compile(
     r'<script type="text/html" class="domain-src" data-domain="([^"]+)">(.*?)</script\s*>', re.S)
 
@@ -75,7 +80,17 @@ def main():
 
     linked = linked_ids()
     rows, total, orphans = [], 0, 0
-    for tid, did, chars, cards in built_topics():
+    parsed = list(built_topics())
+    # A census that finds nothing on a 1,400-topic site is broken, not clean.
+    # This tool once printed "0 of 0 topics have no related link" for two weeks
+    # because a build change moved an attribute, and the line reads like good
+    # news. Fail loudly instead.
+    if not parsed:
+        raise SystemExit(
+            "error: parsed 0 topics from index.html — the topic regex no longer "
+            "matches the built markup. Run 'python build.py' first; if the page "
+            "is current, this tool needs updating, not the page.")
+    for tid, did, chars, cards in parsed:
         if only and did != only:
             continue
         total += 1
