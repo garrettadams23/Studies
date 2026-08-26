@@ -1506,6 +1506,29 @@ function searchTerms(term) {
 }
 
 /**
+ * A test for one search term against a topic's text.
+ *
+ * Long terms match as substrings, which is what a reader expects: typing
+ * "kerber" should find Kerberos. **Short ones must not**, and the reason is
+ * the acronym map rather than the reader. Searching "incident response" adds
+ * the dictionary's alternate "IR", and `text.includes("ir")` is true of
+ * "requires", "first", "third" and "directory" — so the query returned 1,220
+ * of 1,367 topics, which is not a search result, it is the site.
+ *
+ * The guard in searchTerms() covers the *lookup* ("IP" must not pull in every
+ * expansion containing "internet"); this covers the *match*, which is the
+ * other half and was missing. Word-boundary rather than \b, so a term with
+ * punctuation in it still behaves.
+ */
+const SHORT_TERM = 4;
+function matcher(lowered) {
+  if (lowered.length > SHORT_TERM) return text => text.includes(lowered);
+  const esc = lowered.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`(?<![a-z0-9])${esc}(?![a-z0-9])`);
+  return text => re.test(text);
+}
+
+/**
  * Split a raw query into its operators, its quoted phrases and the free text.
  *
  * At 1,300+ topics a bare substring search returns more than a reader can use,
@@ -1640,7 +1663,7 @@ function runSearch(raw) {
   // content the reader was looking for.
   const textTerms = q.text ? searchTerms(q.text) : [];
   _searchTermList = [...q.phrases, ...textTerms];
-  const loweredText = textTerms.map(t => t.toLowerCase());
+  const loweredText = textTerms.map(t => t.toLowerCase()).map(matcher);
   const loweredPhrases = q.phrases.map(p => p.toLowerCase());
   let matchCount = 0, domainCount = 0, firstHit = null;
 
@@ -1657,7 +1680,7 @@ function runSearch(raw) {
       // query or any of its acronym equivalents. A query that is only
       // operators and phrases matches on the phrases alone.
       if (!loweredPhrases.every(p => t.text.includes(p))) return;
-      if (loweredText.length && !loweredText.some(l => t.text.includes(l))) return;
+      if (loweredText.length && !loweredText.some(m => m(t.text))) return;
       hits.add(t.id);
     });
     if (!hits.size) {

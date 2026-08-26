@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test a11y og visual all fmt acronyms stamp census clean help
+.PHONY: build check test a11y og visual all fmt acronyms stamp census clean help search
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -58,6 +58,10 @@ census:
 ## test: drive the built page in a real browser (needs playwright + chromium)
 test:
 	$(NODE) tools/smoke_test.mjs
+
+## search: does searching for a thing find it (plan.md Phase 10 T5)
+search:
+	$(NODE) tools/search_test.mjs
 
 ## a11y: axe-core over the shell, a domain and a dialog, in both themes
 a11y:

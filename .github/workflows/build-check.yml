@@ -166,6 +166,13 @@ jobs:
       - name: Smoke-test the built page
         run: node tools/smoke_test.mjs
 
+      # Does searching for a thing find it. Separate from the smoke test, which
+      # checks that search *narrows the page*; this checks that it narrows to
+      # the right card. A content change that renames a topic or rewords the
+      # phrase a reader would search for breaks retrieval silently otherwise.
+      - name: Search quality
+        run: node tools/search_test.mjs
+
       # axe-core over the shell, an open domain and a dialog, in both themes.
       # Separate from the smoke test because it runs a third-party rule set that
       # can grow new rules between versions — mixing them would make a smoke

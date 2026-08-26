@@ -11415,7 +11415,7 @@ them.
 from anywhere else" rather than "topics missing metadata". Roughly 159 topics × 2 pairs is a
 few sessions of genuinely high-return work.
 
-## T5 — A search-quality harness
+## ✅ T5 — A search-quality harness
 
 The site has search, acronym-aware search and a quiz built on the same index, and **nothing
 tests whether searching for a thing finds it**. Every other user-facing behaviour has a
@@ -11480,7 +11480,7 @@ not a stylistic difference.
 | 3 | **T2** near-duplicates | Phase 9 needs it, and the `--title` mode prevents the next instance |
 | 4 | **T4** orphan report | Turns a vague "the related map is partial" into 159 named cards |
 | 5 | ✅ **T9** contradiction pass | Ten minutes, reuses an existing tool, and finds real bugs if any exist. **It found two — in the tool** |
-| 6 | **T5** search harness | The last untested user-facing behaviour |
+| 6 | ✅ **T5** search harness | The last untested user-facing behaviour. **21 fixtures, 6 known misses, and one query that returned 90% of the site** |
 | 7–9 | T6, T7, T8 | Reader-facing; genuinely nice, and none of them is load-bearing |
 
 
@@ -12531,3 +12531,71 @@ that passes on first run has not been tested. Fixtures prove the comparison; onl
 known-bad case into real data proves the plumbing.**
 
 `make check` and CI both run `--self-test`, `--strict` and `--pairs --strict`.
+
+---
+
+## Session record — Phase 10 T5: there is no top three
+
+T5's spec scored fixtures as *expected topic in the top three*. Writing the harness found the
+first problem immediately: **there is no top three.** The search is substring matching over a
+per-domain index and hands back an unordered `Set`; nothing ranks. Scoring against a ranking
+that does not exist would have been the sixth check in this repo to measure something adjacent
+to its claim, so the spec's scoring was dropped rather than faked.
+
+What is actually true of an unranked result set is two things, and the harness measures both:
+
+| Measure | Why it is the honest one |
+|---|---|
+| **Found** — the expected topic is in the hits | This is the regression test T5 was for. A renamed card or a reworded phrase breaks it |
+| **Scan cost** — how many results the reader must read | With no ranking, result-set size *is* the quality metric. A per-fixture ceiling stops a query quietly widening to half the site |
+
+### The bug the harness found on its first run
+
+`"incident response"` returned **1,220 of 1,367 topics.**
+
+The cause is a guard that covers half of what it needs to. `searchTerms()` looks the query up in
+the acronym dictionary and adds what it finds — for "incident response", the alternate `IR`. Its
+docstring says, correctly, that the *lookup* must be exact, "a substring match would make IP pull
+in every expansion containing the word internet". But the alternate is then matched against topic
+text with `text.includes("ir")`, which is true of *requires*, *first*, *third* and *directory*.
+The lookup was guarded; the match was not.
+
+Fixed with a `matcher()` that keeps substring behaviour for terms over four characters — typing
+`kerber` should still find Kerberos — and requires word boundaries below that.
+
+```
+                       before   after
+"incident response"     1,220      49
+"mtu"                       5       3   ← two were "nmtui"
+"dns"                     120     109
+"kerberos"                 25      25   ← unchanged, as it should be
+```
+
+### The known misses are the deliverable, not a shortfall
+
+Six queries a reader plausibly types return nothing, and the harness prints them every run
+rather than hiding them:
+
+| Query | Why it misses |
+|---|---|
+| `tcp handshake` | Two words that never appear adjacent on the site |
+| `three way handshake` | The site writes it *three-way* |
+| `wifi 6` | The site writes it *Wi-Fi 6*; only the hyphenated form matches |
+| `why is my laptop slow` | A whole sentence, matched as one substring |
+| `page loads halfway` | The MTU card says *half-loading* |
+| `POAM` | The dictionary entry is now `POA&M`, and the map keys on that |
+
+They gate nothing. Four of the six are the same root cause — **whole-string substring matching
+has no notion of words** — which is the single largest available improvement to this site's
+search and is a bigger change than a harness. Writing it down here is what makes it a decision
+somebody takes rather than a thing nobody noticed. The harness also reports a miss that starts
+working, so the backlog cannot quietly grow.
+
+### Proved, not assumed
+
+Same rule as T9, applied without needing to relearn it. 21/21 passing is exactly the result a
+harness that cannot fail would produce, so: `one-way audio` was renamed out of `data/net.html`,
+the page rebuilt, and the fixture went `FAIL … 0 result(s) — NOT FOUND`. Restored, and the run
+returned to 21/21. That is the failure T5 exists to catch, demonstrated rather than asserted.
+
+`make search` and a CI step run it. `make test` is unchanged at **138/138**.
