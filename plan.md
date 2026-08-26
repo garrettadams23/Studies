@@ -11786,3 +11786,54 @@ ceiling. All three tools guard `SIGPIPE`, because a census is a thing people pip
 
 **Remaining in Phase 10:** T5 search harness, T9 contradiction pass over the duplicate pairs,
 and the three reader-facing items T6–T8.
+
+
+## Session record — two bugs found by reading Phase 9's own preconditions
+
+Phase 9 §4 lists what a topic merge costs, and the list is what makes "merge, never delete"
+the rule: the permalink dies, and **five `localStorage` prefixes orphan** — `reviewed:`
+`bookmark:` `known:` `srs:` `note:`. The alias map exists to prevent both.
+
+Before doing a single merge, I read the code that does the preventing. It did not.
+
+### Bug one — `note:` was never migrated
+
+```js
+[REVIEWED_PREFIX, BOOKMARK_PREFIX, KNOWN_PREFIX, SRS_PREFIX].forEach(p => {
+```
+
+Four of the five. The missing one is the only piece of progress a reader **writes by hand**
+— everything else is a click. So every rename in the site's history has silently discarded
+the reader's own words while carefully preserving their checkboxes, and Phase 9 was about to
+do it twenty-three more times.
+
+### Bug two — the migration ran once per device, ever
+
+```js
+const ALIAS_MIGRATED_KEY = "migrated:slug-aliases-v1";
+if (localStorage.getItem(ALIAS_MIGRATED_KEY)) return 0;
+```
+
+A boolean. A device that had visited before the merge would never migrate an alias added
+after it — which is every device, for every future merge. The alias map's *hash redirect*
+would still work, so the link would resolve and the progress would not follow it.
+
+The flag is now keyed on the **contents** of the alias map — an FNV-1a hash of the sorted
+pairs — so it changes exactly when the map does, runs once more, and does nothing on a
+device that has already seen that map. Previous-generation flags are removed when the new
+one is written, so they do not accumulate one per revision.
+
+### And a test, because neither half had one
+
+Three checks, and the middle one is named for what it is: *a note survives the move, which is
+the one it used to lose*. The third proves a second run with an unchanged map moves nothing
+and leaves exactly one flag. **135 → 138 smoke checks.**
+
+### The general point
+
+Phase 9 is a queue of twenty-three merges. Reading the preconditions before starting cost
+twenty minutes and found a data-loss bug that had been live for the whole history of the
+alias map — **and it would have been invisible after the merges, because a lost note leaves
+nothing behind to notice.** The plan section that made this findable is the one listing what
+the work *costs*, which is the least interesting part of a plan to write and turned out to be
+the load-bearing one.

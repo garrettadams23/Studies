@@ -1183,7 +1183,13 @@ function recentTopics() {
 // every permalink anyone shared and orphans the progress stored under the old
 // id. tools/fix_topic_names.py records each move; build.py inlines the map.
 
-const ALIAS_MIGRATED_KEY = "migrated:slug-aliases-v1";
+// The flag is keyed on the *contents* of the alias map, not on a version
+// number. A boolean ran the migration once per device and then never again, so
+// an alias added later — every topic merge does that — moved nobody's progress
+// on a device that had already visited. Hashing the map means the key changes
+// exactly when the map does, the migration runs once more, and a device that
+// has seen this map does nothing.
+const ALIAS_MIGRATED_PREFIX = "migrated:slug-aliases:";
 let _slugAliases = null;
 
 function slugAliases() {
@@ -1204,13 +1210,29 @@ function slugAliases() {
  * run a no-op, so this cannot keep resurrecting keys the user has since
  * cleared.
  */
+function aliasMapKey(aliases) {
+  // FNV-1a over the sorted pairs. Not a security hash — it only has to change
+  // when the map does, and be the same length every time.
+  const src = Object.keys(aliases).sort().map(k => k + ">" + aliases[k]).join("|");
+  let h = 0x811c9dc5;
+  for (let i = 0; i < src.length; i++) {
+    h ^= src.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return ALIAS_MIGRATED_PREFIX + h.toString(36);
+}
+
 function migrateAliasedProgress() {
-  if (localStorage.getItem(ALIAS_MIGRATED_KEY)) return 0;
   const aliases = slugAliases();
+  const flag = aliasMapKey(aliases);
+  try { if (localStorage.getItem(flag)) return 0; } catch { return 0; }
   let moved = 0;
   Object.keys(aliases).forEach(old => {
     const now = aliases[old];
-    [REVIEWED_PREFIX, BOOKMARK_PREFIX, KNOWN_PREFIX, SRS_PREFIX].forEach(p => {
+    // NOTE_PREFIX is here deliberately. It was missing, so a merged or renamed
+    // topic silently discarded the one piece of progress the reader actually
+    // wrote themselves — which is the opposite of what the alias map is for.
+    [REVIEWED_PREFIX, BOOKMARK_PREFIX, KNOWN_PREFIX, SRS_PREFIX, NOTE_PREFIX].forEach(p => {
       const from = localStorage.getItem(p + old);
       if (from === null) return;
       if (localStorage.getItem(p + now) === null) {
@@ -1219,7 +1241,15 @@ function migrateAliasedProgress() {
       localStorage.removeItem(p + old);
     });
   });
-  try { localStorage.setItem(ALIAS_MIGRATED_KEY, "1"); } catch { /* quota */ }
+  try {
+    // Drop the previous generation's flag (and the original v1 boolean) so the
+    // keys do not accumulate one per alias-map revision, forever.
+    Object.keys(localStorage)
+      .filter(k => (k.startsWith(ALIAS_MIGRATED_PREFIX) || k === "migrated:slug-aliases-v1")
+                   && k !== flag)
+      .forEach(k => localStorage.removeItem(k));
+    localStorage.setItem(flag, "1");
+  } catch { /* quota, or storage blocked entirely */ }
   return moved;
 }
 

@@ -1457,6 +1457,50 @@ check("the preview text quotes the site's real size",
   && preview.ogDesc.includes(asWritten(preview.topics)),
   `${asWritten(preview.topics)} topics, ${preview.domains} domains`);
 
+// ── the alias map moves progress, including notes ───────────────────────────
+// Both halves of this were broken and neither was covered. `note:` was missing
+// from the migrated prefixes, so a merged topic silently discarded the one
+// piece of progress a reader writes by hand; and the run-once flag was a
+// boolean, so an alias added later never migrated on a device that had already
+// visited — which is every device, for every future topic merge.
+await step("the alias map migrates progress onto the current id", async () => {
+  const outcome = await page.evaluate(() => {
+    const aliases = JSON.parse(document.getElementById("slug-aliases").textContent);
+    const [old] = Object.keys(aliases);
+    if (!old) return { skipped: true };
+    const now = aliases[old];
+    const prefixes = ["reviewed:", "bookmark:", "known:", "srs:", "note:"];
+    prefixes.forEach(p => { localStorage.removeItem(p + old); localStorage.removeItem(p + now); });
+    Object.keys(localStorage)
+      .filter(k => k.startsWith("migrated:slug-aliases"))
+      .forEach(k => localStorage.removeItem(k));
+
+    localStorage.setItem("reviewed:" + old, "2026-01");
+    localStorage.setItem("note:" + old, "a note the reader wrote");
+    const moved = migrateAliasedProgress();
+
+    const result = {
+      moved,
+      reviewed: localStorage.getItem("reviewed:" + now),
+      note: localStorage.getItem("note:" + now),
+      oldCleared: localStorage.getItem("note:" + old) === null,
+      // A second call with the same map must do nothing.
+      secondRun: migrateAliasedProgress(),
+      flags: Object.keys(localStorage).filter(k => k.startsWith("migrated:slug-aliases")).length,
+    };
+    prefixes.forEach(p => localStorage.removeItem(p + now));
+    return result;
+  });
+  if (outcome.skipped) return check("the alias map migrates progress onto the current id",
+    true, "no aliases to test");
+  check("the alias map migrates progress onto the current id",
+    outcome.reviewed === "2026-01" && outcome.oldCleared, `moved ${outcome.moved}`);
+  check("a note survives the move, which is the one it used to lose",
+    outcome.note === "a note the reader wrote", outcome.note || "lost");
+  check("a second run with an unchanged map is a no-op",
+    outcome.secondRun === 0 && outcome.flags === 1, `${outcome.secondRun} moved, ${outcome.flags} flag(s)`);
+});
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
