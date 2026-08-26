@@ -11304,6 +11304,12 @@ Deleting a topic is not free, and this file has established exactly how not free
 | Related-map edges break | `suggest_related.py --check` will catch it; the fix is to repoint, not to delete the pair |
 | Learning-path steps break | `check_paths.py` catches it; same fix |
 
+**And a third option, added in wave C4 and absent from the table above: move.** When §3 says
+keep both and the two cards are in the wrong *places* rather than duplicated, changing a card's
+domain costs nothing at all — ids are `slugify(title)`, so the permalink, the five
+`localStorage` prefixes, the related edges and the path steps are all unchanged. Check whether
+the duplication is apparent before assuming it is real.
+
 **So the rule is: merge, never delete.** The surviving card absorbs whatever the other had
 that it lacked, the retired id goes into `slug-aliases.json` pointing at the survivor, and
 `renames.json` records why. A reader following an old link lands on the better card. Nobody
@@ -11317,7 +11323,7 @@ loses a note.
 | **C2** — `net` wireless and cloud | 5 | Three wireless cards is the clearest case on the site. Likely outcome: one beginner card, one deep card, one retired into them |
 | ✅ **C3** — `script`↔`shortcut` | 5 | Checked before merging, and the check was right: **2 merged, 4 refused**. The pair that mattered most was not on the list — two `script` PowerShell cards scoring 0.25 on titles and nearly identical in content |
 | ✅ **C4** — Kubernetes across `devops` and `linux` | 3 | The guess was right and the action was not a merge. `devops` owns Kubernetes; `linux` owns container internals. **Moved, not merged** — §3 says keep both, and the card was in the wrong domain, not duplicated |
-| **C5** — `sec` Zero Trust, `web`↔`script` WebAssembly and TypeScript | 4 | Small and clean |
+| ✅ **C5** — `sec` Zero Trust, `web`↔`script` WebAssembly and TypeScript | 4 | Small and clean, and it turned out to overlap Phase 8: both `web` cards retired were on the **thin** list. **2 merged, 1 refused** |
 | **C6** — the tail | ~13 | Mostly below 0.6 overlap and mostly legitimate. Audit, expect to keep most |
 
 **About 23 merges**, of which perhaps 15 are unambiguous.
@@ -12925,6 +12931,72 @@ topics    1,424 (unchanged — a move creates and destroys nothing)
 devops       43 → 44
 linux        57 → 56
 pairs        44 (the pair remains, and is now correctly a keep-both)
+```
+
+Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 9 wave C5, where deduplication and deepening turn out to be the same work
+
+C5 was billed as "small and clean" and was, but it connects two phases that this file has kept
+apart. **Both `web` cards retired here were on Phase 8's thin list**: *WebAssembly — Native
+Speed in the Browser* (1,292 plain chars, one concept card) and *TypeScript — Types for
+JavaScript* (1,345, one card). Each duplicated a `script` card four to five times its size.
+
+| Retired | Into | Ratio |
+|---|---|---|
+| `web` **WebAssembly — Native Speed in the Browser** | `script` **WebAssembly (WASM) — Near-Native Speed in the Browser** | 1,990 → 4,815 chars |
+| `web` **TypeScript — Types for JavaScript** | `script` **TypeScript — JavaScript That Scales** | 2,343 → 9,094 chars |
+
+That is worth stating as a general observation rather than a coincidence, because it changes
+how the two phases should be sequenced:
+
+> **A thin card is a duplicate-shaped thing.** Both of these were written by a session that
+> covered a subject an earlier session had already covered *properly*, and produced a summary
+> of it. The thin card and the near-duplicate card are frequently the same card, and Phase 8's
+> census is therefore a second lens on Phase 9's population.
+
+The practical consequence: a wave D8 should cross-reference `depth_report.py --thin` against
+`near_duplicates.py` **before** deepening anything. Deepening a card that ought to be retired is
+the most expensive mistake available in either phase.
+
+### What was absorbed, and what was already there
+
+The discipline held and mostly found that the survivors were complete. TypeScript's survivor
+already covered erasure at runtime, `any`, `strict` and narrowing — the `web` card's entire
+content bar one idea. So the absorptions were small and precise rather than wholesale:
+
+- **WASM** gained the boundary cost — *a hot loop calling back into JavaScript every iteration
+  can be slower than the JavaScript it replaced* — and the server-side framing: WASI as a
+  sandbox for running somebody else's code without giving it your process.
+- **TypeScript** gained a verdict it did not have at all. Its last block was a bare table, which
+  the linter's `table with no verdict` counter had been counting for months. The `web` card's
+  framing supplied it: the payoff people feel is not caught bugs, it is **fearless refactoring**.
+
+That second one is a merge improving the survivor's structure rather than only its content,
+which is the best case for this phase and is not the usual one.
+
+### The refusal
+
+`sec` **Zero Trust — Never Trust, Always Verify** (badge `SEC • Architecture`, 5 cards) against
+`sec` **Zero Trust – "Never Trust, Always Verify" Explained Simply** (badge **Beginner**, 4
+cards), at 0.83 overlap. §3's first row, unambiguously: **keep both.** The near-identical titles
+are two sessions naming the same idea correctly, and the badges say plainly who each is for.
+
+### Two related edges repointed, which is the guard doing its job again
+
+`retire_topic.py` refused both merges on first attempt — `how-the-browser-renders-a-page →
+webassembly-native-speed-in-the-browser` and `prototypes-modern-classes →
+typescript-types-for-javascript`. Repointed at the survivors, and `suggest_related.py --check`
+reports **882 links, 0 one-way** afterwards. Third real use of that guard, third time it named
+something that would have broken silently.
+
+```
+topics       1,424 → 1,422
+thin           231 → 229    ← two of them left by retirement, not by deepening
+pairs ≥ 0.50    44 → 42
+aliases        111 → 113
 ```
 
 Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
