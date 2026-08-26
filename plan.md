@@ -10892,7 +10892,7 @@ weighted by how central the domain is to why anyone visits.
 |---|---|---|---|
 | ✅ **D1** | `data` | ~~40~~ → **32** | Worst ratio on the site, and the subject rewards depth. **Eight shipped** — the W4 spec's exact list. 93% thin → 74% |
 | ✅ **D2** | `redteam` | ~~40~~ → **32** | The tooling catalogue is the domain's identity. **Eight shipped**, all with the same addition: *what it leaves behind* and *what the defender sees*. 77% thin → 62% |
-| **D3** | `cloud` | 40 | Three providers, one card each. The deepening is provider-neutral: what the service is actually for, and the failure mode that is the same on all three |
+| ✅ **D3** | `cloud` | ~~40~~ → **32** | Three providers, one card each. **Eight shipped**, all provider-neutral: the failure mode that is the same on all three. 63% thin → 50% |
 | **D4** | `blueteam` | 36 | The first 37 cards predate the detection-engineering track that follows them and now reads as a different domain |
 | **D5** | `web` | 35 | Median 1,415 characters against a mean of 2,622 — the clearest case of a bimodal domain in the file |
 | **D6** | `eng` | 33 | The early technical cards sit beside a management track written to a much higher standard |
@@ -12050,5 +12050,56 @@ Two waves, sixteen cards, and the padding counter-metric has moved **three chara
 total**. Phase 8 §8's target was "under 150 thin, with the remainder audited"; the run so far
 is 288 → 271, which is sixteen cards of real progress and a reminder that the target is
 roughly fifteen more sessions of this.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D3: `cloud`, and the failure mode that is provider-neutral
+
+D3's spec asked for something harder than D1's or D2's: not *a* second card, but a second
+card that stays true across AWS, Azure and GCP. The domain's thin cards are thin for a
+specific reason — they were written as "here is the service, here is roughly what it costs",
+and a service description dated on the day it was written is the one thing on this site
+guaranteed to rot. A failure mode does not rot. The eight additions are all failure modes.
+
+| Card | The second card it gained |
+|---|---|
+| Choosing Compute | Operational cost, not compute cost, is what you are choosing — the instance price is the number you compare and the patching, scaling and on-call are the number you pay |
+| Cloud Cost Control | **A budget alert is not a budget control.** The alert fires after the spend, and every provider's story here is the same: the thing that stops spend is a quota, not a notification |
+| Landing Zones | Retrofitting one is a different project entirely. Most of the rows are inconvenient; **overlapping `10.0.0.0/16` ranges is the one that is unfixable** without renumbering a live network |
+| CSPM | Four thousand findings is the same as zero findings. The tool's default posture is "report everything", and a backlog nobody triages is indistinguishable from no tool at all |
+| Terraform on AWS & GCP | State is the thing that breaks, and drift is how you find out — the console change somebody made at 2am is not in state, and the next apply is where you learn that |
+| AWS Load Balancing & DNS | Failover is as fast as the slowest cache between you and the user, which is never your TTL alone: resolvers round up, and some clients pin for the life of the process |
+| AWS Databases | What "managed" covers, and the half it does not — backups and patching yes; your schema, your query plans and your connection count no |
+| AWS Serverless & Containers | **Scale-to-zero is a property of the function, not of the system.** The function scales to zero; the database it opens a connection to does not |
+
+### Why provider-neutrality was the right constraint
+
+The obvious way to deepen a cloud card is to add the other two providers' equivalents, and
+that produces a three-column table that needs re-checking every quarter — the site already
+carries 1,367 freshness stamps and does not need more surface that ages. Writing to the
+failure mode instead means the card is *more* durable after the deepening than before it:
+connection exhaustion behind a scale-to-zero function has been true since the first
+serverless runtime shipped and will outlast every service name in the domain.
+
+Three waves in, the three specs have each asked for a different addition — a per-card gap in
+`data`, one uniform sentence in `redteam`, a provider-neutral failure mode in `cloud` — and
+each was written *before* the cards were touched. The specs are doing real work; they are not
+decoration on the table.
+
+### The measurement
+
+```
+                          D1 end   D2 end   D3 end
+thin topics                  279      271      263     ← eight, exactly, three times
+cloud                                     40 (63%)  →  32 (50%)
+mean chars/concept card    1,200    1,201    1,202     ← +1 again
+```
+
+Twenty-four cards across three waves and the padding counter-metric has moved **two
+characters**. That number is the whole argument that this pass is adding content rather than
+inflating it, and it only holds because every addition arrives as a new concept card with a
+claim of its own rather than as extra sentences bolted onto an existing one.
 
 Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.

@@ -67416,8 +67416,8 @@ way a CV line cannot. General interview preparation is in
 <span class="ctag ctag-general">GCP</span>
 </div>
 <span class="domain-sub">AWS · GCP · Azure · IAM · Networking · Compute · Storage · Security · Troubleshooting</span>
-<span class="domain-meta" aria-label="64 topics, about 1h 45m to read"
->64 topics · ~1h 45m</span>
+<span class="domain-meta" aria-label="64 topics, about 1h 55m to read"
+>64 topics · ~1h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -67893,6 +67893,28 @@ health checks is how you build multi-region resilience.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Failure Mode</div>
+<div class="concept-title">Failover Is as Fast as the Slowest Cache Between You and the User</div>
+<div class="concept-desc">
+Health checks and DNS-based failover are described in seconds and experienced in minutes, because the record's time-to-live is only the first of several caches and several of them do not honour it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Layer</th><th>What it adds to failover time</th></tr></thead>
+<tbody>
+<tr><td>The record's own time-to-live</td><td>What you configured. The floor, not the answer</td></tr>
+<tr><td>Recursive resolvers</td><td>Usually honour it. Some clamp very low values upward</td></tr>
+<tr><td>The operating system's stub resolver</td><td>Caches independently, often for longer than the record says</td></tr>
+<tr><td>The application runtime</td><td>Some configurations cache DNS <em>for the life of the process</em> &mdash; the classic multi-hour failover</td></tr>
+<tr><td>Long-lived connections</td><td>An established connection does not re-resolve at all. It fails when it fails</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">Where the requirement is tight, prefer failover that does not depend on DNS at all.</strong> A load balancer with a stable address moving traffic between healthy targets fails over in the time of a health check; a DNS change asks every layer above to notice. Where DNS failover is the mechanism, test it from a real client rather than from a resolver, and measure what the application does rather than what the record says.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="gcp-vpc-global-networks-firewall-rules" data-reviewed="2026-08">
@@ -68058,6 +68080,27 @@ containers.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Trap</div>
+<div class="concept-title">Scale-to-Zero Is a Property of the Function, Not of the System</div>
+<div class="concept-desc">
+Functions scale beautifully and everything they talk to does not. The failure that surprises teams is not the function &mdash; it is what happens downstream when a thousand copies of it start at once.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Scales instantly</th><th>Does not</th></tr></thead>
+<tbody>
+<tr><td>The function itself</td><td>A relational database behind it, which sees a thousand connection attempts. This is what connection poolers and proxies exist for</td></tr>
+<tr><td>Concurrent executions, up to an account limit</td><td>That limit &mdash; shared across every function in the account, so one noisy workload throttles unrelated ones</td></tr>
+<tr><td>Reads from a queue or stream</td><td>A third-party API <span class="acro-exp">(Application Programming Interface)</span> with a rate limit, which starts returning errors and turns your retries into a second attack on it</td></tr>
+<tr><td>Cost, linearly with invocations</td><td>Cold starts, which are worst exactly when traffic arrives suddenly &mdash; the case autoscaling was supposed to solve</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-red">The account-level concurrency limit is the one worth knowing before an incident.</strong> It is shared, finite, and a single misbehaving function consuming it will throttle everything else you run &mdash; which presents as unrelated services failing simultaneously with no deployment to blame. Reserve concurrency for anything that matters, and treat the limit as a capacity number to monitor rather than a ceiling you will never reach.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="gcp-compute-compute-engine-migs" data-reviewed="2026-08">
@@ -68151,6 +68194,28 @@ control. Less to operate = less to break.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Decision Behind the Decision</div>
+<div class="concept-title">Operational Cost, Not Compute Cost, Is What You Are Choosing</div>
+<div class="concept-desc">
+Every row in the table above is also a choice about who gets paged and what they need to know. That is the durable part &mdash; the per-hour price of a virtual machine changes constantly, and the amount of platform a team has to understand does not.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Choice</th><th>What it actually commits you to</th></tr></thead>
+<tbody>
+<tr><td>Functions</td><td>No servers to patch, and a distributed system whose failure modes are retries, cold starts and concurrency limits. Debugging moves to traces, because there is nowhere to log in</td></tr>
+<tr><td>Serverless containers</td><td>The smallest operational surface that still runs an ordinary container. Usually the right default for a web service in a small team</td></tr>
+<tr><td>Managed Kubernetes</td><td>A platform somebody owns as part of their job. It is not a service you consume, it is a thing you run</td></tr>
+<tr><td>Virtual machines</td><td>Full control, and the whole patching, imaging and configuration-management stack that goes with it. Sometimes right, rarely the modern default</td></tr>
+<tr><td>More than one of these</td><td>The real cost &mdash; two operational models, two on-call runbooks, and every engineer half as fluent in each</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">Pick the least platform that runs the workload</strong>, and change only when something concrete forces it. The migration people regret is not choosing wrongly at the start &mdash; it is adopting a heavier model in anticipation of scale that never arrives, and paying the operational cost every week in the meantime.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="aws-storage-s3-classes-ebs-efs" data-reviewed="2026-08">
@@ -68220,6 +68285,28 @@ backup/restore across AZs <span class="acro-exp">(Availability Zone)</span>.
 → RDS/Aurora. Massive scale with simple key-based access → DynamoDB (design around
 your access patterns — no ad-hoc joins). Always enable
 <strong>Multi-AZ</strong> for production databases (automatic failover).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">What &ldquo;Managed&rdquo; Covers, and the Half It Does Not</div>
+<div class="concept-desc">
+Managed database services remove the work most people find tedious and leave behind the work that actually causes incidents. Knowing which is which is the whole of the buying decision.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>The provider handles</th><th>You still own</th></tr></thead>
+<tbody>
+<tr><td>Patching, backups, replica provisioning, failover mechanics</td><td><strong>Whether the backup restores</strong> &mdash; testing it is still yours, and the button existing is not evidence</td></tr>
+<tr><td>Hardware, storage growth, availability-zone placement</td><td>Schema, indexes and query plans. The majority of real database incidents live here</td></tr>
+<tr><td>Minor version upgrades on a schedule</td><td>Major version upgrades, which change planner behaviour and need a real test</td></tr>
+<tr><td>Metrics and basic alarms</td><td>Knowing which metric predicts <em>your</em> outage</td></tr>
+<tr><td>Encryption at rest and in transit</td><td>Who can read the data, which is an access-control question the service cannot answer for you</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Managed changes who is on call, not whether the system can be badly used.</strong> The most expensive database problems &mdash; a missing index, an unbounded query, a connection storm from a scaled-out application &mdash; are all still yours, and a managed service will scale obligingly to accommodate every one of them until the bill or the latency makes it somebody&rsquo;s problem.
 </div>
 </div>
 </div>
@@ -68468,6 +68555,28 @@ the Cloud and Blue Team domains: run them regularly to find gaps before attacker
 </table>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Trap</div>
+<div class="concept-title">Four Thousand Findings Is the Same as Zero Findings</div>
+<div class="concept-desc">
+Point one of these at an estate that has never been scanned and it returns thousands of results. That is the tool working correctly, and it is also where most posture programmes quietly end, because nobody can act on a list that long and nobody wants to say so.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What arrives</th><th>What to do with it</th></tr></thead>
+<tbody>
+<tr><td>Every benchmark control, every account, ungrouped</td><td>Do not read it as a list. Group by <em>control</em> &mdash; one missing policy usually explains hundreds of rows</td></tr>
+<tr><td>Severity from the benchmark, not from your estate</td><td>A public bucket of marketing images and one of backups score the same. Re-rank by what is behind the resource</td></tr>
+<tr><td>Findings on resources nobody owns</td><td>The genuinely useful output, and the one that needs an owner before it needs a fix</td></tr>
+<tr><td>The same findings next week</td><td>Expected. The signal is the <em>trend</em> and the age of the oldest open finding, not the count</td></tr>
+<tr><td>Findings that are deliberate</td><td>Need an exception with an expiry, exactly like any other policy deviation</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">Start with one control, across every account, and drive it to zero.</strong> Public storage, or root without MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, or logging disabled &mdash; pick one, fix it everywhere, and put a guardrail behind it so it cannot return. That produces a closed control and a repeatable method; a prioritised spreadsheet of four thousand rows produces a meeting.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="terraform-on-aws-gcp" data-reviewed="2026-07">
@@ -68498,6 +68607,28 @@ Cloud essentials: store <strong class="c-green">state remotely</strong> (S3 +
 DynamoDB lock, or GCS) so a team shares it; use <strong>modules</strong> for
 reusable stacks (a "VPC module"); and never edit cloud resources by hand once
 Terraform manages them (drift).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Failure Mode</div>
+<div class="concept-title">State Is the Thing That Breaks, and Drift Is How You Find Out</div>
+<div class="concept-desc">
+Terraform's model is that the state file describes reality. Everything painful about running it in a real organisation follows from the ways that stops being true.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What happens</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Two people apply at once</td><td>Both read the same state and one write wins. <strong>State locking is not optional</strong> &mdash; it is part of the setup, not an enhancement</td></tr>
+<tr><td>Someone fixes something in the console</td><td>The next plan proposes to undo it. This is Terraform working correctly and is the most common way teams lose trust in it</td></tr>
+<tr><td>A resource is deleted outside Terraform</td><td>The plan proposes to create it, or errors on a dependency. Refresh, then targeted state surgery, carefully</td></tr>
+<tr><td>State contains secrets</td><td>It does, in plain text. The backend must be encrypted and access-controlled like a credential store, because that is what it is</td></tr>
+<tr><td>A plan is applied without being read</td><td>The failure that produces outages. A plan showing <em>destroy</em> on anything stateful is a stop-and-read moment</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">The console-fix row is the cultural problem underneath the technical one.</strong> Infrastructure as code holds only if console changes are rare and exceptional, and it stops holding the first time an urgent fix is made by hand and never reconciled. The answer is not a policy telling people off &mdash; it is making the code path fast enough that it is the easier option at 3 a.m.
 </div>
 </div>
 </div>
@@ -68568,6 +68699,28 @@ sneaky line item.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Trap</div>
+<div class="concept-title">A Budget Alert Is Not a Budget Control</div>
+<div class="concept-desc">
+The single most expensive misunderstanding in cloud cost management. Budgets notify; they do not stop anything. Spend is metered continuously and billed in arrears, so by the time an alert fires the money is already committed &mdash; and an alert that arrives on a Friday evening bills the whole weekend before anyone reads it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Believed</th><th>Actually</th></tr></thead>
+<tbody>
+<tr><td>The budget will stop it</td><td>It sends an email. Only a policy, a quota, or an automated action stops anything</td></tr>
+<tr><td>Alerts are timely</td><td>Usage data lags by hours. A runaway job can spend a great deal inside the gap</td></tr>
+<tr><td>Tagging tells us who spent it</td><td>Only for resources tagged <em>at creation</em>. Retro-tagging never completes, which is why the policy has to be enforced at creation</td></tr>
+<tr><td>Rightsizing is the big win</td><td>It is the visible win. Idle and forgotten resources are usually larger, and nobody defends them because nobody remembers them</td></tr>
+<tr><td>Egress is a rounding error</td><td>It is the line that surprises people, because it is invisible in design and appears only in the bill</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">The controls that actually bound spend are quotas and policies, not budgets.</strong> A service quota refuses the resource; a policy refuses the instance family or the region. Budgets are for <em>noticing</em>, and are worth having for that &mdash; but an organisation whose only cost control is an alert has a notification system, not a control.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="landing-zones-multi-account-structure" data-reviewed="2026-07">
@@ -68598,6 +68751,28 @@ pre-built, secure, multi-account foundation you start from.
 The win: a compromise or mistake in one account/project can't reach the others,
 and central <strong class="c-green">guardrails</strong> (SCPs/Org Policies)
 enforce rules — "no public S3 <span class="acro-exp">(Simple Storage Service)</span>," "only these regions" — org-wide.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Failure Mode</div>
+<div class="concept-title">Retrofitting a Landing Zone Is a Different Project Entirely</div>
+<div class="concept-desc">
+Landing zones are described as a starting point and adopted by organisations that already have accounts. Those are two very different exercises, and the second is where the cost is.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Doing it first</th><th>Doing it later</th></tr></thead>
+<tbody>
+<tr><td>Accounts created inside the structure</td><td>Existing accounts moved into it, each with resources referencing each other across the boundary you are about to draw</td></tr>
+<tr><td>Guardrails applied from empty</td><td>Guardrails applied to running workloads, where a deny policy breaks production rather than preventing a mistake</td></tr>
+<tr><td>Identity federated from the start</td><td>Long-lived users and access keys in every account, each owned by somebody who left</td></tr>
+<tr><td>Networking designed once</td><td>Overlapping address ranges chosen independently &mdash; the constraint that most often forces a rebuild rather than a migration</td></tr>
+<tr><td>Billing structured</td><td>One account holding production, development and a forgotten proof of concept, with no way to attribute any of it</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-red">The overlapping-address-range row is the one to check first</strong>, because it is the only item that cannot be fixed by a policy change. Two accounts that both chose <code>10.0.0.0/16</code> cannot be peered, and discovering that after the structure is agreed turns a governance project into a re-addressing project.
 </div>
 </div>
 </div>
