@@ -81716,8 +81716,8 @@ moved the thing that was costing you.
 <span class="ctag ctag-general">JS</span>
 </div>
 <span class="domain-sub">Browser · CSS · JS · Frameworks · Performance · A11y</span>
-<span class="domain-meta" aria-label="41 topics, about 1h 10m to read"
->41 topics · ~1h 10m</span>
+<span class="domain-meta" aria-label="41 topics, about 1h 20m to read"
+>41 topics · ~1h 20m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -81790,6 +81790,33 @@ and <code>opacity</code></strong> — they skip layout and paint entirely.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Measure it</div>
+<div class="concept-title">Your Laptop Is Not the Device That Will Jank</div>
+<div class="concept-desc">
+A layout thrash that costs 3 ms on a development machine can cost 25 ms on a mid-range
+Android phone, and 25 ms misses the frame. The animation you cannot make stutter locally is not
+a smooth animation &mdash; it is <strong class="c-amber">an animation measured on the fastest
+computer that will ever run it</strong>. The fix is not to guess; the browser will tell you.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>What to do</th></tr>
+<tr><td>Throttle the CPU <span class="acro-exp">(Central Processing Unit)</span></td><td>DevTools &rarr; Performance &rarr; CPU: <strong>4&times; or 6&times; slowdown</strong>. This is the whole trick</td></tr>
+<tr><td>Record the interaction</td><td>Not the page load &mdash; the scroll, the open, the drag that feels wrong</td></tr>
+<tr><td>Read the frame budget</td><td>60 fps is <strong>16.7 ms per frame</strong>. Anything longer is a dropped frame, whatever it looks like</td></tr>
+<tr><td>Find the purple</td><td>Layout and Recalculate Style blocks in the flame chart are the reflow you are looking for</td></tr>
+<tr><td>Check the long tasks</td><td>Any task over 50 ms blocks input &mdash; that is the tap that felt ignored</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two habits follow from the number. Animate only <code>transform</code> and
+<code>opacity</code>, because they skip layout and paint entirely; and batch reads before
+writes, because interleaving <code>offsetHeight</code> with a style change forces the browser to
+recompute layout on every iteration. <strong>Throttled DevTools is the cheapest device lab in
+existence</strong>, and it costs one dropdown.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="the-dom-events-bubbling-delegation" data-reviewed="2026-08">
@@ -81857,6 +81884,34 @@ and security properties. Picking the wrong one causes bugs and vulnerabilities.
 <strong class="c-red">Security:</strong> never store auth tokens in
 <code>localStorage</code> — any XSS <span class="acro-exp">(Cross-Site Scripting)</span> reads them. Prefer <code>HttpOnly</code> cookies
 (JS can't touch them). Ties to the web-security cards.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Measure it</div>
+<div class="concept-title">The Browser Can Refuse, and It Can Take It Back Later</div>
+<div class="concept-desc">
+Storage is not memory you own &mdash; it is space the browser lends you under a policy
+that differs per browser and changes between versions. Two failure modes never appear in
+development: <strong class="c-amber">the write throws</strong>, and
+<strong class="c-amber">the data is silently gone next week</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Situation</th><th>What actually happens</th></tr>
+<tr><td>Private / incognito window</td><td>Quota can be tiny or zero; <code>localStorage.setItem</code> throws <code>QuotaExceededError</code></td></tr>
+<tr><td>Site data blocked by the user</td><td>The accessor itself throws &mdash; reading <code>localStorage</code> is enough to break the page</td></tr>
+<tr><td>Safari, no visit for weeks</td><td>Script-writable storage can be cleared under ITP; treat it as a cache, not a record</td></tr>
+<tr><td>Storage pressure on the device</td><td>Non-persistent origins are evicted first, and nobody asks you</td></tr>
+<tr><td>Big writes on the main thread</td><td><code>localStorage</code> is <strong>synchronous</strong> &mdash; a large object blocks rendering to serialise it</td></tr>
+</table>
+<div class="concept-desc verdict">
+Write every access inside <code>try/catch</code>, and make the page correct when the
+value is missing rather than treating that as an error state. The rule of thumb: <strong>if
+losing it would matter, it belongs on a server</strong>; browser storage is for conveniences a
+user would not notice losing &mdash; a remembered tab, a collapsed section, an unsent draft.
+For anything larger or structured, IndexedDB is asynchronous and does not block the main
+thread.
 </div>
 </div>
 </div>
@@ -82005,6 +82060,33 @@ content size itself).
 <strong class="c-green">Container queries</strong> are the big recent shift: a card
 can restyle based on the space <em>it</em> has, so the same component works in a
 sidebar or full-width — impossible with media queries alone.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Measure it</div>
+<div class="concept-title">Device Mode Resizes a Window. It Does Not Give You a Finger</div>
+<div class="concept-desc">
+DevTools device mode is a viewport simulator, and viewport is the one thing about a
+phone that is easy. What it does not simulate is the hand holding it: touch target size, thumb
+reach, the on-screen keyboard eating half the screen, the notch, and the browser chrome that
+appears and disappears as you scroll. <strong class="c-amber">Layouts that pass at 390 px wide
+still fail in a hand.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Reality</th><th>What to do about it</th></tr>
+<tr><td>Fingers are not cursors</td><td><strong>44&times;44 px minimum</strong> tap targets, with spacing &mdash; adjacent small links are the classic miss</td></tr>
+<tr><td><code>100vh</code> lies on mobile</td><td>It includes browser chrome that retracts. Use <code>100dvh</code>, or the layout jumps mid-scroll</td></tr>
+<tr><td>Notches and rounded corners</td><td><code>env(safe-area-inset-*)</code> with <code>viewport-fit=cover</code></td></tr>
+<tr><td>The keyboard covers the input</td><td>Test a form on a real phone. The fix is usually <code>scroll-margin</code> and avoiding fixed footers</td></tr>
+<tr><td>Users enlarge text</td><td>Test at 200% zoom &mdash; WCAG <span class="acro-exp">(Web Content Accessibility Guidelines)</span> requires it, and fixed-height containers clip immediately</td></tr>
+</table>
+<div class="concept-desc verdict">
+Device mode is fine for finding the breakpoint that is wrong. It cannot tell you whether
+the page is usable, and <strong>fifteen minutes on one real phone finds more than an hour of
+resizing a window</strong>. If a device lab is out of reach, remote debugging a single cheap
+Android over USB <span class="acro-exp">(Universal Serial Bus)</span> covers most of the gap.
 </div>
 </div>
 </div>
@@ -82223,6 +82305,33 @@ Modern JS <span class="acro-exp">(JavaScript)</span> is written as <strong class
 <strong class="c-green">Vite</strong> is the current default: instant dev server
 (native ESM, no bundling in dev) + optimized production builds. Tree-shaking is why
 <code>import { thing }</code> beats importing a whole library.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Measure it</div>
+<div class="concept-title">Bytes Are What You Measure, CPU <span class="acro-exp">(Central Processing Unit)</span> Time Is What the User Feels</div>
+<div class="concept-desc">
+Bundle size is the metric because it is the easy one. But a phone does not merely
+download JavaScript &mdash; it parses, compiles and executes it, and
+<strong class="c-amber">that cost scales with the device, not the network</strong>. 300 KB of
+gzipped JS is a moment on a laptop and can be a second of blocked main thread on a mid-range
+Android. An image of the same size costs almost nothing by comparison.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Number</th><th>Where to get it</th></tr>
+<tr><td>Gzipped/Brotli size per chunk</td><td>The bundler's own report &mdash; <code>vite build</code> prints it</td></tr>
+<tr><td>What is <em>in</em> the chunk</td><td><code>rollup-plugin-visualizer</code> or <code>source-map-explorer</code>; the surprise is usually one library</td></tr>
+<tr><td>Parse + compile time</td><td>DevTools Performance, throttled &mdash; the yellow Scripting blocks before first paint</td></tr>
+<tr><td>Unused bytes shipped</td><td>DevTools Coverage panel: red is code downloaded and never run</td></tr>
+<tr><td>Whether a split helped</td><td>Compare the <em>first-load</em> total, not the total across all chunks</td></tr>
+</table>
+<div class="concept-desc verdict">
+The wins in order: remove the dependency, then split the route, then lazy-load the
+component. Code splitting moves cost rather than removing it, so a route split that loads the
+same modules on the next click has bought nothing. <strong>Ship less JavaScript is the only
+optimisation on this list that always works.</strong>
 </div>
 </div>
 </div>
@@ -82477,6 +82586,32 @@ browser security feature, not a bug in your code.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Measure it</div>
+<div class="concept-title">The Dev Proxy Makes Everything Same-Origin, So CORS Waits for Production</div>
+<div class="concept-desc">
+Most frontend dev servers proxy <code>/api</code> to the backend, which means every
+request in development is same-origin and <strong class="c-amber">no preflight ever
+happens</strong>. The first real cross-origin request is therefore made by a user, in
+production, and the failure is a console message about a header nobody has set.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What triggers it</th><th>Consequence</th></tr>
+<tr><td>Any header beyond the safe list</td><td>An <code>OPTIONS</code> preflight before every request &mdash; a whole extra round trip</td></tr>
+<tr><td><code>Content-Type: application/json</code></td><td>Not on the safe list. This alone preflights, which surprises everyone once</td></tr>
+<tr><td><code>credentials: 'include'</code></td><td>Wildcard <code>Access-Control-Allow-Origin: *</code> is <strong>rejected</strong> &mdash; the origin must be named</td></tr>
+<tr><td>A redirect mid-preflight</td><td>Fails outright in most browsers; the error names neither the redirect nor the origin</td></tr>
+<tr><td>An error response</td><td>CORS applies to failures too &mdash; a 500 with no CORS headers reads as a CORS error, hiding the 500</td></tr>
+</table>
+<div class="concept-desc verdict">
+Test cross-origin before you ship it: run the frontend on a different port <em>without</em>
+the proxy, or hit the deployed API directly from a local build. And cache the preflight &mdash;
+<code>Access-Control-Max-Age</code> turns two round trips per request into two per session,
+which on a high-latency mobile connection is the difference a user can feel.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="graphql-on-the-backend-schema-resolvers-caching" data-reviewed="2026-08">
@@ -82648,6 +82783,34 @@ field can differ.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Measure it</div>
+<div class="concept-title">Lighthouse Is a Lab. Your Users Are the Field</div>
+<div class="concept-desc">
+A green Lighthouse score is one simulated load, on one machine, on one network profile,
+with a cold cache and no extensions. The number Google actually ranks on, and the number your
+users experience, is the <strong class="c-amber">75th percentile of real loads</strong> &mdash;
+which includes the ad blocker, the old phone, the hotel Wi-Fi and the tab that was
+backgrounded. The two numbers disagree routinely, and when they do, the field one is right.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Question</th><th>Which number answers it</th></tr>
+<tr><td>Is it actually broken, and for whom?</td><td><strong>Field</strong> &mdash; CrUX or your own RUM, at p75 over 28 days</td></tr>
+<tr><td>Did this commit make it worse?</td><td><strong>Lab</strong> &mdash; Lighthouse, same machine, same profile, run it twice</td></tr>
+<tr><td>Why is it slow?</td><td><strong>Lab</strong> &mdash; the trace is the only thing with a cause in it</td></tr>
+<tr><td>Did the fix reach users?</td><td><strong>Field</strong>, and not for four weeks &mdash; the window is 28 days rolling</td></tr>
+<tr><td>Score went green, complaints continue</td><td>Believe the field number. The lab profile is not your users' phone</td></tr>
+</table>
+<div class="concept-desc verdict">
+Use both, in that order: <strong>field to decide whether there is a problem, lab to find
+it</strong>. The thresholds worth memorising are LCP &le; 2.5 s, INP &le; 200 ms and CLS &le;
+0.1, all at p75. And note that INP replaced FID <span class="acro-exp">(First Input Delay)</span> precisely because FID measured the wrong thing
+&mdash; the delay before the first handler ran, rather than how long until the user saw a
+result.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="web-accessibility-a11y-wcag-aria" data-reviewed="2026-08">
@@ -82679,6 +82842,34 @@ engineering — accessible sites are more robust for everyone.
 element beats a div with roles every time. Test by unplugging your mouse and by
 running a screen reader. WCAG AA is the common target. (This site follows these:
 keyboard nav, focus states, semantic structure.)
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Measure it</div>
+<div class="concept-title">A Clean Automated Scan Is the Floor, Not the Result</div>
+<div class="concept-desc">
+Automated tooling &mdash; axe, Lighthouse, pa11y &mdash; reliably catches the machine-checkable
+subset: missing alt attributes, unlabelled inputs, insufficient contrast, invalid ARIA. That
+subset is real and worth automating in CI. It is also
+<strong class="c-amber">a minority of the barriers a person actually hits</strong>, because the
+rest are questions about meaning that no scanner can answer.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Scanners catch</th><th>Only a human catches</th></tr>
+<tr><td><code>alt</code> missing</td><td><code>alt</code> present and useless &mdash; &ldquo;image1.png&rdquo;</td></tr>
+<tr><td>Contrast below ratio</td><td>Colour used as the <em>only</em> way to tell two states apart</td></tr>
+<tr><td>Input with no label</td><td>Label text that does not describe the field</td></tr>
+<tr><td>Invalid ARIA attribute</td><td>Valid ARIA describing the wrong thing, which is worse than none</td></tr>
+<tr><td>Missing heading levels</td><td>Focus order that jumps around the page, or a modal that does not trap focus</td></tr>
+</table>
+<div class="concept-desc verdict">
+The two manual passes that find the most, both free: <strong>unplug the mouse</strong>
+and complete one real task with <kbd>Tab</kbd>, <kbd>Enter</kbd> and <kbd>Esc</kbd> &mdash;
+watching that the focus ring is always visible; then run one page through a screen reader
+(VoiceOver on macOS, NVDA on Windows) with the display off. Automate the floor in CI so it never
+regresses, and do the keyboard pass on anything interactive before it ships.
 </div>
 </div>
 </div>
@@ -83077,6 +83268,33 @@ flows.
 implementation — query by what a user sees (roles, text), not CSS <span class="acro-exp">(Cascading Style Sheets)</span> classes. Then
 refactors don't break tests. A few reliable E2E tests on the money-path beat a
 hundred brittle ones.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Measure it</div>
+<div class="concept-title">`localhost` Has No Latency, and CI Flake Is the Test Finding Out</div>
+<div class="concept-desc">
+End-to-end tests pass locally because everything is instant: the API <span class="acro-exp">(Application Programming Interface)</span> answers in a
+millisecond, animations complete before the next line runs, and the element is there by the time
+you look. CI is slower, differently slow each run, and
+<strong class="c-amber">a flaky test is almost never random &mdash; it is a race the local
+machine was fast enough to hide</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Flaky pattern</th><th>The fix</th></tr>
+<tr><td><code>waitForTimeout(500)</code></td><td>Wait for the <em>condition</em> &mdash; the element, the response, the URL <span class="acro-exp">(Uniform Resource Locator)</span>. Fixed sleeps encode a guess about speed</td></tr>
+<tr><td>Assert immediately after a click</td><td>Use auto-retrying assertions; the click starts work that has not finished</td></tr>
+<tr><td>Tests share a user or record</td><td>Isolate per test. Parallel CI runs them at the same time and the second one loses</td></tr>
+<tr><td>Animation still running</td><td>Disable animations in the test environment &mdash; one CSS override, many fewer failures</td></tr>
+<tr><td>Real network in the test</td><td>Intercept and stub. A third-party outage should not fail your build</td></tr>
+</table>
+<div class="concept-desc verdict">
+When a test flakes, resist the retry. <strong>Re-run it under throttling until it fails
+reliably</strong>, then fix the race &mdash; a test that fails 1 in 20 times is describing a
+bug your users hit 1 in 20 times. Automatic retries turn that signal off, which is why they feel
+so good and cost so much.
 </div>
 </div>
 </div>

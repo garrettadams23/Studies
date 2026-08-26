@@ -10894,7 +10894,7 @@ weighted by how central the domain is to why anyone visits.
 | ✅ **D2** | `redteam` | ~~40~~ → **32** | The tooling catalogue is the domain's identity. **Eight shipped**, all with the same addition: *what it leaves behind* and *what the defender sees*. 77% thin → 62% |
 | ✅ **D3** | `cloud` | ~~40~~ → **32** | Three providers, one card each. **Eight shipped**, all provider-neutral: the failure mode that is the same on all three. 63% thin → 50% |
 | ✅ **D4** | `blueteam` | ~~36~~ → **28** | The first 37 cards predate the detection-engineering track that follows them. **Eight shipped**, all with the same addition: *what this tool cannot see, and what you pair it with*. 67% thin → 52% |
-| **D5** | `web` | 35 | Median 1,415 characters against a mean of 2,622 — the clearest case of a bimodal domain in the file |
+| ✅ **D5** | `web` | ~~35~~ → **27** | Median 1,415 against a mean of 2,622 — the clearest bimodal domain in the file, and it is bimodal because of *where it was written*. **Eight shipped**, each naming an instrument. 85% thin → 66% |
 | **D6** | `eng` | 33 | The early technical cards sit beside a management track written to a much higher standard |
 | **D7** | `devops` | 20 | Platform track deep, tool cards thin. Same shape as `blueteam` |
 | — | `shortcut` | 20 | **Excluded.** Reference domain, see §4 |
@@ -10934,6 +10934,35 @@ acquisition, translation, attribution, coverage-by-selection:
 | Volatility | Acquisition — memory is gone the moment the machine is |
 | Sigma | Translation — portable rule, non-portable field names |
 | Honeypots | Selection — deception is silent against an attacker who does not look |
+
+### The D5 spec — the domain where the author's machine is the problem
+
+`web` is bimodal because of *where it was written*. Every thin card in the domain describes a
+feature correctly, from a fast laptop, on a fast network, in the current version of one
+browser, with no assistive technology attached and the dev server running on `localhost`. The
+deep cards in the same domain are the ones that eventually met a real user. That difference is
+the entire gap, and it is measurable rather than stylistic.
+
+So the D5 addition is:
+
+> **The number your own machine cannot show you** — what this looks like on the device the
+> user actually has, and the specific way to go measure it.
+
+The measurement clause is not optional. A card that says "it's slower on phones" is the
+padding this phase exists to avoid; a card that says *4× CPU throttle, Performance panel,
+16.7 ms per frame* hands the reader something to do this afternoon. **Every D5 addition must
+name an instrument, a setting, or a threshold.**
+
+| Card | The environment gap |
+|---|---|
+| Reflow & Jank | CPU — the median phone is several times slower than the machine the code was written on |
+| Web Storage | Policy — the browser can refuse or evict, and two of the three APIs have no quota you control |
+| Core Web Vitals | Lab vs field — Lighthouse is a simulation of one load; the field number is a p75 across real ones |
+| Fetch, REST & CORS | Origin — the dev proxy makes everything same-origin, so the preflight never happens until production |
+| Modules & Bundlers | Parse cost — bytes are what you measure and CPU time is what the user feels |
+| Responsive Design | Device vs viewport — DevTools device mode resizes a window; it does not give you a finger |
+| Accessibility | Automated vs human — a clean automated scan is the floor, and this repo's own 6/6 is exactly that |
+| Frontend Testing | Latency — `localhost` has none, and CI flake is usually the test discovering that |
 
 ## 7. The trap in this plan
 
@@ -12194,5 +12223,61 @@ Thirty-two cards, four waves, and the padding counter-metric has moved **three c
 The regularity is not luck: the discipline is that a deepening arrives as a *new concept card
 with its own claim*, never as extra sentences inside an existing one, and a new card that says
 something carries roughly the domain mean by construction.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D5: `web`, and the machine the code was written on
+
+`web`'s bimodality had a cause, and finding it was most of the wave. The deep cards and the
+thin cards are not separated by effort or by subject — they are separated by whether the card
+ever met a real user. Every thin card describes its feature correctly from a fast laptop, on a
+fast network, in one current browser, with no assistive technology attached and the dev server
+on `localhost`. **The deep ones are the ones that had been to production.**
+
+That made the D5 addition write itself: *the number your own machine cannot show you*, with a
+hard requirement that every card name an instrument, a setting or a threshold.
+
+| Card | The gap, and the instrument |
+|---|---|
+| Reflow & Jank | Your laptop is not the device that will jank — **DevTools CPU 4–6× slowdown**, 16.7 ms per frame, long tasks over 50 ms |
+| Web Storage | The browser can refuse, and can take it back later — quota throws in private mode, ITP clears script-written storage, `localStorage` is synchronous |
+| Core Web Vitals | **Lighthouse is a lab, your users are the field** — field decides *whether*, lab finds *why*; LCP 2.5 s / INP 200 ms / CLS 0.1, all at p75 |
+| Fetch, REST & CORS | The dev proxy makes everything same-origin, so the first real preflight is made by a user; `credentials` plus wildcard origin is rejected outright |
+| Modules & Bundlers | Bytes are what you measure, CPU time is what the user feels — Coverage panel for unused bytes, throttled trace for parse cost |
+| Responsive Design | **Device mode resizes a window; it does not give you a finger** — 44×44 tap targets, `100dvh`, `env(safe-area-inset-*)`, 200% zoom |
+| Accessibility | A clean automated scan is the floor — the two free manual passes are unplugging the mouse and turning the display off |
+| Frontend Testing | `localhost` has no latency, and CI flake is the test finding out — a fixed `waitForTimeout` encodes a guess about speed |
+
+### The instrument requirement is what kept this wave honest
+
+"It's slower on phones" is exactly the padding Phase 8 §7 warns about: it reads like content,
+costs the reader time, and leaves them with nothing to do. Requiring a named instrument killed
+four drafts outright and forced the rest to be specific enough to act on this afternoon. It
+also produced the wave's most useful single sentence, which is a dropdown: **CPU throttling in
+DevTools is the cheapest device lab in existence.**
+
+### The uncomfortable one
+
+The accessibility card says a clean automated scan is the floor rather than the result — and
+this repository's own `make a11y` reports **6/6 scans clean** on every commit in this phase.
+Both things are true at once, and writing the card meant writing down that our own green check
+proves the machine-checkable subset and nothing about focus order, alt text that says
+`image1.png`, or colour used as the only signal. A check you rely on is the hardest thing to
+describe the limits of, which is a reason to do it rather than a reason not to.
+
+### The measurement
+
+```
+                          D1     D2     D3     D4     D5
+thin topics              279    271    263    255    247   ← eight, exactly, five times
+web                                            35 →  27  (85% → 66%)
+mean chars/concept card 1,200  1,201  1,202  1,203  1,204
+```
+
+Forty cards, five waves, **four characters** of movement in the padding counter-metric. Phase
+8 §8's target of "under 150 thin" is now 97 cards away — twelve more waves of this, which is
+worth saying plainly rather than implying the end is near.
 
 Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
