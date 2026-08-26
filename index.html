@@ -74946,8 +74946,8 @@ chosen to represent.
 <span class="ctag ctag-general">SWE</span>
 </div>
 <span class="domain-sub">System Design · Architecture · Craft · Reliability · Career</span>
-<span class="domain-meta" aria-label="77 topics, about 2h 30m to read"
->77 topics · ~2h 30m</span>
+<span class="domain-meta" aria-label="77 topics, about 2h 45m to read"
+>77 topics · ~2h 45m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -75180,6 +75180,32 @@ have yet — adopting them too early buys distributed-systems pain for no benefi
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The bill</div>
+<div class="concept-title">The Threshold Is Team Count, Not Request Rate</div>
+<div class="concept-desc">
+Microservices solve an <strong class="c-amber">organisational</strong> problem that
+presents as a technical one: too many people editing the same deployable, blocking each other on
+releases. Below that pain there is nothing to buy, and the bill arrives regardless &mdash;
+network calls that used to be function calls, and every failure mode that comes with them.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Signal</th><th>What it actually means</th></tr>
+<tr><td>One team, any traffic level</td><td>Stay a monolith. Scale it vertically and horizontally; that is far cheaper than a network</td></tr>
+<tr><td>Several teams, one release train</td><td>This is the real threshold &mdash; the cost is people waiting, and splitting buys deployment independence</td></tr>
+<tr><td>Services that deploy together</td><td>A <strong>distributed monolith</strong>: every cost of the split, none of the independence</td></tr>
+<tr><td>Shared database between services</td><td>Not a split. The schema is the coupling, and the coupling was the problem</td></tr>
+<tr><td>One component with a wildly different load</td><td>Extract <em>that one</em>. A single carved-out service is not microservices</td></tr>
+</table>
+<div class="concept-desc verdict">
+The honest default for most teams is a <strong>modular monolith</strong>: enforce module
+boundaries inside one deployable, with no shared tables across modules, and split later along a
+seam you have already proved. It gets you Conway-friendly ownership without paying for
+distributed transactions, service discovery, and a tracing stack you do not yet need.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="event-driven-architecture" data-reviewed="2026-08">
@@ -75211,6 +75237,33 @@ consistency.
 Watch for: event ordering, duplicate delivery (make consumers idempotent), and
 schema evolution (version your events). Pairs with the Message Queues topic and
 CQRS/Event Sourcing below.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bill</div>
+<div class="concept-title">You Trade the Stack Trace for a Correlation ID</div>
+<div class="concept-desc">
+Synchronous code hands you the whole causal chain in one stack trace. Publish an event and
+that goes away: the producer does not know who consumed it, the consumer does not know what
+caused it, and <strong class="c-amber">&ldquo;why did this customer get two emails&rdquo;
+becomes an archaeology project</strong> across services, retries and a broker's redelivery
+semantics.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What you lose</th><th>What has to replace it</th></tr>
+<tr><td>The stack trace</td><td>Distributed tracing, with trace context propagated through <em>every</em> broker hop</td></tr>
+<tr><td>Knowing who consumes what</td><td>A schema registry or catalogue &mdash; otherwise nobody can safely change an event</td></tr>
+<tr><td>Exactly-once delivery</td><td>Consumers must be idempotent. Most brokers are at-least-once whatever the marketing says</td></tr>
+<tr><td>Ordering</td><td>Guaranteed only within a partition &mdash; so the partition key is a design decision, not a default</td></tr>
+<tr><td>One place to see the whole flow</td><td>A diagram somebody maintains, or the flow lives only in four people's heads</td></tr>
+</table>
+<div class="concept-desc verdict">
+Adopt it where the decoupling is the point &mdash; fan-out to many consumers, absorbing
+load spikes, integrating systems on different release cycles. Do not adopt it to make a
+request/response call asynchronous while the caller still waits for the answer: that is the same
+coupling with a broker in the middle, and now the failure is invisible.
 </div>
 </div>
 </div>
@@ -75252,6 +75305,34 @@ the tech stack.
 </table>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The bill</div>
+<div class="concept-title">The Adapter You Never Swap Is Pure Overhead</div>
+<div class="concept-desc">
+Ports and adapters buy one thing: replacing an outside dependency without touching the
+core. The bill is paid on <strong class="c-amber">every feature, forever</strong> &mdash; an
+interface, an implementation, a mapper between the domain type and the outside type, and a test
+double. If the swap never happens, that is the full price for a benefit you did not
+collect.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Question</th><th>Honest answer, most of the time</th></tr>
+<tr><td>Will we change the database?</td><td>No. Teams say yes and mean it, and it is still no ten years later</td></tr>
+<tr><td>Will we change the web framework?</td><td>Rarely, and when it happens it is a rewrite anyway</td></tr>
+<tr><td>Will we swap the payment provider?</td><td><strong>Often yes</strong> &mdash; this is where a port genuinely pays</td></tr>
+<tr><td>Can we test the core without I/O <span class="acro-exp">(Input/Output)</span>?</td><td>This is the real benefit, and it arrives immediately rather than someday</td></tr>
+<tr><td>How many files does one new field touch?</td><td>Count it. Four or five is normal, and that number is the thing to weigh</td></tr>
+</table>
+<div class="concept-desc verdict">
+Put ports where the outside world is genuinely uncertain &mdash; payment providers,
+notification channels, third-party APIs whose contracts you do not control &mdash; and let the
+database be the database. <strong>Fast, I/O-free tests of the core are the benefit that pays
+from day one</strong>; swappability is a lottery ticket, and it is worth buying only where you
+can name the alternative you might swap to.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="cqrs-event-sourcing" data-reviewed="2026-08">
@@ -75283,6 +75364,33 @@ Current state is a replay of the log.
 Powerful together, but <strong class="c-red">not free</strong> — they add real
 complexity. Use them where audit, temporal queries, or extreme read/write
 asymmetry genuinely demand it (banking, ledgers), not by default.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bill</div>
+<div class="concept-title">An Append-Only Log Is a Promise You Cannot Take Back</div>
+<div class="concept-desc">
+Event sourcing's appeal is that nothing is ever lost. Its bill is the same sentence read
+the other way: <strong class="c-amber">nothing can ever be removed</strong>. A bad event, a
+personal detail written by mistake, a schema you now regret &mdash; all permanent by design, and
+all your problem for the lifetime of the system.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Bill</th><th>What it costs in practice</th></tr>
+<tr><td>Events are immutable</td><td>Fixing data means a compensating event; there is no <code>UPDATE</code> and no quiet cleanup</td></tr>
+<tr><td>Event schemas evolve</td><td>You must read every version you ever wrote, forever, or migrate the whole history</td></tr>
+<tr><td>Erasure requests</td><td>&ldquo;Delete my data&rdquo; against an immutable log needs crypto-shredding or a redaction design, chosen up front</td></tr>
+<tr><td>Rebuilding projections</td><td>Replay time grows with history &mdash; snapshotting stops being optional around year three</td></tr>
+<tr><td>Eventual consistency is visible</td><td>The user saves and does not see it. That is a product decision, not an implementation detail</td></tr>
+</table>
+<div class="concept-desc verdict">
+CQRS without event sourcing is a much smaller trade and is often the whole win: separate
+read and write models, keep a normal database. Reach for the log itself when the
+<strong>history is the product</strong> &mdash; ledgers, audit, anything where &ldquo;how did we
+arrive at this balance&rdquo; is a question somebody will ask under oath. If nobody will ask,
+you have bought permanence and only paid for it.
 </div>
 </div>
 </div>
@@ -75359,6 +75467,34 @@ follows.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The bill</div>
+<div class="concept-title">Without the Domain Expert, It Degrades Into a Folder Layout</div>
+<div class="concept-desc">
+DDD's value is in the <strong class="c-cyan">conversation</strong> &mdash; the ubiquitous
+language, the argument about where a boundary falls, the discovery that two teams were using
+&ldquo;order&rdquo; to mean different things. The tactical patterns are the residue of that
+conversation. Copy the residue without the conversation and you get
+<strong class="c-amber">a directory called <code>domain/</code> and no shared
+understanding</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Precondition</th><th>If you do not have it</th></tr>
+<tr><td>Regular access to a domain expert</td><td>The language gets invented by developers, and it will be wrong in ways nobody notices for a year</td></tr>
+<tr><td>Genuine domain complexity</td><td>CRUD <span class="acro-exp">(Create, Read, Update, Delete)</span> with ceremony &mdash; aggregates and repositories over a table with six columns</td></tr>
+<tr><td>Authority to redraw boundaries</td><td>Bounded contexts drawn around the existing team structure, which is where they already were</td></tr>
+<tr><td>Room for the first model to be wrong</td><td>The first model is always wrong. With no room to revise, the first guess ships as architecture</td></tr>
+</table>
+<div class="concept-desc verdict">
+The cheap part of DDD is worth doing everywhere and costs nothing: <strong>name things
+the way the business names them</strong>, and notice when one word means two things. The
+expensive part &mdash; aggregates, repositories, context maps &mdash; earns its keep when the
+rules are genuinely intricate and getting them wrong is costly. Insurance, logistics and
+finance qualify; a booking form does not.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="solid-principles" data-reviewed="2026-08">
@@ -75390,6 +75526,34 @@ hard to change.
 The throughline is <strong class="c-green">manage dependencies</strong>: isolate
 what changes, program to interfaces, and keep the direction of dependency
 pointing at stable abstractions (this is the engine behind Clean Architecture).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bill</div>
+<div class="concept-title">An Interface With One Implementation Is a Guess About the Future</div>
+<div class="concept-desc">
+Applied as rules rather than as pressure, SOLID reliably produces a particular codebase:
+dozens of one-method classes, an interface for every class, a dependency-injection container
+wiring it together, and no way to read a feature end to end.
+<strong class="c-amber">Each of those interfaces is a prediction</strong>, and predictions about
+which axis a system will vary along are usually wrong.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Letter</th><th>Read as a rule &mdash; the failure</th><th>Read as pressure &mdash; the use</th></tr>
+<tr><td>S</td><td>One class, one method</td><td>If you cannot describe it without &ldquo;and&rdquo;, it is doing two things</td></tr>
+<tr><td>O</td><td>Never modify existing code</td><td>Frequently-changing behaviour deserves an extension point. The rest does not</td></tr>
+<tr><td>L</td><td>Formal substitutability proofs</td><td>A subclass that throws on half the interface is lying about what it is</td></tr>
+<tr><td>I</td><td>Split every interface</td><td>Do not force an implementer to stub methods it has no use for</td></tr>
+<tr><td>D</td><td>An interface for everything</td><td>Depend on abstractions <em>at the boundaries you actually cross</em></td></tr>
+</table>
+<div class="concept-desc verdict">
+The cheap test before adding an interface: <strong>name the second
+implementation</strong>. If you can name it, add the abstraction. If you cannot, you are
+speculating &mdash; and the concrete class is easy to extract later, once the second case exists
+and has told you what the abstraction should have been. Removing speculative generality is far
+harder than adding it.
 </div>
 </div>
 </div>
@@ -75700,6 +75864,34 @@ operations.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The bill</div>
+<div class="concept-title">Retries Cause the Outage They Were Added to Survive</div>
+<div class="concept-desc">
+A retry is extra load applied at exactly the moment a system is least able to take it. A
+dependency slows, every caller retries three times, offered load triples, and the dependency
+that was struggling is now down &mdash; a <strong class="c-amber">retry storm</strong>, and a
+classic self-inflicted outage. Worse, retries stack: three layers each retrying three times is
+twenty-seven requests for one user action.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Rule</th><th>Why</th></tr>
+<tr><td>Retry at one layer only</td><td>Retries multiply through the stack. Decide where, and make every other layer fail fast</td></tr>
+<tr><td>Exponential backoff <em>with jitter</em></td><td>Without jitter every client retries at the same instant &mdash; you have built a synchronised load test</td></tr>
+<tr><td>Retry budget, not retry count</td><td>Cap retries as a share of traffic; a per-call count has no idea what the rest of the fleet is doing</td></tr>
+<tr><td>Only retry idempotent operations</td><td>Otherwise a timeout on a call that actually succeeded charges the card twice</td></tr>
+<tr><td>Timeout shorter than your caller's</td><td>A longer one is decoration &mdash; they gave up before you did</td></tr>
+</table>
+<div class="concept-desc verdict">
+The circuit breaker exists to stop the storm: after enough failures it fails fast without
+calling, gives the dependency room to recover, then lets one probe through. Pair it with a
+<strong>fallback that is honest</strong> &mdash; stale cache, reduced feature, a clear message
+&mdash; because the realistic alternative to a slow correct answer is a fast partial one, not an
+error page.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="distributed-transactions-saga-outbox" data-reviewed="2026-08">
@@ -75729,6 +75921,34 @@ card → reserve stock), you can't wrap it in one ACID <span class="acro-exp">(A
 Sagas trade atomicity for availability: the system is briefly inconsistent, then
 converges (or compensates). "Charge failed → cancel the order" is a compensating
 transaction. Pair with idempotency (E3) so retried steps are safe.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bill</div>
+<div class="concept-title">Compensation Is Not Rollback, and Every Partial State Needs an Owner</div>
+<div class="concept-desc">
+A saga does not undo anything. It runs a <strong class="c-amber">second business
+operation</strong> intended to offset the first, and the difference matters: a refund is not an
+un-charge, cancelling a shipment that already left is a different process, and an email that has
+been sent cannot be unsent. Every step you add multiplies the partial states somebody has to
+have thought about.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Reality</th><th>What it demands</th></tr>
+<tr><td>There is no rollback</td><td>Write the compensating action for every step, as product behaviour rather than error handling</td></tr>
+<tr><td>Some steps cannot be compensated</td><td>Order them last, or make them reversible &mdash; send the email after the money has moved</td></tr>
+<tr><td>Partial states are user-visible</td><td>The order that is paid but unshipped needs a screen and a support answer</td></tr>
+<tr><td>Compensation can fail too</td><td>Now you need retries, a dead-letter path, and a human queue</td></tr>
+<tr><td>Outbox is the mechanical half</td><td>Write the event in the same transaction as the state change, publish separately</td></tr>
+</table>
+<div class="concept-desc verdict">
+Before reaching for a saga, try much harder to make the operation
+<strong>local</strong>. Two services that always change together are frequently one service
+that was split too early, and merging them replaces an entire distributed protocol with a
+database transaction. Sagas are right when the boundary is genuinely real &mdash; a payment
+provider, a warehouse, another company &mdash; and expensive whenever it is not.
 </div>
 </div>
 </div>

@@ -10895,7 +10895,7 @@ weighted by how central the domain is to why anyone visits.
 | ✅ **D3** | `cloud` | ~~40~~ → **32** | Three providers, one card each. **Eight shipped**, all provider-neutral: the failure mode that is the same on all three. 63% thin → 50% |
 | ✅ **D4** | `blueteam` | ~~36~~ → **28** | The first 37 cards predate the detection-engineering track that follows them. **Eight shipped**, all with the same addition: *what this tool cannot see, and what you pair it with*. 67% thin → 52% |
 | ✅ **D5** | `web` | ~~35~~ → **27** | Median 1,415 against a mean of 2,622 — the clearest bimodal domain in the file, and it is bimodal because of *where it was written*. **Eight shipped**, each naming an instrument. 85% thin → 66% |
-| **D6** | `eng` | 33 | The early technical cards sit beside a management track written to a much higher standard |
+| ✅ **D6** | `eng` | ~~33~~ → **25** | The architecture cards sat beside a management track that had no choice but to be about trade-offs. **Eight shipped**, each naming a bill and a threshold. 43% thin → 32% |
 | **D7** | `devops` | 20 | Platform track deep, tool cards thin. Same shape as `blueteam` |
 | — | `shortcut` | 20 | **Excluded.** Reference domain, see §4 |
 
@@ -10963,6 +10963,39 @@ name an instrument, a setting, or a threshold.**
 | Responsive Design | Device vs viewport — DevTools device mode resizes a window; it does not give you a finger |
 | Accessibility | Automated vs human — a clean automated scan is the floor, and this repo's own 6/6 is exactly that |
 | Frontend Testing | Latency — `localhost` has none, and CI flake is usually the test discovering that |
+
+### The D6 spec — every pattern sends a bill, and most cards only print the benefit
+
+`eng`'s management track reads well because management writing has no choice but to be about
+trade-offs: there is no way to describe *influence without authority* that does not admit what
+it costs. The architecture track has a choice, and the thin cards took it. They name the
+pattern, explain the mechanism, and stop — which reads as endorsement, and endorsement is how a
+four-person team ends up running a saga orchestrator.
+
+The D6 addition:
+
+> **The bill this pattern sends, and the size below which it is a net loss.**
+
+Two required parts, and a card missing either was rewritten:
+
+| Part | Why it is required |
+|---|---|
+| A **concrete ongoing cost**, not a caveat | "It adds complexity" is true of everything and decides nothing. "Every feature now touches four files and a mapper" is a thing the reader can weigh |
+| A **threshold** — a team size, a service count, a moment | The trade genuinely flips somewhere. A card that says "it depends" has moved the work back onto the reader, which is what they came here to avoid |
+
+Eight chosen so the *kind* of bill differs each time — a wave of eight cards all saying
+"complexity" would be one idea in eight places:
+
+| Card | The kind of bill |
+|---|---|
+| Monolith vs Microservices | Organisational — the threshold is team count, not request rate |
+| CQRS & Event Sourcing | Permanence — an append-only log is a promise you cannot take back |
+| Domain-Driven Design | Access to people — without the domain expert it degrades to a folder layout |
+| Clean / Hexagonal | Indirection — the adapter you never swap is pure overhead |
+| Saga & Outbox | Business logic — compensation is not rollback, and somebody has to design every partial state |
+| Resilience Patterns | Load amplification — retries cause the outage they were added to survive |
+| Event-Driven | Observability — you trade the stack trace for a correlation ID |
+| SOLID | Speculative generality — an interface with one implementation is a guess about the future |
 
 ## 7. The trap in this plan
 
@@ -12279,5 +12312,55 @@ mean chars/concept card 1,200  1,201  1,202  1,203  1,204
 Forty cards, five waves, **four characters** of movement in the padding counter-metric. Phase
 8 §8's target of "under 150 thin" is now 97 cards away — twelve more waves of this, which is
 worth saying plainly rather than implying the end is near.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D6: `eng`, and why the management track was already good
+
+The D6 diagnosis is the most transferable thing in this wave, and it is not about
+architecture. `eng`'s management cards read well because **management writing has no option
+but to be about trade-offs** — there is no way to describe *influence without authority* that
+does not admit what it costs you. Architecture writing has that option, and the thin cards took
+it: name the pattern, explain the mechanism, stop. That reads as endorsement, and endorsement is
+how a four-person team ends up running a saga orchestrator.
+
+| Pattern | The bill, and the threshold |
+|---|---|
+| Monolith vs Microservices | **The threshold is team count, not request rate.** One team at any traffic level should stay a monolith; several teams on one release train is the real signal |
+| CQRS & Event Sourcing | An append-only log is a promise you cannot take back — erasure requests, schema versions you must read forever, replay time that grows with history |
+| Domain-Driven Design | Without the domain expert it degrades into a folder layout. The cheap half — name things the way the business does — is worth doing everywhere |
+| Clean / Hexagonal | **The adapter you never swap is pure overhead.** Ports pay at payment providers and third-party APIs; the database is not going to change |
+| Saga & Outbox | Compensation is not rollback — a refund is not an un-charge, and every partial state needs a screen and a support answer |
+| Resilience Patterns | Retries cause the outage they were added to survive. Three layers retrying three times is twenty-seven requests for one action |
+| Event-Driven | You trade the stack trace for a correlation ID, and most brokers are at-least-once whatever the marketing says |
+| SOLID | An interface with one implementation is a guess about the future. **Name the second implementation** before adding the abstraction |
+
+### The threshold requirement, and what it rejected
+
+Requiring a *number or a moment* rather than a caveat is what stopped this wave becoming eight
+paragraphs about complexity. "It depends" hands the work back to the reader, which is precisely
+what they came here to avoid. Three drafts were rewritten for having a bill and no threshold —
+and the microservices card was rewritten twice, because the first version's threshold was
+request rate, which is the wrong axis and the single most common way this decision is got
+wrong.
+
+The SOLID card is the one that changed shape most: it became a three-column table — the letter,
+the failure when it is read as a rule, the use when it is read as pressure — because SOLID's
+actual problem is not that the principles are wrong but that they are applied as law.
+
+### The measurement
+
+```
+                          D1     D2     D3     D4     D5     D6
+thin topics              279    271    263    255    247    239   ← eight, exactly, six times
+eng                                                   33 →  25  (43% → 32%)
+mean chars/concept card 1,200  1,201  1,202  1,203  1,204  1,205
+```
+
+Forty-eight cards, six waves, **five characters** of movement. One card per wave, on average,
+is now being rewritten for failing its own spec's test rather than for being wrong — which is
+the sign the specs are doing more work than the drafting.
 
 Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
