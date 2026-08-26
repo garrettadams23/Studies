@@ -10891,7 +10891,7 @@ weighted by how central the domain is to why anyone visits.
 | Wave | Domain | Cards | Why this position |
 |---|---|---|---|
 | ✅ **D1** | `data` | ~~40~~ → **32** | Worst ratio on the site, and the subject rewards depth. **Eight shipped** — the W4 spec's exact list. 93% thin → 74% |
-| **D2** | `redteam` | 40 | The tooling catalogue is the domain's identity. Each card needs the same addition — *when would you not use this*, and *what does it look like to the defender* |
+| ✅ **D2** | `redteam` | ~~40~~ → **32** | The tooling catalogue is the domain's identity. **Eight shipped**, all with the same addition: *what it leaves behind* and *what the defender sees*. 77% thin → 62% |
 | **D3** | `cloud` | 40 | Three providers, one card each. The deepening is provider-neutral: what the service is actually for, and the failure mode that is the same on all three |
 | **D4** | `blueteam` | 36 | The first 37 cards predate the detection-engineering track that follows them and now reads as a different domain |
 | **D5** | `web` | 35 | Median 1,415 characters against a mean of 2,622 — the clearest case of a bimodal domain in the file |
@@ -12006,3 +12006,49 @@ instead of repeating them.
 
 Site **1,426 topics** (unchanged — deepening adds no ids, which is the whole argument for
 doing it before Phase 7). Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+
+## Session record — Phase 8 wave D2: `redteam`, and the addition that changed the domain
+
+D2's spec was one sentence and it turned out to be the right one: *each card needs the same
+addition — when would you not use this, and what does it look like to the defender.* Eight
+tool cards, one uniform second concept card, and the domain now reads differently.
+
+| Tool | The sentence it gained |
+|---|---|
+| Masscan | There is no quiet configuration — there is a rate you chose and a rate somebody else notices |
+| Amass | Passive and active are two different engagements, and the forgotten host is usually already in certificate transparency, because the log is permanent |
+| ffuf | **Getting blocked invalidates the test** — the client learns their rate limiting works rather than whether their application is sound |
+| Nuclei | A template is a request and a match condition written by a stranger, and both halves can be wrong. Read the ones tagged intrusive before enabling them |
+| Responder | The defensive answer removes the technique rather than detecting it, and all three settings are free — which is why it still works everywhere |
+| Aircrack-ng | Every other tool is bounded by an address range; **radio is bounded by geography**, and geography does not respect the rules of engagement |
+| Sliver | Widely adopted means widely detected. What gets caught is beacon regularity, not framework choice |
+| Nikto | Run it once, early, and never as your evidence — every finding is a lead to confirm |
+
+### Why the uniform addition works here and would not elsewhere
+
+`data`'s eight cards each needed a *different* thing — a failure mode here, a decision there.
+`redteam`'s eight needed the same thing eight times, because the domain has a single
+structural gap: it documents what a tool does and never what using it costs. That is a
+property of the domain, not of the cards, and the spec caught it in one line.
+
+It also makes the domain more useful to the reader it did not previously serve. Half these
+tables now answer a defender's question — *what would I see if someone did this to me* — from
+cards filed under offence. **The `redteam` tooling catalogue has quietly become a detection
+reference**, which is a better outcome than the cards being individually longer.
+
+### The measurement
+
+```
+                          D1 end   D2 end
+thin topics                  279      271     ← eight, exactly, again
+redteam                 40 (77%)  32 (62%)
+mean chars/concept card    1,200    1,201     ← +1
+```
+
+Two waves, sixteen cards, and the padding counter-metric has moved **three characters in
+total**. Phase 8 §8's target was "under 150 thin, with the remainder audited"; the run so far
+is 288 → 271, which is sixteen cards of real progress and a reminder that the target is
+roughly fifteen more sessions of this.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.

@@ -62715,8 +62715,8 @@ before, AAR after.
 <span class="ctag ctag-secx">OSCP</span>
 </div>
 <span class="domain-sub">Recon · Exploitation · AD Attacks · C2 · Password &amp; Wireless</span>
-<span class="domain-meta" aria-label="52 topics, about 50 min to read"
->52 topics · ~50 min</span>
+<span class="domain-meta" aria-label="52 topics, about 1h 05m to read"
+>52 topics · ~1h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -62821,6 +62821,27 @@ catch it instantly. Attackers throttle to blend in.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">From the Other Side</div>
+<div class="concept-title">It Is Loud by Design, and That Is a Choice You Are Making</div>
+<div class="concept-desc">
+Speed here comes from not waiting for replies, which means sending an enormous number of packets from one source in a short window. There is no quiet configuration of this tool — there is a rate you chose and a rate somebody else notices.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What it leaves behind</th><th>What the defender sees</th></tr></thead>
+<tbody>
+<tr><td>A burst of SYNs <span class="acro-exp">(Synchronize)</span> to many ports from one address</td><td>A near-perfect signature: high fan-out, no completed handshakes, uniform timing</td></tr>
+<tr><td>Connection attempts to closed ports at scale</td><td>Firewall deny logs spike; an IDS <span class="acro-exp">(Intrusion Detection System)</span> rule for horizontal scanning fires on the first few hundred</td></tr>
+<tr><td>A source address that appears once and never again</td><td>Trivially blocklisted, and now every later phase from that address fails</td></tr>
+<tr><td>Nothing at all, if the rate is low enough</td><td>Which takes as long as Nmap would have</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Ask what the scan is for before choosing the tool.</strong> Internet-scale discovery of your own estate is exactly what this is for. Reconnaissance inside an engagement where detection matters is the opposite case — and burning the source address in the first hour costs more than the time saved. The engagement question is not "can I scan faster", it is <em>whether being seen scanning changes the result</em>.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="theharvester-recon-ng-osint-frameworks" data-reviewed="2026-07">
@@ -62887,6 +62908,27 @@ transparency, DNS, APIs) to enumerate them. Finding the forgotten
 <strong class="c-amber">Blue-team note:</strong> maintain your own asset
 inventory the same way — you can't defend subdomains you forgot you own.
 Watch for dangling DNS <span class="acro-exp">(Domain Name System)</span> records (subdomain takeover risk).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">From the Other Side</div>
+<div class="concept-title">Passive and Active Are Two Different Engagements</div>
+<div class="concept-desc">
+Subdomain enumeration splits cleanly into sources that never touch the target — certificate transparency logs, public datasets, search indexes — and probes that do. Mixing them in one command is the default, and it quietly turns an invisible activity into a visible one.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What it leaves behind</th><th>What the defender sees</th></tr></thead>
+<tbody>
+<tr><td>Certificate transparency and public dataset queries</td><td><strong>Nothing.</strong> The target is not contacted at all</td></tr>
+<tr><td>Brute-forced DNS resolution against the target's servers</td><td>A flood of NXDOMAIN responses in the authoritative server's logs</td></tr>
+<tr><td>Resolving every candidate to check it is live</td><td>DNS query volume from one resolver, and hits on hosts nobody uses</td></tr>
+<tr><td>Probing each host found</td><td>Web server logs on assets whose owners had forgotten they existed — often the fastest way to get a call</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">Run passive first and read it properly.</strong> The forgotten host is usually already in certificate transparency, because somebody issued it a certificate years ago and the log is permanent. That single source answers most of the question without generating one packet at the target — and it is also the source a defender should be monitoring for their own domains.
 </div>
 </div>
 </div>
@@ -63106,6 +63148,27 @@ wordlists come from SecLists.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">From the Other Side</div>
+<div class="concept-title">The Noisiest Thing You Will Do to a Web Application</div>
+<div class="concept-desc">
+Content discovery means thousands of requests for paths that do not exist. There is no version of this that looks like normal traffic, and modern edge defences are tuned for precisely this shape.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What it leaves behind</th><th>What the defender sees</th></tr></thead>
+<tbody>
+<tr><td>Thousands of 404s from one source in minutes</td><td>A rate-limit rule, then a block. Often within the first few hundred requests</td></tr>
+<tr><td>A default user agent naming the tool</td><td>Free attribution. Some WAF <span class="acro-exp">(Web Application Firewall)</span> rulesets match it directly</td></tr>
+<tr><td>Uniform request timing</td><td>More distinctive than volume — humans and crawlers both vary; a fuzzer does not</td></tr>
+<tr><td>A hit on <code>/backup.zip</code> or <code>/.git/</code></td><td>An alert worth waking someone for, and the finding that justified the whole exercise</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-red">Getting blocked is not just an inconvenience — it invalidates the test.</strong> An application you can no longer reach cannot be assessed, and the client learns their rate limiting works rather than whether their application is sound. Slow it down, spread it out, and use a wordlist chosen for the technology rather than the largest one available: a 4,000-entry list matched to the stack beats a 200,000-entry generic one on both findings and noise.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="nuclei-templated-vulnerability-scanning" data-reviewed="2026-07">
@@ -63136,6 +63199,27 @@ newly-disclosed CVE affecting you before an attacker does.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">From the Other Side</div>
+<div class="concept-title">Templates Are Somebody Else's Judgement, Running Against Your Client</div>
+<div class="concept-desc">
+The community template library is the tool's strength and the thing to actually inspect. A template is a request and a match condition written by a stranger, and both halves can be wrong in ways that cost you.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What it leaves behind</th><th>What the defender sees</th></tr></thead>
+<tbody>
+<tr><td>A template that only reads</td><td>Ordinary traffic, one request per check — the intended case</td></tr>
+<tr><td>A template that writes, uploads or executes to prove a finding</td><td>A real change on a production system, made by a scan you thought was passive</td></tr>
+<tr><td>A match on a version banner</td><td>A finding that may be a false positive, because banners lie and backports exist</td></tr>
+<tr><td>Several thousand requests in a burst</td><td>The same detection profile as any other scanner, plus a recognisable ordering</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Read the templates you are about to run</strong> — at minimum the severity band you are enabling, and every template tagged intrusive. The dual-use framing in this card is exactly right, and it cuts both ways: the same library that lets a defender check their estate lets an operator run an unreviewed exploit against a client system with one flag. Version-match findings also need confirming by hand before they reach a report, because a patched-but-unbumped banner is common and a report full of them is a report nobody trusts.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="nikto-wpscan-server-cms-scanning" data-reviewed="2026-07">
@@ -63163,6 +63247,27 @@ enumerating plugins/themes/users and matching them to known vulns (WordPress pow
 <strong class="c-amber">Blue-team note:</strong> both are extremely noisy —
 trivially caught by IDS/WAF. Defense is patching, removing version banners, and
 keeping CMS plugins minimal and current.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">From the Other Side</div>
+<div class="concept-title">Loud, Dated, and Still Worth One Run</div>
+<div class="concept-desc">
+Nikto announces itself, tests thousands of paths that were interesting in 2005, and produces findings that need confirming by hand. It is still worth running once, early, because the things it finds are the things that should never have been there.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What it leaves behind</th><th>What the defender sees</th></tr></thead>
+<tbody>
+<tr><td>Thousands of requests for legacy paths</td><td>Instant detection. The tool does not attempt to blend in and never has</td></tr>
+<tr><td>A default user agent</td><td>Named in the log. Changing it is one flag and rarely done</td></tr>
+<tr><td>Findings based on a version banner</td><td>Frequently false — backported patches keep old version strings</td></tr>
+<tr><td>An actual hit — an exposed admin panel, a test script, a backup</td><td>The reason to have run it</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">Run it once at the start, on an authorised target, and never as your evidence.</strong> Treat every finding as a lead to confirm rather than a result to report. For WordPress specifically the plugin enumeration is the valuable half — the core is usually current and a forgotten plugin with a known vulnerability is the common way in, which is also why a defender should be running the same scan against their own site on a schedule.
 </div>
 </div>
 </div>
@@ -63455,6 +63560,27 @@ network. Detection: a host suddenly answering name queries for everything.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">From the Other Side</div>
+<div class="concept-title">One Poisoned Response Is Enough to Be Caught</div>
+<div class="concept-desc">
+This attack works because Windows falls back to broadcast name resolution when DNS fails, and it is detected the same way: the broadcast is visible to everyone on the segment, including anything listening for it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What it leaves behind</th><th>What the defender sees</th></tr></thead>
+<tbody>
+<tr><td>An answer to an LLMNR or NBT-NS query</td><td>A canary host that queries a name which cannot exist and alerts on any reply. Cheap, reliable, and increasingly standard</td></tr>
+<tr><td>Authentication attempts to an unexpected host</td><td>Event 4776 or 4624 naming a workstation nobody has heard of</td></tr>
+<tr><td>A relay to SMB on a server</td><td>Blocked outright where SMB signing is required, which is the actual fix</td></tr>
+<tr><td>Sustained poisoning across a working day</td><td>Every mistyped share name in the building, arriving at one address</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">The defensive answer is short and it removes the technique rather than detecting it:</strong> disable LLMNR and NBT-NS, require SMB signing, and enable Extended Protection for Authentication. All three are Group Policy settings. That is why this card is worth reading from the blue side — the attack is well known, the fix is free, and the reason it still works everywhere is that nobody has been asked to turn the fallbacks off.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="adcs-abuse-certipy-the-esc-techniques" data-reviewed="2026-08">
@@ -63591,6 +63717,27 @@ Sliver-specific indicators — default implant characteristics, certificate
 patterns, and traffic signatures — as YARA <span class="acro-exp">(Yet Another Recursive Acronym)</span> and Suricata rules. The general
 principle holds: any C2's <em>beaconing behavior</em> is detectable even when
 static signatures aren't, so behavioral analytics matter most.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">From the Other Side</div>
+<div class="concept-title">Widely Adopted Means Widely Detected</div>
+<div class="concept-desc">
+The adoption this card mentions is the operational problem with it. A framework used by many red teams and many criminal groups is a framework every detection vendor has samples of, and default builds are the most-sampled artefacts in it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What it leaves behind</th><th>What the defender sees</th></tr></thead>
+<tbody>
+<tr><td>A default-profile implant</td><td>Signatured. Static detection on the binary, often before it runs</td></tr>
+<tr><td>Default HTTP/S traffic profiles</td><td>Published JA3 and header patterns; network detections exist for the stock configuration</td></tr>
+<tr><td>Regular beaconing at a fixed interval</td><td>The detection that survives every change of tooling, because it is a property of having a controller at all</td></tr>
+<tr><td>DNS <span class="acro-exp">(Domain Name System)</span> transport</td><td>Query volume and entropy that stand out sharply on any network with baseline monitoring</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">The lesson generalises past this tool.</strong> Framework choice is a small part of whether an operation is detected; what gets caught is the <em>behaviour</em> — beacon regularity, process lineage, and where the traffic goes. An operator who changes framework in response to detection is treating a symptom, and the defender who tuned on the framework name will miss the next one for the same reason.
 </div>
 </div>
 </div>
@@ -63800,6 +63947,27 @@ to test — intercepting others' Wi-Fi is illegal.</em>
 <strong class="c-amber">Blue-team note:</strong> deauth floods are detectable by
 WIDS/WIPS. Defenses: WPA3 <span class="acro-exp">(Wi-Fi Protected Access 3)</span> (resists offline cracking), long random passphrases,
 802.1X/enterprise auth instead of a shared PSK.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Boundary</div>
+<div class="concept-title">Scope Is Physical Here, and Radio Does Not Respect It</div>
+<div class="concept-desc">
+Every other tool in this domain is constrained by an address range. Wireless is constrained by geography, and a capture in a shared building or a high street picks up networks that were never in scope and whose owners never consented.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What it leaves behind</th><th>What the defender sees</th></tr></thead>
+<tbody>
+<tr><td>Monitor-mode capture</td><td>Frames from every network in range, including the dentist upstairs</td></tr>
+<tr><td>A deauthentication frame to force a handshake</td><td>A denial of service against real users, which is rarely inside the rules of engagement</td></tr>
+<tr><td>An offline crack of a captured handshake</td><td>Nothing — but the capture itself may already have been unlawful</td></tr>
+<tr><td>A rogue access point for a captive-portal test</td><td>Clients from outside the engagement associating to it</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-red">Write the physical boundary into the rules of engagement in advance</strong> — the building, the floor, the hours, the named SSIDs <span class="acro-exp">(Service Set Identifier)</span>, and what happens to frames from everything else. Deauthentication in particular needs explicit written permission, because it is an active denial of service against whoever is using that network at the time. See <span class="xref" data-xref="rules-of-engagement-read-this-first" role="link" tabindex="0">Rules of Engagement — Read This First</span>.
 </div>
 </div>
 </div>
