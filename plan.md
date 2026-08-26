@@ -11316,7 +11316,7 @@ loses a note.
 | **C1** — `script` internal | 6 | Web Scraping, OOP, Design Patterns, Regular Expressions, Git, Files. The largest domain and the worst offender, which is not a coincidence — 145 topics written across many sessions |
 | **C2** — `net` wireless and cloud | 5 | Three wireless cards is the clearest case on the site. Likely outcome: one beginner card, one deep card, one retired into them |
 | ✅ **C3** — `script`↔`shortcut` | 5 | Checked before merging, and the check was right: **2 merged, 4 refused**. The pair that mattered most was not on the list — two `script` PowerShell cards scoring 0.25 on titles and nearly identical in content |
-| **C4** — Kubernetes across `devops` and `linux` | 3 | Cross-domain, so the question is which domain owns the subject. Probably `devops`, with `linux` keeping a container-internals card that is genuinely its own |
+| ✅ **C4** — Kubernetes across `devops` and `linux` | 3 | The guess was right and the action was not a merge. `devops` owns Kubernetes; `linux` owns container internals. **Moved, not merged** — §3 says keep both, and the card was in the wrong domain, not duplicated |
 | **C5** — `sec` Zero Trust, `web`↔`script` WebAssembly and TypeScript | 4 | Small and clean |
 | **C6** — the tail | ~13 | Mostly below 0.6 overlap and mostly legitimate. Audit, expect to keep most |
 
@@ -12863,6 +12863,68 @@ of one-word titles will keep producing these.
 topics       1,426 → 1,424
 pairs ≥ 0.50    46 → 44
 aliases        109 → 111
+```
+
+Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 9 wave C4: the answer was a move, and a merge would have been wrong
+
+C4's single pair scores **1.00** — the highest on the site — and merging it would have been a
+mistake. That is worth more than the pair itself, because 1.00 is exactly the score that
+invites acting without reading.
+
+```
+1.00  [devops] Kubernetes – Container Orchestration Fundamentals   Beginner, 5 concept cards
+      [linux]  Kubernetes — Container Orchestration Reference      DEVOPS · CLOUD, 1 reference card
+```
+
+Both of §3's exemptions apply at once: **a Beginner card beside a deep card**, and **a reference
+card beside a concept card**. The titles are near-identical because both describe the same
+subject correctly; the cards are not the same card. §3's test — one sentence saying who each is
+for — gives two different sentences immediately.
+
+### So what *was* wrong
+
+The queue's own note guessed it: *"which domain owns the subject. Probably `devops`, with
+`linux` keeping a container-internals card that is genuinely its own."* The domain census
+confirms it exactly:
+
+| Domain | What it owns |
+|---|---|
+| `linux` | Docker, Podman & rootless, **Under the Hood — Namespaces & cgroups**, **Container Internals** — the layer beneath the orchestrator |
+| `devops` | Kubernetes Fundamentals, Objects, Networking & Storage, Helm & Kustomize, Secrets — five cards on the orchestrator |
+
+A Kubernetes *reference* was the only Kubernetes card outside `devops`, in the domain that owns
+everything **under** containers rather than above them. So it moved.
+
+### A move is cheaper than a merge, and this file has not said so before
+
+Topic ids are `slugify(title)`, so a card that changes domain **keeps its id**. That means:
+
+| Cost of a merge | Cost of this move |
+|---|---|
+| The retired permalink dies; `slug-aliases.json` grows | Nothing — the id is unchanged |
+| Five `localStorage` prefixes orphan | Nothing — same id, same keys |
+| Related edges and path steps break | Nothing — both are keyed by id, and neither records a domain |
+| Content has to be absorbed and verified first | Nothing — the card moves whole |
+
+**Where §3 says keep both and the cards are in the wrong places, move them.** That option was
+not in §4's cost table and belongs there: it is the correct answer whenever the duplication is
+apparent rather than real, and it costs nothing at all. `check_paths.py`,
+`suggest_related.py --check` and all 142 smoke checks pass unchanged, which is the evidence.
+
+What `devops` gained is also a real content win rather than bookkeeping: the reference card
+carries **13 `kubectl` verbs** — `get`, `describe`, `logs`, `exec`, `apply`, `delete`,
+`rollout`, `scale`, `top`, `port-forward`, `config`, `cluster-info` — and the domain's five
+existing Kubernetes cards had `kubectl apply` between them.
+
+```
+topics    1,424 (unchanged — a move creates and destroys nothing)
+devops       43 → 44
+linux        57 → 56
+pairs        44 (the pair remains, and is now correctly a keep-both)
 ```
 
 Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
