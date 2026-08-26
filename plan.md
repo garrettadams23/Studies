@@ -10890,7 +10890,7 @@ weighted by how central the domain is to why anyone visits.
 
 | Wave | Domain | Cards | Why this position |
 |---|---|---|---|
-| **D1** | `data` | 40 | Worst ratio on the site, and the subject rewards depth: every one of these is a decision with a trade-off that the table does not state |
+| ✅ **D1** | `data` | ~~40~~ → **32** | Worst ratio on the site, and the subject rewards depth. **Eight shipped** — the W4 spec's exact list. 93% thin → 74% |
 | **D2** | `redteam` | 40 | The tooling catalogue is the domain's identity. Each card needs the same addition — *when would you not use this*, and *what does it look like to the defender* |
 | **D3** | `cloud` | 40 | Three providers, one card each. The deepening is provider-neutral: what the service is actually for, and the failure mode that is the same on all three |
 | **D4** | `blueteam` | 36 | The first 37 cards predate the detection-engineering track that follows them and now reads as a different domain |
@@ -11955,3 +11955,54 @@ mean chars/card 1,196 → 1,198            the padding counter-metric, holding
 That thin-count line is the first evidence Phase 8's counter-metric works as designed:
 absorbing content into a survivor moved a card off the thin list and moved the mean by two
 characters. A padding pass would have moved the mean by a great deal more.
+
+
+## Session record — Phase 8 wave D1: the deepening pass, and the counter-metric holding
+
+The W4 worked specification named eight `data` cards and the one thing each was missing.
+All eight shipped, exactly as specified — which is the first evidence in this file that a
+*deepening* wave can be specified to transcription depth the same way a content wave can.
+
+| Card | Added | The sentence it now carries |
+|---|---|---|
+| *Locking & MVCC* | The failure mode | A lock wait does not look like an error — it looks like **nothing, for a while, and then a timeout** from a component several layers away |
+| *Connection Pooling* | The decision | Raising the pool size past a point buys wait time rather than throughput. Fifty small pools still sum to one large one |
+| *ER Modeling* | The trap | Model the invariant, not this year's process — and price belongs on the order line, because a product's price changing must not rewrite last year's revenue |
+| *Normalization* | The verdict | 3NF and stop for transactional; denormalise deliberately for analytical. **Duplication with an owner is different from duplication by accident** |
+| *Backups & PITR* | The failure mode | Backup jobs are monitored and restores are not, so the number nobody has measured is how long recovery takes |
+| *Replication & HA* | The decision | Synchronous makes the replica a dependency of every write — you traded data loss for availability, which is a different trade from the one most people think they are making |
+| *Monitoring a Database* | The trap | 10,000 queries at 2 ms and 100 at 4 s has a mean of 41 ms and a p99 of four seconds |
+| *The Semantic Layer* | The decision | A definition in a glossary is documentation; a definition queries cannot bypass is the thing itself |
+
+### The measurement, which is the point of having built the tool
+
+```
+                          before   after
+thin topics                  287     279      ← eight, exactly
+data domain             40 (93%)  32 (74%)
+mean chars/concept card    1,198   1,200      ← +2
+```
+
+**The counter-metric is the finding.** Phase 8 §7 names padding as the first failure mode —
+words added, nothing said — and predicted it would show up as the thin count falling while
+mean characters per concept card rises. Eight cards gained roughly 2,000 characters each and
+the mean moved by **two characters**, because every addition came as a *new concept card*
+rather than as more prose in the existing one.
+
+That is the difference between deepening and padding stated numerically, and it is now
+checkable on every future wave without anyone having to read the diff.
+
+### On the method
+
+Each addition took one of Phase 8 §5's steps — verdict, failure mode, decision, trap — and
+stopped there. None of the eight reached step 4 *and* step 5; several had exactly one honest
+thing to add and got exactly one. The step list is doing what a rubric should: giving
+permission to stop.
+
+The habit that made it fast was reading all eight cards first, in one pass, before writing
+anything. The eight are related — pooling, locking and monitoring are the same queueing
+problem from three angles — and writing them together let each one point at the others
+instead of repeating them.
+
+Site **1,426 topics** (unchanged — deepening adds no ids, which is the whole argument for
+doing it before Phase 7). Smoke **138/138** · axe **6/6** · visual **2/2**.

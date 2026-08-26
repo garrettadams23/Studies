@@ -79098,8 +79098,8 @@ The commercial equivalent of the whole conversation is
 <span class="ctag ctag-general">DATA</span>
 </div>
 <span class="domain-sub">SQL · DB Internals · NoSQL · Warehousing · DBA</span>
-<span class="domain-meta" aria-label="43 topics, about 50 min to read"
->43 topics · ~50 min</span>
+<span class="domain-meta" aria-label="43 topics, about 1h 00m to read"
+>43 topics · ~1h 00m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -79209,6 +79209,33 @@ are intentionally denormalized.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Verdict</div>
+<div class="concept-title">When to Stop, and When to Go Backwards on Purpose</div>
+<div class="concept-desc">
+Normal forms are a ladder with no instruction about where to get off, which is
+why the subject produces both under- and over-engineered schemas. The honest
+guidance is short and depends entirely on what the table is <em>for</em>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Workload</th><th>Target</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Transactional — orders, accounts, anything written often</td><td><strong>3NF, and stop</strong></td><td>Each fact stored once means a write touches one place. BCNF beyond this rarely changes the tables you would have drawn anyway</td></tr>
+<tr><td>Analytical — reporting, dashboards, a warehouse</td><td><strong>Denormalise deliberately</strong></td><td>Star schemas duplicate on purpose: joins are the cost at read time, and nothing is being updated in place</td></tr>
+<tr><td>A read-heavy path inside a transactional system</td><td>A derived column or a materialised view</td><td>Duplication with an owner and a refresh rule, which is different from duplication by accident</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">Denormalisation is a decision, not a failure —
+provided it is written down.</strong> The distinction that matters is not
+normalised versus not; it is whether a duplicated value has a stated source of
+truth and something that keeps it honest. A copy nobody owns silently
+diverges, and the divergence surfaces as two dashboards disagreeing months
+later.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="acid-transactions-isolation-levels" data-reviewed="2026-08">
@@ -79277,6 +79304,35 @@ language between engineers and stakeholders.
 (one/many) and optionality (zero/one). Get the relationships right here and the
 tables, keys, and joins fall out naturally — this is the bridge from requirements
 to a normalized schema.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Trap</div>
+<div class="concept-title">Model the Invariant, Not the Current Process</div>
+<div class="concept-desc">
+The most common schema mistake is not a missing normal form. It is
+<strong>modelling how the business works this year</strong> — the approval steps,
+the two regions, the one product line — instead of what is true about the domain
+regardless. Processes change every reorganisation; invariants do not, and the
+schema that encodes the second survives the first.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Process, which will change</th><th>Invariant, which will not</th></tr></thead>
+<tbody>
+<tr><td><code>manager_approved</code>, <code>finance_approved</code> as columns</td><td>An <em>approvals</em> table: who approved what, when, in which role</td></tr>
+<tr><td><code>email</code> and <code>email_2</code> on the customer</td><td>Contact methods as rows, with a type and a primary flag</td></tr>
+<tr><td>A <code>status</code> column with eleven values the code branches on</td><td>A state and a transition history, because somebody will ask when it changed</td></tr>
+<tr><td>Price on the product</td><td>Price on the <em>order line</em> — the price at the time of sale is a fact about the sale, and a product's price changing must not rewrite history</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">That last row is the one that causes real damage.</strong>
+Storing a price only on the product means last year's revenue moves when
+somebody edits a price today — and nobody notices, because the report still
+runs. The general test: <em>if this value changes, should history change with
+it?</em> If no, it belongs on the transaction, not on the entity.
 </div>
 </div>
 </div>
@@ -79608,6 +79664,39 @@ is how you safely implement "decrement inventory" under concurrency.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Failure Mode</div>
+<div class="concept-title">A Lock Wait Does Not Look Like an Error</div>
+<div class="concept-desc">
+This is what makes lock contention expensive to diagnose: the application does
+not receive a lock error. It receives <strong>nothing, for a while, and then a
+timeout</strong> — from the connection pool, the HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> client, or the load
+balancer, depending on which gives up first. So the alert fires on a component
+several layers away from the cause, and the first three people to look at it
+are looking in the wrong place.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What you see</th><th>What is happening</th></tr></thead>
+<tbody>
+<tr><td>Latency climbs on one endpoint, then everything</td><td>One slow transaction holds a lock; every request needing that row queues behind it, then the pool is exhausted and unrelated requests queue too</td></tr>
+<tr><td>The database looks idle — low processor, low disk</td><td>Waiting is not work. A blocked system is quiet, which is why resource dashboards say nothing is wrong</td></tr>
+<tr><td>It clears the moment you restart something</td><td>The blocking transaction was killed with its connection, so the evidence went with it</td></tr>
+<tr><td>A deadlock error, occasionally</td><td>The lucky case: the database detected a cycle and killed one side, so you get a message naming both statements</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">The query to know before you need it</strong> is the
+one that lists blocked sessions and their blockers — <code>pg_locks</code>
+joined to <code>pg_stat_activity</code> in Postgres,
+<code>sys.innodb_lock_waits</code> in MySQL. And the important half of the
+answer is <em>the blocker</em>, which is nearly always a transaction left
+open by application code that did work between <code>BEGIN</code> and
+<code>COMMIT</code> it did not need to — an HTTP call, a file write, a
+user waiting on a form.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="partitioning-sharding-scaling-one-big-table" data-reviewed="2026-08">
@@ -79813,6 +79902,36 @@ connections.
 point they just contend. A good pool is often just <em>(cores × 2) + spindles</em>,
 not hundreds. Connection exhaustion presents as timeouts under load; the fix is
 pooling, not a bigger <code>max_connections</code>.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Sizing It — Why a Smaller Pool Is Usually Faster</div>
+<div class="concept-desc">
+The instinct under load is to raise the pool size, and it makes things worse
+past a point that arrives earlier than anyone expects. A database serves
+queries with a finite number of cores and disks; connections beyond that do not
+add capacity, they add <strong>contention</strong> — context switches, lock
+waits, and a scheduler dividing the same work into more, smaller pieces.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Question</th><th>Answer</th></tr></thead>
+<tbody>
+<tr><td>How big should the pool be?</td><td>Start near <code>(cores &times; 2) + effective spindles</code> and measure. Two-digit numbers, not three</td></tr>
+<tr><td>Why does raising it help for ten minutes?</td><td>Queueing moved from your application into the database, where it is less visible. Total throughput did not change</td></tr>
+<tr><td>What if I have fifty application instances?</td><td>Fifty small pools still sum to one large one. This is where an external pooler earns its place</td></tr>
+<tr><td>Transaction mode or session mode?</td><td>Transaction mode multiplexes far better and forbids session state — prepared statements, temp tables, <code>SET</code>. Choose it deliberately, because the failure is a confusing runtime error rather than a config warning</td></tr>
+<tr><td>Serverless?</td><td>Instances &times; concurrency, with no coordination between them. A pooler is not optional here, it is the architecture</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+The relationship between pool size and latency is the queueing one, not a
+linear one: <strong>utilisation past roughly 80% buys wait time rather than
+throughput</strong>, and the knee is steep. A pool sized to keep the database
+busy but not saturated finishes the same work sooner than one sized to keep
+every request from ever queuing.
 </div>
 </div>
 </div>
@@ -80131,6 +80250,36 @@ analytics equivalent of DRY <span class="acro-exp">(Don't Repeat Yourself)</span
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Where the Definition Lives Decides Whether It Holds</div>
+<div class="concept-desc">
+Every organisation has a definition of revenue. The question is not whether one
+exists — it is how many places compute it, because each one is a copy that can
+drift, and drift is discovered in a meeting where two people have different
+numbers on the same slide.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Definition lives in</th><th>What happens</th></tr></thead>
+<tbody>
+<tr><td>Each dashboard</td><td>As many definitions as dashboards. Nobody knows which is right, and the answer depends on who built theirs most recently</td></tr>
+<tr><td>A glossary or wiki page</td><td>Correct on the day it is written. Nothing enforces it, and no query reads it</td></tr>
+<tr><td>Transformation code in the warehouse</td><td>One definition, version-controlled, reviewable — and only for tools that query <em>through</em> it</td></tr>
+<tr><td><strong>A semantic layer every tool queries</strong></td><td>One definition, and a spreadsheet exported by someone in finance gets the same answer as the executive dashboard</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">This is the same principle the rest of this site keeps
+arriving at:</strong> documentation not derived from the thing it documents
+will diverge from it. A metric definition in a glossary is documentation; a
+metric definition that queries cannot bypass is the thing itself. The
+practical first step is smaller than a platform, though — pick the ten numbers
+leadership actually quotes and give those a single home. The rest can wait,
+and most of it will never matter.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="data-quality-observability" data-reviewed="2026-08">
@@ -80200,6 +80349,36 @@ drills, or you have Schrödinger's backup.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Failure Mode</div>
+<div class="concept-title">The Number Nobody Has Measured Is How Long a Restore Takes</div>
+<div class="concept-desc">
+Backup jobs are monitored and restores are not, so an organisation typically
+knows its backups succeeded and has no idea what recovery costs. That gap is
+where the unpleasant surprises live, and all of them are arithmetic that could
+have been done in advance.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Discovered during the incident</th><th>Would have been obvious from one test</th></tr></thead>
+<tbody>
+<tr><td>A logical dump restores at a fraction of the speed it was taken</td><td>Restoring rebuilds every index. A 200&nbsp;GB dump can take most of a day</td></tr>
+<tr><td>Point-in-time recovery needs the whole archive since the base backup</td><td>If the base backup is a month old, recovery replays a month of write-ahead log</td></tr>
+<tr><td>The snapshot restored, and the database will not start</td><td>A volume snapshot taken without quiescing is a crash-consistent copy — usually fine, occasionally not, and you find out at the worst moment</td></tr>
+<tr><td>Nobody can find the credentials for the backup store</td><td>They were in the system that is down</td></tr>
+<tr><td>The restore worked; the application still fails</td><td>The database came back, and the object storage, the search index and the queue did not — they were never in the same plan</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-red">"We have backups" is a statement about last night. The
+question anyone should be able to answer is "how long until we are serving
+traffic again, and how much do we lose."</strong> Both numbers come from a
+restore that was actually performed, timed, and written down — ideally onto
+fresh infrastructure, because restoring beside a healthy primary tests a
+procedure you will not be running.
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="topic" id="replication-high-availability" data-reviewed="2026-08">
@@ -80231,6 +80410,34 @@ and geographic locality — but introduces lag and failover complexity.
 <strong class="c-amber">Replication lag</strong> means "read your own write" can
 fail — route critical reads to the primary. HA needs a leader-election mechanism;
 rolling your own failover is how you get split-brain.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Synchronous or Asynchronous, Expressed as What You Lose</div>
+<div class="concept-desc">
+Framed as a performance trade-off this is an argument nobody can settle. Framed
+as <em>what happens the moment the primary dies</em>, it usually settles itself
+in one sentence, because the two options fail in ways a business can compare.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th></th><th>Asynchronous</th><th>Synchronous</th></tr></thead>
+<tbody>
+<tr><td>Write latency</td><td>Local disk only</td><td>Local disk plus a network round trip, on every commit</td></tr>
+<tr><td>On primary failure</td><td><strong>You lose whatever had not shipped</strong> — usually milliseconds, occasionally minutes if the replica was lagging</td><td>Nothing committed is lost</td></tr>
+<tr><td>If the replica is slow or gone</td><td>The primary does not care</td><td><strong>Writes stall</strong> unless you allow a fallback — and a fallback makes it asynchronous again, quietly</td></tr>
+<tr><td>Suits</td><td>Nearly everything. Read scaling, geographic replicas, a tolerable recovery point</td><td>Money movement, and anything where a lost commit is a phone call</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">The row people skip is the third.</strong> Synchronous
+replication makes the replica a dependency of every write, so a replica
+problem becomes a primary outage — you have traded data loss for
+availability, which is a reasonable trade and a different one from the one
+most people think they are making. Two synchronous replicas with a quorum
+rule is the usual way out, and it costs a third machine.
 </div>
 </div>
 </div>
@@ -80333,6 +80540,41 @@ applied to data.
 <div class="concept-desc verdict">
 <code>pg_stat_statements</code> (Postgres) and the Performance Schema (MySQL)
 surface your worst queries — the single most useful place to look when the DB is slow.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Trap</div>
+<div class="concept-title">Averages Hide Exactly the Problem You Are Looking For</div>
+<div class="concept-desc">
+Mean query time is the metric most often on the dashboard and the least capable
+of showing trouble. A database serving ten thousand fast queries and a hundred
+disastrous ones has a mean that looks healthy, and the hundred are the ones
+timing out a customer's checkout.
+</div>
+<div class="dw">
+<pre class="code-block">10,000 queries at 2 ms  +  100 queries at 4,000 ms
+mean                = 41 ms      ← looks fine, alerts silent
+p50                 =  2 ms      ← looks excellent
+p99                 =  4,000 ms  ← this is what a user experiences
+</pre>
+<table class="ref-table">
+<thead><tr><th>Watch</th><th>Rather than</th></tr></thead>
+<tbody>
+<tr><td>p95 and p99 query time</td><td>Mean, which is dominated by the fast majority</td></tr>
+<tr><td>Total time per statement — calls &times; mean</td><td>Slowest single statement. A 5&nbsp;ms query run ten million times outranks a 3-second one run twice</td></tr>
+<tr><td>Wait events, grouped by what is being waited on</td><td>Processor utilisation, which is low precisely when the database is blocked</td></tr>
+<tr><td>Connection <em>saturation</em>, as a fraction of the limit</td><td>Connection count, which means nothing without the limit beside it</td></tr>
+<tr><td>Replication lag in bytes as well as seconds</td><td>Seconds alone, which reads as zero right up until the replica stops keeping up</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-green">The single highest-value view is total time per
+normalised statement</strong> — <code>pg_stat_statements</code> or the
+performance schema — because it ranks queries by how much of the database's
+life they consume rather than by how slow any one of them felt. The query at
+the top of that list is almost never the one anybody complained about, and it
+is almost always the one worth fixing first.
 </div>
 </div>
 </div>
