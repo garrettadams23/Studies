@@ -11837,3 +11837,55 @@ alias map — **and it would have been invisible after the merges, because a los
 nothing behind to notice.** The plan section that made this findable is the one listing what
 the work *costs*, which is the least interesting part of a plan to write and turned out to be
 the load-bearing one.
+
+
+## Session record — Phase 9, first wave: four merges and four refusals
+
+Eight candidate pairs examined with Phase 9 §3's test — *open both, write one sentence saying
+who each is for; if the sentence is the same, one should not exist.* **Four merged, four kept**,
+and the refusals took longer than the merges.
+
+### Merged
+
+| Retired | Into | Absorbed |
+|---|---|---|
+| `script` *Design Patterns — Named Solutions* | *Design Patterns — Reusable Solutions* | The over-engineering warning. The survivor had **no verdict at all** — it ended mid-code-block, which is the 513-table problem in its natural habitat |
+| `script` *Web Scraping — Extracting Data From Websites* | *…with Python* | One honest sentence the survivor lacked: personal or research use is a grey area, **commercial use of scraped data is frequently unlawful outright** — the distinction that decides whether a hobby project can become a product |
+| `net` *Wireless — 802.11 Standards & Security* | *Wireless Networking — 802.11…* | **Wi-Fi 7 (802.11be)**, which only the retired card had, the generation-name mapping, the 802.1X row, and two verdicts where there had been none |
+| `devops` *Kubernetes — Container Orchestration at Scale* | *…Fundamentals* | The complexity caveat, rebuilt as a full concept card: when Kubernetes earns its cost and when it does not, ending on *"Kubernetes because it is what serious teams use" is not a requirement* |
+
+Every merge left the survivor **better than either card was**, which is the test of whether
+consolidation is worth doing at all. Three of the four added a verdict that had never existed.
+
+### Kept, and why
+
+| Pair | Why it stays |
+|---|---|
+| `sec` Zero Trust ×2 | One `SEC • Architecture`, one `Beginner`. The site's two-level teaching model, working exactly as designed |
+| `script` OOP ×2 | One is a **language-agnostic reference** with a cross-language comparison table; one teaches it in Python. Different jobs — §3's reference-plus-concept case |
+| `net` DNS deep-dives ×2 | Titles overlap at 0.60; content does not. One is *what DNS is* — records, DNSSEC, zones. The other is *how to troubleshoot it* — the resolution chain, tracing, cache. Both Beginner-badged, neither redundant |
+| `net` Cloud Networking ×2 | Beginner and `NET • Cloud`. Same as Zero Trust |
+
+**Half the queue was not work.** That is the number worth carrying into the remaining waves:
+Phase 9 estimated "23 merges, of which perhaps 15 are unambiguous", and the first eight pairs
+returned a 50% rate. The estimate should probably be halved.
+
+### What the census says now
+
+```
+before  54 pairs at or above 0.50, across 1,373 titles
+after   48 pairs at or above 0.50, across 1,369 titles
+```
+
+Four merges removed six pairs, because the three-way wireless and Kubernetes clusters each
+collapsed more than one edge.
+
+### On the mechanics
+
+`slug-aliases.json` 103 → **107 entries**. `make check` passed without a single repointing:
+none of the four retired ids appeared in `related.json` or `paths.json`, which the checks
+would have named. That is luck rather than design — the next wave should check before
+deleting rather than after, and the merge helper should do it.
+
+Site total **1,432 → 1,428**. Smoke **138/138** · axe **6/6** · visual **2/2**. This is the
+only phase whose success makes the site smaller.

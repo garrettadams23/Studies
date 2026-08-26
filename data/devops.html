@@ -83,67 +83,6 @@ jobs:
 <!-- ── TOPIC: KUBERNETES FUNDAMENTALS ────────────────────── -->
 <div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
-    <span class="topic-icon">☸️</span>
-    <span class="topic-name">Kubernetes — Container Orchestration at Scale</span>
-    <span class="topic-badge">OPS • Cloud Native</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">WHAT IS KUBERNETES</div>
-      <div class="concept-title">Run, Scale, and Heal Containers Automatically</div>
-      <div class="concept-desc">Kubernetes (k8s) is a container orchestration platform. You tell it "I want 5 replicas of my web container running at all times." k8s does the scheduling (which node to run it on), restarts failed containers, scales up/down based on load, and manages networking between services. Originally from Google; now the de-facto cloud standard.</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">CORE OBJECTS</div>
-      <div class="concept-title">Pod → Deployment → Service → Ingress</div>
-      <div class="concept-desc"><strong>Pod</strong> — smallest deployable unit; one or more containers sharing a network namespace and storage. Ephemeral — can die and be replaced.<br>
-      <strong>Deployment</strong> — manages N replicas of a Pod; handles rolling updates and rollbacks.<br>
-      <strong>Service</strong> — stable network endpoint that load-balances traffic to pods (pods have dynamic IPs; Services don't change).<br>
-      <strong>Ingress</strong> — HTTP/HTTPS routing: <code>example.com/api → api-service, example.com/ → frontend-service</code>.<br>
-      <strong>ConfigMap / Secret</strong> — inject config and secrets into pods as env vars or files.</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">KUBECTL BASICS</div>
-      <div class="concept-title">The k8s CLI <span class="acro-exp">(Command Line Interface)</span></div>
-      <div class="code-block"><span class="com"># See what's running</span>
-kubectl get pods
-kubectl get pods -n kube-system     <span class="com"># in a specific namespace</span>
-kubectl get all                     <span class="com"># pods, services, deployments</span>
-
-<span class="com"># Inspect resources</span>
-kubectl describe pod my-pod-abc123
-kubectl logs my-pod-abc123
-kubectl logs -f my-pod-abc123       <span class="com"># follow</span>
-
-<span class="com"># Get a shell in a running pod</span>
-kubectl exec -it my-pod-abc123 -- bash
-
-<span class="com"># Apply a manifest file</span>
-kubectl apply -f deployment.yaml
-
-<span class="com"># Scale</span>
-kubectl scale deployment myapp --replicas=5
-
-<span class="com"># Rolling update</span>
-kubectl set image deployment/myapp myapp=myimage:v2
-
-<span class="com"># Rollback</span>
-kubectl rollout undo deployment/myapp</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">WHEN TO USE K8S</div>
-      <div class="concept-title">It's Powerful But Complex</div>
-      <div class="concept-desc">Kubernetes adds significant operational complexity. For a small startup with one app: Docker Compose or a single managed service (Heroku, Railway, Fly.io) is simpler and faster to operate. k8s shines when you have: many services, need to scale services independently, have a team to manage it, or require advanced deployment strategies (canary, blue/green). "Kubernetes because it's cool" is not a good reason.</div>
-    </div>
-  </div>
-</div>
-
-
-<!-- BEGINNER15-OPS v1 -->
-<!-- ── TOPIC: INFRASTRUCTURE AS CODE ─────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
-  <div class="topic-header">
     <span class="topic-icon">🏗️</span>
     <span class="topic-name">Infrastructure as Code — Servers You Define in Text Files</span>
     <span class="topic-badge">OPS • Modern</span>
@@ -444,6 +383,34 @@ spec:
   ports:
   - port: <span class="num">80</span>
     targetPort: <span class="num">8080</span>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The Honest Part</div>
+      <div class="concept-title">It Is Powerful, and It Is a Lot of Operations</div>
+      <div class="concept-desc">
+        Kubernetes buys you scheduling, self-healing, rolling deployments and a common
+        vocabulary across every cloud. It costs a control plane somebody has to run, a
+        networking model somebody has to understand, and a class of failure that only exists
+        because the platform exists. For one application and one team, Docker Compose or a
+        managed platform is simpler and faster to operate, and stays that way for a long time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Kubernetes earns its cost when</th><th>It does not when</th></tr></thead>
+          <tbody>
+            <tr><td>Many services that scale independently</td><td>One application with predictable load</td></tr>
+            <tr><td>Someone owns the platform as part of their job</td><td>Nobody has time to be on call for it</td></tr>
+            <tr><td>You need canary or blue-green as routine</td><td>A deploy is a restart and that is fine</td></tr>
+            <tr><td>Portability between clouds is a real requirement</td><td>It is a hypothetical one</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">"Kubernetes because it is what serious teams use" is not a
+          requirement.</strong> It is the most common reason it gets adopted and the most
+          common reason a small team ends up maintaining a platform instead of a product.
+        </div>
       </div>
     </div>
 

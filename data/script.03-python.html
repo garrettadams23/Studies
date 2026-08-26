@@ -1306,64 +1306,6 @@ urls = [<span class="str">"https://example.com"</span>] * <span class="num">10</
 <!-- ── TOPIC: WEB SCRAPING BASICS ────────────────────────── -->
 <div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
-    <span class="topic-icon">🕷️</span>
-    <span class="topic-name">Web Scraping — Extracting Data From Websites</span>
-    <span class="topic-badge">SCRIPT • Practical</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">LEGAL & ETHICAL NOTE</div>
-      <div class="concept-title">Check robots.txt and Terms of Service</div>
-      <div class="concept-desc">Before scraping, check the site's <code>robots.txt</code> (example.com/robots.txt) — it specifies which paths bots may access. Read the Terms of Service — many prohibit automated access. Don't overload servers (add delays). Prefer official APIs <span class="acro-exp">(Application Programming Interface)</span> when available. Scraping for research or personal use is generally gray area; commercial use of scraped data is often illegal.</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">REQUESTS + BEAUTIFULSOUP</div>
-      <div class="concept-title">The Classic Scraping Stack</div>
-      <div class="code-block"><span class="com"># pip install requests beautifulsoup4</span>
-<span class="kw">import</span> requests
-<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
-
-url = <span class="str">"https://books.toscrape.com/"</span>  <span class="com"># practice site</span>
-response = requests.get(url)
-soup = BeautifulSoup(response.text, <span class="str">"html.parser"</span>)
-
-<span class="com"># Find by tag</span>
-titles = soup.find_all(<span class="str">"h3"</span>)
-
-<span class="com"># Find by CSS selector</span>
-prices = soup.select(<span class="str">".price_color"</span>)
-
-<span class="com"># Find by attribute</span>
-links = soup.find_all(<span class="str">"a"</span>, href=<span class="kw">True</span>)
-
-<span class="kw">for</span> title, price <span class="kw">in</span> <span class="fn">zip</span>(titles[:5], prices[:5]):
-    <span class="fn">print</span>(<span class="str">f"{title.text.strip()} — {price.text}"</span>)</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">BE A POLITE SCRAPER</div>
-      <div class="concept-title">Rate Limit and Identify Yourself</div>
-      <div class="code-block"><span class="kw">import</span> time
-<span class="kw">import</span> requests
-
-headers = {
-    <span class="str">"User-Agent"</span>: <span class="str">"MyResearchBot/1.0 (contact: me@example.com)"</span>
-}
-
-<span class="kw">for</span> page <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>):
-    url = <span class="str">f"https://example.com/page/{page}"</span>
-    resp = requests.get(url, headers=headers)
-    <span class="com"># Process resp...</span>
-    time.sleep(<span class="num">1</span>)   <span class="com"># 1 second between requests</span></div>
-    </div>
-  </div>
-</div>
-
-
-<!-- BEGINNER12-SCRIPT v1 -->
-<!-- ── TOPIC: REGEX MASTERY ─────────────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
-  <div class="topic-header">
     <span class="topic-icon">🔎</span>
     <span class="topic-name">Regular Expressions — Pattern Matching Power</span>
     <span class="topic-badge">SCRIPT • Practical</span>
@@ -2793,57 +2735,6 @@ test    = UserService(FakeInMemoryDatabase())</div>
 </div>
 
 <!-- ── TOPIC: DESIGN PATTERNS ────────────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
-  <div class="topic-header">
-    <span class="topic-icon">📐</span>
-    <span class="topic-name">Design Patterns — Named Solutions to Common Problems</span>
-    <span class="topic-badge">SCRIPT • Design</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">WHAT THEY ARE</div>
-      <div class="concept-title">Reusable Vocabulary for Structuring Code</div>
-      <div class="concept-desc">Design patterns are battle-tested, named solutions to recurring design problems. Knowing them gives you a shared vocabulary ("let's use a factory here") and saves you from reinventing structures. Don't force them in — but recognizing when one fits is a sign of growth. Here are the ones beginners meet most often.</div>
-      <table class="ai-table">
-        <thead><tr><th>Pattern</th><th>Solves</th><th>Example</th></tr></thead>
-        <tbody>
-          <tr><td>Factory</td><td>Creating objects without specifying exact class</td><td><code>get_parser("json")</code> returns the right parser</td></tr>
-          <tr><td>Singleton</td><td>Exactly one instance shared everywhere</td><td>A single config or connection pool</td></tr>
-          <tr><td>Strategy</td><td>Swap algorithms at runtime</td><td>Pluggable sorting/auth/compression methods</td></tr>
-          <tr><td>Observer</td><td>Notify many objects when state changes</td><td>Event systems, pub/sub, callbacks</td></tr>
-          <tr><td>Decorator</td><td>Add behavior without changing the object</td><td>Python's <code>@decorators</code>, middleware</td></tr>
-          <tr><td>Adapter</td><td>Make incompatible interfaces work together</td><td>Wrapping a third-party API <span class="acro-exp">(Application Programming Interface)</span> in your interface</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">STRATEGY EXAMPLE</div>
-      <div class="concept-title">Swappable Behavior in Python</div>
-      <div class="code-block"><span class="com"># Strategy: pass behavior as a function/object</span>
-<span class="kw">def</span> <span class="fn">process</span>(data, transform):    <span class="com"># transform is the "strategy"</span>
-    <span class="kw">return</span> [transform(x) <span class="kw">for</span> x <span class="kw">in</span> data]
-
-process([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="kw">lambda</span> x: x*<span class="num">2</span>)     <span class="com"># [2, 4, 6]</span>
-process([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="fn">str</span>)              <span class="com"># ['1', '2', '3']</span>
-
-<span class="com"># Factory: centralize object creation</span>
-<span class="kw">def</span> <span class="fn">get_notifier</span>(kind):
-    <span class="kw">return</span> {
-        <span class="str">"email"</span>: EmailNotifier,
-        <span class="str">"slack"</span>: SlackNotifier,
-        <span class="str">"sms"</span>:   SMSNotifier,
-    }[kind]()
-
-notifier = get_notifier(<span class="str">"slack"</span>)   <span class="com"># caller doesn't know the class</span>
-notifier.send(<span class="str">"Deploy complete"</span>)</div>
-      <div class="concept-desc"><strong>A warning:</strong> patterns are tools, not goals. Forcing patterns into simple code ("over-engineering") is as bad as having none. Reach for them when complexity actually demands it.</div>
-    </div>
-  </div>
-</div>
-
-<!-- BEGINNER24-SCRIPT v1 -->
-<!-- ── TOPIC: CLOUD AUTOMATION WITH PYTHON ───────────────── -->
 <div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-icon">☁️</span>
