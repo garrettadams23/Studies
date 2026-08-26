@@ -11315,7 +11315,7 @@ loses a note.
 |---|---|---|
 | **C1** — `script` internal | 6 | Web Scraping, OOP, Design Patterns, Regular Expressions, Git, Files. The largest domain and the worst offender, which is not a coincidence — 145 topics written across many sessions |
 | **C2** — `net` wireless and cloud | 5 | Three wireless cards is the clearest case on the site. Likely outcome: one beginner card, one deep card, one retired into them |
-| **C3** — `script`↔`shortcut` | 5 | Genuinely ambiguous: `shortcut` is a reference domain, so several of these may be §3's reference-plus-concept pattern. **Check before merging** |
+| ✅ **C3** — `script`↔`shortcut` | 5 | Checked before merging, and the check was right: **2 merged, 4 refused**. The pair that mattered most was not on the list — two `script` PowerShell cards scoring 0.25 on titles and nearly identical in content |
 | **C4** — Kubernetes across `devops` and `linux` | 3 | Cross-domain, so the question is which domain owns the subject. Probably `devops`, with `linux` keeping a container-internals card that is genuinely its own |
 | **C5** — `sec` Zero Trust, `web`↔`script` WebAssembly and TypeScript | 4 | Small and clean |
 | **C6** — the tail | ~13 | Mostly below 0.6 overlap and mostly legitimate. Audit, expect to keep most |
@@ -12792,3 +12792,77 @@ often was catch each other.
 | T9 | contradiction pass | `--pairs` and `--self-test` in `check_contradictions.py` |
 
 Site **1,426 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 9 wave C3, and the pair the report could not see
+
+C3 was flagged in the queue as the ambiguous wave — `shortcut` is a reference domain, so §3's
+*reference-plus-concept* exemption was expected to cover most of it. That expectation held for
+four of the five and was wrong about the rest in a way worth writing down.
+
+### The two merges
+
+| Retired | Into | Why the §3 test said consolidate |
+|---|---|---|
+| `script` **PowerShell — Windows Automation** | `script` **PowerShell — Scripting Reference** | Both single-card references, same domain, 13 of 17 cmdlets shared. "Who is this for?" produces the identical sentence twice |
+| `shortcut` **Git Power User — Beyond add, commit, push** | `script` **Git Advanced Workflows – Beyond add, commit, push** | Same five subjects (stash, interactive rebase, reflog, bisect) and **the same subtitle**. Not a reference card: five prose concept cards, so the §3 exemption does not apply |
+
+Both absorbed first and verified before anything was retired, per the rule this phase learned
+the hard way. The PowerShell survivor gained discovery (`Get-Command`, `Get-Help`,
+`Get-Member`), `try`/`catch`, execution policy and WinRM remoting — none of which it had. The
+Git survivor gained 17 commands it lacked: `blame`, `log --grep/--author/-S`, `show`, `diff`,
+and the whole undo group (`restore`, `commit --amend`, `reset --soft/--mixed/--hard`, `revert`,
+`rebase --continue/--abort`).
+
+### The finding: title overlap is a proxy, and here it failed
+
+The two `script` PowerShell cards are the clearest duplicate in this wave. `near_duplicates.py`
+scores them **0.25** — nowhere near the 0.50 floor — because their titles diverge:
+
+```
+"PowerShell — Scripting Reference"    → {powershell, scripting}
+"PowerShell — Windows Automation"     → {powershell, window, automation}
+                                        overlap 0.25
+```
+
+Both were reachable only because each scored ≥ 0.50 against a *third* card in `shortcut`, which
+is how they came to be read side by side at all. **The pair that mattered most was found by
+accident.**
+
+That is a real limitation of the measurement, not a bug in it. §6 justified the tool as
+"tokenise titles, compare pairwise, report above a threshold" and titles are what the tool has.
+Content-similarity comparison over 1,365 topics is a different and much larger tool, and this
+file's standing rule is not to ship a measurement whose cost it has not counted. So the
+limitation is recorded here rather than papered over: **C3's real lesson is that the census
+finds duplicated *titles*, and duplicated *cards* are a superset of that.**
+
+### The tool gap that would have blocked wave C4 entirely
+
+`retire_topic.py` located both topics in one domain. The Git merge is `shortcut` → `script`,
+and it simply could not run — and **C4 is Kubernetes across `devops` and `linux`**, so the next
+wave in the queue was blocked by the same limitation.
+
+`--into-domain` fixes it in four lines. Ids are unique site-wide, so nothing else in the tool
+cared which file the survivor came from; only `locate()` did.
+
+### The four refusals, each with the sentence that saved it
+
+| Pair | Verdict |
+|---|---|
+| `shortcut` *tmux — Never Lose a Session Again* · `shortcut` *Tmux Survival Kit* | **Keep both.** One is badged `SHORTCUTS • Productivity` and is a keybinding reference; the other is badged `Beginner` and teaches sessions/windows/panes. §3's first row, exactly |
+| `script` *PowerShell — Scripting Reference* · `shortcut` *PowerShell — Windows (and Cross-Platform) Scripting* | **Keep both.** The shortcut card opens with *Why PowerShell Replaced Command Prompt* — it is for someone who has never used it. The reference is for someone who has |
+| `shortcut` *VS Code* · `shortcut` *VS Code — Debugging* | **Keep both.** A keybinding table and a `launch.json` how-to. A title artefact: "VS Code" is the entire first title, so containment is trivially high |
+| `shortcut` *Windows* · `endpoint` *Windows Administration Fundamentals* | **Keep both.** Same artefact, one shared token, two unrelated cards |
+
+Three of the four refusals are one-token titles scoring high for structural reasons. That is
+worth knowing about the census: **short titles inflate overlap**, and a `shortcut` domain full
+of one-word titles will keep producing these.
+
+```
+topics       1,426 → 1,424
+pairs ≥ 0.50    46 → 44
+aliases        109 → 111
+```
+
+Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.

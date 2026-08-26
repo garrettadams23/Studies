@@ -27,6 +27,7 @@ hand first, then run this.
 Usage:
   python3 tools/retire_topic.py <domain> --retire "<title fragment>" --into "<title fragment>"
   python3 tools/retire_topic.py <domain> --retire "…" --into "…" --dry
+  python3 tools/retire_topic.py <domain> --retire "…" --into-domain <domain> --into "…"
 """
 
 import json
@@ -95,10 +96,15 @@ def main():
     domain = args[0]
     retired_needle = args[args.index("--retire") + 1]
     survivor_needle = args[args.index("--into") + 1]
+    # The survivor is usually in the same domain and sometimes is not — Phase 9's
+    # wave C4 is Kubernetes across `devops` and `linux`, and a merge that cannot
+    # cross a domain boundary cannot do that wave at all. Ids are unique across
+    # the whole site, so nothing else in this tool cares which file it came from.
+    into_domain = args[args.index("--into-domain") + 1] if "--into-domain" in args else domain
     dry = "--dry" in args
 
     rpath, rstart, rend, rblock = locate(domain, retired_needle)
-    _, _, _, sblock = locate(domain, survivor_needle)
+    _, _, _, sblock = locate(into_domain, survivor_needle)
     rtitle, _ = topic_label(rblock)
     stitle, _ = topic_label(sblock)
     old, new = slugify(rtitle), slugify(stitle)

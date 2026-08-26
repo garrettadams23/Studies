@@ -724,6 +724,67 @@ git worktree remove ../hotfix-dir
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Investigation &amp; Undo — The Commands That Save You</div>
+      <div class="concept-desc">
+        The commands above find and reshape commits. These two groups answer the other
+        two questions a bad afternoon produces: <strong>who changed this line and
+        why</strong>, and <strong>how do I take that back</strong>. The undo group is
+        worth reading once before you need it, because the difference between
+        <code>revert</code> and <code>reset</code> is the difference between a change
+        your colleagues can pull and a history they cannot.
+      </div>
+      <div class="dw">
+        <div class="code-label">INVESTIGATION — WHO, WHEN, AND WHY</div>
+        <div class="code-block">
+<span class="com"># Who last touched each line, and in which commit</span>
+git blame path/to/file.py
+git blame -L 40,60 path/to/file.py   <span class="com"># just those lines</span>
+
+<span class="com"># Search history by message, by author, or by the code itself</span>
+git log --oneline --graph --decorate
+git log --grep=<span class="str">"timeout"</span>
+git log --author=<span class="str">"kim"</span>
+git log -p path/to/file.py           <span class="com"># every diff that touched it</span>
+git log -S<span class="str">"connect_timeout"</span>       <span class="com"># commits that added or removed the string</span>
+
+<span class="com"># Look at one commit, or compare two states</span>
+git show a1b2c3d
+git diff main..feature -- path/
+        </div>
+        <div class="code-label">UNDO — FOUR TOOLS, AND THEY ARE NOT INTERCHANGEABLE</div>
+        <div class="code-block">
+<span class="com"># Not yet committed: throw away a working-tree change</span>
+git restore path/to/file.py
+git restore --staged path/to/file.py  <span class="com"># unstage, keep the edit</span>
+
+<span class="com"># Committed, not pushed: reshape the last commit or move the branch pointer</span>
+git commit --amend                    <span class="com"># fix the message or add a file</span>
+git reset --soft HEAD~1               <span class="com"># undo the commit, keep changes staged</span>
+git reset --mixed HEAD~1              <span class="com"># undo the commit, keep changes unstaged</span>
+git reset --hard HEAD~1               <span class="com"># undo the commit and the changes — no undo</span>
+
+<span class="com"># Already pushed: never rewrite. Make a new commit that reverses it</span>
+git revert a1b2c3d
+
+<span class="com"># A rebase that went wrong mid-flight</span>
+git rebase --continue
+git rebase --abort                    <span class="com"># the exit that always exists</span>
+        </div>
+        <div class="concept-desc verdict">
+          The rule that keeps this safe is one line: <strong class="c-amber">rewrite
+          history only while it is still yours.</strong> <code>amend</code>,
+          <code>reset</code> and interactive rebase are fine on commits nobody has
+          pulled; once pushed to a shared branch, <code>revert</code> is the only
+          honest option, because everyone else&rsquo;s clone is built on the commits
+          you would be deleting. And <code>reset --hard</code> is the one command here
+          with no <code>reflog</code> safety net for uncommitted work — it discards the
+          working tree, which was never in Git to recover.
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
