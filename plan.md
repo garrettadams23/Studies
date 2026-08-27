@@ -11281,6 +11281,42 @@ comment, in quotes, that somebody could adapt in thirty seconds.
 
 **✅ D15 shipped** — 8 cards, `eng` 24 → 16 thin (32% → 21%).
 
+### The D16 spec — what this touches that your scope may not cover
+
+`redteam` has had two waves. D2 gave each tool card *what using it costs you and what the
+defender sees*; D11 gave *what you must already have before it runs*. The twenty-four remaining
+share a third gap, and it is the one the domain's own first card —
+**Rules of Engagement — Read This First** — exists to address and then never connects to any
+specific tool.
+
+Several of these tools reach past the target by their nature rather than by mistake. Radio does
+not respect a property line. OSINT about a company is mostly data about its **people**. A MITM
+on a network segment intercepts everyone on it. `sqlmap` writes. Proving exfiltration means
+actually moving data somewhere real.
+
+> **The addition: what this touches beyond the target, and the line the rules of engagement have
+> to contain before you run it.**
+
+The second clause keeps it practical rather than a caution: a boundary with no corresponding
+clause is a worry, and a boundary with one is a pre-engagement checklist.
+
+The test: the reach must be **inherent to the tool**, not a mistake an operator could avoid.
+"Do not scan out of scope" is discipline; "802.11 capture cannot exclude the neighbours' frames"
+is physics.
+
+| Card | What it reaches |
+|---|---|
+| Shodan & Censys | Third-party data about hosts, some of which are not yours and some of which is old |
+| Google Dorking, Maltego, SpiderFoot | Personal data about employees — the subject is people, not infrastructure |
+| Wifite & hcxdumptool | Radio geography, which ignores the property line entirely |
+| Bettercap | Every device on the segment, not just the one in scope |
+| sqlmap | The target's data, in write mode, on a system that may be production |
+| Flipper Zero & Sub-GHz/RFID | Physical premises, other tenants, and law that varies sharply by jurisdiction |
+| Data Exfiltration Channels | Real data leaving to a real destination you now hold |
+| msfvenom | An artefact that becomes public the moment somebody submits it to a scanner |
+
+**✅ D16 shipped** — 8 cards, `redteam` 24 → 16 thin (46% → 31%).
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13876,5 +13912,64 @@ median topic              3,070     3,082
 
 **120 cards across fifteen waves; eighteen characters of counter-metric movement.** The "under
 150 thin" target is **21 cards away** — three waves.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D16: connecting the rules of engagement to the tools
+
+`redteam`'s first card is **Rules of Engagement — Read This First**, and until this wave it was
+the only card in the domain that mentioned scope. Fifty-one others described tools as though
+authorisation were a paperwork step that happens once, somewhere else. D16 connects the two.
+
+The spec's test did the discriminating: the reach must be **inherent to the tool**, not a mistake
+an operator could avoid. "Do not scan out of scope" is discipline and was cut twice. "802.11
+capture cannot exclude the neighbours' frames" is physics.
+
+| Card | What it reaches, and the clause that has to exist |
+|---|---|
+| Shodan & Censys | Third-party observations, some stale, some about recycled cloud IPs. **Ownership confirmed in writing before active testing** |
+| Google Dorking, Maltego, SpiderFoot | The subject is *people*. Lawful basis, and a deletion date for the corpus |
+| Wifite & hcxdumptool | **Radio does not respect the property line.** ESSIDs in scope, deauth authorised or not, out-of-scope captures discarded unanalysed |
+| Bettercap | The whole broadcast domain — printers, handsets, a contractor's phone. Segments named; third-party traffic handled |
+| sqlmap | It writes by default, and `--dump` extracts real personal data. **Prove with a version string, then stop** |
+| Flipper Zero & Sub-GHz | Premises, other tenants, and law that changes at the border. Physical authorisation, a letter carried on the person, a jurisdiction check |
+| Data Exfiltration | Real data to infrastructure you now own. **Plant a canary and exfiltrate that** |
+| msfvenom | An artefact that becomes public the moment anyone submits it to a scanner |
+
+### Three findings that were not obvious before writing them down
+
+- **"Passive" describes the effect on the target's systems, not on people.** OSINT tooling
+  returns personal data about named employees, and collecting it is regulated whether or not a
+  packet ever reached the client. The word has been doing damage by implying the wrong thing.
+- **The client cannot always authorise the test.** In a shared building they do not own the radio
+  environment or the car-park barrier, and this is the one area in the domain where a signed
+  scope document from the client is genuinely insufficient.
+- **The proof can be the harm.** Exfiltration is the only technique here where demonstrating the
+  finding *is* the finding's damage — which is why the canary-file habit matters more than any
+  clause: it proves the channel without the payload ever being a real record.
+
+### What the wave says about the domain
+
+Three waves in, `redteam`'s cards now answer four questions each: what the tool does, what using
+it costs and what the defender sees (D2), what you must already have (D11), and what it touches
+beyond the target (D16). That is the shape of a professional tool reference rather than a
+catalogue, and it arrived by applying a different lens each time rather than by making any single
+card longer.
+
+### The measurement
+
+```
+                        D15 end   D16 end
+thin topics                 171       163
+redteam                            24 →  16   (46% → 31%)
+mean chars/concept card   1,218     1,220
+median topic              3,082     3,105
+10th percentile           1,389     1,393
+```
+
+**128 cards across sixteen waves; twenty characters of counter-metric movement.** The "under 150
+thin" target is **13 cards away** — two waves.
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.

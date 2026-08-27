@@ -250,10 +250,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">Somebody Else Did the Scanning, and Some of It Is Old</div>
+                <div class="concept-desc">
+                  Querying an internet-wide scan database is not touching the target, which is exactly why
+                  it feels free of scope questions. Two things make it one anyway.
+                  <strong class="c-amber">The results include hosts that merely look like the client's</strong>
+                  &mdash; shared hosting, a cloud IP <span class="acro-exp">(Internet Protocol)</span> that has changed tenant, a subsidiary nobody mentioned &mdash;
+                  and the banner you are reading may be months old, describing software that is no longer
+                  there.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What the result actually is</th><th>Consequence</th></tr>
+                    <tr><td>A third party's observation, timestamped</td><td>Check the date. Acting on a stale banner means reporting a vulnerability that was patched in March</td></tr>
+                    <tr><td>An IP that resolves to the client today</td><td>Cloud addresses are recycled. Yesterday's tenant is not your client, and probing it is out of scope</td></tr>
+                    <tr><td>A certificate naming the client</td><td>Good evidence of ownership &mdash; better than an IP. Certificate transparency is the more reliable pivot</td></tr>
+                    <tr><td>A host in a subsidiary or an acquisition</td><td>Common, and genuinely ambiguous. Ask before touching it</td></tr>
+                    <tr><td>Nothing at all</td><td>Not evidence of a small attack surface &mdash; only that these scanners have not seen it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The clause that belongs in the rules of engagement is about <em>ownership verification</em>
+                  rather than about the tool: <strong>&ldquo;in-scope assets are those the client confirms in
+                  writing; passive discovery may propose additions, which are confirmed before any active
+                  testing.&rdquo;</strong> That single sentence converts every ambiguous row above from a judgement
+                  call at 11pm into a short email.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🔎</span>
               <span class="topic-name">Google Dorking, Maltego &amp; SpiderFoot</span>
@@ -287,9 +315,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">The Subject of OSINT Is Usually People, Not Infrastructure</div>
+                <div class="concept-desc">
+                  &ldquo;Passive&rdquo; describes the effect on the target's systems, and it is routinely
+                  mistaken for a statement about consequences. Almost everything productive that these tools return
+                  is <strong class="c-amber">personal data about named employees</strong> &mdash; their addresses,
+                  their side projects, their breached passwords, their family members &mdash; and collecting it is
+                  regulated whether or not a packet ever reached the client.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What is collected</th><th>What it obliges you to do</th></tr>
+                    <tr><td>Employee names, roles, emails</td><td>Personal data under GDPR <span class="acro-exp">(General Data Protection Regulation)</span> and equivalents. You now have a lawful-basis and retention question</td></tr>
+                    <tr><td>Credentials from breach corpora</td><td>Handle as live secrets: encrypted at rest, never pasted into a report body, deleted on schedule</td></tr>
+                    <tr><td>Personal social media, family, home address</td><td>Almost never necessary for the engagement objective. If it is not, do not collect it</td></tr>
+                    <tr><td>Data about people not employed by the client</td><td><strong>Out of scope by default</strong> &mdash; a supplier's staff never agreed to anything</td></tr>
+                    <tr><td>Everything, after the report is delivered</td><td>A deletion date. Findings survive; the corpus should not</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two clauses cover this properly: <strong>an authorised-collection statement</strong>
+                  naming the client as the data controller for the engagement, and
+                  <strong>a retention and destruction schedule</strong> with a date. The professional habit
+                  underneath both is narrower than the tooling encourages: collect what serves the objective, and
+                  notice when curiosity has started driving the search instead.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧪</span>
               <span class="topic-name">Burp Suite — The Web Pentest Workbench</span>
@@ -394,10 +450,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">It Writes, and the Database May Be Production</div>
+                <div class="concept-desc">
+                  Most of this domain reads. `sqlmap` at its default settings is already modifying state
+                  &mdash; it creates and drops objects while fingerprinting &mdash; and its more useful flags go
+                  considerably further. <strong class="c-amber">Proving an injection does not require dumping the
+                  table</strong>, and the difference between proof and damage is a flag.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Flag or behaviour</th><th>What it actually does</th></tr>
+                    <tr><td>Default detection</td><td>Injects test payloads; may create and drop temporary objects. Not read-only</td></tr>
+                    <tr><td><code>--dump</code></td><td>Extracts real data, including personal data, onto your machine</td></tr>
+                    <tr><td><code>--os-shell</code> / <code>--os-pwn</code></td><td>Command execution on the database host. Well beyond &ldquo;there is an injection&rdquo;</td></tr>
+                    <tr><td><code>--file-write</code></td><td>Writes to the server's filesystem</td></tr>
+                    <tr><td><code>--risk=3</code> / <code>--level=5</code></td><td>Includes payloads that can be destructive or heavy. The defaults exist for a reason</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Prove the vulnerability with the smallest thing that proves it: a version string, a single
+                  row count, one non-sensitive value. Then stop and report.
+                  <strong>The rules of engagement should say whether data extraction is authorised at all, and
+                  whether testing touches production</strong> &mdash; and if it does, the answer to
+                  <code>--dump</code> is almost always no. A finding that says &ldquo;confirmed injection, retrieved
+                  the database version, did not extract data&rdquo; is stronger evidence of professionalism than a
+                  directory full of customer records.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">📁</span>
               <span class="topic-name">ffuf &amp; Gobuster — Content &amp; Parameter Fuzzing</span>
@@ -647,10 +731,38 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">The Artefact Outlives the Engagement, and Somebody Will Upload It</div>
+                <div class="concept-desc">
+                  A generated payload is a file, and files travel. Within days it may sit in an email
+                  gateway's quarantine, an EDR vendor's sample pipeline, or a public malware scanner because a
+                  well-meaning administrator submitted it. <strong class="c-amber">Public submission is
+                  publication</strong>, and the artefact contains your infrastructure: the callback address, the
+                  port, sometimes a key.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What ends up where</th><th>Consequence</th></tr>
+                    <tr><td>Uploaded to a public scanner</td><td>Permanently public, downloadable by anyone, including the C2 <span class="acro-exp">(Command and Control)</span> address inside it</td></tr>
+                    <tr><td>Collected by the client's EDR vendor</td><td>Shared through industry channels. Expect it to be detected everywhere within weeks</td></tr>
+                    <tr><td>Left on a client host after the test</td><td>An unowned backdoor on somebody's production estate. This is the one that ends careers</td></tr>
+                    <tr><td>The C2 address baked in</td><td>Points at infrastructure you must keep secured for as long as the artefact exists</td></tr>
+                    <tr><td>Reused between clients</td><td>Cross-contamination &mdash; one client's detection now names another client's engagement</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Three practices, and the third is the one that gets skipped:
+                  <strong>never submit your own payloads to public scanners</strong> (use an offline lab, and
+                  assume the client's tooling may submit them regardless); <strong>use fresh infrastructure and
+                  fresh artefacts per engagement</strong>; and <strong>keep a removal inventory</strong> &mdash;
+                  every implant, file and account created, with the time it was removed, signed off before the
+                  report is delivered. A clean-up list is a deliverable, not an afterthought.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🗃️</span>
               <span class="topic-name">Searchsploit &amp; Exploit-DB — Finding Public Exploits</span>
@@ -1473,10 +1585,38 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">Radio Does Not Respect the Property Line</div>
+                <div class="concept-desc">
+                  This is the clearest case in the domain, because the boundary is physical rather than
+                  procedural. A monitor-mode capture receives <strong class="c-amber">every frame in range</strong>,
+                  including the neighbouring business, the flats upstairs and passers-by. You cannot configure that
+                  away, and any active technique &mdash; deauthentication in particular &mdash; affects devices that
+                  belong to nobody in the engagement.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Action</th><th>Who else it reaches</th></tr>
+                    <tr><td>Passive capture in monitor mode</td><td>Everyone in range. Handshakes for out-of-scope networks land in your file</td></tr>
+                    <tr><td>Deauthentication</td><td><strong>Denial of service against bystanders.</strong> In many jurisdictions this is the part that is plainly illegal</td></tr>
+                    <tr><td>PMKID capture</td><td>Targets an AP directly &mdash; narrower, and still needs the AP to be in scope</td></tr>
+                    <tr><td>Cracking a captured handshake</td><td>If the network was not in scope, this is unauthorised access to someone else's network</td></tr>
+                    <tr><td>Rogue AP / evil twin</td><td>Attracts client devices indiscriminately, including personal phones</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The rules of engagement need three specifics before any of this runs: <strong>the ESSIDs <span class="acro-exp">(Extended Service Set Identifier)</span>
+                  and BSSIDs <span class="acro-exp">(Basic Service Set Identifier)</span> in scope</strong>, <strong>whether active deauthentication is authorised at all</strong>
+                  (often it is not, and PMKID capture is the alternative), and <strong>what happens to out-of-scope
+                  material</strong> &mdash; which should be deleted without analysis and noted in the report as
+                  having been discarded. Wireless testing is also the one area where the client's authorisation may
+                  not be sufficient on its own: in a shared building, they do not own the radio environment.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🥷</span>
               <span class="topic-name">Bettercap — The MITM <span class="acro-exp">(Man-in-the-Middle)</span> Framework</span>
@@ -1509,10 +1649,38 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">A Machine-in-the-Middle Is in the Middle of Everyone</div>
+                <div class="concept-desc">
+                  ARP poisoning and rogue-gateway
+                  techniques operate on a broadcast domain, not on a host. Point them at a segment and
+                  <strong class="c-amber">every device on it routes through you</strong> &mdash; printers,
+                  handsets, the receptionist's laptop, a contractor's phone. Traffic you had no intention of
+                  capturing is now in your capture file, and some of it is personal.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Effect</th><th>Why it exceeds a host-scoped authorisation</th></tr>
+                    <tr><td>ARP cache poisoning</td><td>Segment-wide by design. There is no per-host mode</td></tr>
+                    <tr><td>Interception of unrelated sessions</td><td>Bystander traffic, including personal use of a corporate network</td></tr>
+                    <tr><td>TLS interception / downgrade attempts</td><td>Now handling credentials and content for people not in the engagement</td></tr>
+                    <tr><td>Instability</td><td>Poisoning at scale drops sessions and can take a segment offline &mdash; an availability incident</td></tr>
+                    <tr><td>The capture file afterwards</td><td>Contains material you must not analyse, and must be able to prove you did not</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two clauses, and neither is optional: <strong>the network segments authorised, named
+                  explicitly</strong>, and <strong>a data-handling statement covering intercepted third-party
+                  traffic</strong> &mdash; encrypted storage, no analysis beyond the objective, destruction on a
+                  date. Prefer the narrowest technique that answers the question: targeting one host's traffic is
+                  usually enough, and a segment-wide poison is a blunt instrument that produces evidence you then
+                  have to be careful with.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🐬</span>
               <span class="topic-name">Flipper Zero &amp; Sub-GHz / RFID <span class="acro-exp">(Radio Frequency Identification)</span> Tools</span>
@@ -1545,10 +1713,39 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">Premises, Other Tenants, and Law That Changes at the Border</div>
+                <div class="concept-desc">
+                  Physical and RF tooling crosses boundaries that a network authorisation does not cover at
+                  all. A building may have several tenants; a car park may be shared; a badge cloned in a lift lobby
+                  may belong to a visitor. And <strong class="c-amber">the legality of transmitting on some of these
+                  bands, and of possessing the device itself, varies sharply by jurisdiction</strong> &mdash; this
+                  is one of very few areas in this domain where the tool has been restricted or banned
+                  outright.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Capability</th><th>The boundary it crosses</th></tr>
+                    <tr><td>Reading a 125 kHz or 13.56 MHz credential</td><td>The card belongs to a person. Cloning it is impersonating them</td></tr>
+                    <tr><td>Sub-GHz replay (gates, barriers)</td><td>Frequently shared infrastructure &mdash; a car park barrier serves the whole building</td></tr>
+                    <tr><td>Transmitting at all</td><td>Licensed spectrum in many jurisdictions. Receiving and transmitting are treated very differently in law</td></tr>
+                    <tr><td>BadUSB emulation</td><td>Executes on whatever it is plugged into, which may not be the machine you were shown</td></tr>
+                    <tr><td>Working in a shared building</td><td>The client cannot authorise testing on the other tenants' doors, and often does not realise that</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The paperwork here is different from everywhere else in this domain and should be treated
+                  that way: <strong>written physical authorisation naming the premises and the areas</strong>, a
+                  <strong>get-out-of-jail letter carried on the person</strong> with a name and number that answers
+                  at 2am, and a <strong>jurisdiction check before travelling with the equipment</strong>. Physical
+                  work also puts a human in the position of confronting you, which is a safety question rather than
+                  a legal one &mdash; agree in advance what you do when challenged.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🦆</span>
               <span class="topic-name">BadUSB &amp; RF <span class="acro-exp">(Radio Frequency)</span> Implants — Rubber Ducky, O.MG, Proxmark, HackRF</span>
@@ -1751,10 +1948,37 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Scope</div>
+                <div class="concept-title">Proving Exfiltration Means Really Moving Data, Somewhere Real</div>
+                <div class="concept-desc">
+                  A demonstrated exfiltration path is one of the most persuasive findings in a report, and it
+                  is the only technique here whose proof <em>is</em> the harm. Data leaves the client's control and
+                  arrives somewhere <strong class="c-amber">you now own and are responsible for</strong> &mdash; a
+                  VPS, a DNS server, a cloud bucket &mdash; and the demonstration is indistinguishable from a real
+                  breach to anyone watching it later.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Decision</th><th>Why it belongs in the paperwork</th></tr>
+                    <tr><td><strong>What</strong> you exfiltrate</td><td>Use canary data you planted, not real records. The path is the finding, not the payload</td></tr>
+                    <tr><td><strong>Where</strong> it lands</td><td>Infrastructure you control, in a jurisdiction the client accepts, deleted on a stated date</td></tr>
+                    <tr><td>How much</td><td>A proof of concept is kilobytes. Volume adds no evidence and adds real liability</td></tr>
+                    <tr><td>Who is told, and when</td><td>The blue team may be running an incident. A named point of contact ends that quickly if needed</td></tr>
+                    <tr><td>What the logs will show later</td><td>Your egress looks exactly like an attacker's. Timestamps and destination IPs <span class="acro-exp">(Internet Protocol)</span> go in the report so it can be reconciled</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  One habit removes most of the risk: <strong>plant your own canary file first and exfiltrate
+                  that</strong>. It proves the channel works, it is unambiguous in the logs, and it means the
+                  demonstration never involves a real customer record. The rules of engagement should name the
+                  destination infrastructure and its deletion date explicitly &mdash; unlike most clauses in this
+                  wave, this one protects you as much as the client.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">☁️</span>
               <span class="topic-name">Pacu — The AWS <span class="acro-exp">(Amazon Web Services)</span> Exploitation Framework</span>
