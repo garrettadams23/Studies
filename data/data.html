@@ -832,10 +832,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">You Partition for Maintenance Long Before You Partition for Speed</div>
+                <div class="concept-desc">
+                  The usual reason given for partitioning is query performance, and it is usually not the
+                  reason it actually becomes necessary. On a table of a few hundred gigabytes the queries are often
+                  fine and <strong class="c-amber">the maintenance is not</strong>: the vacuum takes all night, the
+                  index rebuild needs a window nobody will approve, the backup runs into the working day, and
+                  deleting last year's rows locks the table for hours.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Operation</th><th>Why partitioning changes it</th></tr>
+                    <tr><td>Deleting old data</td><td><code>DROP PARTITION</code> is instant; <code>DELETE</code> of 200M rows is an outage</td></tr>
+                    <tr><td>Vacuum and index maintenance</td><td>Runs per partition, so it fits in a window and can be parallelised</td></tr>
+                    <tr><td>Backups and restores</td><td>Older partitions are immutable, so they need copying once, not nightly</td></tr>
+                    <tr><td>Query performance</td><td>Only improves with <em>partition pruning</em> &mdash; the predicate must include the partition key</td></tr>
+                    <tr><td>Sharding across machines</td><td><strong>A one-way door.</strong> Cross-shard joins, transactions and re-sharding are all now your problem</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Partition on the column you will <strong>delete by</strong>, which is usually time, and
+                  which usually also serves pruning. And keep the two decisions apart in your head: partitioning is
+                  a local, reversible change to one table's storage; sharding is a distributed system with its own
+                  failure modes, and it should follow read replicas, caching, and every query fix &mdash; not
+                  precede them.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🐘</span>
               <span class="topic-name">PostgreSQL — The Default Choice</span>
@@ -867,10 +894,36 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">Connections Bind Long Before Storage Does</div>
+                <div class="concept-desc">
+                  &ldquo;Use Postgres&rdquo; is close to always right and the limits are worth knowing
+                  before you meet them. The one that arrives first is not disk and not rows &mdash; it is
+                  <strong class="c-amber">connections</strong>. Each one is a process, and a few hundred idle
+                  connections consume real memory and scheduler time, which is why an application scaled to a
+                  hundred containers can bring down a database that is barely working.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Limit</th><th>Symptom, and the next step</th></tr>
+                    <tr><td>A few hundred connections</td><td>Memory pressure and context-switch overhead. <strong>PgBouncer in transaction mode</strong> &mdash; the cheapest fix on this list</td></tr>
+                    <tr><td>One writer node</td><td>Writes cannot scale horizontally. Read replicas take the read load; the write path stays single</td></tr>
+                    <tr><td>Vacuum and bloat on very hot tables</td><td>Autovacuum falls behind under sustained churn. Tune it per table before adding hardware</td></tr>
+                    <tr><td>Single tables past a few hundred GB</td><td>Maintenance windows dominate. <strong>Partition</strong> &mdash; the operation stops being about queries</td></tr>
+                    <tr><td>Genuine write scale-out</td><td>Citus or a purpose-built distributed engine. Do this last; it is a one-way door</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The order matters and is nearly always this: <strong>pooler, then indexes and query fixes,
+                  then read replicas, then partitioning, then anything distributed.</strong> Most teams that
+                  believe they have outgrown Postgres have skipped step one &mdash; and a single well-tuned node
+                  with a pooler comfortably serves workloads that people assume require a cluster.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧰</span>
               <span class="topic-name">Postgres Power Features — JSONB &amp; Full-Text</span>
@@ -976,10 +1029,36 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">Concurrent Writers, Not Size — the Limit Is Not the One People Assume</div>
+                <div class="concept-desc">
+                  SQLite is dismissed as a toy on the grounds of scale, and scale is the axis where it does
+                  best: databases of hundreds of gigabytes are ordinary, and reads are extremely fast because there
+                  is no network and no server. <strong class="c-amber">The real ceiling is exactly one writer at a
+                  time</strong>, database-wide, and no amount of hardware changes that.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>How it behaves</th></tr>
+                    <tr><td>Many readers, one writer</td><td>Fine, with WAL <span class="acro-exp">(Write-Ahead Log)</span> mode &mdash; readers do not block the writer or each other</td></tr>
+                    <tr><td>Two processes writing at once</td><td>The second waits or gets <code>SQLITE_BUSY</code>. Set a <code>busy_timeout</code> or handle it</td></tr>
+                    <tr><td>A write-heavy multi-user application</td><td><strong>This is where it stops.</strong> Move to Postgres, or serialise writes through one process</td></tr>
+                    <tr><td>Database on NFS <span class="acro-exp">(Network File System)</span> or a network share</td><td><strong>Do not.</strong> File locking over the network is unreliable &mdash; this corrupts databases</td></tr>
+                    <tr><td>Analytics over a large local file</td><td>Consider DuckDB instead &mdash; same single-file convenience, columnar engine</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The right question is never &ldquo;how big is the data&rdquo; but <strong>how many
+                  processes need to write, and can they be funnelled through one</strong>. A single-writer service
+                  in front of SQLite covers an enormous range of real applications, and it keeps the properties
+                  that make it attractive: no server to run, one file to back up, and a copy that is trivially
+                  reproducible.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌊</span>
               <span class="topic-name">Connection Pooling — Surviving Many Clients</span>
@@ -1115,10 +1194,38 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">The Moment Your Access Pattern Needs a Join</div>
+                <div class="concept-desc">
+                  Document databases are excellent when the document *is* the unit of access: fetch one,
+                  render it, write it back. The limit arrives when the same data has to be read a second way
+                  &mdash; by a field inside a nested array, or joined to another collection &mdash; because
+                  <strong class="c-amber">the embedding that made the first access pattern fast is what makes the
+                  second one hard</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Signal</th><th>What it means</th></tr>
+                    <tr><td><code>$lookup</code> appearing in your pipelines</td><td>You are doing joins in the application tier's database. Consider whether the model is relational</td></tr>
+                    <tr><td>The same fact duplicated in many documents</td><td>Denormalisation is the design; the cost is updating every copy, correctly, forever</td></tr>
+                    <tr><td>A document growing without bound</td><td>Arrays that append per event hit the 16 MB document limit. Model as a separate collection</td></tr>
+                    <tr><td>Transactions across collections</td><td>Supported since 4.0, and slower than the single-document case. Frequent use is a modelling signal</td></tr>
+                    <tr><td>Aggregations that scan everything</td><td>Indexes must match the pipeline's first stages, or <code>$match</code> reads the collection</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The honest test before choosing it: <strong>write down the three queries this data must
+                  answer</strong>. If they all start from the same identifier and return one document, a document
+                  store fits beautifully. If any of them start somewhere else, that query is either a second copy
+                  of the data or a join, and a relational model handles both without a decision. PostgreSQL's
+                  <code>JSONB</code> is also worth weighing here &mdash; document storage inside a database that
+                  can still join.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚡</span>
               <span class="topic-name">Redis — The In-Memory Multi-Tool</span>
@@ -1151,10 +1258,37 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">The Working Set Must Fit in RAM, and Eviction Decides What Happens When It Does Not</div>
+                <div class="concept-desc">
+                  Redis is fast because everything is in memory, which makes memory the whole constraint.
+                  The moment the working set exceeds it, the behaviour is not &ldquo;a bit slower&rdquo; &mdash; it
+                  is whatever <code>maxmemory-policy</code> says, and <strong class="c-amber">the default on many
+                  installations is to start refusing writes</strong>. That surprises people mid-incident rather
+                  than during design.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Policy or limit</th><th>What actually happens</th></tr>
+                    <tr><td><code>noeviction</code> (a common default)</td><td>Writes fail with an OOM error once <code>maxmemory</code> is reached. Reads keep working</td></tr>
+                    <tr><td><code>allkeys-lru</code></td><td>Correct for a pure cache &mdash; the coldest keys go, silently</td></tr>
+                    <tr><td><code>volatile-lru</code></td><td>Only keys with a TTL are eligible. Keys without one are permanent, which is how caches fill up</td></tr>
+                    <tr><td>Using it as the system of record</td><td>Durability is a tuning choice (RDB snapshots, AOF). <strong>Neither is a transaction log</strong></td></tr>
+                    <tr><td>One big instance</td><td>Single-threaded for commands. A slow <code>KEYS</code> or a large <code>Lua</code> script blocks everything</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two rules keep it in the role it is good at. <strong>Set a TTL on everything you write to
+                  a cache</strong>, so the working set has a natural ceiling rather than growing until the policy
+                  decides for you. And <strong>never let it be the only copy of anything you cannot regenerate</strong>
+                  &mdash; when Redis is the source of truth, the interesting question stops being throughput and
+                  becomes what happens after a restart.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">Cassandra &amp; DynamoDB — Wide-Column at Scale</span>
@@ -1187,10 +1321,38 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">There Is a Floor as Well as a Ceiling</div>
+                <div class="concept-desc">
+                  Most cards about distributed databases describe the scale above which you need one. The
+                  more useful number for most readers is the one <em>below</em> which choosing one is a mistake.
+                  <strong class="c-amber">Wide-column stores make you design the table from the query</strong>, and
+                  you get almost none of the benefit until the write rate genuinely exceeds what a single tuned
+                  node can absorb &mdash; which is a great deal more than most systems ever produce.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Constraint</th><th>What it costs you</th></tr>
+                    <tr><td>Partition key chosen first</td><td>The query determines the schema. A new query pattern usually means a new table with duplicated data</td></tr>
+                    <tr><td>No joins, no ad-hoc queries</td><td>Anything unanticipated is an application-side scatter-gather or a second table</td></tr>
+                    <tr><td>Eventual consistency by default</td><td>Tunable per query (<code>QUORUM</code>, <code>ONE</code>), and the tuning is a real design decision</td></tr>
+                    <tr><td>Operational weight (self-hosted)</td><td>Repairs, compaction and node replacement are ongoing work, not one-time setup</td></tr>
+                    <tr><td>Small deployments</td><td><strong>Three nodes of Cassandra do less for you than one good Postgres.</strong> The trade only pays at scale</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  DynamoDB removes the operational half and keeps the modelling half, which is often the
+                  right compromise &mdash; but the single-table design it rewards is a genuine skill, and getting
+                  it wrong shows up as hot partitions and surprise cost rather than as errors. <strong>Choose these
+                  when you know the queries, the write rate is real, and the operational answer is decided</strong>;
+                  choose them for anticipated scale and you have paid the whole cost up front for a benefit that
+                  may never arrive.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🕸️</span>
               <span class="topic-name">Graph Databases — When Relationships Are the Data</span>
@@ -1225,10 +1387,38 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">Two Hops Is a Join. Five Is a Graph.</div>
+                <div class="concept-desc">
+                  The question is not whether the data has relationships &mdash; all relational data does
+                  &mdash; but <strong class="c-cyan">how deep and how variable the traversals are</strong>. A
+                  relational join across two or three tables is fast and well understood. It is the queries where
+                  the depth is not known in advance, or is large, where the cost curves cross:
+                  <strong class="c-amber">each additional hop multiplies the work in SQL and is roughly constant in
+                  a graph engine</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Query shape</th><th>Right tool</th></tr>
+                    <tr><td>One or two hops, known depth</td><td>SQL. A join is the answer; a graph database is overhead</td></tr>
+                    <tr><td>&ldquo;Shortest path between A and B&rdquo;</td><td>Graph. Expressing this in SQL requires recursion and gets slow quickly</td></tr>
+                    <tr><td>&ldquo;Everything within N hops&rdquo;, N variable</td><td>Graph &mdash; this is the canonical case</td></tr>
+                    <tr><td>Recursive CTE <span class="acro-exp">(Common Table Expression)</span> in Postgres</td><td>The honest middle ground, and often enough. Try it before adopting a second database</td></tr>
+                    <tr><td>Aggregations over the whole dataset</td><td>Not a graph strength. Most graph engines are poor analytical databases</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two established uses justify the second database on their own: <strong>fraud rings and
+                  access-path analysis</strong> &mdash; and the second is exactly what
+                  <span class="xref">BloodHound &amp; SharpHound — Attack-Path Graphing</span> does to Active
+                  Directory, which is a graph problem wearing a security hat. For everything else, start with a
+                  recursive CTE and adopt a graph engine when it stops finishing.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">↔️</span>
               <span class="topic-name">OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span> — Rows vs Columns</span>
@@ -1297,10 +1487,37 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">Columnar Wins on Scans and Loses on Single Rows</div>
+                <div class="concept-desc">
+                  The trade is structural rather than a matter of tuning. Storing a column together makes
+                  reading one column of a hundred million rows enormously cheaper &mdash; and makes fetching one
+                  complete row more expensive, because it must be reassembled from every column file.
+                  <strong class="c-amber">A columnar engine used for point lookups is slower than the row store you
+                  left</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Workload</th><th>Where it belongs</th></tr>
+                    <tr><td>Aggregate over millions of rows, few columns</td><td>Columnar, decisively. Often 10&ndash;100&times; less I/O <span class="acro-exp">(Input/Output)</span> than a row store</td></tr>
+                    <tr><td>Fetch one row by primary key</td><td>Row store. This is what OLTP <span class="acro-exp">(Online Transaction Processing)</span> databases are built for</td></tr>
+                    <tr><td>Frequent single-row updates</td><td>Row store &mdash; columnar formats favour append and rewrite over in-place update</td></tr>
+                    <tr><td>Analytics that fits on one machine</td><td><strong>DuckDB</strong>, in-process, over Parquet. No cluster, no server</td></tr>
+                    <tr><td>Analytics that does not</td><td>ClickHouse or a warehouse. The jump from DuckDB is about node count, not about the model</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The most common good answer is smaller than people expect: <strong>a laptop running DuckDB
+                  over Parquet files handles datasets that get proposed as cluster projects</strong>, and the
+                  single-node ceiling is high enough that reaching it is a real result rather than an assumption.
+                  Measure before you distribute &mdash; and if the data is already in Postgres and the analytics are
+                  occasional, a read replica may end the conversation entirely.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏞️</span>
               <span class="topic-name">Warehouse vs Lake vs Lakehouse</span>

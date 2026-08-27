@@ -11208,6 +11208,44 @@ The eight are chosen so the *mechanism* of the false negative differs each time:
 
 **✅ D13 shipped** — 8 cards, `blueteam` 28 → 20 thin (52% → 37%).
 
+### The D14 spec — the number at which this stops being the right answer
+
+`data`'s remaining thin cards are mostly **product** cards: PostgreSQL, SQLite, Redis, MongoDB,
+Cassandra, DuckDB, graph databases. D1 gave each card a different missing thing and D8 gave the
+SQL cards their silent wrong answers. The product cards need a third thing, and it is the one
+that makes database advice either useful or worthless:
+
+> **The addition: the number at which this stops being the right answer, and what you move to.**
+
+Every one of these cards is currently written as though data volume and access pattern were
+details. In databases they are the *only* thing. "PostgreSQL is the default choice" is true and
+useless without the sentence that follows it — until *what*? "SQLite is everywhere" is true and
+the limit is not the one people assume: it handles hundreds of gigabytes comfortably and falls
+over on **concurrent writers**, which is a completely different axis.
+
+Two requirements, and a card missing either was rewritten:
+
+| Requirement | Why |
+|---|---|
+| A **named threshold** — rows, writes per second, working-set size, hop count, concurrent writers | "It depends on your workload" hands the work back. A number is arguable; a shrug is not |
+| **What you move to**, and what that costs | A limit with no next step is discouragement. The migration is the actual decision |
+
+The eight are chosen so the *dimension* differs each time — a wave where every threshold was
+"rows in the table" would be one idea eight times:
+
+| Card | The axis that actually binds |
+|---|---|
+| PostgreSQL | Connections and the single writer node, long before storage |
+| SQLite | Concurrent writers — not size |
+| Redis | Working set against RAM, and what eviction does at the boundary |
+| MongoDB | The moment the access pattern needs a join |
+| Cassandra & DynamoDB | Below a threshold as well as above one — knowing the queries first |
+| Partitioning & Sharding | Maintenance cost, not query time. And sharding is a one-way door |
+| Columnar Engines | Scan-heavy analytics, and DuckDB's single-node ceiling |
+| Graph Databases | Traversal depth: two hops is a join, five is a graph |
+
+**✅ D14 shipped** — 8 cards, `data` 23 → 15 thin (55% → 36%).
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13672,5 +13710,72 @@ median topic              3,027     3,046
 
 **104 cards across thirteen waves; fifteen characters of movement in the counter-metric.** The
 "under 150 thin" target is 37 cards away — under five waves.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D14: the number, or it is not advice
+
+`data` has now had three waves and each one found a different missing thing, which is unusual —
+most domains here have one structural gap repeated across their cards. D1 gave eight cards eight
+different additions. D8 gave the SQL cards their silent wrong answers. D14 takes the **product**
+cards, and their gap is the one that decides whether database writing is useful at all.
+
+Every product card was written as though volume and access pattern were details. In databases
+they are the only thing. *"PostgreSQL is the default choice"* is true and useless without the
+sentence that follows it, and *"SQLite is everywhere"* is true with the limit on an axis nobody
+expects.
+
+| Card | The threshold, and what you move to |
+|---|---|
+| PostgreSQL | **Connections bind first** — a few hundred, long before storage. Pooler, then replicas, then partitioning, then distributed |
+| SQLite | **One writer at a time, database-wide.** Size is not the limit; hundreds of GB is ordinary. Funnel writes through one process, or move to Postgres |
+| Redis | Working set against RAM, and `noeviction` **fails writes** at the boundary. TTL on everything |
+| MongoDB | The moment a second access pattern needs a join. Write down the three queries first |
+| Cassandra & DynamoDB | **There is a floor as well as a ceiling** — three nodes of Cassandra do less than one good Postgres |
+| Partitioning & Sharding | You partition for *maintenance* long before speed. Sharding is a one-way door |
+| Columnar Engines | Scans win, point lookups lose. A laptop running DuckDB handles what gets proposed as a cluster |
+| Graph Databases | Two hops is a join; five is a graph. Try a recursive CTE first |
+
+### Why the second requirement mattered more than the first
+
+The spec asked for a threshold **and** what you move to. Thresholds alone would have produced
+eight cards of discouragement — "this will not scale" is not information. The migration path is
+the actual decision, and writing it forced an ordering that most of these cards were quietly
+skipping:
+
+> Pooler, then indexes and query fixes, then read replicas, then partitioning, then anything
+> distributed. **Most teams that believe they have outgrown Postgres have skipped step one.**
+
+### The two cards that invert the expected direction
+
+**SQLite's limit is not size.** It is dismissed on scale grounds and scale is where it does best.
+Getting that right meant contradicting the received framing rather than repeating it, and it
+changes what the card is for: the question is never "how big is the data" but "how many processes
+need to write".
+
+**Cassandra has a floor.** Every card of this kind describes the scale above which you need a
+distributed database. The more useful number for almost every reader is the one below which
+choosing one is a mistake — and that number is high.
+
+### The measurement
+
+```
+                        D13 end   D14 end
+thin topics                 187       179
+data                               23 →  15   (55% → 36%)
+mean chars/concept card   1,215     1,217
+median topic              3,046     3,070
+10th percentile           1,373     1,381    ← +8, the largest single move it has made
+```
+
+`data` has gone **40 → 15** across three waves, from the worst ratio on the site to below the
+median domain. And the 10th percentile moved eight characters, which is the first time it has
+moved meaningfully — not because this wave targeted the floor, but because `data`'s product cards
+were genuinely near it.
+
+**112 cards across fourteen waves; seventeen characters of counter-metric movement.** The "under
+150 thin" target is 29 cards away.
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
