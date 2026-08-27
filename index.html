@@ -66260,8 +66260,8 @@ exercise, which is the only funding argument that consistently works.
 <span class="ctag ctag-secplus">GCIH</span>
 </div>
 <span class="domain-sub">NSM · SIEM · EDR · Detection · DFIR · Threat Intel</span>
-<span class="domain-meta" aria-label="54 topics, about 1h 30m to read"
->54 topics · ~1h 30m</span>
+<span class="domain-meta" aria-label="54 topics, about 1h 40m to read"
+>54 topics · ~1h 40m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -66533,12 +66533,12 @@ happened, metadata gives context, and full packets prove exactly what.
 </div>
 </div>
 </div>
-<div class="topic" id="splunk-spl-the-siem-standard" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="splunk-spl-the-siem-standard" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔍</span>
 <span class="topic-name">Splunk — SPL <span class="acro-exp">(Search Processing Language)</span> &amp; the SIEM <span class="acro-exp">(Security Information and Event Management)</span> Standard</span>
 <span class="topic-badge">SIEM</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -66573,14 +66573,43 @@ the security-specific app with prebuilt correlation rules.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Cadence</div>
+<div class="concept-title">Field Extractions Break Silently the Day a Log Format Changes</div>
+<div class="concept-desc">
+A SIEM's parsing is a contract with every source that feeds it, and nobody on the other end
+of that contract knows it exists. An application upgrade reorders a field, a vendor adds a
+wrapper, a firewall changes its syslog template &mdash; and
+<strong class="c-amber">the dashboards keep rendering, the searches keep running, and the results
+quietly go empty</strong>. Nothing errors, because a search that matches nothing is a valid
+search.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+<tr><td>Checking each source is still parsing</td><td>Weekly, automatically</td><td>Detections that cannot fire, on sources everyone believes are covered</td></tr>
+<tr><td>Watching event volume per source</td><td>Continuously, with an alert</td><td>A source that stopped sending three weeks ago and nobody noticed</td></tr>
+<tr><td>Reviewing searches with zero results</td><td>Monthly</td><td>A rule library where an unknown fraction is decorative</td></tr>
+<tr><td>Retention and index sizing</td><td>Quarterly</td><td>Either an unexpected bill or data ageing out before the investigation reaches it</td></tr>
+<tr><td>Re-testing rules after upgrades</td><td>Per platform release</td><td>Silent regressions introduced by your own change window</td></tr>
+</table>
+<div class="concept-desc verdict">
+The single most valuable alert in a SIEM is not about attacks. It is
+<strong>&ldquo;this log source has sent nothing for an hour&rdquo;</strong>, per source, with an
+owner &mdash; because every detection downstream of a dead source is offline and nothing else
+will tell you. Pair it with a monthly review of searches returning zero results over 30 days,
+which is where broken parsing surfaces.
 </div>
 </div>
-<div class="topic" id="elastic-elk-stack-open-source-log-analytics" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="elastic-elk-stack-open-source-log-analytics" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🟡</span>
 <span class="topic-name">Elastic / ELK Stack — Open-Source Log Analytics</span>
 <span class="topic-badge">SIEM</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -66604,6 +66633,34 @@ detection rules on top.
 Flow: <strong>Beats → Logstash → Elasticsearch → Kibana</strong>. The trade
 vs Splunk: much cheaper (open source) but more ops effort to run and scale the
 cluster yourself.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Cadence</div>
+<div class="concept-title">A Cluster With a Mapping Explosion and No Lifecycle Policy</div>
+<div class="concept-desc">
+Elasticsearch is happy to accept whatever you send it, which is the property that makes it
+easy to adopt and expensive to leave unattended. Dynamic mapping creates a field for every new
+key it sees, so <strong class="c-amber">one application logging a unique identifier as a
+top-level field can add hundreds of thousands of fields</strong> &mdash; and the cluster slows,
+then refuses writes, for reasons that look nothing like their cause.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+<tr><td>Index templates with explicit mappings</td><td>Per new source</td><td>Dynamic mapping, then a field explosion nobody can undo without reindexing</td></tr>
+<tr><td>Index lifecycle management (ILM)</td><td>Configured once, reviewed quarterly</td><td>Indices from 2024 on hot storage, and a disk that fills on a Friday</td></tr>
+<tr><td>Shard sizing</td><td>Per index pattern</td><td>Thousands of tiny shards — the most common cause of a slow cluster</td></tr>
+<tr><td>Watching cluster health and heap</td><td>Continuously</td><td>Yellow for months, then red during an incident</td></tr>
+<tr><td>Snapshot testing</td><td>Quarterly</td><td>Backups that have never been restored, which are not backups</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two settings prevent most of it and both are decided before the first document arrives:
+<strong>an index template that disables dynamic mapping for new sources</strong>, and
+<strong>an ILM policy with a delete phase</strong>. Retrofitting either means reindexing, which
+is the same lesson as the landing-zone and default-deny cards elsewhere on this site &mdash;
+cheap on day one, a project on day four hundred.
 </div>
 </div>
 </div>
@@ -66783,12 +66840,12 @@ community standard) to cut noise. Parent-child process chains (e.g.
 </div>
 </div>
 </div>
-<div class="topic" id="osquery-your-fleet-as-a-sql-database" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="osquery-your-fleet-as-a-sql-database" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🦉</span>
 <span class="topic-name">OSQuery — Your Fleet as a SQL <span class="acro-exp">(Structured Query Language)</span> Database</span>
 <span class="topic-badge">EDR</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -66814,6 +66871,33 @@ monitoring.
 Run ad-hoc during IR <span class="acro-exp">(Incident Response)</span>, or schedule "packs" of queries that stream diffs to your
 SIEM <span class="acro-exp">(Security Information and Event Management)</span> (via Fleet/Kolide) for continuous detection — e.g. alert whenever a new
 persistence entry appears.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Cadence</div>
+<div class="concept-title">A Query That Errors Returns Nothing, Which Looks Exactly Like a Clean Fleet</div>
+<div class="concept-desc">
+osquery <span class="acro-exp">(Operating System Query)</span>'s appeal is that fleet questions become SQL. The maintenance cost is that
+<strong class="c-amber">a query which fails on a platform returns an empty result rather than an
+error you see</strong> &mdash; a table that does not exist on that OS version, a permission the
+agent lost, a path that moved. Empty and clean are indistinguishable in the console.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+<tr><td>Validating packs per platform</td><td>Per OS release, and per pack change</td><td>Queries that silently cover Linux and not macOS, or the reverse</td></tr>
+<tr><td>Watching agent check-in counts</td><td>Daily, automatically</td><td>A fleet number that drifts down as agents die quietly</td></tr>
+<tr><td>Reviewing query performance</td><td>Monthly</td><td>A scheduled query pinning CPU <span class="acro-exp">(Central Processing Unit)</span> on laptops, and users disabling the agent</td></tr>
+<tr><td>Pruning packs nobody uses</td><td>Quarterly</td><td>Interval creep — dozens of queries running because somebody once wanted one</td></tr>
+<tr><td>Confirming a known-true query returns rows</td><td>Weekly</td><td>No way to distinguish 'nothing found' from 'nothing asked'</td></tr>
+</table>
+<div class="concept-desc verdict">
+The last row is the whole discipline, and it costs one scheduled query:
+<strong>ask something you know must be true</strong> &mdash; a file that exists on every host, a
+process that always runs &mdash; and alert when it returns nothing. That single canary
+distinguishes a healthy deployment from a silent one, and it is the same idea as the SIEM's dead
+log source, one layer down.
 </div>
 </div>
 </div>
@@ -67103,12 +67187,12 @@ incident.
 </div>
 </div>
 </div>
-<div class="topic" id="adversary-emulation-atomic-red-team-caldera" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="adversary-emulation-atomic-red-team-caldera" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚛️</span>
 <span class="topic-name">Adversary Emulation — Atomic Red Team &amp; Caldera</span>
 <span class="topic-badge">Detection</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -67134,6 +67218,33 @@ blue team.
 Run these in a lab or with authorization. The loop —
 <strong class="c-green">emulate → observe → tune → re-test</strong> — is how you
 turn ATT&amp;CK coverage from theoretical to proven.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Cadence</div>
+<div class="concept-title">Run Once, It Is Evidence About One Tuesday in March</div>
+<div class="concept-desc">
+An emulation exercise measures detection <em>on the day it runs</em>, against the estate as
+it was configured that morning. Presented later as coverage, it is a claim about a moment
+&mdash; and <strong class="c-amber">everything it measured has since changed</strong>: rules
+tuned, agents upgraded, log sources added and removed, exclusions written during an incident.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+<tr><td>Running a fixed core set</td><td>Monthly, automated</td><td>A number quoted in a board pack that is a year old</td></tr>
+<tr><td>Adding techniques as intel arrives</td><td>Quarterly</td><td>Testing only what you already detect, which always looks good</td></tr>
+<tr><td>Re-running after tuning changes</td><td>Per change to a rule</td><td>No idea whether a tuning change removed a detection</td></tr>
+<tr><td>Recording results over time</td><td>Every run</td><td>No trend, so no way to show improvement or catch regression</td></tr>
+<tr><td>Keeping the test environment honest</td><td>Continuously</td><td>Emulation on a host with exclusions that production does not have</td></tr>
+</table>
+<div class="concept-desc verdict">
+The value is entirely in the <strong>trend</strong>: the same twenty techniques, monthly,
+scored the same way, so a drop is visible and attributable to a change somebody made. A single
+run tells you where you stand today and nothing about whether you are getting better &mdash; and
+it is the repeated run, not the sophisticated one, that catches the detection quietly removed
+three weeks ago.
 </div>
 </div>
 </div>
@@ -67395,12 +67506,12 @@ accidentally.
 </div>
 </div>
 </div>
-<div class="topic" id="chain-of-custody-evidence-handling" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="chain-of-custody-evidence-handling" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚖️</span>
 <span class="topic-name">Chain of Custody &amp; Evidence Handling</span>
 <span class="topic-badge">DFIR</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -67423,14 +67534,41 @@ important as the tools.
 </table>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Cadence</div>
+<div class="concept-title">A Process That Exists in a Document and Has Never Been Performed</div>
+<div class="concept-desc">
+Evidence handling is the one area here where the first real use is likely to be the one
+that matters legally, and where <strong class="c-amber">a procedure nobody has rehearsed will be
+performed badly under pressure</strong>. The form is in a wiki, the write blocker is in a drawer
+with a flat battery, and nobody has ever filled in the sheet with a real serial number on it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+<tr><td>A dry run with real forms and hardware</td><td>Annually, at minimum</td><td>A procedure that has never been tested when it is first needed</td></tr>
+<tr><td>Checking the kit</td><td>Quarterly</td><td>A flat write blocker, an unlabelled drive, expired media</td></tr>
+<tr><td>Naming who is authorised to seize</td><td>On any team change</td><td>Nobody sure they are allowed to act, so nobody acts</td></tr>
+<tr><td>Reviewing with legal or counsel</td><td>Annually</td><td>A form that does not meet the standard it would be judged against</td></tr>
+<tr><td>Storing completed records</td><td>Per incident</td><td>Custody documented in a chat thread, which is not documentation</td></tr>
+</table>
+<div class="concept-desc verdict">
+One hour a year is the whole ask: <strong>take a spare laptop, seize it properly, fill in
+the form, hash the image, and store the record</strong>. That rehearsal finds the flat battery,
+the missing signature line and the person who did not know they were on the list &mdash; and it
+converts a document into a capability. Of everything in this domain, this is the item where the
+gap between written and practised carries the highest cost.
 </div>
 </div>
-<div class="topic" id="misp-opencti-threat-intel-platforms" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="misp-opencti-threat-intel-platforms" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔗</span>
 <span class="topic-name">MISP <span class="acro-exp">(Malware Information Sharing Platform)</span> &amp; OpenCTI — Threat-Intel Platforms</span>
 <span class="topic-badge">Threat Intel</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -67454,6 +67592,33 @@ campaigns, malware, and TTPs <span class="acro-exp">(Tactics, Techniques, and Pr
 The payoff: pull a feed of known-bad indicators into detection, and enrich alerts
 ("this IP belongs to APT-X's infrastructure") so responders act with context, not
 guesswork.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Cadence</div>
+<div class="concept-title">Without Curation It Becomes a Database of Last Year's Indicators</div>
+<div class="concept-desc">
+Threat-intel platforms are easy to stand up and easy to leave running. Feeds keep arriving,
+the record count keeps rising, and <strong class="c-amber">nothing in the product distinguishes
+an indicator that is current from one that stopped being true in 2024</strong>. An IP <span class="acro-exp">(Internet Protocol)</span> address is
+a lease; a domain gets sinkholed; a hash describes a build that has been recompiled twice.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+<tr><td>Reviewing which feeds are enabled</td><td>Quarterly</td><td>Feeds that duplicate each other and one that has been 404ing for months</td></tr>
+<tr><td>Expiry and decay on indicators</td><td>Configured once, checked quarterly</td><td>Matches on infrastructure that changed hands — false positives that erode trust</td></tr>
+<tr><td>Tagging and confidence</td><td>Per import</td><td>Everything at the same weight, so nothing can be prioritised</td></tr>
+<tr><td>Measuring what actually matched</td><td>Monthly</td><td>No idea whether the platform has ever produced a useful detection</td></tr>
+<tr><td>Sharing outward</td><td>Per engagement</td><td>A consumer-only deployment, which is the least valuable way to run one</td></tr>
+</table>
+<div class="concept-desc verdict">
+The metric that keeps this honest is not the record count &mdash; it is
+<strong>how many indicators matched something in your environment in the last 90 days, and how
+many of those were true positives</strong>. Most first measurements are humbling, and they point
+straight at which feeds to drop. Intel that nobody prunes is not an asset; it is a growing source
+of alerts you will eventually learn to ignore.
 </div>
 </div>
 </div>
@@ -67742,12 +67907,12 @@ interesting decisions were quietly made.
 </div>
 </div>
 </div>
-<div class="topic" id="lynis-linux-audit-hardening" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="lynis-linux-audit-hardening" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🐧</span>
 <span class="topic-name">Lynis — Linux Audit &amp; Hardening</span>
 <span class="topic-badge">Hardening</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -67770,6 +67935,34 @@ and prioritized suggestions.
 Great for a fast baseline and for teaching <em>why</em> each setting matters
 (each suggestion links to guidance). Complements — doesn't replace — a real
 benchmark like CIS <span class="acro-exp">(Center for Internet Security)</span>.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Cadence</div>
+<div class="concept-title">A Score Nobody Reads, Instead of a Diff Somebody Acts On</div>
+<div class="concept-desc">
+Hardening scanners produce a number and a long list, and both are the wrong output to
+consume directly. The number moves for uninteresting reasons and the list is too long to read
+twice, so the report gets skimmed once and then ignored.
+<strong class="c-amber">The useful artefact is not this run &mdash; it is the difference between
+this run and the last one.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+<tr><td>Establishing a signed-off baseline</td><td>Once, then on major change</td><td>A score with no meaning, because nobody agreed what good looks like</td></tr>
+<tr><td>Diffing against the baseline</td><td>Weekly, automatically</td><td>Drift that accumulates invisibly between annual reviews</td></tr>
+<tr><td>Recording accepted exceptions</td><td>Per exception, with an owner and a date</td><td>The same findings dismissed by every reviewer, forever</td></tr>
+<tr><td>Acting on new findings only</td><td>Weekly</td><td>A backlog large enough that nobody starts</td></tr>
+<tr><td>Re-baselining after a fleet change</td><td>Per image release</td><td>Alerts on the change you deliberately made</td></tr>
+</table>
+<div class="concept-desc verdict">
+Wire it as <strong>a scheduled scan whose output is a diff and whose alert is
+&ldquo;something changed that nobody approved&rdquo;</strong>. That converts an unread report
+into a small, actionable stream, and it is the same shape as the CIS benchmark card's conclusion:
+the number worth tracking is drift, not score. A hardening tool with no baseline is a report
+generator.
 </div>
 </div>
 </div>
@@ -67976,12 +68169,12 @@ AD <span class="acro-exp">(Active Directory)</span> cards on the red-team side.
 </div>
 </div>
 </div>
-<div class="topic" id="purple-teaming-closing-the-detection-gap" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="purple-teaming-closing-the-detection-gap" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤝</span>
 <span class="topic-name">Purple Teaming — Closing the Detection Gap</span>
 <span class="topic-badge">Purple</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -68006,6 +68199,34 @@ actionable — and they fix the gap on the spot.
 The output is measurable <strong class="c-green">detection coverage</strong> mapped
 to ATT&amp;CK — you learn exactly which techniques you'd catch and which you'd miss.
 This card is the keystone that ties the whole Red and Blue domains together.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Cadence</div>
+<div class="concept-title">A Workshop, Rather Than a Loop That Closes</div>
+<div class="concept-desc">
+Purple teaming is defined by its feedback loop, and the loop is the part that gets dropped.
+A day of red and blue in a room produces findings, energy and a document; six weeks later the
+detections it recommended are half-written and nobody has re-tested the ones that were.
+<strong class="c-amber">An exercise without a closing step is a very expensive way to produce a
+list.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+<tr><td>Owning each gap found, with a date</td><td>Per exercise</td><td>A findings document that ages quietly in a shared drive</td></tr>
+<tr><td><strong>Re-testing the fixed gaps</strong></td><td>Two to four weeks after</td><td>Detections believed to exist because someone said they would write them</td></tr>
+<tr><td>Running the next exercise</td><td>Quarterly</td><td>An annual event, which measures the year rather than the quarter</td></tr>
+<tr><td>Feeding results into emulation</td><td>Per exercise</td><td>Gaps found once and never regression-tested</td></tr>
+<tr><td>Keeping both sides in the room</td><td>Every time</td><td>A red-team report with a blue-team reply — which is what this exists to replace</td></tr>
+</table>
+<div class="concept-desc verdict">
+The step that makes the difference is the second row, and it is the one most often skipped:
+<strong>schedule the re-test at the same time as the exercise</strong>, before anyone leaves the
+room, with a name against it. A gap that is found, fixed and re-tested is a permanent improvement;
+a gap that is found and assigned is a note. The difference between the two is a calendar
+entry.
 </div>
 </div>
 </div>

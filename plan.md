@@ -11349,6 +11349,41 @@ years, and they are what actually determines the invoice.
 
 **✅ D17 shipped** — 8 cards, `cloud` 24 → 16 thin (38% → 25%). Site at **155 thin**.
 
+**✅ D18 shipped** — 8 cards, `blueteam` 20 → 12 thin (37% → 22%). Site at **147 thin — §8's target is met.**
+
+### The D18 spec — who owns it, how often, and what it becomes without that
+
+The wave that crosses §8's target goes back to `blueteam` for a third time. D4 gave its tool
+cards *what this tool cannot see*; D13 gave its practices *how to read a negative result*. The
+twenty remaining share the failure mode that actually kills defensive tooling in real
+organisations, and it is not technical.
+
+**These tools are deployed and then not operated.** A threat-intel platform whose feeds nobody
+curates fills with expired indicators. A SIEM's field extractions break silently the day an
+application changes its log format. A hardening scanner produces a report nobody opens. An
+adversary-emulation exercise run once proves something about a Tuesday in March.
+
+> **The addition: what this needs from a person every week or month, and what it silently becomes
+> without that.**
+
+The second clause is what stops this being a maintenance checklist. Every one of these degrades
+into a *specific* wrong thing — not "it gets worse" but "it becomes a list of indicators that
+were true last year", which is a claim somebody can go and check.
+
+The test: the cadence must be **nameable** — weekly, per release, per log-source change — and the
+degraded state must be **recognisable**, so a reader can tell whether they are already in it.
+
+| Card | Without an owner it becomes |
+|---|---|
+| MISP & OpenCTI | A database of indicators that were true last year |
+| Splunk / SPL | Dashboards that quietly stopped matching when a log format changed |
+| OSQuery | Packs that error on some platforms and return nothing, which looks like a clean fleet |
+| Lynis | A score nobody reads, instead of a diff somebody acts on |
+| Adversary Emulation | Evidence about one Tuesday, presented as coverage |
+| Chain of Custody | A process that exists in a document and has never been performed |
+| Purple Teaming | A workshop, rather than a loop that closes |
+| Elastic / ELK | A cluster with a mapping explosion and no index lifecycle |
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -11368,6 +11403,7 @@ criteria:
 ```
 before:  330 topics single-concept and under 1,800 chars   (23% of site)
 target:  under 150, with the remainder audited and confirmed as reference cards
+ACTUAL:  147 (10% of site) after 18 waves — ✅ target met, and the remainder audited in D10
 ```
 
 And the counter-metric, because §7's first failure mode is invisible in a length number:
@@ -14060,5 +14096,114 @@ median topic              3,105     3,114
 
 **136 cards across seventeen waves; twenty-one characters of counter-metric movement.** The
 "under 150 thin" target is **five cards away** — it falls next wave.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D18, and the target is met
+
+`blueteam`'s third wave takes the failure mode that actually kills defensive tooling in real
+organisations, and it is not technical. **These tools are deployed and then not operated.**
+
+| Card | Without an owner it becomes |
+|---|---|
+| MISP & OpenCTI | A database of indicators that were true last year |
+| Splunk / SPL | **Field extractions break silently the day a log format changes** — searches keep running and quietly go empty |
+| OSQuery | A query that errors returns nothing, which looks exactly like a clean fleet |
+| Lynis | A score nobody reads, instead of a diff somebody acts on |
+| Adversary Emulation | Evidence about one Tuesday in March, presented as coverage |
+| Chain of Custody | A process that exists in a document and has never been performed |
+| Purple Teaming | A workshop, rather than a loop that closes |
+| Elastic / ELK | A mapping explosion and no lifecycle policy |
+
+Three of the eight converged on the same shape without being written to, which is the wave's most
+useful result: **ask something you know must be true, and alert when it stops being true.** A
+SIEM's most valuable alert is "this log source has sent nothing for an hour". osquery's is a
+canary query for a file that exists on every host. Elasticsearch's is a snapshot restore that has
+actually been performed. In each case the tool cannot distinguish *nothing found* from *nothing
+asked*, and one deliberate known-true probe is what separates a healthy deployment from a silent
+one.
+
+The chain-of-custody card is the one to act on first, and it costs an hour a year: seize a spare
+laptop properly, fill in the real form, hash the image, store the record. That rehearsal finds
+the flat write-blocker battery and the person who did not know they were on the authorised list
+— and of everything in this domain, it is where the gap between *written* and *practised* carries
+the highest cost.
+
+---
+
+# Phase 8, closed: 144 cards, eighteen waves
+
+```
+before:  330 topics single-concept and under 1,800 plain chars   (23% of the site)
+target:  under 150
+ACTUAL:  147                                                     (10% of the site)
+```
+
+| | D1 | D5 | D9 | D13 | D18 |
+|---|---|---|---|---|---|
+| thin topics | 279 | 247 | 211 | 187 | **147** |
+| mean chars/concept card | 1,200 | 1,204 | 1,210 | 1,215 | **1,223** |
+| median topic | — | — | 2,996 | 3,046 | **3,133** |
+| 10th percentile | — | — | 1,365 | 1,373 | **1,415** |
+
+**The counter-metric moved twenty-three characters across 144 cards.** That is the number the
+phase should be judged on, because §7 named padding as the way this work fails and the mean is
+what detects it. It held because the discipline never changed: every addition arrived as a *new
+concept card with a claim of its own*, never as extra sentences inside an existing one.
+
+## What eighteen specs turned out to be worth
+
+The thing that transfers is not any individual card. It is that **each wave was given a written
+spec before any card was touched**, and that no spec was reused. Eighteen domains-and-clusters,
+eighteen different structural gaps:
+
+| | Domain | The gap |
+|---|---|---|
+| D1 | `data` | A different missing thing per card — the only wave without a uniform spec |
+| D2 | `redteam` | What using this costs you, and what the defender sees |
+| D3 | `cloud` | The failure mode that is the same on all three providers |
+| D4 | `blueteam` | What this tool cannot see |
+| D5 | `web` | The number your own machine cannot show you |
+| D6 | `eng` | The bill this pattern sends, and the size below which it is a net loss |
+| D7 | `devops` | What this looks like two years in |
+| D8 | `data` | The query that runs, returns a number, and is wrong |
+| D9 | `web` | The bug that sent you here |
+| D10 | — | **No wave.** The bottom decile is deliberately short, and the commitment was retracted |
+| D11 | `redteam` | What you must already have before this runs |
+| D12 | `cloud` | The assumption you carry over from the other cloud |
+| D13 | `blueteam` | What it means when it finds nothing |
+| D14 | `data` | The number at which this stops being the right answer |
+| D15 | `eng` | Show the artefact |
+| D16 | `redteam` | What this touches that your scope may not cover |
+| D17 | `cloud` | What you are billed for, and which default is expensive |
+| D18 | `blueteam` | Who owns it, how often, and what it becomes without that |
+
+Two of those rows matter more than the rest.
+
+**D10 is the wave that did not happen.** D9 committed the next wave to the bottom decile by
+character count; building the tool to execute that commitment showed the commitment was wrong,
+because the bottom of this site is the beginner layer and the certification skims and both are
+the right length already. It was retracted in the same session and recorded under its own
+heading rather than being quietly replaced with an easier wave under the same name.
+
+**D12 inverts D3's own rule**, deliberately, and the spec says why: provider-neutrality is right
+for concept cards and writes nothing for service cards. A later session reading both without that
+sentence would have found a contradiction instead of a distinction.
+
+## What is left, and what it is not
+
+147 thin topics remain, and the composition is now known rather than assumed:
+
+- **64 of the bottom decile are badged deliberately short** — `Beginner • Core`, `Linux+ • CLI`,
+  `PenTest+ • Recon`, `Military • Reference`. These are not debt. Phase 9 §3 exists to protect
+  the first group and D10 established the second.
+- The rest sit across `web` 17, `eng` 16, `redteam` 16, `cloud` 16, `data` 15, `script` 14,
+  `devops` 12, `blueteam` 12 and a long tail of single figures.
+
+Any future wave should start from `depth_report.py`, cross-reference `--thin` against
+`near_duplicates.py` (Phase 9 C5's finding: **a thin card is often a duplicate-shaped thing**),
+and check `--bottom` before assuming a short card is an underdeveloped one.
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
