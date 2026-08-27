@@ -63452,8 +63452,8 @@ before, AAR after.
 <span class="ctag ctag-secx">OSCP</span>
 </div>
 <span class="domain-sub">Recon · Exploitation · AD Attacks · C2 · Password &amp; Wireless</span>
-<span class="domain-meta" aria-label="52 topics, about 1h 05m to read"
->52 topics · ~1h 05m</span>
+<span class="domain-meta" aria-label="52 topics, about 1h 15m to read"
+>52 topics · ~1h 15m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -64143,12 +64143,12 @@ and keep software current.
 </div>
 </div>
 </div>
-<div class="topic" id="impacket-the-windowsad-python-toolkit" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="impacket-the-windowsad-python-toolkit" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🐍</span>
 <span class="topic-name">Impacket — The Windows/AD Python Toolkit</span>
 <span class="topic-badge">Exploitation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -64179,14 +64179,42 @@ technique catches them.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Prerequisite</div>
+<div class="concept-title">A Credential or a Hash, Plus a Path to SMB and RPC <span class="acro-exp">(Remote Procedure Call)</span></div>
+<div class="concept-desc">
+Impacket is a protocol library, not an exploit. Nothing in it gets you a first foothold
+&mdash; every script assumes you are <strong>already authenticated as somebody</strong>, with a
+password, an NTLM hash, or a Kerberos
+ticket, and that you can reach the target on 445 or 135. It is the toolkit that turns
+<em>one</em> credential into lateral movement, which is exactly why the controls that matter are
+about reach and reuse.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Precondition</th><th>The control that denies it</th></tr>
+<tr><td>A valid credential, hash or ticket</td><td>Unique local admin passwords (LAPS) &mdash; kills pass-the-hash reuse across hosts</td></tr>
+<tr><td>Reachability to 445 / 135</td><td><strong>Host firewall blocking inbound SMB between workstations.</strong> Nothing legitimate needs it</td></tr>
+<tr><td>NTLM accepted by the target</td><td>Restrict or disable NTLM; require Kerberos where you can</td></tr>
+<tr><td>SMB signing not enforced</td><td>Enforce signing &mdash; this alone removes the relay half of the toolkit</td></tr>
+<tr><td>A service to create remotely</td><td>Detect: service creation (7045) and named-pipe patterns are noisy in exactly the right way</td></tr>
+</table>
+<div class="concept-desc verdict">
+The row worth acting on this week is the second. <strong>Workstation-to-workstation SMB
+has no legitimate use in most estates</strong>, and blocking it at the host firewall removes a
+large share of lateral movement regardless of which toolkit is used. LAPS <span class="acro-exp">(Local Administrator Password Solution)</span> removes the other
+share, because a hash stolen from one machine then unlocks exactly one machine.
 </div>
 </div>
-<div class="topic" id="bloodhound-sharphound-attack-path-graphing" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="bloodhound-sharphound-attack-path-graphing" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🩸</span>
 <span class="topic-name">BloodHound &amp; SharpHound — Attack-Path Graphing</span>
 <span class="topic-badge">AD Attacks</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -64214,14 +64242,43 @@ them. Collection generates heavy LDAP/SMB queries that anomaly detection can fla
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Prerequisite</div>
+<div class="concept-title">Any Authenticated Domain User. That Is the Whole Finding.</div>
+<div class="concept-desc">
+Most tools in this domain need a privilege you had to steal. BloodHound needs
+<strong class="c-cyan">a normal user account</strong> &mdash; the one a new starter gets on
+their first morning. Active Directory is readable by design: users, groups, sessions,
+ACLs and trusts are all queryable by any
+authenticated principal, and <strong class="c-amber">the attack paths were already there before
+anyone ran anything</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Precondition</th><th>The control that denies it</th></tr>
+<tr><td>One authenticated domain account</td><td><strong>None.</strong> This cannot be taken away without breaking AD itself</td></tr>
+<tr><td>LDAP <span class="acro-exp">(Lightweight Directory Access Protocol)</span> read access to the directory</td><td>Nothing practical &mdash; the directory has to be readable to function</td></tr>
+<tr><td>Session enumeration on hosts</td><td>This half <em>can</em> be reduced: restrict remote SAM/session enumeration by policy</td></tr>
+<tr><td>Time to collect</td><td>The only real signal &mdash; the volume and shape of the queries, not the fact of them</td></tr>
+<tr><td>A path to something valuable</td><td><strong>This is the actual control.</strong> Remove the path and the graph is uninteresting</td></tr>
+</table>
+<div class="concept-desc verdict">
+Because the precondition cannot be removed, this is the one card in the domain where
+<strong>the defensive answer is to run the tool yourself, first, and keep running it</strong>.
+The output is a list of unintended privilege paths, and the win is deleting them: nested groups
+nobody meant, delegated ACLs from a 2016 migration, a service account with local admin on four
+hundred machines. Detection is a distant second to fixing what the graph shows.
 </div>
 </div>
-<div class="topic" id="mimikatz-credential-extraction" data-reviewed="2026-08" data-read="2" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="mimikatz-credential-extraction" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔓</span>
 <span class="topic-name">Mimikatz — Credential Extraction</span>
 <span class="topic-badge">AD Attacks</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -64251,14 +64308,43 @@ anomalous replication (DCSync = event 4662 from a non-DC).
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Prerequisite</div>
+<div class="concept-title">Local Administrator Is Not Enough on Its Own</div>
+<div class="concept-desc">
+Mimikatz is famous enough that people treat it as the start of an attack. It is not
+&mdash; it is what you do <em>after</em> you have already won on a host. Reading LSASS memory needs local
+administrator <strong>and</strong> <code>SeDebugPrivilege</code>, on a machine where that
+process is readable at all. <strong class="c-amber">Every one of those three is something a
+defender can take away.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Precondition</th><th>The control that denies it</th></tr>
+<tr><td>Local administrator on the host</td><td>Least privilege, and separate admin accounts per tier &mdash; the single biggest lever</td></tr>
+<tr><td><code>SeDebugPrivilege</code></td><td>Restrict the privilege by policy; it is not needed by ordinary applications</td></tr>
+<tr><td>LSASS readable</td><td><strong>Credential Guard</strong> moves secrets into VBS; <strong>RunAsPPL</strong> makes LSASS protected</td></tr>
+<tr><td>The binary or its technique runs</td><td>Application control (WDAC / AppLocker). Note that the technique outlives the binary</td></tr>
+<tr><td>Cached credentials worth taking</td><td>Reduce <code>CachedLogonsCount</code>; do not log domain admins into workstations</td></tr>
+</table>
+<div class="concept-desc verdict">
+The defensive reading is the more useful one. If credential theft is in your threat model,
+the four rows above are a project plan in priority order, and
+<strong>Credential Guard plus tiered administration removes the technique rather than detecting
+it</strong>. Detection still matters &mdash; a handle opened to LSASS with
+<code>PROCESS_VM_READ</code> is a high-signal event &mdash; but it is the second line, not the
+first.
 </div>
 </div>
-<div class="topic" id="kerberos-attacks-rubeus-kerbrute" data-reviewed="2026-08" data-read="2" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="kerberos-attacks-rubeus-kerbrute" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎟️</span>
 <span class="topic-name">Kerberos Attacks — Rubeus &amp; Kerbrute</span>
 <span class="topic-badge">AD Attacks</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -64283,6 +64369,34 @@ password spraying against the KDC <span class="acro-exp">(Key Distribution Cente
 <strong class="c-amber">Blue-team note:</strong> Kerberoasting shows as a spike
 of TGS <span class="acro-exp">(Ticket Granting Service)</span> requests (event 4769) for many SPNs <span class="acro-exp">(Service Principal Name)</span> from one user. Defenses: long,
 random service-account passwords (or gMSAs), and enabling Kerberos pre-auth.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Prerequisite</div>
+<div class="concept-title">A Domain User, Plus an Account Somebody Configured Badly</div>
+<div class="concept-desc">
+The Kerberos attacks are not protocol breaks. Each needs an ordinary domain account
+<strong>and</strong> a specific configuration that a person chose, usually years ago and for a
+reason that made sense at the time. <strong class="c-amber">The configuration is the
+vulnerability</strong>, which means each one has a control that is a settings change rather than
+a detection.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Attack</th><th>What must be true</th><th>The control</th></tr>
+<tr><td>Kerberoasting</td><td>An account with an SPN and a human-chosen password</td><td>Group Managed Service Accounts &mdash; 120-character random passwords, rotated</td></tr>
+<tr><td>AS-REP roasting</td><td>An account with pre-authentication disabled</td><td>Re-enable pre-auth. It is almost never legitimately needed</td></tr>
+<tr><td>Unconstrained delegation</td><td>A host trusted for delegation, and a privileged user touching it</td><td>Remove it; use constrained or resource-based delegation. Mark admins &ldquo;sensitive&rdquo;</td></tr>
+<tr><td>Silver ticket</td><td>The service account's hash</td><td>Cannot be prevented directly &mdash; prevent the theft, and rotate <code>krbtgt</code> on schedule</td></tr>
+<tr><td>Golden ticket</td><td>The <code>krbtgt</code> hash, i.e. domain compromise</td><td>By this point the control is recovery planning, not prevention</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two settings changes remove the two attacks that need no privilege at all: <strong>gMSA <span class="acro-exp">(group Managed Service Account)</span>
+for every service account with an SPN, and pre-authentication required everywhere</strong>.
+Neither needs a product, both are auditable with a single LDAP <span class="acro-exp">(Lightweight Directory Access Protocol)</span> query, and together they turn the
+top of this table from &ldquo;any user can try&rdquo; into &ldquo;there is nothing to
+request&rdquo;.
 </div>
 </div>
 </div>
@@ -64341,12 +64455,12 @@ This attack works because Windows falls back to broadcast name resolution when D
 </div>
 </div>
 </div>
-<div class="topic" id="adcs-abuse-certipy-the-esc-techniques" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="adcs-abuse-certipy-the-esc-techniques" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📜</span>
 <span class="topic-name">ADCS Abuse — Certipy &amp; the ESC Techniques</span>
 <span class="topic-badge">AD Attacks</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -64372,6 +64486,35 @@ impactful AD <span class="acro-exp">(Active Directory)</span> attack classes. <e
 (remove "enrollee supplies subject" + client-auth combos), monitor the CA <span class="acro-exp">(Certificate Authority)</span>'s
 issuance logs, and restrict enrollment rights. Certipy's own <code>find</code>
 is the fastest way for defenders to spot the misconfig first.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Prerequisite</div>
+<div class="concept-title">A Domain User and One Certificate Template Nobody Reviewed</div>
+<div class="concept-desc">
+ADCS escalation
+needs no exploit and no privilege beyond an ordinary account. It needs a
+<strong>template</strong> that lets a low-privileged user request a certificate on somebody
+else's behalf &mdash; and because a certificate authenticates, that certificate <em>is</em> the
+other user. <strong class="c-amber">The vulnerability is an ACL <span class="acro-exp">(Access Control List)</span> and a checkbox</strong>, set
+once, usually during a migration.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What must be true</th><th>The control</th></tr>
+<tr><td>A template enrollable by ordinary users</td><td>Review enrollment permissions &mdash; the default set is broader than most estates need</td></tr>
+<tr><td>…that permits client authentication</td><td>Restrict EKU to what the template is genuinely for</td></tr>
+<tr><td>…and lets the requester supply the subject</td><td>The <code>ENROLLEE_SUPPLIES_SUBJECT</code> flag. This is the single most dangerous setting here</td></tr>
+<tr><td>No manager approval on issuance</td><td>Require approval for any template that can authenticate</td></tr>
+<tr><td>A CA that trusts <code>SAN</code> from the request</td><td><code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> on the CA &mdash; audit it and turn it off</td></tr>
+</table>
+<div class="concept-desc verdict">
+This class is worth singling out because <strong>a certificate outlives a password
+reset</strong>. Rotating credentials after an incident does not revoke a certificate the
+attacker already holds, and the validity period can be years. So the response is different from
+every other row in this domain: <strong>find the templates first, then check what has already
+been issued</strong>, and be prepared to revoke rather than reset.
 </div>
 </div>
 </div>
@@ -64540,12 +64683,12 @@ signatures.
 </div>
 </div>
 </div>
-<div class="topic" id="hashcat-gpu-password-cracking" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="hashcat-gpu-password-cracking" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔥</span>
 <span class="topic-name">Hashcat — GPU <span class="acro-exp">(Graphics Processing Unit)</span> Password Cracking</span>
 <span class="topic-badge">Passwords</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -64574,6 +64717,35 @@ passwords. <em>Authorized assessment / cert-prep / your-own-hashes only.</em>
 (nothing to detect on the wire) — the defense is upstream: long passphrases,
 slow hashes (bcrypt/argon2, not fast MD5/NTLM), and stopping the hash theft in
 the first place.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Prerequisite</div>
+<div class="concept-title">You Must Already Have the Hash, and Its Type Decides Everything</div>
+<div class="concept-desc">
+Cracking is the last step and the easiest to write about, which is why it gets more
+attention than it deserves. <strong>The hash has to be stolen first</strong> &mdash; from LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span>,
+a database dump, an NTDS <span class="acro-exp">(NT Directory Services)</span> export, a captured handshake &mdash; and by then a great deal has
+already gone wrong. What the tool can then do is decided almost entirely by
+<strong class="c-amber">which algorithm produced the hash</strong>, not by the hardware.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Hash type</th><th>Why it matters</th></tr>
+<tr><td>NTLM <span class="acro-exp">(NT LAN Manager)</span></td><td>Unsalted and fast. Identical passwords produce identical hashes across the estate</td></tr>
+<tr><td>NetNTLMv2 (captured)</td><td>Slower, and salted per challenge &mdash; but still crackable if the password is weak</td></tr>
+<tr><td>bcrypt / scrypt / Argon2</td><td>Deliberately slow and memory-hard. Orders of magnitude harder, by design</td></tr>
+<tr><td>MD5 <span class="acro-exp">(Message Digest 5)</span> / SHA-1 of a password</td><td>Not a password hash. Should not exist in 2026 and still does</td></tr>
+<tr><td>Kerberos TGS-REP (RC4)</td><td>The kerberoasting output &mdash; which is why gMSA <span class="acro-exp">(group Managed Service Account)</span> passwords defeat it outright</td></tr>
+</table>
+<div class="concept-desc verdict">
+The defensive consequence is not &ldquo;buy better GPUs&rdquo;, it is
+<strong>length beats complexity, and the algorithm beats both</strong>. A 20-character
+passphrase is out of reach whatever the hardware; a modern memory-hard KDF <span class="acro-exp">(Key Derivation Function)</span> makes offline cracking economically
+uninteresting. And because NTLM is unsalted, <strong>password reuse across accounts is visible
+in the dump itself</strong> &mdash; the same hash appearing twice is a finding before anything
+is cracked.
 </div>
 </div>
 </div>
@@ -64877,12 +65049,12 @@ access badges, and staff awareness ("don't plug in found USBs / accept tailgater
 </div>
 </div>
 </div>
-<div class="topic" id="living-off-the-land-lolbas-gtfobins" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="living-off-the-land-lolbas-gtfobins" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🪛</span>
 <span class="topic-name">Living off the Land — LOLBAS &amp; GTFOBins</span>
 <span class="topic-badge">Post-Ex</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -64911,6 +65083,35 @@ are trusted binaries. Detection is <strong class="c-green">behavioral</strong>:
 <code>certutil</code> making a network connection, or <code>winword.exe</code>
 spawning <code>powershell.exe</code>, is anomalous even though every binary is
 signed (this is why Sysmon parent/child chains matter).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Prerequisite</div>
+<div class="concept-title">Code Execution You Already Have, and Nothing Else</div>
+<div class="concept-desc">
+This is the entry with the emptiest prerequisite list, which is exactly what makes it the
+hardest to control. There is no tool to detect, no binary to block, no file to sign: the
+prerequisite is <strong>execution</strong>, and everything after it is software the vendor
+shipped and the estate trusts. <strong class="c-amber">Blocking &ldquo;the tool&rdquo; is not
+available as a control</strong>, because the tool is <code>certutil</code>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Why the usual controls miss</th><th>What works instead</th></tr>
+<tr><td>The binary is signed by the vendor</td><td>Application control by <em>policy</em> &mdash; WDAC or AppLocker rules that allow a binary only where it belongs</td></tr>
+<tr><td>It is legitimately used elsewhere</td><td>Behavioural detection: the parent process and the arguments, not the image name</td></tr>
+<tr><td>Nothing is written to disk</td><td>Command-line auditing (4688) and script block logging (4104). Without those there is no evidence</td></tr>
+<tr><td>On Linux, it is a <code>sudo</code> rule</td><td>GTFOBins is a list of what your <code>sudoers</code> file actually grants. Read it against your own file</td></tr>
+<tr><td>It looks exactly like administration</td><td>This is the honest difficulty &mdash; the signal is context, and context needs baselining</td></tr>
+</table>
+<div class="concept-desc verdict">
+The practical version, and it is a task rather than a purchase: <strong>read GTFOBins
+against your own <code>sudoers</code>, and LOLBAS against your application-control
+policy</strong>. Both are lists of things you have already permitted. Most estates find at least
+one <code>sudo</code> entry that grants a shell by design &mdash; <code>vim</code>,
+<code>find</code>, <code>less</code> &mdash; and closing those is cheaper than detecting their
+use.
 </div>
 </div>
 </div>
@@ -65021,12 +65222,12 @@ catch them.
 </div>
 </div>
 </div>
-<div class="topic" id="pacu-the-aws-exploitation-framework" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="pacu-the-aws-exploitation-framework" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">☁️</span>
 <span class="topic-name">Pacu — The AWS <span class="acro-exp">(Amazon Web Services)</span> Exploitation Framework</span>
 <span class="topic-badge">Cloud Offense</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -65051,6 +65252,34 @@ paths, and demonstrates impact. <em>Authorized cloud assessments only.</em>
 calls — <strong class="c-green">CloudTrail + GuardDuty</strong> see the
 enumeration and privesc attempts. This is the offensive mirror of the CSPM <span class="acro-exp">(Cloud Security Posture Management)</span> tools
 in the Cloud domain.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Prerequisite</div>
+<div class="concept-title">Valid AWS Credentials — Usually Long-Lived Keys That Should Not Exist</div>
+<div class="concept-desc">
+Pacu enumerates and escalates inside an AWS account. It does not get you in. The
+precondition is a working credential, and in practice that is almost always
+<strong class="c-amber">a long-lived access key</strong> &mdash; committed to a repository,
+baked into an AMI <span class="acro-exp">(Amazon Machine Image)</span>, left in a developer's <code>~/.aws/credentials</code>, or exposed by an SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> against the instance metadata
+service.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Precondition</th><th>The control that denies it</th></tr>
+<tr><td>A long-lived <code>AKIA…</code> access key</td><td><strong>Do not issue them.</strong> IAM Identity Center and roles give short-lived credentials</td></tr>
+<tr><td>Instance metadata reachable from the app</td><td><strong>IMDSv2 required</strong> &mdash; session-oriented, and defeats the classic SSRF path</td></tr>
+<tr><td>Permissions broader than the task</td><td>Least privilege, and permission boundaries so a role cannot grant itself more</td></tr>
+<tr><td>An escalation path in the IAM graph</td><td><code>iam:PassRole</code> plus <code>lambda:CreateFunction</code> is the classic pair. Audit for it</td></tr>
+<tr><td>Enumeration going unnoticed</td><td>CloudTrail plus GuardDuty &mdash; the enumeration burst is a strong signal</td></tr>
+</table>
+<div class="concept-desc verdict">
+The first two rows are the whole card. <strong>An account with no long-lived keys and
+IMDSv2 enforced has removed the two most common ways this tool ever gets a credential</strong>,
+and both are configuration rather than product. The IAM graph is the harder, slower work &mdash;
+and it is the same shape as BloodHound's finding, one cloud over: the escalation paths are
+already there, and somebody should be looking at them before an attacker does.
 </div>
 </div>
 </div>

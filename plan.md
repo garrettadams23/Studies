@@ -11100,6 +11100,41 @@ instantly and nothing was saved" is.
 
 **✅ D9 shipped** — 8 cards, `web` 25 → 17 thin (64% → 44%).
 
+### The D11 spec — what you must already have before this runs
+
+D2 gave `redteam`'s tool cards *what using this costs you*. Thirty-two remain, and they share a
+second gap that is arguably worse for a reader learning the subject: **every card is written as
+though you can simply run the tool.**
+
+You cannot. Mimikatz needs local administrator and a debug privilege. Rubeus needs a domain
+context. Impacket needs a credential or a hash you do not have yet. Hashcat needs the hash
+*first*, which is the entire problem. A catalogue that omits the precondition reads as a list of
+capabilities when the real subject is a **chain**, and the chain is the thing a learner cannot
+infer from the tool's own documentation.
+
+> **The addition: what you must already have before this runs, and the control that denies it.**
+
+The second clause is not decoration. A prerequisite is a control point by definition — the place
+a defender can stand — and naming it keeps these cards useful on both sides of the engagement,
+which is how the rest of this site treats offence.
+
+One test: the prerequisite must be **specific enough to be denied**. "Access to the network" is
+not a prerequisite; "a credential or NTLM hash, plus reachability to 445" is, because a defender
+can act on each half.
+
+| Card | The precondition | Kind |
+|---|---|---|
+| Mimikatz | Local admin *and* `SeDebugPrivilege`, on a host where LSASS is readable | Privilege |
+| BloodHound & SharpHound | **Any authenticated domain user** — that is the finding | None at all |
+| Impacket | A credential or hash, plus reachability to SMB/RPC | Credential |
+| Kerberos Attacks | A domain user, plus an account configured a particular way | Protocol configuration |
+| Hashcat | The hash, already stolen. Everything upstream is the hard part | Prior theft |
+| Pacu | Valid AWS credentials — usually long-lived keys that should not exist | Cloud key |
+| ADCS Abuse | A domain user plus one misconfigured certificate template | Misconfiguration |
+| Living off the Land | Code execution you already have, and nothing else | Existing foothold |
+
+**✅ D11 shipped** — 8 cards, `redteam` 32 → 24 thin (62% → 46%).
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13370,3 +13405,70 @@ wave takes the worst remaining ratio in a domain with no deliberate-short popula
 **`redteam`, 32 thin of 52.**
 
 `--bottom` is in `make census`. Nothing else changed.
+
+---
+
+## Session record — Phase 8 wave D11: a catalogue of tools is not an attack path
+
+D2 gave `redteam`'s tool cards *what using this costs you*. Thirty-two were left, and they shared
+a second gap that matters more to someone learning the subject: **every card was written as
+though you could simply run the tool.**
+
+You cannot. Mimikatz is not the start of an attack, it is what you do after you have already won
+on a host. Hashcat needs the hash, and stealing the hash was the hard part. Impacket assumes you
+are already somebody. Without the precondition, a catalogue of capabilities stands in for what is
+actually a chain — and the chain is the part the tool's own documentation never supplies.
+
+| Tool | What you must already have | The control that denies it |
+|---|---|---|
+| Mimikatz | Local admin **and** `SeDebugPrivilege`, with LSASS readable | Credential Guard and RunAsPPL remove the technique, not just detect it |
+| BloodHound | **Any authenticated domain user** | None — and that is the finding |
+| Impacket | A credential or hash, plus reach to 445/135 | LAPS kills the reuse; a host firewall kills the reach |
+| Kerberos Attacks | A domain user plus an account configured badly | gMSA and required pre-auth, both settings changes |
+| Hashcat | The hash, already stolen — and its algorithm decides everything | Length beats complexity; the KDF beats both |
+| Pacu | Valid AWS credentials, usually a long-lived key | Do not issue them; require IMDSv2 |
+| ADCS Abuse | A domain user and one unreviewed template | An ACL and a checkbox, set once during a migration |
+| Living off the Land | Code execution, and nothing else | The emptiest prerequisite, and therefore the hardest |
+
+### The test the spec needed
+
+*The prerequisite must be specific enough to be denied.* "Access to the network" is not a
+prerequisite. "A credential or NTLM hash, plus reachability to 445" is, because a defender can
+act on each half separately — and it turns out that the second half, **blocking
+workstation-to-workstation SMB at the host firewall**, is the single cheapest row in the whole
+wave. Nothing legitimate needs it.
+
+### The two cards that came out differently from the other six
+
+**BloodHound has no control.** Its precondition is a normal user account, Active Directory is
+readable by design, and no setting takes that away. The card had to say so, and then say what
+follows: this is the one entry in the domain where the defensive answer is to *run the tool
+yourself, first, and keep running it* — because the attack paths were already there and the win
+is deleting them, not detecting the enumeration.
+
+**ADCS behaves unlike everything else after the incident.** A certificate outlives a password
+reset. Rotating credentials does not revoke a certificate an attacker already holds, and the
+validity can be years — so the response order inverts: find the templates, then check what has
+already been issued, and be prepared to revoke rather than reset.
+
+Both were discovered by applying the spec rather than by knowing them in advance, which is the
+argument for writing the spec before the cards. Six of eight produced a tidy precondition-and-
+control pair; the two that refused to are the two worth reading.
+
+### The measurement
+
+```
+                        D9 end  D10   D11 end
+thin topics                211  211       203
+redteam                             32 →   24   (62% → 46%)
+mean chars/concept card  1,210  —       1,212
+median topic             2,996  —       3,014    ← crosses 3,000
+10th percentile          1,365  —       1,365    ← unchanged, and now expected to be
+```
+
+Eighty-eight cards across eleven waves, and the padding counter-metric has moved **twelve
+characters in total**. The 10th percentile did not move and D10 established that it should not:
+the floor of this site is the beginner layer and the certification skims, and both are the right
+length already.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
