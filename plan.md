@@ -11135,6 +11135,45 @@ can act on each half.
 
 **✅ D11 shipped** — 8 cards, `redteam` 32 → 24 thin (62% → 46%).
 
+### The D12 spec — the assumption you carry over from the other cloud
+
+D3 worked `cloud`'s *concept* cards — cost control, landing zones, CSPM, Terraform — and its
+rule was **provider-neutral**: write the failure mode that is the same on all three, because a
+service description dated on the day it was written is the thing on this site most certain to
+rot.
+
+The thirty-two that remain are the opposite kind of card. They are **service** cards, they come
+in matched pairs (AWS IAM and GCP IAM, AWS VPC and GCP VPC, and so on), and for them the
+provider *is* the subject. Writing those provider-neutral would be writing nothing.
+
+So D12 inverts D3's rule deliberately, and the inversion is the point:
+
+> **The addition: the assumption you carry over from the other cloud, and exactly where it is
+> wrong.**
+
+Anyone who learned one cloud and moved to another arrives with a working mental model that is
+about 80% right, and the 20% is not evenly distributed — it is concentrated in a handful of
+places where the two designs disagree at the root. Those places are almost never in the
+comparison table, because comparison tables map service *names*.
+
+The test: the difference has to be **structural, not a naming difference**. "AWS calls it a
+Security Group and GCP calls it a firewall rule" is a glossary entry. "GCP firewall rules are
+VPC-wide and priority-ordered with denies; AWS security groups are instance-attached, stateful
+and allow-only" is a different model of the same problem.
+
+| Card | The assumption that breaks |
+|---|---|
+| GCP IAM | You cannot attach a policy to an identity — permissions are bindings *on resources* |
+| AWS IAM Policies | A permission can be granted and still denied; five policy types are evaluated |
+| GCP VPC | The VPC is **global**. Subnets are regional. Firewall rules span the whole network |
+| AWS VPC | Everything is AZ-scoped, and a subnet is "public" only because of its route table |
+| GCP Service Accounts | A service account is an identity **and** a resource you grant access *to* |
+| AWS KMS | The key policy is the authority; the default one delegates to IAM, and a custom one may not |
+| GCP Load Balancing | One global anycast IP, and health checks arrive from ranges you must allow |
+| AWS Observability | Logs and Metrics are separate products with separate bills |
+
+**✅ D12 shipped** — 8 cards, `cloud` 32 → 24 thin (50% → 38%).
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13470,5 +13509,70 @@ Eighty-eight cards across eleven waves, and the padding counter-metric has moved
 characters in total**. The 10th percentile did not move and D10 established that it should not:
 the floor of this site is the beginner layer and the certification skims, and both are the right
 length already.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D12: the wave that inverts D3's own rule
+
+D3's rule for `cloud` was **provider-neutral**, and it was right for the cards it covered: cost
+control, landing zones, CSPM, Terraform. Those are concept cards, and a service description
+dated on the day it was written is the thing on this site most certain to rot.
+
+D12 covers the other thirty-two, and they are the opposite kind of card. They come in matched
+pairs — AWS IAM and GCP IAM, AWS VPC and GCP VPC, AWS KMS and GCP KMS — and for them **the
+provider is the subject**. Writing those provider-neutral would be writing nothing at all. So
+this wave inverts the earlier rule on purpose, and the two rules are compatible because they
+apply to different kinds of card. That distinction is now written into the spec rather than
+being something a later session has to infer from a contradiction.
+
+| Card | The assumption that breaks on arrival |
+|---|---|
+| GCP IAM | **You cannot attach a policy to an identity.** You bind a role to a principal *on a resource*, and inheritance is additive |
+| AWS IAM Deep | A permission can be granted and still denied — five policy types evaluate, and one explicit `Deny` ends it |
+| GCP VPC | The VPC is **global**; subnets are regional; firewall rules are network-wide, priority-ordered, and have denies |
+| AWS VPC | Everything is AZ-scoped, and **a subnet is public only because its route table says so** |
+| GCP Service Accounts | A service account is an identity *and* a resource — `serviceAccountTokenCreator` is impersonation |
+| AWS KMS | The key policy is the authority; the default one delegates to IAM, and a custom one may not |
+| GCP Load Balancing | One global anycast IP, and health checks arrive from `35.191.0.0/16` and `130.211.0.0/22` |
+| AWS Observability | Logs and Metrics are separate products, and custom metrics bill per metric per month |
+
+### The test, and what it threw out
+
+*The difference has to be structural, not a naming difference.* "AWS calls it a Security Group
+and GCP calls it a firewall rule" is a glossary entry and was cut twice. What survives is where
+the two designs disagree at the root — global versus regional networks, additive-allow versus
+explicit-deny evaluation, resource-policy versus identity-policy authority.
+
+The clearest example of why this matters is the pair of network cards. Translating a design in
+either direction is not rewording: a GCP design that assumed global reach and tag-targeted rules
+becomes, in AWS, peering connections, per-subnet route tables and per-instance groups. **The
+provider decides how many boundaries the design has**, which is a thing to know before choosing
+one rather than after.
+
+### Two rows that are worth more than the cards they sit in
+
+- **AWS KMS**: a custom key policy that omits the root statement locks IAM out entirely, and a
+  key policy that names nobody is unrecoverable without AWS support. That is the one mistake in
+  this wave with no self-service repair.
+- **GCP load balancing**: allowing the two health-check ranges is the single most common cause of
+  "every backend is unhealthy and the config looks perfect". It is a firewall rule, and it should
+  be created with the load balancer rather than discovered during the outage.
+
+### The measurement
+
+```
+                        D11 end   D12 end
+thin topics                 203       195
+cloud                              32 →  24   (50% → 38%)
+mean chars/concept card   1,212     1,214
+median topic              3,014     3,027
+10th percentile           1,365     1,367
+```
+
+**Ninety-six cards across twelve waves, and the padding counter-metric has moved fourteen
+characters.** Phase 8 §8's target of "under 150 thin" is now 45 cards away — six more waves at
+the current rate, and for the first time in this phase the end is close enough to name.
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.

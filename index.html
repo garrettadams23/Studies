@@ -68695,8 +68695,8 @@ way a CV line cannot. General interview preparation is in
 <span class="ctag ctag-general">GCP</span>
 </div>
 <span class="domain-sub">AWS · GCP · Azure · IAM · Networking · Compute · Storage · Security · Troubleshooting</span>
-<span class="domain-meta" aria-label="64 topics, about 2h 00m to read"
->64 topics · ~2h 00m</span>
+<span class="domain-meta" aria-label="64 topics, about 2h 10m to read"
+>64 topics · ~2h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -68975,12 +68975,12 @@ access must be explicitly granted by a policy.
 </div>
 </div>
 </div>
-<div class="topic" id="aws-iam-deep-assumerole-sts-boundaries" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="aws-iam-deep-assumerole-sts-boundaries" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎫</span>
 <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> IAM <span class="acro-exp">(Identity and Access Management)</span> Deep — AssumeRole, STS <span class="acro-exp">(Security Token Service)</span> &amp; Boundaries</span>
 <span class="topic-badge">AWS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69011,14 +69011,43 @@ permission boundary, and any SCP <span class="acro-exp">(Service Control Policy)
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The evaluation nobody reads</div>
+<div class="concept-title">A Permission Can Be Granted and Still Denied</div>
+<div class="concept-desc">
+&ldquo;It is in the policy and it still says access denied&rdquo; is the most common AWS
+support question there is, and the answer is that an identity policy is one of
+<strong>five</strong> things being evaluated. The rule that resolves almost every case is short:
+<strong class="c-amber">an explicit <code>Deny</code> anywhere wins, and everything else must
+allow.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Layer</th><th>Effect on the request</th></tr>
+<tr><td>Service control policy (SCP)</td><td>A <em>guardrail</em>, not a grant. It can only remove permissions from the account</td></tr>
+<tr><td>Permissions boundary</td><td>A ceiling on an identity. The identity policy grants; the boundary caps</td></tr>
+<tr><td>Identity policy</td><td>What the user or role is allowed to do</td></tr>
+<tr><td>Resource policy</td><td>What the resource permits &mdash; and cross-account access needs <strong>both</strong> sides</td></tr>
+<tr><td>Session policy</td><td>Passed at <code>AssumeRole</code> time; narrows the session further</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two habits make this debuggable rather than mysterious. Use the
+<strong>IAM policy simulator or <code>--dry-run</code> before blaming the policy</strong>, and
+read the error's principal ARN <span class="acro-exp">(Amazon Resource Name)</span> carefully &mdash; a denied request from
+<code>arn:…:assumed-role/…</code> is a role session, so the identity policy you were reading may
+not be the one in force. And remember the asymmetry: cross-account access requires an allow on
+both sides, while a single explicit deny on either is enough to stop it.
 </div>
 </div>
-<div class="topic" id="gcp-iam-members-roles-hierarchy" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="gcp-iam-members-roles-hierarchy" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔑</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> IAM <span class="acro-exp">(Identity and Access Management)</span> — Members, Roles &amp; Hierarchy</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69049,14 +69078,42 @@ and bind as low in the hierarchy as possible (project &gt; folder &gt; org).
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Coming from AWS <span class="acro-exp">(Amazon Web Services)</span></div>
+<div class="concept-title">You Cannot Attach a Policy to an Identity Here</div>
+<div class="concept-desc">
+The habit that breaks first is the most basic one. In AWS you write a policy and attach it
+to a user or role. In GCP there is <strong class="c-amber">no such thing as attaching a policy to
+an identity</strong> &mdash; you grant a <em>role</em> to a <em>principal</em> <em>on a
+resource</em>, and the resulting binding lives on the resource, not on the person. Permissions
+are then inherited down the hierarchy, and inheritance is additive.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>AWS habit</th><th>GCP reality</th></tr>
+<tr><td>Attach a managed policy to a role</td><td>Bind a predefined role to a principal at organisation, folder, project or resource level</td></tr>
+<tr><td>Read a user's permissions from their policies</td><td>There is no single place. You must inspect bindings at every level above the resource</td></tr>
+<tr><td>Explicit <code>Deny</code> in an identity policy</td><td>Allow policies are additive with no deny. IAM <strong>deny policies</strong> exist as a separate object and are far narrower</td></tr>
+<tr><td>Fine-grained resource ARNs <span class="acro-exp">(Amazon Resource Name)</span> in one policy</td><td>Granularity comes from <em>where</em> you bind, and many services only support project-level binding</td></tr>
+<tr><td>An inline policy for a one-off</td><td>Custom roles &mdash; and they are org- or project-scoped objects, not throwaways</td></tr>
+</table>
+<div class="concept-desc verdict">
+The practical consequence for anyone auditing: <strong>a project-level binding is much
+broader than it looks</strong>, because everything created in that project inherits it forever,
+including resources that did not exist when the grant was made. Bind as far down the hierarchy as
+the service allows, and treat a `roles/editor` grant at project level as the equivalent of a
+wildcard &mdash; it is close to one.
 </div>
 </div>
-<div class="topic" id="gcp-service-accounts-workload-identity" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="gcp-service-accounts-workload-identity" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤖</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Service Accounts &amp; Workload Identity</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69081,6 +69138,34 @@ short-lived SA credentials automatically, with <em>no key file at all</em>.
 <div class="concept-desc verdict">
 Rule: if you're storing a <code>.json</code> key, ask whether Workload Identity
 can replace it. Usually it can.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Coming from AWS <span class="acro-exp">(Amazon Web Services)</span></div>
+<div class="concept-title">A Service Account Is an Identity and a Resource at the Same Time</div>
+<div class="concept-desc">
+AWS roles are assumed; GCP service accounts are <em>both</em> something that acts and
+something you grant people access <strong>to</strong>. That dual nature is the source of most
+confusion, and of a real privilege-escalation path:
+<strong class="c-amber">permission to use a service account is permission to become it</strong>,
+with everything it can do.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Grant</th><th>What it actually means</th></tr>
+<tr><td><code>roles/iam.serviceAccountUser</code></td><td>May attach this service account to a resource &mdash; effectively, may run code as it</td></tr>
+<tr><td><code>roles/iam.serviceAccountTokenCreator</code></td><td>May mint tokens for it directly. **This is impersonation**, no resource needed</td></tr>
+<tr><td>A key file (<code>.json</code>)</td><td>A long-lived credential with no expiry. The thing to stop creating</td></tr>
+<tr><td>Workload Identity (GKE)</td><td>A Kubernetes service account maps to a Google one &mdash; no key material anywhere</td></tr>
+<tr><td>Workload Identity Federation</td><td>External identities (GitHub Actions, AWS, OIDC) impersonate without a key</td></tr>
+</table>
+<div class="concept-desc verdict">
+The audit question that finds real problems: <strong>who holds
+<code>serviceAccountTokenCreator</code> or <code>serviceAccountUser</code> on a highly privileged
+service account?</strong> Those two roles are how a modest project-level grant turns into the
+permissions of whatever the pipeline runs as, and they rarely appear in a review that is looking
+only at what a person can do directly.
 </div>
 </div>
 </div>
@@ -69122,12 +69207,12 @@ Steampipe) that flag these exact patterns.
 </div>
 </div>
 </div>
-<div class="topic" id="aws-vpc-subnets-security-groups-nacls" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="aws-vpc-subnets-security-groups-nacls" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌐</span>
 <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> VPC <span class="acro-exp">(Virtual Private Cloud)</span> — Subnets, Security Groups &amp; NACLs <span class="acro-exp">(Network Access Control List)</span></span>
 <span class="topic-badge">AWS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69153,6 +69238,33 @@ public/private split right is the foundation of a secure architecture.
 <strong class="c-green">Remember:</strong> Security Groups are stateful (the
 common case, instance-level); NACLs are stateless (subnet-level, coarse). Put
 databases in private subnets and never give them a public IP <span class="acro-exp">(Internet Protocol)</span>.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Coming from GCP <span class="acro-exp">(Google Cloud Platform)</span></div>
+<div class="concept-title">Everything Is Zone-Scoped, and a Subnet Is Only Public Because of Its Route Table</div>
+<div class="concept-desc">
+Two things surprise people arriving from a global network. First, the availability zone is
+a first-class design constraint: a subnet lives in exactly one AZ, so high availability means
+building the same thing more than once. Second, there is
+<strong class="c-amber">no &ldquo;public subnet&rdquo; setting</strong> &mdash; a subnet is
+public if and only if its route table sends <code>0.0.0.0/0</code> to an internet gateway.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Question</th><th>Answer</th></tr>
+<tr><td>How do I make this subnet public?</td><td>Attach a route table with a default route to the IGW. That <em>is</em> the definition</td></tr>
+<tr><td>Why can my private instance reach the internet?</td><td>A NAT gateway in a public subnet &mdash; and it is billed hourly plus per GB, per AZ</td></tr>
+<tr><td>Security group vs NACL</td><td>SGs are stateful, instance-attached, allow-only. <strong>NACLs are stateless</strong> and need a rule in both directions</td></tr>
+<tr><td>Why did my return traffic drop?</td><td>Almost always a stateless NACL with no ephemeral-port return rule</td></tr>
+<tr><td>Do I need one subnet or three?</td><td>Three, one per AZ, for anything that must survive an AZ failure &mdash; and the same for NAT</td></tr>
+</table>
+<div class="concept-desc verdict">
+The NACL row is where most of the lost afternoons are. <strong>Use security groups for
+everything, and leave NACLs at their default allow-all unless you have a specific reason</strong>
+&mdash; a stateless layer that silently drops returning packets is a debugging cost you pay
+repeatedly for a control the security group already gave you statefully.
 </div>
 </div>
 </div>
@@ -69209,12 +69321,12 @@ Health checks and DNS-based failover are described in seconds and experienced in
 </div>
 </div>
 </div>
-<div class="topic" id="gcp-vpc-global-networks-firewall-rules" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="gcp-vpc-global-networks-firewall-rules" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌐</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> VPC <span class="acro-exp">(Virtual Private Cloud)</span> — Global Networks &amp; Firewall Rules</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69242,14 +69354,42 @@ tag:web" — no security-group object to attach.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Coming from AWS</div>
+<div class="concept-title">The VPC Is Global. Subnets Are Regional. Firewall Rules Span Both.</div>
+<div class="concept-desc">
+This is the largest structural difference between the two networks and it changes the
+shape of a design rather than its wording. An AWS VPC lives in one region and reaching another
+means peering or Transit Gateway. A GCP VPC is
+<strong class="c-cyan">global</strong> &mdash; one network, subnets in every region, private
+communication between them by default, with no peering to build.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>AWS assumption</th><th>GCP reality</th></tr>
+<tr><td>A VPC belongs to a region</td><td>A VPC is global; a <em>subnet</em> belongs to a region and spans its zones</td></tr>
+<tr><td>Peer VPCs to cross regions</td><td>Nothing to build &mdash; regional subnets in one VPC route to each other privately</td></tr>
+<tr><td>Security groups attach to instances</td><td>Firewall rules are <strong>network-wide</strong>, priority-ordered, and target by tag or service account</td></tr>
+<tr><td>Rules are allow-only and stateful</td><td>Rules are stateful too, but there are <strong>explicit denies</strong>, resolved by priority (lower number wins)</td></tr>
+<tr><td>A route table per subnet</td><td>Routes are VPC-wide with tag-based targeting; there is no per-subnet table</td></tr>
+</table>
+<div class="concept-desc verdict">
+The trap on the way back is worse than the trap on the way out. A design that assumed
+global reach and tag-targeted rules does not survive translation to AWS, where the same intent
+becomes peering connections, per-subnet route tables and per-instance groups. **Draw the
+boundaries before choosing the provider**, because on this one the provider decides how many
+boundaries there are.
 </div>
 </div>
-<div class="topic" id="gcp-load-balancing-dns" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="gcp-load-balancing-dns" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔀</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Load Balancing &amp; DNS <span class="acro-exp">(Domain Name System)</span></span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69270,6 +69410,35 @@ needed. It scales instantly without pre-warming.
 <tr><td>Cloud DNS</td><td>Managed, scalable DNS with 100% SLA <span class="acro-exp">(Service Level Agreement)</span></td></tr>
 <tr><td>Cloud CDN <span class="acro-exp">(Content Delivery Network)</span></td><td>Edge caching, enabled on the LB backend</td></tr>
 </table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Coming from AWS <span class="acro-exp">(Amazon Web Services)</span></div>
+<div class="concept-title">One Global Anycast IP, and Health Checks From Ranges You Must Allow</div>
+<div class="concept-desc">
+An AWS ALB <span class="acro-exp">(Application Load Balancer)</span> is a regional resource with a DNS name, and failing over between regions is a
+Route 53 job you configure. A GCP global external load balancer is a
+<strong class="c-cyan">single anycast IP announced worldwide</strong> &mdash; the nearest Google
+edge answers, and traffic reaches the healthiest backend without any DNS failover to design. The
+part that catches people is on the way in, not the way out.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Difference</th><th>What it means for you</th></tr>
+<tr><td>One global IP rather than per-region names</td><td>No DNS failover to build, and no propagation delay when a region fails</td></tr>
+<tr><td>Terminates at the Google edge</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> ends near the user; the long haul rides Google's backbone</td></tr>
+<tr><td>Health checks come from fixed ranges</td><td><strong><code>35.191.0.0/16</code> and <code>130.211.0.0/22</code> must be allowed</strong>, or every backend reads as unhealthy</td></tr>
+<tr><td>Backend services, not target groups</td><td>Capacity and balancing mode are set on the backend service, per region</td></tr>
+<tr><td>Regional vs global load balancer</td><td>They are different products. Choosing the regional one gives up the anycast behaviour</td></tr>
+</table>
+<div class="concept-desc verdict">
+The health-check row is the single most common &ldquo;everything is unhealthy and the
+config looks perfect&rdquo; cause on this platform, and it is a firewall rule. Add it when you
+create the load balancer rather than when you debug it. The wider point:
+<strong>the two clouds put the failover decision in different layers</strong> &mdash; DNS on one,
+the network on the other &mdash; so a runbook written for one is not merely reworded for the
+other, it is relocated.
+</div>
 </div>
 </div>
 </div>
@@ -69744,12 +69913,12 @@ version of the Blue Team stack.
 </div>
 </div>
 </div>
-<div class="topic" id="aws-data-protection-kms-secrets-manager" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="aws-data-protection-kms-secrets-manager" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔐</span>
 <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Data Protection — KMS <span class="acro-exp">(Key Management Service)</span> &amp; Secrets Manager</span>
 <span class="topic-badge">AWS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69773,6 +69942,35 @@ keys with automatic rotation, so secrets never live in code or env files.
 Enable <strong class="c-green">default encryption</strong> on S3/EBS/RDS with KMS,
 and pull secrets from Secrets Manager at runtime — the two habits that close the
 most common data-exposure gaps.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The authority nobody expects</div>
+<div class="concept-title">The Key Policy Decides, and IAM Only Works Because It Delegates</div>
+<div class="concept-desc">
+A KMS key is one of the few AWS
+resources where the resource policy is the primary authority. The reason IAM appears to work
+normally is that <strong>the default key policy grants the account root full access</strong>,
+which delegates the decision to IAM. Replace that key policy with a hand-written one that omits
+it, and <strong class="c-amber">an administrator with <code>kms:*</code> in their identity policy
+still cannot use the key</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Situation</th><th>What happens</th></tr>
+<tr><td>Default key policy</td><td>Root has full access, so ordinary IAM policies govern use. Business as usual</td></tr>
+<tr><td>Custom key policy without the root statement</td><td>IAM is bypassed. Only principals named in the key policy can use it</td></tr>
+<tr><td>Nobody named, and root removed</td><td><strong>The key is unusable and cannot be repaired without AWS support</strong></td></tr>
+<tr><td>Cross-account use</td><td>Key policy must name the other account <em>and</em> that account's IAM must allow it</td></tr>
+<tr><td>Encrypted snapshot shared cross-account</td><td>Fails unless the key is shared too — the classic surprise</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two operational habits follow. <strong>Never write a key policy that removes the root
+statement</strong> unless you fully understand what you are giving up, because that is the one
+mistake here with no self-service recovery. And use <strong>grants</strong> rather than key-policy
+edits for temporary, scoped delegation — they expire, they are auditable, and they do not risk
+the policy that keeps the key reachable.
 </div>
 </div>
 </div>
@@ -70162,12 +70360,12 @@ Cloud Deploy/CodeDeploy roll them out canary-style.
 </div>
 </div>
 </div>
-<div class="topic" id="aws-observability-cloudwatch-x-ray" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="aws-observability-cloudwatch-x-ray" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📊</span>
 <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Observability — CloudWatch &amp; X-Ray</span>
 <span class="topic-badge">AWS · Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -70193,6 +70391,34 @@ see a request hop across services.
 <strong class="c-green">OpenTelemetry</strong> (via the AWS Distro, ADOT) so your
 telemetry isn't locked in. Alarms on the <em>golden signals</em> (latency, errors,
 saturation) are what turn raw metrics into on-call signal.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The bill nobody predicted</div>
+<div class="concept-title">Logs and Metrics Are Separate Products With Separate Costs</div>
+<div class="concept-desc">
+CloudWatch is not one thing. Logs, Metrics, Alarms, Dashboards and Insights are separate
+products with separate pricing models, and the mental model of &ldquo;send everything to
+CloudWatch&rdquo; produces a bill that surprises people twice: once for ingestion and again for
+the <strong class="c-amber">custom metrics, which are charged per metric per month whether or not
+anyone queries them</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What you do</th><th>What it costs</th></tr>
+<tr><td>Ship application logs</td><td>Per GB ingested, then per GB stored. Set a retention policy &mdash; the default is forever</td></tr>
+<tr><td>Publish a custom metric</td><td>Per metric per month. <strong>A metric per customer or per instance id multiplies fast</strong></td></tr>
+<tr><td>High-cardinality dimensions</td><td>Every combination is a distinct metric. This is the usual cause of a surprise invoice</td></tr>
+<tr><td>Query with Logs Insights</td><td>Per GB scanned &mdash; so retention and query scope both matter</td></tr>
+<tr><td>Turn a log pattern into a metric</td><td>A <em>metric filter</em>, which is the correct bridge between the two products</td></tr>
+</table>
+<div class="concept-desc verdict">
+Three settings recover most of the money and none of them costs signal:
+<strong>set log retention on every group</strong> (14 or 30 days for application logs, longer
+only where compliance requires it), keep high-cardinality identifiers in <em>logs</em> rather
+than promoting them to metric dimensions, and use metric filters so that the thing you alarm on
+is derived from logs you were storing anyway.
 </div>
 </div>
 </div>
