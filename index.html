@@ -69152,8 +69152,8 @@ way a CV line cannot. General interview preparation is in
 <span class="ctag ctag-general">GCP</span>
 </div>
 <span class="domain-sub">AWS · GCP · Azure · IAM · Networking · Compute · Storage · Security · Troubleshooting</span>
-<span class="domain-meta" aria-label="64 topics, about 2h 10m to read"
->64 topics · ~2h 10m</span>
+<span class="domain-meta" aria-label="64 topics, about 2h 20m to read"
+>64 topics · ~2h 20m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -69900,12 +69900,12 @@ other, it is relocated.
 </div>
 </div>
 </div>
-<div class="topic" id="hybrid-connectivity-vpn-interconnect-peering" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="hybrid-connectivity-vpn-interconnect-peering" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔗</span>
 <span class="topic-name">Hybrid Connectivity — VPN <span class="acro-exp">(Virtual Private Network)</span>, Interconnect &amp; Peering</span>
 <span class="topic-badge">Cloud</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69933,14 +69933,43 @@ traffic to cloud services off the public internet entirely.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The meter</div>
+<div class="concept-title">Data Transfer Is the Line Item That Surprises Everyone</div>
+<div class="concept-desc">
+Compute and storage are the prices people compare, and data transfer is the one that
+turns up unannounced. It is charged on nearly every boundary that exists &mdash; out to the
+internet, between regions, between availability zones, through a NAT <span class="acro-exp">(Network Address Translation)</span> gateway, across an
+interconnect &mdash; and <strong class="c-amber">the architecture decides the bill long before
+anyone looks at it</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Boundary crossed</th><th>Billing shape</th></tr>
+<tr><td>Out to the internet (egress)</td><td>Per GB, and the largest rate. Ingress is usually free, which is why data is easy to move in</td></tr>
+<tr><td>Between regions</td><td>Per GB, both directions. Cross-region replication is a permanent recurring cost</td></tr>
+<tr><td>Between availability zones</td><td>Per GB. A chatty multi-AZ service pays for its own internal conversation</td></tr>
+<tr><td>Through a NAT gateway</td><td>Hourly <em>plus</em> per GB processed &mdash; frequently larger than the workloads behind it</td></tr>
+<tr><td>Site-to-site VPN vs dedicated interconnect</td><td>VPN: hourly plus egress. Interconnect: port fee plus a lower per-GB rate &mdash; the crossover is volume</td></tr>
+</table>
+<div class="concept-desc verdict">
+Three architectural moves remove charges rather than reducing them: <strong>private
+endpoints</strong> so traffic to cloud services never traverses NAT or the internet, <strong>a
+CDN <span class="acro-exp">(Content Delivery Network)</span> in front of anything public</strong> so egress is served from cache, and <strong>keeping a
+request's path inside one zone</strong> where the availability requirement allows. Model the
+transfer before choosing the topology &mdash; on data-heavy systems it is routinely the largest
+line on the invoice, and it is the hardest one to change afterwards.
 </div>
 </div>
-<div class="topic" id="aws-compute-ec2-amis-auto-scaling" data-reviewed="2026-08" data-read="2" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="aws-compute-ec2-amis-auto-scaling" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Compute — EC2 <span class="acro-exp">(Elastic Compute Cloud)</span>, AMIs <span class="acro-exp">(Amazon Machine Image)</span> &amp; Auto Scaling</span>
 <span class="topic-badge">AWS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -69970,6 +69999,34 @@ running fixed (and overpaying).
 <tr><td>Savings Plans / Reserved</td><td>1–3 yr commit → ~30–70% off steady load</td></tr>
 <tr><td>Spot</td><td>Spare capacity ~90% off; can be reclaimed → fault-tolerant jobs</td></tr>
 </table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The meter</div>
+<div class="concept-title">The Instance Is the Part You Can Switch Off</div>
+<div class="concept-desc">
+Stopping an EC2 instance stops the
+compute charge and very little else. <strong class="c-amber">The storage, the snapshots and the
+address keep billing</strong>, which is why an account full of &ldquo;stopped&rdquo; instances
+still produces an invoice, and why the tidy-up nobody schedules is usually worth more than the
+instance-type optimisation everybody discusses.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Resource</th><th>What happens when the instance stops</th></tr>
+<tr><td>EBS <span class="acro-exp">(Elastic Block Store)</span> volumes</td><td><strong>Still billed, at the provisioned size</strong> &mdash; a 500 GB volume 5% full costs 500 GB</td></tr>
+<tr><td>Snapshots and AMIs</td><td>Billed indefinitely, and they accumulate. Nothing expires them by default</td></tr>
+<tr><td>Public IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> address</td><td>Charged hourly, allocated or not &mdash; the change that made stale Elastic IPs <span class="acro-exp">(Internet Protocol)</span> visible on the bill</td></tr>
+<tr><td>Data transfer between AZs <span class="acro-exp">(Availability Zone)</span></td><td>Per GB, in both directions. A chatty service spread across zones pays for its own conversation</td></tr>
+<tr><td>NAT <span class="acro-exp">(Network Address Translation)</span> gateway</td><td>Hourly <em>plus</em> per GB processed. Often larger than the instances behind it</td></tr>
+</table>
+<div class="concept-desc verdict">
+The two levers, in order of how much they usually return: <strong>delete unattached
+volumes and expire snapshots on a schedule</strong>, then look at instance type. And treat
+inter-AZ transfer as a design constraint rather than a rounding error &mdash; keeping a
+request's whole path inside one availability zone, and using VPC <span class="acro-exp">(Virtual Private Cloud)</span> endpoints so traffic to AWS
+services never leaves the network, removes a category of charge instead of shrinking it.
+</div>
 </div>
 </div>
 </div>
@@ -70026,12 +70083,12 @@ Functions scale beautifully and everything they talk to does not. The failure th
 </div>
 </div>
 </div>
-<div class="topic" id="gcp-compute-compute-engine-migs" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="gcp-compute-compute-engine-migs" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Compute — Compute Engine &amp; MIGs</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -70054,6 +70111,33 @@ instead of fixed sizes.
 <tr><td>Preemptible / Spot VMs</td><td>Spot — deep discount, reclaimable</td></tr>
 <tr><td>Sustained-use discount</td><td>Automatic; no reservation needed</td></tr>
 </table>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The meter</div>
+<div class="concept-title">Disks Bill Provisioned, and Discounts Are a Decision Not a Setting</div>
+<div class="concept-desc">
+GCP applies sustained-use discounts automatically, which is generous and leads people to
+believe cost is handled. It is not: the automatic discount is the small lever.
+<strong class="c-amber">The large ones are provisioned disk size and a commitment you have to
+actively make</strong>, and neither happens by itself.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What is metered</th><th>The detail that matters</th></tr>
+<tr><td>Persistent disk</td><td>Billed on <strong>provisioned</strong> capacity, not used. A 2 TB disk 10% full costs 2 TB</td></tr>
+<tr><td>Disks after instance deletion</td><td>Only removed if <code>auto-delete</code> was set. Orphaned disks are the classic residue</td></tr>
+<tr><td>Sustained-use discount</td><td>Automatic, and modest. Applies to how much of the month the machine ran</td></tr>
+<tr><td>Committed-use discount</td><td>The real saving, and it is a 1- or 3-year commitment you sign up for deliberately</td></tr>
+<tr><td>Spot / preemptible VMs</td><td>Very cheap, and can be reclaimed at short notice. Right for batch, wrong for anything stateful</td></tr>
+</table>
+<div class="concept-desc verdict">
+The cost review that actually returns money here is short: <strong>list every persistent
+disk, find the unattached ones, and compare provisioned size against used</strong>. Disks are
+easy to grow and cannot be shrunk in place, so the number only ever goes one way &mdash; which
+makes over-provisioning at creation time a decision with a very long tail. Commitments come after
+that, once the baseline is honest.
+</div>
 </div>
 </div>
 </div>
@@ -70240,12 +70324,12 @@ Managed database services remove the work most people find tedious and leave beh
 </div>
 </div>
 </div>
-<div class="topic" id="gcp-storage-cloud-storage-persistent-disk-filestore" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="gcp-storage-cloud-storage-persistent-disk-filestore" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💾</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Storage — Cloud Storage, Persistent Disk &amp; Filestore</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -70267,14 +70351,42 @@ Disks can be resized live and snapshotted globally.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The meter</div>
+<div class="concept-title">A Colder Class Has a Minimum Storage Duration, and Deleting Early Does Not Help</div>
+<div class="concept-desc">
+Choosing a colder storage class looks like a pure win and is a
+<strong class="c-amber">commitment to leave the object there</strong>. Each class carries a
+minimum billed duration, and an object deleted before it elapses is charged for the remainder
+anyway &mdash; so a lifecycle rule that moves short-lived data to Archive can cost considerably
+more than leaving it on Standard.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What is metered</th><th>The trap</th></tr>
+<tr><td>Minimum storage duration per class</td><td>Nearline 30 days, Coldline 90, Archive 365. Delete on day 2 and you still pay the rest</td></tr>
+<tr><td>Retrieval charges on cold classes</td><td>Per GB read. A cold archive that gets queried monthly is the wrong class</td></tr>
+<tr><td>Class transitions</td><td>Each object moved is an operation, and there can be a great many objects</td></tr>
+<tr><td>Egress out of the cloud</td><td>Per GB. Downloading a large bucket is frequently the single largest line on the invoice</td></tr>
+<tr><td>Operations (Class A / Class B)</td><td>Listing and writing are charged per operation. Millions of small objects costs more in operations than storage</td></tr>
+</table>
+<div class="concept-desc verdict">
+Match the class to the <strong>access pattern and the expected lifetime</strong>, not to how
+old the data feels. The practical shape: Standard for anything read this month, Nearline for
+backups you might restore, Archive only for data with a legal retention period that exceeds the
+minimum anyway. And the cheapest habit of all is a <strong>lifecycle rule that deletes</strong>
+&mdash; the least expensive byte is the one you are not storing.
 </div>
 </div>
-<div class="topic" id="gcp-databases-cloud-sql-spanner-firestore" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="gcp-databases-cloud-sql-spanner-firestore" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗃️</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Databases — Cloud SQL <span class="acro-exp">(Structured Query Language)</span>, Spanner &amp; Firestore</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -70297,14 +70409,42 @@ everyday relational choice.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The meter</div>
+<div class="concept-title">HA Doubles It, and Storage Grows Without a Way Back</div>
+<div class="concept-desc">
+Managed databases are billed on instance size, storage, backups and network, and two of
+those behave in ways that catch people out. High availability is
+<strong>a second instance</strong>, priced accordingly. And storage that auto-grows to meet
+demand <strong class="c-amber">does not shrink again when the data is deleted</strong> &mdash;
+the high-water mark becomes the new floor.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What is metered</th><th>The detail</th></tr>
+<tr><td>Instance vCPU and memory</td><td>Continuous while running. Stopping stops this and not the storage</td></tr>
+<tr><td>Storage, provisioned</td><td>Auto-grow raises it permanently. Reclaiming means export, recreate, import</td></tr>
+<tr><td>High availability</td><td>A standby instance. Roughly double, and worth it for production &mdash; but choose it knowingly</td></tr>
+<tr><td>Backups and PITR</td><td>Retained backup volume, and a longer point-in-time window costs more storage</td></tr>
+<tr><td>Read replicas</td><td>Each is another instance. Useful, and not free</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two habits keep this predictable. <strong>Set a storage ceiling you have thought about</strong>,
+so auto-grow cannot quietly ratchet the floor upward during an incident, and monitor free space
+so the growth is a decision rather than a surprise. And <strong>switch off non-production
+instances out of hours</strong> &mdash; a development database running 168 hours a week to serve
+40 is the most common avoidable charge in this whole domain, on every provider.
 </div>
 </div>
-<div class="topic" id="bigquery-serverless-data-warehouse" data-reviewed="2026-08" data-read="2" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="bigquery-serverless-data-warehouse" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📊</span>
 <span class="topic-name">BigQuery — Serverless Data Warehouse</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -70329,6 +70469,35 @@ to the transactional databases above (see the OLTP vs OLAP topic).
 <strong class="c-amber">Cost tip:</strong> select only needed columns and use
 partitioned/clustered tables — you pay for data scanned, so pruning saves real
 money. AWS <span class="acro-exp">(Amazon Web Services)</span>'s equivalent is Redshift (and Athena for S3).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The meter</div>
+<div class="concept-title">Bytes Scanned, Not Bytes Returned</div>
+<div class="concept-desc">
+On-demand BigQuery bills by the volume of data the query <em>reads</em>, and a
+<code>LIMIT</code> does not reduce it &mdash; the engine still scans the columns you named.
+<strong class="c-amber"><code>SELECT *</code> on a wide table is the most expensive thing in the
+product</strong>, and it looks identical in the editor to a query that costs a thousandth as
+much.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Query habit</th><th>Effect on bytes scanned</th></tr>
+<tr><td><code>SELECT *</code></td><td>Reads every column. Columnar storage means naming three columns reads three columns</td></tr>
+<tr><td><code>LIMIT 10</code></td><td><strong>Does not reduce the scan.</strong> It limits what comes back, after the read</td></tr>
+<tr><td>No partition filter</td><td>Reads the whole table. A <code>_PARTITIONTIME</code> or date predicate is the single biggest saving</td></tr>
+<tr><td>Clustering</td><td>Skips blocks within a partition &mdash; helps further, on the clustered columns</td></tr>
+<tr><td>Preview and <code>--dry_run</code></td><td><strong>Free.</strong> The dry run prints the bytes before you spend them</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two habits, and the second is a five-second reflex worth building: partition every large
+table on the column people filter by, and <strong>dry-run any query you have not run
+before</strong> &mdash; the estimate is printed before execution and costs nothing. Once
+consumption is both predictable and large, the question changes shape: capacity pricing (slots)
+trades a variable bill for a fixed one, which is a procurement decision rather than a query
+one.
 </div>
 </div>
 </div>
@@ -70782,12 +70951,12 @@ and infra config under one reconciliation loop (ties to GitOps in ops).
 </div>
 </div>
 </div>
-<div class="topic" id="cloud-cicd-codepipeline-cloud-build" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="cloud-cicd-codepipeline-cloud-build" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚚</span>
 <span class="topic-name">Cloud CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> — CodePipeline &amp; Cloud Build</span>
 <span class="topic-badge">AWS · GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -70812,6 +70981,33 @@ integration with the platform.
 long-lived keys), and use <strong class="c-green">OIDC <span class="acro-exp">(OpenID Connect)</span></strong> to let external
 CI authenticate without stored secrets. Push signed images to the registry, then
 Cloud Deploy/CodeDeploy roll them out canary-style.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The meter</div>
+<div class="concept-title">Build Minutes, and What a Cache Miss Costs on Every Push</div>
+<div class="concept-desc">
+Hosted build services bill by the minute, on machines you selected, for every push from
+every contributor. That makes <strong class="c-amber">a slow build a recurring charge rather than
+a one-off annoyance</strong> &mdash; and the most common cause of a slow build, a dependency
+cache that never hits, is invisible unless somebody looks at the log.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What is metered</th><th>Where the waste is</th></tr>
+<tr><td>Build minutes &times; machine size</td><td>A larger runner that halves the time is often cheaper, not dearer. Measure before assuming</td></tr>
+<tr><td>Dependency installation</td><td>A cache that misses re-downloads the world on every run. <strong>Check the hit rate, not the config</strong></td></tr>
+<tr><td>Container image pulls</td><td>Egress and time. Keep base images small and pull from a registry in the same region</td></tr>
+<tr><td>Matrix builds</td><td>Multiply everything. Run the full matrix on merge, a subset on push</td></tr>
+<tr><td>Idle waiting on approvals</td><td>Not billed on most services &mdash; but a job spinning in a wait loop is</td></tr>
+</table>
+<div class="concept-desc verdict">
+The number to put on a dashboard is <strong>minutes per merged pull request</strong>, not
+total spend, because it survives a change in team size and it points straight at the cause.
+Everything expensive here is also everything slow, which is the happy case: the same fixes that
+reduce the invoice are the ones that shorten the feedback loop, and that is the argument that
+gets them scheduled.
 </div>
 </div>
 </div>
@@ -70881,12 +71077,12 @@ is derived from logs you were storing anyway.
 </div>
 </div>
 </div>
-<div class="topic" id="gcp-observability-cloud-monitoring-logging-trace" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="gcp-observability-cloud-monitoring-logging-trace" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📈</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Observability — Cloud Monitoring, Logging &amp; Trace</span>
 <span class="topic-badge">GCP · Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -70910,6 +71106,35 @@ budgets are first-class in Cloud Monitoring).
 Define an <strong class="c-green">SLO <span class="acro-exp">(Service Level Objective)</span></strong> right in Cloud Monitoring and it
 tracks the error budget and burn rate for you — the theory from the SRE card,
 operationalized. Also OpenTelemetry-native.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The meter</div>
+<div class="concept-title">You Are Billed on Log Ingestion, and the Default Bucket Keeps Everything</div>
+<div class="concept-desc">
+Cloud Logging charges principally for <strong>volume ingested</strong>, and the default
+configuration is generous about what arrives: data-access audit logs, load-balancer logs and
+verbose application output all land in the <code>_Default</code> bucket and count.
+<strong class="c-amber">The largest single contributor is usually a log nobody reads</strong>,
+and the fix is an exclusion filter rather than a smaller retention.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Source</th><th>What to do about it</th></tr>
+<tr><td>Verbose application logs</td><td>Log at the level you will actually query. Debug in production is a billing decision</td></tr>
+<tr><td>Load balancer request logs</td><td>Sample them &mdash; a percentage is usually enough to answer the questions people ask</td></tr>
+<tr><td>Data-access audit logs</td><td>Off by default for most services for exactly this reason. Turn on deliberately, per service</td></tr>
+<tr><td>The <code>_Default</code> bucket</td><td>Set retention explicitly, and add <strong>exclusion filters</strong> for the noisy sources</td></tr>
+<tr><td>Long-term retention</td><td>Sink to Cloud Storage rather than paying logging retention for years-old data</td></tr>
+</table>
+<div class="concept-desc verdict">
+Exclusions are the lever that changes the shape of the bill, because they act before
+ingestion is counted. Retention only changes what you keep after paying to receive it. The
+sequence that works: <strong>find the top five log sources by volume, exclude or sample the ones
+nobody queries, then set retention, then sink anything with a compliance requirement to
+storage</strong> &mdash; and note the same structure applies on the other providers, with
+different product names.
 </div>
 </div>
 </div>

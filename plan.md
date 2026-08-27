@@ -11317,6 +11317,38 @@ is physics.
 
 **✅ D16 shipped** — 8 cards, `redteam` 24 → 16 thin (46% → 31%).
 
+### The D17 spec — what you are billed for, and which default is expensive
+
+`cloud` has had two waves: D3's provider-neutral failure modes for the concept cards, D12's
+cross-cloud assumptions for the service cards. The twenty-four remaining share a third gap, and
+it is the one thing that makes this domain unlike every other on the site.
+
+**Everywhere else, a mistake breaks something. Here, a mistake is billed** — quietly, monthly,
+by a service that is working exactly as designed. Not one of these cards says what the meter
+counts.
+
+> **The addition: the unit you are billed for, which default is expensive, and where the surprise
+> line item comes from.**
+
+One hard rule, and it is what makes this durable rather than the fastest-rotting content on the
+site: **name the unit, never the price.** Prices change quarterly and would put a stale number on
+1,420 pages. Billing *shapes* — per GB scanned, per hour whether or not it is used, per GB
+crossing a zone boundary, a 90-day minimum on an object stored for one — change on a scale of
+years, and they are what actually determines the invoice.
+
+| Card | The meter |
+|---|---|
+| GCP Storage | Storage class minimums — an Archive object deleted next week still bills for a year |
+| AWS Compute | The instance is the part you switch off. EBS, snapshots and a public IPv4 are not |
+| GCP Compute | Persistent disks bill provisioned, not used; discounts are a commitment decision |
+| GCP Observability | Log **ingestion** volume, and a default bucket that keeps everything |
+| BigQuery | Bytes **scanned**, not returned. `SELECT *` is the whole lesson |
+| Cloud CI/CD | Build minutes, and what a cache miss costs on every push |
+| Hybrid Connectivity | Data transfer — the line item that surprises people most, on every provider |
+| GCP Databases | HA doubles it, storage auto-grows and **never shrinks** |
+
+**✅ D17 shipped** — 8 cards, `cloud` 24 → 16 thin (38% → 25%). Site at **155 thin**.
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13971,5 +14003,62 @@ median topic              3,082     3,105
 
 **128 cards across sixteen waves; twenty characters of counter-metric movement.** The "under 150
 thin" target is **13 cards away** — two waves.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D17: the domain where a mistake is billed
+
+Three waves on `cloud`, three lenses. D3: the failure mode that is the same on all three
+providers. D12: the assumption you carry over from the other cloud. D17: the meter.
+
+**Everywhere else on this site a mistake breaks something. Here it is billed** — quietly,
+monthly, by a service working exactly as designed — and not one of these twenty-four cards said
+what the meter counts.
+
+| Card | The meter, and the expensive default |
+|---|---|
+| GCP Storage | Minimum storage duration per class — **an Archive object deleted next week still bills for a year** |
+| AWS Compute | Stopping the instance stops the instance. EBS, snapshots and the public IPv4 keep billing |
+| GCP Compute | Persistent disks bill **provisioned**, not used, and cannot be shrunk in place |
+| GCP Observability | Log *ingestion* volume. Exclusions act before the meter; retention only acts after |
+| BigQuery | Bytes **scanned**, not returned. `LIMIT` does not reduce it; `--dry_run` is free |
+| Cloud CI/CD | Build minutes × machine size, and a cache that never hits re-downloads the world per push |
+| Hybrid Connectivity | Data transfer, on every boundary — the largest line on data-heavy invoices |
+| GCP Databases | HA is a second instance; storage auto-grows and **never shrinks** |
+
+### The rule that makes this durable instead of the fastest-rotting content on the site
+
+**Name the unit, never the price.** Prices change quarterly; a number here would be stale within
+a quarter and wrong on 1,420 pages. Billing *shapes* — per GB scanned, per hour whether used or
+not, per GB crossing a zone boundary, a 90-day minimum on an object stored for one — change on a
+scale of years, and they are what actually determines the invoice. Every draft that reached for a
+figure was rewritten to name the meter instead.
+
+That constraint also produced the wave's most transferable observations, none of which is a
+price:
+
+- **Exclusions beat retention**, because one acts before ingestion is counted and the other after.
+- **The cheapest byte is the one you are not storing** — a lifecycle rule that deletes outperforms
+  every class optimisation.
+- **Three architectural moves remove transfer charges rather than reducing them**: private
+  endpoints, a CDN in front of anything public, and keeping a request's path inside one zone.
+- **Everything expensive in CI is also everything slow**, which is the happy case — the same fixes
+  shorten the feedback loop, and that is the argument that gets them scheduled.
+
+### The measurement
+
+```
+                        D16 end   D17 end
+thin topics                 163       155
+cloud                              24 →  16   (38% → 25%)
+mean chars/concept card   1,220     1,221
+median topic              3,105     3,114
+10th percentile           1,393     1,404
+```
+
+**136 cards across seventeen waves; twenty-one characters of counter-metric movement.** The
+"under 150 thin" target is **five cards away** — it falls next wave.
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
