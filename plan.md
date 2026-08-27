@@ -11246,6 +11246,41 @@ The eight are chosen so the *dimension* differs each time — a wave where every
 
 **✅ D14 shipped** — 8 cards, `data` 23 → 15 thin (55% → 36%).
 
+### The D15 spec — show the artefact
+
+D6 took `eng`'s architecture patterns. What remains splits into more technical cards and a
+**craft and career** cluster — code review, ADRs, estimation, technical debt, Staff+ archetypes,
+influence without authority — and those are thin in a way that adding analysis will not fix.
+
+They already contain analysis. What they contain none of is **the thing itself**. A card explains
+that a good review comment is specific and kind, and never shows one. A card explains that an ADR
+records the decision and its context, and never contains an ADR. A card explains that estimates
+should carry assumptions, and gives no estimate.
+
+> **The addition: the artefact, written out. The review comment as it would be typed. The ADR
+> with its headings filled in. The estimate with its assumptions and its range.**
+
+This is the first spec in the phase that adds *concrete* rather than *analytical* content, and it
+is the right one here for a specific reason: craft is imitated before it is understood. A reader
+who has never seen a good design doc cannot produce one from a description of its qualities, and
+one worked example does more than a page of criteria.
+
+The test: **it has to be copy-pasteable.** Not "a review comment should explain the why" but the
+comment, in quotes, that somebody could adapt in thirty seconds.
+
+| Card | The artefact |
+|---|---|
+| Code Review | Three versions of the same comment: unhelpful, good, and blocking |
+| ADRs & Design Docs | A complete short ADR, all four headings filled in |
+| Estimation & Planning | An estimate with its assumptions listed and a range rather than a number |
+| Designing for Failure | A completed pre-mortem for one real dependency, rows and all |
+| Staff+ Archetypes | What evidence looks like per archetype, as sentences a manager could paste |
+| Influence Without Authority | The message that actually gets another team to act |
+| Back-of-the-Envelope | A full worked calculation with the numbers |
+| API-First | The contract, and the three questions to ask in review |
+
+**✅ D15 shipped** — 8 cards, `eng` 24 → 16 thin (32% → 21%).
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13777,5 +13812,69 @@ were genuinely near it.
 
 **112 cards across fourteen waves; seventeen characters of counter-metric movement.** The "under
 150 thin" target is 29 cards away.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D15: the first wave that adds concrete rather than analysis
+
+Fourteen waves added *analysis* — a failure mode, a blind spot, a threshold, a bill, a
+prerequisite, a null result. D15 is the first that adds **the thing itself**, and `eng`'s craft
+cluster is where that was the only move available.
+
+Those cards do not lack analysis. They contain plenty. What they contain none of is an example. A
+card explains that a review comment should be specific and kind and never shows one; a card
+explains what an ADR records and contains no ADR; a card says estimates should carry assumptions
+and gives no estimate. **Craft is imitated before it is understood**, and a reader who has never
+seen a good design doc cannot produce one from a list of its qualities.
+
+| Card | The artefact now on the page |
+|---|---|
+| Code Review | The same N+1 comment written three ways — unhelpful, good, and blocking |
+| ADRs & Design Docs | A complete ADR-014, four headings, one screen |
+| Estimation & Planning | "3–5 weeks, 80% confidence", with what is excluded and what would break it |
+| Designing for Failure | A filled-in pre-mortem for a payment provider, four columns, five rows |
+| Staff+ Archetypes | Promotion-packet sentences per archetype — scope, outcome, artefact |
+| Influence Without Authority | The cross-team request that gets ignored, and the one that gets done |
+| Back-of-the-Envelope | 5M users → 36 TB/year → "not one Postgres table", worked through |
+| API-First | One endpoint's contract, then the three questions to ask of it |
+
+### The test, and the row it produced
+
+*It has to be copy-pasteable.* Not "a review comment should explain the why" but the comment, in
+quotes, that somebody could adapt in thirty seconds. That constraint is what turned the influence
+card from advice into a diagnosis: the message that works does so **because it removes the other
+team's work, not because it is more polite** — it arrives with the PR written, the flag defaulting
+to off, one specific ask, and an easy way to say no. Nothing in the abstract version of that card
+said any of it.
+
+The pre-mortem produced the wave's most useful single row, and it is the one nobody writes down:
+
+> *The provider succeeded and our write failed.* Every team has considered "the dependency is
+> down". Almost none have considered the case where money moved and the order did not — which is
+> where the fix has to be designed in (record intent, reconcile after) rather than added later.
+
+### One card was cut for duplicating a card that already existed
+
+Technical Debt was in the original eight, with a debt item written to compete with features. The
+domain already carries **Technical Debt as a Financial Argument — Language That Funds It**, which
+is that artefact, better. Caught by `retire_topic.py`'s ambiguity refusal on the title fragment —
+a guard written for Phase 9 turning up a Phase 8 duplication before it was written rather than
+after. Replaced with **Designing for Failure**.
+
+### The measurement
+
+```
+                        D14 end   D15 end
+thin topics                 179       171
+eng                                24 →  16   (32% → 21%)
+mean chars/concept card   1,217     1,218
+median topic              3,070     3,082
+10th percentile           1,381     1,389
+```
+
+**120 cards across fifteen waves; eighteen characters of counter-metric movement.** The "under
+150 thin" target is **21 cards away** — three waves.
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.

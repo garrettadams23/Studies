@@ -76590,8 +76590,8 @@ chosen to represent.
 <span class="ctag ctag-general">SWE</span>
 </div>
 <span class="domain-sub">System Design · Architecture · Craft · Reliability · Career</span>
-<span class="domain-meta" aria-label="76 topics, about 2h 45m to read"
->76 topics · ~2h 45m</span>
+<span class="domain-meta" aria-label="76 topics, about 2h 55m to read"
+>76 topics · ~2h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -76678,12 +76678,12 @@ even distribution and no cross-shard joins on the hot path.
 </div>
 </div>
 </div>
-<div class="topic" id="back-of-the-envelope-estimation" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="back-of-the-envelope-estimation" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧮</span>
 <span class="topic-name">Back-of-the-Envelope Estimation</span>
 <span class="topic-badge">System Design</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -76716,14 +76716,42 @@ typically 2–3× average → design for ~300 req/s. Storage: 10M writes/day ×
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The artefact</div>
+<div class="concept-title">One Worked Calculation, All the Way Through</div>
+<div class="concept-desc">
+The technique is only convincing when you watch it happen. Question:
+<em>can we store a year of events for 5 million users?</em> Nothing here is precise, and
+<strong class="c-cyan">precision is not what the calculation is for</strong> &mdash; it is for
+deciding whether the answer is &ldquo;obviously fine&rdquo;, &ldquo;obviously not&rdquo;, or
+&ldquo;we need to think&rdquo;.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Step</th><th>Working</th></tr>
+<tr><td>1. Events per user per day</td><td>Guess 20. Round numbers only &mdash; 20, not 17</td></tr>
+<tr><td>2. Events per day</td><td>5M &times; 20 = <strong>100M/day</strong></td></tr>
+<tr><td>3. Per second, average</td><td>100M / 86,400 &asymp; <strong>1,200/s</strong>. Peak is 3&ndash;5&times; average, so ~5,000/s</td></tr>
+<tr><td>4. Size per event</td><td>~1 KB with indexes. So 100 GB/day, <strong>~36 TB/year</strong></td></tr>
+<tr><td>5. The verdict</td><td>36 TB is not &ldquo;one Postgres table&rdquo;. It is fine as partitioned cold storage or a warehouse, and 5,000 writes/s needs a real design</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two habits make this fast enough to do in a meeting. <strong>Memorise a handful of
+anchors</strong> &mdash; 86,400 seconds in a day, ~10<sup>5</sup> for rough work, 1 KB per small
+row, 1 MB per second is ~2.5 TB a month &mdash; and <strong>round aggressively and say you are
+rounding</strong>. The output is never the number; it is which of the three verdicts you are in,
+and that conclusion is robust to being wrong by a factor of two.
 </div>
 </div>
-<div class="topic" id="designing-for-failure" data-reviewed="2026-08" data-read="2" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="designing-for-failure" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛟</span>
 <span class="topic-name">Designing for Failure</span>
 <span class="topic-badge">System Design</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -76749,6 +76777,35 @@ gracefully instead of collapsing.
 Pair with the resilience patterns (circuit breaker, retry-with-backoff,
 timeout) at the call level. The mindset: <em>"what happens when this
 dependency is down?"</em> should have an answer for every dependency.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The artefact</div>
+<div class="concept-title">A Pre-Mortem, Filled In for One Real Dependency</div>
+<div class="concept-desc">
+&ldquo;Design for failure&rdquo; is agreed with universally and practised rarely, because
+it is stated as a principle rather than an exercise. The exercise takes twenty minutes and works
+on one dependency at a time. Here is a completed one for a payment provider, and the format
+transfers to anything:
+<strong class="c-cyan">how it fails, what the user sees, what we do, how we know.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Failure mode</th><th>User sees</th><th>We do</th><th>We know because</th></tr>
+<tr><td>Provider returns 500</td><td>&ldquo;Payment failed, try again&rdquo;</td><td>Retry once with jitter; do not double-charge (idempotency key)</td><td>Error rate alert on the provider client</td></tr>
+<tr><td>Provider is slow (5s+)</td><td>A spinner, then a clear timeout message</td><td>Timeout at 3s, below our own request budget</td><td>p99 latency on the payment call</td></tr>
+<tr><td>Provider is down entirely</td><td>&ldquo;Payments are unavailable, your basket is saved&rdquo;</td><td>Circuit breaker opens; basket persists; no order created</td><td>Breaker-open event pages on-call</td></tr>
+<tr><td>Provider succeeds, our write fails</td><td>Order missing after a charge &mdash; <strong>the worst case</strong></td><td>Outbox: record intent before charging, reconcile after</td><td>Daily reconciliation report, not an alert</td></tr>
+<tr><td>Provider silently changes a field</td><td>Nothing, for weeks</td><td>Contract test against their sandbox in CI</td><td>The test fails before customers do</td></tr>
+</table>
+<div class="concept-desc verdict">
+The fourth row is the one this exercise exists to find. Every team has thought about
+&ldquo;the dependency is down&rdquo;; almost none have thought about
+<strong>&ldquo;the dependency succeeded and we failed&rdquo;</strong>, which is where money
+disappears and where the fix (record intent first, reconcile afterwards) has to be designed in
+rather than added later. Run this table for your top three dependencies and it will find at least
+one row nobody has an answer for.
 </div>
 </div>
 </div>
@@ -77250,12 +77307,12 @@ telling you the boundaries are wrong.
 </div>
 </div>
 </div>
-<div class="topic" id="api-first-contract-driven-design" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="api-first-contract-driven-design" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📐</span>
 <span class="topic-name">API-First &amp; Contract-Driven Design</span>
 <span class="topic-badge">Design</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77281,6 +77338,35 @@ source of truth, not an afterthought.
 This is what makes microservices and public platforms manageable — the contract
 is a stable boundary that lets teams move independently without constant
 breakage (ties to the API Design topic).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The artefact</div>
+<div class="concept-title">The Contract, and the Three Questions to Ask of It</div>
+<div class="concept-desc">
+&ldquo;Design the contract first&rdquo; is agreed with and then skipped, because the
+contract is described rather than shown. It is short. Here is one endpoint, and then the review
+that matters &mdash; <strong class="c-amber">most API mistakes are visible in the contract before
+a line of code exists</strong>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Contract</th><th>Written</th></tr>
+<tr><td>The operation</td><td><code>POST /v1/exports</code> &rarr; <code>202 Accepted</code>, body <code>{ id, status: "pending", href }</code></td></tr>
+<tr><td>Because it is slow</td><td>Asynchronous by design. <code>GET /v1/exports/{id}</code> polls; the client never holds a connection open for minutes</td></tr>
+<tr><td>Errors, typed</td><td><code>400</code> validation with a <code>field</code> array; <code>409</code> if an export is already running; <code>429</code> with <code>Retry-After</code></td></tr>
+<tr><td>Idempotency</td><td><code>Idempotency-Key</code> header; a repeat within 24h returns the original <code>id</code> rather than starting a second export</td></tr>
+<tr><td>Pagination and versioning</td><td>Cursor-based (<code>?cursor=</code>), never offset. <code>/v1/</code> in the path, and additive changes only within a major version</td></tr>
+</table>
+<div class="concept-desc verdict">
+The three review questions that catch most of it: <strong>what does a client do when this
+times out?</strong> (if the answer is "retry and hope", it needs an idempotency key);
+<strong>what breaks if this field is added?</strong> (if anything does, the client is too strict
+and the contract should say so); and <strong>how does a caller page through a million of
+these?</strong> (offset pagination silently duplicates and skips rows under concurrent writes).
+All three are answerable before any code exists, which is the entire argument for writing the
+contract first.
 </div>
 </div>
 </div>
@@ -77356,12 +77442,12 @@ cleaner than you found it. Small, constant improvements beat big rewrites.
 </div>
 </div>
 </div>
-<div class="topic" id="code-review-doing-it-well" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="code-review-doing-it-well" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">👀</span>
 <span class="topic-name">Code Review — Doing It Well</span>
 <span class="topic-badge">Craft</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77385,6 +77471,33 @@ ones make everyone better.
 <div class="concept-desc verdict">
 Automate the boring parts (formatting, lint, tests in CI) so humans review what
 matters: correctness, design, edge cases, and clarity.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The artefact</div>
+<div class="concept-title">The Same Point, Written Three Ways</div>
+<div class="concept-desc">
+Advice about review comments is easy to agree with and hard to act on. Here is one real
+situation &mdash; a pull request adds a database call inside a loop &mdash; written three ways.
+<strong class="c-amber">The difference is not tone. It is how much work the author has to do
+after reading it.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Version</th><th>As typed</th></tr>
+<tr><td>Unhelpful</td><td>&ldquo;This is an N+1.&rdquo; <em>Correct, and the author now has to work out where, why it matters, and what you want instead.</em></td></tr>
+<tr><td>Good</td><td>&ldquo;This queries once per row, so a 500-row page becomes 501 queries. Can we <code>select_related('owner')</code> above the loop? Happy to pair if the ORM <span class="acro-exp">(Object-Relational Mapping)</span> fights you.&rdquo;</td></tr>
+<tr><td>Blocking</td><td>&ldquo;<strong>Blocking:</strong> this runs per row on the checkout path, which is our p99 hot spot &mdash; it will show up in production. Fix or a ticket with an owner before merge, either is fine.&rdquo;</td></tr>
+<tr><td>A question, not a demand</td><td>&ldquo;What happens here if <code>owner</code> is null? I might be missing something.&rdquo; <em>Leaves room to be wrong, which you sometimes are.</em></td></tr>
+<tr><td>Praise, specifically</td><td>&ldquo;The retry-budget comment is excellent &mdash; I'd have got that wrong.&rdquo; <em>Costs nothing and is remembered.</em></td></tr>
+</table>
+<div class="concept-desc verdict">
+Three habits carry most of the value. <strong>Say whether a comment is blocking</strong>,
+because an author cannot tell and will either ignore everything or fix everything. <strong>Name
+the consequence, not the rule</strong> &mdash; "501 queries on the checkout path" is a reason,
+"N+1" is a label. And when a thread reaches three rounds, stop typing and have a five-minute
+conversation; the disagreement is about something the comments are not reaching.
 </div>
 </div>
 </div>
@@ -77425,12 +77538,12 @@ corner rarely matters.
 </div>
 </div>
 </div>
-<div class="topic" id="adrs-design-docs" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="adrs-design-docs" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📝</span>
 <span class="topic-name">ADRs <span class="acro-exp">(Architecture Decision Record)</span> &amp; Design Docs</span>
 <span class="topic-badge">Craft</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77455,6 +77568,33 @@ options, the choice, and the consequences. A <strong class="c-cyan">design doc</
 Keep them short and in the repo (version-controlled next to the code). The value
 is the <em>trail of reasoning</em> — it onboards new people and stops old debates
 from restarting.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The artefact</div>
+<div class="concept-title">A Complete ADR, Short Enough That Someone Will Write One</div>
+<div class="concept-desc">
+ADRs fail by being described rather than shown, and then by being too long to write. The
+whole thing fits on one screen. Here is a real one, and the format is the point:
+<strong class="c-cyan">Context, Decision, Consequences, Status</strong>, with the context doing
+most of the work.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Heading</th><th>Filled in</th></tr>
+<tr><td><strong>ADR-014: Use Postgres for the events table</strong></td><td><em>Status:</em> Accepted, 2026-03-11. Supersedes ADR-009</td></tr>
+<tr><td>Context</td><td>Events reach ~40M rows/year. We already run Postgres and nobody on the team has operated Cassandra. Read patterns are unknown; the product team expects ad-hoc queries</td></tr>
+<tr><td>Decision</td><td>Use Postgres with monthly range partitions on <code>occurred_at</code>. Revisit if sustained writes exceed 5k/s or a single partition exceeds 100 GB</td></tr>
+<tr><td>Consequences</td><td>We accept a single writer node. Ad-hoc queries stay easy. Partition maintenance needs a scheduled job. If the write ceiling is reached, migration is a project, not a config change</td></tr>
+<tr><td>What is missing on purpose</td><td>The alternatives considered in detail. Add them only when the choice was genuinely close &mdash; otherwise it is padding nobody reads</td></tr>
+</table>
+<div class="concept-desc verdict">
+Two properties make an ADR worth the ten minutes. <strong>It records the context that made
+the decision reasonable</strong>, so the reader in 2029 can tell whether that context still
+holds &mdash; which is the only question they will actually have. And <strong>it names the
+condition that would reverse it</strong>: "revisit if sustained writes exceed 5k/s" turns an
+opinion into something checkable. A decision with no reversal condition is a preference.
 </div>
 </div>
 </div>
@@ -77689,12 +77829,12 @@ The shift from senior → staff is the big one: from "I solve hard problems" to
 </div>
 </div>
 </div>
-<div class="topic" id="staff-archetypes" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="staff-archetypes" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⭐</span>
 <span class="topic-name">Staff+ Archetypes</span>
 <span class="topic-badge">Career</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77717,6 +77857,33 @@ leadership your org needs.
 <div class="concept-desc verdict">
 All four share the staff-level core: technical judgment, cross-team influence,
 and moving the org forward — not just shipping personal code.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The artefact</div>
+<div class="concept-title">What the Evidence Actually Looks Like</div>
+<div class="concept-desc">
+Archetypes are readable and hard to act on, because the gap between &ldquo;be a
+Tech Lead&rdquo; and knowing what to put in a promotion packet is large. The packet is the
+artefact, and what belongs in it is <strong class="c-cyan">a sentence with a scope and an
+outcome</strong> &mdash; not a list of responsibilities.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Archetype</th><th>Evidence that reads as Staff+</th></tr>
+<tr><td>Tech Lead</td><td>&ldquo;Led the checkout re-platform: 4 engineers, 2 quarters, shipped with no customer-visible incident. Wrote the design doc; ran weekly demos with the product team.&rdquo;</td></tr>
+<tr><td>Architect</td><td>&ldquo;Owned the event-schema standard now used by 6 services. Wrote ADR-014 and ADR-021; reviewed 30 designs against it.&rdquo;</td></tr>
+<tr><td>Solver</td><td>&ldquo;Diagnosed and fixed the p99 regression that three teams had escalated for a month. Root cause was connection-pool exhaustion; published the write-up.&rdquo;</td></tr>
+<tr><td>Right Hand</td><td>&ldquo;Ran the org's migration off the deprecated auth service &mdash; 14 teams, no missed deadline, weekly status the director used verbatim.&rdquo;</td></tr>
+<tr><td>The pattern in all four</td><td><strong>Scope</strong> (how many people or teams), <strong>outcome</strong> (what changed), <strong>artefact</strong> (something a reader can go and look at)</td></tr>
+</table>
+<div class="concept-desc verdict">
+The sentence to test any bullet against: <strong>would a stranger on the promotion
+committee, who has never met you, be able to tell what changed because you were there?</strong>
+&ldquo;Provided technical leadership&rdquo; fails that test; &ldquo;4 engineers, 2 quarters, no
+customer-visible incident&rdquo; passes it. Keep a file and add to it monthly &mdash;
+reconstructing a year of scope from memory is where most packets lose their best material.
 </div>
 </div>
 </div>
@@ -77754,12 +77921,12 @@ solving technical problems, or growing people and systems. Neither is superior.
 </div>
 </div>
 </div>
-<div class="topic" id="influence-without-authority" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="influence-without-authority" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📣</span>
 <span class="topic-name">Influence Without Authority</span>
 <span class="topic-badge">Career</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77783,6 +77950,33 @@ through credibility, clear writing, and trust, not org-chart power.
 <div class="concept-desc verdict">
 The best technical idea loses to a well-communicated mediocre one. Learning to
 write and persuade is as much a "senior engineering skill" as system design.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The artefact</div>
+<div class="concept-title">The Message That Actually Gets Another Team to Act</div>
+<div class="concept-desc">
+The advice is to build relationships and frame things in others' interests, which is true
+and does not tell you what to type. Here is the same request written twice &mdash; asking a team
+you do not manage to change a shared library.
+<strong class="c-amber">The second one works because it removes their work, not because it is
+more polite.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Version</th><th>As sent</th></tr>
+<tr><td>The one that gets ignored</td><td>&ldquo;Hi &mdash; could your team add retry support to the client library? It would really help us out. Let me know, thanks!&rdquo;</td></tr>
+<tr><td>The one that gets done</td><td>&ldquo;We're seeing 40 failed jobs a week from transient 503s on the client. I've opened a PR that adds retry-with-jitter behind a flag &mdash; tests included, default off. Could someone review it this week? If it's the wrong shape, tell me and I'll redo it.&rdquo;</td></tr>
+<tr><td>Why it works</td><td>It brings the evidence, does the work, defaults to safe, asks for one specific thing, and gives them an easy way to say no</td></tr>
+<tr><td>When you cannot do the work</td><td>Bring the decision instead: &ldquo;Two options, here's the trade-off, we'd prefer A &mdash; which do you want?&rdquo; A question with options is far easier to answer than an open one</td></tr>
+<tr><td>The escalation that keeps the relationship</td><td>&ldquo;I want to flag this to your manager and mine, and I'd rather do it with you than about you &mdash; can we write it together?&rdquo;</td></tr>
+</table>
+<div class="concept-desc verdict">
+The generalisable move is to <strong>arrive with the work mostly done and an obvious exit
+for them</strong>. Most cross-team requests fail not because people disagree but because the
+request is an unbounded amount of somebody else's roadmap. Make it small, make it reviewable, and
+make refusing it cost them nothing &mdash; then it gets said yes to on its merits.
 </div>
 </div>
 </div>
@@ -77894,12 +78088,12 @@ relational's "model entities, query later."
 </div>
 </div>
 </div>
-<div class="topic" id="estimation-planning" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="estimation-planning" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📐</span>
 <span class="topic-name">Estimation &amp; Planning</span>
 <span class="topic-badge">Career</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77924,6 +78118,34 @@ uncertainty rather than pretending to predict exact dates.
 <strong class="c-green">Senior move:</strong> break big work into small,
 independently shippable slices — small things estimate accurately, and you get
 feedback early. Padding a giant estimate just hides the risk.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The artefact</div>
+<div class="concept-title">An Estimate, With Its Assumptions Showing</div>
+<div class="concept-desc">
+&ldquo;About three weeks&rdquo; is not an estimate; it is a number with the reasoning
+removed, and it will be treated as a commitment. An estimate that survives contact with a
+stakeholder looks like this, and it is barely longer to write:
+<strong class="c-amber">a range, the assumptions the range depends on, and the thing that would
+break it.</strong>
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Part</th><th>As written</th></tr>
+<tr><td>The range</td><td>&ldquo;<strong>3&ndash;5 weeks</strong> for the export feature, 80% confidence&rdquo;</td></tr>
+<tr><td>What is included</td><td>&ldquo;CSV <span class="acro-exp">(Comma-Separated Values)</span> and JSON <span class="acro-exp">(JavaScript Object Notation)</span> export, the async job, the download page, tests&rdquo;</td></tr>
+<tr><td>What is not</td><td>&ldquo;Not included: scheduled exports, or anything about permissions on shared reports&rdquo;</td></tr>
+<tr><td>Assumptions</td><td>&ldquo;Assumes the reporting API <span class="acro-exp">(Application Programming Interface)</span> returns paginated results &mdash; if it does not, add a week&rdquo;</td></tr>
+<tr><td>The biggest unknown</td><td>&ldquo;The riskiest part is export size. If files exceed ~200 MB we need streaming, which is the difference between 3 and 5&rdquo;</td></tr>
+</table>
+<div class="concept-desc verdict">
+The most useful line is the last one, because it converts an estimate into a
+<strong>plan for reducing uncertainty</strong>: spend two days finding out the real export size
+and the range collapses. Ranges also survive better than points politically &mdash; a single
+number invites negotiation about the number, while a range invites a conversation about scope,
+which is the conversation worth having.
 </div>
 </div>
 </div>
