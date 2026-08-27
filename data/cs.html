@@ -4016,3 +4016,95 @@ valgrind --leak-check=full ./prog</pre>
     </div>
   </div>
 </div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⏳</span>
+    <span class="topic-name">Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full</span>
+    <span class="topic-badge">CS • Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">One Equation, and the Reason Waiting Is Not Linear</div>
+      <div class="concept-desc">
+        Queueing feels like it should be proportional: twice the load, twice the wait. It is not, and
+        the gap between intuition and arithmetic is where most capacity decisions go wrong.
+        <strong class="c-cyan">Little's Law</strong> is the whole of the first half:
+        <strong>L = &lambda;W</strong> &mdash; the average number of items in a system equals the
+        arrival rate multiplied by the average time each spends there. It holds for any stable system,
+        with no assumption about the distribution of arrivals or service times, which is what makes it
+        so widely applicable and so easy to overlook.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Symbol</th><th>Means</th><th>In a web service</th></tr>
+          <tr><td><strong>L</strong></td><td>Items in the system</td><td>Requests in flight, including those queued</td></tr>
+          <tr><td><strong>&lambda;</strong> (lambda)</td><td>Arrival rate</td><td>Requests per second</td></tr>
+          <tr><td><strong>W</strong></td><td>Time in the system</td><td>Latency, queueing plus service</td></tr>
+          <tr><td>Rearranged</td><td><strong>W = L / &lambda;</strong></td><td>1,000 in flight at 200/s means a 5-second latency &mdash; whatever the code does</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The rearrangement is the useful one, because <strong>L is the number you can usually
+          measure</strong> and W is the one people argue about. A thread pool of 1,000 serving 200
+          requests a second <em>is</em> a five-second latency; no amount of profiling the handler
+          changes that, because the wait is in the queue rather than in the work.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Knee</div>
+      <div class="concept-title">Utilisation Does Not Trade Off Linearly Against Latency</div>
+      <div class="concept-desc">
+        The second half is why a system at 90% utilisation is not &ldquo;10% away from trouble&rdquo;.
+        For a simple queue, the average wait scales roughly with <strong>1 / (1 &minus; &rho;)</strong>,
+        where &rho; is utilisation. <strong class="c-amber">The curve is flat and then it is a
+        wall</strong> &mdash; and the wall arrives a long way before the server is full.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Utilisation &rho;</th><th>Relative queueing delay</th><th>What it feels like</th></tr>
+          <tr><td>50%</td><td>2&times;</td><td>Comfortable. Spare capacity absorbs bursts</td></tr>
+          <tr><td>80%</td><td>5&times;</td><td>Still fine on average; the tail has started to spread</td></tr>
+          <tr><td>90%</td><td>10&times;</td><td><strong>The knee.</strong> Small load increases now produce large latency increases</td></tr>
+          <tr><td>95%</td><td>20&times;</td><td>A brief burst becomes a visible outage</td></tr>
+          <tr><td>99%</td><td>100&times;</td><td>Effectively unusable, on a server that is not out of CPU <span class="acro-exp">(Central Processing Unit)</span></td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          Three consequences worth carrying. <strong>Running at 90% is a decision about latency, not
+          about efficiency</strong> &mdash; and it is a defensible one for batch work and a poor one for
+          anything a human waits on. Variability makes it worse: bursty arrivals hit the wall earlier
+          than the average suggests. And this is why <strong>adding one worker sometimes fixes
+          everything</strong> &mdash; moving from 95% to 80% utilisation is not a 15% improvement, it is
+          a four-fold reduction in queueing delay.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Where it shows up</div>
+      <div class="concept-title">The Same Curve, Wearing Different Clothes</div>
+      <div class="concept-desc">
+        Once the shape is recognisable it appears everywhere on this site, which is the argument for
+        learning it once rather than meeting it five times as separate surprises.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Situation</th><th>The queue</th></tr>
+          <tr><td>A database connection pool at capacity</td><td>Requests wait for a connection. <span class="xref">PostgreSQL — The Default Choice</span> is the same limit seen from the database's side</td></tr>
+          <tr><td>A CI pipeline with too few runners</td><td>Jobs queue; the wait explodes near saturation, which is why build times feel fine and then do not</td></tr>
+          <tr><td>A support queue or on-call rotation</td><td>People are servers. Staffing to 95% of capacity guarantees a backlog</td></tr>
+          <tr><td>Retry storms</td><td>Retries raise &lambda; at exactly the moment &rho; is already high &mdash; the mechanism behind <span class="xref">Resilience Patterns — Circuit Breaker, Retry &amp; Timeout</span></td></tr>
+          <tr><td>Kanban work-in-progress limits</td><td>L is capped deliberately, so W becomes predictable. That is the whole argument for WIP limits</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The practical habit is to <strong>measure L and &lambda; before reasoning about W</strong>.
+          Both are usually already in your metrics &mdash; in-flight requests and requests per second
+          &mdash; and their ratio is the latency you actually have, independent of any story about why.
+          When the ratio disagrees with the latency you believe you have, one of the two numbers is
+          measuring something other than what its name says.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

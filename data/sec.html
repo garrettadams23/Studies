@@ -7016,3 +7016,97 @@ POST /token   grant_type=authorization_code
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗂️</span>
+              <span class="topic-name">Asset Discovery — You Cannot Protect What Nobody Listed</span>
+              <span class="topic-badge">Programme</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Every Coverage Metric Is a Fraction With an Unknown Denominator</div>
+                <div class="concept-desc">
+                  &ldquo;94% patched&rdquo;, &ldquo;full EDR <span class="acro-exp">(Endpoint Detection and Response)</span> coverage&rdquo;, &ldquo;all endpoints encrypted&rdquo;
+                  &mdash; every one of those is a fraction, and
+                  <strong class="c-amber">the denominator is whatever the tool happens to know about</strong>.
+                  An agent-based inventory reports on hosts running the agent. A scanner reports on ranges it was
+                  given. Both are self-referential: the machines missing from the list are exactly the machines
+                  the list cannot tell you about.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Source</th><th>What it can see</th><th>What it structurally cannot</th></tr>
+                    <tr><td>EDR / agent inventory</td><td>Hosts with the agent installed</td><td>Hosts where installation failed, or that predate the rollout</td></tr>
+                    <tr><td>Vulnerability scanner</td><td>The ranges configured</td><td>Anything outside them, and anything powered off during the window</td></tr>
+                    <tr><td>Cloud provider inventory</td><td>Resources in the accounts you enumerated</td><td>Accounts opened on a personal card, and other providers</td></tr>
+                    <tr><td>DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> and DNS <span class="acro-exp">(Domain Name System)</span> logs</td><td>Things that asked for an address or resolved a name</td><td>Static addresses, and hosts that never speak</td></tr>
+                    <tr><td>The CMDB <span class="acro-exp">(Configuration Management Database)</span></td><td>What somebody typed in</td><td>Everything since the last time somebody typed</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The error is not random. <strong>Inventories are always wrong in the same direction</strong>
+                    &mdash; they under-count, because the failure modes of every discovery method are absences
+                    rather than false entries. Which means an unexplained rise in asset count after improving
+                    discovery is not a problem with the new tool; it is the old number being corrected.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Method</div>
+                <div class="concept-title">Triangulate From Sources That Fail Differently</div>
+                <div class="concept-desc">
+                  No single source is authoritative, and the useful technique is not to find a better one &mdash;
+                  it is to <strong class="c-cyan">reconcile several that fail for unrelated reasons</strong> and
+                  treat every disagreement as a question. A host in DHCP and not in EDR is a finding. A cloud
+                  instance with no owner tag is a finding. The reconciliation is where the value is; each
+                  individual source is just an input.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pairing</th><th>What the gap means</th></tr>
+                    <tr><td>DHCP/ARP &times; EDR inventory</td><td>Hosts on the network with no agent &mdash; the classic gap</td></tr>
+                    <tr><td>Cloud billing &times; cloud inventory</td><td>Resources in accounts nobody enumerated. <strong>Billing is the most complete cloud inventory you have</strong></td></tr>
+                    <tr><td>Certificate transparency &times; known domains</td><td>Public services somebody stood up outside the process</td></tr>
+                    <tr><td>Identity provider apps &times; approved SaaS list</td><td>Sanctioned-adjacent software, and the sprawl behind it</td></tr>
+                    <tr><td>Purchase orders &times; asset register</td><td>Hardware that arrived and never got recorded</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two of these are worth doing first because they are cheap and consistently productive.
+                    <strong>Cloud billing as an inventory source</strong> finds accounts and resources that no
+                    console enumeration reaches, since anything that costs money appears there by construction. And
+                    <strong>certificate transparency</strong> finds internet-facing services created outside the
+                    process, which is where a surprising share of external attack surface comes from.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The output</div>
+                <div class="concept-title">An Owner, Not a Count</div>
+                <div class="concept-desc">
+                  A discovery programme that produces a number has produced a report. One that produces
+                  <strong>an owner per asset</strong> has produced something every other control can act on
+                  &mdash; because the recurring question is never &ldquo;how many are there&rdquo;, it is
+                  &ldquo;who do we ask about this one&rdquo;.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Field</th><th>Why it earns its place</th></tr>
+                    <tr><td>Owner (a person, not a team alias)</td><td>Somebody has to answer at 2am. A distribution list does not</td></tr>
+                    <tr><td>Business criticality</td><td>Decides patch urgency and recovery order, and cannot be inferred from the host</td></tr>
+                    <tr><td>Data classification</td><td>Decides the blast radius. See <span class="xref">Data Classification — Knowing What Needs Protecting</span></td></tr>
+                    <tr><td>Discovered-by, and last-seen</td><td>Distinguishes a decommissioned host from one that stopped reporting</td></tr>
+                    <tr><td>Exception status and expiry</td><td>An asset that cannot meet a control is a decision with a date, not a permanent gap</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The measurement worth reporting is not asset count either. It is
+                    <strong>the percentage of assets with a named owner, and the percentage seen by two or more
+                    independent sources</strong> &mdash; the first makes every other programme actionable, and the
+                    second is the only honest confidence statement you can make about the denominator that all your
+                    other numbers are divided by.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

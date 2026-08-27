@@ -2773,3 +2773,93 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🕶️</span>
+              <span class="topic-name">Operator OPSEC <span class="acro-exp">(Operational Security)</span> — Not Being Caught Is Part of the Objective</span>
+              <span class="topic-badge">Tradecraft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Being Detected on Day One Produces the Wrong Findings</div>
+                <div class="concept-desc">
+                  An engagement that is caught immediately still produces a report, and the report answers a
+                  question nobody asked. <strong class="c-amber">You have measured the client's response to a
+                  noisy operator, not to a realistic adversary</strong> &mdash; and the two are very different
+                  tests, because the behaviour that gets caught fastest is rarely the behaviour a patient actor
+                  would use. OPSEC is therefore a <strong class="c-cyan">fidelity requirement</strong>, not
+                  vanity or theatre.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>If you are detected</th><th>What the client learns</th><th>What they wanted to learn</th></tr>
+                    <tr><td>On day one, by a scanner signature</td><td>Their AV catches a public tool</td><td>Whether a patient adversary could reach the crown jewels</td></tr>
+                    <tr><td>On day one, by volume</td><td>Their SIEM <span class="acro-exp">(Security Information and Event Management)</span> alerts on high request rates</td><td>Whether their detections catch <em>quiet</em> activity</td></tr>
+                    <tr><td>On day five, by a behavioural rule</td><td><strong>A genuine result.</strong> Something worked, and you can say what</td><td>Exactly this</td></tr>
+                    <tr><td>Never</td><td>Also a genuine result, and an uncomfortable one</td><td>Exactly this</td></tr>
+                    <tr><td>By the wrong control</td><td>That one control works, and nothing about the rest</td><td>Coverage, not a single lucky catch</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The row worth sitting with is the last one. <strong>Being caught by one control tells the
+                    client that control works and nothing about the others</strong> &mdash; and a report built on a
+                    single early detection systematically overstates coverage, because the techniques that were
+                    never attempted are invisible in it. Design the engagement so several things are tried before
+                    anything is likely to fire.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Discipline Is Mostly Choices Made Before Anything Runs</div>
+                <div class="concept-desc">
+                  Very little of this is clever tooling. Most of it is decisions taken during setup that cannot
+                  be taken back afterwards, and the failures are usually mundane rather than sophisticated.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Discipline</th><th>Why</th></tr>
+                    <tr><td>Fresh infrastructure per engagement</td><td>Reused domains and IPs <span class="acro-exp">(Internet Protocol)</span> carry another client's detections, and correlate the two</td></tr>
+                    <tr><td>Fresh artefacts per engagement</td><td>See <span class="xref">msfvenom — Payload Generation</span>: a payload that goes public takes its C2 <span class="acro-exp">(Command and Control)</span> address with it</td></tr>
+                    <tr><td>Rate and timing</td><td>Enumeration at machine speed is the loudest thing most operators do, and it is a flag away from being quiet</td></tr>
+                    <tr><td>Blend with the estate's normal</td><td>Working hours, hostnames that fit the naming convention, protocols already in use</td></tr>
+                    <tr><td>Log your own activity</td><td>Timestamps and source IPs, so the client can separate the exercise from a real intrusion during and after</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Almost none of this is exotic, which is the point: <strong>the loud thing is usually the
+                    default setting</strong> &mdash; a scanner's default rate, a framework's default beacon interval,
+                    a tool's default user agent. Reviewing defaults before the engagement costs an hour and removes
+                    most of what gets an operator caught in the first day.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Deconfliction Half</div>
+                <div class="concept-title">Quiet Is Not the Same as Unaccountable</div>
+                <div class="concept-desc">
+                  The obvious risk of good OPSEC is that a defender who <em>does</em> catch something cannot tell
+                  whether it is you, and spends a night running a real incident against an authorised test. That
+                  is a failure of the engagement, and it is prevented by paperwork rather than by restraint.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mechanism</th><th>What it prevents</th></tr>
+                    <tr><td>A named deconfliction contact, reachable out of hours</td><td>An escalation that reaches executives at 2am over an exercise</td></tr>
+                    <tr><td>A pre-agreed code word</td><td>The single sentence that ends the ambiguity in one phone call</td></tr>
+                    <tr><td>An activity log with timestamps and source addresses</td><td>Weeks of forensic work reconstructing what was you</td></tr>
+                    <tr><td>Agreed stop conditions</td><td>A test that continues past the point it should have stopped</td></tr>
+                    <tr><td>Clean-up inventory, signed off</td><td>An implant, account or file left behind &mdash; the ending that does real harm</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The two halves are not in tension, and stating that is the point of the card:
+                    <strong>be difficult to detect, and trivially easy to identify once detected</strong>. The
+                    first is what makes the exercise a valid measurement; the second is what keeps it an exercise.
+                    An operator who is quiet and unreachable has not demonstrated skill, they have created an
+                    incident.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

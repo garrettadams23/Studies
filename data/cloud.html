@@ -3902,3 +3902,95 @@ dsregcmd /status
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌐</span>
+              <span class="topic-name">Multi-Cloud — The Four Reasons, and Which Ones Survive Contact</span>
+              <span class="topic-badge">Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Four Reasons People Give, and Two of Them Are Real</div>
+                <div class="concept-desc">
+                  Multi-cloud is the most-asked question in this domain and the one with the least written down,
+                  partly because the answer is uncomfortable. Nearly every multi-cloud programme is justified by
+                  one of four arguments, and <strong class="c-amber">only two of them survive contact with an
+                  invoice</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The reason given</th><th>Verdict</th></tr>
+                    <tr><td><strong>Regulatory or sovereignty requirement</strong></td><td><strong>Real.</strong> A jurisdiction requires data in a place one provider does not serve. Not a preference, and not negotiable</td></tr>
+                    <tr><td><strong>Acquisition</strong></td><td><strong>Real, and usually temporary.</strong> You now run two clouds because you bought a company. The decision is migrate or federate, on a timeline</td></tr>
+                    <tr><td>Deliberate best-of-breed</td><td>Sometimes. Genuine where one service is decisively better &mdash; and it means using that <em>service</em>, not running the whole estate twice</td></tr>
+                    <tr><td>Avoiding lock-in</td><td><strong>Usually not.</strong> The abstraction layer that avoids lock-in is itself a dependency, and one nobody else maintains</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The distinction that matters is between a reason that <em>arrived</em> and one that was
+                    <em>chosen</em>. Regulation and acquisition arrive; you handle them. Best-of-breed and
+                    lock-in are chosen, and a choice deserves a cost. Ask which of the four is actually driving the
+                    conversation before designing anything &mdash; the answer usually changes the design.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Trade</div>
+                <div class="concept-title">The Abstraction That Avoids Lock-In Costs More Than the Lock-In</div>
+                <div class="concept-desc">
+                  The lock-in argument deserves the plainest treatment because it is the one most often made and
+                  least often costed. Writing to the lowest common denominator means giving up the managed
+                  services that were the reason to be in a cloud at all &mdash; and
+                  <strong class="c-amber">you have replaced a dependency on a provider with a dependency on your
+                  own abstraction layer</strong>, which has one maintainer, no documentation, and no support
+                  contract.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you give up</th><th>What it actually means</th></tr>
+                    <tr><td>Managed services</td><td>Run your own database, queue and cache. That is a team, permanently</td></tr>
+                    <tr><td>Provider-native identity</td><td>A second identity model to reconcile, and the seam is where the incidents happen</td></tr>
+                    <tr><td>Committed-use discounts</td><td>Spend split across providers earns a smaller discount on each</td></tr>
+                    <tr><td>Operational depth</td><td>Two sets of failure modes, two consoles, two on-call runbooks, half the expertise in each</td></tr>
+                    <tr><td>The abstraction itself</td><td>A layer your team maintains, that lags both providers' feature sets</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The question that ends this debate quickly: <strong>name the migration you are buying the
+                    option on, and estimate what it would cost without the abstraction.</strong> If nobody can name
+                    it, the option has no strike price and the premium is being paid for nothing. If somebody can,
+                    compare the two numbers &mdash; the abstraction usually loses, and when it wins, it wins for a
+                    reason everyone can now see.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">What to do instead</div>
+                <div class="concept-title">Reduce the Cost of Leaving, Rather Than Pre-Paying It</div>
+                <div class="concept-desc">
+                  The reasonable form of the lock-in concern is not &ldquo;be portable&rdquo; but
+                  <strong class="c-cyan">know what leaving would cost, and keep that number lower than it would
+                  otherwise be</strong> &mdash; which is achievable without running anything twice.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Move</th><th>Why it helps</th></tr>
+                    <tr><td>Keep <strong>data</strong> portable, not compute</td><td>Data has gravity and egress charges; compute is comparatively easy to rebuild</td></tr>
+                    <tr><td>Prefer open interfaces where they are free</td><td>Postgres over a proprietary engine, S3-compatible APIs <span class="acro-exp">(Application Programming Interface)</span>, OpenTelemetry &mdash; no ceremony, real optionality</td></tr>
+                    <tr><td>Use IaC <span class="acro-exp">(Infrastructure as Code)</span> and keep it readable</td><td>The rebuild is the exit plan. See <span class="xref">Terraform on AWS &amp; GCP</span></td></tr>
+                    <tr><td>Write down the exit estimate</td><td>One page, revisited yearly. Turns an anxiety into a number somebody can argue with</td></tr>
+                    <tr><td>Adopt a second provider for one <em>service</em></td><td>The honest form of best-of-breed, and it does not multiply the operating model</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The distinction that resolves most of these conversations is between
+                    <strong>multi-cloud and multi-<em>account</em></strong>. Almost everything people want from
+                    multi-cloud &mdash; blast-radius isolation, per-team autonomy, environment separation &mdash; is
+                    delivered by good account and project structure inside one provider, at a fraction of the cost.
+                    See <span class="xref">Landing Zones &amp; Multi-Account Structure</span>: that is
+                    the decision worth agonising over, and it is the one people skip while debating this one.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

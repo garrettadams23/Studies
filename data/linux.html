@@ -4897,4 +4897,112 @@ bootctl status | grep -i secure</pre>
             </div>
           </div>
 
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🩺</span>
+              <span class="topic-name">Rescuing a System That Will Not Boot — GRUB <span class="acro-exp">(GRand Unified Bootloader)</span>, initramfs <span class="acro-exp">(Initial RAM Filesystem)</span> &amp; the Chroot</span>
+              <span class="topic-badge">LINUX • Recovery</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Recovery Sequence, Which Has to Be Known Cold</div>
+                <div class="concept-desc">
+                  This is used at exactly the moment there is no time to look it up, on a machine with no
+                  browser. The sequence is short and the order matters: <strong class="c-cyan">mount, bind,
+                  chroot, fix, rebuild, exit, unmount</strong>. Step three is the one people skip, and without it
+                  <code>grub-install</code> and <code>update-initramfs</code> either fail or &mdash; worse
+                  &mdash; succeed against the rescue system rather than the broken one.
+                </div>
+                <div class="dw">
+                  <div class="code-label">THE SEQUENCE, IN ORDER</div>
+                  <div class="code-block">
+                  <span class="com"># 1. Boot the live/rescue media, become root, find the root filesystem</span>
+                  lsblk -f
+                  blkid
+                  
+                  <span class="com"># 2. Mount it. Add /boot and the EFI partition if they are separate</span>
+                  mount /dev/nvme0n1p3 /mnt
+                  mount /dev/nvme0n1p2 /mnt/boot
+                  mount /dev/nvme0n1p1 /mnt/boot/efi
+                  
+                  <span class="com"># 3. Bind the pseudo-filesystems — the step people forget, and nothing works without it</span>
+                  <span class="kw">for</span> d <span class="kw">in</span> /dev /dev/pts /proc /sys /run; <span class="kw">do</span> mount --bind $d /mnt$d; <span class="kw">done</span>
+                  
+                  <span class="com"># 4. Enter the broken system</span>
+                  chroot /mnt /bin/bash
+                  
+                  <span class="com"># 5. Fix it — then rebuild what depends on the fix</span>
+                  grub-install /dev/nvme0n1          <span class="com"># Debian/Ubuntu; grub2-install on RHEL</span>
+                  update-grub                        <span class="com"># grub2-mkconfig -o /boot/grub2/grub.cfg on RHEL</span>
+                  update-initramfs -u -k all         <span class="com"># dracut -f --regenerate-all on RHEL</span>
+                  
+                  <span class="com"># 6. Leave cleanly, in reverse order</span>
+                  <span class="kw">exit</span>
+                  umount -R /mnt
+                  reboot
+                  </div>
+                  <div class="concept-desc verdict">
+                    The rebuild in step five is not optional. Repairing a bootloader without regenerating the
+                    initramfs fixes the menu and leaves the kernel unable to mount root, which produces a different
+                    failure that looks like the first one. <strong>Whatever you changed, rebuild the thing
+                    downstream of it</strong> &mdash; and if the root filesystem is on LVM <span class="acro-exp">(Logical Volume Manager)</span> or encrypted, the
+                    initramfs is what knows how to open it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Diagnosis</div>
+                <div class="concept-title">Read the Screen — the Failures Look Different From Each Other</div>
+                <div class="concept-desc">
+                  Boot failures are usually diagnosable from what is on the screen before you touch anything,
+                  and the four common ones fail at visibly different stages.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you see</th><th>Stage</th><th>Usually</th></tr>
+                    <tr><td>No firmware POST <span class="acro-exp">(Power-On Self-Test)</span>, no logo</td><td>Hardware</td><td>Not a software problem. Power, RAM <span class="acro-exp">(Random Access Memory)</span>, or the display</td></tr>
+                    <tr><td><code>No bootable device</code></td><td>Firmware &rarr; disk</td><td>Boot order, a disconnected disk, or a wiped EFI <span class="acro-exp">(Extensible Firmware Interface)</span> entry</td></tr>
+                    <tr><td><code>grub rescue&gt;</code> prompt</td><td>Bootloader</td><td>GRUB found itself and not its configuration &mdash; a moved or renamed <code>/boot</code></td></tr>
+                    <tr><td>Kernel panic, <code>unable to mount root</code></td><td>Kernel &rarr; initramfs</td><td>A broken initramfs, or a changed UUID <span class="acro-exp">(Universally Unique Identifier)</span> in <code>/etc/fstab</code></td></tr>
+                    <tr><td>Emergency shell after some services start</td><td>systemd</td><td>A failed mount in <code>fstab</code>. <code>journalctl -xb</code> names it in one line</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The last row is the most common of all and the least dramatic: <strong>an entry in
+                    <code>/etc/fstab</code> for a device that is not there</strong> drops the system to an
+                    emergency shell, and the fix is one <code>nofail</code> option or one corrected UUID. Before
+                    reaching for rescue media, try the boot menu's earlier kernel &mdash; if the previous kernel
+                    boots, the problem is the newest one and the chroot is only needed to remove it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Prevention</div>
+                <div class="concept-title">The Three Habits That Turn This Into a Ten-Minute Job</div>
+                <div class="concept-desc">
+                  Every one of these costs nothing on a working system and is impossible to arrange on a broken
+                  one, which is the whole argument for doing them now.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Habit</th><th>What it saves</th></tr>
+                    <tr><td>Keep the previous kernel installed</td><td>The single most useful recovery option, and it is a package-manager setting</td></tr>
+                    <tr><td>Use UUIDs in <code>fstab</code>, with <code>nofail</code> on non-essential mounts</td><td>A missing data disk stops being a boot failure</td></tr>
+                    <tr><td>Know where your rescue media is</td><td>The ISO <span class="acro-exp">(International Organization for Standardization)</span> you cannot download because the machine will not boot</td></tr>
+                    <tr><td>Record the disk layout somewhere off the host</td><td><code>lsblk -f</code> output in the runbook. Guessing partitions under pressure is how the wrong one gets formatted</td></tr>
+                    <tr><td>Practise once, on a VM <span class="acro-exp">(Virtual Machine)</span> you can break</td><td>The same argument as evidence handling: a procedure never performed is not a capability</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    On a virtualised or cloud estate there is usually a faster path than any of this:
+                    <strong>detach the disk, attach it to a working instance, fix it there, and reattach</strong>.
+                    It skips the rescue media and the chroot entirely, and it is worth knowing as the first option
+                    rather than the clever one &mdash; the sequence above is for physical hardware and for the
+                    times the console is all you have.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body linux -->

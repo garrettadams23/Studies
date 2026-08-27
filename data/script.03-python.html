@@ -3076,3 +3076,80 @@ console.print(table)
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">subprocess Without Shell Injection</span>
+              <span class="topic-badge">SCRIPT • Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Convenient Form Is the Dangerous One</div>
+                <div class="concept-desc">
+                  <code>shell=True</code> exists because it lets you write the command the way you would type it,
+                  and that convenience is the vulnerability: <strong class="c-amber">a shell is a language
+                  interpreter, and you have just concatenated user input into a program</strong>. A list of
+                  arguments passes the values straight to the process with no interpreter in between, which
+                  removes the entire bug class rather than filtering it.
+                </div>
+                <div class="dw">
+                  <div class="code-label">THE SAME COMMAND, TWO WAYS</div>
+                  <div class="code-block">
+                  <span class="kw">import</span> subprocess
+                  
+                  <span class="com"># DANGEROUS — a shell parses this string, and the filename is part of it</span>
+                  filename = <span class="str">"report.pdf; rm -rf ~"</span>       <span class="com"># it came from a form field</span>
+                  subprocess.run(<span class="str">f"pdfinfo {filename}"</span>, shell=<span class="kw">True</span>)
+                  <span class="com"># the shell sees two commands. The second one runs.</span>
+                  
+                  <span class="com"># SAFE — a list of arguments. No shell, no parsing, no metacharacters</span>
+                  subprocess.run([<span class="str">"pdfinfo"</span>, filename], check=<span class="kw">True</span>)
+                  <span class="com"># pdfinfo receives one argument, which is a very strange filename. Nothing else happens.</span>
+                  
+                  <span class="com"># Also safe, and better: capture output and fail loudly</span>
+                  r = subprocess.run([<span class="str">"pdfinfo"</span>, filename],
+                                     capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>,
+                                     timeout=<span class="num">10</span>, check=<span class="kw">True</span>)
+                  <span class="kw">print</span>(r.stdout)
+                  </div>
+                  <div class="concept-desc verdict">
+                    Notice what the safe version does <em>not</em> need: no escaping, no allowlist of characters,
+                    no regex to strip semicolons. <strong>The metacharacters stop being special because nothing is
+                    parsing them</strong> &mdash; and that is why this is a design fix rather than a mitigation.
+                    Every attempt to sanitise a shell string is a race against a language with many ways to say the
+                    same thing.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Everything Else on the Call, and Why</div>
+                <div class="concept-desc">
+                  Once the argument list is right, four more parameters turn a working call into a reliable one.
+                  The defaults are chosen for interactive convenience and are wrong for anything running
+                  unattended.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Parameter</th><th>Default</th><th>What to use, and why</th></tr>
+                    <tr><td><code>shell</code></td><td><code>False</code></td><td>Leave it. If you genuinely need a pipeline, build it with two <code>Popen</code> objects instead</td></tr>
+                    <tr><td><code>check</code></td><td><code>False</code></td><td><strong><code>check=True</code></strong> &mdash; otherwise a failed command returns quietly and the script continues</td></tr>
+                    <tr><td><code>timeout</code></td><td>None</td><td>Always set one. A hung child process hangs the parent forever</td></tr>
+                    <tr><td><code>capture_output</code></td><td><code>False</code></td><td>Capture it if you need it; note a large output can fill the pipe buffer if you read it wrongly</td></tr>
+                    <tr><td><code>cwd</code> / <code>env</code></td><td>Inherited</td><td>Set them explicitly for anything scheduled &mdash; inherited state is how a script works by hand and fails in cron</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two cases people reach for <code>shell=True</code> to solve, and what to do instead:
+                    <strong>globbing</strong> is <code>glob.glob()</code> or <code>pathlib</code>, which is safer
+                    and clearer; <strong>pipelines</strong> are two processes connected with
+                    <code>stdout=subprocess.PIPE</code>. And the general principle:
+                    <strong>if you find yourself escaping, you are on the wrong path</strong> &mdash; the same
+                    lesson as parameterised SQL <span class="acro-exp">(Structured Query Language)</span>, one layer down.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

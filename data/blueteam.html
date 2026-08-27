@@ -3077,3 +3077,83 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">SOC <span class="acro-exp">(Security Operations Center)</span> Metrics That Do Not Lie</span>
+              <span class="topic-badge">Detection Engineering</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">MTTD Is Gameable by Narrowing What Counts as Detected</div>
+                <div class="concept-desc">
+                  Mean time to detect is the metric every SOC reports and the easiest one in security to improve
+                  without improving anything. <strong class="c-amber">The clock starts when something is
+                  &ldquo;detected&rdquo;, and the team reporting the number decides what that means</strong>
+                  &mdash; so excluding the alerts that took longest, counting the ticket rather than the
+                  intrusion, or measuring only the incidents that were caught at all, all move it in the
+                  comfortable direction.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>How a metric gets gamed</th><th>Without anybody being dishonest</th></tr>
+                    <tr><td>MTTD improves</td><td>Slow-burn cases are reclassified as 'investigations', not detections</td></tr>
+                    <tr><td>MTTR <span class="acro-exp">(Mean Time To Repair)</span> improves</td><td>Tickets close when triaged rather than when remediated</td></tr>
+                    <tr><td>Alert volume falls</td><td>Tuning removed noise &mdash; or removed detection. <span class="xref">Detection Tuning &amp; the Pyramid of Pain</span> covers why they look identical</td></tr>
+                    <tr><td>False-positive rate falls</td><td>Fewer rules fire at all, which is not the same as being more accurate</td></tr>
+                    <tr><td>Coverage rises</td><td>The matrix was coloured from rule inventory rather than from test results</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Honest Set</div>
+                <div class="concept-title">Four Numbers, Each Uncomfortable in a Way the Gameable Ones Are Not</div>
+                <div class="concept-desc">
+                  A metric is trustworthy roughly in proportion to how bad it feels to report. These four resist
+                  gaming because <strong class="c-cyan">improving the number requires improving the
+                  thing</strong>, and each is uncomfortable on first measurement in a way that is itself
+                  informative.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Metric</th><th>Why it resists gaming</th></tr>
+                    <tr><td><strong>Telemetry coverage</strong> — % of assets sending the log sources your detections need</td><td>Cannot be improved by reclassifying anything. Needs an asset inventory, which is the honest denominator</td></tr>
+                    <tr><td><strong>Detection efficacy</strong> — % of emulated techniques that produced an alert</td><td>Measured by running the technique. See <span class="xref">Adversary Emulation — Atomic Red Team &amp; Caldera</span></td></tr>
+                    <tr><td><strong>Alert-to-incident ratio</strong></td><td>Says what proportion of the team's day is spent on things that mattered. Painful, and directly actionable</td></tr>
+                    <tr><td><strong>Dwell time on confirmed incidents</strong></td><td>Measured backwards from evidence, not forwards from the ticket. Cannot be improved by narrowing the definition</td></tr>
+                    <tr><td><strong>Analyst-hours per incident</strong></td><td>Reveals automation and tooling gaps that every quality metric hides</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reporting</div>
+                <div class="concept-title">What a Board Should Be Shown, and What It Should Not</div>
+                <div class="concept-desc">
+                  The metrics that survive contact with an executive audience are the ones expressed as
+                  <strong>coverage and trend</strong> rather than as volume. &ldquo;We handled 4,000
+                  alerts&rdquo; sounds like work and answers nothing; &ldquo;we can see 71% of servers and 94%
+                  of endpoints, up from 55% and 90%&rdquo; is a statement about risk that supports a decision.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Do not report</th><th>Report instead</th></tr>
+                    <tr><td>Alerts handled</td><td>Telemetry coverage, with the denominator named</td></tr>
+                    <tr><td>MTTD as a single number</td><td>Dwell time distribution on confirmed incidents, with the worst case shown</td></tr>
+                    <tr><td>A green ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> matrix</td><td>Techniques tested this quarter, and the pass rate</td></tr>
+                    <tr><td>&ldquo;No incidents this quarter&rdquo;</td><td>What you would have detected if there had been. Absence of alerts is not evidence &mdash; the same argument as <span class="xref">Threat Hunting — Assume Breach, Go Looking</span></td></tr>
+                    <tr><td>Tool count or spend</td><td>Analyst-hours per incident, trending</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The pairing this card is written to complete: a SOC's numbers and the organisation's risk
+                    reporting have to be the same story told at two levels of detail. When the security team
+                    reports coverage and the board hears alert volume, both are describing activity and neither is
+                    describing exposure &mdash; and the first genuinely bad quarter is when everyone discovers they
+                    were tracking different things.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

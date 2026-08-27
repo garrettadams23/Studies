@@ -32,12 +32,12 @@ for the reasoning rather than the tasks.
 | Calculus track | ~4500 | `math` domain and the TI-84 tooling | ✅ closed |
 | **What is actually outstanding** | ~4640 | The audit sections: defects, the lint trend, undersized domains, content age. All four now resolved and re-measured | ✅ closed |
 | Session records | ~5100–10,360 | Roughly forty of them. The reasoning behind every decision above | 📘 archive |
-| **Phase 7 — the next hundred cards** | ~10,365 | 96 specified cards, 15 tracks, ordered first ten, rejects | ⬜ **live** |
-| **Phase 8 — the depth problem** | ~10,754 | 330 thin topics measured; 244 queued for deepening | ⬜ **live** |
+| **Phase 7 — the next hundred cards** | ~10,365 | 96 specified cards, 15 tracks, ordered first ten, rejects | ⬜ **live — the only one left** |
+| **Phase 8 — the depth problem** | ~10,754 | 330 thin → **147**, eighteen waves, 144 cards. §8's target met | ✅ **closed** |
 | Worked specifications | ~10,897 | Four sessions written out to transcription depth | 📘 reference |
 | **The card rubric** | ~10,988 | What the good cards have, measured from forty written in one session | 📘 reference |
-| **Phase 9 — the duplication problem** | ~11,072 | 36 near-duplicate pairs, ~23 merges | ⬜ **live** |
-| **Phase 10 — the tooling** | ~11,175 | 9 tools that make Phases 8 and 9 measurable | ⬜ **live** |
+| **Phase 9 — the duplication problem** | ~11,072 | Queue C1–C6 complete: **12 merges, 1 move, 1 link**, a dozen documented refusals | ✅ **closed** |
+| **Phase 10 — the tooling** | ~11,175 | All nine shipped. **Five of them found a defect in something other than themselves** | ✅ **closed** |
 | Domain shape | ~11,322 | The connectivity graph: hubs, broadcasters, islands | 📘 reference |
 | **Phase 11 — the verification debt** | ~11,411 | 51 dated claims, and why the denominator is not countable | ⬜ **live** |
 | **The session operating manual** | ~11,522 | The loop, the ordering constraints, and ten failures with their guards | 📘 **start here** |
@@ -10699,16 +10699,18 @@ sitting and the early ones re-establish the method.
 
 | # | Card | Why here |
 |---|---|---|
-| 1 | `cs` **Little's Law &amp; Queueing** | Self-contained, one equation, and it explains three existing cards from underneath |
-| 2 | `threat` **State-Sponsored Operations** | The thinnest domain relative to its subject, and the card that anchors the rest of Track CA |
-| 3 | `sec` **Asset Discovery** | Every coverage metric elsewhere depends on it; writing it first makes later cards able to reference it |
-| 4 | `cloud` **Multi-Cloud — The Four Reasons** | The most-asked question in the domain and the one with the least written down |
-| 5 | `linux` **Rescuing a System That Will Not Boot** | Short, high-value, and the kind of card people return to |
-| 6 | `eng` **RFCs &amp; Design Docs** | Unlocks Track CF, since the ADR and build-vs-buy cards both reference it |
-| 7 | `productivity` **The Weekly Review** | The smallest card that makes the rest of Track CM coherent |
-| 8 | `redteam` **Operator OPSEC** | Reframes the whole tooling catalogue that already exists |
-| 9 | `script` **subprocess Without Shell Injection** | One clear security lesson, short, and overdue in the largest domain |
-| 10 | `blueteam` **SOC Metrics That Do Not Lie** | Pairs with `grc`'s new board-reporting card, and the two should cross-reference |
+| ✅ 1 | `cs` **Little's Law &amp; Queueing** | Self-contained, one equation, and it explains three existing cards from underneath |
+| ✅ 2 | `threat` **State-Sponsored Operations** | The thinnest domain relative to its subject, and the card that anchors the rest of Track CA |
+| ✅ 3 | `sec` **Asset Discovery** | Every coverage metric elsewhere depends on it; writing it first makes later cards able to reference it |
+| ✅ 4 | `cloud` **Multi-Cloud — The Four Reasons** | The most-asked question in the domain and the one with the least written down |
+| ✅ 5 | `linux` **Rescuing a System That Will Not Boot** | Short, high-value, and the kind of card people return to |
+| ✅ 6 | `eng` **RFCs &amp; Design Docs** | Unlocks Track CF, since the ADR and build-vs-buy cards both reference it |
+| ✅ 7 | `productivity` **The Weekly Review** | The smallest card that makes the rest of Track CM coherent |
+| ✅ 8 | `redteam` **Operator OPSEC** | Reframes the whole tooling catalogue that already exists |
+| ✅ 9 | `script` **subprocess Without Shell Injection** | One clear security lesson, short, and overdue in the largest domain |
+| ✅ 10 | `blueteam` **SOC Metrics That Do Not Lie** | Pairs with `grc`'s new board-reporting card, and the two should cross-reference |
+
+**✅ All ten shipped. Site 1,420 → 1,430.** See the session record at the end of this file.
 
 **After ten, re-run the audit rather than continuing down the list.** Eleven waves shipped
 this session and the site moved from 1,401 to 1,432 topics; a list written today describes a
@@ -14207,3 +14209,59 @@ Any future wave should start from `depth_report.py`, cross-reference `--thin` ag
 and check `--bottom` before assuming a short card is an underdeveloped one.
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7's first ten, and the checks that caught four mistakes
+
+The ordered ten shipped as specified. Each was pre-flighted with
+`near_duplicates.py --title` before a word was written &mdash; which is the mode T2 was built
+for, and this is the first session to have used it as intended rather than as a census.
+
+| # | Card | The argument it turns on |
+|---|---|---|
+| 1 | `cs` **Little's Law & Queueing** | `W = L / λ`, and the wall at 90% utilisation. Adding one worker is not a 15% improvement, it is a fourfold reduction in queueing delay |
+| 2 | `threat` **State-Sponsored Operations** | Criminals optimise for money per hour; states optimise for access and will spend a year being quiet. **"We're not a target" is a claim about value to a specific sponsor** |
+| 3 | `sec` **Asset Discovery** | Every coverage metric is a fraction with an unknown denominator — and inventories are always wrong in the same direction |
+| 4 | `cloud` **Multi-Cloud** | Four reasons, two of them real. **The abstraction that avoids lock-in is a dependency with one maintainer** |
+| 5 | `linux` **Rescuing a System That Will Not Boot** | Mount, bind, chroot, fix, rebuild, exit, unmount — and step three is the one people skip |
+| 6 | `eng` **RFCs & Design Docs** | Written before the decision, or it is documentation. The test is whether anyone could change the outcome by reading it |
+| 7 | `productivity` **The Weekly Review** | Capture without review is a graveyard, and reading back last week's *calendar* finds more than the inboxes do |
+| 8 | `redteam` **Operator OPSEC** | Detection on day one measures the client's response to a noisy operator. **Be hard to detect and trivially easy to identify once detected** |
+| 9 | `script` **subprocess Without Shell Injection** | The convenient form is the dangerous one, and a list of arguments removes the bug class rather than filtering it |
+| 10 | `blueteam` **SOC Metrics That Do Not Lie** | MTTD is gameable by narrowing what counts as detected. Four metrics that resist gaming, each uncomfortable |
+
+### Four mistakes, four different checks
+
+Writing ten new cards rather than deepening existing ones exercises a different set of guards,
+and every one of them fired:
+
+| Caught by | What it was |
+|---|---|
+| **The verdict ratchet** in `lint_content.py` | `table with no verdict: 514 exceeds the ceiling of 513`. Eight new tables had been written without one. Fixed by writing eight verdicts — the ratchet turned a style rule into content |
+| **The xref checker** | Three invented cross-reference titles: *Landing Zones — The Account Structure You Cannot Retrofit*, *Motivation — Why Waiting for It Fails and What Low-Motivation Systems Look Like*, and an ADR title with the acronym expansion inside it. All three were plausible and none existed |
+| **The acronym `byDomain` check** | Writing "a CI/CD supplier" in `threat` introduced `CD` to a domain with no decision recorded for it, and the linter refused to guess between Continuous Delivery and Continuous Deployment |
+| **`suggest_related.py --check`** | Ten new cards would have been ten orphans. Eleven bidirectional edges added, and the one-way count stayed at zero |
+
+The xref row is the one worth noting, because it is the **sixth** time this session that a
+cross-reference has been invented rather than looked up. The failure is consistent enough to
+name as a rule: **a title you can remember is a title you are reconstructing.** Grep for it
+first, every time — the linter will catch it, but at the cost of a build cycle each.
+
+### What the new cards were built to do
+
+Six of the ten exist to be referenced by other cards rather than read alone, which is why the
+ordering put them early. *Asset Discovery* gives every coverage metric elsewhere a denominator.
+*Little's Law* explains three existing cards from underneath — connection pools, CI queues and
+retry storms are one phenomenon. *RFCs & Design Docs* completes a pair with the existing ADR
+card: **the doc is the deliberation and the ADR is the residue**, and writing only one of the
+two loses either the record or the chance to influence it.
+
+```
+topics     1,420 → 1,430
+thin         147 → 147     (none of the ten is thin)
+mean chars/concept card  1,223 → 1,227
+related links  882 → 904, still 0 one-way
+```
+
+Site **1,430 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
