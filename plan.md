@@ -13299,4 +13299,74 @@ the most to say.
 That is now a named commitment rather than an observation: **D10 goes to the bottom decile by
 character count, across whatever domains it falls in.**
 
+> **Retracted the same session, after actually looking.** `depth_report.py --bottom` was written
+> to execute this commitment and immediately showed it was the wrong target. The bottom decile
+> is not underdeveloped content: **64 of its 132 cards carry a badge that means deliberately
+> short** — `Beginner • Core`, `Linux+ • CLI`, `PenTest+ • Recon`, `Military • Reference`. They
+> are the beginner layer §3 of Phase 9 exists to protect, and the per-certification objective
+> skims. Deepening them would make the beginner cards stop being beginner cards and the syllabus
+> skims stop being skims. See the D10 record below.
+
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D10: the wave that did not happen, and the metric that hid why
+
+D9 ended with a commitment: *the 10th percentile has moved three characters in nine waves, so
+D10 goes to the bottom decile by character count.* Executing that commitment needed a tool that
+did not exist — every existing mode of `depth_report.py` answers "which cards are **thin**",
+and thin is `one concept card AND under 1,800 characters`. So `--bottom` was written, listing
+the shortest topics regardless of card count.
+
+It answered the question in one screen, and the answer was that the commitment was wrong.
+
+```
+   317 · 0 card(s)  military   Common Codes Decoded              [Military • Reference]
+   443 · 1 card(s)  linux      Package Management                [Linux+ • Distros]
+   458 · 2 card(s)  linux      File Ops & Text Processing        [Linux+ • CLI]
+   475 · 1 card(s)  military   Staff Functions 1–9               [Military • Sections]
+   636 · 2 card(s)  script     Scope — Where Variables Live      [Beginner • Core]
+   710 · 2 card(s)  pentest    Web, Wireless & Reporting         [PenTest+ • Specialized]
+
+64 of the 132 in the bottom decile carry a badge that means deliberately short.
+```
+
+**The bottom of this site is not underdeveloped. It is two things that are supposed to be
+short**: the beginner layer that Phase 9 §3 exists to protect, and per-certification objective
+skims — a Linux+ candidate wants six package managers in a table, not an essay on repository
+signing. Deepening either would destroy the thing that makes it useful. The 10th percentile has
+not moved in nine waves because **nothing should have moved it.**
+
+### Two measurement failures, and only one of them was known
+
+The first was already suspected: nine waves picked eight cards each and nothing forced them to
+be the hardest. True, and it turns out not to be the interesting one.
+
+The second was invisible until `--bottom` existed. **The thin metric's `cc <= 1` clause means a
+458-character topic with two concept cards is not thin.** Of the 24 shortest topics on the site,
+**21 were never counted by the measurement that has driven ten waves of work.** T1's census
+answers "which cards are one card and short", and that has been silently standing in for "which
+cards are short" since Phase 8 began.
+
+That is not a reason to change the thin definition — a single-concept card genuinely is the
+signal that a subject was covered once and left — but it is a reason for the report to carry
+both numbers and say which is which. `--bottom` now does, and it marks the deliberate ones with
+a `·` so nobody re-derives this finding in three months.
+
+### What this says about the phase's target
+
+Phase 8 §8 wants "under 150 thin". At 211 that is 61 cards, or roughly eight more waves. What
+D10 establishes is that **the target should be read as a ceiling on genuinely thin cards, not as
+a claim about the site's floor** — and that the floor, measured honestly, is where it should be.
+A future session that sees "10th percentile: 1,365" and decides to attack it should read this
+record first.
+
+### D10 therefore ships tooling and a correction, and the wave moves on
+
+No content was deepened under this heading, which is the right outcome and is recorded as such
+rather than being quietly replaced with an easier wave under the same name. The next content
+wave takes the worst remaining ratio in a domain with no deliberate-short population:
+**`redteam`, 32 thin of 52.**
+
+`--bottom` is in `make census`. Nothing else changed.

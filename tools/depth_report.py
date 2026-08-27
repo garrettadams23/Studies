@@ -46,9 +46,22 @@ REFERENCE_DOMAINS = {"shortcut", "acronym"}
 TOPIC_RE = re.compile(r'<div class="topic"')
 TAG_RE = re.compile(r"<[^>]+>")
 NAME_RE = re.compile(r'class="topic-name"[^>]*>(.*?)</span>\s*(?:<span class="topic-badge|</div>)', re.S)
+BADGE_RE = re.compile(r'class="topic-badge">(.*?)</span>', re.S)
+
+# Badge prefixes that mark a card as *deliberately* short. Wave D10 went looking
+# for the shortest cards on the site and found these: the beginner layer, and
+# per-certification objective summaries. Neither wants deepening — one would
+# stop being a beginner card and the other would stop being a skim.
+DELIBERATE = ("beginner", "linux+", "pentest+", "military", "mil ", "sec+", "net+",
+              "a+", "security+", "reference", "all tracks")
 
 
-def topics(domain):
+def _deliberate(badge):
+    b = badge.lower()
+    return any(b.startswith(d) or f" {d}" in b for d in DELIBERATE)
+
+
+def topics(domain, badges=False):
     """(title, plain_chars, concept_cards) for every topic in one domain."""
     text = "".join(p.read_text(encoding="utf-8") for p in domain_files(domain))
     starts = [m.start() for m in TOPIC_RE.finditer(text)]
@@ -57,7 +70,13 @@ def topics(domain):
         block = text[start:end]
         name = NAME_RE.search(block)
         title = re.sub(r"\s+", " ", TAG_RE.sub("", name.group(1))).strip() if name else "?"
-        yield title, len(TAG_RE.sub("", block)), len(re.findall(r'class="concept-card"', block))
+        row = (title, len(TAG_RE.sub("", block)),
+               len(re.findall(r'class="concept-card"', block)))
+        if not badges:
+            yield row
+            continue
+        bg = BADGE_RE.search(block)
+        yield row + (re.sub(r"\s+", " ", TAG_RE.sub("", bg.group(1))).strip() if bg else "-",)
 
 
 def main():
@@ -86,6 +105,35 @@ def main():
                 thin_rows.append((length, did, title))
         if n:
             rows.append((round(100 * t / n), t, n, did))
+
+    if "--bottom" in args:
+        # The bottom of the site by length, regardless of concept-card count.
+        # `--thin` answers "which cards are one card and short"; this answers
+        # "which cards are shortest", and wave D10 exists because those are not
+        # the same list — nine waves moved the 10th percentile by three
+        # characters while the thin count fell by 77.
+        n = int(args[args.index("--bottom") + 1]) if len(args) > args.index("--bottom") + 1 \
+            and args[args.index("--bottom") + 1].isdigit() else 20
+        every = []
+        for dom in json.loads((DATA / "domains.json").read_text(encoding="utf-8")):
+            did = dom["id"]
+            if did in REFERENCE_DOMAINS or (only and did != only):
+                continue
+            for title, length, cc, badge in topics(did, badges=True):
+                every.append((length, cc, did, title, badge))
+        every.sort()
+        for length, cc, did, title, badge in every[:n]:
+            mark = "·" if _deliberate(badge) else " "
+            print(f"{length:>6} {mark} {cc} card(s)  {did:<10} {title[:42]:<44} [{badge[:22]}]")
+        cut = every[len(every) // 10][0]
+        decile = every[:max(len(every) // 10, 1)]
+        marked = sum(1 for r in decile if _deliberate(r[4]))
+        print(f"\n{n} shortest of {len(every):,} non-reference topics. "
+              f"10th percentile is {cut:,} chars.")
+        print(f"{marked} of the {len(decile)} in the bottom decile carry a badge that means "
+              f"deliberately short (·)\n  — the beginner layer and the per-certification "
+              f"objective skims. Deepening those is not the win it looks like.")
+        return 0
 
     if "--thin" in args:
         thin_rows.sort()
