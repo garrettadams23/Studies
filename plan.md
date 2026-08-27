@@ -11174,6 +11174,40 @@ and allow-only" is a different model of the same problem.
 
 **✅ D12 shipped** — 8 cards, `cloud` 32 → 24 thin (50% → 38%).
 
+### The D13 spec — what it means when it finds nothing
+
+D4 gave `blueteam`'s tool cards *what this tool cannot see*. The twenty-eight that remain are
+mostly the domain's **practices and outputs** — hunting, tuning, benchmarks, forensics,
+adversary emulation, threat intel — and they share a gap that is peculiar to defensive work and
+almost never written down.
+
+**Blue-team tools return a negative result most of the time.** The hunt finds nothing. The
+sandbox says clean. The benchmark passes. The coverage map is green. And nothing on this site,
+or in most of the documentation these tools ship with, says how to read that — so a negative
+result gets treated as reassurance when it is, at best, a statement about the question that was
+asked.
+
+> **The addition: what it means when this finds nothing, and what would have to be true for that
+> to be good news.**
+
+The second clause is the working half. "It might be a false negative" is a shrug; naming the
+conditions under which absence is genuinely evidence is a checklist somebody can run.
+
+The eight are chosen so the *mechanism* of the false negative differs each time:
+
+| Card | Why "nothing found" may mean nothing |
+|---|---|
+| Threat Hunting | The hypothesis was never written down, so nobody can say what was ruled out |
+| Windows Forensic Artifacts | Absence of an artefact is not absence of activity — rollover, defaults, anti-forensics |
+| Vulnerability Scanners | An unauthenticated scan is a guess from outside the host |
+| MITRE ATT&CK coverage | A green cell means a rule exists, not that it fires |
+| YARA | A rule is a hypothesis about bytes; no match means your description is wrong, not that the file is clean |
+| Malware Sandboxes | Evasion, time bombs, geofencing, and C2 that was already taken down |
+| Detection Tuning | Zero alerts after tuning: did you remove the noise or the detection? |
+| CIS Benchmarks & STIGs | A pass measures configuration against a checklist, and "not applicable" is doing a lot of work |
+
+**✅ D13 shipped** — 8 cards, `blueteam` 28 → 20 thin (52% → 37%).
+
 ## 7. The trap in this plan
 
 A deepening programme is exactly the kind of work that feels productive and can produce
@@ -13574,5 +13608,69 @@ median topic              3,014     3,027
 **Ninety-six cards across twelve waves, and the padding counter-metric has moved fourteen
 characters.** Phase 8 §8's target of "under 150 thin" is now 45 cards away — six more waves at
 the current rate, and for the first time in this phase the end is close enough to name.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D13: reading a negative result
+
+D4 gave `blueteam`'s tool cards *what this tool cannot see*. The twenty-eight left are mostly
+the domain's practices and outputs — hunting, tuning, benchmarks, forensics, coverage maps,
+detonation — and they share a gap that belongs to defensive work specifically.
+
+**Blue-team tools return a negative result most of the time.** The hunt finds nothing. The
+sandbox says clean. The benchmark passes. The matrix is green. Nothing on this site said how to
+read that, so the reassuring answer was being taken at face value in exactly the eight places
+where it deserves the most suspicion.
+
+| Card | What "nothing found" may actually mean |
+|---|---|
+| Threat Hunting | Nobody wrote the hypothesis down, so nothing was ruled out — **the output of a clean hunt should be a statement of coverage** |
+| Windows Forensic Artifacts | Prefetch is off by default on Server; the USN journal wraps in hours. Scope the conclusion to the artefacts examined |
+| Vulnerability Scanners | An unauthenticated scan infers versions from banners. **Report the denominator: what fraction was scanned, and credentialed** |
+| MITRE ATT&CK | A green cell means a rule was tagged. Colour the matrix from test results, not rule inventory |
+| YARA | A rule is a hypothesis about bytes; no match falsifies the rule, not the file |
+| Malware Sandboxes | A suspiciously empty report is itself a finding — evasion looks exactly like harmlessness |
+| Detection Tuning | **A well-tuned rule and a broken rule both produce silence.** Re-run the behaviour and confirm the alert still fires |
+| CIS Benchmarks | A fully hardened host running vulnerable software scores very well |
+
+### The clause that made the wave work
+
+The spec required two things: what a null result may mean, *and* what would have to be true for
+it to be good news. The first half alone is a shrug — "it might be a false negative" leaves the
+reader exactly where they started. The second half turns each card into something runnable:
+
+- A hunt is trustworthy if the hypothesis was falsifiable, the coverage was measured, and the
+  query is recorded verbatim.
+- A scan result is trustworthy in proportion to the fraction of assets reached **with
+  credentials**.
+- A tuning change is trustworthy once the behaviour has been re-run and the alert observed.
+
+Those are three checklists that did not exist on this site an hour ago, and each is a few minutes
+of work rather than a project.
+
+### The card that argues with a number the site elsewhere reports approvingly
+
+The MITRE ATT&CK card says an inventory-coloured coverage map typically overstates real coverage
+by around three to one, and that the honest number is the one that predicts incident outcomes.
+That sits alongside D6's accessibility finding — where this repository's own green `make a11y`
+was described as the floor rather than the result — and the two are the same argument in
+different domains: **a measurement that is easy to make green is the one to trust least**, and
+the site should say so about its own numbers as readily as about anyone else's.
+
+### The measurement
+
+```
+                        D12 end   D13 end
+thin topics                 195       187
+blueteam                           28 →  20   (52% → 37%)
+mean chars/concept card   1,214     1,215
+median topic              3,027     3,046
+10th percentile           1,367     1,373
+```
+
+**104 cards across thirteen waves; fifteen characters of movement in the counter-metric.** The
+"under 150 thin" target is 37 cards away — under five waves.
 
 Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
