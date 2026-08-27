@@ -10517,12 +10517,12 @@ that get blamed when delivery slows.
 
 | Card | The argument it turns on |
 |---|---|
-| **Flaky Tests — A Reliability Problem in the Test Suite** | A suite that fails randomly teaches the team to re-run rather than to read, and once that habit forms the suite stops being a signal at all. Flakiness must be measured and quarantined with an owner and a date, or the test suite decays into ceremony |
-| **Test Data — The Constraint That Shapes Every Environment** | Production data cannot be copied and synthetic data does not find real bugs. Every strategy is a trade between fidelity, privacy and refresh cost, and choosing one deliberately is what makes environments usable |
-| **Ephemeral Environments — One Per Change, and What It Costs** | An environment per pull request removes the queue for the shared staging system, which is often the real bottleneck. It also requires that infrastructure and data can be created from code in minutes, which is why most teams cannot have it yet |
-| **Monorepo vs Many Repos — The Trade Is About Coordination, Not Storage** | One repo makes cross-cutting changes atomic and makes tooling a full-time job. Many repos make each team independent and make a shared change a project. Pick the failure you can staff |
-| **Build Caches &amp; Incremental Builds — Where the Minutes Actually Go** | Nobody optimises a build until it hurts, and by then the fix is architectural. The card gives the measurement first: which step, on which machine, on a cold cache and a warm one |
-| **Release Notes &amp; Changelogs as an Interface** | A changelog is the API of your release process, read by support, security and customers. Generated from commits it is noise; written per user-visible change it is the cheapest support tool you own |
+| ✅ **Flaky Tests — A Reliability Problem in the Test Suite** | A suite that fails randomly teaches the team to re-run rather than to read, and once that habit forms the suite stops being a signal at all. Flakiness must be measured and quarantined with an owner and a date, or the test suite decays into ceremony |
+| ✅ **Test Data — The Constraint That Shapes Every Environment** | Production data cannot be copied and synthetic data does not find real bugs. Every strategy is a trade between fidelity, privacy and refresh cost, and choosing one deliberately is what makes environments usable |
+| ✅ **Ephemeral Environments — One Per Change, and What It Costs** | An environment per pull request removes the queue for the shared staging system, which is often the real bottleneck. It also requires that infrastructure and data can be created from code in minutes, which is why most teams cannot have it yet |
+| ✅ **Monorepo vs Many Repos — The Trade Is About Coordination, Not Storage** | One repo makes cross-cutting changes atomic and makes tooling a full-time job. Many repos make each team independent and make a shared change a project. Pick the failure you can staff |
+| ✅ **Build Caches &amp; Incremental Builds — Where the Minutes Actually Go** | Nobody optimises a build until it hurts, and by then the fix is architectural. The card gives the measurement first: which step, on which machine, on a cold cache and a warm one |
+| ✅ **Release Notes &amp; Changelogs as an Interface** | A changelog is the API of your release process, read by support, security and customers. Generated from commits it is noise; written per user-visible change it is the cheapest support tool you own |
 
 ---
 
@@ -10583,11 +10583,11 @@ a script survives being handed to someone else.
 
 | Card | The argument it turns on |
 |---|---|
-| **Type Hints &amp; a Type Checker — Documentation the Machine Verifies** | Hints that nothing checks are comments with better syntax. The value appears the moment a checker runs in CI, and the honest cost is the gradual-typing boundary where a large untyped codebase meets a typed edge |
-| **pathlib &amp; the End of String Paths** | Path manipulation with string concatenation is a portability bug waiting for a Windows user. A short card, because the argument is short and the habit change is total |
-| **subprocess Without Shell Injection** | The convenient form is the dangerous one. A list of arguments beats a shell string, and the card should show the exact case where interpolating a filename becomes remote code execution |
-| **Threads, Processes &amp; async — Choosing by Where the Time Goes** | Three concurrency models and one question that picks between them: is the program waiting on I/O or burning processor? Everything else is detail, and getting this wrong is why "we added threads and it got slower" |
-| **Packaging &amp; Dependency Pinning — Making It Installable by Someone Else** | The gap between "works on my machine" and "installs" is a project file and a lockfile. This is also the supply-chain surface, which connects to `eng`'s dependency-risk card |
+| ✅ **Type Hints &amp; a Type Checker — Documentation the Machine Verifies** | Hints that nothing checks are comments with better syntax. The value appears the moment a checker runs in CI, and the honest cost is the gradual-typing boundary where a large untyped codebase meets a typed edge |
+| ✅ **pathlib &amp; the End of String Paths** | Path manipulation with string concatenation is a portability bug waiting for a Windows user. A short card, because the argument is short and the habit change is total |
+| ✅ **subprocess Without Shell Injection** | The convenient form is the dangerous one. A list of arguments beats a shell string, and the card should show the exact case where interpolating a filename becomes remote code execution |
+| ✅ **Threads, Processes &amp; async — Choosing by Where the Time Goes** | Three concurrency models and one question that picks between them: is the program waiting on I/O or burning processor? Everything else is detail, and getting this wrong is why "we added threads and it got slower" |
+| ✅ **Packaging &amp; Dependency Pinning — Making It Installable by Someone Else** | The gap between "works on my machine" and "installs" is a project file and a lockfile. This is also the supply-chain surface, which connects to `eng`'s dependency-risk card |
 | **Pre-Commit, Formatters &amp; Linters — Ending the Style Argument** | A formatter removes an entire category of review comment by making style non-negotiable and automatic. The card's argument is social rather than technical: the tool is valuable because it stops humans discussing whitespace |
 | **Dates &amp; Times in Code — The Five Mistakes** | Naive datetimes, local-time arithmetic, storing offsets instead of zones, assuming days are 24 hours, and formatting for humans in a database. Pairs with the existing *Dates, Times & Time Zones* card, which covers the concepts rather than the code |
 
@@ -14265,3 +14265,54 @@ related links  882 → 904, still 0 one-way
 ```
 
 Site **1,430 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7, tracks CE and CI: the release factory and the toolchain
+
+Phase 7 says *&ldquo;after ten, re-run the audit rather than continuing down the list&rdquo;*, so
+the audit was re-run before this batch and it chose the tracks. `devops` was 27% thin with the
+best-specified remaining track; `script` was 143 topics teaching the language thoroughly and the
+environment around it barely. **Track CE is now complete (6 of 6) and CI is complete (5 of 5).**
+
+| Domain | Card | The argument |
+|---|---|---|
+| `devops` | Flaky Tests | A suite that fails randomly teaches the team to re-run rather than read — and **automatic retries are the fix that removes the evidence** |
+| `devops` | Test Data | Fidelity, privacy, refresh cost: pick two. Teams that never chose have all three at their worst |
+| `devops` | Ephemeral Environments | **The shared staging queue is often the real bottleneck**, and the prerequisites are the capabilities that make production recoverable |
+| `devops` | Monorepo vs Many Repos | The trade is about coordination, not storage. Pick the failure you can staff |
+| `devops` | Build Caches | Measure first — the minutes are in dependency install, not compile. **The cache key is the whole design** |
+| `devops` | Release Notes | A changelog is the API of your release process, read by five audiences with five different questions |
+| `script` | Type Hints & a Type Checker | Hints nothing checks are comments with better syntax. **A type annotation is not validation** |
+| `script` | pathlib | Always pass `encoding="utf-8"`; `resolve()` before comparing; check the path stays inside the directory you meant |
+| `script` | Threads, Processes & async | One diagnostic picks all three: is the program waiting, or computing? |
+| `script` | Packaging & Dependency Pinning | Pin for applications, range for libraries — and **this is the supply-chain surface** |
+
+### The verdict ratchet fired again, and harder
+
+Thirteen new tables without verdicts this time (520 against a ceiling of 513), after eight last
+batch. That is not carelessness twice; it is a **structural property of writing new cards**. A
+deepening wave adds one card with one table and one verdict, because the spec asks for a claim.
+A new card is three cards and three tables, and the middle one is always the reference table
+that feels like it speaks for itself.
+
+It does not. Writing the thirteen verdicts produced some of the better lines in the batch — the
+antisocial-pinning point, the GIL-is-not-a-lock warning, the observation that an unpinned
+`requirements.txt` failure gets debugged as though it were your code. **The ratchet is not a
+style rule with a content side effect; it is a content rule enforced by counting.**
+
+### And the seventh invented cross-reference
+
+*Software Supply Chain Security — SBOM, SLSA & Signing.* The real title ends *& Sigstore*. The
+linter's "Did you mean" caught it in one cycle, which is the third time this session that
+feature has paid for itself — but the rule stated after the last batch stands unchanged and was
+ignored one batch later: **grep for the title, do not remember it.**
+
+```
+topics     1,430 → 1,440
+thin         147 → 147   (none of the twenty new cards is thin)
+mean chars/concept card  1,227 → 1,231
+related links  904 → 924, still 0 one-way
+```
+
+Site **1,440 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
