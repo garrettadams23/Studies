@@ -988,6 +988,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The format's real value</div>
+                <div class="concept-title">The Decision Matters Less Than the Options You Rejected</div>
+                <div class="concept-desc">
+                  An ADR that records only what was chosen answers a question nobody asks. The
+                  code already says what was chosen. What the reader in two years needs is
+                  <strong class="c-cyan">what else was considered and which constraint killed
+                  it</strong> &mdash; because constraints expire, and when one does, the ADR is
+                  the only artefact that says the decision should now be revisited.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Recorded</th><th>What it is worth later</th></tr>
+                    <tr><td>&ldquo;We chose Postgres&rdquo;</td><td>Nothing. Anyone can see that</td></tr>
+                    <tr><td>&ldquo;We considered Cassandra&rdquo;</td><td>A little &mdash; at least the option was seen</td></tr>
+                    <tr><td>&ldquo;Rejected Cassandra: nobody on the team had operated it&rdquo;</td><td><strong>A great deal.</strong> That constraint changes when you hire, and the reader can tell</td></tr>
+                    <tr><td>&ldquo;Rejected managed search: not available in our region&rdquo;</td><td>Regions open. This is a dated fact, not a principle</td></tr>
+                    <tr><td>&ldquo;Rejected X because it is bad&rdquo;</td><td>Nothing, and worse than nothing &mdash; it forecloses re-examination with no reason to weigh</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The test for a rejection line is whether it names something that could
+                    <strong>stop being true</strong>. &ldquo;Too expensive at our volume&rdquo;,
+                    &ldquo;no in-house experience&rdquo;, &ldquo;unavailable in this region&rdquo;
+                    and &ldquo;the team is three people&rdquo; all pass; &ldquo;not a good
+                    fit&rdquo; does not. Write the constraint, not the conclusion &mdash; and
+                    when an ADR is superseded, say which constraint expired, because that is the
+                    sentence the next reader is looking for.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 <div class="topic" data-reviewed="2026-08">
@@ -5239,6 +5269,268 @@ cosign verify $IMAGE \
                     the residue</strong>. The doc is long, argumentative and read once; the ADR is short, states
                     what was decided and what would reverse it, and is read for years. Writing only the first leaves
                     nothing findable; writing only the second means the decision was never open to influence.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚖️</span>
+              <span class="topic-name">Build vs Buy — The Question Behind the Question</span>
+              <span class="topic-badge">Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">It Is Never Build Cost Against Licence Cost</div>
+                <div class="concept-desc">
+                  The comparison as usually presented &mdash; six months of engineering time against an annual
+                  subscription &mdash; is not the comparison. It is <strong class="c-cyan">total cost against
+                  total cost</strong>, and the side that is systematically understated is always the same one,
+                  because building has a large recurring cost that does not appear on the estimate that justified
+                  it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What the estimate includes</th><th>What it leaves out</th></tr>
+                    <tr><td>The initial build</td><td>Maintenance, forever &mdash; and it does not decline</td></tr>
+                    <tr><td>&mdash;</td><td>The on-call burden when it breaks at 3 a.m.</td></tr>
+                    <tr><td>&mdash;</td><td>The person who wrote it leaving, and the six months of nobody understanding it</td></tr>
+                    <tr><td>&mdash;</td><td>Features the vendor ships that you will now be asked for</td></tr>
+                    <tr><td>&mdash;</td><td>Security patching of a thing nobody is watching for CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></td></tr>
+                    <tr><td>The licence cost, accurately</td><td>Integration effort, and the exit cost when you eventually leave</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The rule of thumb that survives contact with reality: <strong>the build estimate is the
+                    smallest number in the decision, and the maintenance is the largest</strong>. A useful
+                    discipline is to multiply the build estimate by the number of years the thing will exist and
+                    add 20% of the build per year for upkeep &mdash; not because that is precise, but because it
+                    puts a recurring number next to the recurring number on the other side.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Question Behind the Question: Is This Your Differentiator?</div>
+                <div class="concept-desc">
+                  Cost analysis rarely decides this and should not, because the two totals are usually within a
+                  factor of two and the estimates are worse than that. The question that actually decides it is
+                  strategic: <strong class="c-amber">would a customer ever choose you because of this
+                  thing?</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>If it is...</th><th>Then</th></tr>
+                    <tr><td>Your differentiator</td><td><strong>Build.</strong> Even at a cost premium &mdash; this is the thing you are for</td></tr>
+                    <tr><td>Undifferentiated but critical</td><td>Buy, and integrate well. Identity, payments, email delivery, observability</td></tr>
+                    <tr><td>Undifferentiated and non-critical</td><td>Buy the cheapest adequate thing, and do not think about it again</td></tr>
+                    <tr><td>A commodity you keep customising</td><td><strong>The trap.</strong> You are building, slowly, while paying a licence</td></tr>
+                    <tr><td>Something no vendor does</td><td>Check that again. &ldquo;Nobody sells this&rdquo; is usually &ldquo;we have not looked&rdquo;</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The fourth row is where most of the regret is. <strong>A bought system customised past
+                    recognition has both costs</strong>: the licence, and a maintenance burden on integration code
+                    that upgrades will keep breaking. When customisation exceeds roughly the effort of building the
+                    part you actually need, the decision has already been made and nobody has admitted it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Buy Decisions Need an Exit, and Build Decisions Need an Owner</div>
+                <div class="concept-desc">
+                  Both directions have one obligation that is routinely skipped, and skipping it is what turns a
+                  reasonable decision into a bad outcome three years later.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Direction</th><th>The obligation</th></tr>
+                    <tr><td>Buy</td><td><strong>Know the exit.</strong> How does the data come out, in what format, and how long would migrating take?</td></tr>
+                    <tr><td>Buy</td><td>Avoid the deepest integrations where a shallow one suffices &mdash; every hook is exit cost</td></tr>
+                    <tr><td>Build</td><td><strong>A named owning team, funded past the launch.</strong> Unowned internal tools are the most expensive things an organisation runs</td></tr>
+                    <tr><td>Build</td><td>A deprecation plan from the start. What would make us stop, and what happens to users then?</td></tr>
+                    <tr><td>Either</td><td>Revisit on a date. Both decisions are correct under conditions that change</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The asymmetry worth knowing: <strong>a buy decision is reversible at a cost you can estimate;
+                    a build decision is reversible only by finding somebody to take it over</strong>. That makes
+                    &ldquo;buy&rdquo; the safer default for anything outside your differentiator &mdash; not because
+                    building is bad, but because the failure mode of a bought system is a migration project, and
+                    the failure mode of a built one is an orphan nobody will admit to owning.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧭</span>
+              <span class="topic-name">The Staff Engineer Role — What It Is When It Is Not Management</span>
+              <span class="topic-badge">Career</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Track Is Real and Badly Defined Nearly Everywhere</div>
+                <div class="concept-desc">
+                  Most organisations write a Staff+ ladder by taking the management ladder and removing the
+                  people management, which produces a description of a senior engineer with more adjectives.
+                  The actual difference is not seniority, it is <strong class="c-cyan">scope of
+                  impact</strong> &mdash; and specifically, work that requires no direct authority and that
+                  nobody else in the organisation is positioned to do.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Level</th><th>The unit of work</th></tr>
+                    <tr><td>Senior</td><td>A feature, a service, a project. Delivered well, largely alone or leading a couple of people</td></tr>
+                    <tr><td>Staff</td><td><strong>A problem that crosses teams</strong> and that nobody owns, because it belongs to no single team</td></tr>
+                    <tr><td>Principal</td><td>A problem that crosses the organisation, often multi-year, often about direction rather than delivery</td></tr>
+                    <tr><td>The common mistake</td><td>Defining Staff as &ldquo;a very good senior&rdquo;, which makes the promotion about tenure</td></tr>
+                    <tr><td>The other mistake</td><td>Defining it as &ldquo;a manager who codes&rdquo;, which is a fourth job nobody wanted</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The test that separates the first two rows cleanly: <strong>could a senior engineer on one team
+                    have done this, if they were excellent?</strong> If yes, it is senior work done well. If it
+                    required standing between three teams who disagreed, or seeing a problem none of them could see
+                    from inside, that is the other track &mdash; and it is a difference in <em>kind</em>, not in
+                    degree.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">What the Work Actually Is</div>
+                <div class="concept-desc">
+                  The day looks nothing like a senior engineer's, and the surprise for people entering the role
+                  is how little of it is writing code &mdash; without it being management either.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Activity</th><th>Why it belongs to this role</th></tr>
+                    <tr><td>Writing the design doc nobody was going to write</td><td>A cross-team decision has no owner by definition. See <span class="xref">RFCs &amp; Design Docs — Writing to Decide, Not to Record</span></td></tr>
+                    <tr><td>Reviewing other teams' designs</td><td>Consistency across an estate is an outcome only somebody spanning it can produce</td></tr>
+                    <tr><td>Unblocking, not delivering</td><td>Two days spent making four teams faster beats two days of your own output</td></tr>
+                    <tr><td>Being the person who says the uncomfortable thing</td><td><strong>Without authority, and therefore credibly.</strong> A manager saying it is politics; an engineer saying it is engineering</td></tr>
+                    <tr><td>Actually writing code, sometimes</td><td>Prototypes that settle an argument, and the hard part nobody else will pick up</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The proportion that surprises people is the third row.
+                    <strong>Most of the value is other people's output, not yours</strong>, which makes the role
+                    uncomfortable for anyone whose sense of a good week is measured in merged pull requests &mdash;
+                    and that discomfort, rather than the technical difficulty, is what makes the transition
+                    hard.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Failure Modes, and How the Role Goes Wrong</div>
+                <div class="concept-desc">
+                  Three ways this role fails, and all three are structural rather than personal.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Failure</th><th>What it looks like</th></tr>
+                    <tr><td>No scope granted</td><td>Given the title and left on one team. The work requires access to problems, and access is granted rather than taken</td></tr>
+                    <tr><td>Becoming a bottleneck</td><td>Every design routed through one person. <strong>Influence that does not scale is just a queue</strong></td></tr>
+                    <tr><td>Drifting into management without the title</td><td>Coordination expands to fill the day, and the technical judgement that justified the role decays</td></tr>
+                    <tr><td>No visible artefacts</td><td>Influence is invisible in a promotion packet unless it left documents behind &mdash; see <span class="xref">Staff+ Archetypes</span></td></tr>
+                    <tr><td>Loneliness</td><td>The honest one. The role has no peers on the team and no cohort, and organisations rarely build one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The advice that most reliably helps someone in the role: <strong>write things down, and make
+                    other people faster in ways that outlast the conversation</strong>. A design doc, a standard, a
+                    tool, a written review &mdash; those are how influence compounds and how it becomes visible.
+                    Advice given in meetings helps once and is invisible in six months.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎯</span>
+              <span class="topic-name">Goals That Survive the Quarter — OKRs <span class="acro-exp">(Objectives and Key Results)</span> Without the Theatre</span>
+              <span class="topic-badge">Leading Teams</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Most Goal Frameworks Fail the Same Three Ways</div>
+                <div class="concept-desc">
+                  The framework is rarely the problem. Almost every failed goal-setting exercise fails through the
+                  same three mechanisms, and they are independent of whether you call them OKRs, V2MOM or
+                  anything else.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Failure</th><th>What it looks like</th></tr>
+                    <tr><td><strong>Outputs written as outcomes</strong></td><td>&ldquo;Ship the new dashboard&rdquo; is a task with a date. &ldquo;Support answers 30% fewer 'where is my order' tickets&rdquo; is an outcome</td></tr>
+                    <tr><td><strong>Targets set to be achievable</strong></td><td>If every goal lands at 100%, they were commitments. A measure that cannot go the wrong way is not a measure</td></tr>
+                    <tr><td><strong>A review nobody attends</strong></td><td>Set in January, read in December. The value is in the mid-quarter conversation, which is the part that gets cancelled</td></tr>
+                    <tr><td>Too many</td><td>Six goals is a list of everything the team was going to do anyway, relabelled</td></tr>
+                    <tr><td>No named owner</td><td>&ldquo;The team&rdquo; owns it, so nobody reports on it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The second row is the one people resist and it is the load-bearing one.
+                    <strong>A goal you are confident of hitting carries no information</strong>, and a set of them
+                    is a plan with a scoring system attached. The point of a target is to make you change what you
+                    would otherwise have done.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Fewer Goals, a Measure That Could Move Against You, a Named Person</div>
+                <div class="concept-desc">
+                  The corrective for each failure is small, and all three together take about an hour a quarter.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Fix</th><th>Why it works</th></tr>
+                    <tr><td><strong>Two or three goals, not six</strong></td><td>Forces the prioritisation conversation that the list was avoiding</td></tr>
+                    <tr><td>A metric with a plausible bad outcome</td><td>&ldquo;p95 latency under 300ms&rdquo; can fail. &ldquo;Improve performance&rdquo; cannot</td></tr>
+                    <tr><td>One named person per goal</td><td>Not an owner of the work &mdash; an owner of <em>reporting the number</em></td></tr>
+                    <tr><td>A mid-quarter checkpoint in the calendar</td><td>Booked at the same time the goals are set, or it does not happen</td></tr>
+                    <tr><td>Written down where the work is</td><td>A goal in a slide deck is invisible; one at the top of the team's board is read weekly</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The cheapest of the five is the fourth, and it is the one that makes the others matter:
+                    <strong>book the mid-quarter review in the same meeting where the goals are written</strong>.
+                    Goals fail silently between the setting and the scoring, and the only mechanism that catches
+                    that is a date already in the calendar when everyone still cares.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">What to Do When a Goal Is Going to Miss</div>
+                <div class="concept-desc">
+                  The response to a goal that is failing is where the framework earns its keep or becomes theatre,
+                  and the honest options are three rather than one.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>The right response</th></tr>
+                    <tr><td>The goal is right, the plan is wrong</td><td>Change the plan. This is the intended outcome of the mid-quarter check</td></tr>
+                    <tr><td>The goal is wrong &mdash; the world changed</td><td><strong>Change the goal, and say so in writing.</strong> Pretending otherwise wastes a quarter of everyone's attention</td></tr>
+                    <tr><td>The goal is right and unreachable this quarter</td><td>Keep it, report the miss, carry it. A miss with a number is more useful than a hit with a redefinition</td></tr>
+                    <tr><td>Quietly redefining the metric</td><td><strong>The failure mode that destroys the whole exercise</strong> &mdash; after one instance, nobody believes any of the numbers</td></tr>
+                    <tr><td>Dropping it silently</td><td>Same, slower</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The cultural precondition is the fourth row and it cannot be added later:
+                    <strong>if missing a goal is punished, every goal will be set to be met</strong>, and the
+                    framework converts into an elaborate way of writing down what was going to happen anyway. That
+                    is a leadership behaviour rather than a process choice, and no amount of tooling substitutes for
+                    it.
                   </div>
                 </div>
               </div>

@@ -67,11 +67,60 @@ def _fold(word):
     return word
 
 
-def tokens(title):
-    """The meaningful words in a title, lower-cased, expansions already gone."""
+_ACRO_MAP = None
+
+
+def _acronyms():
+    """acronym -> its expansions' words, from the dictionary.
+
+    An abbreviation and its expansion share no characters, so a token census
+    cannot see that they are the same subject. `ADRs & Design Docs` and
+    `Architecture Decision Records — …` scored **0.00** against each other, and
+    the `--title` pre-flight said "clear to write" for a card the site already
+    had. Expanding both sides before tokenising is the fix.
+    """
+    global _ACRO_MAP
+    if _ACRO_MAP is None:
+        _ACRO_MAP = {}
+        try:
+            entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
+        except (OSError, ValueError, KeyError):
+            return _ACRO_MAP
+        for e in entries:
+            words = set()
+            for m in e.get("m", []):
+                words |= {w.lower() for w in re.findall(r"[A-Za-z0-9']+", m.get("e", ""))}
+            key = re.sub(r"[^a-z0-9]", "", e["a"].lower())
+            if key:
+                _ACRO_MAP[key] = words
+    return _ACRO_MAP
+
+
+def tokens(title, expand=False):
+    """The meaningful words in a title, lower-cased, expansions already gone.
+
+    `expand=True` additionally pulls each acronym's dictionary meanings in, so
+    an abbreviation and its written-out form overlap. **That is right for
+    `--title` and wrong for the census**, and the measurement says so: turning
+    it on everywhere took the pairwise count from 40 to 80, because any two
+    titles sharing an acronym now also share every word of its expansions.
+
+    So the census compares titles as written — a symmetric question where the
+    extra tokens are almost all noise — and `--title` compares a candidate
+    against them expanded, where a single missed match costs a duplicate card.
+    Asymmetric tools for asymmetric questions.
+    """
     title = re.sub(r"\(.*?\)", " ", title)
-    return {_fold(w) for w in re.findall(r"[a-z0-9']+", title.lower())
-            if w not in STOP and len(w) > 2}
+    raw = re.findall(r"[a-z0-9']+", title.lower())
+    out = {_fold(w) for w in raw if w not in STOP and len(w) > 2}
+    if expand:
+        acro = _acronyms()
+        for w in raw:
+            for key in (w, _fold(w)):     # `ADRs` folds to `adr`; try both
+                for e in acro.get(key, ()):
+                    if e not in STOP and len(e) > 2:
+                        out.add(_fold(e))
+    return out
 
 
 def titles():
@@ -112,7 +161,9 @@ def main():
     rows = [(d, t, tokens(t)) for d, t in titles()]
 
     if "--title" in args:
-        want = tokens(args[args.index("--title") + 1])
+        # Both sides expanded — see tokens().
+        want = tokens(args[args.index("--title") + 1], expand=True)
+        rows = [(d, t, tokens(t, expand=True)) for d, t, _ in rows]
         hits = sorted(((covered(want, k), d, t) for d, t, k in rows), reverse=True)
         near = [h for h in hits if h[0] >= floor]
         for score, d, t in (near or hits[:5]):

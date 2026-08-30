@@ -10535,10 +10535,10 @@ delegation, ladders, Conway's Law, managing up, calendars, planning. What is mis
 | Card | The argument it turns on |
 |---|---|
 | **RFCs &amp; Design Docs — Writing to Decide, Not to Record** | A design doc written after the decision is documentation; one written before it is a decision-making tool, and the difference is whether anyone was ever able to change the outcome by reading it. Includes the failure mode: the doc that circulates for comment after the work has started |
-| **Architecture Decision Records — The Format Whose Value Is the Rejected Options** | The decision matters less than the alternatives and the constraints that killed them, because in two years the constraints will have changed and only the ADR will say which ones they were |
-| **Build vs Buy — The Question Behind the Question** | The comparison is never build cost against licence cost. It is *total* cost against *total* cost, including the maintenance you will owe forever and the exit you will eventually want — and the honest version usually turns on whether this is your differentiator |
-| **The Staff Engineer Role — What It Is When It Is Not Management** | The individual-contributor track above senior is real and badly defined nearly everywhere. The card's job is to describe what the work actually is — scope, influence without authority, and the projects only this role can do — and what it is not |
-| **Goals That Survive the Quarter — OKRs Without the Theatre** | Most goal frameworks fail the same way: outputs written as outcomes, targets set to be achievable, and a review that nobody attends. The fix is fewer goals, a measure that could go the wrong way, and a named person |
+| ✅ **Architecture Decision Records — The Format Whose Value Is the Rejected Options** | The decision matters less than the alternatives and the constraints that killed them, because in two years the constraints will have changed and only the ADR will say which ones they were |
+| ✅ **Build vs Buy — The Question Behind the Question** | The comparison is never build cost against licence cost. It is *total* cost against *total* cost, including the maintenance you will owe forever and the exit you will eventually want — and the honest version usually turns on whether this is your differentiator |
+| ✅ **The Staff Engineer Role — What It Is When It Is Not Management** | The individual-contributor track above senior is real and badly defined nearly everywhere. The card's job is to describe what the work actually is — scope, influence without authority, and the projects only this role can do — and what it is not |
+| ✅ **Goals That Survive the Quarter — OKRs Without the Theatre** | Most goal frameworks fail the same way: outputs written as outcomes, targets set to be achievable, and a review that nobody attends. The fix is fewer goals, a measure that could go the wrong way, and a named person |
 | **Measuring Developer Productivity Without Doing Harm** | Every individual metric in this space is gameable and most are actively harmful. What can be measured is the *system* — lead time, review latency, time to first commit for a new joiner — and the card should be blunt about why the individual version keeps being attempted |
 
 ---
@@ -10665,12 +10665,12 @@ cards about running security as an ongoing function rather than as a set of cont
 
 | Card | The argument it turns on |
 |---|---|
-| **Asset Discovery — You Cannot Protect What Nobody Listed** | Every control's coverage is a fraction with an unknown denominator until the estate is enumerated, and the enumeration is always wrong in the same direction. This is the card that makes every other coverage metric meaningful |
-| **Vulnerability Prioritisation — Severity Is Not Priority** | A high-severity finding on an isolated internal host loses to a medium on an internet-facing one, every time. Exploitability, exposure and asset value are the multipliers, and the card should name the specific published sources that carry them |
-| **Shadow IT — Finding It Without Making It Worse** | Unsanctioned tools exist because a sanctioned one was missing or slow. Discovery is easy and the response is the whole subject: a blocked service returns as an unmanaged one, so the sanctioned path has to be genuinely better |
-| **Break-Glass Accounts — The Ones That Must Work When Everything Else Does Not** | Excluded from conditional access, credentials split and sealed, monitored on use, and tested on a schedule. Every organisation has them, almost none tests them, and the day they are needed is the day the identity provider is down |
-| **Code Signing &amp; the Key That Cannot Leak** | A signing key is a trust anchor with a blast radius the size of your install base. The card covers where the key lives, who can invoke it, and why build-time signing in a pipeline needs the same treatment as a production credential |
-| **Security Champions — Making the Team Larger Than the Team** | A security function is always outnumbered by engineers, so influence scales and headcount does not. The programme works when champions get something real — early access, training, time — and fails when it is a title with meetings attached |
+| ✅ **Asset Discovery — You Cannot Protect What Nobody Listed** | Every control's coverage is a fraction with an unknown denominator until the estate is enumerated, and the enumeration is always wrong in the same direction. This is the card that makes every other coverage metric meaningful |
+| ✅ **Vulnerability Prioritisation — Severity Is Not Priority** | A high-severity finding on an isolated internal host loses to a medium on an internet-facing one, every time. Exploitability, exposure and asset value are the multipliers, and the card should name the specific published sources that carry them |
+| ✅ **Shadow IT — Finding It Without Making It Worse** | Unsanctioned tools exist because a sanctioned one was missing or slow. Discovery is easy and the response is the whole subject: a blocked service returns as an unmanaged one, so the sanctioned path has to be genuinely better |
+| ✅ **Break-Glass Accounts — The Ones That Must Work When Everything Else Does Not** | Excluded from conditional access, credentials split and sealed, monitored on use, and tested on a schedule. Every organisation has them, almost none tests them, and the day they are needed is the day the identity provider is down |
+| ✅ **Code Signing &amp; the Key That Cannot Leak** | A signing key is a trust anchor with a blast radius the size of your install base. The card covers where the key lives, who can invoke it, and why build-time signing in a pipeline needs the same treatment as a production credential |
+| ✅ **Security Champions — Making the Team Larger Than the Team** | A security function is always outnumbered by engineers, so influence scales and headcount does not. The programme works when champions get something real — early access, training, time — and fails when it is a title with meetings attached |
 
 ---
 
@@ -14419,3 +14419,78 @@ table with no verdict  509 → 509
 **Phase 7: 40 of 96 shipped.** Tracks CE, CG, CH, CI, CJ and CM complete.
 
 Site **1,458 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7, tracks CF and CN: and the census's second blind spot
+
+Tracks CF (`eng`, the decision-making machinery) and CN (`sec`, running security as a function)
+are complete. Eight new cards and **one card that turned out not to need writing** — which is
+the more interesting result.
+
+| Domain | Card | The claim it turns on |
+|---|---|---|
+| `eng` | Build vs Buy | Never build cost against licence cost. **The question behind it is whether this is your differentiator** |
+| `eng` | The Staff Engineer Role | Not a very good senior. A problem that crosses teams and belongs to none of them |
+| `eng` | Goals That Survive the Quarter | A goal you are confident of hitting carries no information |
+| `sec` | Vulnerability Prioritisation | Severity is a property of the flaw; priority is a property of your estate. **KEV first, then EPSS weighted by exposure** |
+| `sec` | Shadow IT | Every instance is a requirements document somebody wrote by spending money |
+| `sec` | Break-Glass Accounts | The day you need them is the day the identity provider is down — and **two accounts, not one** |
+| `sec` | Code Signing | You are not protecting a file, you are controlling an operation |
+| `sec` | Security Champions | Influence scales and headcount does not. Measured by consultations, not by headcount |
+
+### The card that already existed, and the reason the check missed it
+
+Track CF asks for *Architecture Decision Records — The Format Whose Value Is the Rejected
+Options*. The `--title` pre-flight said **clear to write**. The site already has
+**ADRs & Design Docs**.
+
+```
+tokens("ADRs & Design Docs")                          = {adr, design, doc}
+tokens("Architecture Decision Records — …")           = {architecture, decision, record, …}
+containment                                           = 0.00
+```
+
+**An abbreviation and its expansion share no characters**, so a token census cannot see they are
+the same subject. This is the second structural limitation the title census has shown this
+session — the first being the two `script` PowerShell cards at 0.25, where the titles diverged
+while the content did not. Different mechanism, same class: *the tool measures titles and the
+question is about subjects.*
+
+### Fixed, and the fix had to be asymmetric
+
+`tokens()` now takes `expand=`, pulling each acronym's dictionary meanings in. Turning that on
+everywhere was the obvious move and the measurement rejected it:
+
+```
+census pairs ≥ 0.50, expansion off  = 40
+census pairs ≥ 0.50, expansion on   = 80
+```
+
+Any two titles sharing an acronym now also share every word of its expansions, and the census
+doubled with almost all of the new pairs false. So the two modes now differ deliberately:
+**`--title` expands both sides, because a missed match costs a duplicate card; the census does
+not, because a false pair costs a reader's time and there are a million comparisons.**
+Asymmetric tools for asymmetric questions — and with the fix, the ADR candidate surfaces as the
+top hit at 0.38.
+
+The card itself became a **deepening** rather than a new topic: the existing ADR card had two
+concept cards and covered neither rejected options nor the constraints that killed them, so it
+gained a third. The right outcome, and one the plan's own queue would have got wrong.
+
+### The scaffold held again
+
+Four more refusals in this batch, and `table with no verdict` **stayed at 509** across seventeen
+new cards. One further byDomain decision — `CISA` in `sec`, which the dictionary also knows as
+*Certified Information Systems Auditor*.
+
+```
+topics     1,458 → 1,466
+thin         147 → 147
+mean chars/concept card  1,238 → 1,241
+related links  960 → 976, still 0 one-way
+```
+
+**Phase 7: 49 of 96 shipped.** Tracks CE, CF, CG, CH, CI, CJ, CM and CN complete.
+
+Site **1,466 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
