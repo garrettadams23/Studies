@@ -83,67 +83,6 @@ jobs:
 <!-- ── TOPIC: KUBERNETES FUNDAMENTALS ────────────────────── -->
 <div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
-    <span class="topic-icon">☸️</span>
-    <span class="topic-name">Kubernetes — Container Orchestration at Scale</span>
-    <span class="topic-badge">OPS • Cloud Native</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">WHAT IS KUBERNETES</div>
-      <div class="concept-title">Run, Scale, and Heal Containers Automatically</div>
-      <div class="concept-desc">Kubernetes (k8s) is a container orchestration platform. You tell it "I want 5 replicas of my web container running at all times." k8s does the scheduling (which node to run it on), restarts failed containers, scales up/down based on load, and manages networking between services. Originally from Google; now the de-facto cloud standard.</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">CORE OBJECTS</div>
-      <div class="concept-title">Pod → Deployment → Service → Ingress</div>
-      <div class="concept-desc"><strong>Pod</strong> — smallest deployable unit; one or more containers sharing a network namespace and storage. Ephemeral — can die and be replaced.<br>
-      <strong>Deployment</strong> — manages N replicas of a Pod; handles rolling updates and rollbacks.<br>
-      <strong>Service</strong> — stable network endpoint that load-balances traffic to pods (pods have dynamic IPs; Services don't change).<br>
-      <strong>Ingress</strong> — HTTP/HTTPS routing: <code>example.com/api → api-service, example.com/ → frontend-service</code>.<br>
-      <strong>ConfigMap / Secret</strong> — inject config and secrets into pods as env vars or files.</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">KUBECTL BASICS</div>
-      <div class="concept-title">The k8s CLI <span class="acro-exp">(Command Line Interface)</span></div>
-      <div class="code-block"><span class="com"># See what's running</span>
-kubectl get pods
-kubectl get pods -n kube-system     <span class="com"># in a specific namespace</span>
-kubectl get all                     <span class="com"># pods, services, deployments</span>
-
-<span class="com"># Inspect resources</span>
-kubectl describe pod my-pod-abc123
-kubectl logs my-pod-abc123
-kubectl logs -f my-pod-abc123       <span class="com"># follow</span>
-
-<span class="com"># Get a shell in a running pod</span>
-kubectl exec -it my-pod-abc123 -- bash
-
-<span class="com"># Apply a manifest file</span>
-kubectl apply -f deployment.yaml
-
-<span class="com"># Scale</span>
-kubectl scale deployment myapp --replicas=5
-
-<span class="com"># Rolling update</span>
-kubectl set image deployment/myapp myapp=myimage:v2
-
-<span class="com"># Rollback</span>
-kubectl rollout undo deployment/myapp</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">WHEN TO USE K8S</div>
-      <div class="concept-title">It's Powerful But Complex</div>
-      <div class="concept-desc">Kubernetes adds significant operational complexity. For a small startup with one app: Docker Compose or a single managed service (Heroku, Railway, Fly.io) is simpler and faster to operate. k8s shines when you have: many services, need to scale services independently, have a team to manage it, or require advanced deployment strategies (canary, blue/green). "Kubernetes because it's cool" is not a good reason.</div>
-    </div>
-  </div>
-</div>
-
-
-<!-- BEGINNER15-OPS v1 -->
-<!-- ── TOPIC: INFRASTRUCTURE AS CODE ─────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
-  <div class="topic-header">
     <span class="topic-icon">🏗️</span>
     <span class="topic-name">Infrastructure as Code — Servers You Define in Text Files</span>
     <span class="topic-badge">OPS • Modern</span>
@@ -447,8 +386,155 @@ spec:
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Honest Part</div>
+      <div class="concept-title">It Is Powerful, and It Is a Lot of Operations</div>
+      <div class="concept-desc">
+        Kubernetes buys you scheduling, self-healing, rolling deployments and a common
+        vocabulary across every cloud. It costs a control plane somebody has to run, a
+        networking model somebody has to understand, and a class of failure that only exists
+        because the platform exists. For one application and one team, Docker Compose or a
+        managed platform is simpler and faster to operate, and stays that way for a long time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Kubernetes earns its cost when</th><th>It does not when</th></tr></thead>
+          <tbody>
+            <tr><td>Many services that scale independently</td><td>One application with predictable load</td></tr>
+            <tr><td>Someone owns the platform as part of their job</td><td>Nobody has time to be on call for it</td></tr>
+            <tr><td>You need canary or blue-green as routine</td><td>A deploy is a restart and that is fine</td></tr>
+            <tr><td>Portability between clouds is a real requirement</td><td>It is a hypothetical one</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">"Kubernetes because it is what serious teams use" is not a
+          requirement.</strong> It is the most common reason it gets adopted and the most
+          common reason a small team ends up maintaining a platform instead of a product.
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⚙️</span>
+    <span class="topic-name">Kubernetes — Container Orchestration Reference</span>
+    <span class="topic-badge">DEVOPS · CLOUD</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">K8s — Google Borg → Open Source</div>
+      <div class="concept-title">Deploy, Scale, and Heal Containers Automatically</div>
+      <div class="concept-desc">
+        Kubernetes (K8s) automates deployment, scaling, and management of
+        containerised applications. It clusters multiple machines into one
+        compute pool and decides where each container runs.
+        <strong style="color:var(--cyan)">Control Plane</strong> = the brain.
+        <strong style="color:var(--green)">Worker Nodes</strong> = where workloads run.
+      </div>
+      <div class="dw">
+
+        <div class="dt">▸ CORE OBJECTS</div>
+        <table class="ref-table" style="margin-bottom:14px">
+          <tr><th>Object</th><th>What it is</th><th>Analogy</th></tr>
+          <tr><td style="color:var(--cyan)">Pod</td><td>Smallest deployable unit. One or more containers sharing network + storage. Ephemeral — dies and is replaced.</td><td>A single server instance</td></tr>
+          <tr><td style="color:var(--cyan)">Deployment</td><td>Manages a set of identical Pods. Handles rolling updates, rollbacks, desired replica count.</td><td>The process supervisor</td></tr>
+          <tr><td style="color:var(--cyan)">Service</td><td>Stable network endpoint for a set of Pods. Types: ClusterIP (internal), NodePort, LoadBalancer, ExternalName.</td><td>A load balancer</td></tr>
+          <tr><td style="color:var(--cyan)">ConfigMap</td><td>Non-sensitive config data (env vars, config files) injected into Pods.</td><td>An .env file</td></tr>
+          <tr><td style="color:var(--red)">Secret</td><td>Sensitive config (passwords, tokens). Base64-encoded (NOT encrypted by default — use Sealed Secrets or Vault).</td><td>A locked .env file</td></tr>
+          <tr><td style="color:var(--green)">Namespace</td><td>Virtual cluster within a cluster. Logical separation for teams/environments (dev/staging/prod).</td><td>A project folder</td></tr>
+          <tr><td style="color:var(--green)">Ingress</td><td>HTTP/HTTPS routing rules. Maps hostnames and paths to Services. Requires an Ingress Controller (nginx, traefik).</td><td>A reverse proxy</td></tr>
+          <tr><td style="color:var(--amber)">PersistentVolume</td><td>Cluster-level storage resource. PersistentVolumeClaim requests a piece of it.</td><td>A mounted hard drive</td></tr>
+        </table>
+
+        <div class="dt">▸ KUBECTL — ESSENTIAL COMMANDS</div>
+        <div class="code-block">
+<span class="com"># ── Context & cluster ──────────────────────────────────────</span>
+<span class="fn">kubectl</span> config get-contexts           <span class="com"># list clusters you're connected to</span>
+<span class="fn">kubectl</span> config use-context prod       <span class="com"># switch cluster</span>
+<span class="fn">kubectl</span> cluster-info                  <span class="com"># control plane endpoint</span>
+
+<span class="com"># ── Explore resources ──────────────────────────────────────</span>
+<span class="fn">kubectl</span> get pods                       <span class="com"># list Pods in current namespace</span>
+<span class="fn">kubectl</span> get pods -n kube-system        <span class="com"># specify namespace</span>
+<span class="fn">kubectl</span> get pods -A                    <span class="com"># all namespaces</span>
+<span class="fn">kubectl</span> get all                        <span class="com"># pods, services, deployments...</span>
+<span class="fn">kubectl</span> describe pod my-pod            <span class="com"># full details + events</span>
+<span class="fn">kubectl</span> get deployment web -o yaml     <span class="com"># export as YAML</span>
+
+<span class="com"># ── Deploy & manage ────────────────────────────────────────</span>
+<span class="fn">kubectl</span> apply -f deployment.yaml       <span class="com"># create/update from file (preferred)</span>
+<span class="fn">kubectl</span> delete -f deployment.yaml      <span class="com"># remove resources in file</span>
+<span class="fn">kubectl</span> scale deployment web --replicas=5
+<span class="fn">kubectl</span> rollout status deployment/web  <span class="com"># watch rolling update</span>
+<span class="fn">kubectl</span> rollout undo deployment/web    <span class="com"># rollback to previous version</span>
+
+<span class="com"># ── Debug ──────────────────────────────────────────────────</span>
+<span class="fn">kubectl</span> logs my-pod                    <span class="com"># container logs</span>
+<span class="fn">kubectl</span> logs my-pod -f                 <span class="com"># follow / stream logs</span>
+<span class="fn">kubectl</span> exec -it my-pod -- bash        <span class="com"># shell into pod</span>
+<span class="fn">kubectl</span> port-forward pod/my-pod 8080:<span class="num">80</span> <span class="com"># forward port to localhost</span>
+<span class="fn">kubectl</span> top pods                       <span class="com"># CPU/memory usage</span>
+        </div>
+
+        <div class="dt">▸ MINIMAL DEPLOYMENT MANIFEST</div>
+        <div class="code-block">
+<span class="com"># deployment.yaml — the most common K8s resource</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: production
+spec:
+  replicas: <span class="num">3</span>
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: myrepo/web:<span class="num">1.0</span>
+          ports:
+            - containerPort: <span class="num">8080</span>
+          env:
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: url
+          resources:
+            requests: {{cpu: <span class="str">"100m"</span>, memory: <span class="str">"128Mi"</span>}}
+            limits:   {{cpu: <span class="str">"500m"</span>, memory: <span class="str">"512Mi"</span>}}
+          readinessProbe:
+            httpGet: {{path: /healthz, port: <span class="num">8080</span>}}
+      securityContext:
+        runAsNonRoot: true
+        readOnlyRootFilesystem: true
+        </div>
+
+        <div class="dt">▸ K8s SECURITY — KEY CONTROLS</div>
+        <table class="ref-table">
+          <tr><th>Control</th><th>What it does</th></tr>
+          <tr><td style="color:var(--red)">RBAC</td><td>Role-Based Access Control. Roles define permissions; RoleBindings attach them to users/serviceaccounts.</td></tr>
+          <tr><td style="color:var(--red)">NetworkPolicy</td><td>Firewall rules between Pods. Default: allow all. Apply deny-all then allowlist what's needed.</td></tr>
+          <tr><td style="color:var(--amber)">PodSecurityContext</td><td>runAsNonRoot, readOnlyRootFilesystem, allowPrivilegeEscalation: false on every container.</td></tr>
+          <tr><td style="color:var(--amber)">Secrets encryption</td><td>Encrypt etcd at rest (EncryptionConfiguration). Use Sealed Secrets or Vault for GitOps <span class="acro-exp">(Git Operations)</span> workflows.</td></tr>
+          <tr><td style="color:var(--green)">Resource limits</td><td>Always set requests + limits. Prevents resource starvation and limits blast radius.</td></tr>
+          <tr><td style="color:var(--green)">Image scanning</td><td>Scan in CI (trivy, Grype) and at admission (Kyverno, OPA Gatekeeper).</td></tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- BEGINNER35-OPS v1 -->
 <!-- ── TOPIC: CI/CD Pipeline Fundamentals ────────────────────── -->
@@ -1541,10 +1627,35 @@ jobs:
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Day two</div>
+                <div class="concept-title">The Platform Team Becomes the Ticket Queue It Was Built to Abolish</div>
+                <div class="concept-desc">
+                  Internal platforms are built to remove a bottleneck and, done wrong, relocate it. The
+                  golden path covers the common case; everything else needs the platform team; requests queue; and
+                  <strong class="c-amber">the team that was created to unblock delivery is now the thing delivery
+                  waits on</strong> &mdash; with the added twist that they are also on call for it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+                    <tr><td>Every non-standard need is a ticket</td><td>A <strong>paved road, not a walled garden</strong> &mdash; there must be a supported way to step off it</td></tr>
+                    <tr><td>Adoption is mandated</td><td>Measure voluntary adoption. A platform teams choose is working; one they are ordered onto is a tax</td></tr>
+                    <tr><td>The abstraction leaks under pressure</td><td>Expose the layer beneath. Hiding Kubernetes is fine until the incident, and then it must be reachable</td></tr>
+                    <tr><td>Platform team owns everyone's incidents</td><td>The platform owns the platform; teams own their services. Blur this and the platform team is on call for the company</td></tr>
+                    <tr><td>Nobody knows what it costs</td><td>Track the time saved per team, or the platform is unarguable in either direction at budget time</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The healthy test is whether a team <em>could</em> leave and chooses not to. If leaving is
+                  impossible, the platform's adoption number means nothing, and the feedback that would have
+                  improved it never arrives &mdash; users who cannot leave complain instead of switching, and
+                  complaints are a much weaker signal than departures.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏭</span>
               <span class="topic-name">CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> Pipeline Design — Stages, Gates &amp; Artifacts</span>
@@ -1579,10 +1690,36 @@ jobs:
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Day two</div>
+                <div class="concept-title">A Slow Pipeline Makes Batches Bigger, and Bigger Batches Are Harder to Fix</div>
+                <div class="concept-desc">
+                  Pipeline duration is not a convenience metric. Once a build takes forty-five minutes,
+                  people stop pushing small changes and start batching &mdash; and a batch of eight changes that
+                  fails tells you far less than eight changes that failed individually.
+                  <strong class="c-amber">The flywheel runs backwards</strong>: slower feedback, bigger batches,
+                  harder debugging, more caution, slower still.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+                    <tr><td>45-minute pipeline</td><td>Treat build time as a bug with an owner and a budget &mdash; ten minutes to a deployable signal is the usual target</td></tr>
+                    <tr><td>Everything runs on every commit</td><td>Split fast checks from slow ones; run the full matrix on merge, not on every push</td></tr>
+                    <tr><td>Flaky tests retried automatically</td><td>A test that fails 1 in 20 times is describing a real race. Retries turn the signal off</td></tr>
+                    <tr><td>Nobody trusts a red build</td><td>Red on the default branch stops other work. It only works if it is rare, and it is only rare if it means something</td></tr>
+                    <tr><td>Deploys are a separate manual ritual</td><td>The pipeline that builds should be the pipeline that deploys &mdash; two systems means two truths</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Measure the number that matters: <strong>commit to deployable signal</strong>, not total
+                  job time. Caching dependencies, parallelising the test matrix, and moving the slowest suite
+                  behind a merge gate usually recover most of it without deleting a single test &mdash; which
+                  matters, because deleting tests to go faster is how a pipeline stops being evidence.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🎬</span>
               <span class="topic-name">GitHub Actions — Workflows, Jobs &amp; Secrets</span>
@@ -1623,10 +1760,35 @@ jobs:
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Day two</div>
+                <div class="concept-title">Forty Copy-Pasted Workflows and Third-Party Actions Nobody Pinned</div>
+                <div class="concept-desc">
+                  Workflows multiply because copying one is faster than factoring it, and each copy quietly
+                  takes a dependency on strangers' code that runs with access to your repository. The end state is
+                  a directory nobody owns, where <strong class="c-amber">a change to a third-party action's
+                  <code>v3</code> tag runs in your pipeline tomorrow without anyone approving anything</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+                    <tr><td>Third-party actions on floating tags</td><td><strong>Pin by commit SHA <span class="acro-exp">(Secure Hash Algorithm)</span>.</strong> A tag is mutable; a SHA is not. Dependabot can still bump them</td></tr>
+                    <tr><td>Forty near-identical workflows</td><td>Reusable workflows and composite actions early, while there are three to factor rather than forty</td></tr>
+                    <tr><td>Every job has write access to everything</td><td>Set <code>permissions:</code> explicitly at the top &mdash; default to <code>contents: read</code> and add what a job needs</td></tr>
+                    <tr><td><code>pull_request_target</code> used for convenience</td><td>It runs with secrets and repo write on a fork's proposed code. Use <code>pull_request</code> unless you can explain why not</td></tr>
+                    <tr><td>Secrets available to every job</td><td>Environment-scoped secrets with required reviewers on the environments that deploy</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  SHA-pinning is the item to do first, because it is the only one on the list where the
+                  failure is somebody else's decision rather than your own drift. It is a fifteen-minute change
+                  today across three workflows, and a research project once forty of them reference two dozen
+                  actions.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔧</span>
               <span class="topic-name">Jenkins · GitLab CI · CircleCI — The Landscape</span>
@@ -1761,10 +1923,35 @@ jobs:
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Day two</div>
+                <div class="concept-title">The Image You Cannot Rebuild, Still Running as Root</div>
+                <div class="concept-desc">
+                  An image that built reproducibly in week one usually cannot be rebuilt in year two: the
+                  base tag moved, an <code>apt</code> mirror dropped a version, a package pulled from a URL <span class="acro-exp">(Uniform Resource Locator)</span> that
+                  now 404s. What is deployed becomes <strong class="c-amber">an artefact nobody can reproduce and
+                  nobody dares rebuild</strong>, which is also why it is still on a base with known CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+                    <tr><td><code>FROM node:latest</code></td><td>Pin the base by <strong>digest</strong>, not tag. A tag moves; <code>@sha256:…</code> does not</td></tr>
+                    <tr><td>Cannot reproduce last year's build</td><td>Lockfiles committed, and no <code>curl | sh</code> of an unversioned URL in the Dockerfile</td></tr>
+                    <tr><td>Everything runs as root</td><td>A <code>USER</code> line and a non-root filesystem, from the first version &mdash; retrofitting means fixing every permission at once</td></tr>
+                    <tr><td>2 GB images</td><td>Multi-stage: build tooling in one stage, only the artefact in the final. Distroless or Alpine where the runtime allows</td></tr>
+                    <tr><td>Nobody knows what is inside</td><td>Generate an SBOM <span class="acro-exp">(Software Bill of Materials)</span> at build time and store it with the image, so a CVE announcement is a query rather than a project</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Digest pinning and a <code>USER</code> line are each a one-line change on day one and a
+                  month of archaeology later. The tell that an estate is past the point: somebody proposes
+                  rebuilding an image to patch it, and the honest answer is <strong>&ldquo;we are not sure it
+                  still builds&rdquo;</strong>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">☸️</span>
               <span class="topic-name">Kubernetes Objects — The Ones You Actually Use</span>
@@ -1828,10 +2015,36 @@ jobs:
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Day two</div>
+                <div class="concept-title">A Chart Becomes a Templating Language Nobody Can Diff</div>
+                <div class="concept-desc">
+                  Helm starts as a way to install someone else's software and ends, in most estates, as a
+                  Go-template program that emits YAML. There is no type checking, the errors point at line
+                  numbers in generated output, and <strong class="c-amber">nobody can tell you what an upgrade
+                  will change before it changes it</strong> &mdash; which is when a templating convenience becomes
+                  a production risk.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+                    <tr><td>Conditionals nested three deep in templates</td><td>Keep templating shallow. A values file that turns things on and off, not a language</td></tr>
+                    <tr><td>Nobody knows what <code>helm upgrade</code> will do</td><td>Render and diff in CI: <code>helm template</code> piped to <code>kubectl diff</code>, on every PR</td></tr>
+                    <tr><td>Values files copied per environment, drifting</td><td>One base plus per-environment overlays &mdash; this is what Kustomize is genuinely better at</td></tr>
+                    <tr><td>A chart nobody dares bump</td><td>Pin the chart version and treat bumps as normal PRs with a rendered diff attached</td></tr>
+                    <tr><td>Release state lives only in the cluster</td><td>GitOps <span class="acro-exp">(Git Operations)</span> &mdash; the desired state is a file in a repo, and the cluster reconciles to it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The rendered diff is the whole preventive measure and it costs one CI step. Once every
+                  change to a chart shows up in review as <em>the actual Kubernetes objects that will change</em>,
+                  templating complexity stops being invisible &mdash; and the reviewer who cannot read the diff
+                  is the signal that the chart has become a program.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔒</span>
               <span class="topic-name">Kubernetes Security — RBAC <span class="acro-exp">(Role-Based Access Control)</span>, Network Policies &amp; Pod Security</span>
@@ -1863,10 +2076,36 @@ jobs:
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Day two</div>
+                <div class="concept-title">Everyone Is cluster-admin and the Network Is Flat</div>
+                <div class="concept-desc">
+                  Both defaults decay in the same direction, for the same reason: the secure option is
+                  slightly inconvenient exactly once, and the workaround is permanent. A Role was fiddly during an
+                  outage, so someone was granted <code>cluster-admin</code> &ldquo;temporarily&rdquo;. No
+                  NetworkPolicy existed, so <strong class="c-amber">every pod can reach every other pod</strong>,
+                  and by year two something depends on that.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+                    <tr><td>A dozen cluster-admin bindings</td><td>Namespace-scoped Roles from the start; audit bindings on a schedule and require a ticket for cluster-wide</td></tr>
+                    <tr><td>Flat pod network</td><td><strong>A default-deny NetworkPolicy per namespace on day one.</strong> This is the retrofit that never happens</td></tr>
+                    <tr><td>Default ServiceAccount tokens mounted everywhere</td><td><code>automountServiceAccountToken: false</code> unless the workload calls the API <span class="acro-exp">(Application Programming Interface)</span></td></tr>
+                    <tr><td>Containers running as root</td><td>Pod Security Admission at <code>restricted</code> for new namespaces, before anything is deployed into them</td></tr>
+                    <tr><td>Nobody knows who can do what</td><td><code>kubectl auth can-i --list</code> as a periodic review, not a thing you run during an incident</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Default-deny networking is the one item here with a genuine expiry date. Adding it to an
+                  empty namespace costs one manifest; adding it to a namespace with thirty running services means
+                  discovering every undocumented dependency at once, under load, which is why the ticket stays
+                  open for years. <strong>Do it before there is anything to break.</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚙️</span>
               <span class="topic-name">Configuration Management — Ansible &amp; the Alternatives</span>
@@ -1940,10 +2179,37 @@ jobs:
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Day two</div>
+                <div class="concept-title">Nothing Can Be Rotated, Because Rotation Was Never Once Performed</div>
+                <div class="concept-desc">
+                  Every secrets deployment is capable of rotation and almost none have done it. The secret
+                  gets written once, applications read it at startup, and two years later
+                  <strong class="c-amber">nobody knows which of eleven services would break if it
+                  changed</strong>. At that point the secret is not managed; it is stored, and the difference only
+                  shows up during an incident when it must change today.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Belief</th><th>Reality</th></tr>
+                    <tr><td>&ldquo;We can rotate whenever we need to&rdquo;</td><td>Untested. A rotation path that has never run is a plan, not a capability</td></tr>
+                    <tr><td>&ldquo;Kubernetes Secrets are encrypted&rdquo;</td><td>Base64 at rest by default &mdash; enable encryption at rest, and remember etcd backups contain them</td></tr>
+                    <tr><td>&ldquo;Env vars are safe enough&rdquo;</td><td>They land in crash dumps, <code>/proc</code>, child processes and any log line that prints the environment</td></tr>
+                    <tr><td>&ldquo;Only the app can read it&rdquo;</td><td>Anyone who can <code>exec</code> into the pod or read the ServiceAccount token usually can too</td></tr>
+                    <tr><td>&ldquo;It is not in Git&rdquo;</td><td>Check the history, not the tip. Removing a file does not remove the commit</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>Rotate one real secret in the first week</strong>, deliberately, in working hours,
+                  and watch what breaks. That single exercise converts rotation from a documented feature into a
+                  tested one and usually finds two services reading the value at startup and never again. Prefer
+                  short-lived dynamic credentials where the tool supports them &mdash; a credential that expires in
+                  an hour cannot be a secret nobody dares change.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
               <span class="topic-name">Software Supply Chain Security — SBOM <span class="acro-exp">(Software Bill of Materials)</span>, SLSA <span class="acro-exp">(Supply-chain Levels for Software Artifacts)</span> &amp; Sigstore</span>
@@ -2012,10 +2278,36 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Day two</div>
+                <div class="concept-title">Two Hundred Policies, All in Audit Mode</div>
+                <div class="concept-desc">
+                  Policy engines ship with an audit mode so you can see what would be blocked before you
+                  block it, which is correct and is also the trap. Enforcing one policy broke a deploy at 5pm
+                  once; after that everything new is written as audit-only,
+                  <strong class="c-amber">the violation count becomes a dashboard nobody acts on</strong>, and the
+                  control that was purchased is a report.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Two years in</th><th>The decision that prevents it</th></tr>
+                    <tr><td>Every policy in audit mode</td><td>Ship each policy with an <strong>enforcement date in the same PR</strong>. Audit is a migration window, not a setting</td></tr>
+                    <tr><td>Violation count only ever grows</td><td>Enforce for <em>new</em> resources immediately; grandfather existing ones with an explicit exception list</td></tr>
+                    <tr><td>Exceptions are undocumented</td><td>Exceptions expire. An exception with no owner and no end date is a policy you deleted slowly</td></tr>
+                    <tr><td>Policies duplicate admission defaults</td><td>Use Pod Security Admission for the standard cases and save the engine for rules only you have</td></tr>
+                    <tr><td>Rego nobody can read</td><td>Test files alongside every policy &mdash; both engines support unit tests, and a policy without one is untested code in the admission path</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The enforcement date is the whole discipline. It converts &ldquo;we will turn it on when
+                  things are cleaner&rdquo; &mdash; which never arrives, because the violation list grows faster
+                  than anyone cleans it &mdash; into a dated commitment somebody has to actively push back on.
+                  <strong>A policy engine that blocks nothing is an expensive linter.</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗄️</span>
               <span class="topic-name">Artifact &amp; Registry Management</span>
@@ -2766,6 +3058,529 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                     toil, and automating it is how organisations produce systems nobody can override. Some
                     work is also genuinely better left manual: rare, high-consequence and worth a human
                     pausing over — a production database restore does not need to be one click.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎲</span>
+              <span class="topic-name">Flaky Tests — A Reliability Problem in the Test Suite</span>
+              <span class="topic-badge">Quality</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">A Suite That Fails Randomly Teaches the Team to Re-Run</div>
+                <div class="concept-desc">
+                  The damage from flakiness is not the failed build. It is the habit that forms afterwards: once
+                  re-running is the reflex, <strong class="c-amber">a red result stops carrying
+                  information</strong>, and the suite has quietly become ceremony. From that point a genuine
+                  regression looks exactly like the noise everyone has learned to click through.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Stage</th><th>What the team does</th><th>What the suite is worth</th></tr>
+                    <tr><td>Rare flake</td><td>Re-runs, mildly annoyed</td><td>Still a signal</td></tr>
+                    <tr><td>Regular flake</td><td>Re-runs first, reads second</td><td>Degraded &mdash; failures are triaged by patience</td></tr>
+                    <tr><td>Automatic retries added</td><td>Nothing. The failure is invisible</td><td><strong>Zero for the flaky tests, and unknown for the rest</strong></td></tr>
+                    <tr><td>Suite ignored on red</td><td>Merges anyway, &ldquo;it's that test again&rdquo;</td><td>Negative &mdash; it costs time and provides no coverage</td></tr>
+                    <tr><td>Suite deleted or skipped</td><td>Honest, at least</td><td>Zero, and now visible</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The automatic-retry row is the one to resist, because it is the fix that feels responsible and
+                    is the one that removes the evidence. <strong>A test failing 1 in 20 times is describing a race
+                    your users hit 1 in 20 times</strong> &mdash; a retry silences the report and leaves the bug.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Measure It, Quarantine It, and Give It an Owner and a Date</div>
+                <div class="concept-desc">
+                  Flakiness is a reliability problem in a piece of software you own, and it responds to the same
+                  treatment as any other: measure the rate, isolate the failure, assign it, and set a deadline
+                  after which it is deleted rather than tolerated.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What it looks like</th></tr>
+                    <tr><td>Measure per test</td><td>Failure rate over the last 100 runs, on the same commit where possible. Without this it is anecdote</td></tr>
+                    <tr><td>Quarantine</td><td>Move to a non-blocking suite that still <em>runs</em> and still reports. Skipping hides the rate</td></tr>
+                    <tr><td>Owner and date</td><td>A name and a deadline. Both, or it stays quarantined forever</td></tr>
+                    <tr><td>Delete on expiry</td><td><strong>A quarantined test nobody fixed in a quarter is not protecting anything</strong></td></tr>
+                    <tr><td>Track the count as a metric</td><td>Quarantined tests, trending. Rising means the suite is decaying faster than it is repaired</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The date is the load-bearing part. <strong>Quarantine without an expiry is deletion with
+                    extra steps</strong> &mdash; the test stops protecting anything on the day it is quarantined,
+                    and the only difference is whether anyone admits it. A quarter is a reasonable window; what
+                    matters is that the window exists and something happens when it closes.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Diagnosis</div>
+                <div class="concept-title">Most Flakes Are One of Five Things</div>
+                <div class="concept-desc">
+                  Random-seeming failures are rarely random. Almost all of them come from a small set of causes,
+                  and identifying which one is usually faster than staring at the test.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Cause</th><th>Tell</th></tr>
+                    <tr><td>Timing / race</td><td>Fails more on slow or loaded machines. See <span class="xref">Frontend Testing — Unit, Component &amp; E2E</span> for the browser version</td></tr>
+                    <tr><td>Shared state between tests</td><td>Fails only when run in a particular order, or only in parallel</td></tr>
+                    <tr><td>Time and time zones</td><td>Fails at midnight, on the 1st, or during a DST change</td></tr>
+                    <tr><td>External dependency</td><td>Fails when someone else's service is slow. Stub it &mdash; their outage is not your test failure</td></tr>
+                    <tr><td>Non-deterministic data</td><td>Random fixtures, unordered collections, hash ordering. Seed it and log the seed</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The fastest reproduction technique is to <strong>make the machine worse</strong>: run the suite
+                    under CPU <span class="acro-exp">(Central Processing Unit)</span> contention, with a slower disk, in parallel, in a different order. A flake that will
+                    not reproduce locally is usually a timing assumption, and the local machine is too fast to
+                    violate it &mdash; which is the same finding the frontend cards reach from the other side.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧪</span>
+              <span class="topic-name">Test Data — The Constraint That Shapes Every Environment</span>
+              <span class="topic-badge">Quality</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Production Data Cannot Be Copied and Synthetic Data Does Not Find Real Bugs</div>
+                <div class="concept-desc">
+                  Every test-data strategy is a trade between three things that cannot all be maximised:
+                  <strong class="c-cyan">fidelity</strong> (does it behave like production),
+                  <strong class="c-cyan">privacy</strong> (may we hold it), and
+                  <strong class="c-cyan">refresh cost</strong> (how long to make a fresh one).
+                  <strong class="c-amber">Teams that never chose deliberately end up with all three at their
+                  worst</strong> &mdash; a stale copy of production with real personal data in it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Strategy</th><th>Fidelity</th><th>Privacy</th><th>Refresh cost</th></tr>
+                    <tr><td>Copy of production</td><td>Highest</td><td><strong>Unacceptable</strong> in most jurisdictions</td><td>High &mdash; and it ages immediately</td></tr>
+                    <tr><td>Masked / anonymised copy</td><td>Good, if masking preserves shape</td><td>Depends entirely on the masking being right</td><td>High, plus the masking pipeline to maintain</td></tr>
+                    <tr><td>Synthetic, generated</td><td>Poor for edge cases nobody imagined</td><td>Excellent</td><td>Low once built</td></tr>
+                    <tr><td>Subset with referential integrity</td><td>Good, and small enough to be fast</td><td>Still real data &mdash; masking still required</td><td>Medium, and the extraction is the hard part</td></tr>
+                    <tr><td>Per-test fixtures</td><td>Narrow by design</td><td>Excellent</td><td>Very low, and the most maintainable</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Read the table as a menu rather than a ranking: <strong>most teams need three of these at
+                    once</strong>, for different jobs. The failure is not picking the wrong row, it is never picking
+                    at all and inheriting the top row by default &mdash; which is the one combination that is both
+                    the most expensive and the least defensible.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Masking Is Harder Than It Looks, and Failing at It Is Silent</div>
+                <div class="concept-desc">
+                  &ldquo;We anonymise it&rdquo; usually means names and emails were replaced. That leaves
+                  <strong class="c-amber">re-identification through everything else</strong> &mdash; a postcode
+                  plus a date of birth plus a job title is frequently unique &mdash; and it also tends to destroy
+                  the properties that made the data useful for testing.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Masking mistake</th><th>Consequence</th></tr>
+                    <tr><td>Replacing values with random ones</td><td>Breaks referential integrity: the order now belongs to nobody</td></tr>
+                    <tr><td>Masking only direct identifiers</td><td>Quasi-identifiers remain, and combinations re-identify</td></tr>
+                    <tr><td>Preserving formats but not distributions</td><td>Every record looks average; performance testing becomes meaningless</td></tr>
+                    <tr><td>Masking once, then refreshing from prod</td><td>The refresh path skips the masking. This is how real data reaches staging</td></tr>
+                    <tr><td>Free-text fields</td><td><strong>The hardest case.</strong> Notes and descriptions contain anything, including identifiers</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The rule that prevents the fourth row is structural rather than procedural: <strong>the
+                    production credentials must not exist in the environment that receives the data</strong>. If
+                    refreshing staging requires an export step that a human runs with production access, someone
+                    will eventually run it without the masking. Make the pipeline the only path.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Combination That Works for Most Teams</div>
+                <div class="concept-desc">
+                  There is no single answer, but there is a common shape that resolves the trade sensibly, and it
+                  is layered rather than singular.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Layer</th><th>For what</th></tr>
+                    <tr><td><strong>Per-test fixtures</strong>, created and destroyed by the test</td><td>The overwhelming majority of tests. Fast, isolated, no shared state &mdash; which also removes a class of flakes</td></tr>
+                    <tr><td>A small seeded dataset in version control</td><td>Demos, local development, and the &ldquo;does the app start&rdquo; case</td></tr>
+                    <tr><td>Synthetic data at volume</td><td>Performance work, where distribution matters and content does not</td></tr>
+                    <tr><td>A masked subset, refreshed on a schedule</td><td>The pre-production environment where you need production's shape</td></tr>
+                    <tr><td>Production itself</td><td>Never for tests. For <em>observing</em>, with feature flags and canaries &mdash; a different technique</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The step most teams are missing is the first, and it is also the cheapest: <strong>a test that
+                    creates its own data is faster, more readable, and cannot be broken by another test</strong>.
+                    Shared fixtures feel efficient and are the single most common source of order-dependent
+                    failures &mdash; which is the flaky-test card's second row, arriving from the data side.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌱</span>
+              <span class="topic-name">Ephemeral Environments — One Per Change, and What It Costs</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Shared Staging Queue Is Often the Real Bottleneck</div>
+                <div class="concept-desc">
+                  Teams measure build time and deploy frequency and rarely measure the thing that actually delays
+                  delivery: <strong class="c-amber">waiting for the one staging environment</strong>. With a
+                  single shared system, changes queue, they get tested together, and when something breaks nobody
+                  knows which change did it &mdash; which is the batching problem from the CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> card, wearing an
+                  environment instead of a pipeline.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>With shared staging</th><th>With one environment per change</th></tr>
+                    <tr><td>Changes queue for a slot</td><td>No queue. Every pull request has its own URL <span class="acro-exp">(Uniform Resource Locator)</span></td></tr>
+                    <tr><td>Several changes tested together</td><td>One change, one environment, unambiguous attribution</td></tr>
+                    <tr><td>&ldquo;Who broke staging?&rdquo;</td><td>Nobody. Yours is yours</td></tr>
+                    <tr><td>Reviewers read a diff</td><td>Reviewers click a link and use the feature</td></tr>
+                    <tr><td>Environment drifts from production</td><td>Created from code each time, so drift has nowhere to accumulate</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Before building any of this, measure the thing it claims to fix: <strong>how long does a
+                    change wait for an environment, and how often are two changes tested together?</strong> On teams
+                    where the answers are &ldquo;minutes&rdquo; and &ldquo;rarely&rdquo;, ephemeral environments are
+                    a solution to a problem somebody else has.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Cost</div>
+                <div class="concept-title">It Requires Infrastructure and Data From Code, in Minutes</div>
+                <div class="concept-desc">
+                  This is the reason most teams cannot have it yet, and the reason it is worth wanting: the
+                  prerequisites are the same capabilities that make everything else recoverable.
+                  <strong class="c-cyan">If you cannot create the environment from code in minutes, you also
+                  cannot rebuild production from code in an afternoon</strong>, and the ephemeral-environment
+                  project is really that project with a nicer justification.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Prerequisite</th><th>Why it blocks</th></tr>
+                    <tr><td>Infrastructure defined as code</td><td>Manual environment setup cannot be done per pull request</td></tr>
+                    <tr><td>A seeded dataset that loads fast</td><td>See <span class="xref">Test Data — The Constraint That Shapes Every Environment</span>: a production restore is too slow and too sensitive</td></tr>
+                    <tr><td>Cheap compute, torn down reliably</td><td>Otherwise you are paying for hundreds of forgotten environments &mdash; the cost failure mode</td></tr>
+                    <tr><td>Stubbed or shared third parties</td><td>You cannot stand up a payment provider per PR. Decide which are stubbed</td></tr>
+                    <tr><td>DNS <span class="acro-exp">(Domain Name System)</span> and certificates automated</td><td>A per-branch hostname with a valid certificate, or nobody will use it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Every row is worth having whether or not the environments ever ship, which is the honest
+                    argument for starting: <strong>these are the capabilities that make production recoverable</strong>.
+                    The per-PR environment is the visible reward for work that was justified anyway.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Start Narrow, and Make Teardown the Reliable Part</div>
+                <div class="concept-desc">
+                  The failure mode is not technical difficulty, it is <strong class="c-amber">environments that
+                  are created reliably and destroyed unreliably</strong> &mdash; a cost that grows silently until
+                  someone reads the invoice.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Move</th><th>Why</th></tr>
+                    <tr><td>Tear down on PR close <em>and</em> on a timer</td><td>The close event is missed sometimes. The timer is the backstop that actually works</td></tr>
+                    <tr><td>Tag every resource with the PR number</td><td>So the orphans are findable, and so the cost is attributable</td></tr>
+                    <tr><td>Start with the frontend and one service</td><td>A full-estate-per-PR is a year of work; a useful subset is a fortnight</td></tr>
+                    <tr><td>Give it a predictable URL</td><td><code>pr-1234.dev.example.com</code>. If reviewers have to hunt for it, they stop</td></tr>
+                    <tr><td>Measure adoption, not availability</td><td>The metric is how many reviews used the environment, not how many were created</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The honest framing for a team that cannot do this yet: <strong>it is not a prerequisite for
+                    good delivery, it is a symptom of having already built the things that are</strong>. Chasing it
+                    directly usually stalls; building infrastructure-as-code and a fast seeded dataset for their own
+                    sake tends to deliver it as a by-product.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗃️</span>
+              <span class="topic-name">Monorepo vs Many Repos — The Trade Is About Coordination, Not Storage</span>
+              <span class="topic-badge">Platform</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Trade Is About Coordination, Not Storage</div>
+                <div class="concept-desc">
+                  The debate is usually conducted as though it were about repository size, and it is not.
+                  It is about <strong class="c-cyan">where you want a cross-cutting change to be hard</strong>.
+                  One repository makes such a change atomic and makes tooling a permanent job. Many repositories
+                  make each team independent and make a shared change a project with a spreadsheet.
+                  <strong class="c-amber">Pick the failure you can staff.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>Monorepo</th><th>Many repos</th></tr>
+                    <tr><td>Change an interface used by six services</td><td>One commit, one review, atomic</td><td>Six PRs, ordered, with a compatibility window</td></tr>
+                    <tr><td>A team wants a different toolchain</td><td>Friction &mdash; the shared tooling assumes one way</td><td>Trivial. This is the main appeal</td></tr>
+                    <tr><td>Build and CI</td><td>Needs a build system that understands the graph, or CI runs everything</td><td>Simple per repo, duplicated everywhere</td></tr>
+                    <tr><td>Finding who owns something</td><td>Easy &mdash; one <code>CODEOWNERS</code>, one search</td><td>Hard once there are more repos than people</td></tr>
+                    <tr><td>Dependency versions across the estate</td><td>One version, enforced. Upgrades are a whole-estate event</td><td>Many versions, drifting. Upgrades are per team, and never finish</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The row people underweight is the last one. <strong>Dependency drift across many repositories
+                    is the cost that never appears on a plan</strong> and never finishes being paid &mdash; it
+                    surfaces as a security fix that takes a quarter to land everywhere, long after the repository
+                    decision has been forgotten as its cause.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Each Choice Has One Investment That Makes It Work</div>
+                <div class="concept-desc">
+                  Both models are fine when the corresponding investment is made and both degrade badly when it
+                  is not. The failure is almost never the choice; it is picking one and skipping the thing it
+                  requires.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>The investment it requires</th><th>What happens without it</th></tr>
+                    <tr><td>Monorepo</td><td>A build system that builds only what changed (Bazel, Nx, Turborepo, or careful CI path filters)</td><td>CI runs the entire repository on every commit and the feedback loop dies</td></tr>
+                    <tr><td>Monorepo</td><td>Clear ownership boundaries in-tree</td><td>Everyone can change everything, and nobody reviews the parts they own</td></tr>
+                    <tr><td>Many repos</td><td>Templated repos and a way to propagate changes</td><td>Fifty subtly different CI configurations, and a security fix that takes a quarter</td></tr>
+                    <tr><td>Many repos</td><td>A dependency-update automation</td><td>Version drift, and the upgrade that is never finished</td></tr>
+                    <tr><td>Either</td><td>A written answer to &ldquo;where does new code go?&rdquo;</td><td>It goes wherever the author had checked out</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Read this as a checklist before committing to either model: <strong>if you cannot name who
+                    will own the investment, you are choosing the failure rather than the model</strong>. Both
+                    columns describe healthy organisations; both middle columns describe an unstaffed tooling
+                    function, which is the same outcome by two routes.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Middle That Most Teams Actually Want</div>
+                <div class="concept-desc">
+                  Almost nobody needs the extremes. The arrangement that fits most organisations is a small number
+                  of repositories aligned to <strong>deployment and ownership boundaries</strong> rather than to
+                  either purity.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Grouping</th><th>Rationale</th></tr>
+                    <tr><td>One repo per deployable unit that a single team owns</td><td>Independence where independence is real</td></tr>
+                    <tr><td>One repo for things that always change together</td><td>The atomicity argument, applied only where it pays</td></tr>
+                    <tr><td>A shared library repo, versioned and released</td><td>Not vendored, not copy-pasted. Versioned, so consumers move deliberately</td></tr>
+                    <tr><td>Infrastructure with the service it provisions</td><td>Splitting these is the split people most regret</td></tr>
+                    <tr><td>Nothing organised by technology</td><td><strong>A repo of &ldquo;all the frontends&rdquo; is an org chart from 2015</strong>, not a boundary</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The question that resolves most real cases: <strong>which changes do you want to be a single
+                    review?</strong> Things that must ship together belong together; things that ship on their own
+                    schedules do not. That is the same reasoning as
+                    <span class="xref">Monolith vs Microservices vs Modular Monolith</span> applied to source
+                    control rather than to runtime &mdash; and the two decisions do not have to match.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚡</span>
+              <span class="topic-name">Build Caches &amp; Incremental Builds — Where the Minutes Actually Go</span>
+              <span class="topic-badge">DevOps</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Measure Before Optimising, Because the Answer Is Rarely the Compile</div>
+                <div class="concept-desc">
+                  Nobody looks at a build until it hurts, and by then the instinct is to buy a bigger runner. The
+                  measurement almost always says something else: <strong class="c-amber">most of the minutes are
+                  dependency installation, container image pulls and test setup</strong>, not compilation &mdash;
+                  and those respond to caching rather than to hardware.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>Typical share</th><th>Responds to</th></tr>
+                    <tr><td>Checkout</td><td>Small, unless the repo has deep history</td><td>Shallow clone, sparse checkout</td></tr>
+                    <tr><td>Dependency install</td><td><strong>Often the largest</strong></td><td>A cache keyed on the lockfile hash</td></tr>
+                    <tr><td>Container image pull</td><td>Large on cold runners</td><td>Smaller base images, a registry in the same region</td></tr>
+                    <tr><td>Compile / bundle</td><td>The part everyone assumes dominates</td><td>Incremental builds, a remote build cache</td></tr>
+                    <tr><td>Tests</td><td>Grows fastest over time</td><td>Parallelism, and only running what changed</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Get the measurement from a <strong>cold cache and a warm one, on the machine CI actually
+                    uses</strong>. A local timing answers a different question &mdash; your laptop has the
+                    dependencies already, which is precisely the step that dominates in CI.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Cache Key Is the Whole Design</div>
+                <div class="concept-desc">
+                  A cache that never hits is worse than no cache: it pays the upload cost on every run and
+                  delivers nothing. <strong class="c-cyan">Nearly every caching failure is a key that is either
+                  too specific or too loose</strong>, and both are invisible unless somebody reads the hit rate.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Key</th><th>Behaviour</th></tr>
+                    <tr><td>Hash of the lockfile</td><td><strong>Correct.</strong> Changes exactly when dependencies change</td></tr>
+                    <tr><td>Branch name</td><td>Too specific &mdash; a new branch always misses. Very common, and it looks reasonable</td></tr>
+                    <tr><td>Commit SHA <span class="acro-exp">(Secure Hash Algorithm)</span></td><td>Never hits. Every commit is a new key</td></tr>
+                    <tr><td>A constant string</td><td>Too loose &mdash; the cache is never invalidated and eventually serves stale artefacts</td></tr>
+                    <tr><td>Lockfile hash with an OS <span class="acro-exp">(Operating System)</span> and version prefix</td><td>Correct for a matrix, and prevents a macOS cache being restored on Linux</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The number to look at is <strong>cache hit rate on the default branch</strong>, and most teams
+                    who check it for the first time find a step at zero. Log it: a build that prints
+                    &ldquo;cache miss&rdquo; loudly gets fixed, while one that silently re-downloads the world does
+                    not.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Incremental Builds, and the Reason People Distrust Them</div>
+                <div class="concept-desc">
+                  Incremental compilation and remote build caches can be transformative &mdash; and the reason
+                  teams turn them off is that <strong class="c-amber">an incorrect cache produces a build that is
+                  wrong rather than slow</strong>, which is a far worse failure. Correctness depends on the build
+                  system knowing every input.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Requirement</th><th>Why</th></tr>
+                    <tr><td>Hermetic inputs</td><td>If a step reads something undeclared &mdash; the clock, the environment, a network resource &mdash; the cache key is a lie</td></tr>
+                    <tr><td>Deterministic outputs</td><td>Timestamps and embedded build numbers defeat caching. Strip or normalise them</td></tr>
+                    <tr><td>A way to bypass</td><td>One flag for a clean build, so &ldquo;is it the cache?&rdquo; takes a minute to answer rather than an argument</td></tr>
+                    <tr><td>Cache scoped to the branch, promoted on merge</td><td>A poisoned cache on a feature branch should not reach the default branch</td></tr>
+                    <tr><td>Determinism verified</td><td>Build twice, compare outputs. This site does exactly that in <code>check_determinism.py</code></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The metric worth putting on a dashboard is not build duration but <strong>time from commit to a
+                    deployable signal</strong>, because it survives changes in team size and points at the real
+                    cost. Everything expensive in a build is also everything slow, which means the invoice argument
+                    and the developer-experience argument recommend the same work &mdash; and that is the version
+                    that gets scheduled.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📝</span>
+              <span class="topic-name">Release Notes &amp; Changelogs as an Interface</span>
+              <span class="topic-badge">Delivery</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">A Changelog Is the API <span class="acro-exp">(Application Programming Interface)</span> of Your Release Process</div>
+                <div class="concept-desc">
+                  It is read by more people than any other artefact the team produces: support answering a
+                  ticket, security assessing whether they need to patch, a customer deciding whether to upgrade,
+                  and the on-call engineer working out what changed before the incident.
+                  <strong class="c-amber">Generated from commit messages it is noise</strong> &mdash; four hundred
+                  lines of `fix: typo` &mdash; and everyone learns to skip it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Reader</th><th>The question they arrive with</th></tr>
+                    <tr><td>Support</td><td>&ldquo;Is the thing this customer is reporting fixed?&rdquo;</td></tr>
+                    <tr><td>Security</td><td>&ldquo;Does this release contain a fix I need, and how urgently?&rdquo;</td></tr>
+                    <tr><td>A customer</td><td>&ldquo;Does upgrading break anything I depend on?&rdquo;</td></tr>
+                    <tr><td>On-call</td><td>&ldquo;What went out in the hour before this started?&rdquo;</td></tr>
+                    <tr><td>The team next year</td><td>&ldquo;When did this behaviour change, and why?&rdquo;</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Written Per User-Visible Change, Not Per Commit</div>
+                <div class="concept-desc">
+                  The unit is <strong class="c-cyan">a change somebody outside the team can notice</strong>. Most
+                  commits are not that, and including them is what destroys the document. The cheap way to make
+                  this sustainable is to write the note when the change is made rather than at release time.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Practice</th><th>Effect</th></tr>
+                    <tr><td>A changelog fragment in the PR</td><td>Written by the person who knows, when they know it. Tools like <code>towncrier</code> or a <code>changelog.d/</code> directory assemble them</td></tr>
+                    <tr><td>Categories: added, changed, fixed, <strong>removed</strong>, security</td><td>Keep a Changelog's shape. <em>Removed</em> and <em>security</em> are the two people scan for</td></tr>
+                    <tr><td>Write for the reader, not the repo</td><td>&ldquo;Exports over 200 MB now stream&rdquo;, not &ldquo;refactor ExportService&rdquo;</td></tr>
+                    <tr><td>Link the issue, not the commit</td><td>The issue has the context; the commit has the diff</td></tr>
+                    <tr><td>Explicitly mark breaking changes</td><td>At the top, with the migration. This is the only part some readers read</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The first row is what makes the rest sustainable. <strong>A fragment written in the pull
+                    request costs thirty seconds from the person who knows</strong>; the same note reconstructed at
+                    release time costs an hour from somebody who does not, which is why it stops happening after
+                    two releases.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Versioning Is a Promise, and Dates Are Not One</div>
+                <div class="concept-desc">
+                  The version number is the other half of the interface, and choosing a scheme is choosing what
+                  you are promising. <strong>SemVer is a commitment about compatibility</strong>; calendar
+                  versioning is a statement that there is no such commitment &mdash; which is honest, and should
+                  be stated deliberately rather than arrived at.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Scheme</th><th>What it promises</th></tr>
+                    <tr><td>SemVer (<code>2.4.1</code>)</td><td>Major means breaking, minor means additive, patch means neither. <strong>Only meaningful if the team honours it</strong></td></tr>
+                    <tr><td>CalVer (<code>2026.08</code>)</td><td>No compatibility promise; the number tells you when. Right for continuously delivered products</td></tr>
+                    <tr><td>Sequential (<code>build 4471</code>)</td><td>Ordering and nothing else. Fine internally, unhelpful to a customer</td></tr>
+                    <tr><td>Git SHA <span class="acro-exp">(Secure Hash Algorithm)</span></td><td>Precise, unreadable, and impossible to compare by eye. Include it <em>as well</em>, never instead</td></tr>
+                    <tr><td>No version at all</td><td>The default for many web products, and it makes &ldquo;which version are you on?&rdquo; unanswerable during an incident</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The habit that pays regardless of scheme: <strong>make the running version visible from the
+                    product itself</strong> &mdash; a footer, a health endpoint, a response header. During an
+                    incident the first question is always what is deployed, and an estate that cannot answer it in
+                    ten seconds spends the first twenty minutes finding out.
                   </div>
                 </div>
               </div>

@@ -3805,4 +3805,453 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
   </div>
 </div>
 
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗳️</span>
+              <span class="topic-name">Failover Clustering — Quorum Is the Whole Subject</span>
+              <span class="topic-badge">High Availability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Clusters Do Not Fail Because a Node Dies. They Fail Because the Survivors Cannot Agree That It Did.</div>
+                <div class="concept-desc">
+                  The failure everyone designs for &mdash; a node stops &mdash; is the easy one. The failure that
+                  actually takes clusters down is <strong class="c-amber">two halves that can each see themselves
+                  and not each other</strong>, both concluding they are the survivors, and both mounting the
+                  shared storage. Quorum exists entirely to make that impossible, by ensuring at most one partition
+                  can ever hold a majority.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>What the cluster must conclude</th></tr>
+                    <tr><td>A node crashes</td><td>Easy. The rest hold a majority and carry on</td></tr>
+                    <tr><td>A network link between racks fails</td><td><strong>Hard.</strong> Both sides are healthy and each sees half the cluster</td></tr>
+                    <tr><td>A node is alive but unreachable</td><td>Indistinguishable from dead, from the outside. This is why fencing exists</td></tr>
+                    <tr><td>Both halves decide they are authoritative</td><td><strong>Split-brain.</strong> Two writers on one dataset — the worst outcome available</td></tr>
+                    <tr><td>No majority anywhere</td><td>Correct behaviour is to <em>stop</em>. Unavailable beats corrupt</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The line worth saying to anyone specifying a cluster: <strong>a two-node cluster with no witness
+                    is a coin toss</strong>. Each node holds exactly half the votes, neither can ever achieve a
+                    majority alone, and the design has no correct answer to a link failure. Two nodes is a common
+                    budget outcome and it is not a quorum.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Witnesses, Votes, and the Arithmetic</div>
+                <div class="concept-desc">
+                  Quorum is arithmetic, and the arrangements exist to make the total odd or to break ties from
+                  somewhere that cannot be on either side of the partition.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Arrangement</th><th>Quorum behaviour</th></tr>
+                    <tr><td>3 nodes</td><td>Tolerates 1 failure. <strong>The smallest genuinely sane cluster</strong></td></tr>
+                    <tr><td>2 nodes + a witness</td><td>The witness is the third vote. It must be somewhere neither node's failure takes with it</td></tr>
+                    <tr><td>File-share witness</td><td>A share on a third site or an independent host. Cheap, and the usual answer</td></tr>
+                    <tr><td>Cloud witness</td><td>A storage account or blob. Independent of both data centres by construction</td></tr>
+                    <tr><td>4 nodes</td><td>Tolerates 1, not 2 — an even count buys nothing over 3. Add a witness or a fifth node</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The witness placement is the part people get wrong: <strong>a witness in the same rack, on the
+                    same power feed, or behind the same link as one of the nodes is not a third opinion</strong>.
+                    It has to fail independently of both, which for a two-site cluster means a third site or a cloud
+                    service &mdash; and that is the whole reason cloud witnesses became the default answer.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Fencing, and Why the Cluster Sometimes Shoots a Node</div>
+                <div class="concept-desc">
+                  Quorum decides who <em>should</em> be running. Fencing makes sure the loser actually
+                  <em>stops</em>. Without it, a node that was merely unreachable can come back holding stale locks
+                  and write to storage the survivors have already claimed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mechanism</th><th>What it does</th></tr>
+                    <tr><td>STONITH / power fencing</td><td>Cuts power via IPMI or a switched PDU <span class="acro-exp">(Power Distribution Unit)</span>. Crude, and unambiguous</td></tr>
+                    <tr><td>Storage fencing (SCSI reservations)</td><td>Revokes the loser's access to the disk. It may still be running; it cannot write</td></tr>
+                    <tr><td>Network fencing</td><td>Ports disabled on the switch. Depends on the switch being reachable, which it may not be</td></tr>
+                    <tr><td>No fencing</td><td><strong>The cluster is trusting a node it cannot talk to.</strong> This is how corruption happens</td></tr>
+                    <tr><td>Fencing that needs the failed node's cooperation</td><td>Not fencing. If it were cooperating there would be no problem</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two operational habits. <strong>Test the failure you are afraid of, not the one that is easy to
+                    test</strong> &mdash; pulling a power cable proves little, while severing the inter-site link
+                    proves everything. And <strong>write down what the cluster should do when quorum is lost
+                    entirely</strong>, because the correct answer is usually &ldquo;stop and page a human&rdquo;, and
+                    a team that has not agreed that in advance will override it at 3am and cause the split-brain the
+                    design prevented.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏗️</span>
+              <span class="topic-name">The Rack, the Power &amp; the Cooling</span>
+              <span class="topic-badge">Data Centre</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Physical Constraints That Software People Meet Exactly Once</div>
+                <div class="concept-desc">
+                  Most of this is invisible until it is violated, and then it is expensive. Racks, power and
+                  cooling are not background detail: they are hard limits that decide what can be installed, and
+                  <strong class="c-amber">every one of them has a failure mode where the equipment works fine
+                  until the day it does not</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Constraint</th><th>How it bites</th></tr>
+                    <tr><td>Rack units and depth</td><td>42U is standard; depth is not. A 900mm server does not fit a 600mm rack, and nobody measures until delivery</td></tr>
+                    <tr><td>Floor loading</td><td>A full rack is 700&ndash;1,200 kg. <strong>Older buildings and raised floors have real limits</strong>, expressed per square metre</td></tr>
+                    <tr><td>Power per rack</td><td>Circuits are rated in amps. Two 16A feeds is roughly 7kW total, not per feed &mdash; and modern kit is dense</td></tr>
+                    <tr><td>Cooling capacity</td><td>Every watt in is a watt of heat out. A rack the power can supply may exceed what the room can cool</td></tr>
+                    <tr><td>Weight distribution</td><td>Heavy at the bottom. A top-heavy rack on castors is a genuine hazard while being moved</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The order these are discovered in is almost always wrong: <strong>space is checked, then power,
+                    then cooling, then floor loading &mdash; which is the reverse of how hard they are to fix</strong>.
+                    Adding a rack is easy; adding a circuit is a project; adding cooling capacity is a building
+                    works programme. Ask about the last two first.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Dual Feeds Are Pointless if the Device Has One Supply</div>
+                <div class="concept-desc">
+                  Redundant power is the most commonly claimed and most commonly broken piece of resilience in a
+                  rack, and the break is nearly always the same:
+                  <strong class="c-cyan">redundancy has to be end to end</strong>. Two feeds, two PDUs <span class="acro-exp">(Power Distribution Unit)</span>, and then a switch with one power supply
+                  plugged into one of them.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What to check</th><th>Why</th></tr>
+                    <tr><td>Every device's supply count</td><td>Single-supply devices need a transfer switch, or they are a single point of failure</td></tr>
+                    <tr><td>Which PDU each cable is in</td><td>Both cords of a dual-supply server in the <em>same</em> PDU is common and useless</td></tr>
+                    <tr><td>Feed capacity when one fails</td><td><strong>Each feed must carry the whole load alone.</strong> Two feeds at 60% each means a failure trips the survivor</td></tr>
+                    <tr><td>UPS <span class="acro-exp">(Uninterruptible Power Supply)</span> runtime, measured</td><td>Batteries age. The runtime on the label is for new cells at 25&deg;C</td></tr>
+                    <tr><td>Generator start and transfer time</td><td>The gap the UPS has to cover. Tested under load, or it is a hope</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The A/B discipline is simple to state and needs enforcing at install time, because retrofitting
+                    it means unplugging live equipment: <strong>every dual-supply device takes one cord from feed A
+                    and one from feed B, and every single-supply device is documented as a known single point of
+                    failure</strong>. The second half matters as much as the first &mdash; an undocumented one is
+                    discovered during the outage.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Hot Air Comes Back Unless You Stop It</div>
+                <div class="concept-desc">
+                  Cooling failures in a well-provisioned room are usually not about capacity. They are about air
+                  taking the shortest path, which is frequently a path straight back to the intake it just left.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Problem</th><th>Fix</th></tr>
+                    <tr><td>Recirculation through empty rack slots</td><td><strong>Blanking panels.</strong> The cheapest cooling improvement that exists, and the most often skipped</td></tr>
+                    <tr><td>Mixed intake directions</td><td>Hot/cold aisle containment &mdash; all intakes facing the cold aisle, all exhausts the hot</td></tr>
+                    <tr><td>Cable bundles blocking exhaust</td><td>Route to the sides. A dense bundle behind a server is a wall</td></tr>
+                    <tr><td>Under-floor obstruction</td><td>Old cabling under a raised floor stops the air that is supposed to arrive</td></tr>
+                    <tr><td>Perforated tiles in the wrong aisle</td><td>Cold air delivered to the hot aisle cools nothing and costs the same</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The measurement that settles arguments is <strong>intake temperature at the top of the
+                    rack</strong>, not room temperature. Rooms are cool at head height and hot at 2 metres; the
+                    equipment cares about what reaches its own intake, and a rack that is fine at the bottom and
+                    throttling at the top is the standard picture in a room nobody has contained. The efficiency
+                    version of this argument &mdash; what all that cooling costs, and what it emits &mdash; is
+                    <span class="xref">Green IT — Power, Cooling, Hardware Lifespan &amp; the Honest Carbon Maths</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏷️</span>
+              <span class="topic-name">Labelling &amp; Asset Tagging — The Boring Discipline That Pays Out at 3 a.m.</span>
+              <span class="topic-badge">Operations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Cost Is Paid Now and the Benefit Lands at 3 a.m.</div>
+                <div class="concept-desc">
+                  Labelling is the clearest example of a discipline whose economics are misjudged because the two
+                  sides land at different times. Labelling a rack costs an afternoon while everything is calm;
+                  <strong class="c-cyan">not labelling it costs twenty minutes of an outage</strong>, at the
+                  moment when twenty minutes is the most expensive commodity in the building &mdash; and it costs
+                  that repeatedly, for years.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Moment</th><th>Unlabelled</th><th>Labelled</th></tr>
+                    <tr><td>Routine change</td><td>Trace the cable by hand, or unplug and see what breaks</td><td>Read the label</td></tr>
+                    <tr><td>Emergency, 3 a.m.</td><td><strong>Someone unplugs the wrong thing.</strong> This is the actual risk</td><td>Read the label</td></tr>
+                    <tr><td>New starter's first week</td><td>Weeks of tribal knowledge transfer</td><td>The room documents itself</td></tr>
+                    <tr><td>Auditor asks what this is</td><td>An afternoon of reconstruction</td><td>A photograph</td></tr>
+                    <tr><td>Decommissioning</td><td>Nobody dares remove anything</td><td>Remove what the label says</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The argument that gets it funded is not tidiness, it is the second row.
+                    <strong>The most common cause of a second outage during a first one is somebody acting on a
+                    guess about what a cable does</strong> &mdash; and a label is the cheapest control against that
+                    which exists.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What to Label, and What to Put on the Label</div>
+                <div class="concept-desc">
+                  Over-labelling fails as surely as under-labelling, because labels that carry information which
+                  changes are wrong within a year and then actively mislead.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Label</th><th>Put on it</th><th>Not on it</th></tr>
+                    <tr><td>Both ends of every cable</td><td>Source device + port, destination device + port</td><td>The service it carries &mdash; that changes</td></tr>
+                    <tr><td>The front and back of each device</td><td>Hostname and asset tag</td><td>The IP <span class="acro-exp">(Internet Protocol)</span> address, unless it is genuinely static and documented</td></tr>
+                    <tr><td>Rack front</td><td>Rack ID matching the floor plan</td><td>A person's name</td></tr>
+                    <tr><td>Power cords</td><td>Which PDU <span class="acro-exp">(Power Distribution Unit)</span> and outlet</td><td>Anything about the workload</td></tr>
+                    <tr><td>Patch panel ports</td><td>The port on the far end</td><td>Whatever was plugged in that day</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The rule that keeps labels honest over time: <strong>label the physical fact, not the logical
+                    role</strong>. A cable's endpoints do not change while the cable is in place; the service it
+                    carries changes every migration. A label that says <em>sw-core-01 Gi1/0/12</em> is true for the
+                    life of the cable, and one that says <em>&ldquo;payroll&rdquo;</em> is a lie waiting for the next
+                    project.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Asset Tags Are the Link Between the Room and the Database</div>
+                <div class="concept-desc">
+                  The physical label only pays fully when it matches something. An asset tag is the join key
+                  between a device you can touch and the record in an inventory &mdash; which is what makes
+                  <span class="xref">Asset Discovery — You Cannot Protect What Nobody Listed</span> resolvable in
+                  a data centre rather than only on the network.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Practice</th><th>Why</th></tr>
+                    <tr><td>Tag at receipt, before installation</td><td>The one moment every device passes through, and the only one that catches everything</td></tr>
+                    <tr><td>A tag that survives</td><td>Printed labels fall off warm equipment. Use proper asset labels rated for the temperature</td></tr>
+                    <tr><td>The tag is the primary key</td><td>Serial numbers vary by vendor format; a tag you control does not</td></tr>
+                    <tr><td>Photograph the rack after any change</td><td>Ten seconds, and it settles most later questions without a site visit</td></tr>
+                    <tr><td>Reconcile the room against the database quarterly</td><td><strong>The reconciliation is the control.</strong> A tag with no record, or a record with no tag, is a finding</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The quarterly walk is the part that turns this from documentation into a control, and it is
+                    worth doing even badly: <strong>a rack-by-rack comparison of tags against the inventory finds
+                    decommissioned-but-still-powered hosts, undocumented equipment somebody installed, and records
+                    for devices that left the building</strong> &mdash; all three of which are invisible from a
+                    network scan.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📼</span>
+              <span class="topic-name">Tape, Archive &amp; the Restore Nobody Has Tested</span>
+              <span class="topic-badge">Backup</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Tape Did Not Die. It Became the Offline Copy.</div>
+                <div class="concept-desc">
+                  Tape's decline was widely announced and then reversed by ransomware, for a reason that has
+                  nothing to do with cost per terabyte: <strong class="c-cyan">a tape on a shelf is not reachable
+                  from the network</strong>. Every online backup, however well replicated, is reachable by
+                  credentials an attacker may hold &mdash; and the whole point of the offline copy is that no
+                  credential reaches it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>Tape</th><th>Disk / cloud</th></tr>
+                    <tr><td>Offline by default</td><td><strong>Yes, once ejected.</strong> This is the whole argument</td><td>No &mdash; unless made immutable deliberately</td></tr>
+                    <tr><td>Cost per TB at scale</td><td>Low, and lower still for cold archive</td><td>Higher, though the gap narrows with archive tiers</td></tr>
+                    <tr><td>Restore latency</td><td>Minutes to hours &mdash; find, load, seek</td><td>Seconds to minutes</td></tr>
+                    <tr><td>Sequential throughput</td><td>Excellent. A modern drive is faster than most networks</td><td>Depends on the tier</td></tr>
+                    <tr><td>Random access</td><td>Effectively none. It is a stream</td><td>Fine</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The modern answer is not usually tape <em>or</em> cloud, it is
+                    <strong>whichever copy is genuinely out of reach of your production credentials</strong>. Object
+                    lock, an immutable archive tier, or a separate account with its own identity provider achieves
+                    the same property without a drive &mdash; and a tape that never leaves an autoloader connected
+                    to the backup server has lost the property it was bought for.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Three Questions, and the Last One Strands More Archives Than the First Two</div>
+                <div class="concept-desc">
+                  Archive planning asks about capacity and media life, and the failure that actually loses data is
+                  usually neither.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>The honest answer</th></tr>
+                    <tr><td>How long does the media last?</td><td>LTO is rated 15&ndash;30 years in proper conditions. Rarely the binding constraint</td></tr>
+                    <tr><td>How fast can we restore?</td><td>Compute it: total size &divide; drive throughput, plus load and seek per tape. <strong>A 200 TB restore on one drive is days</strong></td></tr>
+                    <tr><td><strong>Will there be a drive that can read it?</strong></td><td><strong>The one that strands archives.</strong> LTO reads two generations back and writes one. An LTO-6 tape is unreadable in an LTO-9 drive</td></tr>
+                    <tr><td>Will the software still exist?</td><td>Proprietary backup formats need the software as well as the drive. Keep a documented restore path</td></tr>
+                    <tr><td>Is the key still available?</td><td>An encrypted archive with a lost key is a landfill item. Escrow it separately, and test that too</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    For anything with a retention period longer than a hardware generation, the plan needs a
+                    <strong>migration schedule, not just a retention schedule</strong> — a date by which the archive
+                    is re-written onto current media. Retention policies routinely specify seven years and never
+                    mention that the drive estate will turn over twice in that window.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Restore Nobody Has Tested Is Not a Backup</div>
+                <div class="concept-desc">
+                  Every organisation has backups. A much smaller number have restores, and the difference only
+                  becomes visible on the day it matters. <strong class="c-amber">A restore that has never been
+                  performed is a hypothesis</strong>, and it usually fails on something procedural rather than
+                  something technical.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What a test restore finds</th><th>How often it is the cause</th></tr>
+                    <tr><td>The backup was not running on that host</td><td>Extremely common. Nobody watches a job that never alerts</td></tr>
+                    <tr><td>It ran and captured the wrong path</td><td>Common. The data moved and the job did not</td></tr>
+                    <tr><td>The restore takes far longer than the RTO <span class="acro-exp">(Recovery Time Objective)</span> assumed</td><td>Very common, and it is arithmetic nobody did</td></tr>
+                    <tr><td>No drive, no software, or no key</td><td>Rare and terminal &mdash; see the previous card</td></tr>
+                    <tr><td>Nobody present knows the procedure</td><td>Common at 3 a.m., and fixed only by rehearsal</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Make it a <strong>scheduled, dated exercise with a written result</strong>: restore one real
+                    system to a scratch environment, time it, and record what broke. Quarterly is enough. The
+                    finding is almost never &ldquo;the tape was bad&rdquo; &mdash; it is that the RTO on the
+                    continuity plan was an aspiration, and the exercise is the only thing that converts it into a
+                    measured number.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧹</span>
+              <span class="topic-name">Decommissioning at Estate Scale</span>
+              <span class="topic-badge">Lifecycle</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Existing Card Covers One Server. This Is the Programme.</div>
+                <div class="concept-desc">
+                  Decommissioning a known server is a checklist. Decommissioning at estate scale is a different
+                  problem, because the hard part is not the removal &mdash; it is
+                  <strong class="c-amber">finding the things nobody owns</strong>, and then discovering what still
+                  points at them after they are gone.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Stage</th><th>The real difficulty</th></tr>
+                    <tr><td>Finding candidates</td><td>Nobody volunteers a system. Low utilisation, no logins, no patches, no owner in the CMDB <span class="acro-exp">(Configuration Management Database)</span></td></tr>
+                    <tr><td>Establishing ownership</td><td><strong>The longest step.</strong> The named owner left in 2022 and their team was reorganised</td></tr>
+                    <tr><td>Notice period</td><td>Long enough for a real objection, short enough to finish. Four to six weeks is typical</td></tr>
+                    <tr><td>Powering off, not removing</td><td>Leave it off and recoverable for a defined window. This is the step that makes the programme safe</td></tr>
+                    <tr><td>Removal and disposal</td><td>Media sanitisation, asset record, licence reclaim &mdash; and the record that it happened</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Run it as a <strong>standing programme with a monthly cohort</strong> rather than an annual
+                    project. A cohort of ten systems a month finishes; a project to clear four hundred stalls at
+                    ownership, which is the second row, and never restarts — and in the meantime the estate has
+                    grown again.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Scream Test, Done Properly</div>
+                <div class="concept-desc">
+                  The standard technique for an unowned system is to switch it off and wait for someone to
+                  complain. It works, and it is only responsible when it is bounded: <strong class="c-cyan">a
+                  scream test without a rollback plan and a notice period is an outage you scheduled without
+                  telling anyone</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Element</th><th>Why it is required</th></tr>
+                    <tr><td>Notice, broadcast wider than you think necessary</td><td>The user is frequently in a department you would not have asked</td></tr>
+                    <tr><td>A firewall block first, then power off</td><td>Reversible in seconds, and it produces the same scream</td></tr>
+                    <tr><td>Off, not deleted, for 30&ndash;90 days</td><td>The objection often arrives at month-end, quarter-end or year-end</td></tr>
+                    <tr><td>A named contact on the notice</td><td>A scream needs somewhere to go, or it goes to a ticket queue and is lost</td></tr>
+                    <tr><td>Never during a change freeze or a peak</td><td>The one variable entirely within your control</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The refinement that avoids most incidents is the second row. <strong>Block the traffic before
+                    removing the power</strong>: it exercises the same &ldquo;does anyone need this&rdquo; question,
+                    it is undone by deleting a rule, and it leaves the system available for forensic questions about
+                    what it was doing &mdash; which is precisely what a scream test destroys when it starts with the
+                    power button.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">What Outlives the Host</div>
+                <div class="concept-desc">
+                  The server is the easy part. The residue is what causes incidents months later, and almost all
+                  of it lives in systems owned by other teams.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Residue</th><th>Consequence if left</th></tr>
+                    <tr><td>DNS <span class="acro-exp">(Domain Name System)</span> records</td><td><strong>A dangling record pointing at a reclaimed IP <span class="acro-exp">(Internet Protocol)</span> is a subdomain takeover</strong> &mdash; especially in cloud, where the address is reissued to a stranger</td></tr>
+                    <tr><td>Firewall rules and NAT <span class="acro-exp">(Network Address Translation)</span> entries</td><td>Permanent holes accumulating in the ruleset, each one now pointing nowhere or somewhere new</td></tr>
+                    <tr><td>Monitoring checks and dashboards</td><td>Alerts nobody can resolve, which trains the team to ignore alerts</td></tr>
+                    <tr><td>Backup jobs</td><td>Failing nightly forever, or worse, succeeding on nothing</td></tr>
+                    <tr><td>Credentials and service accounts</td><td>The account outlives its purpose and nobody rotates it. See <span class="xref">Offboarding as a Security Control — The Checklist and Its Failure Modes</span></td></tr>
+                    <tr><td>Certificates</td><td>Issued for a name that now resolves elsewhere</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The first row deserves separating out because it is a security finding rather than untidiness.
+                    <strong>A CNAME <span class="acro-exp">(Canonical Name)</span> left pointing at a decommissioned cloud resource can be claimed by whoever next
+                    allocates that name</strong>, and the result is an attacker serving content from your domain,
+                    with a valid certificate they obtained legitimately. Removing DNS should be the <em>first</em>
+                    step of a cloud decommission, not the last.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body infra -->

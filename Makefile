@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test a11y og visual all fmt acronyms stamp clean help
+.PHONY: build check test a11y og visual all fmt acronyms stamp census clean help search
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -38,7 +38,9 @@ check:
 	$(PY) tools/fix_topic_names.py --check
 	$(PY) tools/annotate_acronyms.py --check
 	$(PY) tools/check_renames.py
+	$(PY) tools/check_contradictions.py --self-test
 	$(PY) tools/check_contradictions.py --strict
+	$(PY) tools/check_contradictions.py --pairs --strict
 	$(PY) tools/check_volatility.py --self-test
 	$(PY) tools/check_volatility.py
 	$(PY) tools/suggest_related.py --check
@@ -47,9 +49,20 @@ check:
 	$(PY) tools/check_determinism.py
 	$(PY) tools/page_budget.py
 
+## census: the three reports that measure content rather than gate it
+census:
+	@echo "── depth ──"       && $(PY) tools/depth_report.py
+	@echo "── the floor ──"   && $(PY) tools/depth_report.py --bottom 12
+	@echo "── duplicates ──"  && $(PY) tools/near_duplicates.py
+	@echo "── orphans ──"     && $(PY) tools/orphan_report.py
+
 ## test: drive the built page in a real browser (needs playwright + chromium)
 test:
 	$(NODE) tools/smoke_test.mjs
+
+## search: does searching for a thing find it (plan.md Phase 10 T5)
+search:
+	$(NODE) tools/search_test.mjs
 
 ## a11y: axe-core over the shell, a domain and a dialog, in both themes
 a11y:

@@ -159,6 +159,98 @@ def assign_topic_ids(body, used):
     return "".join(out), ids
 
 
+CHARS_PER_MINUTE = 1000        # ~200 words a minute at ~5 characters a word
+_CHEV_RE = re.compile(r'(\s*)<span class="topic-chev">')
+
+
+def stamp_reading_time(body):
+    """Stamp `data-read` on every topic and render it beside the badge.
+
+    plan.md Phase 10 T6. Cards on this site run from 900 to 15,000 characters
+    with no outward sign of which is which, so a reader deciding whether to
+    open one is guessing. Derived at build time from the plain-text length,
+    because the length is already known here and nothing about it needs to be
+    computed in the browser.
+
+    **The caveat the plan asked for, kept next to the code:** this is a proxy
+    for *length*, not for *difficulty*. A dense 2,000-character card marked
+    "2 min" is a small lie, and the honest defence is that the alternative —
+    no signal at all — is a larger one. T7's `data-level` is the axis that
+    would carry difficulty; this is not it.
+    """
+    starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
+    out, prev, stamped = [], 0, 0
+    for n, start in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(body)
+        block = body[start:end]
+        minutes = max(1, round(len(_TAG_RE.sub("", block)) / CHARS_PER_MINUTE))
+        # At the *end* of the open tag, not straight after `class="topic"`.
+        # The first version inserted here and pushed `id` rightwards, which
+        # silently broke orphan_report.py's `<div class="topic" id="..."`
+        # regex — it reported "0 of 0 topics" and read like a clean result.
+        cut = start + block.index(">") + 1
+        chev = _CHEV_RE.search(block)
+        out.append(body[prev:cut - 1])
+        out.append(f' data-read="{minutes}"')
+        out.append(">")
+        if chev:
+            # Before the chevron, after the badge: the chevron is the affordance
+            # and stays rightmost.
+            at = start + chev.start()
+            out.append(body[cut:at])
+            out.append(f'{chev.group(1)}<span class="topic-read" '
+                       f'title="Rough reading time, estimated from length">'
+                       f'{minutes} min</span>')
+            prev = start + chev.start()
+            stamped += 1
+        else:
+            prev = cut
+    out.append(body[prev:])
+    return "".join(out), stamped
+
+
+_BADGE_RE = re.compile(r'<span class="topic-badge">(.*?)</span>', re.S)
+_BEGINNER_RE = re.compile(r"\bbeginner\b", re.I)
+_ADVANCED_RE = re.compile(r"\b(advanced|expert|deep)\b", re.I)
+
+
+def stamp_level(body):
+    """Stamp `data-level` on every topic, read from its badge.
+
+    plan.md Phase 10 T7. The site teaches at two levels and the only outward
+    sign is a badge that sometimes reads *Beginner*, so the beginner layer is
+    discoverable by accident rather than filterable.
+
+    **The rule is deliberately mechanical and it does not guess.** A badge that
+    says Beginner means beginner; one that says Advanced, Expert or Deep means
+    advanced; everything else is `core`, which is a statement that the card is
+    *not marked* as either — not a claim that it sits in the middle. T7 as
+    written suggested stamping the rest "by hand", and hand-labelling 1,300
+    cards' difficulty in one pass would produce a confident number nobody had
+    actually assessed. Three honest values beat three invented ones.
+    """
+    starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
+    out, prev = [], 0
+    counts = {"beginner": 0, "advanced": 0, "core": 0}
+    for n, start in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(body)
+        badge = _BADGE_RE.search(body[start:end])
+        text = _TAG_RE.sub("", badge.group(1)) if badge else ""
+        if _BEGINNER_RE.search(text):
+            level = "beginner"
+        elif _ADVANCED_RE.search(text):
+            level = "advanced"
+        else:
+            level = "core"
+        counts[level] += 1
+        cut = start + body[start:end].index(">") + 1     # end of the open tag
+        out.append(body[prev:cut - 1])
+        out.append(f' data-level="{level}">')
+        prev = cut
+    out.append(body[prev:])
+    return "".join(out), counts
+
+
 def topic_titles(body, ids):
     """The title of each topic in one body, paired with the id just stamped."""
     starts = [m.start() for m in _TOPIC_OPEN_RE.finditer(body)]
@@ -452,6 +544,7 @@ def main():
     used_slugs = set()
     topic_index = {}
     by_title = {}
+    level_counts = {}
     changelog = {}
     for domain in domains:
         # One file, or an ordered set of parts concatenated in filename order.
@@ -473,6 +566,10 @@ def main():
             chunks.append(text)
         body = "".join(chunks)
         body, ids = assign_topic_ids(body, used_slugs)
+        body, _read = stamp_reading_time(body)
+        body, lv = stamp_level(body)
+        for k, v in lv.items():
+            level_counts[k] = level_counts.get(k, 0) + v
         topic_index[domain["id"]] = ids
         by_title.update(topic_titles(body, ids))
         recent = recent_topics(body, ids)
@@ -490,6 +587,8 @@ def main():
         sections.append(build_domain_section(domain, body))
         print(f"  + {domain['id']} ({len(body):,} chars, {len(ids)} topics)")
     print(f"  + {xref_total} cross-references linked")
+    print("  + levels: " + ", ".join(f"{k} {v}" for k, v in
+                                     sorted(level_counts.items(), key=lambda r: -r[1])))
 
     domains_html = "\n\n".join(sections)
     output = shell.replace("<!-- DOMAINS_CONTENT -->", domains_html)

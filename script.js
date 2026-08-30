@@ -644,6 +644,10 @@ function plainLabel(html) {
   return plainText(html.replace(RE_ACRO_SPAN, ""));
 }
 
+const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
+const RE_TOPIC_LEVEL = /data-level="([a-z]+)"/;
+const RE_TOPIC_REVIEWED = /data-reviewed="(\d{4}-\d{2})"/;
+
 const _domainTopics = new Map();
 
 /**
@@ -666,11 +670,17 @@ function domainTopics(domainId) {
     const openTag = chunk.slice(0, chunk.indexOf(">") + 1);
     rows.push({
       id: (RE_TOPIC_ID.exec(openTag) || ["", ""])[1],
+      level: (RE_TOPIC_LEVEL.exec(openTag) || ["", "core"])[1],
+      reviewed: (RE_TOPIC_REVIEWED.exec(openTag) || ["", ""])[1],
       name: plainLabel(firstInner(chunk, RE_TOPIC_NAME)),
       title: plainText(firstInner(chunk, RE_CONCEPT_TITLE)),
       desc: plainText(firstInner(chunk, RE_CONCEPT_DESC)),
       badge: plainText(firstInner(chunk, RE_TOPIC_BADGE)),
-      text: plainText(chunk).toLowerCase(),
+      // The build stamps a reading-time span into every header (plan.md T6).
+      // It is chrome, not content: leaving it in made "min" match 1,337 of
+      // 1,367 topics, which is the same failure the acronym-alternate bug
+      // produced and would have been just as invisible.
+      text: plainText(chunk.replace(RE_TOPIC_READ, "")).toLowerCase(),
     });
     start = next;
   }
@@ -790,11 +800,83 @@ function updateThemeUI(theme) {
 })();
 
 // ── DOM READY ──────────────────────────────────────────────────────────────
+
+// ── WHAT'S NEW SINCE YOUR LAST VISIT ────────────────────────────────────────
+// plan.md Phase 10 T8. The changelog answers "what changed"; this answers "what
+// changed *for me*", which is the question people actually have. No new data:
+// every topic already carries `data-reviewed`, and the reader's side is one
+// month string in localStorage.
+const SEEN_KEY = "seen-through";
+
+/** The newest freshness stamp anywhere on the site, or "" if there are none. */
+function newestReviewedMonth() {
+  let newest = "";
+  Object.keys(topicIndex()).forEach(d => {
+    domainTopics(d).forEach(t => { if (t.reviewed > newest) newest = t.reviewed; });
+  });
+  return newest;
+}
+
+function countUpdatedSince(month) {
+  let n = 0;
+  Object.keys(topicIndex()).forEach(d => {
+    domainTopics(d).forEach(t => { if (t.reviewed && t.reviewed > month) n++; });
+  });
+  return n;
+}
+
+/**
+ * Show the banner, or silently record where a first-time reader is starting.
+ *
+ * A reader with nothing stored is **not** told that 1,426 topics are new —
+ * they are all new, the statement is useless, and it would train people to
+ * dismiss the banner before it ever says anything. Their first visit just
+ * records the newest month and shows nothing.
+ */
+function initWhatsNew() {
+  const bar = document.getElementById("whatsnew");
+  if (!bar) return;
+  const newest = newestReviewedMonth();
+  if (!newest) return;
+
+  let seen = null;
+  try { seen = localStorage.getItem(SEEN_KEY); } catch { return; }
+  const markSeen = () => {
+    try { localStorage.setItem(SEEN_KEY, newest); } catch { /* full or blocked */ }
+  };
+  if (!seen || !/^\d{4}-\d{2}$/.test(seen)) { markSeen(); return; }
+
+  const n = countUpdatedSince(seen);
+  if (!n) return;
+
+  document.getElementById("whatsnew-text").textContent =
+    `${n} topic${n === 1 ? "" : "s"} updated since ${monthLabel(seen)}`;
+  bar.hidden = false;
+
+  document.getElementById("whatsnew-show")?.addEventListener("click", () => {
+    const input = document.getElementById("search-input");
+    if (!input) return;
+    // Route it through the search box rather than a private code path: the
+    // reader can then see the query, edit it, add `domain:` to it, or clear it
+    // with Esc like any other search.
+    input.value = `since:${seen}`;
+    runSearch(input.value);
+    input.focus();
+  });
+  document.getElementById("whatsnew-seen")?.addEventListener("click", () => {
+    markSeen();
+    bar.hidden = true;
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   updateThemeUI(document.documentElement.getAttribute("data-theme"));
   initSnapQuote();
   initCloudStack();
   initTouchFeedback();
+  // After the content index is warm enough to answer; it parses on demand, so
+  // this is correct at load and costs one pass over the already-parsed rows.
+  initWhatsNew();
 
   // Filter chips — event delegation on the filter bar
   document.querySelector(".filter-bar")?.addEventListener("click", e => {
@@ -1183,7 +1265,13 @@ function recentTopics() {
 // every permalink anyone shared and orphans the progress stored under the old
 // id. tools/fix_topic_names.py records each move; build.py inlines the map.
 
-const ALIAS_MIGRATED_KEY = "migrated:slug-aliases-v1";
+// The flag is keyed on the *contents* of the alias map, not on a version
+// number. A boolean ran the migration once per device and then never again, so
+// an alias added later — every topic merge does that — moved nobody's progress
+// on a device that had already visited. Hashing the map means the key changes
+// exactly when the map does, the migration runs once more, and a device that
+// has seen this map does nothing.
+const ALIAS_MIGRATED_PREFIX = "migrated:slug-aliases:";
 let _slugAliases = null;
 
 function slugAliases() {
@@ -1204,13 +1292,29 @@ function slugAliases() {
  * run a no-op, so this cannot keep resurrecting keys the user has since
  * cleared.
  */
+function aliasMapKey(aliases) {
+  // FNV-1a over the sorted pairs. Not a security hash — it only has to change
+  // when the map does, and be the same length every time.
+  const src = Object.keys(aliases).sort().map(k => k + ">" + aliases[k]).join("|");
+  let h = 0x811c9dc5;
+  for (let i = 0; i < src.length; i++) {
+    h ^= src.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return ALIAS_MIGRATED_PREFIX + h.toString(36);
+}
+
 function migrateAliasedProgress() {
-  if (localStorage.getItem(ALIAS_MIGRATED_KEY)) return 0;
   const aliases = slugAliases();
+  const flag = aliasMapKey(aliases);
+  try { if (localStorage.getItem(flag)) return 0; } catch { return 0; }
   let moved = 0;
   Object.keys(aliases).forEach(old => {
     const now = aliases[old];
-    [REVIEWED_PREFIX, BOOKMARK_PREFIX, KNOWN_PREFIX, SRS_PREFIX].forEach(p => {
+    // NOTE_PREFIX is here deliberately. It was missing, so a merged or renamed
+    // topic silently discarded the one piece of progress the reader actually
+    // wrote themselves — which is the opposite of what the alias map is for.
+    [REVIEWED_PREFIX, BOOKMARK_PREFIX, KNOWN_PREFIX, SRS_PREFIX, NOTE_PREFIX].forEach(p => {
       const from = localStorage.getItem(p + old);
       if (from === null) return;
       if (localStorage.getItem(p + now) === null) {
@@ -1219,7 +1323,15 @@ function migrateAliasedProgress() {
       localStorage.removeItem(p + old);
     });
   });
-  try { localStorage.setItem(ALIAS_MIGRATED_KEY, "1"); } catch { /* quota */ }
+  try {
+    // Drop the previous generation's flag (and the original v1 boolean) so the
+    // keys do not accumulate one per alias-map revision, forever.
+    Object.keys(localStorage)
+      .filter(k => (k.startsWith(ALIAS_MIGRATED_PREFIX) || k === "migrated:slug-aliases-v1")
+                   && k !== flag)
+      .forEach(k => localStorage.removeItem(k));
+    localStorage.setItem(flag, "1");
+  } catch { /* quota, or storage blocked entirely */ }
   return moved;
 }
 
@@ -1476,6 +1588,29 @@ function searchTerms(term) {
 }
 
 /**
+ * A test for one search term against a topic's text.
+ *
+ * Long terms match as substrings, which is what a reader expects: typing
+ * "kerber" should find Kerberos. **Short ones must not**, and the reason is
+ * the acronym map rather than the reader. Searching "incident response" adds
+ * the dictionary's alternate "IR", and `text.includes("ir")` is true of
+ * "requires", "first", "third" and "directory" — so the query returned 1,220
+ * of 1,367 topics, which is not a search result, it is the site.
+ *
+ * The guard in searchTerms() covers the *lookup* ("IP" must not pull in every
+ * expansion containing "internet"); this covers the *match*, which is the
+ * other half and was missing. Word-boundary rather than \b, so a term with
+ * punctuation in it still behaves.
+ */
+const SHORT_TERM = 4;
+function matcher(lowered) {
+  if (lowered.length > SHORT_TERM) return text => text.includes(lowered);
+  const esc = lowered.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`(?<![a-z0-9])${esc}(?![a-z0-9])`);
+  return text => re.test(text);
+}
+
+/**
  * Split a raw query into its operators, its quoted phrases and the free text.
  *
  * At 1,300+ topics a bare substring search returns more than a reader can use,
@@ -1492,6 +1627,18 @@ function searchTerms(term) {
  * dropping an operator would answer a different question than the one asked.
  */
 const RE_DOMAIN_OP = /(?:^|\s)domain:([a-z0-9_-]+)/gi;
+// plan.md Phase 10 T7. `data-level` is stamped at build time from the badge —
+// beginner, advanced, or core meaning "not marked as either". An operator
+// rather than a chip: it composes with `domain:`, needs no room in a filter bar
+// that is already full, and lands in the same place readers already look for
+// `domain:`. A level that does not exist yields no matches rather than being
+// ignored, for the reason the domain operator does.
+const RE_LEVEL_OP = /(?:^|\s)level:([a-z]+)/gi;
+// plan.md Phase 10 T8. `since:2026-06` is *strictly after* that month, which is
+// what "since" means in English and what the what's-new banner needs: it passes
+// the last month this reader acknowledged, and wants what landed afterwards.
+// Month strings compare correctly as strings because they are zero-padded.
+const RE_SINCE_OP = /(?:^|\s)since:(\d{4}-\d{2})/gi;
 const RE_PHRASE = /"([^"]+)"/g;
 
 function parseQuery(raw) {
@@ -1506,7 +1653,14 @@ function parseQuery(raw) {
     domains.push(d.toLowerCase());
     return " ";
   });
-  return { domains, phrases, text: rest.replace(/\s+/g, " ").trim() };
+  const levels = [];
+  rest = rest.replace(RE_LEVEL_OP, (_, l) => {
+    levels.push(l.toLowerCase());
+    return " ";
+  });
+  let since = "";
+  rest = rest.replace(RE_SINCE_OP, (_, m) => { since = m; return " "; });
+  return { domains, levels, since, phrases, text: rest.replace(/\s+/g, " ").trim() };
 }
 
 // ── SEARCH STATE ────────────────────────────────────────────────────────────
@@ -1596,7 +1750,8 @@ function runSearch(raw) {
   // reads as a result rather than as a rejected query.
   const tooShort = q.text.length > 0 && q.text.length < 2;
   const usable = !tooShort
-    && (q.text.length >= 2 || q.phrases.length > 0 || q.domains.length > 0);
+    && (q.text.length >= 2 || q.phrases.length > 0 || q.domains.length > 0
+        || q.levels.length > 0 || q.since);
   _searchTerm = usable ? term : "";
   if (!_searchTerm) {
     _searchTermList = [];
@@ -1610,7 +1765,7 @@ function runSearch(raw) {
   // content the reader was looking for.
   const textTerms = q.text ? searchTerms(q.text) : [];
   _searchTermList = [...q.phrases, ...textTerms];
-  const loweredText = textTerms.map(t => t.toLowerCase());
+  const loweredText = textTerms.map(t => t.toLowerCase()).map(matcher);
   const loweredPhrases = q.phrases.map(p => p.toLowerCase());
   let matchCount = 0, domainCount = 0, firstHit = null;
 
@@ -1626,8 +1781,10 @@ function runSearch(raw) {
       // Phrases are required, all of them; the free text is satisfied by the
       // query or any of its acronym equivalents. A query that is only
       // operators and phrases matches on the phrases alone.
+      if (q.levels.length && !q.levels.includes(t.level)) return;
+      if (q.since && !(t.reviewed && t.reviewed > q.since)) return;
       if (!loweredPhrases.every(p => t.text.includes(p))) return;
-      if (loweredText.length && !loweredText.some(l => t.text.includes(l))) return;
+      if (loweredText.length && !loweredText.some(m => m(t.text))) return;
       hits.add(t.id);
     });
     if (!hits.size) {
@@ -1656,7 +1813,11 @@ function runSearch(raw) {
       ? ` · also matching ${textTerms.slice(1).map(t => `“${t}”`).join(", ")}` : "";
     // Say when an operator narrowed the search, so "no matches" is never
     // ambiguous between "nothing on the site" and "nothing in that domain".
-    const scope = q.domains.length ? ` · in ${q.domains.join(", ")}` : "";
+    const parts = [];
+    if (q.domains.length) parts.push(`in ${q.domains.join(", ")}`);
+    if (q.levels.length) parts.push(`at ${q.levels.join(", ")} level`);
+    if (q.since) parts.push(`updated after ${monthLabel(q.since)}`);
+    const scope = parts.length ? ` · ${parts.join(" · ")}` : "";
     countEl.textContent = matchCount
       ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${via}`
       : `no matches${scope}`;

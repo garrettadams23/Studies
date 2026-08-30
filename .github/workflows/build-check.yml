@@ -70,7 +70,20 @@ jobs:
       # a plain contradiction, and the annotator cannot see it — it only ever
       # adds expansions, never reads the ones an author typed.
       - name: Check for contradicted acronym expansions
-        run: python tools/check_contradictions.py --strict
+        run: |
+          python tools/check_contradictions.py --self-test
+          python tools/check_contradictions.py --strict
+          python tools/check_contradictions.py --pairs --strict
+
+      # The three content censuses. None of them gates — they measure what the
+      # gates cannot: how deep the cards are, whether a subject exists twice, and
+      # which good cards nothing links to. Printed in the log so a reviewer sees
+      # the numbers move. See plan.md Phases 8-10.
+      - name: Content census (reports only)
+        run: |
+          python tools/depth_report.py
+          python tools/near_duplicates.py
+          python tools/orphan_report.py
 
       # Volatile spans and fact anchors: a malformed or future date, or an
       # anchor missing its source, fails. The vendor-console queue only reports.
@@ -152,6 +165,13 @@ jobs:
       # verification since the first review; this is what makes the claim true.
       - name: Smoke-test the built page
         run: node tools/smoke_test.mjs
+
+      # Does searching for a thing find it. Separate from the smoke test, which
+      # checks that search *narrows the page*; this checks that it narrows to
+      # the right card. A content change that renames a topic or rewords the
+      # phrase a reader would search for breaks retrieval silently otherwise.
+      - name: Search quality
+        run: node tools/search_test.mjs
 
       # axe-core over the shell, an open domain and a dialog, in both themes.
       # Separate from the smoke test because it runs a third-party rule set that

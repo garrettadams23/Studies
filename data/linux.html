@@ -1688,125 +1688,6 @@ jobs:
 <!-- ═══════════════════════════════════════════════════
      TOPIC: Kubernetes
 ═══════════════════════════════════════════════════ -->
-<div class="topic" data-reviewed="2026-08">
-  <div class="topic-header">
-    <span class="topic-icon">⚙️</span>
-    <span class="topic-name">Kubernetes — Container Orchestration Reference</span>
-    <span class="topic-badge">DEVOPS · CLOUD</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">K8s — Google Borg → Open Source</div>
-      <div class="concept-title">Deploy, Scale, and Heal Containers Automatically</div>
-      <div class="concept-desc">
-        Kubernetes (K8s) automates deployment, scaling, and management of
-        containerised applications. It clusters multiple machines into one
-        compute pool and decides where each container runs.
-        <strong style="color:var(--cyan)">Control Plane</strong> = the brain.
-        <strong style="color:var(--green)">Worker Nodes</strong> = where workloads run.
-      </div>
-      <div class="dw">
-
-        <div class="dt">▸ CORE OBJECTS</div>
-        <table class="ref-table" style="margin-bottom:14px">
-          <tr><th>Object</th><th>What it is</th><th>Analogy</th></tr>
-          <tr><td style="color:var(--cyan)">Pod</td><td>Smallest deployable unit. One or more containers sharing network + storage. Ephemeral — dies and is replaced.</td><td>A single server instance</td></tr>
-          <tr><td style="color:var(--cyan)">Deployment</td><td>Manages a set of identical Pods. Handles rolling updates, rollbacks, desired replica count.</td><td>The process supervisor</td></tr>
-          <tr><td style="color:var(--cyan)">Service</td><td>Stable network endpoint for a set of Pods. Types: ClusterIP (internal), NodePort, LoadBalancer, ExternalName.</td><td>A load balancer</td></tr>
-          <tr><td style="color:var(--cyan)">ConfigMap</td><td>Non-sensitive config data (env vars, config files) injected into Pods.</td><td>An .env file</td></tr>
-          <tr><td style="color:var(--red)">Secret</td><td>Sensitive config (passwords, tokens). Base64-encoded (NOT encrypted by default — use Sealed Secrets or Vault).</td><td>A locked .env file</td></tr>
-          <tr><td style="color:var(--green)">Namespace</td><td>Virtual cluster within a cluster. Logical separation for teams/environments (dev/staging/prod).</td><td>A project folder</td></tr>
-          <tr><td style="color:var(--green)">Ingress</td><td>HTTP/HTTPS routing rules. Maps hostnames and paths to Services. Requires an Ingress Controller (nginx, traefik).</td><td>A reverse proxy</td></tr>
-          <tr><td style="color:var(--amber)">PersistentVolume</td><td>Cluster-level storage resource. PersistentVolumeClaim requests a piece of it.</td><td>A mounted hard drive</td></tr>
-        </table>
-
-        <div class="dt">▸ KUBECTL — ESSENTIAL COMMANDS</div>
-        <div class="code-block">
-<span class="com"># ── Context & cluster ──────────────────────────────────────</span>
-<span class="fn">kubectl</span> config get-contexts           <span class="com"># list clusters you're connected to</span>
-<span class="fn">kubectl</span> config use-context prod       <span class="com"># switch cluster</span>
-<span class="fn">kubectl</span> cluster-info                  <span class="com"># control plane endpoint</span>
-
-<span class="com"># ── Explore resources ──────────────────────────────────────</span>
-<span class="fn">kubectl</span> get pods                       <span class="com"># list Pods in current namespace</span>
-<span class="fn">kubectl</span> get pods -n kube-system        <span class="com"># specify namespace</span>
-<span class="fn">kubectl</span> get pods -A                    <span class="com"># all namespaces</span>
-<span class="fn">kubectl</span> get all                        <span class="com"># pods, services, deployments...</span>
-<span class="fn">kubectl</span> describe pod my-pod            <span class="com"># full details + events</span>
-<span class="fn">kubectl</span> get deployment web -o yaml     <span class="com"># export as YAML</span>
-
-<span class="com"># ── Deploy & manage ────────────────────────────────────────</span>
-<span class="fn">kubectl</span> apply -f deployment.yaml       <span class="com"># create/update from file (preferred)</span>
-<span class="fn">kubectl</span> delete -f deployment.yaml      <span class="com"># remove resources in file</span>
-<span class="fn">kubectl</span> scale deployment web --replicas=5
-<span class="fn">kubectl</span> rollout status deployment/web  <span class="com"># watch rolling update</span>
-<span class="fn">kubectl</span> rollout undo deployment/web    <span class="com"># rollback to previous version</span>
-
-<span class="com"># ── Debug ──────────────────────────────────────────────────</span>
-<span class="fn">kubectl</span> logs my-pod                    <span class="com"># container logs</span>
-<span class="fn">kubectl</span> logs my-pod -f                 <span class="com"># follow / stream logs</span>
-<span class="fn">kubectl</span> exec -it my-pod -- bash        <span class="com"># shell into pod</span>
-<span class="fn">kubectl</span> port-forward pod/my-pod 8080:<span class="num">80</span> <span class="com"># forward port to localhost</span>
-<span class="fn">kubectl</span> top pods                       <span class="com"># CPU/memory usage</span>
-        </div>
-
-        <div class="dt">▸ MINIMAL DEPLOYMENT MANIFEST</div>
-        <div class="code-block">
-<span class="com"># deployment.yaml — the most common K8s resource</span>
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: web
-  namespace: production
-spec:
-  replicas: <span class="num">3</span>
-  selector:
-    matchLabels:
-      app: web
-  template:
-    metadata:
-      labels:
-        app: web
-    spec:
-      containers:
-        - name: web
-          image: myrepo/web:<span class="num">1.0</span>
-          ports:
-            - containerPort: <span class="num">8080</span>
-          env:
-            - name: DB_URL
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: url
-          resources:
-            requests: {{cpu: <span class="str">"100m"</span>, memory: <span class="str">"128Mi"</span>}}
-            limits:   {{cpu: <span class="str">"500m"</span>, memory: <span class="str">"512Mi"</span>}}
-          readinessProbe:
-            httpGet: {{path: /healthz, port: <span class="num">8080</span>}}
-      securityContext:
-        runAsNonRoot: true
-        readOnlyRootFilesystem: true
-        </div>
-
-        <div class="dt">▸ K8s SECURITY — KEY CONTROLS</div>
-        <table class="ref-table">
-          <tr><th>Control</th><th>What it does</th></tr>
-          <tr><td style="color:var(--red)">RBAC</td><td>Role-Based Access Control. Roles define permissions; RoleBindings attach them to users/serviceaccounts.</td></tr>
-          <tr><td style="color:var(--red)">NetworkPolicy</td><td>Firewall rules between Pods. Default: allow all. Apply deny-all then allowlist what's needed.</td></tr>
-          <tr><td style="color:var(--amber)">PodSecurityContext</td><td>runAsNonRoot, readOnlyRootFilesystem, allowPrivilegeEscalation: false on every container.</td></tr>
-          <tr><td style="color:var(--amber)">Secrets encryption</td><td>Encrypt etcd at rest (EncryptionConfiguration). Use Sealed Secrets or Vault for GitOps <span class="acro-exp">(Git Operations)</span> workflows.</td></tr>
-          <tr><td style="color:var(--green)">Resource limits</td><td>Always set requests + limits. Prevents resource starvation and limits blast radius.</td></tr>
-          <tr><td style="color:var(--green)">Image scanning</td><td>Scan in CI (trivy, Grype) and at admission (Kyverno, OPA Gatekeeper).</td></tr>
-        </table>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <!-- LINUX-DOMAIN v1 -->
 <div class="topic" data-reviewed="2026-07"><div class="topic-header"><span class="topic-icon">📁</span><span class="topic-name">Filesystem &amp; Navigation</span><span class="topic-badge">Linux+ • FHS</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">LAYOUT</div><div class="concept-title">Filesystem Hierarchy (FHS)</div><div class="concept-desc">Everything hangs off / (root). Config in /etc, logs &amp; variable data in /var, users in /home, binaries in /bin and /usr.</div></div><div class="concept-card"><div class="concept-label">FIND</div><div class="concept-title">Locating Files</div><div class="concept-desc">find walks the tree live with rich filters; locate is instant but uses a database (updatedb).</div><pre class="code-block"><span class='com'># Logs modified in the last 7 days</span>
 <span class='fn'>find</span> /var/log -name '*.log' -mtime -7
@@ -2210,63 +2091,6 @@ sudo systemctl enable --now myapp</div>
 </div>
 
 <!-- ── TOPIC: DISK MANAGEMENT & STORAGE ──────────────────── -->
-<div class="topic" data-reviewed="2026-07">
-  <div class="topic-header">
-    <span class="topic-icon">💾</span>
-    <span class="topic-name">Disk Management — Partitions, Filesystems &amp; LVM <span class="acro-exp">(Logical Volume Manager)</span></span>
-    <span class="topic-badge">LINUX • Foundation</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">CHECK DISK USAGE</div>
-      <div class="concept-title">df and du — Your First Diagnostic</div>
-      <div class="code-block"><span class="com"># Disk space by filesystem</span>
-df -h
-
-<span class="com"># Where is space being used in a directory?</span>
-du -sh /var/log/*          <span class="com"># sizes in human readable</span>
-du -sh /* 2>/dev/null      <span class="com"># top-level dirs</span>
-
-<span class="com"># Find the 10 largest files</span>
-find / -type f -printf '%s %p
-' 2>/dev/null   | sort -rn | head -10
-
-<span class="com"># What files are open (and may not show freed space)</span>
-lsof +L1 | grep deleted</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">PARTITIONS</div>
-      <div class="concept-title">Dividing Physical Disks</div>
-      <div class="concept-desc">A partition divides a physical disk into logical sections. Common layout:<br>
-      <code>/boot</code> — kernel and boot files (~500MB)<br>
-      <code>/</code> — root filesystem (everything else)<br>
-      <code>/home</code> — user data (separate so OS reinstall preserves data)<br>
-      <code>swap</code> — overflow memory (RAM extension on disk; slow)<br>
-      Tools: <code>fdisk</code> (MBR), <code>gdisk</code> (GPT), <code>parted</code> (both)</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">FILESYSTEMS</div>
-      <div class="concept-title">How Data Is Organized on Disk</div>
-      <table class="ai-table">
-        <thead><tr><th>Filesystem</th><th>OS <span class="acro-exp">(Operating System)</span></th><th>Strengths</th></tr></thead>
-        <tbody>
-          <tr><td>ext4</td><td>Linux</td><td>Default Linux; journaled; stable; 16TB max file</td></tr>
-          <tr><td>xfs</td><td>Linux</td><td>High-performance; great for large files; RHEL <span class="acro-exp">(Red Hat Enterprise Linux)</span> default</td></tr>
-          <tr><td>btrfs</td><td>Linux</td><td>Copy-on-write; snapshots; checksums; still maturing</td></tr>
-          <tr><td>NTFS <span class="acro-exp">(New Technology File System)</span></td><td>Windows</td><td>Windows default; full permissions; mountable on Linux</td></tr>
-          <tr><td>FAT32/exFAT</td><td>Universal</td><td>USB <span class="acro-exp">(Universal Serial Bus)</span> drives; read/write anywhere; no permissions</td></tr>
-          <tr><td>APFS</td><td>macOS</td><td>Apple default; encrypted; snapshot support</td></tr>
-          <tr><td>ZFS <span class="acro-exp">(Zettabyte File System)</span></td><td>BSD/Linux</td><td>Enterprise; built-in RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span>; checksums; snapshots</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-
-<!-- BEGINNER10-LINUX v1 -->
-<!-- ── TOPIC: DOCKER & CONTAINERS ────────────────────────── -->
 <div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
     <span class="topic-icon">🐳</span>
@@ -3021,7 +2845,21 @@ fdisk -l                       <span class="com"># detailed partition tables</sp
 df -h                          <span class="com"># free space per filesystem</span>
 df -i                          <span class="com"># inode usage (can fill before space!)</span>
 du -sh /var/*                  <span class="com"># what's eating space in /var</span>
-du -h --max-depth=1 / | sort -h   <span class="com"># biggest dirs</span></div>
+du -h --max-depth=1 / | sort -h   <span class="com"># biggest dirs</span>
+
+<span class="com"># The ten largest files anywhere</span>
+find / -type f -printf '%s %p\n' 2>/dev/null | sort -rn | head -10
+<span class="com"># Deleted but still held open — space df counts and du cannot see</span>
+lsof +L1 | grep deleted</div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">When <code>df</code> and <code>du</code> disagree, the last
+          command is the answer.</strong> <code>df</code> reports the disk full,
+          <code>du</code> adds up to far less, and the difference is a deleted file that some
+          process still has open — a log rotated out from under a service that never reopened
+          it. The space returns when that process restarts, not when the file is removed,
+          because it already was. <code>df -i</code> covers the other confusing case: inodes
+          exhausted while space remains, which is a directory full of tiny files.
+        </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">PARTITION → FORMAT → MOUNT</div>
@@ -5053,6 +4891,602 @@ bootctl status | grep -i secure</pre>
                     It also pairs naturally with dm-verity from
                     <span class="xref">Secure Boot, LUKS &amp; Integrity — Measured Boot, dm-verity &amp; IMA</span>,
                     since a read-only root is exactly what a hash tree can protect.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🩺</span>
+              <span class="topic-name">Rescuing a System That Will Not Boot — GRUB <span class="acro-exp">(GRand Unified Bootloader)</span>, initramfs <span class="acro-exp">(Initial RAM Filesystem)</span> &amp; the Chroot</span>
+              <span class="topic-badge">LINUX • Recovery</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Recovery Sequence, Which Has to Be Known Cold</div>
+                <div class="concept-desc">
+                  This is used at exactly the moment there is no time to look it up, on a machine with no
+                  browser. The sequence is short and the order matters: <strong class="c-cyan">mount, bind,
+                  chroot, fix, rebuild, exit, unmount</strong>. Step three is the one people skip, and without it
+                  <code>grub-install</code> and <code>update-initramfs</code> either fail or &mdash; worse
+                  &mdash; succeed against the rescue system rather than the broken one.
+                </div>
+                <div class="dw">
+                  <div class="code-label">THE SEQUENCE, IN ORDER</div>
+                  <div class="code-block">
+                  <span class="com"># 1. Boot the live/rescue media, become root, find the root filesystem</span>
+                  lsblk -f
+                  blkid
+                  
+                  <span class="com"># 2. Mount it. Add /boot and the EFI partition if they are separate</span>
+                  mount /dev/nvme0n1p3 /mnt
+                  mount /dev/nvme0n1p2 /mnt/boot
+                  mount /dev/nvme0n1p1 /mnt/boot/efi
+                  
+                  <span class="com"># 3. Bind the pseudo-filesystems — the step people forget, and nothing works without it</span>
+                  <span class="kw">for</span> d <span class="kw">in</span> /dev /dev/pts /proc /sys /run; <span class="kw">do</span> mount --bind $d /mnt$d; <span class="kw">done</span>
+                  
+                  <span class="com"># 4. Enter the broken system</span>
+                  chroot /mnt /bin/bash
+                  
+                  <span class="com"># 5. Fix it — then rebuild what depends on the fix</span>
+                  grub-install /dev/nvme0n1          <span class="com"># Debian/Ubuntu; grub2-install on RHEL</span>
+                  update-grub                        <span class="com"># grub2-mkconfig -o /boot/grub2/grub.cfg on RHEL</span>
+                  update-initramfs -u -k all         <span class="com"># dracut -f --regenerate-all on RHEL</span>
+                  
+                  <span class="com"># 6. Leave cleanly, in reverse order</span>
+                  <span class="kw">exit</span>
+                  umount -R /mnt
+                  reboot
+                  </div>
+                  <div class="concept-desc verdict">
+                    The rebuild in step five is not optional. Repairing a bootloader without regenerating the
+                    initramfs fixes the menu and leaves the kernel unable to mount root, which produces a different
+                    failure that looks like the first one. <strong>Whatever you changed, rebuild the thing
+                    downstream of it</strong> &mdash; and if the root filesystem is on LVM <span class="acro-exp">(Logical Volume Manager)</span> or encrypted, the
+                    initramfs is what knows how to open it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Diagnosis</div>
+                <div class="concept-title">Read the Screen — the Failures Look Different From Each Other</div>
+                <div class="concept-desc">
+                  Boot failures are usually diagnosable from what is on the screen before you touch anything,
+                  and the four common ones fail at visibly different stages.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you see</th><th>Stage</th><th>Usually</th></tr>
+                    <tr><td>No firmware POST <span class="acro-exp">(Power-On Self-Test)</span>, no logo</td><td>Hardware</td><td>Not a software problem. Power, RAM <span class="acro-exp">(Random Access Memory)</span>, or the display</td></tr>
+                    <tr><td><code>No bootable device</code></td><td>Firmware &rarr; disk</td><td>Boot order, a disconnected disk, or a wiped EFI <span class="acro-exp">(Extensible Firmware Interface)</span> entry</td></tr>
+                    <tr><td><code>grub rescue&gt;</code> prompt</td><td>Bootloader</td><td>GRUB found itself and not its configuration &mdash; a moved or renamed <code>/boot</code></td></tr>
+                    <tr><td>Kernel panic, <code>unable to mount root</code></td><td>Kernel &rarr; initramfs</td><td>A broken initramfs, or a changed UUID <span class="acro-exp">(Universally Unique Identifier)</span> in <code>/etc/fstab</code></td></tr>
+                    <tr><td>Emergency shell after some services start</td><td>systemd</td><td>A failed mount in <code>fstab</code>. <code>journalctl -xb</code> names it in one line</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The last row is the most common of all and the least dramatic: <strong>an entry in
+                    <code>/etc/fstab</code> for a device that is not there</strong> drops the system to an
+                    emergency shell, and the fix is one <code>nofail</code> option or one corrected UUID. Before
+                    reaching for rescue media, try the boot menu's earlier kernel &mdash; if the previous kernel
+                    boots, the problem is the newest one and the chroot is only needed to remove it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Prevention</div>
+                <div class="concept-title">The Three Habits That Turn This Into a Ten-Minute Job</div>
+                <div class="concept-desc">
+                  Every one of these costs nothing on a working system and is impossible to arrange on a broken
+                  one, which is the whole argument for doing them now.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Habit</th><th>What it saves</th></tr>
+                    <tr><td>Keep the previous kernel installed</td><td>The single most useful recovery option, and it is a package-manager setting</td></tr>
+                    <tr><td>Use UUIDs in <code>fstab</code>, with <code>nofail</code> on non-essential mounts</td><td>A missing data disk stops being a boot failure</td></tr>
+                    <tr><td>Know where your rescue media is</td><td>The ISO <span class="acro-exp">(International Organization for Standardization)</span> you cannot download because the machine will not boot</td></tr>
+                    <tr><td>Record the disk layout somewhere off the host</td><td><code>lsblk -f</code> output in the runbook. Guessing partitions under pressure is how the wrong one gets formatted</td></tr>
+                    <tr><td>Practise once, on a VM <span class="acro-exp">(Virtual Machine)</span> you can break</td><td>The same argument as evidence handling: a procedure never performed is not a capability</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    On a virtualised or cloud estate there is usually a faster path than any of this:
+                    <strong>detach the disk, attach it to a working instance, fix it there, and reattach</strong>.
+                    It skips the rescue media and the chroot entirely, and it is worth knowing as the first option
+                    rather than the clever one &mdash; the sequence above is for physical hardware and for the
+                    times the console is all you have.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔑</span>
+              <span class="topic-name">sudoers &amp; PAM <span class="acro-exp">(Pluggable Authentication Modules)</span> — The Two Files That Decide Who You Are</span>
+              <span class="topic-badge">LINUX • Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Two Separate Stacks That People Conflate</div>
+                <div class="concept-desc">
+                  Authentication asks <em>who are you</em>; authorisation asks <em>what may you do</em>. On
+                  Linux those are two different systems that fail in two different ways, and the confusion between
+                  them produces the two mistakes that lock everybody out of a machine.
+                  <strong class="c-cyan">PAM decides whether you get in. sudoers decides what you can do once you
+                  are.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>Answered by</th><th>Failure looks like</th></tr>
+                    <tr><td>Is this password correct?</td><td>PAM, via <code>/etc/pam.d/</code></td><td>Cannot log in at all, including as root on the console</td></tr>
+                    <tr><td>Is this account expired or locked?</td><td>PAM (<code>pam_unix</code>, <code>pam_faillock</code>)</td><td>Correct password, still rejected</td></tr>
+                    <tr><td>May this user run this command as root?</td><td>sudoers</td><td><code>user is not in the sudoers file</code></td></tr>
+                    <tr><td>May they do it without a password?</td><td>sudoers <code>NOPASSWD</code></td><td>Prompted when you expected not to be</td></tr>
+                    <tr><td>Which groups do they have?</td><td>The name service (<code>/etc/group</code>, LDAP <span class="acro-exp">(Lightweight Directory Access Protocol)</span>, SSSD <span class="acro-exp">(System Security Services Daemon)</span>)</td><td>Group membership that does not take effect until re-login</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The distinction matters most during an incident: <strong>if nobody can authenticate, editing
+                    sudoers will not help</strong>, and if everybody authenticates but nothing is permitted, PAM is
+                    not the file to look at. Check with <code>sudo -l -U user</code> and
+                    <code>getent group wheel</code> before changing anything &mdash; both are read-only and both
+                    answer the question directly.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The sudoers Grammar, and the Commands That Are a Root Shell</div>
+                <div class="concept-desc">
+                  The grammar is four fields and reads badly until you know the shape:
+                  <strong>who, on which hosts, as whom, running what</strong>. The second field is almost always
+                  <code>ALL</code> and confuses everyone, because it refers to hosts rather than to permissions.
+                </div>
+                <div class="dw">
+                  <div class="code-label">EDIT SUDOERS THE ONLY SAFE WAY</div>
+                  <div class="code-block">
+                  <span class="com"># visudo validates before saving. A syntax error saved directly = nobody has sudo.</span>
+                  visudo
+                  visudo -f /etc/sudoers.d/10-deploy    <span class="com"># drop-in files are safer than editing the main file</span>
+                  
+                  <span class="com"># Grammar:  who   where = (as-whom[:group])  what</span>
+                  alice     ALL = (ALL:ALL) ALL              <span class="com"># full sudo, prompts for password</span>
+                  %wheel    ALL = (ALL:ALL) ALL              <span class="com"># % means a group</span>
+                  deploy    ALL = (root) NOPASSWD: /usr/bin/systemctl restart myapp
+                  
+                  <span class="com"># DANGEROUS — every one of these grants a root shell</span>
+                  bob       ALL = (ALL) NOPASSWD: /usr/bin/vim      <span class="com"># :!sh</span>
+                  bob       ALL = (ALL) NOPASSWD: /usr/bin/find     <span class="com"># -exec sh</span>
+                  bob       ALL = (ALL) NOPASSWD: /usr/bin/less     <span class="com"># !sh</span>
+                  
+                  <span class="com"># Check what a user actually has, before you believe the file</span>
+                  sudo -l -U bob
+                  </div>
+                  <div class="concept-desc verdict">
+                    The bottom block is the part worth internalising, and it is the whole content of GTFOBins:
+                    <strong class="c-amber">granting <code>NOPASSWD</code> on any program that can spawn a shell,
+                    execute a command or write an arbitrary file is granting root</strong>. <code>vim</code>,
+                    <code>find</code>, <code>less</code>, <code>awk</code>, <code>tar</code>, <code>git</code> and
+                    dozens of others qualify. Before adding an entry, check the binary against GTFOBins &mdash; and
+                    prefer granting a specific <code>systemctl</code> unit over granting an editor.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">PAM Is a Stack, and the Control Field Decides What a Failure Means</div>
+                <div class="concept-desc">
+                  A PAM configuration is a list of modules evaluated in order, and the second column &mdash; the
+                  control &mdash; is what makes the behaviour non-obvious. <strong>The order matters and so does
+                  the word</strong>, and one <code>sufficient</code> in the wrong place makes the modules below it
+                  unreachable.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Control</th><th>Meaning</th></tr>
+                    <tr><td><code>required</code></td><td>Must pass. On failure, keep evaluating the rest, then fail &mdash; so the error does not reveal which one failed</td></tr>
+                    <tr><td><code>requisite</code></td><td>Must pass, and fail immediately. Faster, and leakier about what went wrong</td></tr>
+                    <tr><td><code>sufficient</code></td><td>If it passes and nothing required has failed, <strong>stop and succeed</strong> &mdash; everything below is skipped</td></tr>
+                    <tr><td><code>optional</code></td><td>Ignored unless it is the only module in the stack</td></tr>
+                    <tr><td>Type: <code>auth</code> / <code>account</code> / <code>password</code> / <code>session</code></td><td>Four independent stacks. <em>auth</em> is the password; <em>account</em> is expiry and access rules; <em>session</em> is what happens after</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two safety habits make PAM survivable. <strong>Keep a second root session open while
+                    editing</strong> &mdash; a broken <code>auth</code> stack cannot be fixed by a user who cannot
+                    log in, and single-user mode or rescue media is the alternative
+                    (<span class="xref">Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot</span>).
+                    And <strong>test with a non-privileged account in another terminal</strong> before closing the
+                    one you have.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🪵</span>
+              <span class="topic-name">Journald, Logrotate &amp; the Disk That Filled With Logs</span>
+              <span class="topic-badge">LINUX • Operations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Two Overlapping Mechanisms, and the Overlap Is the Problem</div>
+                <div class="concept-desc">
+                  Modern systems run <strong>both</strong> log retention systems at once and people configure the
+                  wrong one. <code>journald</code> keeps its own binary journal with its own size limits;
+                  <code>logrotate</code> rotates text files in <code>/var/log/</code> that a syslog daemon
+                  wrote. <strong class="c-amber">Setting a logrotate policy does nothing to the journal, and
+                  capping the journal does nothing to the text logs</strong> &mdash; and when a disk fills, it is
+                  usually the one you did not configure.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mechanism</th><th>What it manages</th><th>Where it is configured</th></tr>
+                    <tr><td><code>journald</code></td><td>The binary journal, usually <code>/var/log/journal/</code></td><td><code>/etc/systemd/journald.conf</code></td></tr>
+                    <tr><td><code>logrotate</code></td><td>Text files written by rsyslog and applications</td><td><code>/etc/logrotate.conf</code> and <code>/etc/logrotate.d/</code></td></tr>
+                    <tr><td>Both, on most distros</td><td>The same events, twice</td><td><strong>This is the overlap.</strong> rsyslog often reads from the journal and writes text as well</td></tr>
+                    <tr><td>Neither, in a container</td><td>Stdout, captured by the runtime</td><td>The container runtime's log driver &mdash; a third system again</td></tr>
+                    <tr><td>An application's own rotation</td><td>Whatever it decided</td><td>Its own config. Nginx and Postgres both do this</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The row that catches people is the third. <strong>On a default install the same event is
+                    frequently written twice</strong> — once into the journal and once into a text file by rsyslog
+                    reading from it — so a host can be storing every log line at double size while both retention
+                    policies look reasonable in isolation.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Settings That Actually Cap Growth</div>
+                <div class="concept-desc">
+                  Both systems have a size cap and a time cap, and the useful one is nearly always size &mdash;
+                  time-based retention on a busy host is a promise about volume that nobody has checked.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Setting</th><th>Effect</th></tr>
+                    <tr><td><code>SystemMaxUse=2G</code></td><td>Hard cap on the journal. <strong>The single most useful line</strong>; without it journald uses up to 10% of the filesystem</td></tr>
+                    <tr><td><code>SystemKeepFree=1G</code></td><td>Leave this much free regardless. The safety net for a shared partition</td></tr>
+                    <tr><td><code>MaxRetentionSec=1month</code></td><td>Time cap. Use with a size cap, never instead of one</td></tr>
+                    <tr><td><code>Storage=volatile</code></td><td>Memory only, lost on reboot &mdash; correct for an ephemeral or diskless node</td></tr>
+                    <tr><td>logrotate <code>size 100M</code> + <code>rotate 5</code></td><td>The text-log equivalent, and <code>compress</code> usually pays for itself immediately</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two commands worth knowing before the disk is full rather than after:
+                    <strong><code>journalctl --disk-usage</code></strong> says how much the journal is actually
+                    using, and <strong><code>journalctl --vacuum-size=500M</code></strong> reclaims space
+                    immediately without a restart. Both are the answer to a 3am page, and both are more useful
+                    learned in daylight.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Disk Fills Anyway, and Deleting the File Does Not Help</div>
+                <div class="concept-desc">
+                  The classic 3am sequence: the disk is full, somebody deletes a large log file, and
+                  <strong class="c-amber">the free space does not come back</strong>. The file is unlinked but a
+                  process still holds it open, so the blocks stay allocated until that process closes the
+                  descriptor.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>What to do</th></tr>
+                    <tr><td><code>df</code> says full, <code>du</code> says not</td><td><strong>A deleted-but-open file.</strong> <code>lsof +L1</code> lists them</td></tr>
+                    <tr><td>Found the holder</td><td>Truncate rather than delete: <code>: &gt; /proc/PID/fd/N</code>, or restart the service</td></tr>
+                    <tr><td>Journal is the culprit</td><td><code>journalctl --vacuum-size=</code>, then set <code>SystemMaxUse</code> so it does not recur</td></tr>
+                    <tr><td>Inodes exhausted, space free</td><td>Millions of small files &mdash; <code>df -i</code>. Usually a session or cache directory</td></tr>
+                    <tr><td>Nothing obvious is large</td><td>A hidden mount is masking a full directory underneath it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The preventive version is one line of configuration and one alert: <strong>set
+                    <code>SystemMaxUse</code> on every host at build time, and alert on disk usage at 80% rather
+                    than at 95%</strong>. The gap between those two numbers is the difference between a ticket and
+                    an outage, and on a log-growth curve it is often only a few hours.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🚚</span>
+              <span class="topic-name">Moving Data Safely — rsync <span class="acro-exp">(Remote Sync)</span>, Its Flags, and the Trailing Slash</span>
+              <span class="topic-badge">LINUX • Essential</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">One Character Decides Whether You Copy a Directory or Its Contents</div>
+                <div class="concept-desc">
+                  The trailing slash on the <em>source</em> is the whole trap.
+                  <code>/src/data</code> means &ldquo;copy this directory&rdquo;;
+                  <code>/src/data/</code> means &ldquo;copy what is inside it&rdquo;. On its own that produces a
+                  nested directory you did not want. <strong class="c-amber">Combined with
+                  <code>--delete</code>, it means the destination's real contents are removed as
+                  &ldquo;extraneous&rdquo;</strong>, and there is no undo.
+                </div>
+                <div class="dw">
+                  <div class="code-label">THE TRAILING SLASH, AND THE DRY RUN</div>
+                  <div class="code-block">
+                  <span class="com"># These two are NOT the same command.</span>
+                  rsync -a /src/data  /dest/     <span class="com"># -&gt; /dest/data/...   copies the DIRECTORY</span>
+                  rsync -a /src/data/ /dest/     <span class="com"># -&gt; /dest/...        copies its CONTENTS</span>
+                  
+                  <span class="com"># Always, before anything with --delete. Always.</span>
+                  rsync -avn --delete /src/data/ /dest/data/   <span class="com"># -n = dry run. Read the output.</span>
+                  rsync -av  --delete /src/data/ /dest/data/   <span class="com"># only after the -n looked right</span>
+                  
+                  <span class="com"># The flags worth knowing</span>
+                  <span class="com">#  -a  archive: recursive, preserves times, perms, symlinks, owner (as root)</span>
+                  <span class="com">#  -v  verbose      -n  dry run      -z  compress in transit</span>
+                  <span class="com">#  -P  progress + partial (resume an interrupted large transfer)</span>
+                  <span class="com">#  --delete           remove files at the destination not present at the source</span>
+                  <span class="com">#  --exclude='*.tmp'  repeatable; put excludes BEFORE --delete decides</span>
+                  <span class="com">#  --checksum         compare contents not size+mtime. Slow, and sometimes the only way</span>
+                  
+                  <span class="com"># Over ssh, resumable, showing progress</span>
+                  rsync -azP --delete -e ssh /src/data/ user@host:/dest/data/
+                  </div>
+                  <div class="concept-desc verdict">
+                    The habit that makes this safe is not caution, it is <strong>a dry run every single
+                    time</strong>. <code>-n</code> costs one keystroke and prints exactly what would happen,
+                    including every deletion. Read the output rather than glancing at it: the failure mode is not a
+                    command that errors, it is a command that does precisely what you typed.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">How rsync Decides a File Has Changed, and When It Is Wrong</div>
+                <div class="concept-desc">
+                  By default rsync compares <strong>size and modification time</strong>, which is fast and
+                  correct almost always. The exceptions are worth knowing because they are silent: a file that
+                  changed without its size or mtime changing is skipped, and you will not be told.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>What happens, and what to use</th></tr>
+                    <tr><td>Ordinary sync</td><td>Size + mtime. Fast, and right</td></tr>
+                    <tr><td>A file edited in place, same size, mtime restored</td><td><strong>Skipped.</strong> <code>--checksum</code> catches it, at the cost of reading everything</td></tr>
+                    <tr><td>Filesystems with different timestamp resolution</td><td>Spurious re-copies. <code>--modify-window=1</code> tolerates a second's difference</td></tr>
+                    <tr><td>Copying to FAT/exFAT</td><td>Perms and ownership cannot be preserved; <code>-a</code> will complain. Use <code>-rltD</code></td></tr>
+                    <tr><td>Large file, interrupted</td><td><code>-P</code> keeps the partial and resumes. Without it, it starts again</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The second row is the one that produces a silent wrong answer rather than an error.
+                    <strong>If correctness matters more than speed, run a periodic <code>--checksum</code>
+                    pass</strong> — nightly syncs on size and mtime, weekly on content. Anything else is trusting a
+                    timestamp that any process can set.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">It Is a Copy Tool, Not a Backup</div>
+                <div class="concept-desc">
+                  rsync with <code>--delete</code> produces a <em>mirror</em>, and a mirror faithfully reproduces
+                  a deletion, an encryption, and a corruption. <strong class="c-amber">If the source is ransomed
+                  on Monday, the mirror is ransomed on Monday</strong> &mdash; which is the difference between a
+                  copy and a backup, and the reason a nightly rsync job is not a recovery plan.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Want</th><th>Use</th></tr>
+                    <tr><td>A mirror for staging or a CDN <span class="acro-exp">(Content Delivery Network)</span> origin</td><td>rsync <code>--delete</code>. That is what it is for</td></tr>
+                    <tr><td>Point-in-time recovery</td><td>Snapshots, or <code>--link-dest</code> for hardlinked incrementals</td></tr>
+                    <tr><td>Protection from ransomware</td><td>Immutable or append-only storage. A mirror cannot provide this by construction</td></tr>
+                    <tr><td>Verification that the copy is good</td><td><code>rsync -c --dry-run</code> afterwards, or compare checksums out of band</td></tr>
+                    <tr><td>The 3-2-1 rule</td><td>Three copies, two media, one offsite &mdash; and rsync is a mechanism for moving copies, not a policy</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The one-line version worth remembering when somebody proposes a cron job:
+                    <strong>a backup you have never restored is not a backup, and a mirror is not a backup at
+                    all.</strong> rsync is excellent at the job it does; the mistake is letting it be the answer to
+                    a question about recovery.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔬</span>
+              <span class="topic-name">strace &amp; ltrace — Watching a Program Ask the Kernel for Things</span>
+              <span class="topic-badge">LINUX • Advanced</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">When the Logs Say Nothing and the Code Is Not Yours</div>
+                <div class="concept-desc">
+                  Syscall tracing answers one question extremely well: <strong class="c-cyan">what is this
+                  program actually asking the operating system for?</strong> Which files it opens, which it fails
+                  to find, where it tries to connect, and where it is stuck. That converts a specific class of
+                  problem &mdash; a vendor binary that fails with no useful message &mdash; from unsolvable into
+                  routine.
+                </div>
+                <div class="dw">
+                  <div class="code-label">WHAT FILE IS IT ACTUALLY LOOKING FOR?</div>
+                  <div class="code-block">
+                  <span class="com"># The single most useful invocation: every file the program tries to open</span>
+                  strace -f -e trace=openat,open,stat -o /tmp/out.txt ./myprogram
+                  grep ENOENT /tmp/out.txt          <span class="com"># the ones that were not there</span>
+                  
+                  <span class="com"># -f  follow forks (almost always wanted)   -o  to a file, not the terminal</span>
+                  <span class="com"># -e trace=network   sockets, connects, DNS</span>
+                  <span class="com"># -e trace=file      anything with a path</span>
+                  <span class="com"># -s 200             show more of each string, not the truncated default</span>
+                  <span class="com"># -T                 time spent in each call — finds the slow one</span>
+                  <span class="com"># -c                 summary table instead of a firehose. Start here.</span>
+                  
+                  <span class="com"># Attach to something already running and stuck</span>
+                  strace -f -p 12345
+                  
+                  <span class="com"># Library calls rather than syscalls — where strace shows nothing useful</span>
+                  ltrace ./myprogram
+                  </div>
+                  <div class="concept-desc verdict">
+                    Start with <code>-c</code> rather than the full trace. The summary shows call counts and time,
+                    which usually points at the answer in one screen; the firehose is for after you know what to
+                    look for. And <strong>grep for <code>ENOENT</code></strong> first &mdash; a program failing to
+                    find a config file, a library or a socket accounts for a large fraction of everything this tool
+                    is used for.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Reading the Output: Four Return Values Do Most of the Work</div>
+                <div class="concept-desc">
+                  The output is dense and the interesting parts are the failures. Four errno values cover most
+                  real diagnoses.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you see</th><th>It means</th></tr>
+                    <tr><td><code>= -1 ENOENT</code></td><td>No such file. <strong>The most common finding</strong> &mdash; wrong path, missing config, unset variable</td></tr>
+                    <tr><td><code>= -1 EACCES</code></td><td>Permission denied. Check the whole path, not just the file &mdash; and check SELinux/AppArmor before assuming the mode bits</td></tr>
+                    <tr><td><code>= -1 EAGAIN</code> repeatedly</td><td>Busy-waiting. Often a poll loop, and often the reason a process is burning CPU <span class="acro-exp">(Central Processing Unit)</span> doing nothing</td></tr>
+                    <tr><td>Stopped on <code>read()</code> or <code>futex()</code></td><td>Waiting. A blocked read on a socket is a network problem; a futex is lock contention</td></tr>
+                    <tr><td><code>connect(... 127.0.0.53 ...)</code></td><td>DNS <span class="acro-exp">(Domain Name System)</span> via systemd-resolved. A failure here is name resolution, not the application</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Read the trace from the <em>end</em> backwards when a program is stuck, and from the beginning
+                    when it fails to start. <strong>The last syscall before a hang is the answer</strong>, and the
+                    first <code>ENOENT</code> is usually the cause of a startup failure — everything after it is
+                    consequence.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Limits, and the Modern Alternatives</div>
+                <div class="concept-desc">
+                  Tracing has real costs and two of them matter operationally: it is <strong>slow</strong>, and
+                  attaching to a process is intrusive.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Limit</th><th>Consequence</th></tr>
+                    <tr><td>Every syscall is intercepted</td><td>10&ndash;100&times; slowdown. A timing-sensitive bug may vanish, and a busy production process may not tolerate it</td></tr>
+                    <tr><td>Attaching stops the process briefly</td><td>Not free on a live service. Prefer reproducing in staging</td></tr>
+                    <tr><td>Static binaries and <code>ltrace</code></td><td><code>ltrace</code> needs dynamic linking; on a static Go binary it shows nothing</td></tr>
+                    <tr><td>Containers</td><td>Needs <code>SYS_PTRACE</code>, often dropped by default</td></tr>
+                    <tr><td>Modern alternative</td><td>eBPF <span class="acro-exp">(Extended Berkeley Packet Filter)</span> tooling &mdash; <code>bpftrace</code>, <code>execsnoop</code>, <code>opensnoop</code> &mdash; far lower overhead, and the same questions</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    For a one-off diagnosis on a machine you can afford to slow down, <code>strace</code> is
+                    unbeatable for how little you need to know to use it. For anything continuous or in production,
+                    <strong>the eBPF tools are the same idea at a cost you can leave running</strong> &mdash; and
+                    <code>opensnoop</code> in particular answers the ENOENT question fleet-wide rather than one
+                    process at a time.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">Linux on the Desktop, and WSL <span class="acro-exp">(Windows Subsystem for Linux)</span> — Two Different Answers to the Same Wish</span>
+              <span class="topic-badge">Beginner</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Honest Answer Is About Workflows, Not About Linux</div>
+                <div class="concept-desc">
+                  &ldquo;Should I run Linux?&rdquo; is asked as a question about an operating system and is
+                  almost always a question about a <strong class="c-cyan">workflow</strong>: the person wants the
+                  tooling, the shell and the package manager, and has assumed those require the desktop. Since
+                  WSL they do not, which removes the
+                  dual-boot decision that used to make this hard.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you actually want</th><th>Cheapest way to get it</th></tr>
+                    <tr><td>The shell, the tools, the package manager</td><td>WSL, or a VM <span class="acro-exp">(Virtual Machine)</span>. No commitment, no dual boot</td></tr>
+                    <tr><td>To learn Linux administration</td><td>A VM you can break and rebuild, or a cheap VPS. Breaking it is the point</td></tr>
+                    <tr><td>A development environment matching production</td><td>Containers, or WSL &mdash; matching the <em>kernel</em> matters more than matching the desktop</td></tr>
+                    <tr><td>To not use Windows or macOS</td><td>The desktop. A legitimate reason, and a different one</td></tr>
+                    <tr><td>Better battery life or hardware support</td><td><strong>Usually the wrong direction.</strong> Vendor firmware and drivers are written for the shipped OS <span class="acro-exp">(Operating System)</span> first</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The last row deserves saying plainly because it is the reason people are disappointed:
+                    <strong>hardware support is written for the operating system the machine shipped with</strong>.
+                    Choosing Linux for battery life or for a fingerprint reader is choosing to do somebody else's
+                    driver work, and that is a hobby rather than a productivity decision.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">WSL's Filesystem Boundary, Which Is Where Everyone Trips</div>
+                <div class="concept-desc">
+                  WSL 2 is a real kernel in a lightweight VM, and the consequence people meet on day two is that
+                  <strong class="c-amber">crossing between the Windows filesystem and the Linux one is
+                  slow</strong>. Files under <code>/mnt/c/</code> are reached over a network protocol; a
+                  <code>git status</code> in a large repository there can take seconds instead of
+                  milliseconds.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Where the files live</th><th>Behaviour</th></tr>
+                    <tr><td><code>~/project</code> (inside WSL)</td><td><strong>Fast.</strong> Native ext4. This is where code should live</td></tr>
+                    <tr><td><code>/mnt/c/Users/you/project</code></td><td>Slow for many small files &mdash; the git, node_modules and build case</td></tr>
+                    <tr><td>Editing WSL files from Windows</td><td>Fine &mdash; <code>\\wsl$\</code> works, and editors with a WSL mode handle it properly</td></tr>
+                    <tr><td>Line endings</td><td>The other day-two problem. <code>core.autocrlf</code>, or a <code>.gitattributes</code></td></tr>
+                    <tr><td>File permissions across the boundary</td><td>Windows has no concept of the Unix mode bits. Scripts arrive non-executable</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    One rule covers all five rows: <strong>keep the code on the side of the boundary that runs
+                    it</strong>. Linux tooling on Linux files, Windows tooling on Windows files, and edit across the
+                    boundary rather than working across it. Almost every WSL performance complaint is a repository
+                    sitting under <code>/mnt/c/</code>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Choosing, and What Each Option Actually Costs</div>
+                <div class="concept-desc">
+                  Four routes, and the right one depends almost entirely on whether you need the Linux
+                  <em>desktop</em> or the Linux <em>userland</em>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Route</th><th>Good for</th><th>Cost</th></tr>
+                    <tr><td>WSL 2</td><td>Development on a Windows machine, matching container targets</td><td>The filesystem boundary; GUI <span class="acro-exp">(Graphical User Interface)</span> apps work but are a second-class path</td></tr>
+                    <tr><td>A virtual machine</td><td>Learning administration, testing, anything you want to snapshot</td><td>Resources, and it is not your daily desktop</td></tr>
+                    <tr><td>Dual boot</td><td>Wanting the desktop and needing Windows sometimes</td><td><strong>The reboot.</strong> In practice people stop rebooting and use one of them</td></tr>
+                    <tr><td>Linux as the only desktop</td><td>Wanting it, and being willing to solve hardware problems</td><td>Vendor software, video calls, and the peripheral that has no driver</td></tr>
+                    <tr><td>macOS</td><td>A Unix userland with vendor hardware support</td><td>Not Linux &mdash; BSD tools differ, and containers run in a VM anyway</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The recommendation that fits most people asking:
+                    <strong>WSL for work, a disposable VM for learning</strong>. The first gives you the tooling
+                    with no commitment; the second gives you a machine you can destroy, which is the only way to
+                    learn recovery &mdash; and the card on
+                    <span class="xref">Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot</span>
+                    is considerably easier to practise on something you are allowed to break.
                   </div>
                 </div>
               </div>

@@ -1306,64 +1306,6 @@ urls = [<span class="str">"https://example.com"</span>] * <span class="num">10</
 <!-- ── TOPIC: WEB SCRAPING BASICS ────────────────────────── -->
 <div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
-    <span class="topic-icon">🕷️</span>
-    <span class="topic-name">Web Scraping — Extracting Data From Websites</span>
-    <span class="topic-badge">SCRIPT • Practical</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">LEGAL & ETHICAL NOTE</div>
-      <div class="concept-title">Check robots.txt and Terms of Service</div>
-      <div class="concept-desc">Before scraping, check the site's <code>robots.txt</code> (example.com/robots.txt) — it specifies which paths bots may access. Read the Terms of Service — many prohibit automated access. Don't overload servers (add delays). Prefer official APIs <span class="acro-exp">(Application Programming Interface)</span> when available. Scraping for research or personal use is generally gray area; commercial use of scraped data is often illegal.</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">REQUESTS + BEAUTIFULSOUP</div>
-      <div class="concept-title">The Classic Scraping Stack</div>
-      <div class="code-block"><span class="com"># pip install requests beautifulsoup4</span>
-<span class="kw">import</span> requests
-<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
-
-url = <span class="str">"https://books.toscrape.com/"</span>  <span class="com"># practice site</span>
-response = requests.get(url)
-soup = BeautifulSoup(response.text, <span class="str">"html.parser"</span>)
-
-<span class="com"># Find by tag</span>
-titles = soup.find_all(<span class="str">"h3"</span>)
-
-<span class="com"># Find by CSS selector</span>
-prices = soup.select(<span class="str">".price_color"</span>)
-
-<span class="com"># Find by attribute</span>
-links = soup.find_all(<span class="str">"a"</span>, href=<span class="kw">True</span>)
-
-<span class="kw">for</span> title, price <span class="kw">in</span> <span class="fn">zip</span>(titles[:5], prices[:5]):
-    <span class="fn">print</span>(<span class="str">f"{title.text.strip()} — {price.text}"</span>)</div>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">BE A POLITE SCRAPER</div>
-      <div class="concept-title">Rate Limit and Identify Yourself</div>
-      <div class="code-block"><span class="kw">import</span> time
-<span class="kw">import</span> requests
-
-headers = {
-    <span class="str">"User-Agent"</span>: <span class="str">"MyResearchBot/1.0 (contact: me@example.com)"</span>
-}
-
-<span class="kw">for</span> page <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>):
-    url = <span class="str">f"https://example.com/page/{page}"</span>
-    resp = requests.get(url, headers=headers)
-    <span class="com"># Process resp...</span>
-    time.sleep(<span class="num">1</span>)   <span class="com"># 1 second between requests</span></div>
-    </div>
-  </div>
-</div>
-
-
-<!-- BEGINNER12-SCRIPT v1 -->
-<!-- ── TOPIC: REGEX MASTERY ─────────────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
-  <div class="topic-header">
     <span class="topic-icon">🔎</span>
     <span class="topic-name">Regular Expressions — Pattern Matching Power</span>
     <span class="topic-badge">SCRIPT • Practical</span>
@@ -2795,57 +2737,6 @@ test    = UserService(FakeInMemoryDatabase())</div>
 <!-- ── TOPIC: DESIGN PATTERNS ────────────────────────────── -->
 <div class="topic" data-reviewed="2026-07">
   <div class="topic-header">
-    <span class="topic-icon">📐</span>
-    <span class="topic-name">Design Patterns — Named Solutions to Common Problems</span>
-    <span class="topic-badge">SCRIPT • Design</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <div class="concept-label">WHAT THEY ARE</div>
-      <div class="concept-title">Reusable Vocabulary for Structuring Code</div>
-      <div class="concept-desc">Design patterns are battle-tested, named solutions to recurring design problems. Knowing them gives you a shared vocabulary ("let's use a factory here") and saves you from reinventing structures. Don't force them in — but recognizing when one fits is a sign of growth. Here are the ones beginners meet most often.</div>
-      <table class="ai-table">
-        <thead><tr><th>Pattern</th><th>Solves</th><th>Example</th></tr></thead>
-        <tbody>
-          <tr><td>Factory</td><td>Creating objects without specifying exact class</td><td><code>get_parser("json")</code> returns the right parser</td></tr>
-          <tr><td>Singleton</td><td>Exactly one instance shared everywhere</td><td>A single config or connection pool</td></tr>
-          <tr><td>Strategy</td><td>Swap algorithms at runtime</td><td>Pluggable sorting/auth/compression methods</td></tr>
-          <tr><td>Observer</td><td>Notify many objects when state changes</td><td>Event systems, pub/sub, callbacks</td></tr>
-          <tr><td>Decorator</td><td>Add behavior without changing the object</td><td>Python's <code>@decorators</code>, middleware</td></tr>
-          <tr><td>Adapter</td><td>Make incompatible interfaces work together</td><td>Wrapping a third-party API <span class="acro-exp">(Application Programming Interface)</span> in your interface</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="concept-card">
-      <div class="concept-label">STRATEGY EXAMPLE</div>
-      <div class="concept-title">Swappable Behavior in Python</div>
-      <div class="code-block"><span class="com"># Strategy: pass behavior as a function/object</span>
-<span class="kw">def</span> <span class="fn">process</span>(data, transform):    <span class="com"># transform is the "strategy"</span>
-    <span class="kw">return</span> [transform(x) <span class="kw">for</span> x <span class="kw">in</span> data]
-
-process([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="kw">lambda</span> x: x*<span class="num">2</span>)     <span class="com"># [2, 4, 6]</span>
-process([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="fn">str</span>)              <span class="com"># ['1', '2', '3']</span>
-
-<span class="com"># Factory: centralize object creation</span>
-<span class="kw">def</span> <span class="fn">get_notifier</span>(kind):
-    <span class="kw">return</span> {
-        <span class="str">"email"</span>: EmailNotifier,
-        <span class="str">"slack"</span>: SlackNotifier,
-        <span class="str">"sms"</span>:   SMSNotifier,
-    }[kind]()
-
-notifier = get_notifier(<span class="str">"slack"</span>)   <span class="com"># caller doesn't know the class</span>
-notifier.send(<span class="str">"Deploy complete"</span>)</div>
-      <div class="concept-desc"><strong>A warning:</strong> patterns are tools, not goals. Forcing patterns into simple code ("over-engineering") is as bad as having none. Reach for them when complexity actually demands it.</div>
-    </div>
-  </div>
-</div>
-
-<!-- BEGINNER24-SCRIPT v1 -->
-<!-- ── TOPIC: CLOUD AUTOMATION WITH PYTHON ───────────────── -->
-<div class="topic" data-reviewed="2026-07">
-  <div class="topic-header">
     <span class="topic-icon">☁️</span>
     <span class="topic-name">Cloud Automation — Controlling Infrastructure with Code</span>
     <span class="topic-badge">SCRIPT • Cloud</span>
@@ -3178,9 +3069,422 @@ console.print(table)
           <tr><td>Repeatable</td><td>Same result every time (no flakiness, no real network/time)</td></tr>
           <tr><td>Clear failure</td><td>When it fails, you immediately know what broke</td></tr>
           <tr><td>Tests behavior, not implementation</td><td>Survives refactoring; tests what, not how</td></tr>
+          <tr><td>Reads as a specification</td><td>BDD <span class="acro-exp">(Behavior-Driven Development)</span> frames each test as <em>given / when / then</em> — the same discipline, written so a non-programmer can check it says the right thing</td></tr>
           <tr><td>Covers edge cases</td><td>Empty, zero, negative, huge, None, unicode</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">subprocess Without Shell Injection</span>
+              <span class="topic-badge">SCRIPT • Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Convenient Form Is the Dangerous One</div>
+                <div class="concept-desc">
+                  <code>shell=True</code> exists because it lets you write the command the way you would type it,
+                  and that convenience is the vulnerability: <strong class="c-amber">a shell is a language
+                  interpreter, and you have just concatenated user input into a program</strong>. A list of
+                  arguments passes the values straight to the process with no interpreter in between, which
+                  removes the entire bug class rather than filtering it.
+                </div>
+                <div class="dw">
+                  <div class="code-label">THE SAME COMMAND, TWO WAYS</div>
+                  <div class="code-block">
+                  <span class="kw">import</span> subprocess
+                  
+                  <span class="com"># DANGEROUS — a shell parses this string, and the filename is part of it</span>
+                  filename = <span class="str">"report.pdf; rm -rf ~"</span>       <span class="com"># it came from a form field</span>
+                  subprocess.run(<span class="str">f"pdfinfo {filename}"</span>, shell=<span class="kw">True</span>)
+                  <span class="com"># the shell sees two commands. The second one runs.</span>
+                  
+                  <span class="com"># SAFE — a list of arguments. No shell, no parsing, no metacharacters</span>
+                  subprocess.run([<span class="str">"pdfinfo"</span>, filename], check=<span class="kw">True</span>)
+                  <span class="com"># pdfinfo receives one argument, which is a very strange filename. Nothing else happens.</span>
+                  
+                  <span class="com"># Also safe, and better: capture output and fail loudly</span>
+                  r = subprocess.run([<span class="str">"pdfinfo"</span>, filename],
+                                     capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>,
+                                     timeout=<span class="num">10</span>, check=<span class="kw">True</span>)
+                  <span class="kw">print</span>(r.stdout)
+                  </div>
+                  <div class="concept-desc verdict">
+                    Notice what the safe version does <em>not</em> need: no escaping, no allowlist of characters,
+                    no regex to strip semicolons. <strong>The metacharacters stop being special because nothing is
+                    parsing them</strong> &mdash; and that is why this is a design fix rather than a mitigation.
+                    Every attempt to sanitise a shell string is a race against a language with many ways to say the
+                    same thing.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Everything Else on the Call, and Why</div>
+                <div class="concept-desc">
+                  Once the argument list is right, four more parameters turn a working call into a reliable one.
+                  The defaults are chosen for interactive convenience and are wrong for anything running
+                  unattended.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Parameter</th><th>Default</th><th>What to use, and why</th></tr>
+                    <tr><td><code>shell</code></td><td><code>False</code></td><td>Leave it. If you genuinely need a pipeline, build it with two <code>Popen</code> objects instead</td></tr>
+                    <tr><td><code>check</code></td><td><code>False</code></td><td><strong><code>check=True</code></strong> &mdash; otherwise a failed command returns quietly and the script continues</td></tr>
+                    <tr><td><code>timeout</code></td><td>None</td><td>Always set one. A hung child process hangs the parent forever</td></tr>
+                    <tr><td><code>capture_output</code></td><td><code>False</code></td><td>Capture it if you need it; note a large output can fill the pipe buffer if you read it wrongly</td></tr>
+                    <tr><td><code>cwd</code> / <code>env</code></td><td>Inherited</td><td>Set them explicitly for anything scheduled &mdash; inherited state is how a script works by hand and fails in cron</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two cases people reach for <code>shell=True</code> to solve, and what to do instead:
+                    <strong>globbing</strong> is <code>glob.glob()</code> or <code>pathlib</code>, which is safer
+                    and clearer; <strong>pipelines</strong> are two processes connected with
+                    <code>stdout=subprocess.PIPE</code>. And the general principle:
+                    <strong>if you find yourself escaping, you are on the wrong path</strong> &mdash; the same
+                    lesson as parameterised SQL <span class="acro-exp">(Structured Query Language)</span>, one layer down.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏷️</span>
+              <span class="topic-name">Type Hints &amp; a Type Checker — Documentation the Machine Verifies</span>
+              <span class="topic-badge">SCRIPT • Quality</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Hints Nothing Checks Are Comments With Better Syntax</div>
+                <div class="concept-desc">
+                  Python's annotations are not enforced at runtime, which surprises people who arrive from a
+                  compiled language. A function annotated to return <code>int</code> will return a string without
+                  complaint. <strong class="c-amber">The value appears entirely at the moment a checker runs in
+                  CI</strong> &mdash; before that, hints are documentation that can drift, and drifting
+                  documentation is the thing they were supposed to replace.
+                </div>
+                <div class="dw">
+                  <div class="code-label">HINTS, AND WHAT A CHECKER DOES WITH THEM</div>
+                  <div class="code-block">
+                  <span class="com"># Hints alone change nothing at runtime — this happily returns a string</span>
+                  <span class="kw">def</span> <span class="fn">total</span>(items: list[<span class="type">int</span>]) -&gt; <span class="type">int</span>:
+                      <span class="kw">return</span> <span class="str">"oops"</span>          <span class="com"># Python: fine. mypy: error, line 2</span>
+                  
+                  <span class="com"># The value appears when a checker runs. Optional is the common catch:</span>
+                  <span class="kw">def</span> <span class="fn">find_user</span>(uid: <span class="type">int</span>) -&gt; <span class="type">User</span> | <span class="kw">None</span>:
+                      ...
+                  
+                  user = find_user(<span class="num">7</span>)
+                  <span class="kw">print</span>(user.name)              <span class="com"># error: item "None" has no attribute "name"</span>
+                  
+                  <span class="kw">if</span> user <span class="kw">is not</span> <span class="kw">None</span>:      <span class="com"># narrowing — now it is a User</span>
+                      <span class="kw">print</span>(user.name)          <span class="com"># fine</span>
+                  </div>
+                  <div class="concept-desc verdict">
+                    The largest single win is the third example: <strong>a checker forces you to handle
+                    <code>None</code></strong>, which is the source of a very large share of runtime errors in
+                    Python codebases. That one rule &mdash; strict optional checking &mdash; is worth more than
+                    every other annotation combined, and it is on by default in <code>mypy</code>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Gradual Typing, and the Boundary Where the Cost Is</div>
+                <div class="concept-desc">
+                  Adding types to an existing codebase is easy to start and easy to stall. The honest cost is
+                  <strong class="c-cyan">the boundary between typed and untyped code</strong>, where everything
+                  arriving is <code>Any</code> &mdash; and <code>Any</code> propagates silently, so a partially
+                  typed codebase can report zero errors while checking almost nothing.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Move</th><th>Why, and in what order</th></tr>
+                    <tr><td>Turn the checker on with a permissive config</td><td>A baseline that passes today. A checker that fails 4,000 times gets removed</td></tr>
+                    <tr><td>Ratchet the config, module by module</td><td>Per-module strictness in <code>pyproject.toml</code> &mdash; the same ratchet idea as this site's lint ceilings</td></tr>
+                    <tr><td>Type the <strong>edges</strong> first</td><td>Function signatures and data models. Internals infer from them</td></tr>
+                    <tr><td>Ban new <code>Any</code></td><td><code>--disallow-any-explicit</code> on new modules. Existing ones stay grandfathered</td></tr>
+                    <tr><td>Add stubs for untyped dependencies</td><td><code>types-requests</code> and friends, or a small local stub. Otherwise the whole call graph goes <code>Any</code></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The ratchet is the part that survives contact with a real codebase.
+                    <strong>A checker that fails four thousand times is removed within a week</strong>; one that
+                    passes today and gets slightly stricter each month is still running a year later &mdash; the
+                    same reasoning as the lint ceilings that gate this site.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">What Types Do Not Do</div>
+                <div class="concept-desc">
+                  The claim worth not overstating: types catch a specific class of mistake and nothing else, and a
+                  team that expects more will conclude the effort was wasted.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Types catch</th><th>Types do not catch</th></tr>
+                    <tr><td>Wrong argument, wrong shape, wrong return</td><td>Wrong logic that happens to type-check</td></tr>
+                    <tr><td>Unhandled <code>None</code></td><td>A value that is present and incorrect</td></tr>
+                    <tr><td>Renames missed in a refactor &mdash; <strong>the biggest day-to-day win</strong></td><td>Anything about data arriving from outside the program</td></tr>
+                    <tr><td>Impossible states, when you model them with unions</td><td>Business rules, which need tests</td></tr>
+                    <tr><td>Nothing at runtime, ever</td><td>Validation. <strong>Types vanish; external data still needs checking</strong> &mdash; with Pydantic or similar</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The point most worth repeating, because it is where people get burned: <strong>a type
+                    annotation is not validation</strong>. Data arriving from an API <span class="acro-exp">(Application Programming Interface)</span>, a JSON <span class="acro-exp">(JavaScript Object Notation)</span> file or a form is
+                    whatever the sender said it was, and the annotation is a comment about your intentions. Validate
+                    at the boundary; type everything behind it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📁</span>
+              <span class="topic-name">pathlib &amp; the End of String Paths</span>
+              <span class="topic-badge">SCRIPT • Essential</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">One Object, and the End of Separator Bugs</div>
+                <div class="concept-desc">
+                  Path manipulation with string concatenation is a portability bug waiting for a Windows user,
+                  and a correctness bug waiting for a trailing slash. <code>pathlib</code> replaces the whole
+                  category: a <code>Path</code> knows what it is, the <code>/</code> operator joins correctly on
+                  every platform, and the operations you actually want are methods on the object rather than
+                  functions in three different modules.
+                </div>
+                <div class="dw">
+                  <div class="code-label">THE HABIT CHANGE, IN FULL</div>
+                  <div class="code-block">
+                  <span class="kw">from</span> pathlib <span class="kw">import</span> Path
+                  
+                  <span class="com"># String paths: separator bugs, and every operation is a different function</span>
+                  <span class="kw">import</span> os
+                  p = base + <span class="str">"/"</span> + name + <span class="str">".txt"</span>            <span class="com"># breaks on Windows, breaks on a trailing slash</span>
+                  p = os.path.join(base, name + <span class="str">".txt"</span>)      <span class="com"># better, still stringly typed</span>
+                  
+                  <span class="com"># pathlib: one object, operators that read like the thing they do</span>
+                  p = Path(base) / <span class="str">f"{name}.txt"</span>
+                  
+                  p.suffix                 <span class="com"># '.txt'</span>
+                  p.stem                   <span class="com"># the name without the suffix</span>
+                  p.parent                 <span class="com"># the directory, as a Path</span>
+                  p.with_suffix(<span class="str">".bak"</span>)     <span class="com"># same path, different extension</span>
+                  p.exists(), p.is_file()
+                  p.read_text(encoding=<span class="str">"utf-8"</span>)
+                  p.write_text(data, encoding=<span class="str">"utf-8"</span>)
+                  p.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
+                  
+                  <span class="kw">for</span> f <span class="kw">in</span> Path(<span class="str">"logs"</span>).glob(<span class="str">"**/*.log"</span>):   <span class="com"># recursive, no os.walk</span>
+                      <span class="kw">print</span>(f.resolve())
+                  </div>
+                  <div class="concept-desc verdict">
+                    Three habits worth adopting wholesale. <strong>Always pass <code>encoding="utf-8"</code></strong>
+                    to <code>read_text</code> and <code>write_text</code> &mdash; the default is
+                    platform-dependent, and that is a bug that only appears on somebody else's machine. Use
+                    <strong><code>resolve()</code> before comparing paths</strong>, because <code>./a</code> and
+                    <code>a</code> are equal as files and not as strings. And <strong>never build a path from user
+                    input without checking it stays inside the directory you intended</strong> &mdash;
+                    <code>Path(base).resolve() in p.resolve().parents</code> is the check, and its absence is
+                    directory traversal.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧵</span>
+              <span class="topic-name">Threads, Processes &amp; async — Choosing by Where the Time Goes</span>
+              <span class="topic-badge">SCRIPT • Intermediate</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">One Question Picks Between All Three: Where Is the Time Going?</div>
+                <div class="concept-desc">
+                  Concurrency in Python looks like three competing options and is really one diagnostic followed
+                  by an obvious answer. <strong class="c-cyan">Is the program waiting, or is it
+                  computing?</strong> Waiting on the network, a disk or a database is I/O-bound and the answer is
+                  threads or <code>async</code>. Burning processor on arithmetic is CPU-bound and the answer is
+                  processes. <strong class="c-amber">&ldquo;We added threads and it got slower&rdquo; is almost
+                  always this question answered wrongly.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>Right for</th><th>Because</th></tr>
+                    <tr><td><code>async</code> / <code>asyncio</code></td><td>Many concurrent I/O <span class="acro-exp">(Input/Output)</span> waits &mdash; thousands of sockets</td><td>One thread, no context-switch cost, and waiting is explicit at <code>await</code></td></tr>
+                    <tr><td>Threads</td><td>I/O-bound work in libraries that are not async</td><td>The GIL is released during I/O, so threads genuinely overlap</td></tr>
+                    <tr><td>Processes</td><td>CPU-bound work &mdash; parsing, compression, numerical loops</td><td>Separate interpreters, separate GILs, real parallelism</td></tr>
+                    <tr><td>None of them</td><td>Work that is fast enough already</td><td>Concurrency is a cost paid in debuggability. Measure first</td></tr>
+                    <tr><td>Threads for CPU <span class="acro-exp">(Central Processing Unit)</span> work</td><td><strong>Nothing.</strong> The classic mistake</td><td>The GIL means one runs at a time, plus switching overhead</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Answer the question with a profiler rather than an intuition. <strong>The programs people
+                    most confidently describe as CPU-bound are usually waiting on a database</strong>, and the fix
+                    in that case is neither threads nor processes &mdash; it is one fewer query.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The GIL, Stated Accurately</div>
+                <div class="concept-desc">
+                  The global interpreter lock is described badly more often than it is described well, and both
+                  directions cause bad decisions. <strong>It does not make threads useless</strong>, and it
+                  <strong>does</strong> prevent two threads executing Python bytecode simultaneously.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Claim</th><th>Accurate version</th></tr>
+                    <tr><td>&ldquo;Threads are pointless in Python&rdquo;</td><td>False. The GIL is released during I/O and inside many C extensions, so threads help exactly where waiting dominates</td></tr>
+                    <tr><td>&ldquo;The GIL makes Python thread-safe&rdquo;</td><td>False, and dangerous. Individual bytecodes are atomic; your read-modify-write is not. Use a <code>Lock</code></td></tr>
+                    <tr><td>&ldquo;numpy is single-threaded because of the GIL&rdquo;</td><td>False. It releases the GIL for the heavy loops, which is why it scales</td></tr>
+                    <tr><td>&ldquo;Processes are just slower threads&rdquo;</td><td>They start slower and cannot share objects — arguments and results are pickled, so large payloads cost</td></tr>
+                    <tr><td>&ldquo;Free-threaded Python removes the question&rdquo;</td><td>It changes the trade rather than removing it. Treat the model choice as still yours to make</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The row that costs real money is the second. <strong>The GIL is not a substitute for a
+                    lock</strong>: a counter incremented from two threads will lose updates, exactly as it would in
+                    any other language, and the belief that Python is implicitly thread-safe is how that bug reaches
+                    production.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Choosing, and the Failure Modes of Each</div>
+                <div class="concept-desc">
+                  Once the diagnostic is done, each model has one characteristic way of going wrong that is worth
+                  knowing before you meet it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>How it goes wrong</th></tr>
+                    <tr><td><code>async</code></td><td><strong>One blocking call poisons the whole loop.</strong> A synchronous library, a CPU-heavy function, or <code>time.sleep</code> stalls every task. Use <code>run_in_executor</code></td></tr>
+                    <tr><td><code>async</code></td><td>Colouring: an async function can only be awaited by async callers, so adoption spreads through the codebase</td></tr>
+                    <tr><td>Threads</td><td>Shared mutable state, and races that only appear under load. Prefer a queue to a shared object</td></tr>
+                    <tr><td>Threads</td><td>No cheap cancellation. A thread stuck in a blocking call cannot be interrupted</td></tr>
+                    <tr><td>Processes</td><td>Pickling costs, and the object that cannot be pickled. Also: the child that inherits state it should not</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two practical defaults. For I/O-bound work in ordinary application code,
+                    <strong><code>concurrent.futures.ThreadPoolExecutor</code> is the smallest thing that
+                    works</strong> and requires no rewrite; reach for <code>asyncio</code> when the concurrency is
+                    in the thousands or the libraries are already async. For CPU-bound work,
+                    <strong><code>ProcessPoolExecutor</code> with chunked inputs</strong> &mdash; and check whether
+                    the library you are using (numpy, polars, a compression codec) already parallelises internally,
+                    because wrapping it in processes then makes it slower.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📦</span>
+              <span class="topic-name">Packaging &amp; Dependency Pinning — Making It Installable by Someone Else</span>
+              <span class="topic-badge">SCRIPT • Practical</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Gap Between &ldquo;Works on My Machine&rdquo; and &ldquo;Installs&rdquo;</div>
+                <div class="concept-desc">
+                  A script becomes software the moment somebody else has to run it, and the two artefacts that
+                  close that gap are a <strong class="c-cyan">project file</strong> (what this needs, roughly)
+                  and a <strong class="c-cyan">lockfile</strong> (exactly what was installed when it last
+                  worked). They answer different questions and
+                  <strong class="c-amber">having only the first is the most common reason a working project
+                  cannot be reproduced</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>File</th><th>Answers</th><th>Who reads it</th></tr>
+                    <tr><td><code>pyproject.toml</code></td><td>What this project needs, as ranges</td><td>Humans, and the resolver</td></tr>
+                    <tr><td>A lockfile</td><td>The exact versions and hashes that worked</td><td>The installer, in CI and in production</td></tr>
+                    <tr><td><code>requirements.txt</code>, unpinned</td><td>Neither, really &mdash; a wish list</td><td>Nobody, successfully</td></tr>
+                    <tr><td><code>requirements.txt</code>, fully pinned + hashes</td><td>Acts as a lockfile. Adequate, and awkward to update by hand</td><td>The installer</td></tr>
+                    <tr><td>A container image</td><td>The whole environment, and it still needs the two above inside it</td><td>The runtime</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The middle row is the one that quietly wastes the most time. <strong>An unpinned
+                    <code>requirements.txt</code> is not a lockfile</strong>, and treating it as one means a build
+                    that worked on Tuesday can fail on Wednesday with no change to your code &mdash; which is then
+                    debugged as though it were your code.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Pin for Applications, Range for Libraries</div>
+                <div class="concept-desc">
+                  The rule that resolves most arguments is that <strong>the right answer differs by what you are
+                  building</strong>. An application is installed once into an environment you control, so pinning
+                  is free and reproducibility is everything. A library is installed alongside other people's
+                  dependencies, so pinning tightly makes it un-installable.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>You are building</th><th>Do this</th></tr>
+                    <tr><td>An application or service</td><td>Pin everything, with hashes, in a lockfile committed to the repo</td></tr>
+                    <tr><td>A library for others</td><td>Declare ranges &mdash; a lower bound you tested and an upper bound only where you know a break exists</td></tr>
+                    <tr><td>A library, pinning exact versions</td><td><strong>Causes dependency hell for every consumer.</strong> Two libraries pinning different patch versions cannot coexist</td></tr>
+                    <tr><td>An internal tool</td><td>Treat it as an application. Nobody depends on it as a library</td></tr>
+                    <tr><td>Anything at all</td><td>Commit the lockfile. It is not build output; it is a record of what worked</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The middle row is worth stating as a rule for anyone publishing a package:
+                    <strong>pinning exact versions in a library is antisocial</strong>. It cannot coexist with any
+                    other library that made the same choice, and the person who discovers that is a stranger with no
+                    way to fix it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">This Is Also the Supply-Chain Surface</div>
+                <div class="concept-desc">
+                  Dependency management and supply-chain security are the same activity described by two
+                  departments. Every pin is a decision about what code you are choosing to run, and the
+                  mechanisms that make builds reproducible are the mechanisms that make them auditable.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Control</th><th>What it prevents</th></tr>
+                    <tr><td>Hashes in the lockfile</td><td>A package being replaced at the registry after you resolved it</td></tr>
+                    <tr><td>A lockfile at all</td><td>A dependency's dependency changing silently between two builds of the same commit</td></tr>
+                    <tr><td>Reviewing new transitive dependencies</td><td>The install that quietly added forty packages nobody looked at</td></tr>
+                    <tr><td>Typo-squat awareness on install</td><td><code>python-dateutil</code> vs a plausible near-miss. Read the name you typed</td></tr>
+                    <tr><td>An SBOM <span class="acro-exp">(Software Bill of Materials)</span> generated at build</td><td>Turning a CVE <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> announcement into a query rather than a project &mdash; see <span class="xref">Software Supply Chain Security — SBOM, SLSA &amp; Sigstore</span></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The practical modern default: <strong>use a tool that produces a lockfile with hashes and keep
+                    it in version control</strong> &mdash; <code>uv</code>, <code>poetry</code> or
+                    <code>pip-tools</code> all do this, and which one matters far less than having one. And build
+                    the habit of reading what an install added: the moment a project has more dependencies than
+                    anyone has looked at, its supply chain is somebody else's decision.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

@@ -4016,3 +4016,477 @@ valgrind --leak-check=full ./prog</pre>
     </div>
   </div>
 </div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⏳</span>
+    <span class="topic-name">Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full</span>
+    <span class="topic-badge">CS • Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">One Equation, and the Reason Waiting Is Not Linear</div>
+      <div class="concept-desc">
+        Queueing feels like it should be proportional: twice the load, twice the wait. It is not, and
+        the gap between intuition and arithmetic is where most capacity decisions go wrong.
+        <strong class="c-cyan">Little's Law</strong> is the whole of the first half:
+        <strong>L = &lambda;W</strong> &mdash; the average number of items in a system equals the
+        arrival rate multiplied by the average time each spends there. It holds for any stable system,
+        with no assumption about the distribution of arrivals or service times, which is what makes it
+        so widely applicable and so easy to overlook.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Symbol</th><th>Means</th><th>In a web service</th></tr>
+          <tr><td><strong>L</strong></td><td>Items in the system</td><td>Requests in flight, including those queued</td></tr>
+          <tr><td><strong>&lambda;</strong> (lambda)</td><td>Arrival rate</td><td>Requests per second</td></tr>
+          <tr><td><strong>W</strong></td><td>Time in the system</td><td>Latency, queueing plus service</td></tr>
+          <tr><td>Rearranged</td><td><strong>W = L / &lambda;</strong></td><td>1,000 in flight at 200/s means a 5-second latency &mdash; whatever the code does</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The rearrangement is the useful one, because <strong>L is the number you can usually
+          measure</strong> and W is the one people argue about. A thread pool of 1,000 serving 200
+          requests a second <em>is</em> a five-second latency; no amount of profiling the handler
+          changes that, because the wait is in the queue rather than in the work.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Knee</div>
+      <div class="concept-title">Utilisation Does Not Trade Off Linearly Against Latency</div>
+      <div class="concept-desc">
+        The second half is why a system at 90% utilisation is not &ldquo;10% away from trouble&rdquo;.
+        For a simple queue, the average wait scales roughly with <strong>1 / (1 &minus; &rho;)</strong>,
+        where &rho; is utilisation. <strong class="c-amber">The curve is flat and then it is a
+        wall</strong> &mdash; and the wall arrives a long way before the server is full.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Utilisation &rho;</th><th>Relative queueing delay</th><th>What it feels like</th></tr>
+          <tr><td>50%</td><td>2&times;</td><td>Comfortable. Spare capacity absorbs bursts</td></tr>
+          <tr><td>80%</td><td>5&times;</td><td>Still fine on average; the tail has started to spread</td></tr>
+          <tr><td>90%</td><td>10&times;</td><td><strong>The knee.</strong> Small load increases now produce large latency increases</td></tr>
+          <tr><td>95%</td><td>20&times;</td><td>A brief burst becomes a visible outage</td></tr>
+          <tr><td>99%</td><td>100&times;</td><td>Effectively unusable, on a server that is not out of CPU <span class="acro-exp">(Central Processing Unit)</span></td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          Three consequences worth carrying. <strong>Running at 90% is a decision about latency, not
+          about efficiency</strong> &mdash; and it is a defensible one for batch work and a poor one for
+          anything a human waits on. Variability makes it worse: bursty arrivals hit the wall earlier
+          than the average suggests. And this is why <strong>adding one worker sometimes fixes
+          everything</strong> &mdash; moving from 95% to 80% utilisation is not a 15% improvement, it is
+          a four-fold reduction in queueing delay.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Where it shows up</div>
+      <div class="concept-title">The Same Curve, Wearing Different Clothes</div>
+      <div class="concept-desc">
+        Once the shape is recognisable it appears everywhere on this site, which is the argument for
+        learning it once rather than meeting it five times as separate surprises.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Situation</th><th>The queue</th></tr>
+          <tr><td>A database connection pool at capacity</td><td>Requests wait for a connection. <span class="xref">PostgreSQL — The Default Choice</span> is the same limit seen from the database's side</td></tr>
+          <tr><td>A CI pipeline with too few runners</td><td>Jobs queue; the wait explodes near saturation, which is why build times feel fine and then do not</td></tr>
+          <tr><td>A support queue or on-call rotation</td><td>People are servers. Staffing to 95% of capacity guarantees a backlog</td></tr>
+          <tr><td>Retry storms</td><td>Retries raise &lambda; at exactly the moment &rho; is already high &mdash; the mechanism behind <span class="xref">Resilience Patterns — Circuit Breaker, Retry &amp; Timeout</span></td></tr>
+          <tr><td>Kanban work-in-progress limits</td><td>L is capped deliberately, so W becomes predictable. That is the whole argument for WIP limits</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The practical habit is to <strong>measure L and &lambda; before reasoning about W</strong>.
+          Both are usually already in your metrics &mdash; in-flight requests and requests per second
+          &mdash; and their ratio is the latency you actually have, independent of any story about why.
+          When the ratio disagrees with the latency you believe you have, one of the two numbers is
+          measuring something other than what its name says.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗜️</span>
+    <span class="topic-name">Compression — Why It Works, and Why It Sometimes Cannot</span>
+    <span class="topic-badge">CS • Information</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Compression Exploits Redundancy, So Incompressible Data Is Data With None</div>
+      <div class="concept-desc">
+        Every compressor works by finding structure and describing it more briefly: repeated bytes,
+        predictable patterns, skewed symbol frequencies. That single fact explains all the surprising
+        behaviour. <strong class="c-amber">Data with no discoverable structure cannot be
+        compressed</strong> &mdash; and a counting argument proves no algorithm can compress every
+        input, because there are more possible files of length <em>n</em> than of length less than
+        <em>n</em>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Data</th><th>Compresses?</th><th>Why</th></tr>
+          <tr><td>English text, source code, logs</td><td>Very well</td><td>Skewed symbol frequencies and enormous repetition</td></tr>
+          <tr><td>A CSV <span class="acro-exp">(Comma-Separated Values)</span> of numbers</td><td>Well, especially columnar</td><td>Similar values adjacent &mdash; the whole argument for Parquet</td></tr>
+          <tr><td>An already-compressed archive</td><td><strong>No</strong></td><td>The redundancy has been removed. Re-compressing usually grows it slightly</td></tr>
+          <tr><td>JPEG <span class="acro-exp">(Joint Photographic Experts Group)</span>, MP3, MP4</td><td>No</td><td>Same reason &mdash; lossy compression already removed the structure</td></tr>
+          <tr><td>Encrypted data</td><td><strong>No, and this is diagnostic</strong></td><td>Good ciphertext is indistinguishable from random. If it compresses, something is wrong</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The last row is a genuinely useful test rather than a curiosity.
+          <strong>Try to compress something you believe is encrypted</strong> — if the ratio is meaningful,
+          either the encryption is not happening or it is badly broken, and that is a two-second check
+          available to anyone.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Practice</div>
+      <div class="concept-title">Compress Then Encrypt Is the Only Order That Works</div>
+      <div class="concept-desc">
+        The ordering follows directly. <strong class="c-cyan">Compression before encryption</strong>
+        works, because the plaintext still has structure. Encryption before compression achieves
+        nothing, because ciphertext has no structure left to find &mdash; and if it did, the cipher
+        would be broken.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Order</th><th>Result</th></tr>
+          <tr><td>Compress, then encrypt</td><td><strong>Correct.</strong> Smaller and secret</td></tr>
+          <tr><td>Encrypt, then compress</td><td>No size reduction. A wasted pass</td></tr>
+          <tr><td>Neither</td><td>Fine, and larger</td></tr>
+          <tr><td>Compress, encrypt, then compress again</td><td>The second pass does nothing, and the CPU <span class="acro-exp">(Central Processing Unit)</span> is spent anyway</td></tr>
+          <tr><td>Compression ratio as a check</td><td>If encrypted output compresses meaningfully, treat it as evidence of a broken or absent cipher</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The correct order has a security cost that is not obvious and is worth stating plainly:
+          <strong class="c-amber">compressing attacker-influenced data alongside a secret leaks the
+          secret through the output length</strong>. If an attacker can inject text and observe the
+          compressed size, matches with the secret compress better &mdash; and the size difference
+          recovers it byte by byte. This is the mechanism behind the CRIME and BREACH attacks on
+          compressed TLS <span class="acro-exp">(Transport Layer Security)</span>, and the reason
+          compression of secret-bearing responses was disabled rather than fixed.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Choosing, and the One Number That Decides</div>
+      <div class="concept-desc">
+        Algorithms differ mostly along one axis &mdash; how much CPU you will spend per byte &mdash; and
+        the right choice depends on whether the bottleneck is the network, the disk or the processor.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Algorithm</th><th>Character</th><th>Right when</th></tr>
+          <tr><td><code>gzip</code> / DEFLATE</td><td>Universal, modest ratio, modest speed</td><td>Compatibility matters more than anything</td></tr>
+          <tr><td><code>zstd</code></td><td>Wide range of levels, fast at low ones</td><td><strong>The current default answer</strong> for most new uses</td></tr>
+          <tr><td><code>lz4</code></td><td>Very fast, weak ratio</td><td>Compressing is cheaper than transmitting, but only just &mdash; memory, hot paths</td></tr>
+          <tr><td><code>brotli</code></td><td>Best ratio for web text, slow to compress</td><td>Static assets compressed once and served many times</td></tr>
+          <tr><td><code>xz</code> / LZMA</td><td>Strong ratio, very slow</td><td>Distribution archives where compression happens once</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The decision rule that avoids most mistakes: <strong>if the data is served more often than it
+          is created, spend CPU at creation time</strong> (brotli, xz); if it is created more often than
+          it is read, use something fast (zstd at a low level, lz4). And measure the ratio on your own
+          data before choosing &mdash; the published benchmarks are on corpora that may look nothing like
+          yours.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">⭕</span>
+    <span class="topic-name">Consistent Hashing — Adding a Server Without Moving Everything</span>
+    <span class="topic-badge">CS • Distributed</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">Modulo Sharding Remaps Almost Everything When the Server Count Changes</div>
+      <div class="concept-desc">
+        The obvious way to spread keys across N servers is <code>hash(key) % N</code>. It is even, it
+        is instant, and it has one catastrophic property: <strong class="c-amber">change N and nearly
+        every key moves</strong>. Going from 4 servers to 5 relocates roughly 80% of the data &mdash;
+        which for a cache means an 80% miss rate arriving at the database all at once, and for a
+        database means a migration.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Servers</th><th>Keys that move on adding one more</th><th>Consequence</th></tr>
+          <tr><td><code>% 4</code> &rarr; <code>% 5</code></td><td>~80%</td><td>The cache is effectively cold</td></tr>
+          <tr><td><code>% 100</code> &rarr; <code>% 101</code></td><td>~99%</td><td>It gets <em>worse</em> with scale, not better</td></tr>
+          <tr><td>Consistent hashing, 4 &rarr; 5</td><td><strong>~1/5 of keys</strong></td><td>Only the share the new node takes over</td></tr>
+          <tr><td>Consistent hashing, node fails</td><td>Only that node's share</td><td>Its neighbour absorbs it; everyone else is untouched</td></tr>
+          <tr><td>Rendezvous hashing</td><td>Same guarantee, different mechanism</td><td>Simpler to implement, no ring to maintain</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The second row is the important one and it is counter-intuitive: <strong>modulo sharding gets
+          worse as the cluster grows</strong>. At four nodes you lose most of the cache; at a hundred you
+          lose essentially all of it — so the technique fails hardest exactly where it was adopted to
+          help.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The Ring, and Why Virtual Nodes Are Not Optional</div>
+      <div class="concept-desc">
+        Map both keys and servers onto the same circular space &mdash; the output range of the hash
+        &mdash; and assign each key to the first server clockwise from it. Adding a server takes over
+        only the arc between it and its predecessor, so <strong class="c-cyan">the disruption is
+        proportional to what changed, not to the size of the cluster</strong>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Refinement</th><th>The problem it solves</th></tr>
+          <tr><td>Servers placed once each</td><td>Arcs are uneven by luck. One node gets twice the load of another</td></tr>
+          <tr><td><strong>Virtual nodes</strong> — each server at 100&ndash;200 points</td><td>Averages the arcs out. <strong>Without this the balance is poor enough to matter</strong></td></tr>
+          <tr><td>Weighted nodes</td><td>A bigger machine gets more virtual points. Heterogeneous clusters work naturally</td></tr>
+          <tr><td>A node fails</td><td>Its arcs pass to the next node clockwise &mdash; concentrated on neighbours, which is why virtual nodes spread the failure too</td></tr>
+          <tr><td>Rendezvous (HRW) hashing</td><td>For each key, pick the server maximising <code>hash(key, server)</code>. No ring, no virtual nodes, same properties</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          If you are implementing this rather than using a library, <strong>the number of virtual nodes
+          is the parameter that decides whether it works</strong>. One point per server gives a load
+          imbalance large enough to negate the benefit; a hundred or two gives distribution close enough
+          to even that nobody notices. It is not a tuning knob so much as a correctness requirement.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Where it shows up</div>
+      <div class="concept-title">One Idea That Made Horizontal Scaling Practical</div>
+      <div class="concept-desc">
+        This is worth learning once because it recurs everywhere, and in each place it is the answer to
+        the same question: how do we add capacity without moving all the data?
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>System</th><th>Where it appears</th></tr>
+          <tr><td>Memcached and Redis client libraries</td><td>Client-side sharding across a pool &mdash; the original popular use</td></tr>
+          <tr><td>Cassandra and DynamoDB</td><td>The partitioner. See <span class="xref">Cassandra &amp; DynamoDB — Wide-Column at Scale</span></td></tr>
+          <tr><td>CDNs <span class="acro-exp">(Content Delivery Network)</span></td><td>Which edge cache holds which object, with the same 'add a node' requirement</td></tr>
+          <tr><td>Load balancers</td><td>Session affinity that survives a backend joining or leaving</td></tr>
+          <tr><td>Sharded databases generally</td><td>The alternative is a lookup table, which is also valid and needs its own consistency story</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The limitation worth stating alongside the idea: <strong>consistent hashing distributes keys
+          evenly, not load</strong>. One extremely popular key &mdash; a celebrity account, a hot product
+          &mdash; lands on one node regardless, which is the hot-partition problem that no amount of
+          rebalancing fixes. That needs a different tool: replication of the hot key, or a composite key
+          that spreads it deliberately.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🔢</span>
+    <span class="topic-name">Byte Order &amp; Binary Layout — Endianness, Alignment &amp; Struct Packing</span>
+    <span class="topic-badge">CS • Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The Bug Class Where the Data Parses and Is Wrong</div>
+      <div class="concept-desc">
+        Endianness is not an exotic concern; it is the general form of a failure that shows up whenever
+        bytes cross a boundary. <strong class="c-amber">The same four bytes mean two different numbers
+        depending on who wrote them</strong>, and neither reader errors &mdash; one simply produces
+        16,777,216 where the other produced 256. Nothing crashes, nothing logs, and the number is
+        wrong.
+      </div>
+      <div class="dw">
+        <div class="code-label">THE SAME FOUR BYTES, TWO NUMBERS</div>
+        <div class="code-block">
+        bytes on the wire:   0x00 0x00 0x01 0x00
+        
+          big-endian    (network order, most significant first)  =        256
+          little-endian (x86, ARM by default, least significant) = 16,777,216
+        
+        <span class="com"># Python: be explicit, always</span>
+        <span class="kw">import</span> struct
+        struct.pack(<span class="str">"&gt;I"</span>, <span class="num">256</span>)      <span class="com"># b'\x00\x00\x01\x00'  big-endian</span>
+        struct.pack(<span class="str">"&lt;I"</span>, <span class="num">256</span>)      <span class="com"># b'\x00\x01\x00\x00'  little-endian</span>
+        struct.pack(<span class="str">"I"</span>, <span class="num">256</span>)       <span class="com"># native + PADDING. Almost never what you want on the wire.</span>
+        
+        <span class="com"># Struct padding: this is 12 bytes in C, not 6</span>
+        <span class="com">#   struct { char a; int b; char c; }   -&gt; a, 3 pad, b(4), c, 3 pad</span>
+        struct.calcsize(<span class="str">"cic"</span>)        <span class="com"># 12 — native alignment</span>
+        struct.calcsize(<span class="str">"&lt;cic"</span>)       <span class="com"># 6  — '&lt;' also means "no padding"</span>
+        </div>
+        <div class="concept-desc verdict">
+          Two rules remove almost all of it. <strong>Be explicit at every boundary</strong>: use
+          <code>&gt;</code> or <code>&lt;</code> in a format string, never the native default, because
+          native is whatever the machine that ran the code happened to be. And <strong>network byte order
+          is big-endian</strong> &mdash; that is why <code>htonl</code> exists and why most protocol
+          specifications say &ldquo;most significant byte first&rdquo;, even though nearly every machine
+          running them today is little-endian.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Alignment and Padding, Which Surprise People Separately</div>
+      <div class="concept-desc">
+        The second half of &ldquo;binary layout&rdquo; is that a struct is not the sum of its fields.
+        Compilers insert padding so each field starts at an address its type likes, and the padding is
+        invisible in the source.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Fact</th><th>Consequence</th></tr>
+          <tr><td>Fields are aligned to their own size</td><td>A 4-byte int starts at a multiple of 4. Bytes are inserted before it if needed</td></tr>
+          <tr><td>Field <em>order</em> changes the size</td><td><code>char, int, char</code> is 12 bytes; <code>int, char, char</code> is 8. Same fields</td></tr>
+          <tr><td>Padding bytes are uninitialised</td><td><strong>Writing a struct to disk or a socket leaks whatever was in memory</strong> &mdash; a genuine information-disclosure bug</td></tr>
+          <tr><td><code>#pragma pack</code> / <code>__attribute__((packed))</code></td><td>Removes padding, and can make access slower or fault on architectures that require alignment</td></tr>
+          <tr><td>Two compilers, two layouts</td><td>A struct is not a wire format. It never was</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The third row is a security bug, not a formatting curiosity. <strong>Padding bytes are never
+          initialised</strong>, so writing a struct straight to a socket or a file sends whatever was
+          previously in that memory — which has leaked keys and pointers from real systems, and which no
+          test will ever notice.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Practice</div>
+      <div class="concept-title">The Rule That Prevents All of It</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Never send a struct. Serialise fields explicitly.</strong> Everything
+        above is a symptom of treating an in-memory layout as if it were a defined format, and the
+        layout belongs to the compiler, the architecture and the flags &mdash; none of which the reader
+        on the other end shares.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Approach</th><th>Verdict</th></tr>
+          <tr><td><code>write(fd, &amp;struct, sizeof(struct))</code></td><td>Works until the other end differs. Then it is the bug in the first card</td></tr>
+          <tr><td>Explicit field-by-field serialisation</td><td>Verbose, correct, and reviewable</td></tr>
+          <tr><td>A schema format &mdash; Protobuf, Avro, MessagePack, CBOR</td><td>Handles endianness, alignment and versioning. <strong>The right default</strong></td></tr>
+          <tr><td>Text formats &mdash; JSON <span class="acro-exp">(JavaScript Object Notation)</span>, CSV <span class="acro-exp">(Comma-Separated Values)</span></td><td>Immune to all of this. Larger and slower, and usually fine</td></tr>
+          <tr><td>Reading a foreign binary format</td><td>The specification will state the byte order. Believe it over your machine</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          Where the file format is not yours &mdash; a packet capture, a disk image, a mainframe extract
+          &mdash; the same discipline applies in reverse: <strong>read the specification's stated byte
+          order and unpack explicitly</strong>. This is the general version of a problem that the
+          mainframe integration cards meet from the other end, where EBCDIC and packed decimal add two
+          more encodings to the same question of &ldquo;whose interpretation of these bytes is
+          right?&rdquo;
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">💣</span>
+    <span class="topic-name">Catastrophic Backtracking — When a Regular Expression Is a Denial of Service</span>
+    <span class="topic-badge">CS • Algorithms</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">A Regular Expression That Is a Denial of Service</div>
+      <div class="concept-desc">
+        Most regex engines &mdash; those in Python, Java, JavaScript, .NET, PCRE &mdash; are
+        <em>backtracking</em> engines. On a failed match they retry alternatives, and with a
+        <strong class="c-amber">nested quantifier</strong> the number of alternatives grows
+        exponentially with input length. Thirty characters can take longer than the rest of the request
+        by orders of magnitude, on a single CPU <span class="acro-exp">(Central Processing Unit)</span>, from an input the user chose.
+      </div>
+      <div class="dw">
+        <div class="code-label">THE SHAPE, AND THE INPUT THAT KILLS IT</div>
+        <div class="code-block">
+        <span class="com"># Nested quantifier: (a+)+ — the engine can split "aaaa" many ways</span>
+        pattern = r<span class="str">"^(a+)+$"</span>
+        <span class="str">"aaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"</span>   <span class="com"># 29 a's and one non-match</span>
+        <span class="com"># backtracking paths grow as 2^n. 29 chars ≈ half a billion attempts.</span>
+        
+        <span class="com"># Same disease, common in the wild:</span>
+        r<span class="str">"^(\w+\s?)*$"</span>          <span class="com"># "trim and validate a sentence"</span>
+        r<span class="str">"^(\d+|\w+)*$"</span>          <span class="com"># alternation inside a quantifier — overlapping</span>
+        r<span class="str">"(.*),(.*),(.*)"</span>        <span class="com"># greedy .* that must be re-split on failure</span>
+        
+        <span class="com"># Fixes, in order of preference</span>
+        r<span class="str">"^a+$"</span>                   <span class="com"># 1. remove the nesting — usually possible</span>
+        r<span class="str">"^[^,]*,[^,]*,[^,]*$"</span>   <span class="com"># 2. make each part unambiguous, no backtracking needed</span>
+        <span class="com"># 3. use a linear-time engine: Go regexp, Rust regex, RE2</span>
+        <span class="com"># 4. bound it: a timeout, and a maximum input length</span>
+        </div>
+        <div class="concept-desc verdict">
+          It is the rare bug that is <strong>simultaneously a performance problem, a security
+          vulnerability and invisible in code review</strong> &mdash; because the pattern looks correct,
+          passes every test, and only misbehaves on inputs nobody wrote a test for. The tell is a
+          quantifier applied to a group that itself contains a quantifier or an alternation:
+          <code>(a+)+</code>, <code>(\w+\s?)*</code>, <code>(x|xx)*</code>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Where It Reaches You, and Why the Input Is Usually Not Yours</div>
+      <div class="concept-desc">
+        The reason this class matters operationally is that the dangerous inputs arrive from outside and
+        the patterns are frequently not written by the person who deployed them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Source</th><th>Why it is exposed</th></tr>
+          <tr><td>Input validation on a form field</td><td>The archetype &mdash; an email or URL <span class="acro-exp">(Uniform Resource Locator)</span> pattern applied to attacker-chosen text</td></tr>
+          <tr><td>A log-parsing rule</td><td>Logs contain attacker-influenced content. A slow regex in the ingest path stalls the pipeline</td></tr>
+          <tr><td>A WAF <span class="acro-exp">(Web Application Firewall)</span> or IDS <span class="acro-exp">(Intrusion Detection System)</span> rule set</td><td>Rules written by a third party, run against traffic. See <span class="xref">Suricata &amp; Snort — Signature IDS/IPS</span></td></tr>
+          <tr><td>A dependency's internal regex</td><td>You did not write it and may not know it exists. ReDoS advisories against libraries are common</td></tr>
+          <tr><td>Markdown or template rendering</td><td>User content, complex patterns, and usually server-side</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The fourth row is why this needs a dependency-scanning answer as well as a code-review one.
+          <strong>Most exposure is in patterns you did not write</strong>, inside libraries and rule sets,
+          so the practical controls are keeping dependencies current and putting a bound on input length
+          at the edge.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Practice</div>
+      <div class="concept-title">Four Fixes, and Only One of Them Is Universal</div>
+      <div class="concept-desc">
+        Ordered by how well they work rather than by how easy they are.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Fix</th><th>Strength</th></tr>
+          <tr><td>Rewrite to remove the ambiguity</td><td><strong>Best.</strong> Usually possible &mdash; <code>(a+)+</code> was never needed, and <code>[^,]*</code> beats <code>.*</code></td></tr>
+          <tr><td>Use a linear-time engine</td><td><strong>Universal.</strong> RE2, Go's <code>regexp</code>, Rust's <code>regex</code> cannot backtrack, by construction. They give up some features to guarantee it</td></tr>
+          <tr><td>Atomic groups / possessive quantifiers</td><td>Effective where supported (PCRE, Java, .NET) &mdash; not available in Python's <code>re</code> or JavaScript</td></tr>
+          <tr><td>A timeout on the match</td><td>A backstop, not a fix. .NET and Java support it; Python and JavaScript do not, natively</td></tr>
+          <tr><td>Cap the input length</td><td>Cheap, blunt, and genuinely reduces the exponent. Do it anyway</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The habit worth building is smaller than any of these: <strong>when you write a quantifier over
+          a group, ask whether two different splits of the same input could both match</strong>. If they
+          can, the pattern backtracks. And for anything running against untrusted input at volume, prefer
+          a <strong>parser over a regular expression</strong> &mdash; the cases where a regex is genuinely
+          the right tool for structured input are fewer than habit suggests.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

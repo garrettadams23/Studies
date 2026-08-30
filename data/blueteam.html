@@ -35,10 +35,34 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">You Cannot Analyse a Capture Nobody Took</div>
+                <div class="concept-desc">
+                  Wireshark is the best tool on this page for a question you can still reproduce, and no
+                  help at all for last Tuesday. The blind spot is <strong class="c-amber">retroactivity</strong>:
+                  by the time an incident is declared the packets are gone, and the only network evidence that
+                  survives is whatever something was already writing down.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>Can Wireshark answer it?</th></tr>
+                    <tr><td>What is this application doing right now?</td><td>Yes &mdash; this is its home ground</td></tr>
+                    <tr><td>What did this host do at 02:00 last Tuesday?</td><td>Only if a rolling capture was already running</td></tr>
+                    <tr><td>What was inside that TLS <span class="acro-exp">(Transport Layer Security)</span> 1.3 session?</td><td>Not from the server key &mdash; forward secrecy removed that. Needs <code>SSLKEYLOGFILE</code> from the client</td></tr>
+                    <tr><td>Which hosts beaconed all month?</td><td>Wrong tool &mdash; that is a Zeek <code>conn.log</code> query</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The pairing is a rolling full-capture ring buffer at the choke points that matter
+                  (Arkime, or <code>tcpdump -C -W</code>), sized to whatever retention you can afford &mdash;
+                  even 48 hours changes what a Tuesday-morning investigation can reach. Wireshark then becomes
+                  the <em>reader</em> of that archive rather than a tool you can only point at the present.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">📡</span>
               <span class="topic-name">tcpdump — Capture from the Command Line</span>
@@ -107,10 +131,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">A Sensor Sees What Crosses It, and Less Crosses It Every Year</div>
+                <div class="concept-desc">
+                  Zeek's logs are only as complete as the traffic reaching the tap. The gap is not a
+                  setting you forgot &mdash; it is <strong class="c-amber">where the sensor sits</strong>, and the
+                  amount of traffic that never passes a central chokepoint has grown every year for a decade:
+                  laptops that split-tunnel, workloads that talk east-west inside one subnet, and anything
+                  running in a cloud VPC <span class="acro-exp">(Virtual Private Cloud)</span> with no
+                  on-premise path at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Traffic Zeek misses</th><th>What covers it</th></tr>
+                    <tr><td>East-west inside one VLAN <span class="acro-exp">(Virtual Local Area Network)</span> or subnet</td><td>Host telemetry &mdash; Sysmon 3, auditd, EDR <span class="acro-exp">(Endpoint Detection and Response)</span> process and network events</td></tr>
+                    <tr><td>Remote users on split-tunnel VPN <span class="acro-exp">(Virtual Private Network)</span></td><td>The endpoint agent, or full-tunnel for the sessions that matter</td></tr>
+                    <tr><td>Cloud workload to cloud service</td><td>VPC flow logs, plus the provider's own service logs</td></tr>
+                    <tr><td>Payload inside TLS</td><td><code>ssl.log</code> gives SNI <span class="acro-exp">(Server Name Indication)</span>, JA3 and cert chain &mdash; treat the metadata as the detection surface</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Before trusting a Zeek deployment, answer one question with a number: <strong>what
+                  percentage of your hosts' traffic physically traverses this sensor?</strong> If nobody knows,
+                  that is the finding. A sensor covering 40% of traffic is useful; a sensor believed to cover
+                  100% while covering 40% is worse than none, because it retires the question.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🚨</span>
               <span class="topic-name">Suricata &amp; Snort — Signature IDS/IPS</span>
@@ -150,10 +200,34 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">A Signature Is a Description of Something Already Named</div>
+                <div class="concept-desc">
+                  Signature IDS <span class="acro-exp">(Intrusion Detection System)</span> detects what somebody has already written down. That makes it excellent
+                  against commodity tooling and structurally blind to anything first-of-its-kind &mdash; not
+                  because the rules are bad, but because <strong class="c-amber">the rule has to exist before
+                  the traffic does</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Blind to</th><th>What covers it</th></tr>
+                    <tr><td>Novel or bespoke tooling</td><td>Anomaly and frequency analysis over Zeek logs &mdash; beacon intervals, new-domain rates</td></tr>
+                    <tr><td>Payload inside TLS <span class="acro-exp">(Transport Layer Security)</span></td><td>JA3/JA4 fingerprints and certificate anomalies; interception only where policy allows it</td></tr>
+                    <tr><td>Lateral movement</td><td>Placement again &mdash; a perimeter sensor never sees it. Internal taps or host telemetry</td></tr>
+                    <tr><td>Your own environment's normal</td><td>Nothing ships this. It only comes from tuning against your traffic</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The measurable version: track <strong>how many distinct rule IDs have fired in the last
+                  30 days</strong>. A healthy deployment fires a long tail; a deployment where the same dozen
+                  rules produce 95% of events has been tuned into a very expensive way of detecting twelve
+                  things. That number is also the honest answer to &ldquo;is the IDS working?&rdquo;
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗄️</span>
               <span class="topic-name">Arkime &amp; ntopng — Full-Capture &amp; Traffic Analytics</span>
@@ -226,6 +300,35 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Cadence</div>
+                <div class="concept-title">Field Extractions Break Silently the Day a Log Format Changes</div>
+                <div class="concept-desc">
+                  A SIEM's parsing is a contract with every source that feeds it, and nobody on the other end
+                  of that contract knows it exists. An application upgrade reorders a field, a vendor adds a
+                  wrapper, a firewall changes its syslog template &mdash; and
+                  <strong class="c-amber">the dashboards keep rendering, the searches keep running, and the results
+                  quietly go empty</strong>. Nothing errors, because a search that matches nothing is a valid
+                  search.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+                    <tr><td>Checking each source is still parsing</td><td>Weekly, automatically</td><td>Detections that cannot fire, on sources everyone believes are covered</td></tr>
+                    <tr><td>Watching event volume per source</td><td>Continuously, with an alert</td><td>A source that stopped sending three weeks ago and nobody noticed</td></tr>
+                    <tr><td>Reviewing searches with zero results</td><td>Monthly</td><td>A rule library where an unknown fraction is decorative</td></tr>
+                    <tr><td>Retention and index sizing</td><td>Quarterly</td><td>Either an unexpected bill or data ageing out before the investigation reaches it</td></tr>
+                    <tr><td>Re-testing rules after upgrades</td><td>Per platform release</td><td>Silent regressions introduced by your own change window</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The single most valuable alert in a SIEM is not about attacks. It is
+                  <strong>&ldquo;this log source has sent nothing for an hour&rdquo;</strong>, per source, with an
+                  owner &mdash; because every detection downstream of a dead source is offline and nothing else
+                  will tell you. Pair it with a monthly review of searches returning zero results over 30 days,
+                  which is where broken parsing surfaces.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -257,6 +360,34 @@ index=auth <span class="str">"Failed password"</span>
                     Flow: <strong>Beats → Logstash → Elasticsearch → Kibana</strong>. The trade
                     vs Splunk: much cheaper (open source) but more ops effort to run and scale the
                     cluster yourself.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Cadence</div>
+                <div class="concept-title">A Cluster With a Mapping Explosion and No Lifecycle Policy</div>
+                <div class="concept-desc">
+                  Elasticsearch is happy to accept whatever you send it, which is the property that makes it
+                  easy to adopt and expensive to leave unattended. Dynamic mapping creates a field for every new
+                  key it sees, so <strong class="c-amber">one application logging a unique identifier as a
+                  top-level field can add hundreds of thousands of fields</strong> &mdash; and the cluster slows,
+                  then refuses writes, for reasons that look nothing like their cause.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+                    <tr><td>Index templates with explicit mappings</td><td>Per new source</td><td>Dynamic mapping, then a field explosion nobody can undo without reindexing</td></tr>
+                    <tr><td>Index lifecycle management (ILM)</td><td>Configured once, reviewed quarterly</td><td>Indices from 2024 on hot storage, and a disk that fills on a Friday</td></tr>
+                    <tr><td>Shard sizing</td><td>Per index pattern</td><td>Thousands of tiny shards — the most common cause of a slow cluster</td></tr>
+                    <tr><td>Watching cluster health and heap</td><td>Continuously</td><td>Yellow for months, then red during an incident</td></tr>
+                    <tr><td>Snapshot testing</td><td>Quarterly</td><td>Backups that have never been restored, which are not backups</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two settings prevent most of it and both are decided before the first document arrives:
+                  <strong>an index template that disables dynamic mapping for new sources</strong>, and
+                  <strong>an ILM policy with a delete phase</strong>. Retrofitting either means reindexing, which
+                  is the same lesson as the landing-zone and default-deny cards elsewhere on this site &mdash;
+                  cheap on day one, a project on day four hundred.
                   </div>
                 </div>
               </div>
@@ -367,10 +498,36 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">Portable Rule, Non-Portable Field Names</div>
+                <div class="concept-desc">
+                  <code>sigmac</code> converting a rule into your backend's query language is the easy half
+                  of portability. The rule still names <em>fields</em> &mdash; <code>CommandLine</code>,
+                  <code>ParentImage</code>, <code>TargetUserName</code> &mdash; and those exist only if your
+                  pipeline collected and named them that way. <strong class="c-amber">A rule that converts
+                  cleanly and matches nothing looks identical to a rule that converts cleanly and
+                  works.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Assumption inside the rule</th><th>Where it breaks</th></tr>
+                    <tr><td>The field was collected</td><td>4688 command line was never enabled &mdash; the field is absent, not empty</td></tr>
+                    <tr><td>The field has this name</td><td>Your pipeline normalised to ECS <span class="acro-exp">(Elastic Container Service)</span> or OCSF and renamed it</td></tr>
+                    <tr><td>The log source is what it says</td><td>A rule scoped to Sysmon, run against an estate with no Sysmon</td></tr>
+                    <tr><td>Values look like the author's</td><td>Paths, drive letters and locale differ &mdash; a regex tuned to one estate misses in another</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Every imported rule needs one test before it counts as deployed: <strong>fire the
+                  behaviour and confirm the rule alerts</strong>, with Atomic Red Team or a hand-run command.
+                  Untested imported rules are the most convincing form of coverage theatre on this page, because
+                  the rule count goes up and the detection does not.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔬</span>
               <span class="topic-name">Sysmon — The Windows Telemetry Powerhouse</span>
@@ -443,6 +600,33 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Cadence</div>
+                <div class="concept-title">A Query That Errors Returns Nothing, Which Looks Exactly Like a Clean Fleet</div>
+                <div class="concept-desc">
+                  osquery <span class="acro-exp">(Operating System Query)</span>'s appeal is that fleet questions become SQL. The maintenance cost is that
+                  <strong class="c-amber">a query which fails on a platform returns an empty result rather than an
+                  error you see</strong> &mdash; a table that does not exist on that OS version, a permission the
+                  agent lost, a path that moved. Empty and clean are indistinguishable in the console.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+                    <tr><td>Validating packs per platform</td><td>Per OS release, and per pack change</td><td>Queries that silently cover Linux and not macOS, or the reverse</td></tr>
+                    <tr><td>Watching agent check-in counts</td><td>Daily, automatically</td><td>A fleet number that drifts down as agents die quietly</td></tr>
+                    <tr><td>Reviewing query performance</td><td>Monthly</td><td>A scheduled query pinning CPU <span class="acro-exp">(Central Processing Unit)</span> on laptops, and users disabling the agent</td></tr>
+                    <tr><td>Pruning packs nobody uses</td><td>Quarterly</td><td>Interval creep — dozens of queries running because somebody once wanted one</td></tr>
+                    <tr><td>Confirming a known-true query returns rows</td><td>Weekly</td><td>No way to distinguish 'nothing found' from 'nothing asked'</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The last row is the whole discipline, and it costs one scheduled query:
+                  <strong>ask something you know must be true</strong> &mdash; a file that exists on every host, a
+                  process that always runs &mdash; and alert when it returns nothing. That single canary
+                  distinguishes a healthy deployment from a silent one, and it is the same idea as the SIEM's dead
+                  log source, one layer down.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -511,10 +695,34 @@ index=auth <span class="str">"Failed password"</span>
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">The Event You Need Is Off, or Already Rolled Over</div>
+                <div class="concept-desc">
+                  The IDs above are only useful if they were being written and were still there when you
+                  went looking. Two separate defaults defeat that, and both are Windows shipping as designed
+                  rather than anyone misconfiguring it: <strong class="c-amber">the richest events are
+                  disabled</strong>, and <strong class="c-amber">the default log sizes are small</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Default</th><th>Consequence</th></tr>
+                    <tr><td>4688 command line not recorded</td><td>You get the process name and not the arguments &mdash; which is where the story lives</td></tr>
+                    <tr><td>PowerShell script block logging off</td><td>4104 never written, so an obfuscated one-liner leaves no body text</td></tr>
+                    <tr><td>Security log 20 MB, overwrite as needed</td><td>A busy domain controller can roll a full day out in hours</td></tr>
+                    <tr><td>Logs live only on the host</td><td>The machine that was compromised is the machine holding the evidence</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Turn on 4688 with command line, and 4104, before you need them &mdash; both are free and
+                  neither is retroactive. Then ship the logs off the host: <strong>local retention is not
+                  retention</strong>, because the intruder who cleared 1102 owned the only copy. Forwarding to a
+                  collector is what turns these IDs from a list into evidence.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🐧</span>
               <span class="topic-name">auditd &amp; Linux Endpoint Logging</span>
@@ -546,10 +754,35 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">Syscalls Are Not Intent, and Containers Muddy Whose Syscall It Was</div>
+                <div class="concept-desc">
+                  auditd records with great fidelity that a syscall happened. What it cannot supply is
+                  <strong class="c-amber">why</strong>, and on a container host it often cannot cleanly supply
+                  <strong class="c-amber">who</strong> either &mdash; containers share the host kernel, so events
+                  arrive attributed to the host namespace unless something maps them back to a container.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Limitation</th><th>What covers it</th></tr>
+                    <tr><td>No process ancestry in the raw event</td><td>auditd plus a session tracker, or eBPF tooling (Falco, Tetragon) that carries lineage</td></tr>
+                    <tr><td>Container events land on the host</td><td>A runtime-aware collector that resolves cgroup to container and image</td></tr>
+                    <tr><td>Rule cost is real</td><td>Scope rules to paths that matter &mdash; a blanket <code>-a always,exit -S all</code> is a performance incident waiting to happen</td></tr>
+                    <tr><td>Log lives on the compromised host</td><td>Forward it. Same rule as Windows</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Write auditd rules against <strong>things that should never change</strong> &mdash;
+                  <code>/etc/passwd</code>, <code>/etc/sudoers</code>, <code>/etc/ssh/</code>, the cron
+                  directories &mdash; rather than trying to record everything every process does. A small rule
+                  set whose every hit deserves a look beats a large one nobody reads, and it costs a fraction of
+                  the CPU <span class="acro-exp">(Central Processing Unit)</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🧾</span>
               <span class="topic-name">YARA <span class="acro-exp">(Yet Another Recursive Acronym)</span> — Pattern-Matching Rules for Malware</span>
@@ -584,10 +817,36 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Finding nothing</div>
+                <div class="concept-title">A Rule Is a Hypothesis About Bytes, and No Match Falsifies the Rule</div>
+                <div class="concept-desc">
+                  YARA answers one question exactly: <em>does this file contain the patterns I described?</em>
+                  When the answer is no, the only sound conclusion is that
+                  <strong class="c-amber">the description does not fit</strong> &mdash; not that the file is
+                  harmless. Packing, a recompilation, one changed string, or a variant from the same family is
+                  enough, and none of those makes the file any less malicious.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Why a good rule misses</th><th>What to do about it</th></tr>
+                    <tr><td>The sample is packed or encrypted</td><td>Scan memory rather than disk &mdash; the strings exist at runtime</td></tr>
+                    <tr><td>Strings were compiler-specific</td><td>Prefer code constructs and structural patterns over incidental strings</td></tr>
+                    <tr><td>A variant changed one literal</td><td>Wide/nocase, wildcards in hex patterns, and a lower <code>of them</code> threshold</td></tr>
+                    <tr><td>The rule targets one campaign</td><td>Family and behaviour rules age far better than campaign rules</td></tr>
+                    <tr><td>It was never tested against clean files</td><td><strong>Every rule needs a false-positive corpus</strong>, or it ships untested in both directions</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Treat YARA as <strong>a fast filter over a large corpus, never as a verdict on one
+                  file</strong>. Its strength is retrospective: a good rule sweeps years of stored samples or every
+                  endpoint's memory in minutes and tells you where else this thing has been. Its weakness is the
+                  single clean result, which is the least informative output the tool can produce.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎯</span>
               <span class="topic-name">MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> &amp; Navigator — Coverage-Driven Detection</span>
@@ -620,10 +879,38 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Finding nothing</div>
+                <div class="concept-title">A Green Coverage Map Means a Rule Exists, Not That It Fires</div>
+                <div class="concept-desc">
+                  Coverage matrices are the most persuasive artefact in this domain and the easiest to
+                  mislead yourself with. A green cell means <em>somebody wrote a rule tagged with that
+                  technique</em>. It does not mean the rule fires on that technique, that the data source it needs
+                  is being collected, or that anyone is triaging the alert &mdash;
+                  <strong class="c-amber">and a matrix cannot tell the difference between a working detection and a
+                  tag</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What green can mean</th><th>How to tell</th></tr>
+                    <tr><td>A tested detection that fires</td><td>Someone ran the technique and watched the alert arrive</td></tr>
+                    <tr><td>A rule that references absent fields</td><td>Sigma-style field mismatch. It converts, deploys, and never matches</td></tr>
+                    <tr><td>A rule for one <em>procedure</em> of many</td><td>T1059 is a technique; the rule may catch one PowerShell variant and nothing else</td></tr>
+                    <tr><td>A vendor's tag on a generic signature</td><td>Common in marketing matrices &mdash; check whether you or the vendor coloured the cell</td></tr>
+                    <tr><td>A technique nobody in your threat model uses</td><td>Green here is not worth what green elsewhere is worth</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Colour the matrix from <strong>test results, not from rule inventory</strong>: run the
+                  technique with Atomic Red Team or by hand, and only then mark the cell. Most teams doing this for
+                  the first time find their honest coverage is a third of what the inventory-based map claimed, and
+                  that number is far more useful &mdash; it is the one that predicts what will happen during an
+                  incident.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚛️</span>
               <span class="topic-name">Adversary Emulation — Atomic Red Team &amp; Caldera</span>
@@ -653,6 +940,33 @@ index=auth <span class="str">"Failed password"</span>
                     Run these in a lab or with authorization. The loop —
                     <strong class="c-green">emulate → observe → tune → re-test</strong> — is how you
                     turn ATT&amp;CK coverage from theoretical to proven.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Cadence</div>
+                <div class="concept-title">Run Once, It Is Evidence About One Tuesday in March</div>
+                <div class="concept-desc">
+                  An emulation exercise measures detection <em>on the day it runs</em>, against the estate as
+                  it was configured that morning. Presented later as coverage, it is a claim about a moment
+                  &mdash; and <strong class="c-amber">everything it measured has since changed</strong>: rules
+                  tuned, agents upgraded, log sources added and removed, exclusions written during an incident.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+                    <tr><td>Running a fixed core set</td><td>Monthly, automated</td><td>A number quoted in a board pack that is a year old</td></tr>
+                    <tr><td>Adding techniques as intel arrives</td><td>Quarterly</td><td>Testing only what you already detect, which always looks good</td></tr>
+                    <tr><td>Re-running after tuning changes</td><td>Per change to a rule</td><td>No idea whether a tuning change removed a detection</td></tr>
+                    <tr><td>Recording results over time</td><td>Every run</td><td>No trend, so no way to show improvement or catch regression</td></tr>
+                    <tr><td>Keeping the test environment honest</td><td>Continuously</td><td>Emulation on a host with exclusions that production does not have</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The value is entirely in the <strong>trend</strong>: the same twenty techniques, monthly,
+                  scored the same way, so a drop is visible and attributable to a change somebody made. A single
+                  run tells you where you stand today and nothing about whether you are getting better &mdash; and
+                  it is the repeated run, not the sophisticated one, that catches the detection quietly removed
+                  three weeks ago.
                   </div>
                 </div>
               </div>
@@ -695,10 +1009,36 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Finding nothing</div>
+                <div class="concept-title">Zero Alerts After Tuning: Did You Remove the Noise or the Detection?</div>
+                <div class="concept-desc">
+                  Tuning is the right response to alert fatigue and it is also the easiest way to
+                  accidentally switch a control off. The two outcomes are indistinguishable on the dashboard
+                  &mdash; <strong class="c-amber">a well-tuned rule and a broken rule both produce silence</strong>
+                  &mdash; and the difference only surfaces during an incident, which is the worst possible moment
+                  to discover which one you have.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tuning action</th><th>What it costs, and how to keep it honest</th></tr>
+                    <tr><td>Exclude a noisy process path</td><td>Attackers use trusted paths. Scope the exclusion by <em>parent and arguments</em>, not by image name alone</td></tr>
+                    <tr><td>Raise a threshold</td><td>Slow-and-low activity now passes underneath. Record the threshold and why</td></tr>
+                    <tr><td>Filter out a service account</td><td>The account most worth compromising is now invisible. Prefer narrowing to the specific expected behaviour</td></tr>
+                    <tr><td>Disable the rule</td><td>Legitimate sometimes &mdash; but with an owner and a review date, or it is permanent</td></tr>
+                    <tr><td>Every exclusion, always</td><td><strong>In version control, with a reason and a date.</strong> An undocumented exclusion is indistinguishable from an attacker's</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The check that separates the two silences: <strong>re-run the behaviour after tuning and
+                  confirm the alert still fires</strong>. Atomic Red Team makes this a few minutes' work per rule,
+                  and it converts &ldquo;the noise stopped&rdquo; from an assumption into a test. A tuning change
+                  that has not been validated this way is a rule you have decided to trust without evidence.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🧠</span>
               <span class="topic-name">Volatility — Memory Forensics</span>
@@ -730,10 +1070,35 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">Memory Is Gone the Moment the Machine Is</div>
+                <div class="concept-desc">
+                  Every Volatility plugin is downstream of one decision made by whoever touched the
+                  machine first. <strong class="c-amber">Acquisition is the hard part</strong>, it happens once,
+                  and &ldquo;we rebooted it to be safe&rdquo; ends the memory investigation before it starts
+                  &mdash; along with every injected process, unbacked page, and key that only ever existed in
+                  RAM.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Decision at the scene</th><th>What it costs you</th></tr>
+                    <tr><td>Reboot or shut down</td><td>All of memory. Non-recoverable &mdash; there is no later</td></tr>
+                    <tr><td>Pull the network cable, leave it running</td><td>Preserves memory; may trip malware that watches for it</td></tr>
+                    <tr><td>Image the disk only</td><td>Encryption keys, in-memory-only payloads, live network state</td></tr>
+                    <tr><td>Snapshot a VM <span class="acro-exp">(Virtual Machine)</span></td><td>Best case &mdash; the <code>.vmem</code> is a memory image, taken with no agent on the guest</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The pairing here is not another tool but a playbook step: <strong>capture memory before
+                  containment</strong>, written into the procedure rather than decided at 3am by whoever arrived
+                  first. On a virtualised estate it is nearly free, which is a good argument for practising it on
+                  VMs until the reflex is automatic.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">💽</span>
               <span class="topic-name">Autopsy &amp; The Sleuth Kit — Disk Forensics</span>
@@ -830,10 +1195,38 @@ index=auth <span class="str">"Failed password"</span>
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Finding nothing</div>
+                <div class="concept-title">Absence of an Artefact Is Not Absence of Activity</div>
+                <div class="concept-desc">
+                  Every artefact on this page has a lifetime, a default state, and a way of being removed
+                  &mdash; and analysts routinely report &ldquo;no evidence of execution&rdquo; when what they mean
+                  is <strong class="c-amber">no evidence in the four places they looked</strong>. Most of the time
+                  the reason is mundane: the artefact rolled over, or it was never enabled on that edition of
+                  Windows in the first place.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Artefact</th><th>Why it may legitimately be empty</th></tr>
+                    <tr><td>Prefetch</td><td><strong>Disabled by default on Windows Server</strong>, and capped at 1,024 entries on client editions</td></tr>
+                    <tr><td>Shimcache / AppCompatCache</td><td>Only written on shutdown &mdash; a live-response capture may not include recent entries</td></tr>
+                    <tr><td>Amcache</td><td>Populated by a maintenance task; timing is not reliable to the minute</td></tr>
+                    <tr><td>USN <span class="acro-exp">(Update Sequence Number)</span> journal</td><td>Fixed size and wraps. Busy volumes can hold hours, not weeks</td></tr>
+                    <tr><td>Event logs</td><td>Small defaults, and 1102 records that the Security log was cleared &mdash; itself a finding</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The honest conclusion to write is scoped: <strong>&ldquo;no evidence of X in artefacts
+                  A, B and C, which cover approximately this window on this host&rdquo;</strong>. It is longer than
+                  &ldquo;nothing found&rdquo; and it is the only version that survives review. And when several
+                  independent artefacts are simultaneously empty on a host that has clearly been used, treat the
+                  pattern itself as the finding &mdash; consistent absence is expensive to achieve
+                  accidentally.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚖️</span>
               <span class="topic-name">Chain of Custody &amp; Evidence Handling</span>
@@ -858,6 +1251,33 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Chain of custody log</td><td>Who had it, when, why — an unbroken documented trail</td></tr>
                     <tr><td>Documentation</td><td>Record every action; reproducibility = credibility</td></tr>
                   </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Cadence</div>
+                <div class="concept-title">A Process That Exists in a Document and Has Never Been Performed</div>
+                <div class="concept-desc">
+                  Evidence handling is the one area here where the first real use is likely to be the one
+                  that matters legally, and where <strong class="c-amber">a procedure nobody has rehearsed will be
+                  performed badly under pressure</strong>. The form is in a wiki, the write blocker is in a drawer
+                  with a flat battery, and nobody has ever filled in the sheet with a real serial number on it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+                    <tr><td>A dry run with real forms and hardware</td><td>Annually, at minimum</td><td>A procedure that has never been tested when it is first needed</td></tr>
+                    <tr><td>Checking the kit</td><td>Quarterly</td><td>A flat write blocker, an unlabelled drive, expired media</td></tr>
+                    <tr><td>Naming who is authorised to seize</td><td>On any team change</td><td>Nobody sure they are allowed to act, so nobody acts</td></tr>
+                    <tr><td>Reviewing with legal or counsel</td><td>Annually</td><td>A form that does not meet the standard it would be judged against</td></tr>
+                    <tr><td>Storing completed records</td><td>Per incident</td><td>Custody documented in a chat thread, which is not documentation</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  One hour a year is the whole ask: <strong>take a spare laptop, seize it properly, fill in
+                  the form, hash the image, and store the record</strong>. That rehearsal finds the flat battery,
+                  the missing signature line and the person who did not know they were on the list &mdash; and it
+                  converts a document into a capability. Of everything in this domain, this is the item where the
+                  gap between written and practised carries the highest cost.
+                  </div>
                 </div>
               </div>
             </div>
@@ -891,6 +1311,33 @@ index=auth <span class="str">"Failed password"</span>
                     The payoff: pull a feed of known-bad indicators into detection, and enrich alerts
                     ("this IP belongs to APT-X's infrastructure") so responders act with context, not
                     guesswork.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Cadence</div>
+                <div class="concept-title">Without Curation It Becomes a Database of Last Year's Indicators</div>
+                <div class="concept-desc">
+                  Threat-intel platforms are easy to stand up and easy to leave running. Feeds keep arriving,
+                  the record count keeps rising, and <strong class="c-amber">nothing in the product distinguishes
+                  an indicator that is current from one that stopped being true in 2024</strong>. An IP <span class="acro-exp">(Internet Protocol)</span> address is
+                  a lease; a domain gets sinkholed; a hash describes a build that has been recompiled twice.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+                    <tr><td>Reviewing which feeds are enabled</td><td>Quarterly</td><td>Feeds that duplicate each other and one that has been 404ing for months</td></tr>
+                    <tr><td>Expiry and decay on indicators</td><td>Configured once, checked quarterly</td><td>Matches on infrastructure that changed hands — false positives that erode trust</td></tr>
+                    <tr><td>Tagging and confidence</td><td>Per import</td><td>Everything at the same weight, so nothing can be prioritised</td></tr>
+                    <tr><td>Measuring what actually matched</td><td>Monthly</td><td>No idea whether the platform has ever produced a useful detection</td></tr>
+                    <tr><td>Sharing outward</td><td>Per engagement</td><td>A consumer-only deployment, which is the least valuable way to run one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The metric that keeps this honest is not the record count &mdash; it is
+                  <strong>how many indicators matched something in your environment in the last 90 days, and how
+                  many of those were true positives</strong>. Most first measurements are humbling, and they point
+                  straight at which feeds to drop. Intel that nobody prunes is not an asset; it is a growing source
+                  of alerts you will eventually learn to ignore.
                   </div>
                 </div>
               </div>
@@ -959,10 +1406,37 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Finding nothing</div>
+                <div class="concept-title">A Clean Verdict Often Means the Sample Knew It Was Being Watched</div>
+                <div class="concept-desc">
+                  Detonation produces a confident-looking report and a benign verdict is the least
+                  trustworthy thing in it. Modern samples check whether they are in a sandbox and simply do
+                  nothing if they are &mdash; and <strong class="c-amber">a sample that does nothing looks exactly
+                  like a sample that is harmless</strong>. Several other causes produce the same clean report for
+                  reasons that have nothing to do with the file.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Reason for a benign verdict</th><th>Signal that this is what happened</th></tr>
+                    <tr><td>Anti-analysis checks</td><td>Very short run, no network, no persistence &mdash; suspicious <em>because</em> nothing happened</td></tr>
+                    <tr><td>Time bomb or long sleep</td><td>The sandbox ran for two minutes; the sample waits an hour</td></tr>
+                    <tr><td>Requires a specific trigger</td><td>A password-protected archive, an argument, a domain-joined host, a particular user</td></tr>
+                    <tr><td>Geofencing</td><td>The C2 <span class="acro-exp">(Command and Control)</span> answers only from one country</td></tr>
+                    <tr><td>The C2 was already taken down</td><td>Nothing to talk to, so nothing to observe. Common with samples over a few weeks old</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Read a sandbox report for <strong>behaviour, not verdict</strong>, and treat a suspiciously
+                  empty report as its own finding. Two habits help: submit to more than one sandbox, since evasion
+                  checks target specific environments; and never upload a sample you have not thought about &mdash;
+                  <strong>public submission is publication</strong>, and uploading a document from an incident can
+                  disclose it to the attacker and to everyone else.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧭</span>
               <span class="topic-name">Threat Hunting — Assume Breach, Go Looking</span>
@@ -994,10 +1468,38 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Finding nothing</div>
+                <div class="concept-title">A Hunt That Finds Nothing Is Either Good News or No News</div>
+                <div class="concept-desc">
+                  Most hunts find nothing, and that is the expected outcome rather than a failure. The
+                  problem is that <strong class="c-amber">an undocumented hunt cannot tell the two apart</strong>.
+                  &ldquo;We looked and there was nothing&rdquo; and &ldquo;we looked in the wrong place with the
+                  wrong query over the wrong fortnight&rdquo; produce identical write-ups, and only one of them is
+                  worth anything to the person reading it next quarter.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Write it down before you start</th><th>Why it matters afterwards</th></tr>
+                    <tr><td>The hypothesis, as a falsifiable sentence</td><td>&ldquo;An attacker is using scheduled tasks for persistence&rdquo; can be ruled out. &ldquo;Look for weird stuff&rdquo; cannot</td></tr>
+                    <tr><td>The data source and its <strong>coverage</strong></td><td>&ldquo;4698 across 82% of Windows endpoints&rdquo; is a result. &ldquo;The SIEM <span class="acro-exp">(Security Information and Event Management)</span>&rdquo; is not</td></tr>
+                    <tr><td>The time window, and why that one</td><td>A hunt over seven days says nothing about a dwell time of ninety</td></tr>
+                    <tr><td>The query, verbatim</td><td>So the next person can re-run it, and so you can tell it was wrong</td></tr>
+                    <tr><td>What you would have seen if it were true</td><td>The step that catches a query that could never have matched anything</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The output of a hunt that finds nothing should be a
+                  <strong>statement of what has been ruled out, and over what coverage</strong> &mdash; which is a
+                  genuinely useful artefact, and compounds. Two other outcomes are worth as much as a finding: a
+                  <em>detection</em> written so the hunt never has to be run manually again, and a
+                  <strong>visibility gap</strong> discovered because the data you needed was not being collected.
+                  Both should be logged as results, not as reasons the hunt failed.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🩺</span>
               <span class="topic-name">Vulnerability Scanners — Nessus &amp; OpenVAS</span>
@@ -1029,10 +1531,38 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Finding nothing</div>
+                <div class="concept-title">An Unauthenticated Scan Is a Guess Made From Outside the Host</div>
+                <div class="concept-desc">
+                  A clean scan result answers a narrower question than the report's title suggests. Without
+                  credentials the scanner is inferring versions from banners and responses, so
+                  <strong class="c-amber">it cannot see an unpatched library inside an application, a vulnerable
+                  package that is installed but not listening, or a service that was firewalled off from the
+                  scanner and nobody else</strong>. &ldquo;No findings&rdquo; then means &ldquo;nothing detectable
+                  from here&rdquo;.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Scan condition</th><th>What a clean result actually proves</th></tr>
+                    <tr><td>Unauthenticated, external</td><td>Little about the host. Banner inference, and backported patches routinely read as vulnerable <em>or</em> clean incorrectly</td></tr>
+                    <tr><td>Authenticated / credentialed</td><td>A great deal &mdash; the package inventory is read directly. This is the scan worth running</td></tr>
+                    <tr><td>Agent-based</td><td>Similar, and it reaches hosts that are off the network when you scan</td></tr>
+                    <tr><td>Assets not in scope</td><td>Nothing at all, and this is the usual gap. <strong>Coverage is the metric, not findings</strong></td></tr>
+                    <tr><td>Scanned during a maintenance window</td><td>Services that were stopped were not assessed</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Report scanner output with its denominator: <strong>&ldquo;findings across 94% of known
+                  assets, credentialed on 71%&rdquo;</strong> is a sentence somebody can act on, and a bare finding
+                  count is not. The two questions that improve a programme fastest are not about the findings at
+                  all &mdash; <em>what fraction of assets did we scan</em>, and <em>what fraction did we scan with
+                  credentials</em>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📏</span>
               <span class="topic-name">CIS <span class="acro-exp">(Center for Internet Security)</span> Benchmarks &amp; CIS-CAT — Hardening Baselines</span>
@@ -1063,10 +1593,37 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Finding nothing</div>
+                <div class="concept-title">A Passing Benchmark Measures Configuration Against a Checklist</div>
+                <div class="concept-desc">
+                  A 98% benchmark score is a genuine achievement and a narrow one. It says the settings the
+                  benchmark checks are set the way the benchmark wants &mdash; it says nothing about the
+                  application on top, the credentials in a share, the unpatched dependency, or the firewall rule
+                  somebody added at 2am. <strong class="c-amber">A fully hardened host running vulnerable software
+                  scores very well.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Limit of the score</th><th>What it hides</th></tr>
+                    <tr><td>It checks settings, not software</td><td>An unpatched application is out of scope, and is usually the actual entry point</td></tr>
+                    <tr><td>&ldquo;Not applicable&rdquo; findings</td><td>Often the largest bucket. Read what was excluded before believing the percentage</td></tr>
+                    <tr><td>Level 1 vs Level 2 profiles</td><td>Level 1 is deliberately conservative. A Level 1 pass is a starting position</td></tr>
+                    <tr><td>Scored vs unscored items</td><td>Unscored recommendations do not affect the number and include some of the most useful advice</td></tr>
+                    <tr><td>Configuration drift</td><td>A scan is a moment. Without continuous checking, the score describes the day it ran</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Use benchmarks as <strong>a baseline and a drift detector, not as a security
+                  measurement</strong>. The number worth tracking is not the score but <em>how many hosts have
+                  drifted since last month</em>, because that is the one that reflects whether anything is holding.
+                  And read the exception list as carefully as the findings &mdash; on most estates it is where the
+                  interesting decisions were quietly made.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🐧</span>
               <span class="topic-name">Lynis — Linux Audit &amp; Hardening</span>
@@ -1093,6 +1650,34 @@ index=auth <span class="str">"Failed password"</span>
                     Great for a fast baseline and for teaching <em>why</em> each setting matters
                     (each suggestion links to guidance). Complements — doesn't replace — a real
                     benchmark like CIS <span class="acro-exp">(Center for Internet Security)</span>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Cadence</div>
+                <div class="concept-title">A Score Nobody Reads, Instead of a Diff Somebody Acts On</div>
+                <div class="concept-desc">
+                  Hardening scanners produce a number and a long list, and both are the wrong output to
+                  consume directly. The number moves for uninteresting reasons and the list is too long to read
+                  twice, so the report gets skimmed once and then ignored.
+                  <strong class="c-amber">The useful artefact is not this run &mdash; it is the difference between
+                  this run and the last one.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+                    <tr><td>Establishing a signed-off baseline</td><td>Once, then on major change</td><td>A score with no meaning, because nobody agreed what good looks like</td></tr>
+                    <tr><td>Diffing against the baseline</td><td>Weekly, automatically</td><td>Drift that accumulates invisibly between annual reviews</td></tr>
+                    <tr><td>Recording accepted exceptions</td><td>Per exception, with an owner and a date</td><td>The same findings dismissed by every reviewer, forever</td></tr>
+                    <tr><td>Acting on new findings only</td><td>Weekly</td><td>A backlog large enough that nobody starts</td></tr>
+                    <tr><td>Re-baselining after a fleet change</td><td>Per image release</td><td>Alerts on the change you deliberately made</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Wire it as <strong>a scheduled scan whose output is a diff and whose alert is
+                  &ldquo;something changed that nobody approved&rdquo;</strong>. That converts an unread report
+                  into a small, actionable stream, and it is the same shape as the CIS benchmark card's conclusion:
+                  the number worth tracking is drift, not score. A hardening tool with no baseline is a report
+                  generator.
                   </div>
                 </div>
               </div>
@@ -1200,10 +1785,35 @@ oscap xccdf eval \
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">Deception Is Silent Against an Attacker Who Does Not Look</div>
+                <div class="concept-desc">
+                  A canary's precision is its whole appeal &mdash; nothing legitimate touches it, so a hit
+                  is a hit. The cost of that precision is <strong class="c-amber">zero coverage
+                  guarantee</strong>: deception detects curiosity, and an intruder who arrived with a specific
+                  target and went straight to it triggers nothing at all. Silence from a honeypot is not evidence
+                  of absence, and it is worth saying so before anyone treats it as coverage.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>Consequence</th></tr>
+                    <tr><td>Fires only on interaction</td><td>A targeted actor with prior knowledge walks straight past</td></tr>
+                    <tr><td>Near-zero false positives</td><td>Genuinely rare &mdash; page on it, do not queue it</td></tr>
+                    <tr><td>Placement decides value</td><td>A canary file in a share nobody browses is a canary nobody trips</td></tr>
+                    <tr><td>Silence proves nothing</td><td>Never counts as coverage in a control matrix</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Use deception as a <strong>tripwire layered on top of detection, never as detection
+                  itself</strong>: canary tokens in credential stores, a decoy account in AD that no process should ever authenticate as, a
+                  fake share on the path a discovery tool would enumerate. Placed where an intruder <em>must</em>
+                  pass rather than where they <em>might</em> browse, it stops being a lottery ticket.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📧</span>
               <span class="topic-name">Email Security — SPF, DKIM <span class="acro-exp">(DomainKeys Identified Mail)</span> &amp; DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span></span>
@@ -1303,6 +1913,34 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     The output is measurable <strong class="c-green">detection coverage</strong> mapped
                     to ATT&amp;CK — you learn exactly which techniques you'd catch and which you'd miss.
                     This card is the keystone that ties the whole Red and Blue domains together.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Cadence</div>
+                <div class="concept-title">A Workshop, Rather Than a Loop That Closes</div>
+                <div class="concept-desc">
+                  Purple teaming is defined by its feedback loop, and the loop is the part that gets dropped.
+                  A day of red and blue in a room produces findings, energy and a document; six weeks later the
+                  detections it recommended are half-written and nobody has re-tested the ones that were.
+                  <strong class="c-amber">An exercise without a closing step is a very expensive way to produce a
+                  list.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
+                    <tr><td>Owning each gap found, with a date</td><td>Per exercise</td><td>A findings document that ages quietly in a shared drive</td></tr>
+                    <tr><td><strong>Re-testing the fixed gaps</strong></td><td>Two to four weeks after</td><td>Detections believed to exist because someone said they would write them</td></tr>
+                    <tr><td>Running the next exercise</td><td>Quarterly</td><td>An annual event, which measures the year rather than the quarter</td></tr>
+                    <tr><td>Feeding results into emulation</td><td>Per exercise</td><td>Gaps found once and never regression-tested</td></tr>
+                    <tr><td>Keeping both sides in the room</td><td>Every time</td><td>A red-team report with a blue-team reply — which is what this exists to replace</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The step that makes the difference is the second row, and it is the one most often skipped:
+                  <strong>schedule the re-test at the same time as the exercise</strong>, before anyone leaves the
+                  room, with a name against it. A gap that is found, fixed and re-tested is a permanent improvement;
+                  a gap that is found and assigned is a note. The difference between the two is a calendar
+                  entry.
                   </div>
                 </div>
               </div>
@@ -2439,3 +3077,83 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">SOC <span class="acro-exp">(Security Operations Center)</span> Metrics That Do Not Lie</span>
+              <span class="topic-badge">Detection Engineering</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">MTTD Is Gameable by Narrowing What Counts as Detected</div>
+                <div class="concept-desc">
+                  Mean time to detect is the metric every SOC reports and the easiest one in security to improve
+                  without improving anything. <strong class="c-amber">The clock starts when something is
+                  &ldquo;detected&rdquo;, and the team reporting the number decides what that means</strong>
+                  &mdash; so excluding the alerts that took longest, counting the ticket rather than the
+                  intrusion, or measuring only the incidents that were caught at all, all move it in the
+                  comfortable direction.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>How a metric gets gamed</th><th>Without anybody being dishonest</th></tr>
+                    <tr><td>MTTD improves</td><td>Slow-burn cases are reclassified as 'investigations', not detections</td></tr>
+                    <tr><td>MTTR <span class="acro-exp">(Mean Time To Repair)</span> improves</td><td>Tickets close when triaged rather than when remediated</td></tr>
+                    <tr><td>Alert volume falls</td><td>Tuning removed noise &mdash; or removed detection. <span class="xref">Detection Tuning &amp; the Pyramid of Pain</span> covers why they look identical</td></tr>
+                    <tr><td>False-positive rate falls</td><td>Fewer rules fire at all, which is not the same as being more accurate</td></tr>
+                    <tr><td>Coverage rises</td><td>The matrix was coloured from rule inventory rather than from test results</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Honest Set</div>
+                <div class="concept-title">Four Numbers, Each Uncomfortable in a Way the Gameable Ones Are Not</div>
+                <div class="concept-desc">
+                  A metric is trustworthy roughly in proportion to how bad it feels to report. These four resist
+                  gaming because <strong class="c-cyan">improving the number requires improving the
+                  thing</strong>, and each is uncomfortable on first measurement in a way that is itself
+                  informative.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Metric</th><th>Why it resists gaming</th></tr>
+                    <tr><td><strong>Telemetry coverage</strong> — % of assets sending the log sources your detections need</td><td>Cannot be improved by reclassifying anything. Needs an asset inventory, which is the honest denominator</td></tr>
+                    <tr><td><strong>Detection efficacy</strong> — % of emulated techniques that produced an alert</td><td>Measured by running the technique. See <span class="xref">Adversary Emulation — Atomic Red Team &amp; Caldera</span></td></tr>
+                    <tr><td><strong>Alert-to-incident ratio</strong></td><td>Says what proportion of the team's day is spent on things that mattered. Painful, and directly actionable</td></tr>
+                    <tr><td><strong>Dwell time on confirmed incidents</strong></td><td>Measured backwards from evidence, not forwards from the ticket. Cannot be improved by narrowing the definition</td></tr>
+                    <tr><td><strong>Analyst-hours per incident</strong></td><td>Reveals automation and tooling gaps that every quality metric hides</td></tr>
+                  </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reporting</div>
+                <div class="concept-title">What a Board Should Be Shown, and What It Should Not</div>
+                <div class="concept-desc">
+                  The metrics that survive contact with an executive audience are the ones expressed as
+                  <strong>coverage and trend</strong> rather than as volume. &ldquo;We handled 4,000
+                  alerts&rdquo; sounds like work and answers nothing; &ldquo;we can see 71% of servers and 94%
+                  of endpoints, up from 55% and 90%&rdquo; is a statement about risk that supports a decision.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Do not report</th><th>Report instead</th></tr>
+                    <tr><td>Alerts handled</td><td>Telemetry coverage, with the denominator named</td></tr>
+                    <tr><td>MTTD as a single number</td><td>Dwell time distribution on confirmed incidents, with the worst case shown</td></tr>
+                    <tr><td>A green ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> matrix</td><td>Techniques tested this quarter, and the pass rate</td></tr>
+                    <tr><td>&ldquo;No incidents this quarter&rdquo;</td><td>What you would have detected if there had been. Absence of alerts is not evidence &mdash; the same argument as <span class="xref">Threat Hunting — Assume Breach, Go Looking</span></td></tr>
+                    <tr><td>Tool count or spend</td><td>Analyst-hours per incident, trending</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The pairing this card is written to complete: a SOC's numbers and the organisation's risk
+                    reporting have to be the same story told at two levels of detail. When the security team
+                    reports coverage and the board hears alert volume, both are describing activity and neither is
+                    describing exposure &mdash; and the first genuinely bad quarter is when everyone discovers they
+                    were tracking different things.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

@@ -1257,181 +1257,6 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-08">
-            <div class="topic-header">
-              <span class="topic-icon">🔷</span>
-              <span class="topic-name">PowerShell — Windows Automation</span>
-              <span class="topic-badge">SHELL SCRIPTING</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
-              <div class="concept-card">
-                <div class="concept-label">Reference</div>
-                <div class="concept-title">
-                  PowerShell 5/7 — Cmdlets · Variables · Pipeline · Scripting ·
-                  Remoting
-                </div>
-                <div class="concept-desc">
-                  Object-based shell and scripting language. Verbs:
-                  Get/Set/New/Remove/Invoke.
-                  <code style="color: var(--cyan)">Get-Command *firewall*</code>
-                  discovers cmdlets. Execution policy controls script runs.
-                </div>
-                <div class="dw">
-                  <div class="code-label">VARIABLES &amp; TYPES</div>
-                  <div class="code-block">
-                    <span class="com"># Variables prefix with $</span>
-                    <span class="var">$name</span> =
-                    <span class="str">"Alice"</span>
-                    <span class="var">$count</span> =
-                    <span class="num">42</span>
-                    <span class="var">$active</span> =
-                    <span class="var">$true</span>
-                    <span class="var">$nothing</span> =
-                    <span class="var">$null</span>
-
-                    <span class="com"># Strong typing</span>
-                    [<span class="type">int</span>]<span class="var">$x</span> =
-                    <span class="num">10</span> [<span class="type">string</span>]<span class="var">$s</span> =
-                    <span class="str">"hi"</span> [<span class="type">datetime</span>]<span class="var">$d</span> =
-                    <span class="str">"2025-01-01"</span> [<span class="type">array</span>]<span class="var">$arr</span> =
-                    <span class="num">1</span>,<span class="num">2</span>,<span
-                      class="num">3</span>
-                    [<span class="type">hashtable</span>]<span class="var">$h</span>
-                    = @{ <span class="var">a</span>=<span class="num">1</span>;
-                    <span class="var">b</span>=<span class="num">2</span> }
-
-                    <span class="com"># Here-string</span>
-                    <span class="var">$text</span> = @<span class="str">" Multiline string here "</span>@
-
-                    <span class="com"># Environment variables</span>
-                    <span class="var">$env</span>:PATH;
-                    <span class="var">$env</span>:USERPROFILE;
-                    <span class="var">$env</span>:COMPUTERNAME
-                  </div>
-                  <div class="code-label">PIPELINE &amp; COMMON CMDLETS</div>
-                  <div class="code-block">
-                    <span class="com"># Pipeline passes objects (not text)</span>
-                    <span class="fn">Get-Process</span> |
-                    <span class="fn">Where-Object</span> CPU -gt
-                    <span class="num">10</span> |
-                    <span class="fn">Sort-Object</span> CPU -Descending |
-                    <span class="fn">Select-Object</span> -First
-                    <span class="num">5</span>
-
-                    <span class="fn">Get-ChildItem</span> -Recurse -Filter *.log
-                    | <span class="fn">Where-Object</span> {
-                    <span class="var">$_</span>.Length -gt
-                    <span class="num">1MB</span> } |
-                    <span class="fn">ForEach-Object</span> {
-                    <span class="fn">Remove-Item</span>
-                    <span class="var">$_</span>.FullName }
-
-                    <span class="com"># Essential cmdlets</span>
-                    <span class="fn">Get-Command</span> *service*
-                    <span class="com"># find cmdlets</span>
-                    <span class="fn">Get-Help</span> Get-Process -Full
-                    <span class="com"># full help</span>
-                    <span class="fn">Get-Member</span>
-                    <span class="com"># show object properties</span>
-                    <span class="fn">Get-Service</span> |
-                    <span class="fn">Format-Table</span> -AutoSize
-                    <span class="fn">Get-Content</span> file.log |
-                    <span class="fn">Select-String</span>
-                    <span class="str">"ERROR"</span>
-                    <span class="fn">Set-Content</span> /
-                    <span class="fn">Add-Content</span> /
-                    <span class="fn">Out-File</span> /
-                    <span class="fn">Tee-Object</span>
-                    <span class="fn">Copy-Item</span>;
-                    <span class="fn">Move-Item</span>;
-                    <span class="fn">Remove-Item</span> -Recurse -Force
-                  </div>
-                  <div class="code-label">SCRIPTING CONSTRUCTS</div>
-                  <div class="code-block">
-                    <span class="com"># If / switch</span>
-                    <span class="kw">if</span> (<span class="var">$x</span> -gt
-                    <span class="num">10</span>) {
-                    <span class="str">"big"</span> }
-                    <span class="kw">elseif</span> (<span class="var">$x</span>
-                    -gt <span class="num">5</span>) {
-                    <span class="str">"med"</span> }
-                    <span class="kw">else</span> {
-                    <span class="str">"small"</span> }
-                    <span class="kw">switch</span> (<span class="var">$role</span>) { <span class="str">"admin"</span> { ... }
-                    <span class="str">"user"</span> { ... } default { ... } }
-
-                    <span class="com"># Loops</span>
-                    <span class="kw">foreach</span> (<span class="var">$item</span>
-                    <span class="kw">in</span>
-                    <span class="var">$collection</span>) {
-                    <span class="var">$item</span>.<span class="var">Name</span>
-                    } <span class="kw">for</span> (<span class="var">$i</span>=<span class="num">0</span>;
-                    <span class="var">$i</span> -lt <span class="num">10</span>;
-                    <span class="var">$i</span>++) {
-                    <span class="var">$i</span> }
-                    <span class="num">1</span>..<span class="num">5</span> |
-                    <span class="fn">ForEach-Object</span> {
-                    <span class="var">$_</span> * <span class="num">2</span> }
-                    <span class="kw">while</span> (<span class="var">$x</span>
-                    -gt <span class="num">0</span>) {
-                    <span class="var">$x</span>-- }
-
-                    <span class="com"># Functions</span>
-                    <span class="kw">function</span>
-                    <span class="fn">Get-Square</span> {
-                    <span class="kw">param</span>([<span class="type">int</span>]<span class="var">$n</span>)
-                    <span class="kw">return</span> <span class="var">$n</span> *
-                    <span class="var">$n</span>
-                    }
-                    <span class="fn">Get-Square</span>
-                    <span class="num">5</span>
-
-                    <span class="com"># Try/catch</span>
-                    <span class="kw">try</span> {
-                    <span class="fn">Get-Item</span>
-                    <span class="str">"missing"</span> -ErrorAction Stop }
-                    <span class="kw">catch</span> [<span class="type">System.IO.FileNotFoundException</span>] { <span class="str">"not found"</span> }
-                    <span class="kw">finally</span> {
-                    <span class="str">"always"</span> }
-                  </div>
-                  <div class="code-label">SECURITY &amp; REMOTING</div>
-                  <div class="code-block">
-                    <span class="com"># Execution policy</span>
-                    <span class="fn">Get-ExecutionPolicy</span>
-                    <span class="fn">Set-ExecutionPolicy</span> RemoteSigned
-                    -Scope CurrentUser
-                    <span class="com"># Restricted | AllSigned | RemoteSigned | Unrestricted |
-                      Bypass</span>
-
-                    <span class="com"># Bypass for single script (pentest / admin)</span>
-                    powershell -ExecutionPolicy Bypass -File script.ps1
-                    <span class="com"># Base64 encoded payload execution</span>
-                    powershell -EncodedCommand &lt;base64string&gt;
-
-                    <span class="com"># Remoting (WinRM)</span>
-                    <span class="fn">Enable-PSRemoting</span> -Force
-                    <span class="fn">Enter-PSSession</span> -ComputerName
-                    SERVER01 -Credential <span class="var">$cred</span>
-                    <span class="fn">Invoke-Command</span> -ComputerName
-                    SERVER01 -ScriptBlock {
-                    <span class="fn">Get-Service</span> }
-                    <span class="fn">New-PSSession</span>;
-                    <span class="fn">Disconnect-PSSession</span>
-
-                    <span class="com"># Credential object</span>
-                    <span class="var">$cred</span> =
-                    <span class="fn">Get-Credential</span>
-                    <span class="var">$cred</span> =
-                    <span class="kw">New-Object</span>
-                    <span class="type">PSCredential</span>(<span class="str">"user"</span>, (<span class="fn">ConvertTo-SecureString</span>
-                    <span class="str">"pass"</span> -AsPlainText -Force))
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🔶</span>
@@ -2299,6 +2124,75 @@
                     <td>—</td>
                   </tr>
                 </table>
+              </div>
+            </div>
+            <div class="concept-card">
+              <div class="concept-label">Reference &mdash; Discovery, Errors &amp; Remoting</div>
+              <div class="concept-title">
+                Finding Cmdlets &middot; try/catch &middot; Execution Policy &middot; WinRM
+              </div>
+              <div class="concept-desc">
+                The three things a PowerShell reference is asked for once the syntax is known:
+                <strong class="c-cyan">how to find the cmdlet you do not know</strong>, how to
+                make a script fail loudly instead of quietly, and how to run it on another
+                machine. Discovery is worth learning first &mdash; PowerShell is
+                self-documenting to a degree no other shell matches, and
+                <code>Get-Member</code> answers &ldquo;what can I do with this object&rdquo;
+                without a search engine.
+              </div>
+              <div class="dw">
+                <div class="code-label">DISCOVERY &mdash; THE THREE THAT REPLACE A SEARCH</div>
+                <div class="code-block">
+                  <span class="com"># What cmdlets exist for this?</span>
+                  <span class="fn">Get-Command</span> *service*
+                  <span class="fn">Get-Command</span> -Module Microsoft.PowerShell.Management
+
+                  <span class="com"># How does this one work? -Full includes every example</span>
+                  <span class="fn">Get-Help</span> Get-Process -Full
+                  <span class="fn">Get-Help</span> Get-Process -Examples
+
+                  <span class="com"># What is actually in this object? The one people skip</span>
+                  <span class="fn">Get-Process</span> | <span class="fn">Get-Member</span>
+                  <span class="fn">Get-Service</span> | <span class="fn">Select-Object</span> -First 1 | <span class="fn">Format-List</span> *
+                </div>
+                <div class="code-label">ERRORS &mdash; FAILING QUIETLY IS WORSE THAN CRASHING</div>
+                <div class="code-block">
+                  <span class="com"># Most cmdlets warn and carry on. -ErrorAction Stop makes them throwable</span>
+                  <span class="kw">try</span> {
+                  <span class="fn">Get-Item</span> <span class="str">"missing"</span> -ErrorAction Stop }
+                  <span class="kw">catch</span> [<span class="type">System.IO.FileNotFoundException</span>] { <span class="str">"not found"</span> }
+                  <span class="kw">catch</span> { <span class="str">"anything else"</span> }
+                  <span class="kw">finally</span> { <span class="str">"always runs"</span> }
+
+                  <span class="com"># Script-wide, at the top: turn warnings into failures</span>
+                  <span class="var">$ErrorActionPreference</span> = <span class="str">"Stop"</span>
+                </div>
+                <div class="code-label">EXECUTION POLICY &amp; REMOTING</div>
+                <div class="code-block">
+                  <span class="com"># Not a security boundary — it stops accidents, not attackers</span>
+                  <span class="fn">Get-ExecutionPolicy</span>
+                  <span class="fn">Set-ExecutionPolicy</span> RemoteSigned -Scope CurrentUser
+                  <span class="com"># Restricted | AllSigned | RemoteSigned | Unrestricted | Bypass</span>
+
+                  <span class="com"># Remoting over WinRM</span>
+                  <span class="fn">Enable-PSRemoting</span> -Force
+                  <span class="fn">Enter-PSSession</span> -ComputerName SERVER01 -Credential <span class="var">$cred</span>
+                  <span class="fn">Invoke-Command</span> -ComputerName SERVER01 -ScriptBlock { <span class="fn">Get-Service</span> }
+                  <span class="fn">New-PSSession</span>; <span class="fn">Disconnect-PSSession</span>
+
+                  <span class="com"># Credential object</span>
+                  <span class="var">$cred</span> = <span class="fn">Get-Credential</span>
+                </div>
+                <div class="concept-desc verdict">
+                  Two of these are worth knowing as much for reading someone else&rsquo;s script
+                  as for writing your own. <code>-ExecutionPolicy Bypass</code> and
+                  <code>-EncodedCommand</code> are ordinary administrative arguments and are
+                  also the two most common shapes in a malicious PowerShell command line
+                  &mdash; which is why
+                  <span class="xref">Windows Event Logs — The IDs That Matter</span> treats
+                  4688 command-line auditing and 4104 script block logging as the pair that
+                  matters.
+                </div>
               </div>
             </div>
           </div>
@@ -4365,6 +4259,13 @@
 <span class="var">emitter</span>.<span class="fn">on</span>(<span class="str">"login"</span>, <span class="kw">lambda</span> <span class="var">u</span>: <span class="fn">log_event</span>(<span class="str">f"{u} logged in"</span>))
 <span class="var">emitter</span>.<span class="fn">emit</span>(<span class="str">"login"</span>, <span class="str">"Alice"</span>)  <span class="com"># both listeners fire automatically</span>
 <span class="com"># Same pattern as: btn.addEventListener("click", fn) in JavaScript</span>
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Patterns are vocabulary, not goals.</strong> Forcing one into
+          code that does not need it — a factory that returns one class, a strategy with a
+          single strategy — is over-engineering, and it is as expensive as having no structure
+          at all. Reach for a pattern when the complexity is already there and you want a name
+          for the shape it should take, not to give simple code somewhere to grow into.
         </div>
 
       </div>

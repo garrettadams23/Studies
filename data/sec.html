@@ -7016,3 +7016,532 @@ POST /token   grant_type=authorization_code
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗂️</span>
+              <span class="topic-name">Asset Discovery — You Cannot Protect What Nobody Listed</span>
+              <span class="topic-badge">Programme</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Every Coverage Metric Is a Fraction With an Unknown Denominator</div>
+                <div class="concept-desc">
+                  &ldquo;94% patched&rdquo;, &ldquo;full EDR <span class="acro-exp">(Endpoint Detection and Response)</span> coverage&rdquo;, &ldquo;all endpoints encrypted&rdquo;
+                  &mdash; every one of those is a fraction, and
+                  <strong class="c-amber">the denominator is whatever the tool happens to know about</strong>.
+                  An agent-based inventory reports on hosts running the agent. A scanner reports on ranges it was
+                  given. Both are self-referential: the machines missing from the list are exactly the machines
+                  the list cannot tell you about.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Source</th><th>What it can see</th><th>What it structurally cannot</th></tr>
+                    <tr><td>EDR / agent inventory</td><td>Hosts with the agent installed</td><td>Hosts where installation failed, or that predate the rollout</td></tr>
+                    <tr><td>Vulnerability scanner</td><td>The ranges configured</td><td>Anything outside them, and anything powered off during the window</td></tr>
+                    <tr><td>Cloud provider inventory</td><td>Resources in the accounts you enumerated</td><td>Accounts opened on a personal card, and other providers</td></tr>
+                    <tr><td>DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> and DNS <span class="acro-exp">(Domain Name System)</span> logs</td><td>Things that asked for an address or resolved a name</td><td>Static addresses, and hosts that never speak</td></tr>
+                    <tr><td>The CMDB <span class="acro-exp">(Configuration Management Database)</span></td><td>What somebody typed in</td><td>Everything since the last time somebody typed</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The error is not random. <strong>Inventories are always wrong in the same direction</strong>
+                    &mdash; they under-count, because the failure modes of every discovery method are absences
+                    rather than false entries. Which means an unexplained rise in asset count after improving
+                    discovery is not a problem with the new tool; it is the old number being corrected.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Method</div>
+                <div class="concept-title">Triangulate From Sources That Fail Differently</div>
+                <div class="concept-desc">
+                  No single source is authoritative, and the useful technique is not to find a better one &mdash;
+                  it is to <strong class="c-cyan">reconcile several that fail for unrelated reasons</strong> and
+                  treat every disagreement as a question. A host in DHCP and not in EDR is a finding. A cloud
+                  instance with no owner tag is a finding. The reconciliation is where the value is; each
+                  individual source is just an input.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pairing</th><th>What the gap means</th></tr>
+                    <tr><td>DHCP/ARP &times; EDR inventory</td><td>Hosts on the network with no agent &mdash; the classic gap</td></tr>
+                    <tr><td>Cloud billing &times; cloud inventory</td><td>Resources in accounts nobody enumerated. <strong>Billing is the most complete cloud inventory you have</strong></td></tr>
+                    <tr><td>Certificate transparency &times; known domains</td><td>Public services somebody stood up outside the process</td></tr>
+                    <tr><td>Identity provider apps &times; approved SaaS list</td><td>Sanctioned-adjacent software, and the sprawl behind it</td></tr>
+                    <tr><td>Purchase orders &times; asset register</td><td>Hardware that arrived and never got recorded</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two of these are worth doing first because they are cheap and consistently productive.
+                    <strong>Cloud billing as an inventory source</strong> finds accounts and resources that no
+                    console enumeration reaches, since anything that costs money appears there by construction. And
+                    <strong>certificate transparency</strong> finds internet-facing services created outside the
+                    process, which is where a surprising share of external attack surface comes from.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The output</div>
+                <div class="concept-title">An Owner, Not a Count</div>
+                <div class="concept-desc">
+                  A discovery programme that produces a number has produced a report. One that produces
+                  <strong>an owner per asset</strong> has produced something every other control can act on
+                  &mdash; because the recurring question is never &ldquo;how many are there&rdquo;, it is
+                  &ldquo;who do we ask about this one&rdquo;.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Field</th><th>Why it earns its place</th></tr>
+                    <tr><td>Owner (a person, not a team alias)</td><td>Somebody has to answer at 2am. A distribution list does not</td></tr>
+                    <tr><td>Business criticality</td><td>Decides patch urgency and recovery order, and cannot be inferred from the host</td></tr>
+                    <tr><td>Data classification</td><td>Decides the blast radius. See <span class="xref">Data Classification — Knowing What Needs Protecting</span></td></tr>
+                    <tr><td>Discovered-by, and last-seen</td><td>Distinguishes a decommissioned host from one that stopped reporting</td></tr>
+                    <tr><td>Exception status and expiry</td><td>An asset that cannot meet a control is a decision with a date, not a permanent gap</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The measurement worth reporting is not asset count either. It is
+                    <strong>the percentage of assets with a named owner, and the percentage seen by two or more
+                    independent sources</strong> &mdash; the first makes every other programme actionable, and the
+                    second is the only honest confidence statement you can make about the denominator that all your
+                    other numbers are divided by.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📐</span>
+              <span class="topic-name">Vulnerability Prioritisation — Severity Is Not Priority</span>
+              <span class="topic-badge">Programme</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">A High Severity on an Isolated Host Loses to a Medium on the Internet</div>
+                <div class="concept-desc">
+                  CVSS <span class="acro-exp">(Common Vulnerability Scoring System)</span> base score describes
+                  the vulnerability. It says nothing about <em>your</em> instance of it &mdash; where the host is,
+                  whether an exploit exists, whether anyone is using that exploit, or what the machine does.
+                  <strong class="c-amber">Severity is a property of the flaw; priority is a property of your
+                  estate</strong>, and a queue sorted by severity is sorted by the wrong key.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Two findings</th><th>Base score</th><th>Which to fix first</th></tr>
+                    <tr><td>RCE <span class="acro-exp">(Remote Code Execution)</span> on an internal build server, no known exploit</td><td>9.8</td><td>Second</td></tr>
+                    <tr><td>Auth bypass on an internet-facing app, exploited in the wild</td><td>7.5</td><td><strong>First, by a wide margin</strong></td></tr>
+                    <tr><td>Critical in a library you ship but do not call</td><td>9.1</td><td>Later — reachability matters</td></tr>
+                    <tr><td>Medium on the domain controller</td><td>6.4</td><td>Early. Asset value is a multiplier</td></tr>
+                    <tr><td>Critical on a host being decommissioned next week</td><td>9.8</td><td>Decommission it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The correction is multiplicative rather than a re-ranking: <strong>severity &times;
+                    exploitability &times; exposure &times; asset value</strong>. Any one of those at nearly zero
+                    makes the finding low priority regardless of the base score, which is why a scanner's ordering
+                    and a defender's ordering rarely agree.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Published Sources That Carry the Missing Multipliers</div>
+                <div class="concept-desc">
+                  Each multiplier has a public source, so this does not require building a risk model &mdash; it
+                  requires joining three or four feeds to your asset inventory.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Multiplier</th><th>Where it comes from</th></tr>
+                    <tr><td>Is it being exploited?</td><td><strong>CISA <span class="acro-exp">(Cybersecurity and Infrastructure Security Agency)</span> KEV <span class="acro-exp">(Known Exploited Vulnerabilities)</span></strong> &mdash; a short, curated list of what is actually used. The single highest-value filter</td></tr>
+                    <tr><td>How likely is exploitation?</td><td><strong>EPSS <span class="acro-exp">(Exploit Prediction Scoring System)</span></strong> &mdash; a probability, updated daily. Far more discriminating than CVSS for ordering</td></tr>
+                    <tr><td>Is the code reachable?</td><td>SCA <span class="acro-exp">(Software Composition Analysis)</span> tooling with call-graph reachability. Removes a large share of library findings</td></tr>
+                    <tr><td>Where is the host?</td><td>Your asset inventory &mdash; see <span class="xref">Asset Discovery — You Cannot Protect What Nobody Listed</span>. This is the multiplier you must supply</td></tr>
+                    <tr><td>What does the host do?</td><td>Business criticality, also from the inventory. Nobody else can tell you</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The two-step that most improves a backlog without building anything:
+                    <strong>patch everything on the KEV list regardless of score, then order the rest by EPSS
+                    weighted by exposure</strong>. KEV is small enough to act on and describes real attacks; EPSS
+                    turns the long tail into an ordering rather than a wall. Both are free feeds.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Metric That Changes Behaviour Is Not the Count</div>
+                <div class="concept-desc">
+                  &ldquo;Open findings&rdquo; is the number every programme reports and the one least connected
+                  to risk: it rises when scanning improves and falls when it degrades.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Instead of</th><th>Report</th></tr>
+                    <tr><td>Total open findings</td><td><strong>Time to remediate, by priority band</strong> &mdash; and the trend</td></tr>
+                    <tr><td>Findings closed this month</td><td>Percentage of KEV findings remediated within the SLA <span class="acro-exp">(Service Level Agreement)</span></td></tr>
+                    <tr><td>Average CVSS</td><td>Age of the oldest unremediated critical. The one number nobody can spin</td></tr>
+                    <tr><td>Scan coverage as a raw count</td><td>Coverage as a fraction of known assets, credentialed vs not</td></tr>
+                    <tr><td>&ldquo;We are 94% patched&rdquo;</td><td>94% of <em>what</em> &mdash; the denominator, stated</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The single most useful chart in a vulnerability programme is
+                    <strong>age of oldest open critical, over time</strong>. It cannot be improved by scanning less,
+                    it cannot be gamed by reclassification, and it goes up on its own if nothing is done &mdash;
+                    which makes it the rare security metric that tells the truth without anyone maintaining it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">👤</span>
+              <span class="topic-name">Shadow IT — Finding It Without Making It Worse</span>
+              <span class="topic-badge">Programme</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Unsanctioned Tools Exist Because a Sanctioned One Was Missing or Slow</div>
+                <div class="concept-desc">
+                  Shadow IT is usually framed as a discipline problem and is almost always a
+                  <strong class="c-cyan">service problem</strong>. Nobody expenses a file-sharing subscription for
+                  fun; they do it because the approved way took three weeks, or did not exist, or could not do the
+                  thing. Treating the symptom without the cause is what makes the next instance harder to
+                  find.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What was used</th><th>What it says about the sanctioned path</th></tr>
+                    <tr><td>A personal cloud drive</td><td>Sharing with an external party was hard or slow</td></tr>
+                    <tr><td>An unapproved AI <span class="acro-exp">(Artificial Intelligence)</span> assistant</td><td>There is no approved one, or it is worse</td></tr>
+                    <tr><td>A team's own SaaS <span class="acro-exp">(Software as a Service)</span> subscription</td><td>Procurement takes longer than the project</td></tr>
+                    <tr><td>A script on somebody's laptop</td><td>The platform team's queue is long</td></tr>
+                    <tr><td>A personal phone for work chat</td><td>The corporate option was unusable on the move</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The reframing that makes the programme work: <strong>every instance of shadow IT is a
+                    requirements document somebody wrote by spending money</strong>. Read it that way and the
+                    discovery exercise produces a roadmap as well as a risk register &mdash; which is also the only
+                    version of this that engineering teams will cooperate with.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Discovery Is the Easy Half</div>
+                <div class="concept-desc">
+                  Finding it is largely mechanical, and several of these sources are already in the building.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Source</th><th>What it surfaces</th></tr>
+                    <tr><td>Expense reports and corporate cards</td><td><strong>The highest-signal source, and the least used.</strong> Anything paid for appears here</td></tr>
+                    <tr><td>Identity provider &mdash; OAuth <span class="acro-exp">(Open Authorization)</span> grants</td><td>Every SaaS a user has signed into with the corporate account, with the scopes granted</td></tr>
+                    <tr><td>DNS <span class="acro-exp">(Domain Name System)</span> and egress logs</td><td>Traffic to services nobody approved. Noisy, and thorough</td></tr>
+                    <tr><td>CASB <span class="acro-exp">(Cloud Access Security Broker)</span> or SSE <span class="acro-exp">(Security Service Edge)</span> tooling</td><td>The purpose-built version of the previous row</td></tr>
+                    <tr><td>Simply asking</td><td>Works far better than expected when the answer is not punitive</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The second row deserves attention beyond discovery, because it is also a live risk:
+                    <strong>an OAuth grant is standing access to corporate data, and it survives the employee's
+                    departure unless somebody revokes it</strong>. Reviewing third-party app grants in the identity
+                    provider is a shadow-IT census and an access review at the same time.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">A Blocked Service Returns as an Unmanaged One</div>
+                <div class="concept-desc">
+                  The response is the whole subject. Blocking is fast, satisfying and
+                  <strong class="c-amber">usually makes the problem invisible rather than absent</strong> &mdash;
+                  the work moves to a personal device, a personal account, or a service you have not heard of,
+                  where you cannot see it at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Response</th><th>What actually happens</th></tr>
+                    <tr><td>Block it, say nothing</td><td>Recurs on a personal device. <strong>Now genuinely unmanaged</strong></td></tr>
+                    <tr><td>Block it, offer nothing</td><td>The need persists. People are inventive and now adversarial</td></tr>
+                    <tr><td>Sanction it, with conditions</td><td>Often the right answer &mdash; SSO <span class="acro-exp">(Single Sign-On)</span>, DLP <span class="acro-exp">(Data Loss Prevention)</span>, a data-classification limit</td></tr>
+                    <tr><td>Sanction a better alternative, then block</td><td>The only sequence that reliably works, and the slowest</td></tr>
+                    <tr><td>Ask why, then fix the sanctioned path</td><td>Fixes the class rather than the instance</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The rule to hold to: <strong>never remove a capability without replacing it</strong>, and make
+                    the sanctioned path genuinely better rather than merely permitted. Where blocking is
+                    unavoidable &mdash; a service that cannot meet a legal requirement &mdash; say so plainly and
+                    name what people should use instead. A block with no explanation and no alternative teaches
+                    people to route around security, which is a far more expensive outcome than the tool you
+                    removed.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧯</span>
+              <span class="topic-name">Break-Glass Accounts — The Ones That Must Work When Everything Else Does Not</span>
+              <span class="topic-badge">Identity</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Day You Need Them Is the Day the Identity Provider Is Down</div>
+                <div class="concept-desc">
+                  Break-glass accounts exist for one scenario and it is the scenario in which every normal control
+                  has failed: the identity provider is unreachable, conditional access is misconfigured, MFA <span class="acro-exp">(Multi-Factor Authentication)</span> is broken, or an administrator's
+                  account has been disabled by an attacker. <strong class="c-amber">Every organisation has them
+                  and almost none tests them</strong>, which means the first test is during the outage.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Requirement</th><th>Why</th></tr>
+                    <tr><td>Excluded from conditional access</td><td>The policy engine is a common cause of the lockout. An account subject to it cannot rescue you from it</td></tr>
+                    <tr><td>Not federated</td><td>A cloud-only account in the tenant. If the identity provider is the outage, federation is the problem</td></tr>
+                    <tr><td>Long random password, split and sealed</td><td>Two halves, two custodians, physically sealed. No single person holds it</td></tr>
+                    <tr><td>Highly privileged, and only that</td><td>Global admin. Not used for anything else, ever</td></tr>
+                    <tr><td>Alarmed on every use</td><td><strong>Any authentication is an incident until proven otherwise</strong></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Two accounts, not one, and stored separately. <strong>A single break-glass account is a single
+                    point of failure in the control that exists to survive single points of failure</strong> — and
+                    the second one costs nothing beyond a second envelope, which is a very small price for removing
+                    the one scenario the whole design cannot absorb.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Storage, Custody and the Two-Person Rule</div>
+                <div class="concept-desc">
+                  The credential handling is where the design usually breaks, and it breaks toward convenience:
+                  the sealed envelope becomes a password manager entry, and then the account is protected by the
+                  same system it exists to bypass.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Approach</th><th>Verdict</th></tr>
+                    <tr><td>Split password, two sealed envelopes, a safe</td><td><strong>Works.</strong> Offline, two-person, and survives a total identity outage</td></tr>
+                    <tr><td>In the corporate password manager</td><td>Circular &mdash; if identity is down or compromised, the manager likely is too</td></tr>
+                    <tr><td>In a separate, offline-capable vault</td><td>Acceptable if it genuinely does not depend on the primary identity provider</td></tr>
+                    <tr><td>A hardware token in a safe</td><td>Good, and remember it expires and needs a custody record</td></tr>
+                    <tr><td>Known by one administrator</td><td>Not a control. That is a person, with holidays and a resignation date</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The design constraint that catches people is the <strong>dependency check</strong>: write down
+                    what the break-glass path relies on, and confirm none of it is the thing it is meant to survive.
+                    A safe in a building requiring badge access controlled by the identity provider is a
+                    sealed envelope you cannot reach during exactly the incident you sealed it for.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Testing, and What the Test Finds</div>
+                <div class="concept-desc">
+                  An untested break-glass account is an assumption. The test is short, it should be scheduled, and
+                  it reliably finds something.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Test step</th><th>What it typically uncovers</th></tr>
+                    <tr><td>Retrieve the credential</td><td>The safe key holder has left, or the envelope is empty</td></tr>
+                    <tr><td>Authenticate</td><td>The password expired. <strong>Many tenants expire passwords by default</strong>, and the account has not been touched in a year</td></tr>
+                    <tr><td>Confirm the exclusion still applies</td><td>A new conditional-access policy was created without the exclusion</td></tr>
+                    <tr><td>Confirm the alert fires</td><td>The alert rule was tuned away, or points at a mailbox nobody reads</td></tr>
+                    <tr><td>Re-seal and record</td><td>The step people skip &mdash; and then the account sits with a known credential</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Test <strong>twice a year, on a date, with a written result</strong>, and treat every step as
+                    part of the test rather than the login alone. The most common finding is the third row: a policy
+                    created months later without the exclusion, which silently converts the account from a rescue
+                    path into another locked door &mdash; and nothing in the system will report that.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔏</span>
+              <span class="topic-name">Code Signing &amp; the Key That Cannot Leak</span>
+              <span class="topic-badge">Identity</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">A Signing Key Is a Trust Anchor With a Blast Radius the Size of Your Install Base</div>
+                <div class="concept-desc">
+                  Code signing converts a question about a file into a question about a key. That is a very good
+                  trade until the key leaks, at which point <strong class="c-amber">everything the attacker signs
+                  is trusted by everyone who trusts you</strong> &mdash; and the revocation path is slow,
+                  incomplete and visible to your customers.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Compromise</th><th>Consequence</th></tr>
+                    <tr><td>Attacker signs malware with your key</td><td>It passes on every machine that trusts your publisher. This is the supply-chain scenario</td></tr>
+                    <tr><td>Key revoked</td><td>Every artefact signed with it becomes untrusted, including the good ones, unless timestamped</td></tr>
+                    <tr><td>No timestamping</td><td><strong>Signatures expire with the certificate.</strong> Old releases stop validating</td></tr>
+                    <tr><td>Key in the build system</td><td>The build system is now a production credential store, and it is usually the least hardened</td></tr>
+                    <tr><td>Key on a developer's laptop</td><td>The blast radius is one stolen laptop</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The second and third rows together are the argument for <strong>timestamping every
+                    signature</strong>, and it is a checkbox rather than a project. Without it, revoking a
+                    compromised key invalidates your entire release history along with the attacker's forgery — so
+                    the response to a compromise becomes a choice between leaving the forgery trusted and breaking
+                    every customer's installed software.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Where the Key Lives, and Who Can Invoke It</div>
+                <div class="concept-desc">
+                  The design goal is that the key is never extractable and its use is always attributable, which
+                  splits into two separate questions people tend to merge.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>The answer that holds</th></tr>
+                    <tr><td>Where does the key live?</td><td><strong>An HSM <span class="acro-exp">(Hardware Security Module)</span></strong> or a cloud KMS <span class="acro-exp">(Key Management Service)</span>. The private key is generated inside and never leaves</td></tr>
+                    <tr><td>Who can ask it to sign?</td><td>A service identity, not a person. Signing is an <em>operation</em> you authorise, not a file you hand out</td></tr>
+                    <tr><td>What can be signed?</td><td>Only artefacts from a known build, ideally with provenance attached</td></tr>
+                    <tr><td>Who approved this release?</td><td>Two-person approval for production signing. The key cannot enforce this; the pipeline can</td></tr>
+                    <tr><td>What was signed, and when?</td><td>An append-only log. Transparency logs exist for exactly this</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The distinction that matters operationally: <strong>you are not protecting a file, you are
+                    controlling an operation</strong>. Once the key is in an HSM, every remaining control is about
+                    who may invoke signing and on what &mdash; which is an authorisation problem, and one your
+                    existing identity tooling can answer.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Build-Time Signing Needs Production-Credential Treatment</div>
+                <div class="concept-desc">
+                  The most common weakness is not the key's storage &mdash; it is that the pipeline holding
+                  access to it is treated as developer infrastructure. <strong class="c-cyan">Anything that can
+                  invoke the signing key is as sensitive as the key</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Control</th><th>Why</th></tr>
+                    <tr><td>Signing on a dedicated, restricted runner</td><td>A shared runner executes other teams' code, and that code can ask the key to sign</td></tr>
+                    <tr><td>Signing only from a protected branch or tag</td><td>Otherwise a pull request from a fork can request a signature</td></tr>
+                    <tr><td>Short-lived credentials to the KMS</td><td>OIDC <span class="acro-exp">(OpenID Connect)</span> federation from the CI provider &mdash; no long-lived key in a secret store</td></tr>
+                    <tr><td>Provenance recorded at build</td><td>SLSA-style attestation. See <span class="xref">Software Supply Chain Security — SBOM, SLSA &amp; Sigstore</span></td></tr>
+                    <tr><td>Alert on every signing operation</td><td>Volume is low by nature, so an alert per signature is realistic and high signal</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The single most valuable habit here is the last one, precisely because signing is rare:
+                    <strong>a per-signature alert is affordable in a way that a per-deploy alert is not</strong>,
+                    and an unexpected signature is one of the few security events that is unambiguous. If your
+                    pipeline signs four times a week, four alerts a week is not noise &mdash; it is the control.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🤝</span>
+              <span class="topic-name">Security Champions — Making the Team Larger Than the Team</span>
+              <span class="topic-badge">Programme</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Influence Scales and Headcount Does Not</div>
+                <div class="concept-desc">
+                  A security function is always outnumbered &mdash; the ratios quoted are somewhere between 1:20
+                  and 1:100 engineers &mdash; and no amount of hiring changes the shape of that. The only lever
+                  that scales is <strong class="c-cyan">having someone on each team who thinks about this
+                  already</strong>, which is what a champions programme is for.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Approach</th><th>How it scales</th></tr>
+                    <tr><td>Review everything centrally</td><td>Linearly with the security team. It is a queue, and it becomes the bottleneck</td></tr>
+                    <tr><td>Gate at release</td><td>Finds problems at the most expensive moment, and makes security the department of no</td></tr>
+                    <tr><td>Automated checks in the pipeline</td><td>Scales well, catches the mechanical subset. Necessary, not sufficient</td></tr>
+                    <tr><td><strong>Champions</strong></td><td>Scales with the engineering org, because it grows as it does</td></tr>
+                    <tr><td>Training everyone equally</td><td>Broad and shallow. Useful for awareness, ineffective for design decisions</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The rows are not alternatives &mdash; a working programme uses the third and fourth together.
+                    <strong>Automation catches what is mechanical; champions catch what is contextual</strong>, and
+                    the second category is where the expensive mistakes live, because a design decision cannot be
+                    linted.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">It Works When Champions Get Something Real</div>
+                <div class="concept-desc">
+                  The difference between a programme that works and one that quietly dies is entirely in what the
+                  champion receives. <strong class="c-amber">A title with meetings attached is a tax</strong>, and
+                  the people who volunteer for it first are the ones who will be most disappointed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What they get</th><th>Why it works</th></tr>
+                    <tr><td><strong>Time, protected</strong></td><td>A stated share of their week. Without it, the role happens after hours or not at all</td></tr>
+                    <tr><td>Training and a budget</td><td>A conference, a certification, a course. Tangible, and it is career progression</td></tr>
+                    <tr><td>Early access and real influence</td><td>Consulted on the roadmap and on design, not informed afterwards</td></tr>
+                    <tr><td>Direct access to the security team</td><td>A channel where questions are answered quickly. The most-valued benefit, consistently</td></tr>
+                    <tr><td>Recognition that reaches their manager</td><td>The performance review is where this becomes real or does not</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The failure to guard against is the reverse flow: <strong>a champions programme must not become
+                    a way to delegate the security team's backlog</strong>. The moment champions are assigned
+                    tickets, the role becomes unpaid extra work with a nice name, volunteers stop appearing, and the
+                    programme is over &mdash; usually without anybody declaring it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Running It: Small, Voluntary, and Visibly Useful</div>
+                <div class="concept-desc">
+                  The operational shape that survives is smaller than most programme designs, and every element
+                  below exists because its absence is a known failure.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Element</th><th>Why</th></tr>
+                    <tr><td>Voluntary</td><td>Assigned champions are attendees. The programme depends on people who wanted it</td></tr>
+                    <tr><td>One per team, not one per person</td><td>Coverage is the goal; depth comes from the same person staying</td></tr>
+                    <tr><td>A monthly session with content, not status</td><td>A threat model walkthrough, a real incident, a new tool &mdash; something they could not get elsewhere</td></tr>
+                    <tr><td>A visible channel</td><td>Questions asked in public teach everyone reading. This is most of the leverage</td></tr>
+                    <tr><td>Measured by <em>consultations</em>, not headcount</td><td>&ldquo;Thirty champions&rdquo; says nothing. &ldquo;Designs reviewed before build&rdquo; says whether it works</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The metric in the last row is the one to commit to, because it is the only one that
+                    distinguishes a working programme from a mailing list: <strong>how many design decisions were
+                    influenced before the code was written?</strong> If that number is near zero, the programme is
+                    producing awareness rather than security, and the honest response is to fix the incentives
+                    rather than to recruit more champions.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

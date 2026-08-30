@@ -32,10 +32,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">The Text Jumps When the Font Loads, and the Page Is Blank Until the CSS Arrives</div>
+                <div class="concept-desc">
+                  Two of the three most-reported &ldquo;the page feels broken&rdquo; symptoms are direct
+                  consequences of the render pipeline, and both are fixable in the head of the document.
+                  <strong class="c-amber">CSS is render-blocking by design</strong> &mdash; nothing paints until
+                  it arrives, because painting first would mean painting wrong. Fonts then arrive later still, and
+                  swapping them reflows text that was already on screen.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+                    <tr><td>Blank screen, then everything at once</td><td>Render-blocking CSS. Inline the critical rules; load the rest with <code>media</code> or asynchronously</td></tr>
+                    <tr><td>Text appears, then jumps as the font loads</td><td><code>font-display: swap</code> without matched metrics. Add <code>size-adjust</code> / <code>ascent-override</code> on a fallback, or <code>font-display: optional</code></td></tr>
+                    <tr><td>Layout shifts as images arrive</td><td>No reserved space. <code>width</code> and <code>height</code> attributes, or <code>aspect-ratio</code></td></tr>
+                    <tr><td>A synchronous <code>&lt;script&gt;</code> stalls first paint</td><td>Parser-blocking. <code>defer</code> for order-dependent scripts, <code>async</code> for independent ones</td></tr>
+                    <tr><td>The page paints and then freezes</td><td>A long task on the main thread after paint &mdash; hydration, or a large JSON <span class="acro-exp">(JavaScript Object Notation)</span> parse</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The order is the thing to hold: <strong>HTML parses, CSS blocks the first paint, layout
+                  computes geometry, paint fills pixels, compositing puts layers on screen</strong>. Every symptom
+                  above is one stage being made to wait or repeat. And the reason <code>transform</code> and
+                  <code>opacity</code> are the animation-safe properties is exactly this: they touch only the last
+                  stage.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌀</span>
               <span class="topic-name">Reflow, Repaint &amp; What Causes Jank</span>
@@ -67,10 +94,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Measure it</div>
+                <div class="concept-title">Your Laptop Is Not the Device That Will Jank</div>
+                <div class="concept-desc">
+                  A layout thrash that costs 3 ms on a development machine can cost 25 ms on a mid-range
+                  Android phone, and 25 ms misses the frame. The animation you cannot make stutter locally is not
+                  a smooth animation &mdash; it is <strong class="c-amber">an animation measured on the fastest
+                  computer that will ever run it</strong>. The fix is not to guess; the browser will tell you.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What to do</th></tr>
+                    <tr><td>Throttle the CPU <span class="acro-exp">(Central Processing Unit)</span></td><td>DevTools &rarr; Performance &rarr; CPU: <strong>4&times; or 6&times; slowdown</strong>. This is the whole trick</td></tr>
+                    <tr><td>Record the interaction</td><td>Not the page load &mdash; the scroll, the open, the drag that feels wrong</td></tr>
+                    <tr><td>Read the frame budget</td><td>60 fps is <strong>16.7 ms per frame</strong>. Anything longer is a dropped frame, whatever it looks like</td></tr>
+                    <tr><td>Find the purple</td><td>Layout and Recalculate Style blocks in the flame chart are the reflow you are looking for</td></tr>
+                    <tr><td>Check the long tasks</td><td>Any task over 50 ms blocks input &mdash; that is the tap that felt ignored</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two habits follow from the number. Animate only <code>transform</code> and
+                  <code>opacity</code>, because they skip layout and paint entirely; and batch reads before
+                  writes, because interleaving <code>offsetHeight</code> with a style change forces the browser to
+                  recompute layout on every iteration. <strong>Throttled DevTools is the cheapest device lab in
+                  existence</strong>, and it costs one dropdown.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌳</span>
               <span class="topic-name">The DOM <span class="acro-exp">(Document Object Model)</span> &amp; Events — Bubbling &amp; Delegation</span>
@@ -105,10 +158,36 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">The Click Handler Works, Until the Row Was Added After Page Load</div>
+                <div class="concept-desc">
+                  The most common DOM bug in existence: handlers attached in a loop at load time, and any
+                  element created afterwards &mdash; by a fetch, a framework render, a &ldquo;load more&rdquo;
+                  button &mdash; has none. <strong class="c-amber">The element looks identical and does
+                  nothing</strong>, which is why the first instinct is usually to blame the CSS <span class="acro-exp">(Cascading Style Sheets)</span> or the framework
+                  rather than the listener that was never attached.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+                    <tr><td>New rows are dead, original rows work</td><td>Listeners were attached to elements that existed then. <strong>Delegate to a parent that always exists</strong> and check <code>e.target.closest('.row')</code></td></tr>
+                    <tr><td>A handler fires twice</td><td>It was attached twice &mdash; often a re-render that never removed the first. Same function reference or an <code>AbortController</code> signal to remove it</td></tr>
+                    <tr><td>Someone else's handler stopped firing</td><td><code>stopPropagation()</code> upstream. It is not a local decision: it silences every ancestor, including analytics and framework roots</td></tr>
+                    <tr><td>The form reloads the page</td><td>The <code>submit</code> handler threw before <code>preventDefault()</code>, or never called it</td></tr>
+                    <tr><td>A scroll or touch handler is janky</td><td>It is blocking. <code>{ passive: true }</code> tells the browser it will not call <code>preventDefault</code></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Delegation is the habit that removes the first two rows entirely: <strong>one listener on
+                  a container that outlives its children</strong> handles every present and future row, survives
+                  re-renders, and costs one listener instead of N. It is also why frameworks attach at the root
+                  rather than per element.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗃️</span>
               <span class="topic-name">Web Storage — Cookies, localStorage &amp; IndexedDB</span>
@@ -139,10 +218,37 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Measure it</div>
+                <div class="concept-title">The Browser Can Refuse, and It Can Take It Back Later</div>
+                <div class="concept-desc">
+                  Storage is not memory you own &mdash; it is space the browser lends you under a policy
+                  that differs per browser and changes between versions. Two failure modes never appear in
+                  development: <strong class="c-amber">the write throws</strong>, and
+                  <strong class="c-amber">the data is silently gone next week</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>What actually happens</th></tr>
+                    <tr><td>Private / incognito window</td><td>Quota can be tiny or zero; <code>localStorage.setItem</code> throws <code>QuotaExceededError</code></td></tr>
+                    <tr><td>Site data blocked by the user</td><td>The accessor itself throws &mdash; reading <code>localStorage</code> is enough to break the page</td></tr>
+                    <tr><td>Safari, no visit for weeks</td><td>Script-writable storage can be cleared under ITP; treat it as a cache, not a record</td></tr>
+                    <tr><td>Storage pressure on the device</td><td>Non-persistent origins are evicted first, and nobody asks you</td></tr>
+                    <tr><td>Big writes on the main thread</td><td><code>localStorage</code> is <strong>synchronous</strong> &mdash; a large object blocks rendering to serialise it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Write every access inside <code>try/catch</code>, and make the page correct when the
+                  value is missing rather than treating that as an error state. The rule of thumb: <strong>if
+                  losing it would matter, it belongs on a server</strong>; browser storage is for conveniences a
+                  user would not notice losing &mdash; a remembered tab, a collapsed section, an unsent draft.
+                  For anything larger or structured, IndexedDB is asynchronous and does not block the main
+                  thread.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🛠️</span>
               <span class="topic-name">DevTools Mastery</span>
@@ -215,10 +321,36 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">The Flex Item Refuses to Shrink and Pushes the Page Wider Than the Screen</div>
+                <div class="concept-desc">
+                  A long URL <span class="acro-exp">(Uniform Resource Locator)</span>, a wide table or a `pre` block inside a flex item makes the whole layout
+                  overflow horizontally, and no amount of <code>width: 100%</code> or <code>overflow: hidden</code>
+                  on the child fixes it. The cause is one line in the spec that nobody meets until it bites:
+                  <strong class="c-amber">a flex item's default <code>min-width</code> is <code>auto</code>, not
+                  <code>0</code></strong> &mdash; it will not shrink below its content's intrinsic size.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+                    <tr><td>Horizontal scrollbar caused by one long word or table</td><td><code>min-width: 0</code> on the flex item (or <code>min-height: 0</code> in a column)</td></tr>
+                    <tr><td><code>overflow-x: auto</code> on the child does nothing</td><td>The child is not too wide &mdash; the <em>item</em> refuses to shrink. Fix the item, then scroll inside the child</td></tr>
+                    <tr><td><code>flex: 1</code> items are not equal widths</td><td><code>flex: 1</code> is <code>1 1 0%</code>; <code>flex-grow: 1</code> alone leaves <code>flex-basis: auto</code>, which is content-sized</td></tr>
+                    <tr><td><code>gap</code> makes items overflow their container</td><td>Gaps are added after basis is computed. Let items shrink, or subtract the gap from the basis</td></tr>
+                    <tr><td>Text truncation with <code>text-overflow: ellipsis</code> never triggers</td><td>Same root cause. The ellipsis needs a constrained box, which <code>min-width: auto</code> prevents</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong><code>min-width: 0</code> is the single most useful line of CSS <span class="acro-exp">(Cascading Style Sheets)</span> in a flex
+                  layout</strong>, and it looks like it should do nothing. If a flex container is overflowing and
+                  you cannot see why, set it on the item before investigating anything else &mdash; it resolves
+                  this whole table's first, second and fifth rows at once.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔲</span>
               <span class="topic-name">CSS <span class="acro-exp">(Cascading Style Sheets)</span> Grid — Two-Dimensional Layout</span>
@@ -255,10 +387,37 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">One Long Word Blows the Column Out Past 1fr</div>
+                <div class="concept-desc">
+                  Grid has the same intrinsic-minimum rule as flexbox, wearing different syntax.
+                  <code>1fr</code> is shorthand for <code>minmax(auto, 1fr)</code>, and that <code>auto</code>
+                  minimum is the content's intrinsic size &mdash; so
+                  <strong class="c-amber">a wide table, a long URL <span class="acro-exp">(Uniform Resource Locator)</span> or a <code>pre</code> block makes a
+                  &ldquo;flexible&rdquo; column wider than its share</strong>, and the other columns shrink to
+                  compensate.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+                    <tr><td>A <code>1fr</code> column is far wider than the others</td><td>Its content will not fit. <strong><code>minmax(0, 1fr)</code></strong> lets it actually shrink</td></tr>
+                    <tr><td>The grid overflows its container horizontally</td><td>Same rule. Fix the track, then let the child scroll with <code>overflow-x: auto</code></td></tr>
+                    <tr><td><code>auto-fit</code> collapses to one column</td><td>No items, or a <code>minmax()</code> minimum larger than the container. <code>auto-fill</code> keeps empty tracks</td></tr>
+                    <tr><td>Items land in the wrong cells after one is hidden</td><td>Auto-placement re-flows. Name the areas, or place explicitly, if position must be stable</td></tr>
+                    <tr><td><code>grid-template-areas</code> silently does nothing</td><td>Every row string must have the same number of columns, or the whole declaration is invalid</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The pair to remember together: <strong><code>minmax(0, 1fr)</code> in Grid is
+                  <code>min-width: 0</code> in Flexbox</strong>. Both exist because both layout models default to
+                  &ldquo;never smaller than the content&rdquo;, which is the right default for text and the wrong
+                  one for anything that can be arbitrarily wide.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📱</span>
               <span class="topic-name">Responsive Design — Fluid, Mobile-First</span>
@@ -291,10 +450,36 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Measure it</div>
+                <div class="concept-title">Device Mode Resizes a Window. It Does Not Give You a Finger</div>
+                <div class="concept-desc">
+                  DevTools device mode is a viewport simulator, and viewport is the one thing about a
+                  phone that is easy. What it does not simulate is the hand holding it: touch target size, thumb
+                  reach, the on-screen keyboard eating half the screen, the notch, and the browser chrome that
+                  appears and disappears as you scroll. <strong class="c-amber">Layouts that pass at 390 px wide
+                  still fail in a hand.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Reality</th><th>What to do about it</th></tr>
+                    <tr><td>Fingers are not cursors</td><td><strong>44&times;44 px minimum</strong> tap targets, with spacing &mdash; adjacent small links are the classic miss</td></tr>
+                    <tr><td><code>100vh</code> lies on mobile</td><td>It includes browser chrome that retracts. Use <code>100dvh</code>, or the layout jumps mid-scroll</td></tr>
+                    <tr><td>Notches and rounded corners</td><td><code>env(safe-area-inset-*)</code> with <code>viewport-fit=cover</code></td></tr>
+                    <tr><td>The keyboard covers the input</td><td>Test a form on a real phone. The fix is usually <code>scroll-margin</code> and avoiding fixed footers</td></tr>
+                    <tr><td>Users enlarge text</td><td>Test at 200% zoom &mdash; WCAG <span class="acro-exp">(Web Content Accessibility Guidelines)</span> requires it, and fixed-height containers clip immediately</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Device mode is fine for finding the breakpoint that is wrong. It cannot tell you whether
+                  the page is usable, and <strong>fifteen minutes on one real phone finds more than an hour of
+                  resizing a window</strong>. If a device lab is out of reach, remote debugging a single cheap
+                  Android over USB <span class="acro-exp">(Universal Serial Bus)</span> covers most of the gap.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">✨</span>
               <span class="topic-name">Modern CSS <span class="acro-exp">(Cascading Style Sheets)</span> — Custom Properties, :has() &amp; Layers</span>
@@ -329,10 +514,37 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">The var() Fallback Did Not Apply, and the Property Came Out Unset</div>
+                <div class="concept-desc">
+                  Custom properties do not behave like the rest of CSS and the difference only shows up when
+                  something is wrong. They are substituted at computed-value time, which means a syntactically
+                  valid-looking value can be garbage by the time it is used &mdash; and when that happens the
+                  property becomes <strong class="c-amber">unset (inherited or initial), not the declaration you
+                  wrote before it</strong>. The usual cascade fallback does not save you.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause</th></tr>
+                    <tr><td>A property vanishes instead of using the earlier declaration</td><td><em>Invalid at computed-value time</em>. A bad <code>var()</code> makes the property <code>unset</code>, and an earlier valid declaration is <strong>not</strong> used</td></tr>
+                    <tr><td><code>var(--x, red)</code> ignored the fallback</td><td>The fallback applies when <code>--x</code> is <em>undefined</em>, not when it holds an invalid value</td></tr>
+                    <tr><td>A theme variable leaks into a component</td><td>Custom properties inherit. Set them on the element that owns the scope, not on <code>:root</code> by default</td></tr>
+                    <tr><td><code>--gap: 10</code> then <code>padding: var(--gap)px</code> fails</td><td>Substitution is textual and happens too late. Use <code>calc(var(--gap) * 1px)</code></td></tr>
+                    <tr><td><code>:has()</code> works in one browser and not the build</td><td>It is widely supported now, but a build-time CSS parser that predates it can drop the whole rule</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two habits make the whole class of bug visible. <strong>Type your custom properties with
+                  <code>@property</code></strong> where the browser supports it &mdash; it gives them a syntax, an
+                  initial value, and real invalid-value behaviour instead of silent unsetting. And
+                  <strong>register fallbacks at the point of use</strong>, because a <code>var()</code> that
+                  resolves to nothing is a very quiet way to lose a colour.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎨</span>
               <span class="topic-name">Design Systems, Tokens &amp; Tailwind</span>
@@ -404,10 +616,36 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">The Loop Printed 5 Five Times, and This Became Undefined</div>
+                <div class="concept-desc">
+                  Two symptoms bring people to this card, and neither of them sounds like
+                  &ldquo;closures&rdquo;. One: a loop that schedules something prints the <em>final</em> value
+                  every time instead of 0, 1, 2, 3, 4. Two: a method that works as <code>obj.save()</code> throws
+                  <strong class="c-amber">&ldquo;Cannot read properties of undefined&rdquo;</strong> the moment
+                  you pass it somewhere as <code>obj.save</code>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+                    <tr><td><code>for (var i…) setTimeout(() =&gt; log(i))</code> prints 5, 5, 5, 5, 5</td><td><code>var</code> is function-scoped &mdash; one <code>i</code>, shared. <strong><code>let</code> makes one binding per iteration</strong></td></tr>
+                    <tr><td>A callback reads a stale value from an earlier render</td><td>It closed over that render's variable. In React, that is the dependency array's job</td></tr>
+                    <tr><td><code>this</code> is undefined inside a passed method</td><td><code>this</code> is decided by <em>how the function is called</em>, not where it was written</td></tr>
+                    <tr><td>Fix for that</td><td><code>obj.save.bind(obj)</code>, an arrow wrapper <code>() =&gt; obj.save()</code>, or make it a class field</td></tr>
+                    <tr><td>An arrow function inside a method sees the right <code>this</code></td><td>Arrows have no <code>this</code> of their own &mdash; they take the enclosing one. This is why they fixed the 2010s callback mess</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The single sentence that resolves both symptoms: <strong>a closure captures the variable,
+                  not its value at the time</strong>, and <code>this</code> is not part of the closure at all. Once
+                  those are separated, the <code>var</code>/<code>let</code> loop and the detached-method error stop
+                  looking like the same mystery, which is how most people first meet them.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⏳</span>
               <span class="topic-name">Async Deep — Promises, await &amp; the Event Loop</span>
@@ -446,10 +684,37 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">forEach Returned Immediately and Nothing Was Saved</div>
+                <div class="concept-desc">
+                  Two opposite symptoms, both from the same misunderstanding of what <code>await</code>
+                  does. One: an <code>async</code> callback inside <code>forEach</code> &mdash; the loop finishes
+                  instantly, the function returns, and <strong class="c-amber">the writes land after the caller has
+                  already moved on</strong>, or not at all. Two: a <code>for</code> loop with <code>await</code>
+                  inside takes thirty seconds for thirty requests that could have taken one.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause, and the fix</th></tr>
+                    <tr><td><code>arr.forEach(async x =&gt; await save(x))</code> completes instantly</td><td><code>forEach</code> ignores the returned promise. Use <code>for…of</code> with <code>await</code>, or <code>Promise.all(arr.map(save))</code></td></tr>
+                    <tr><td>Thirty sequential requests take thirty seconds</td><td><code>await</code> inside a loop serialises. <code>Promise.all</code> when they are independent</td></tr>
+                    <tr><td>&ldquo;UnhandledPromiseRejection&rdquo; with no stack you recognise</td><td>A promise nobody awaited threw. <code>Promise.allSettled</code> when partial failure is acceptable</td></tr>
+                    <tr><td>One failure loses all the successes</td><td><code>Promise.all</code> rejects on the first failure. <code>allSettled</code> returns every outcome</td></tr>
+                    <tr><td>A <code>setTimeout(…, 0)</code> runs after a resolved promise</td><td>Microtasks (promises) drain before the next macrotask (timers). That ordering is the event loop</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The sentence that covers all five: <strong><code>await</code> pauses the function it is
+                  in, and nothing else.</strong> It does not pause a loop that never looked at the promise, does not
+                  make independent work parallel, and does not stop the rest of the program. Deciding whether calls
+                  are independent is the whole design question &mdash; <code>Promise.all</code> when they are,
+                  <code>for…of</code> with <code>await</code> when each depends on the last.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧬</span>
               <span class="topic-name">Prototypes &amp; Modern Classes</span>
@@ -480,10 +745,37 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">It Worked as obj.method() and Broke as setTimeout(obj.method)</div>
+                <div class="concept-desc">
+                  <code>class</code> syntax hides prototypes well enough that people meet them only when
+                  something breaks. The usual entry point: a method works when called on the object and throws when
+                  passed as a reference, because <strong class="c-amber">a class method lives on the prototype and
+                  is not bound to the instance</strong>. Detach it and it arrives with no
+                  <code>this</code>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>What is actually happening</th></tr>
+                    <tr><td><code>setTimeout(obj.tick, 100)</code> throws</td><td>The function was extracted from the prototype; <code>this</code> is now undefined (class bodies are strict mode)</td></tr>
+                    <tr><td><code>tick = () =&gt; {…}</code> as a class field works</td><td>A field is per-instance and the arrow captures <code>this</code>. Costs one function per instance</td></tr>
+                    <tr><td><code>instanceof</code> false for an object that clearly is one</td><td>Two copies of the library, or a different realm (iframe, worker) &mdash; different prototype objects</td></tr>
+                    <tr><td>A property appears on every instance you never set</td><td>Something wrote to the prototype. <code>Object.hasOwn(obj, k)</code> distinguishes own from inherited</td></tr>
+                    <tr><td><code>JSON.stringify</code> drops the methods</td><td>Methods are on the prototype and are not own enumerable properties. Nothing is wrong</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The mental model that makes all five predictable: <strong>a class is a function with an
+                  object hanging off it</strong>, instances hold data and delegate behaviour up the prototype chain,
+                  and <code>this</code> is supplied by the call rather than the definition. Prefer prototype methods
+                  by default, and reach for a bound class field only for the callbacks you actually pass
+                  around.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
               <span class="topic-name">Modules &amp; Bundlers — ESM <span class="acro-exp">(ECMAScript Modules)</span>, Vite &amp; Tree-Shaking</span>
@@ -515,48 +807,36 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="topic" data-reviewed="2026-08">
-            <div class="topic-header">
-              <span class="topic-icon">🔷</span>
-              <span class="topic-name">TypeScript — Types for JavaScript</span>
-              <span class="topic-badge">JavaScript</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
               <div class="concept-card">
-                <div class="concept-label">Reference</div>
-                <div class="concept-title">Catch Bugs Before They Ship</div>
+                <div class="concept-label">Measure it</div>
+                <div class="concept-title">Bytes Are What You Measure, CPU <span class="acro-exp">(Central Processing Unit)</span> Time Is What the User Feels</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">TypeScript</strong> adds static types to JavaScript, caught at
-                  compile time. It's now the default for serious projects — the editor autocomplete and
-                  refactoring safety alone are worth it.
+                  Bundle size is the metric because it is the easy one. But a phone does not merely
+                  download JavaScript &mdash; it parses, compiles and executes it, and
+                  <strong class="c-amber">that cost scales with the device, not the network</strong>. 300 KB of
+                  gzipped JS is a moment on a laptop and can be a second of blocked main thread on a mid-range
+                  Android. An image of the same size costs almost nothing by comparison.
                 </div>
                 <div class="dw">
-                  <pre class="code-block"><span class="kw">type</span> <span class="type">User</span> = { id: <span class="type">number</span>; name: <span class="type">string</span>; email?: <span class="type">string</span> };
-<span class="kw">function</span> <span class="fn">greet</span>(u: <span class="type">User</span>): <span class="type">string</span> {
-  <span class="kw">return</span> <span class="str">`Hi ${u.name}`</span>;
-}</pre>
                   <table class="ref-table">
-                    <tr><th>Feature</th><th>Detail</th></tr>
-                    <tr><td>Interfaces / types</td><td>Describe object shapes</td></tr>
-                    <tr><td>Generics</td><td>Reusable, type-safe code (<code>Array&lt;T&gt;</code>)</td></tr>
-                    <tr><td>Narrowing</td><td>Types refine via checks (unions, guards)</td></tr>
-                    <tr><td>strict mode</td><td>Null-safety &amp; more — turn it on</td></tr>
+                    <tr><th>Number</th><th>Where to get it</th></tr>
+                    <tr><td>Gzipped/Brotli size per chunk</td><td>The bundler's own report &mdash; <code>vite build</code> prints it</td></tr>
+                    <tr><td>What is <em>in</em> the chunk</td><td><code>rollup-plugin-visualizer</code> or <code>source-map-explorer</code>; the surprise is usually one library</td></tr>
+                    <tr><td>Parse + compile time</td><td>DevTools Performance, throttled &mdash; the yellow Scripting blocks before first paint</td></tr>
+                    <tr><td>Unused bytes shipped</td><td>DevTools Coverage panel: red is code downloaded and never run</td></tr>
+                    <tr><td>Whether a split helped</td><td>Compare the <em>first-load</em> total, not the total across all chunks</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-amber">Mental model:</strong> types are erased at build time — they
-                    guide the compiler and editor, then disappear. The payoff is fewer runtime
-                    <code>undefined</code> errors and fearless refactoring in large codebases.
+                  The wins in order: remove the dependency, then split the route, then lazy-load the
+                  component. Code splitting moves cost rather than removing it, so a route split that loads the
+                  same modules on the next click has bought nothing. <strong>Ship less JavaScript is the only
+                  optimisation on this list that always works.</strong>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚛️</span>
               <span class="topic-name">React — Components, Hooks &amp; the Mental Model</span>
@@ -773,10 +1053,35 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Measure it</div>
+                <div class="concept-title">The Dev Proxy Makes Everything Same-Origin, So CORS Waits for Production</div>
+                <div class="concept-desc">
+                  Most frontend dev servers proxy <code>/api</code> to the backend, which means every
+                  request in development is same-origin and <strong class="c-amber">no preflight ever
+                  happens</strong>. The first real cross-origin request is therefore made by a user, in
+                  production, and the failure is a console message about a header nobody has set.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What triggers it</th><th>Consequence</th></tr>
+                    <tr><td>Any header beyond the safe list</td><td>An <code>OPTIONS</code> preflight before every request &mdash; a whole extra round trip</td></tr>
+                    <tr><td><code>Content-Type: application/json</code></td><td>Not on the safe list. This alone preflights, which surprises everyone once</td></tr>
+                    <tr><td><code>credentials: 'include'</code></td><td>Wildcard <code>Access-Control-Allow-Origin: *</code> is <strong>rejected</strong> &mdash; the origin must be named</td></tr>
+                    <tr><td>A redirect mid-preflight</td><td>Fails outright in most browsers; the error names neither the redirect nor the origin</td></tr>
+                    <tr><td>An error response</td><td>CORS applies to failures too &mdash; a 500 with no CORS headers reads as a CORS error, hiding the 500</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Test cross-origin before you ship it: run the frontend on a different port <em>without</em>
+                  the proxy, or hit the deployed API directly from a local build. And cache the preflight &mdash;
+                  <code>Access-Control-Max-Age</code> turns two round trips per request into two per session,
+                  which on a high-latency mobile connection is the difference a user can feel.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">◈</span>
               <span class="topic-name">GraphQL on the Backend — Schema, Resolvers &amp; Caching</span>
@@ -949,10 +1254,37 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Measure it</div>
+                <div class="concept-title">Lighthouse Is a Lab. Your Users Are the Field</div>
+                <div class="concept-desc">
+                  A green Lighthouse score is one simulated load, on one machine, on one network profile,
+                  with a cold cache and no extensions. The number Google actually ranks on, and the number your
+                  users experience, is the <strong class="c-amber">75th percentile of real loads</strong> &mdash;
+                  which includes the ad blocker, the old phone, the hotel Wi-Fi and the tab that was
+                  backgrounded. The two numbers disagree routinely, and when they do, the field one is right.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>Which number answers it</th></tr>
+                    <tr><td>Is it actually broken, and for whom?</td><td><strong>Field</strong> &mdash; CrUX or your own RUM, at p75 over 28 days</td></tr>
+                    <tr><td>Did this commit make it worse?</td><td><strong>Lab</strong> &mdash; Lighthouse, same machine, same profile, run it twice</td></tr>
+                    <tr><td>Why is it slow?</td><td><strong>Lab</strong> &mdash; the trace is the only thing with a cause in it</td></tr>
+                    <tr><td>Did the fix reach users?</td><td><strong>Field</strong>, and not for four weeks &mdash; the window is 28 days rolling</td></tr>
+                    <tr><td>Score went green, complaints continue</td><td>Believe the field number. The lab profile is not your users' phone</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Use both, in that order: <strong>field to decide whether there is a problem, lab to find
+                  it</strong>. The thresholds worth memorising are LCP &le; 2.5 s, INP &le; 200 ms and CLS &le;
+                  0.1, all at p75. And note that INP replaced FID <span class="acro-exp">(First Input Delay)</span> precisely because FID measured the wrong thing
+                  &mdash; the delay before the first handler ran, rather than how long until the user saw a
+                  result.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">♿</span>
               <span class="topic-name">Web Accessibility (a11y) — WCAG <span class="acro-exp">(Web Content Accessibility Guidelines)</span> &amp; ARIA <span class="acro-exp">(Accessible Rich Internet Applications)</span></span>
@@ -984,11 +1316,37 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Measure it</div>
+                <div class="concept-title">A Clean Automated Scan Is the Floor, Not the Result</div>
+                <div class="concept-desc">
+                  Automated tooling &mdash; axe, Lighthouse, pa11y &mdash; reliably catches the machine-checkable
+                  subset: missing alt attributes, unlabelled inputs, insufficient contrast, invalid ARIA. That
+                  subset is real and worth automating in CI. It is also
+                  <strong class="c-amber">a minority of the barriers a person actually hits</strong>, because the
+                  rest are questions about meaning that no scanner can answer.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Scanners catch</th><th>Only a human catches</th></tr>
+                    <tr><td><code>alt</code> missing</td><td><code>alt</code> present and useless &mdash; &ldquo;image1.png&rdquo;</td></tr>
+                    <tr><td>Contrast below ratio</td><td>Colour used as the <em>only</em> way to tell two states apart</td></tr>
+                    <tr><td>Input with no label</td><td>Label text that does not describe the field</td></tr>
+                    <tr><td>Invalid ARIA attribute</td><td>Valid ARIA describing the wrong thing, which is worse than none</td></tr>
+                    <tr><td>Missing heading levels</td><td>Focus order that jumps around the page, or a modal that does not trap focus</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The two manual passes that find the most, both free: <strong>unplug the mouse</strong>
+                  and complete one real task with <kbd>Tab</kbd>, <kbd>Enter</kbd> and <kbd>Esc</kbd> &mdash;
+                  watching that the focus ring is always visible; then run one page through a screen reader
+                  (VoiceOver on macOS, NVDA on Windows) with the display off. Automate the floor in CI so it never
+                  regresses, and do the keyboard pass on anything interactive before it ships.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌍</span>
               <span class="topic-name">Internationalization (i18n) — Designing for Languages You Do Not Speak</span>
@@ -1395,10 +1753,36 @@ Three defects become visible immediately:
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Measure it</div>
+                <div class="concept-title">`localhost` Has No Latency, and CI Flake Is the Test Finding Out</div>
+                <div class="concept-desc">
+                  End-to-end tests pass locally because everything is instant: the API <span class="acro-exp">(Application Programming Interface)</span> answers in a
+                  millisecond, animations complete before the next line runs, and the element is there by the time
+                  you look. CI is slower, differently slow each run, and
+                  <strong class="c-amber">a flaky test is almost never random &mdash; it is a race the local
+                  machine was fast enough to hide</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Flaky pattern</th><th>The fix</th></tr>
+                    <tr><td><code>waitForTimeout(500)</code></td><td>Wait for the <em>condition</em> &mdash; the element, the response, the URL <span class="acro-exp">(Uniform Resource Locator)</span>. Fixed sleeps encode a guess about speed</td></tr>
+                    <tr><td>Assert immediately after a click</td><td>Use auto-retrying assertions; the click starts work that has not finished</td></tr>
+                    <tr><td>Tests share a user or record</td><td>Isolate per test. Parallel CI runs them at the same time and the second one loses</td></tr>
+                    <tr><td>Animation still running</td><td>Disable animations in the test environment &mdash; one CSS override, many fewer failures</td></tr>
+                    <tr><td>Real network in the test</td><td>Intercept and stub. A third-party outage should not fail your build</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  When a test flakes, resist the retry. <strong>Re-run it under throttling until it fails
+                  reliably</strong>, then fix the race &mdash; a test that fails 1 in 20 times is describing a
+                  bug your users hit 1 in 20 times. Automatic retries turn that signal off, which is why they feel
+                  so good and cost so much.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
               <span class="topic-name">Frontend Security — XSS <span class="acro-exp">(Cross-Site Scripting)</span>, CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> &amp; CSP <span class="acro-exp">(Content Security Policy)</span></span>
@@ -1717,40 +2101,6 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                     Node APIs, short execution) — great for fast, small logic, not heavy work.
                     Combined with hashed filenames + long cache TTLs <span class="acro-exp">(Time To Live)</span>, the edge makes global sites feel
                     local.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="topic" data-reviewed="2026-08">
-            <div class="topic-header">
-              <span class="topic-icon">🧩</span>
-              <span class="topic-name">WebAssembly — Native Speed in the Browser</span>
-              <span class="topic-badge">Platform</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
-              <div class="concept-card">
-                <div class="concept-label">Concept</div>
-                <div class="concept-title">When JavaScript Isn't Fast Enough</div>
-                <div class="concept-desc">
-                  <strong class="c-cyan">WebAssembly (Wasm)</strong> is a compact binary format that
-                  runs at near-native speed in the browser. Compile C/C++/Rust/Go to Wasm and call it
-                  from JS <span class="acro-exp">(JavaScript)</span> for compute-heavy work.
-                </div>
-                <div class="dw">
-                  <table class="ref-table">
-                    <tr><th>Great for</th><th>Example</th></tr>
-                    <tr><td>Heavy compute</td><td>Image/video editing, games, simulations</td></tr>
-                    <tr><td>Porting native code</td><td>Existing C/C++ libraries to the web (FFmpeg, SQLite)</td></tr>
-                    <tr><td>Beyond the browser</td><td>Wasm + WASI as a portable, sandboxed runtime (edge, plugins)</td></tr>
-                  </table>
-                  <div class="concept-desc verdict">
-                    <strong class="c-amber">Not a JS replacement:</strong> Wasm can't touch the DOM <span class="acro-exp">(Document Object Model)</span>
-                    directly and has call-overhead — reach for it for the hot compute path, not the
-                    whole app. Its bigger future may be server-side: a fast, secure, language-agnostic
-                    sandbox.
                   </div>
                 </div>
               </div>

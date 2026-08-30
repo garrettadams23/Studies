@@ -306,10 +306,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The evaluation nobody reads</div>
+                <div class="concept-title">A Permission Can Be Granted and Still Denied</div>
+                <div class="concept-desc">
+                  &ldquo;It is in the policy and it still says access denied&rdquo; is the most common AWS
+                  support question there is, and the answer is that an identity policy is one of
+                  <strong>five</strong> things being evaluated. The rule that resolves almost every case is short:
+                  <strong class="c-amber">an explicit <code>Deny</code> anywhere wins, and everything else must
+                  allow.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Layer</th><th>Effect on the request</th></tr>
+                    <tr><td>Service control policy (SCP)</td><td>A <em>guardrail</em>, not a grant. It can only remove permissions from the account</td></tr>
+                    <tr><td>Permissions boundary</td><td>A ceiling on an identity. The identity policy grants; the boundary caps</td></tr>
+                    <tr><td>Identity policy</td><td>What the user or role is allowed to do</td></tr>
+                    <tr><td>Resource policy</td><td>What the resource permits &mdash; and cross-account access needs <strong>both</strong> sides</td></tr>
+                    <tr><td>Session policy</td><td>Passed at <code>AssumeRole</code> time; narrows the session further</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two habits make this debuggable rather than mysterious. Use the
+                  <strong>IAM policy simulator or <code>--dry-run</code> before blaming the policy</strong>, and
+                  read the error's principal ARN <span class="acro-exp">(Amazon Resource Name)</span> carefully &mdash; a denied request from
+                  <code>arn:…:assumed-role/…</code> is a role session, so the identity policy you were reading may
+                  not be the one in force. And remember the asymmetry: cross-account access requires an allow on
+                  both sides, while a single explicit deny on either is enough to stop it.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔑</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> IAM <span class="acro-exp">(Identity and Access Management)</span> — Members, Roles &amp; Hierarchy</span>
@@ -344,10 +372,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Coming from AWS <span class="acro-exp">(Amazon Web Services)</span></div>
+                <div class="concept-title">You Cannot Attach a Policy to an Identity Here</div>
+                <div class="concept-desc">
+                  The habit that breaks first is the most basic one. In AWS you write a policy and attach it
+                  to a user or role. In GCP there is <strong class="c-amber">no such thing as attaching a policy to
+                  an identity</strong> &mdash; you grant a <em>role</em> to a <em>principal</em> <em>on a
+                  resource</em>, and the resulting binding lives on the resource, not on the person. Permissions
+                  are then inherited down the hierarchy, and inheritance is additive.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>AWS habit</th><th>GCP reality</th></tr>
+                    <tr><td>Attach a managed policy to a role</td><td>Bind a predefined role to a principal at organisation, folder, project or resource level</td></tr>
+                    <tr><td>Read a user's permissions from their policies</td><td>There is no single place. You must inspect bindings at every level above the resource</td></tr>
+                    <tr><td>Explicit <code>Deny</code> in an identity policy</td><td>Allow policies are additive with no deny. IAM <strong>deny policies</strong> exist as a separate object and are far narrower</td></tr>
+                    <tr><td>Fine-grained resource ARNs <span class="acro-exp">(Amazon Resource Name)</span> in one policy</td><td>Granularity comes from <em>where</em> you bind, and many services only support project-level binding</td></tr>
+                    <tr><td>An inline policy for a one-off</td><td>Custom roles &mdash; and they are org- or project-scoped objects, not throwaways</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The practical consequence for anyone auditing: <strong>a project-level binding is much
+                  broader than it looks</strong>, because everything created in that project inherits it forever,
+                  including resources that did not exist when the grant was made. Bind as far down the hierarchy as
+                  the service allows, and treat a `roles/editor` grant at project level as the equivalent of a
+                  wildcard &mdash; it is close to one.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🤖</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Service Accounts &amp; Workload Identity</span>
@@ -379,10 +434,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Coming from AWS <span class="acro-exp">(Amazon Web Services)</span></div>
+                <div class="concept-title">A Service Account Is an Identity and a Resource at the Same Time</div>
+                <div class="concept-desc">
+                  AWS roles are assumed; GCP service accounts are <em>both</em> something that acts and
+                  something you grant people access <strong>to</strong>. That dual nature is the source of most
+                  confusion, and of a real privilege-escalation path:
+                  <strong class="c-amber">permission to use a service account is permission to become it</strong>,
+                  with everything it can do.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Grant</th><th>What it actually means</th></tr>
+                    <tr><td><code>roles/iam.serviceAccountUser</code></td><td>May attach this service account to a resource &mdash; effectively, may run code as it</td></tr>
+                    <tr><td><code>roles/iam.serviceAccountTokenCreator</code></td><td>May mint tokens for it directly. **This is impersonation**, no resource needed</td></tr>
+                    <tr><td>A key file (<code>.json</code>)</td><td>A long-lived credential with no expiry. The thing to stop creating</td></tr>
+                    <tr><td>Workload Identity (GKE)</td><td>A Kubernetes service account maps to a Google one &mdash; no key material anywhere</td></tr>
+                    <tr><td>Workload Identity Federation</td><td>External identities (GitHub Actions, AWS, OIDC) impersonate without a key</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The audit question that finds real problems: <strong>who holds
+                  <code>serviceAccountTokenCreator</code> or <code>serviceAccountUser</code> on a highly privileged
+                  service account?</strong> Those two roles are how a modest project-level grant turns into the
+                  permissions of whatever the pipeline runs as, and they rarely appear in a review that is looking
+                  only at what a person can do directly.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚠️</span>
               <span class="topic-name">Cloud IAM <span class="acro-exp">(Identity and Access Management)</span> Pitfalls &amp; Privilege Escalation</span>
@@ -451,10 +533,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Coming from GCP <span class="acro-exp">(Google Cloud Platform)</span></div>
+                <div class="concept-title">Everything Is Zone-Scoped, and a Subnet Is Only Public Because of Its Route Table</div>
+                <div class="concept-desc">
+                  Two things surprise people arriving from a global network. First, the availability zone is
+                  a first-class design constraint: a subnet lives in exactly one AZ, so high availability means
+                  building the same thing more than once. Second, there is
+                  <strong class="c-amber">no &ldquo;public subnet&rdquo; setting</strong> &mdash; a subnet is
+                  public if and only if its route table sends <code>0.0.0.0/0</code> to an internet gateway.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>Answer</th></tr>
+                    <tr><td>How do I make this subnet public?</td><td>Attach a route table with a default route to the IGW. That <em>is</em> the definition</td></tr>
+                    <tr><td>Why can my private instance reach the internet?</td><td>A NAT gateway in a public subnet &mdash; and it is billed hourly plus per GB, per AZ</td></tr>
+                    <tr><td>Security group vs NACL</td><td>SGs are stateful, instance-attached, allow-only. <strong>NACLs are stateless</strong> and need a rule in both directions</td></tr>
+                    <tr><td>Why did my return traffic drop?</td><td>Almost always a stateless NACL with no ephemeral-port return rule</td></tr>
+                    <tr><td>Do I need one subnet or three?</td><td>Three, one per AZ, for anything that must survive an AZ failure &mdash; and the same for NAT</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The NACL row is where most of the lost afternoons are. <strong>Use security groups for
+                  everything, and leave NACLs at their default allow-all unless you have a specific reason</strong>
+                  &mdash; a stateless layer that silently drops returning packets is a debugging cost you pay
+                  repeatedly for a control the security group already gave you statefully.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔀</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Load Balancing &amp; DNS <span class="acro-exp">(Domain Name System)</span> — ELB <span class="acro-exp">(Elastic Load Balancing)</span>, Route 53, CloudFront</span>
@@ -480,10 +588,32 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Failure Mode</div>
+                <div class="concept-title">Failover Is as Fast as the Slowest Cache Between You and the User</div>
+                <div class="concept-desc">
+                  Health checks and DNS-based failover are described in seconds and experienced in minutes, because the record's time-to-live is only the first of several caches and several of them do not honour it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Layer</th><th>What it adds to failover time</th></tr></thead>
+                    <tbody>
+                      <tr><td>The record's own time-to-live</td><td>What you configured. The floor, not the answer</td></tr>
+                      <tr><td>Recursive resolvers</td><td>Usually honour it. Some clamp very low values upward</td></tr>
+                      <tr><td>The operating system's stub resolver</td><td>Caches independently, often for longer than the record says</td></tr>
+                      <tr><td>The application runtime</td><td>Some configurations cache DNS <em>for the life of the process</em> &mdash; the classic multi-hour failover</td></tr>
+                      <tr><td>Long-lived connections</td><td>An established connection does not re-resolve at all. It fails when it fails</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Where the requirement is tight, prefer failover that does not depend on DNS at all.</strong> A load balancer with a stable address moving traffic between healthy targets fails over in the time of a health check; a DNS change asks every layer above to notice. Where DNS failover is the mechanism, test it from a real client rather than from a resolver, and measure what the application does rather than what the record says.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌐</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> VPC <span class="acro-exp">(Virtual Private Cloud)</span> — Global Networks &amp; Firewall Rules</span>
@@ -515,10 +645,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Coming from AWS</div>
+                <div class="concept-title">The VPC Is Global. Subnets Are Regional. Firewall Rules Span Both.</div>
+                <div class="concept-desc">
+                  This is the largest structural difference between the two networks and it changes the
+                  shape of a design rather than its wording. An AWS VPC lives in one region and reaching another
+                  means peering or Transit Gateway. A GCP VPC is
+                  <strong class="c-cyan">global</strong> &mdash; one network, subnets in every region, private
+                  communication between them by default, with no peering to build.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>AWS assumption</th><th>GCP reality</th></tr>
+                    <tr><td>A VPC belongs to a region</td><td>A VPC is global; a <em>subnet</em> belongs to a region and spans its zones</td></tr>
+                    <tr><td>Peer VPCs to cross regions</td><td>Nothing to build &mdash; regional subnets in one VPC route to each other privately</td></tr>
+                    <tr><td>Security groups attach to instances</td><td>Firewall rules are <strong>network-wide</strong>, priority-ordered, and target by tag or service account</td></tr>
+                    <tr><td>Rules are allow-only and stateful</td><td>Rules are stateful too, but there are <strong>explicit denies</strong>, resolved by priority (lower number wins)</td></tr>
+                    <tr><td>A route table per subnet</td><td>Routes are VPC-wide with tag-based targeting; there is no per-subnet table</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The trap on the way back is worse than the trap on the way out. A design that assumed
+                  global reach and tag-targeted rules does not survive translation to AWS, where the same intent
+                  becomes peering connections, per-subnet route tables and per-instance groups. **Draw the
+                  boundaries before choosing the provider**, because on this one the provider decides how many
+                  boundaries there are.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔀</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Load Balancing &amp; DNS <span class="acro-exp">(Domain Name System)</span></span>
@@ -545,10 +702,38 @@
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Coming from AWS <span class="acro-exp">(Amazon Web Services)</span></div>
+                <div class="concept-title">One Global Anycast IP, and Health Checks From Ranges You Must Allow</div>
+                <div class="concept-desc">
+                  An AWS ALB <span class="acro-exp">(Application Load Balancer)</span> is a regional resource with a DNS name, and failing over between regions is a
+                  Route 53 job you configure. A GCP global external load balancer is a
+                  <strong class="c-cyan">single anycast IP announced worldwide</strong> &mdash; the nearest Google
+                  edge answers, and traffic reaches the healthiest backend without any DNS failover to design. The
+                  part that catches people is on the way in, not the way out.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Difference</th><th>What it means for you</th></tr>
+                    <tr><td>One global IP rather than per-region names</td><td>No DNS failover to build, and no propagation delay when a region fails</td></tr>
+                    <tr><td>Terminates at the Google edge</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> ends near the user; the long haul rides Google's backbone</td></tr>
+                    <tr><td>Health checks come from fixed ranges</td><td><strong><code>35.191.0.0/16</code> and <code>130.211.0.0/22</code> must be allowed</strong>, or every backend reads as unhealthy</td></tr>
+                    <tr><td>Backend services, not target groups</td><td>Capacity and balancing mode are set on the backend service, per region</td></tr>
+                    <tr><td>Regional vs global load balancer</td><td>They are different products. Choosing the regional one gives up the anycast behaviour</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The health-check row is the single most common &ldquo;everything is unhealthy and the
+                  config looks perfect&rdquo; cause on this platform, and it is a firewall rule. Add it when you
+                  create the load balancer rather than when you debug it. The wider point:
+                  <strong>the two clouds put the failover decision in different layers</strong> &mdash; DNS on one,
+                  the network on the other &mdash; so a runbook written for one is not merely reworded for the
+                  other, it is relocated.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
               <span class="topic-name">Hybrid Connectivity — VPN <span class="acro-exp">(Virtual Private Network)</span>, Interconnect &amp; Peering</span>
@@ -580,10 +765,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The meter</div>
+                <div class="concept-title">Data Transfer Is the Line Item That Surprises Everyone</div>
+                <div class="concept-desc">
+                  Compute and storage are the prices people compare, and data transfer is the one that
+                  turns up unannounced. It is charged on nearly every boundary that exists &mdash; out to the
+                  internet, between regions, between availability zones, through a NAT <span class="acro-exp">(Network Address Translation)</span> gateway, across an
+                  interconnect &mdash; and <strong class="c-amber">the architecture decides the bill long before
+                  anyone looks at it</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Boundary crossed</th><th>Billing shape</th></tr>
+                    <tr><td>Out to the internet (egress)</td><td>Per GB, and the largest rate. Ingress is usually free, which is why data is easy to move in</td></tr>
+                    <tr><td>Between regions</td><td>Per GB, both directions. Cross-region replication is a permanent recurring cost</td></tr>
+                    <tr><td>Between availability zones</td><td>Per GB. A chatty multi-AZ service pays for its own internal conversation</td></tr>
+                    <tr><td>Through a NAT gateway</td><td>Hourly <em>plus</em> per GB processed &mdash; frequently larger than the workloads behind it</td></tr>
+                    <tr><td>Site-to-site VPN vs dedicated interconnect</td><td>VPN: hourly plus egress. Interconnect: port fee plus a lower per-GB rate &mdash; the crossover is volume</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Three architectural moves remove charges rather than reducing them: <strong>private
+                  endpoints</strong> so traffic to cloud services never traverses NAT or the internet, <strong>a
+                  CDN <span class="acro-exp">(Content Delivery Network)</span> in front of anything public</strong> so egress is served from cache, and <strong>keeping a
+                  request's path inside one zone</strong> where the availability requirement allows. Model the
+                  transfer before choosing the topology &mdash; on data-heavy systems it is routinely the largest
+                  line on the invoice, and it is the hardest one to change afterwards.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Compute — EC2 <span class="acro-exp">(Elastic Compute Cloud)</span>, AMIs <span class="acro-exp">(Amazon Machine Image)</span> &amp; Auto Scaling</span>
@@ -619,10 +832,37 @@
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The meter</div>
+                <div class="concept-title">The Instance Is the Part You Can Switch Off</div>
+                <div class="concept-desc">
+                  Stopping an EC2 instance stops the
+                  compute charge and very little else. <strong class="c-amber">The storage, the snapshots and the
+                  address keep billing</strong>, which is why an account full of &ldquo;stopped&rdquo; instances
+                  still produces an invoice, and why the tidy-up nobody schedules is usually worth more than the
+                  instance-type optimisation everybody discusses.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Resource</th><th>What happens when the instance stops</th></tr>
+                    <tr><td>EBS <span class="acro-exp">(Elastic Block Store)</span> volumes</td><td><strong>Still billed, at the provisioned size</strong> &mdash; a 500 GB volume 5% full costs 500 GB</td></tr>
+                    <tr><td>Snapshots and AMIs</td><td>Billed indefinitely, and they accumulate. Nothing expires them by default</td></tr>
+                    <tr><td>Public IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> address</td><td>Charged hourly, allocated or not &mdash; the change that made stale Elastic IPs <span class="acro-exp">(Internet Protocol)</span> visible on the bill</td></tr>
+                    <tr><td>Data transfer between AZs <span class="acro-exp">(Availability Zone)</span></td><td>Per GB, in both directions. A chatty service spread across zones pays for its own conversation</td></tr>
+                    <tr><td>NAT <span class="acro-exp">(Network Address Translation)</span> gateway</td><td>Hourly <em>plus</em> per GB processed. Often larger than the instances behind it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The two levers, in order of how much they usually return: <strong>delete unattached
+                  volumes and expire snapshots on a schedule</strong>, then look at instance type. And treat
+                  inter-AZ transfer as a design constraint rather than a rounding error &mdash; keeping a
+                  request's whole path inside one availability zone, and using VPC <span class="acro-exp">(Virtual Private Cloud)</span> endpoints so traffic to AWS
+                  services never leaves the network, removes a category of charge instead of shrinking it.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Serverless &amp; Containers — Lambda, ECS <span class="acro-exp">(Elastic Container Service)</span>, EKS <span class="acro-exp">(Elastic Kubernetes Service)</span>, Fargate</span>
@@ -650,10 +890,31 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Trap</div>
+                <div class="concept-title">Scale-to-Zero Is a Property of the Function, Not of the System</div>
+                <div class="concept-desc">
+                  Functions scale beautifully and everything they talk to does not. The failure that surprises teams is not the function &mdash; it is what happens downstream when a thousand copies of it start at once.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Scales instantly</th><th>Does not</th></tr></thead>
+                    <tbody>
+                      <tr><td>The function itself</td><td>A relational database behind it, which sees a thousand connection attempts. This is what connection poolers and proxies exist for</td></tr>
+                      <tr><td>Concurrent executions, up to an account limit</td><td>That limit &mdash; shared across every function in the account, so one noisy workload throttles unrelated ones</td></tr>
+                      <tr><td>Reads from a queue or stream</td><td>A third-party API <span class="acro-exp">(Application Programming Interface)</span> with a rate limit, which starts returning errors and turns your retries into a second attack on it</td></tr>
+                      <tr><td>Cost, linearly with invocations</td><td>Cold starts, which are worst exactly when traffic arrives suddenly &mdash; the case autoscaling was supposed to solve</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The account-level concurrency limit is the one worth knowing before an incident.</strong> It is shared, finite, and a single misbehaving function consuming it will throttle everything else you run &mdash; which presents as unrelated services failing simultaneously with no deployment to blame. Reserve concurrency for anything that matters, and treat the limit as a capacity number to monitor rather than a ceiling you will never reach.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Compute — Compute Engine &amp; MIGs</span>
@@ -682,10 +943,36 @@
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The meter</div>
+                <div class="concept-title">Disks Bill Provisioned, and Discounts Are a Decision Not a Setting</div>
+                <div class="concept-desc">
+                  GCP applies sustained-use discounts automatically, which is generous and leads people to
+                  believe cost is handled. It is not: the automatic discount is the small lever.
+                  <strong class="c-amber">The large ones are provisioned disk size and a commitment you have to
+                  actively make</strong>, and neither happens by itself.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What is metered</th><th>The detail that matters</th></tr>
+                    <tr><td>Persistent disk</td><td>Billed on <strong>provisioned</strong> capacity, not used. A 2 TB disk 10% full costs 2 TB</td></tr>
+                    <tr><td>Disks after instance deletion</td><td>Only removed if <code>auto-delete</code> was set. Orphaned disks are the classic residue</td></tr>
+                    <tr><td>Sustained-use discount</td><td>Automatic, and modest. Applies to how much of the month the machine ran</td></tr>
+                    <tr><td>Committed-use discount</td><td>The real saving, and it is a 1- or 3-year commitment you sign up for deliberately</td></tr>
+                    <tr><td>Spot / preemptible VMs</td><td>Very cheap, and can be reclaimed at short notice. Right for batch, wrong for anything stateful</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The cost review that actually returns money here is short: <strong>list every persistent
+                  disk, find the unattached ones, and compare provisioned size against used</strong>. Disks are
+                  easy to grow and cannot be shrunk in place, so the number only ever goes one way &mdash; which
+                  makes over-provisioning at creation time a decision with a very long tail. Commitments come after
+                  that, once the baseline is honest.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏃</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Serverless &amp; Containers — Cloud Run, Functions, GKE <span class="acro-exp">(Google Kubernetes Engine)</span></span>
@@ -746,10 +1033,32 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Decision Behind the Decision</div>
+                <div class="concept-title">Operational Cost, Not Compute Cost, Is What You Are Choosing</div>
+                <div class="concept-desc">
+                  Every row in the table above is also a choice about who gets paged and what they need to know. That is the durable part &mdash; the per-hour price of a virtual machine changes constantly, and the amount of platform a team has to understand does not.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Choice</th><th>What it actually commits you to</th></tr></thead>
+                    <tbody>
+                      <tr><td>Functions</td><td>No servers to patch, and a distributed system whose failure modes are retries, cold starts and concurrency limits. Debugging moves to traces, because there is nowhere to log in</td></tr>
+                      <tr><td>Serverless containers</td><td>The smallest operational surface that still runs an ordinary container. Usually the right default for a web service in a small team</td></tr>
+                      <tr><td>Managed Kubernetes</td><td>A platform somebody owns as part of their job. It is not a service you consume, it is a thing you run</td></tr>
+                      <tr><td>Virtual machines</td><td>Full control, and the whole patching, imaging and configuration-management stack that goes with it. Sometimes right, rarely the modern default</td></tr>
+                      <tr><td>More than one of these</td><td>The real cost &mdash; two operational models, two on-call runbooks, and every engineer half as fluent in each</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Pick the least platform that runs the workload</strong>, and change only when something concrete forces it. The migration people regret is not choosing wrongly at the start &mdash; it is adopting a heavier model in anticipation of scale that never arrives, and paying the operational cost every week in the meantime.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">💾</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Storage — S3 <span class="acro-exp">(Simple Storage Service)</span> Classes, EBS <span class="acro-exp">(Elastic Block Store)</span> &amp; EFS <span class="acro-exp">(Elastic File System)</span></span>
@@ -820,10 +1129,32 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">What &ldquo;Managed&rdquo; Covers, and the Half It Does Not</div>
+                <div class="concept-desc">
+                  Managed database services remove the work most people find tedious and leave behind the work that actually causes incidents. Knowing which is which is the whole of the buying decision.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>The provider handles</th><th>You still own</th></tr></thead>
+                    <tbody>
+                      <tr><td>Patching, backups, replica provisioning, failover mechanics</td><td><strong>Whether the backup restores</strong> &mdash; testing it is still yours, and the button existing is not evidence</td></tr>
+                      <tr><td>Hardware, storage growth, availability-zone placement</td><td>Schema, indexes and query plans. The majority of real database incidents live here</td></tr>
+                      <tr><td>Minor version upgrades on a schedule</td><td>Major version upgrades, which change planner behaviour and need a real test</td></tr>
+                      <tr><td>Metrics and basic alarms</td><td>Knowing which metric predicts <em>your</em> outage</td></tr>
+                      <tr><td>Encryption at rest and in transit</td><td>Who can read the data, which is an access-control question the service cannot answer for you</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Managed changes who is on call, not whether the system can be badly used.</strong> The most expensive database problems &mdash; a missing index, an unbounded query, a connection storm from a scaled-out application &mdash; are all still yours, and a managed service will scale obligingly to accommodate every one of them until the bill or the latency makes it somebody&rsquo;s problem.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">💾</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Storage — Cloud Storage, Persistent Disk &amp; Filestore</span>
@@ -849,10 +1180,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The meter</div>
+                <div class="concept-title">A Colder Class Has a Minimum Storage Duration, and Deleting Early Does Not Help</div>
+                <div class="concept-desc">
+                  Choosing a colder storage class looks like a pure win and is a
+                  <strong class="c-amber">commitment to leave the object there</strong>. Each class carries a
+                  minimum billed duration, and an object deleted before it elapses is charged for the remainder
+                  anyway &mdash; so a lifecycle rule that moves short-lived data to Archive can cost considerably
+                  more than leaving it on Standard.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What is metered</th><th>The trap</th></tr>
+                    <tr><td>Minimum storage duration per class</td><td>Nearline 30 days, Coldline 90, Archive 365. Delete on day 2 and you still pay the rest</td></tr>
+                    <tr><td>Retrieval charges on cold classes</td><td>Per GB read. A cold archive that gets queried monthly is the wrong class</td></tr>
+                    <tr><td>Class transitions</td><td>Each object moved is an operation, and there can be a great many objects</td></tr>
+                    <tr><td>Egress out of the cloud</td><td>Per GB. Downloading a large bucket is frequently the single largest line on the invoice</td></tr>
+                    <tr><td>Operations (Class A / Class B)</td><td>Listing and writing are charged per operation. Millions of small objects costs more in operations than storage</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Match the class to the <strong>access pattern and the expected lifetime</strong>, not to how
+                  old the data feels. The practical shape: Standard for anything read this month, Nearline for
+                  backups you might restore, Archive only for data with a legal retention period that exceeds the
+                  minimum anyway. And the cheapest habit of all is a <strong>lifecycle rule that deletes</strong>
+                  &mdash; the least expensive byte is the one you are not storing.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗃️</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Databases — Cloud SQL <span class="acro-exp">(Structured Query Language)</span>, Spanner &amp; Firestore</span>
@@ -879,10 +1237,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The meter</div>
+                <div class="concept-title">HA Doubles It, and Storage Grows Without a Way Back</div>
+                <div class="concept-desc">
+                  Managed databases are billed on instance size, storage, backups and network, and two of
+                  those behave in ways that catch people out. High availability is
+                  <strong>a second instance</strong>, priced accordingly. And storage that auto-grows to meet
+                  demand <strong class="c-amber">does not shrink again when the data is deleted</strong> &mdash;
+                  the high-water mark becomes the new floor.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What is metered</th><th>The detail</th></tr>
+                    <tr><td>Instance vCPU and memory</td><td>Continuous while running. Stopping stops this and not the storage</td></tr>
+                    <tr><td>Storage, provisioned</td><td>Auto-grow raises it permanently. Reclaiming means export, recreate, import</td></tr>
+                    <tr><td>High availability</td><td>A standby instance. Roughly double, and worth it for production &mdash; but choose it knowingly</td></tr>
+                    <tr><td>Backups and PITR</td><td>Retained backup volume, and a longer point-in-time window costs more storage</td></tr>
+                    <tr><td>Read replicas</td><td>Each is another instance. Useful, and not free</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two habits keep this predictable. <strong>Set a storage ceiling you have thought about</strong>,
+                  so auto-grow cannot quietly ratchet the floor upward during an incident, and monitor free space
+                  so the growth is a decision rather than a surprise. And <strong>switch off non-production
+                  instances out of hours</strong> &mdash; a development database running 168 hours a week to serve
+                  40 is the most common avoidable charge in this whole domain, on every provider.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📊</span>
               <span class="topic-name">BigQuery — Serverless Data Warehouse</span>
@@ -914,10 +1299,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The meter</div>
+                <div class="concept-title">Bytes Scanned, Not Bytes Returned</div>
+                <div class="concept-desc">
+                  On-demand BigQuery bills by the volume of data the query <em>reads</em>, and a
+                  <code>LIMIT</code> does not reduce it &mdash; the engine still scans the columns you named.
+                  <strong class="c-amber"><code>SELECT *</code> on a wide table is the most expensive thing in the
+                  product</strong>, and it looks identical in the editor to a query that costs a thousandth as
+                  much.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Query habit</th><th>Effect on bytes scanned</th></tr>
+                    <tr><td><code>SELECT *</code></td><td>Reads every column. Columnar storage means naming three columns reads three columns</td></tr>
+                    <tr><td><code>LIMIT 10</code></td><td><strong>Does not reduce the scan.</strong> It limits what comes back, after the read</td></tr>
+                    <tr><td>No partition filter</td><td>Reads the whole table. A <code>_PARTITIONTIME</code> or date predicate is the single biggest saving</td></tr>
+                    <tr><td>Clustering</td><td>Skips blocks within a partition &mdash; helps further, on the clustered columns</td></tr>
+                    <tr><td>Preview and <code>--dry_run</code></td><td><strong>Free.</strong> The dry run prints the bytes before you spend them</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two habits, and the second is a five-second reflex worth building: partition every large
+                  table on the column people filter by, and <strong>dry-run any query you have not run
+                  before</strong> &mdash; the estimate is printed before execution and costs nothing. Once
+                  consumption is both predictable and large, the question changes shape: capacity pricing (slots)
+                  trades a variable bill for a fixed one, which is a procurement decision rather than a query
+                  one.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Security Stack — CloudTrail, GuardDuty &amp; Security Hub</span>
@@ -984,10 +1397,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The authority nobody expects</div>
+                <div class="concept-title">The Key Policy Decides, and IAM Only Works Because It Delegates</div>
+                <div class="concept-desc">
+                  A KMS key is one of the few AWS
+                  resources where the resource policy is the primary authority. The reason IAM appears to work
+                  normally is that <strong>the default key policy grants the account root full access</strong>,
+                  which delegates the decision to IAM. Replace that key policy with a hand-written one that omits
+                  it, and <strong class="c-amber">an administrator with <code>kms:*</code> in their identity policy
+                  still cannot use the key</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>What happens</th></tr>
+                    <tr><td>Default key policy</td><td>Root has full access, so ordinary IAM policies govern use. Business as usual</td></tr>
+                    <tr><td>Custom key policy without the root statement</td><td>IAM is bypassed. Only principals named in the key policy can use it</td></tr>
+                    <tr><td>Nobody named, and root removed</td><td><strong>The key is unusable and cannot be repaired without AWS support</strong></td></tr>
+                    <tr><td>Cross-account use</td><td>Key policy must name the other account <em>and</em> that account's IAM must allow it</td></tr>
+                    <tr><td>Encrypted snapshot shared cross-account</td><td>Fails unless the key is shared too — the classic surprise</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two operational habits follow. <strong>Never write a key policy that removes the root
+                  statement</strong> unless you fully understand what you are giving up, because that is the one
+                  mistake here with no self-service recovery. And use <strong>grants</strong> rather than key-policy
+                  edits for temporary, scoped delegation — they expire, they are auditable, and they do not risk
+                  the policy that keeps the key reachable.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Security — Cloud Audit Logs &amp; Security Command Center</span>
@@ -1073,10 +1514,32 @@
                   </table>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Trap</div>
+                <div class="concept-title">Four Thousand Findings Is the Same as Zero Findings</div>
+                <div class="concept-desc">
+                  Point one of these at an estate that has never been scanned and it returns thousands of results. That is the tool working correctly, and it is also where most posture programmes quietly end, because nobody can act on a list that long and nobody wants to say so.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>What arrives</th><th>What to do with it</th></tr></thead>
+                    <tbody>
+                      <tr><td>Every benchmark control, every account, ungrouped</td><td>Do not read it as a list. Group by <em>control</em> &mdash; one missing policy usually explains hundreds of rows</td></tr>
+                      <tr><td>Severity from the benchmark, not from your estate</td><td>A public bucket of marketing images and one of backups score the same. Re-rank by what is behind the resource</td></tr>
+                      <tr><td>Findings on resources nobody owns</td><td>The genuinely useful output, and the one that needs an owner before it needs a fix</td></tr>
+                      <tr><td>The same findings next week</td><td>Expected. The signal is the <em>trend</em> and the age of the oldest open finding, not the count</td></tr>
+                      <tr><td>Findings that are deliberate</td><td>Need an exception with an expiry, exactly like any other policy deviation</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Start with one control, across every account, and drive it to zero.</strong> Public storage, or root without MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, or logging disabled &mdash; pick one, fix it everywhere, and put a guardrail behind it so it cannot return. That produces a closed control and a repeatable method; a prioritised spreadsheet of four thousand rows produces a meeting.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🏗️</span>
               <span class="topic-name">Terraform on AWS <span class="acro-exp">(Amazon Web Services)</span> &amp; GCP <span class="acro-exp">(Google Cloud Platform)</span></span>
@@ -1107,10 +1570,32 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Failure Mode</div>
+                <div class="concept-title">State Is the Thing That Breaks, and Drift Is How You Find Out</div>
+                <div class="concept-desc">
+                  Terraform's model is that the state file describes reality. Everything painful about running it in a real organisation follows from the ways that stops being true.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>What happens</th><th>Why</th></tr></thead>
+                    <tbody>
+                      <tr><td>Two people apply at once</td><td>Both read the same state and one write wins. <strong>State locking is not optional</strong> &mdash; it is part of the setup, not an enhancement</td></tr>
+                      <tr><td>Someone fixes something in the console</td><td>The next plan proposes to undo it. This is Terraform working correctly and is the most common way teams lose trust in it</td></tr>
+                      <tr><td>A resource is deleted outside Terraform</td><td>The plan proposes to create it, or errors on a dependency. Refresh, then targeted state surgery, carefully</td></tr>
+                      <tr><td>State contains secrets</td><td>It does, in plain text. The backend must be encrypted and access-controlled like a credential store, because that is what it is</td></tr>
+                      <tr><td>A plan is applied without being read</td><td>The failure that produces outages. A plan showing <em>destroy</em> on anything stateful is a stop-and-read moment</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The console-fix row is the cultural problem underneath the technical one.</strong> Infrastructure as code holds only if console changes are rare and exceptional, and it stops holding the first time an urgent fix is made by hand and never reconciled. The answer is not a policy telling people off &mdash; it is making the code path fast enough that it is the easier option at 3 a.m.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">📜</span>
               <span class="topic-name">AWS-Native IaC <span class="acro-exp">(Infrastructure as Code)</span> — CloudFormation &amp; CDK <span class="acro-exp">(Cloud Development Kit)</span></span>
@@ -1176,10 +1661,32 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Trap</div>
+                <div class="concept-title">A Budget Alert Is Not a Budget Control</div>
+                <div class="concept-desc">
+                  The single most expensive misunderstanding in cloud cost management. Budgets notify; they do not stop anything. Spend is metered continuously and billed in arrears, so by the time an alert fires the money is already committed &mdash; and an alert that arrives on a Friday evening bills the whole weekend before anyone reads it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Believed</th><th>Actually</th></tr></thead>
+                    <tbody>
+                      <tr><td>The budget will stop it</td><td>It sends an email. Only a policy, a quota, or an automated action stops anything</td></tr>
+                      <tr><td>Alerts are timely</td><td>Usage data lags by hours. A runaway job can spend a great deal inside the gap</td></tr>
+                      <tr><td>Tagging tells us who spent it</td><td>Only for resources tagged <em>at creation</em>. Retro-tagging never completes, which is why the policy has to be enforced at creation</td></tr>
+                      <tr><td>Rightsizing is the big win</td><td>It is the visible win. Idle and forgotten resources are usually larger, and nobody defends them because nobody remembers them</td></tr>
+                      <tr><td>Egress is a rounding error</td><td>It is the line that surprises people, because it is invisible in design and appears only in the bill</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The controls that actually bound spend are quotas and policies, not budgets.</strong> A service quota refuses the resource; a policy refuses the instance family or the region. Budgets are for <em>noticing</em>, and are worth having for that &mdash; but an organisation whose only cost control is an alert has a notification system, not a control.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">Landing Zones &amp; Multi-Account Structure</span>
@@ -1210,10 +1717,32 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Failure Mode</div>
+                <div class="concept-title">Retrofitting a Landing Zone Is a Different Project Entirely</div>
+                <div class="concept-desc">
+                  Landing zones are described as a starting point and adopted by organisations that already have accounts. Those are two very different exercises, and the second is where the cost is.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Doing it first</th><th>Doing it later</th></tr></thead>
+                    <tbody>
+                      <tr><td>Accounts created inside the structure</td><td>Existing accounts moved into it, each with resources referencing each other across the boundary you are about to draw</td></tr>
+                      <tr><td>Guardrails applied from empty</td><td>Guardrails applied to running workloads, where a deny policy breaks production rather than preventing a mistake</td></tr>
+                      <tr><td>Identity federated from the start</td><td>Long-lived users and access keys in every account, each owned by somebody who left</td></tr>
+                      <tr><td>Networking designed once</td><td>Overlapping address ranges chosen independently &mdash; the constraint that most often forces a rebuild rather than a migration</td></tr>
+                      <tr><td>Billing structured</td><td>One account holding production, development and a forgotten proof of concept, with no way to attribute any of it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The overlapping-address-range row is the one to check first</strong>, because it is the only item that cannot be fixed by a policy change. Two accounts that both chose <code>10.0.0.0/16</code> cannot be peered, and discovering that after the structure is agreed turns a governance project into a re-addressing project.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
               <span class="topic-name">GCP-Native IaC <span class="acro-exp">(Infrastructure as Code)</span> — Deployment Manager &amp; Config Controller</span>
@@ -1280,10 +1809,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The meter</div>
+                <div class="concept-title">Build Minutes, and What a Cache Miss Costs on Every Push</div>
+                <div class="concept-desc">
+                  Hosted build services bill by the minute, on machines you selected, for every push from
+                  every contributor. That makes <strong class="c-amber">a slow build a recurring charge rather than
+                  a one-off annoyance</strong> &mdash; and the most common cause of a slow build, a dependency
+                  cache that never hits, is invisible unless somebody looks at the log.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What is metered</th><th>Where the waste is</th></tr>
+                    <tr><td>Build minutes &times; machine size</td><td>A larger runner that halves the time is often cheaper, not dearer. Measure before assuming</td></tr>
+                    <tr><td>Dependency installation</td><td>A cache that misses re-downloads the world on every run. <strong>Check the hit rate, not the config</strong></td></tr>
+                    <tr><td>Container image pulls</td><td>Egress and time. Keep base images small and pull from a registry in the same region</td></tr>
+                    <tr><td>Matrix builds</td><td>Multiply everything. Run the full matrix on merge, a subset on push</td></tr>
+                    <tr><td>Idle waiting on approvals</td><td>Not billed on most services &mdash; but a job spinning in a wait loop is</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The number to put on a dashboard is <strong>minutes per merged pull request</strong>, not
+                  total spend, because it survives a change in team size and it points straight at the cause.
+                  Everything expensive here is also everything slow, which is the happy case: the same fixes that
+                  reduce the invoice are the ones that shorten the feedback loop, and that is the argument that
+                  gets them scheduled.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📊</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Observability — CloudWatch &amp; X-Ray</span>
@@ -1316,10 +1871,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill nobody predicted</div>
+                <div class="concept-title">Logs and Metrics Are Separate Products With Separate Costs</div>
+                <div class="concept-desc">
+                  CloudWatch is not one thing. Logs, Metrics, Alarms, Dashboards and Insights are separate
+                  products with separate pricing models, and the mental model of &ldquo;send everything to
+                  CloudWatch&rdquo; produces a bill that surprises people twice: once for ingestion and again for
+                  the <strong class="c-amber">custom metrics, which are charged per metric per month whether or not
+                  anyone queries them</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you do</th><th>What it costs</th></tr>
+                    <tr><td>Ship application logs</td><td>Per GB ingested, then per GB stored. Set a retention policy &mdash; the default is forever</td></tr>
+                    <tr><td>Publish a custom metric</td><td>Per metric per month. <strong>A metric per customer or per instance id multiplies fast</strong></td></tr>
+                    <tr><td>High-cardinality dimensions</td><td>Every combination is a distinct metric. This is the usual cause of a surprise invoice</td></tr>
+                    <tr><td>Query with Logs Insights</td><td>Per GB scanned &mdash; so retention and query scope both matter</td></tr>
+                    <tr><td>Turn a log pattern into a metric</td><td>A <em>metric filter</em>, which is the correct bridge between the two products</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Three settings recover most of the money and none of them costs signal:
+                  <strong>set log retention on every group</strong> (14 or 30 days for application logs, longer
+                  only where compliance requires it), keep high-cardinality identifiers in <em>logs</em> rather
+                  than promoting them to metric dimensions, and use metric filters so that the thing you alarm on
+                  is derived from logs you were storing anyway.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📈</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Observability — Cloud Monitoring, Logging &amp; Trace</span>
@@ -1350,10 +1932,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The meter</div>
+                <div class="concept-title">You Are Billed on Log Ingestion, and the Default Bucket Keeps Everything</div>
+                <div class="concept-desc">
+                  Cloud Logging charges principally for <strong>volume ingested</strong>, and the default
+                  configuration is generous about what arrives: data-access audit logs, load-balancer logs and
+                  verbose application output all land in the <code>_Default</code> bucket and count.
+                  <strong class="c-amber">The largest single contributor is usually a log nobody reads</strong>,
+                  and the fix is an exclusion filter rather than a smaller retention.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Source</th><th>What to do about it</th></tr>
+                    <tr><td>Verbose application logs</td><td>Log at the level you will actually query. Debug in production is a billing decision</td></tr>
+                    <tr><td>Load balancer request logs</td><td>Sample them &mdash; a percentage is usually enough to answer the questions people ask</td></tr>
+                    <tr><td>Data-access audit logs</td><td>Off by default for most services for exactly this reason. Turn on deliberately, per service</td></tr>
+                    <tr><td>The <code>_Default</code> bucket</td><td>Set retention explicitly, and add <strong>exclusion filters</strong> for the noisy sources</td></tr>
+                    <tr><td>Long-term retention</td><td>Sink to Cloud Storage rather than paying logging retention for years-old data</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Exclusions are the lever that changes the shape of the bill, because they act before
+                  ingestion is counted. Retention only changes what you keep after paying to receive it. The
+                  sequence that works: <strong>find the top five log sources by volume, exclude or sample the ones
+                  nobody queries, then set retention, then sink anything with a compliance requirement to
+                  storage</strong> &mdash; and note the same structure applies on the other providers, with
+                  different product names.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">Well-Architected &amp; the Architecture Framework</span>
@@ -3292,3 +3902,95 @@ dsregcmd /status
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌐</span>
+              <span class="topic-name">Multi-Cloud — The Four Reasons, and Which Ones Survive Contact</span>
+              <span class="topic-badge">Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Four Reasons People Give, and Two of Them Are Real</div>
+                <div class="concept-desc">
+                  Multi-cloud is the most-asked question in this domain and the one with the least written down,
+                  partly because the answer is uncomfortable. Nearly every multi-cloud programme is justified by
+                  one of four arguments, and <strong class="c-amber">only two of them survive contact with an
+                  invoice</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The reason given</th><th>Verdict</th></tr>
+                    <tr><td><strong>Regulatory or sovereignty requirement</strong></td><td><strong>Real.</strong> A jurisdiction requires data in a place one provider does not serve. Not a preference, and not negotiable</td></tr>
+                    <tr><td><strong>Acquisition</strong></td><td><strong>Real, and usually temporary.</strong> You now run two clouds because you bought a company. The decision is migrate or federate, on a timeline</td></tr>
+                    <tr><td>Deliberate best-of-breed</td><td>Sometimes. Genuine where one service is decisively better &mdash; and it means using that <em>service</em>, not running the whole estate twice</td></tr>
+                    <tr><td>Avoiding lock-in</td><td><strong>Usually not.</strong> The abstraction layer that avoids lock-in is itself a dependency, and one nobody else maintains</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The distinction that matters is between a reason that <em>arrived</em> and one that was
+                    <em>chosen</em>. Regulation and acquisition arrive; you handle them. Best-of-breed and
+                    lock-in are chosen, and a choice deserves a cost. Ask which of the four is actually driving the
+                    conversation before designing anything &mdash; the answer usually changes the design.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Trade</div>
+                <div class="concept-title">The Abstraction That Avoids Lock-In Costs More Than the Lock-In</div>
+                <div class="concept-desc">
+                  The lock-in argument deserves the plainest treatment because it is the one most often made and
+                  least often costed. Writing to the lowest common denominator means giving up the managed
+                  services that were the reason to be in a cloud at all &mdash; and
+                  <strong class="c-amber">you have replaced a dependency on a provider with a dependency on your
+                  own abstraction layer</strong>, which has one maintainer, no documentation, and no support
+                  contract.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you give up</th><th>What it actually means</th></tr>
+                    <tr><td>Managed services</td><td>Run your own database, queue and cache. That is a team, permanently</td></tr>
+                    <tr><td>Provider-native identity</td><td>A second identity model to reconcile, and the seam is where the incidents happen</td></tr>
+                    <tr><td>Committed-use discounts</td><td>Spend split across providers earns a smaller discount on each</td></tr>
+                    <tr><td>Operational depth</td><td>Two sets of failure modes, two consoles, two on-call runbooks, half the expertise in each</td></tr>
+                    <tr><td>The abstraction itself</td><td>A layer your team maintains, that lags both providers' feature sets</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The question that ends this debate quickly: <strong>name the migration you are buying the
+                    option on, and estimate what it would cost without the abstraction.</strong> If nobody can name
+                    it, the option has no strike price and the premium is being paid for nothing. If somebody can,
+                    compare the two numbers &mdash; the abstraction usually loses, and when it wins, it wins for a
+                    reason everyone can now see.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">What to do instead</div>
+                <div class="concept-title">Reduce the Cost of Leaving, Rather Than Pre-Paying It</div>
+                <div class="concept-desc">
+                  The reasonable form of the lock-in concern is not &ldquo;be portable&rdquo; but
+                  <strong class="c-cyan">know what leaving would cost, and keep that number lower than it would
+                  otherwise be</strong> &mdash; which is achievable without running anything twice.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Move</th><th>Why it helps</th></tr>
+                    <tr><td>Keep <strong>data</strong> portable, not compute</td><td>Data has gravity and egress charges; compute is comparatively easy to rebuild</td></tr>
+                    <tr><td>Prefer open interfaces where they are free</td><td>Postgres over a proprietary engine, S3-compatible APIs <span class="acro-exp">(Application Programming Interface)</span>, OpenTelemetry &mdash; no ceremony, real optionality</td></tr>
+                    <tr><td>Use IaC <span class="acro-exp">(Infrastructure as Code)</span> and keep it readable</td><td>The rebuild is the exit plan. See <span class="xref">Terraform on AWS &amp; GCP</span></td></tr>
+                    <tr><td>Write down the exit estimate</td><td>One page, revisited yearly. Turns an anxiety into a number somebody can argue with</td></tr>
+                    <tr><td>Adopt a second provider for one <em>service</em></td><td>The honest form of best-of-breed, and it does not multiply the operating model</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The distinction that resolves most of these conversations is between
+                    <strong>multi-cloud and multi-<em>account</em></strong>. Almost everything people want from
+                    multi-cloud &mdash; blast-radius isolation, per-team autonomy, environment separation &mdash; is
+                    delivered by good account and project structure inside one provider, at a fraction of the cost.
+                    See <span class="xref">Landing Zones &amp; Multi-Account Structure</span>: that is
+                    the decision worth agonising over, and it is the one people skip while debating this one.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

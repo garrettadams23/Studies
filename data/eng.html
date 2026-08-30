@@ -117,10 +117,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The artefact</div>
+                <div class="concept-title">One Worked Calculation, All the Way Through</div>
+                <div class="concept-desc">
+                  The technique is only convincing when you watch it happen. Question:
+                  <em>can we store a year of events for 5 million users?</em> Nothing here is precise, and
+                  <strong class="c-cyan">precision is not what the calculation is for</strong> &mdash; it is for
+                  deciding whether the answer is &ldquo;obviously fine&rdquo;, &ldquo;obviously not&rdquo;, or
+                  &ldquo;we need to think&rdquo;.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>Working</th></tr>
+                    <tr><td>1. Events per user per day</td><td>Guess 20. Round numbers only &mdash; 20, not 17</td></tr>
+                    <tr><td>2. Events per day</td><td>5M &times; 20 = <strong>100M/day</strong></td></tr>
+                    <tr><td>3. Per second, average</td><td>100M / 86,400 &asymp; <strong>1,200/s</strong>. Peak is 3&ndash;5&times; average, so ~5,000/s</td></tr>
+                    <tr><td>4. Size per event</td><td>~1 KB with indexes. So 100 GB/day, <strong>~36 TB/year</strong></td></tr>
+                    <tr><td>5. The verdict</td><td>36 TB is not &ldquo;one Postgres table&rdquo;. It is fine as partitioned cold storage or a warehouse, and 5,000 writes/s needs a real design</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two habits make this fast enough to do in a meeting. <strong>Memorise a handful of
+                  anchors</strong> &mdash; 86,400 seconds in a day, ~10<sup>5</sup> for rough work, 1 KB per small
+                  row, 1 MB per second is ~2.5 TB a month &mdash; and <strong>round aggressively and say you are
+                  rounding</strong>. The output is never the number; it is which of the three verdicts you are in,
+                  and that conclusion is robust to being wrong by a factor of two.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🛟</span>
               <span class="topic-name">Designing for Failure</span>
@@ -153,10 +180,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The artefact</div>
+                <div class="concept-title">A Pre-Mortem, Filled In for One Real Dependency</div>
+                <div class="concept-desc">
+                  &ldquo;Design for failure&rdquo; is agreed with universally and practised rarely, because
+                  it is stated as a principle rather than an exercise. The exercise takes twenty minutes and works
+                  on one dependency at a time. Here is a completed one for a payment provider, and the format
+                  transfers to anything:
+                  <strong class="c-cyan">how it fails, what the user sees, what we do, how we know.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Failure mode</th><th>User sees</th><th>We do</th><th>We know because</th></tr>
+                    <tr><td>Provider returns 500</td><td>&ldquo;Payment failed, try again&rdquo;</td><td>Retry once with jitter; do not double-charge (idempotency key)</td><td>Error rate alert on the provider client</td></tr>
+                    <tr><td>Provider is slow (5s+)</td><td>A spinner, then a clear timeout message</td><td>Timeout at 3s, below our own request budget</td><td>p99 latency on the payment call</td></tr>
+                    <tr><td>Provider is down entirely</td><td>&ldquo;Payments are unavailable, your basket is saved&rdquo;</td><td>Circuit breaker opens; basket persists; no order created</td><td>Breaker-open event pages on-call</td></tr>
+                    <tr><td>Provider succeeds, our write fails</td><td>Order missing after a charge &mdash; <strong>the worst case</strong></td><td>Outbox: record intent before charging, reconcile after</td><td>Daily reconciliation report, not an alert</td></tr>
+                    <tr><td>Provider silently changes a field</td><td>Nothing, for weeks</td><td>Contract test against their sandbox in CI</td><td>The test fails before customers do</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The fourth row is the one this exercise exists to find. Every team has thought about
+                  &ldquo;the dependency is down&rdquo;; almost none have thought about
+                  <strong>&ldquo;the dependency succeeded and we failed&rdquo;</strong>, which is where money
+                  disappears and where the fix (record intent first, reconcile afterwards) has to be designed in
+                  rather than added later. Run this table for your top three dependencies and it will find at least
+                  one row nobody has an answer for.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧩</span>
               <span class="topic-name">The System Design Interview — A Framework</span>
@@ -230,10 +285,35 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill</div>
+                <div class="concept-title">The Threshold Is Team Count, Not Request Rate</div>
+                <div class="concept-desc">
+                  Microservices solve an <strong class="c-amber">organisational</strong> problem that
+                  presents as a technical one: too many people editing the same deployable, blocking each other on
+                  releases. Below that pain there is nothing to buy, and the bill arrives regardless &mdash;
+                  network calls that used to be function calls, and every failure mode that comes with them.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Signal</th><th>What it actually means</th></tr>
+                    <tr><td>One team, any traffic level</td><td>Stay a monolith. Scale it vertically and horizontally; that is far cheaper than a network</td></tr>
+                    <tr><td>Several teams, one release train</td><td>This is the real threshold &mdash; the cost is people waiting, and splitting buys deployment independence</td></tr>
+                    <tr><td>Services that deploy together</td><td>A <strong>distributed monolith</strong>: every cost of the split, none of the independence</td></tr>
+                    <tr><td>Shared database between services</td><td>Not a split. The schema is the coupling, and the coupling was the problem</td></tr>
+                    <tr><td>One component with a wildly different load</td><td>Extract <em>that one</em>. A single carved-out service is not microservices</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The honest default for most teams is a <strong>modular monolith</strong>: enforce module
+                  boundaries inside one deployable, with no shared tables across modules, and split later along a
+                  seam you have already proved. It gets you Conway-friendly ownership without paying for
+                  distributed transactions, service discovery, and a tracing stack you do not yet need.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📡</span>
               <span class="topic-name">Event-Driven Architecture</span>
@@ -265,10 +345,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill</div>
+                <div class="concept-title">You Trade the Stack Trace for a Correlation ID</div>
+                <div class="concept-desc">
+                  Synchronous code hands you the whole causal chain in one stack trace. Publish an event and
+                  that goes away: the producer does not know who consumed it, the consumer does not know what
+                  caused it, and <strong class="c-amber">&ldquo;why did this customer get two emails&rdquo;
+                  becomes an archaeology project</strong> across services, retries and a broker's redelivery
+                  semantics.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you lose</th><th>What has to replace it</th></tr>
+                    <tr><td>The stack trace</td><td>Distributed tracing, with trace context propagated through <em>every</em> broker hop</td></tr>
+                    <tr><td>Knowing who consumes what</td><td>A schema registry or catalogue &mdash; otherwise nobody can safely change an event</td></tr>
+                    <tr><td>Exactly-once delivery</td><td>Consumers must be idempotent. Most brokers are at-least-once whatever the marketing says</td></tr>
+                    <tr><td>Ordering</td><td>Guaranteed only within a partition &mdash; so the partition key is a design decision, not a default</td></tr>
+                    <tr><td>One place to see the whole flow</td><td>A diagram somebody maintains, or the flow lives only in four people's heads</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Adopt it where the decoupling is the point &mdash; fan-out to many consumers, absorbing
+                  load spikes, integrating systems on different release cycles. Do not adopt it to make a
+                  request/response call asynchronous while the caller still waits for the answer: that is the same
+                  coupling with a broker in the middle, and now the failure is invisible.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⬡</span>
               <span class="topic-name">Clean / Hexagonal Architecture</span>
@@ -304,10 +410,37 @@
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill</div>
+                <div class="concept-title">The Adapter You Never Swap Is Pure Overhead</div>
+                <div class="concept-desc">
+                  Ports and adapters buy one thing: replacing an outside dependency without touching the
+                  core. The bill is paid on <strong class="c-amber">every feature, forever</strong> &mdash; an
+                  interface, an implementation, a mapper between the domain type and the outside type, and a test
+                  double. If the swap never happens, that is the full price for a benefit you did not
+                  collect.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>Honest answer, most of the time</th></tr>
+                    <tr><td>Will we change the database?</td><td>No. Teams say yes and mean it, and it is still no ten years later</td></tr>
+                    <tr><td>Will we change the web framework?</td><td>Rarely, and when it happens it is a rewrite anyway</td></tr>
+                    <tr><td>Will we swap the payment provider?</td><td><strong>Often yes</strong> &mdash; this is where a port genuinely pays</td></tr>
+                    <tr><td>Can we test the core without I/O <span class="acro-exp">(Input/Output)</span>?</td><td>This is the real benefit, and it arrives immediately rather than someday</td></tr>
+                    <tr><td>How many files does one new field touch?</td><td>Count it. Four or five is normal, and that number is the thing to weigh</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Put ports where the outside world is genuinely uncertain &mdash; payment providers,
+                  notification channels, third-party APIs whose contracts you do not control &mdash; and let the
+                  database be the database. <strong>Fast, I/O-free tests of the core are the benefit that pays
+                  from day one</strong>; swappability is a lottery ticket, and it is worth buying only where you
+                  can name the alternative you might swap to.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">✂️</span>
               <span class="topic-name">CQRS <span class="acro-exp">(Command Query Responsibility Segregation)</span> &amp; Event Sourcing</span>
@@ -339,10 +472,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill</div>
+                <div class="concept-title">An Append-Only Log Is a Promise You Cannot Take Back</div>
+                <div class="concept-desc">
+                  Event sourcing's appeal is that nothing is ever lost. Its bill is the same sentence read
+                  the other way: <strong class="c-amber">nothing can ever be removed</strong>. A bad event, a
+                  personal detail written by mistake, a schema you now regret &mdash; all permanent by design, and
+                  all your problem for the lifetime of the system.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Bill</th><th>What it costs in practice</th></tr>
+                    <tr><td>Events are immutable</td><td>Fixing data means a compensating event; there is no <code>UPDATE</code> and no quiet cleanup</td></tr>
+                    <tr><td>Event schemas evolve</td><td>You must read every version you ever wrote, forever, or migrate the whole history</td></tr>
+                    <tr><td>Erasure requests</td><td>&ldquo;Delete my data&rdquo; against an immutable log needs crypto-shredding or a redaction design, chosen up front</td></tr>
+                    <tr><td>Rebuilding projections</td><td>Replay time grows with history &mdash; snapshotting stops being optional around year three</td></tr>
+                    <tr><td>Eventual consistency is visible</td><td>The user saves and does not see it. That is a product decision, not an implementation detail</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  CQRS without event sourcing is a much smaller trade and is often the whole win: separate
+                  read and write models, keep a normal database. Reach for the log itself when the
+                  <strong>history is the product</strong> &mdash; ledgers, audit, anything where &ldquo;how did we
+                  arrive at this balance&rdquo; is a question somebody will ask under oath. If nobody will ask,
+                  you have bought permanence and only paid for it.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">1️⃣2️⃣</span>
               <span class="topic-name">The Twelve-Factor App</span>
@@ -414,10 +573,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill</div>
+                <div class="concept-title">Without the Domain Expert, It Degrades Into a Folder Layout</div>
+                <div class="concept-desc">
+                  DDD's value is in the <strong class="c-cyan">conversation</strong> &mdash; the ubiquitous
+                  language, the argument about where a boundary falls, the discovery that two teams were using
+                  &ldquo;order&rdquo; to mean different things. The tactical patterns are the residue of that
+                  conversation. Copy the residue without the conversation and you get
+                  <strong class="c-amber">a directory called <code>domain/</code> and no shared
+                  understanding</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Precondition</th><th>If you do not have it</th></tr>
+                    <tr><td>Regular access to a domain expert</td><td>The language gets invented by developers, and it will be wrong in ways nobody notices for a year</td></tr>
+                    <tr><td>Genuine domain complexity</td><td>CRUD <span class="acro-exp">(Create, Read, Update, Delete)</span> with ceremony &mdash; aggregates and repositories over a table with six columns</td></tr>
+                    <tr><td>Authority to redraw boundaries</td><td>Bounded contexts drawn around the existing team structure, which is where they already were</td></tr>
+                    <tr><td>Room for the first model to be wrong</td><td>The first model is always wrong. With no room to revise, the first guess ships as architecture</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The cheap part of DDD is worth doing everywhere and costs nothing: <strong>name things
+                  the way the business names them</strong>, and notice when one word means two things. The
+                  expensive part &mdash; aggregates, repositories, context maps &mdash; earns its keep when the
+                  rules are genuinely intricate and getting them wrong is costly. Insurance, logistics and
+                  finance qualify; a booking form does not.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧱</span>
               <span class="topic-name">SOLID <span class="acro-exp">(Single responsibility, Open-closed, Liskov substitution, Interface segregation, Dependency inversion)</span> Principles</span>
@@ -449,10 +635,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill</div>
+                <div class="concept-title">An Interface With One Implementation Is a Guess About the Future</div>
+                <div class="concept-desc">
+                  Applied as rules rather than as pressure, SOLID reliably produces a particular codebase:
+                  dozens of one-method classes, an interface for every class, a dependency-injection container
+                  wiring it together, and no way to read a feature end to end.
+                  <strong class="c-amber">Each of those interfaces is a prediction</strong>, and predictions about
+                  which axis a system will vary along are usually wrong.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Letter</th><th>Read as a rule &mdash; the failure</th><th>Read as pressure &mdash; the use</th></tr>
+                    <tr><td>S</td><td>One class, one method</td><td>If you cannot describe it without &ldquo;and&rdquo;, it is doing two things</td></tr>
+                    <tr><td>O</td><td>Never modify existing code</td><td>Frequently-changing behaviour deserves an extension point. The rest does not</td></tr>
+                    <tr><td>L</td><td>Formal substitutability proofs</td><td>A subclass that throws on half the interface is lying about what it is</td></tr>
+                    <tr><td>I</td><td>Split every interface</td><td>Do not force an implementer to stub methods it has no use for</td></tr>
+                    <tr><td>D</td><td>An interface for everything</td><td>Depend on abstractions <em>at the boundaries you actually cross</em></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The cheap test before adding an interface: <strong>name the second
+                  implementation</strong>. If you can name it, add the abstraction. If you cannot, you are
+                  speculating &mdash; and the concrete class is easy to extract later, once the second case exists
+                  and has told you what the abstraction should have been. Removing speculative generality is far
+                  harder than adding it.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
               <span class="topic-name">Coupling &amp; Cohesion</span>
@@ -520,10 +733,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The artefact</div>
+                <div class="concept-title">The Contract, and the Three Questions to Ask of It</div>
+                <div class="concept-desc">
+                  &ldquo;Design the contract first&rdquo; is agreed with and then skipped, because the
+                  contract is described rather than shown. It is short. Here is one endpoint, and then the review
+                  that matters &mdash; <strong class="c-amber">most API mistakes are visible in the contract before
+                  a line of code exists</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Contract</th><th>Written</th></tr>
+                    <tr><td>The operation</td><td><code>POST /v1/exports</code> &rarr; <code>202 Accepted</code>, body <code>{ id, status: "pending", href }</code></td></tr>
+                    <tr><td>Because it is slow</td><td>Asynchronous by design. <code>GET /v1/exports/{id}</code> polls; the client never holds a connection open for minutes</td></tr>
+                    <tr><td>Errors, typed</td><td><code>400</code> validation with a <code>field</code> array; <code>409</code> if an export is already running; <code>429</code> with <code>Retry-After</code></td></tr>
+                    <tr><td>Idempotency</td><td><code>Idempotency-Key</code> header; a repeat within 24h returns the original <code>id</code> rather than starting a second export</td></tr>
+                    <tr><td>Pagination and versioning</td><td>Cursor-based (<code>?cursor=</code>), never offset. <code>/v1/</code> in the path, and additive changes only within a major version</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The three review questions that catch most of it: <strong>what does a client do when this
+                  times out?</strong> (if the answer is "retry and hope", it needs an idempotency key);
+                  <strong>what breaks if this field is added?</strong> (if anything does, the client is too strict
+                  and the contract should say so); and <strong>how does a caller page through a million of
+                  these?</strong> (offset pagination silently duplicates and skips rows under concurrent writes).
+                  All three are answerable before any code exists, which is the entire argument for writing the
+                  contract first.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧮</span>
               <span class="topic-name">Idempotency &amp; Exactly-Once — Safe Retries</span>
@@ -624,45 +865,36 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="topic" data-reviewed="2026-08">
-            <div class="topic-header">
-              <span class="topic-icon">🧪</span>
-              <span class="topic-name">Testing Strategy — The Test Pyramid</span>
-              <span class="topic-badge">Craft</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
               <div class="concept-card">
-                <div class="concept-label">Concept</div>
-                <div class="concept-title">Many Fast Tests, Few Slow Ones</div>
+                <div class="concept-label">The artefact</div>
+                <div class="concept-title">The Same Point, Written Three Ways</div>
                 <div class="concept-desc">
-                  The <strong class="c-cyan">test pyramid</strong> guides how to balance test types:
-                  lots of fast unit tests at the base, fewer integration tests, and a thin layer of
-                  slow end-to-end tests on top. Invert it (mostly E2E) and your suite is slow,
-                  flaky, and brittle — the dreaded "ice-cream cone."
+                  Advice about review comments is easy to agree with and hard to act on. Here is one real
+                  situation &mdash; a pull request adds a database call inside a loop &mdash; written three ways.
+                  <strong class="c-amber">The difference is not tone. It is how much work the author has to do
+                  after reading it.</strong>
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Level</th><th>Tests</th><th>Trait</th></tr>
-                    <tr><td>Unit (many)</td><td>One function/class in isolation</td><td>Fast, precise, cheap</td></tr>
-                    <tr><td>Integration (some)</td><td>Components together (DB, API)</td><td>Slower, more realistic</td></tr>
-                    <tr><td>E2E (few)</td><td>The whole system as a user</td><td>Slow, flaky, high-value paths only</td></tr>
+                    <tr><th>Version</th><th>As typed</th></tr>
+                    <tr><td>Unhelpful</td><td>&ldquo;This is an N+1.&rdquo; <em>Correct, and the author now has to work out where, why it matters, and what you want instead.</em></td></tr>
+                    <tr><td>Good</td><td>&ldquo;This queries once per row, so a 500-row page becomes 501 queries. Can we <code>select_related('owner')</code> above the loop? Happy to pair if the ORM <span class="acro-exp">(Object-Relational Mapping)</span> fights you.&rdquo;</td></tr>
+                    <tr><td>Blocking</td><td>&ldquo;<strong>Blocking:</strong> this runs per row on the checkout path, which is our p99 hot spot &mdash; it will show up in production. Fix or a ticket with an owner before merge, either is fine.&rdquo;</td></tr>
+                    <tr><td>A question, not a demand</td><td>&ldquo;What happens here if <code>owner</code> is null? I might be missing something.&rdquo; <em>Leaves room to be wrong, which you sometimes are.</em></td></tr>
+                    <tr><td>Praise, specifically</td><td>&ldquo;The retry-budget comment is excellent &mdash; I'd have got that wrong.&rdquo; <em>Costs nothing and is remembered.</em></td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-green">TDD <span class="acro-exp">(Test-Driven Development)</span></strong> (write the test first) drives better design
-                    and guarantees coverage; <strong class="c-green">BDD <span class="acro-exp">(Behavior-Driven Development)</span></strong> frames tests as
-                    behavior ("given/when/then"). Aim to test <em>behavior</em>, not implementation,
-                    so refactors don't break the suite.
+                  Three habits carry most of the value. <strong>Say whether a comment is blocking</strong>,
+                  because an author cannot tell and will either ignore everything or fix everything. <strong>Name
+                  the consequence, not the rule</strong> &mdash; "501 queries on the checkout path" is a reason,
+                  "N+1" is a label. And when a thread reaches three rounds, stop typing and have a five-minute
+                  conversation; the disagreement is about something the comments are not reaching.
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">💳</span>
               <span class="topic-name">Technical Debt — Recognize &amp; Pay It Down</span>
@@ -729,10 +961,66 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The artefact</div>
+                <div class="concept-title">A Complete ADR, Short Enough That Someone Will Write One</div>
+                <div class="concept-desc">
+                  ADRs fail by being described rather than shown, and then by being too long to write. The
+                  whole thing fits on one screen. Here is a real one, and the format is the point:
+                  <strong class="c-cyan">Context, Decision, Consequences, Status</strong>, with the context doing
+                  most of the work.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Heading</th><th>Filled in</th></tr>
+                    <tr><td><strong>ADR-014: Use Postgres for the events table</strong></td><td><em>Status:</em> Accepted, 2026-03-11. Supersedes ADR-009</td></tr>
+                    <tr><td>Context</td><td>Events reach ~40M rows/year. We already run Postgres and nobody on the team has operated Cassandra. Read patterns are unknown; the product team expects ad-hoc queries</td></tr>
+                    <tr><td>Decision</td><td>Use Postgres with monthly range partitions on <code>occurred_at</code>. Revisit if sustained writes exceed 5k/s or a single partition exceeds 100 GB</td></tr>
+                    <tr><td>Consequences</td><td>We accept a single writer node. Ad-hoc queries stay easy. Partition maintenance needs a scheduled job. If the write ceiling is reached, migration is a project, not a config change</td></tr>
+                    <tr><td>What is missing on purpose</td><td>The alternatives considered in detail. Add them only when the choice was genuinely close &mdash; otherwise it is padding nobody reads</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two properties make an ADR worth the ten minutes. <strong>It records the context that made
+                  the decision reasonable</strong>, so the reader in 2029 can tell whether that context still
+                  holds &mdash; which is the only question they will actually have. And <strong>it names the
+                  condition that would reverse it</strong>: "revisit if sustained writes exceed 5k/s" turns an
+                  opinion into something checkable. A decision with no reversal condition is a preference.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The format's real value</div>
+                <div class="concept-title">The Decision Matters Less Than the Options You Rejected</div>
+                <div class="concept-desc">
+                  An ADR that records only what was chosen answers a question nobody asks. The
+                  code already says what was chosen. What the reader in two years needs is
+                  <strong class="c-cyan">what else was considered and which constraint killed
+                  it</strong> &mdash; because constraints expire, and when one does, the ADR is
+                  the only artefact that says the decision should now be revisited.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Recorded</th><th>What it is worth later</th></tr>
+                    <tr><td>&ldquo;We chose Postgres&rdquo;</td><td>Nothing. Anyone can see that</td></tr>
+                    <tr><td>&ldquo;We considered Cassandra&rdquo;</td><td>A little &mdash; at least the option was seen</td></tr>
+                    <tr><td>&ldquo;Rejected Cassandra: nobody on the team had operated it&rdquo;</td><td><strong>A great deal.</strong> That constraint changes when you hire, and the reader can tell</td></tr>
+                    <tr><td>&ldquo;Rejected managed search: not available in our region&rdquo;</td><td>Regions open. This is a dated fact, not a principle</td></tr>
+                    <tr><td>&ldquo;Rejected X because it is bad&rdquo;</td><td>Nothing, and worse than nothing &mdash; it forecloses re-examination with no reason to weigh</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The test for a rejection line is whether it names something that could
+                    <strong>stop being true</strong>. &ldquo;Too expensive at our volume&rdquo;,
+                    &ldquo;no in-house experience&rdquo;, &ldquo;unavailable in this region&rdquo;
+                    and &ldquo;the team is three people&rdquo; all pass; &ldquo;not a good
+                    fit&rdquo; does not. Write the constraint, not the conclusion &mdash; and
+                    when an ADR is superseded, say which constraint expired, because that is the
+                    sentence the next reader is looking for.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔌</span>
               <span class="topic-name">Resilience Patterns — Circuit Breaker, Retry &amp; Timeout</span>
@@ -765,10 +1053,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill</div>
+                <div class="concept-title">Retries Cause the Outage They Were Added to Survive</div>
+                <div class="concept-desc">
+                  A retry is extra load applied at exactly the moment a system is least able to take it. A
+                  dependency slows, every caller retries three times, offered load triples, and the dependency
+                  that was struggling is now down &mdash; a <strong class="c-amber">retry storm</strong>, and a
+                  classic self-inflicted outage. Worse, retries stack: three layers each retrying three times is
+                  twenty-seven requests for one user action.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Rule</th><th>Why</th></tr>
+                    <tr><td>Retry at one layer only</td><td>Retries multiply through the stack. Decide where, and make every other layer fail fast</td></tr>
+                    <tr><td>Exponential backoff <em>with jitter</em></td><td>Without jitter every client retries at the same instant &mdash; you have built a synchronised load test</td></tr>
+                    <tr><td>Retry budget, not retry count</td><td>Cap retries as a share of traffic; a per-call count has no idea what the rest of the fleet is doing</td></tr>
+                    <tr><td>Only retry idempotent operations</td><td>Otherwise a timeout on a call that actually succeeded charges the card twice</td></tr>
+                    <tr><td>Timeout shorter than your caller's</td><td>A longer one is decoration &mdash; they gave up before you did</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The circuit breaker exists to stop the storm: after enough failures it fails fast without
+                  calling, gives the dependency room to recover, then lets one probe through. Pair it with a
+                  <strong>fallback that is honest</strong> &mdash; stale cache, reduced feature, a clear message
+                  &mdash; because the realistic alternative to a slow correct answer is a fast partial one, not an
+                  error page.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">💰</span>
               <span class="topic-name">Distributed Transactions — Saga &amp; Outbox</span>
@@ -798,10 +1113,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The bill</div>
+                <div class="concept-title">Compensation Is Not Rollback, and Every Partial State Needs an Owner</div>
+                <div class="concept-desc">
+                  A saga does not undo anything. It runs a <strong class="c-amber">second business
+                  operation</strong> intended to offset the first, and the difference matters: a refund is not an
+                  un-charge, cancelling a shipment that already left is a different process, and an email that has
+                  been sent cannot be unsent. Every step you add multiplies the partial states somebody has to
+                  have thought about.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Reality</th><th>What it demands</th></tr>
+                    <tr><td>There is no rollback</td><td>Write the compensating action for every step, as product behaviour rather than error handling</td></tr>
+                    <tr><td>Some steps cannot be compensated</td><td>Order them last, or make them reversible &mdash; send the email after the money has moved</td></tr>
+                    <tr><td>Partial states are user-visible</td><td>The order that is paid but unshipped needs a screen and a support answer</td></tr>
+                    <tr><td>Compensation can fail too</td><td>Now you need retries, a dead-letter path, and a human queue</td></tr>
+                    <tr><td>Outbox is the mechanical half</td><td>Write the event in the same transaction as the state change, publish separately</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Before reaching for a saga, try much harder to make the operation
+                  <strong>local</strong>. Two services that always change together are frequently one service
+                  that was split too early, and merging them replaces an entire distributed protocol with a
+                  database transaction. Sagas are right when the boundary is genuinely real &mdash; a payment
+                  provider, a warehouse, another company &mdash; and expensive whenever it is not.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌊</span>
               <span class="topic-name">Backpressure &amp; Flow Control</span>
@@ -935,10 +1277,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The artefact</div>
+                <div class="concept-title">What the Evidence Actually Looks Like</div>
+                <div class="concept-desc">
+                  Archetypes are readable and hard to act on, because the gap between &ldquo;be a
+                  Tech Lead&rdquo; and knowing what to put in a promotion packet is large. The packet is the
+                  artefact, and what belongs in it is <strong class="c-cyan">a sentence with a scope and an
+                  outcome</strong> &mdash; not a list of responsibilities.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Archetype</th><th>Evidence that reads as Staff+</th></tr>
+                    <tr><td>Tech Lead</td><td>&ldquo;Led the checkout re-platform: 4 engineers, 2 quarters, shipped with no customer-visible incident. Wrote the design doc; ran weekly demos with the product team.&rdquo;</td></tr>
+                    <tr><td>Architect</td><td>&ldquo;Owned the event-schema standard now used by 6 services. Wrote ADR-014 and ADR-021; reviewed 30 designs against it.&rdquo;</td></tr>
+                    <tr><td>Solver</td><td>&ldquo;Diagnosed and fixed the p99 regression that three teams had escalated for a month. Root cause was connection-pool exhaustion; published the write-up.&rdquo;</td></tr>
+                    <tr><td>Right Hand</td><td>&ldquo;Ran the org's migration off the deprecated auth service &mdash; 14 teams, no missed deadline, weekly status the director used verbatim.&rdquo;</td></tr>
+                    <tr><td>The pattern in all four</td><td><strong>Scope</strong> (how many people or teams), <strong>outcome</strong> (what changed), <strong>artefact</strong> (something a reader can go and look at)</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The sentence to test any bullet against: <strong>would a stranger on the promotion
+                  committee, who has never met you, be able to tell what changed because you were there?</strong>
+                  &ldquo;Provided technical leadership&rdquo; fails that test; &ldquo;4 engineers, 2 quarters, no
+                  customer-visible incident&rdquo; passes it. Keep a file and add to it monthly &mdash;
+                  reconstructing a year of scope from memory is where most packets lose their best material.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🍴</span>
               <span class="topic-name">Tech Lead vs Engineering Manager</span>
@@ -1001,10 +1369,36 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The artefact</div>
+                <div class="concept-title">The Message That Actually Gets Another Team to Act</div>
+                <div class="concept-desc">
+                  The advice is to build relationships and frame things in others' interests, which is true
+                  and does not tell you what to type. Here is the same request written twice &mdash; asking a team
+                  you do not manage to change a shared library.
+                  <strong class="c-amber">The second one works because it removes their work, not because it is
+                  more polite.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Version</th><th>As sent</th></tr>
+                    <tr><td>The one that gets ignored</td><td>&ldquo;Hi &mdash; could your team add retry support to the client library? It would really help us out. Let me know, thanks!&rdquo;</td></tr>
+                    <tr><td>The one that gets done</td><td>&ldquo;We're seeing 40 failed jobs a week from transient 503s on the client. I've opened a PR that adds retry-with-jitter behind a flag &mdash; tests included, default off. Could someone review it this week? If it's the wrong shape, tell me and I'll redo it.&rdquo;</td></tr>
+                    <tr><td>Why it works</td><td>It brings the evidence, does the work, defaults to safe, asks for one specific thing, and gives them an easy way to say no</td></tr>
+                    <tr><td>When you cannot do the work</td><td>Bring the decision instead: &ldquo;Two options, here's the trade-off, we'd prefer A &mdash; which do you want?&rdquo; A question with options is far easier to answer than an open one</td></tr>
+                    <tr><td>The escalation that keeps the relationship</td><td>&ldquo;I want to flag this to your manager and mine, and I'd rather do it with you than about you &mdash; can we write it together?&rdquo;</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The generalisable move is to <strong>arrive with the work mostly done and an obvious exit
+                  for them</strong>. Most cross-team requests fail not because people disagree but because the
+                  request is an unbounded amount of somebody else's roadmap. Make it small, make it reviewable, and
+                  make refusing it cost them nothing &mdash; then it gets said yes to on its merits.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎓</span>
               <span class="topic-name">Cert Roadmaps — Choosing a Path</span>
@@ -1142,10 +1536,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The artefact</div>
+                <div class="concept-title">An Estimate, With Its Assumptions Showing</div>
+                <div class="concept-desc">
+                  &ldquo;About three weeks&rdquo; is not an estimate; it is a number with the reasoning
+                  removed, and it will be treated as a commitment. An estimate that survives contact with a
+                  stakeholder looks like this, and it is barely longer to write:
+                  <strong class="c-amber">a range, the assumptions the range depends on, and the thing that would
+                  break it.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Part</th><th>As written</th></tr>
+                    <tr><td>The range</td><td>&ldquo;<strong>3&ndash;5 weeks</strong> for the export feature, 80% confidence&rdquo;</td></tr>
+                    <tr><td>What is included</td><td>&ldquo;CSV <span class="acro-exp">(Comma-Separated Values)</span> and JSON <span class="acro-exp">(JavaScript Object Notation)</span> export, the async job, the download page, tests&rdquo;</td></tr>
+                    <tr><td>What is not</td><td>&ldquo;Not included: scheduled exports, or anything about permissions on shared reports&rdquo;</td></tr>
+                    <tr><td>Assumptions</td><td>&ldquo;Assumes the reporting API <span class="acro-exp">(Application Programming Interface)</span> returns paginated results &mdash; if it does not, add a week&rdquo;</td></tr>
+                    <tr><td>The biggest unknown</td><td>&ldquo;The riskiest part is export size. If files exceed ~200 MB we need streaming, which is the difference between 3 and 5&rdquo;</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The most useful line is the last one, because it converts an estimate into a
+                  <strong>plan for reducing uncertainty</strong>: spend two days finding out the real export size
+                  and the range collapses. Ranges also survive better than points politically &mdash; a single
+                  number invites negotiation about the number, while a range invites a conversation about scope,
+                  which is the conversation worth having.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧑‍💻</span>
               <span class="topic-name">Career Ladders &amp; Interviews</span>
@@ -4765,3 +5186,353 @@ cosign verify $IMAGE \
     </div>
   </div>
 </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📄</span>
+              <span class="topic-name">RFCs <span class="acro-exp">(Request for Comments)</span> &amp; Design Docs — Writing to Decide, Not to Record</span>
+              <span class="topic-badge">Craft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Written Before the Decision, or It Is Documentation</div>
+                <div class="concept-desc">
+                  A design doc circulated <em>after</em> the work has started is a status update wearing a
+                  different hat. The test is not the format and not the length &mdash; it is whether
+                  <strong class="c-cyan">anyone was ever able to change the outcome by reading it</strong>. If
+                  the answer is no, the document is a record, which is a fine thing to have and a different thing
+                  from a decision-making tool.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>What it means</th></tr>
+                    <tr><td>The doc appears with the PR</td><td>The decision was made in the PR. The doc is a summary</td></tr>
+                    <tr><td>&ldquo;Any concerns?&rdquo; with no alternatives listed</td><td>There is nothing to disagree with. Approval is the only available response</td></tr>
+                    <tr><td>Comments are all on wording</td><td>Readers can tell the substance is settled, so they review what is still movable</td></tr>
+                    <tr><td>A reviewer's objection changes the plan</td><td><strong>This is the signal it worked.</strong> Rare enough to be worth noticing</td></tr>
+                    <tr><td>Nobody read it</td><td>Either it was too long, or the audience knew the decision was already made</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    None of these symptoms mean the document was wasted. They mean it is doing a different job
+                    than its author thinks, and that <strong>nobody should treat the review as a decision
+                    gate</strong>. If the decision genuinely is made, say so in the first line &mdash; readers spend
+                    their attention differently on &ldquo;deciding Thursday&rdquo; than on &ldquo;here is what we
+                    are doing&rdquo;, and both are legitimate.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Structure</div>
+                <div class="concept-title">The Sections That Make It Reviewable</div>
+                <div class="concept-desc">
+                  The exact template matters far less than whether it contains something a reader can push back
+                  on. These five do; a document that is all &ldquo;design&rdquo; does not.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Section</th><th>What it has to contain to be useful</th></tr>
+                    <tr><td><strong>Context</strong></td><td>What is true today that makes this worth doing. The part that dates fastest and matters most later</td></tr>
+                    <tr><td><strong>Goals and non-goals</strong></td><td>Non-goals do most of the work &mdash; they end the &ldquo;but what about&rdquo; comments before they start</td></tr>
+                    <tr><td><strong>Options considered</strong></td><td>At least two taken seriously. One option and a recommendation is a proposal, not a decision</td></tr>
+                    <tr><td><strong>Recommendation, with the trade accepted</strong></td><td>Say what you are giving up. A recommendation with no cost reads as unexamined</td></tr>
+                    <tr><td><strong>Open questions</strong></td><td>The section that invites the comments you actually want, and the one usually deleted before circulation</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The section people cut for length is <strong>non-goals</strong>, and it is the one that saves
+                    the most time. Half the comments on a design doc are about scope somebody assumed was included;
+                    three lines of non-goals removes them before they are written. Keep the whole thing under two
+                    pages &mdash; a document nobody finishes is not reviewable at any level of rigour.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Circulation Is a Design Decision Too</div>
+                <div class="concept-desc">
+                  Most design docs fail on process rather than content. Sending a finished twelve-page document
+                  to a wide list on a Friday produces silence, and the silence gets read as agreement.
+                  <strong class="c-amber">Silence is the default outcome and it is not consent.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Move</th><th>Why</th></tr>
+                    <tr><td>Circulate at ~70% complete</td><td>Late enough to be coherent, early enough that comments can change it</td></tr>
+                    <tr><td>Name the decision and the date</td><td>&ldquo;Deciding Thursday&rdquo; converts an open document into a deadline people act on</td></tr>
+                    <tr><td>Ask two specific people directly</td><td>General circulation gets general silence. A named request gets a reply</td></tr>
+                    <tr><td>Hold a review meeting only if there is disagreement</td><td>If comments converge, the meeting is a ceremony. If they do not, it is the only thing that resolves it</td></tr>
+                    <tr><td>Record the outcome where it will be found</td><td>A decided doc becomes an ADR <span class="acro-exp">(Architecture Decision Record)</span>. See <span class="xref">ADRs &amp; Design Docs</span></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The pairing worth keeping straight: <strong>the design doc is the deliberation and the ADR is
+                    the residue</strong>. The doc is long, argumentative and read once; the ADR is short, states
+                    what was decided and what would reverse it, and is read for years. Writing only the first leaves
+                    nothing findable; writing only the second means the decision was never open to influence.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚖️</span>
+              <span class="topic-name">Build vs Buy — The Question Behind the Question</span>
+              <span class="topic-badge">Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">It Is Never Build Cost Against Licence Cost</div>
+                <div class="concept-desc">
+                  The comparison as usually presented &mdash; six months of engineering time against an annual
+                  subscription &mdash; is not the comparison. It is <strong class="c-cyan">total cost against
+                  total cost</strong>, and the side that is systematically understated is always the same one,
+                  because building has a large recurring cost that does not appear on the estimate that justified
+                  it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What the estimate includes</th><th>What it leaves out</th></tr>
+                    <tr><td>The initial build</td><td>Maintenance, forever &mdash; and it does not decline</td></tr>
+                    <tr><td>&mdash;</td><td>The on-call burden when it breaks at 3 a.m.</td></tr>
+                    <tr><td>&mdash;</td><td>The person who wrote it leaving, and the six months of nobody understanding it</td></tr>
+                    <tr><td>&mdash;</td><td>Features the vendor ships that you will now be asked for</td></tr>
+                    <tr><td>&mdash;</td><td>Security patching of a thing nobody is watching for CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></td></tr>
+                    <tr><td>The licence cost, accurately</td><td>Integration effort, and the exit cost when you eventually leave</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The rule of thumb that survives contact with reality: <strong>the build estimate is the
+                    smallest number in the decision, and the maintenance is the largest</strong>. A useful
+                    discipline is to multiply the build estimate by the number of years the thing will exist and
+                    add 20% of the build per year for upkeep &mdash; not because that is precise, but because it
+                    puts a recurring number next to the recurring number on the other side.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Question Behind the Question: Is This Your Differentiator?</div>
+                <div class="concept-desc">
+                  Cost analysis rarely decides this and should not, because the two totals are usually within a
+                  factor of two and the estimates are worse than that. The question that actually decides it is
+                  strategic: <strong class="c-amber">would a customer ever choose you because of this
+                  thing?</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>If it is...</th><th>Then</th></tr>
+                    <tr><td>Your differentiator</td><td><strong>Build.</strong> Even at a cost premium &mdash; this is the thing you are for</td></tr>
+                    <tr><td>Undifferentiated but critical</td><td>Buy, and integrate well. Identity, payments, email delivery, observability</td></tr>
+                    <tr><td>Undifferentiated and non-critical</td><td>Buy the cheapest adequate thing, and do not think about it again</td></tr>
+                    <tr><td>A commodity you keep customising</td><td><strong>The trap.</strong> You are building, slowly, while paying a licence</td></tr>
+                    <tr><td>Something no vendor does</td><td>Check that again. &ldquo;Nobody sells this&rdquo; is usually &ldquo;we have not looked&rdquo;</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The fourth row is where most of the regret is. <strong>A bought system customised past
+                    recognition has both costs</strong>: the licence, and a maintenance burden on integration code
+                    that upgrades will keep breaking. When customisation exceeds roughly the effort of building the
+                    part you actually need, the decision has already been made and nobody has admitted it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Buy Decisions Need an Exit, and Build Decisions Need an Owner</div>
+                <div class="concept-desc">
+                  Both directions have one obligation that is routinely skipped, and skipping it is what turns a
+                  reasonable decision into a bad outcome three years later.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Direction</th><th>The obligation</th></tr>
+                    <tr><td>Buy</td><td><strong>Know the exit.</strong> How does the data come out, in what format, and how long would migrating take?</td></tr>
+                    <tr><td>Buy</td><td>Avoid the deepest integrations where a shallow one suffices &mdash; every hook is exit cost</td></tr>
+                    <tr><td>Build</td><td><strong>A named owning team, funded past the launch.</strong> Unowned internal tools are the most expensive things an organisation runs</td></tr>
+                    <tr><td>Build</td><td>A deprecation plan from the start. What would make us stop, and what happens to users then?</td></tr>
+                    <tr><td>Either</td><td>Revisit on a date. Both decisions are correct under conditions that change</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The asymmetry worth knowing: <strong>a buy decision is reversible at a cost you can estimate;
+                    a build decision is reversible only by finding somebody to take it over</strong>. That makes
+                    &ldquo;buy&rdquo; the safer default for anything outside your differentiator &mdash; not because
+                    building is bad, but because the failure mode of a bought system is a migration project, and
+                    the failure mode of a built one is an orphan nobody will admit to owning.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧭</span>
+              <span class="topic-name">The Staff Engineer Role — What It Is When It Is Not Management</span>
+              <span class="topic-badge">Career</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Track Is Real and Badly Defined Nearly Everywhere</div>
+                <div class="concept-desc">
+                  Most organisations write a Staff+ ladder by taking the management ladder and removing the
+                  people management, which produces a description of a senior engineer with more adjectives.
+                  The actual difference is not seniority, it is <strong class="c-cyan">scope of
+                  impact</strong> &mdash; and specifically, work that requires no direct authority and that
+                  nobody else in the organisation is positioned to do.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Level</th><th>The unit of work</th></tr>
+                    <tr><td>Senior</td><td>A feature, a service, a project. Delivered well, largely alone or leading a couple of people</td></tr>
+                    <tr><td>Staff</td><td><strong>A problem that crosses teams</strong> and that nobody owns, because it belongs to no single team</td></tr>
+                    <tr><td>Principal</td><td>A problem that crosses the organisation, often multi-year, often about direction rather than delivery</td></tr>
+                    <tr><td>The common mistake</td><td>Defining Staff as &ldquo;a very good senior&rdquo;, which makes the promotion about tenure</td></tr>
+                    <tr><td>The other mistake</td><td>Defining it as &ldquo;a manager who codes&rdquo;, which is a fourth job nobody wanted</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The test that separates the first two rows cleanly: <strong>could a senior engineer on one team
+                    have done this, if they were excellent?</strong> If yes, it is senior work done well. If it
+                    required standing between three teams who disagreed, or seeing a problem none of them could see
+                    from inside, that is the other track &mdash; and it is a difference in <em>kind</em>, not in
+                    degree.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">What the Work Actually Is</div>
+                <div class="concept-desc">
+                  The day looks nothing like a senior engineer's, and the surprise for people entering the role
+                  is how little of it is writing code &mdash; without it being management either.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Activity</th><th>Why it belongs to this role</th></tr>
+                    <tr><td>Writing the design doc nobody was going to write</td><td>A cross-team decision has no owner by definition. See <span class="xref">RFCs &amp; Design Docs — Writing to Decide, Not to Record</span></td></tr>
+                    <tr><td>Reviewing other teams' designs</td><td>Consistency across an estate is an outcome only somebody spanning it can produce</td></tr>
+                    <tr><td>Unblocking, not delivering</td><td>Two days spent making four teams faster beats two days of your own output</td></tr>
+                    <tr><td>Being the person who says the uncomfortable thing</td><td><strong>Without authority, and therefore credibly.</strong> A manager saying it is politics; an engineer saying it is engineering</td></tr>
+                    <tr><td>Actually writing code, sometimes</td><td>Prototypes that settle an argument, and the hard part nobody else will pick up</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The proportion that surprises people is the third row.
+                    <strong>Most of the value is other people's output, not yours</strong>, which makes the role
+                    uncomfortable for anyone whose sense of a good week is measured in merged pull requests &mdash;
+                    and that discomfort, rather than the technical difficulty, is what makes the transition
+                    hard.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">The Failure Modes, and How the Role Goes Wrong</div>
+                <div class="concept-desc">
+                  Three ways this role fails, and all three are structural rather than personal.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Failure</th><th>What it looks like</th></tr>
+                    <tr><td>No scope granted</td><td>Given the title and left on one team. The work requires access to problems, and access is granted rather than taken</td></tr>
+                    <tr><td>Becoming a bottleneck</td><td>Every design routed through one person. <strong>Influence that does not scale is just a queue</strong></td></tr>
+                    <tr><td>Drifting into management without the title</td><td>Coordination expands to fill the day, and the technical judgement that justified the role decays</td></tr>
+                    <tr><td>No visible artefacts</td><td>Influence is invisible in a promotion packet unless it left documents behind &mdash; see <span class="xref">Staff+ Archetypes</span></td></tr>
+                    <tr><td>Loneliness</td><td>The honest one. The role has no peers on the team and no cohort, and organisations rarely build one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The advice that most reliably helps someone in the role: <strong>write things down, and make
+                    other people faster in ways that outlast the conversation</strong>. A design doc, a standard, a
+                    tool, a written review &mdash; those are how influence compounds and how it becomes visible.
+                    Advice given in meetings helps once and is invisible in six months.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎯</span>
+              <span class="topic-name">Goals That Survive the Quarter — OKRs <span class="acro-exp">(Objectives and Key Results)</span> Without the Theatre</span>
+              <span class="topic-badge">Leading Teams</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Most Goal Frameworks Fail the Same Three Ways</div>
+                <div class="concept-desc">
+                  The framework is rarely the problem. Almost every failed goal-setting exercise fails through the
+                  same three mechanisms, and they are independent of whether you call them OKRs, V2MOM or
+                  anything else.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Failure</th><th>What it looks like</th></tr>
+                    <tr><td><strong>Outputs written as outcomes</strong></td><td>&ldquo;Ship the new dashboard&rdquo; is a task with a date. &ldquo;Support answers 30% fewer 'where is my order' tickets&rdquo; is an outcome</td></tr>
+                    <tr><td><strong>Targets set to be achievable</strong></td><td>If every goal lands at 100%, they were commitments. A measure that cannot go the wrong way is not a measure</td></tr>
+                    <tr><td><strong>A review nobody attends</strong></td><td>Set in January, read in December. The value is in the mid-quarter conversation, which is the part that gets cancelled</td></tr>
+                    <tr><td>Too many</td><td>Six goals is a list of everything the team was going to do anyway, relabelled</td></tr>
+                    <tr><td>No named owner</td><td>&ldquo;The team&rdquo; owns it, so nobody reports on it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The second row is the one people resist and it is the load-bearing one.
+                    <strong>A goal you are confident of hitting carries no information</strong>, and a set of them
+                    is a plan with a scoring system attached. The point of a target is to make you change what you
+                    would otherwise have done.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Fewer Goals, a Measure That Could Move Against You, a Named Person</div>
+                <div class="concept-desc">
+                  The corrective for each failure is small, and all three together take about an hour a quarter.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Fix</th><th>Why it works</th></tr>
+                    <tr><td><strong>Two or three goals, not six</strong></td><td>Forces the prioritisation conversation that the list was avoiding</td></tr>
+                    <tr><td>A metric with a plausible bad outcome</td><td>&ldquo;p95 latency under 300ms&rdquo; can fail. &ldquo;Improve performance&rdquo; cannot</td></tr>
+                    <tr><td>One named person per goal</td><td>Not an owner of the work &mdash; an owner of <em>reporting the number</em></td></tr>
+                    <tr><td>A mid-quarter checkpoint in the calendar</td><td>Booked at the same time the goals are set, or it does not happen</td></tr>
+                    <tr><td>Written down where the work is</td><td>A goal in a slide deck is invisible; one at the top of the team's board is read weekly</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The cheapest of the five is the fourth, and it is the one that makes the others matter:
+                    <strong>book the mid-quarter review in the same meeting where the goals are written</strong>.
+                    Goals fail silently between the setting and the scoring, and the only mechanism that catches
+                    that is a date already in the calendar when everyone still cares.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">What to Do When a Goal Is Going to Miss</div>
+                <div class="concept-desc">
+                  The response to a goal that is failing is where the framework earns its keep or becomes theatre,
+                  and the honest options are three rather than one.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>The right response</th></tr>
+                    <tr><td>The goal is right, the plan is wrong</td><td>Change the plan. This is the intended outcome of the mid-quarter check</td></tr>
+                    <tr><td>The goal is wrong &mdash; the world changed</td><td><strong>Change the goal, and say so in writing.</strong> Pretending otherwise wastes a quarter of everyone's attention</td></tr>
+                    <tr><td>The goal is right and unreachable this quarter</td><td>Keep it, report the miss, carry it. A miss with a number is more useful than a hit with a redefinition</td></tr>
+                    <tr><td>Quietly redefining the metric</td><td><strong>The failure mode that destroys the whole exercise</strong> &mdash; after one instance, nobody believes any of the numbers</td></tr>
+                    <tr><td>Dropping it silently</td><td>Same, slower</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The cultural precondition is the fourth row and it cannot be added later:
+                    <strong>if missing a goal is punished, every goal will be set to be met</strong>, and the
+                    framework converts into an elaborate way of writing down what was going to happen anyway. That
+                    is a leadership behaviour rather than a process choice, and no amount of tooling substitutes for
+                    it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

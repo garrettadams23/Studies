@@ -1457,6 +1457,91 @@ check("the preview text quotes the site's real size",
   && preview.ogDesc.includes(asWritten(preview.topics)),
   `${asWritten(preview.topics)} topics, ${preview.domains} domains`);
 
+// ── the alias map moves progress, including notes ───────────────────────────
+// Both halves of this were broken and neither was covered. `note:` was missing
+// from the migrated prefixes, so a merged topic silently discarded the one
+// piece of progress a reader writes by hand; and the run-once flag was a
+// boolean, so an alias added later never migrated on a device that had already
+// visited — which is every device, for every future topic merge.
+await step("the alias map migrates progress onto the current id", async () => {
+  const outcome = await page.evaluate(() => {
+    const aliases = JSON.parse(document.getElementById("slug-aliases").textContent);
+    const [old] = Object.keys(aliases);
+    if (!old) return { skipped: true };
+    const now = aliases[old];
+    const prefixes = ["reviewed:", "bookmark:", "known:", "srs:", "note:"];
+    prefixes.forEach(p => { localStorage.removeItem(p + old); localStorage.removeItem(p + now); });
+    Object.keys(localStorage)
+      .filter(k => k.startsWith("migrated:slug-aliases"))
+      .forEach(k => localStorage.removeItem(k));
+
+    localStorage.setItem("reviewed:" + old, "2026-01");
+    localStorage.setItem("note:" + old, "a note the reader wrote");
+    const moved = migrateAliasedProgress();
+
+    const result = {
+      moved,
+      reviewed: localStorage.getItem("reviewed:" + now),
+      note: localStorage.getItem("note:" + now),
+      oldCleared: localStorage.getItem("note:" + old) === null,
+      // A second call with the same map must do nothing.
+      secondRun: migrateAliasedProgress(),
+      flags: Object.keys(localStorage).filter(k => k.startsWith("migrated:slug-aliases")).length,
+    };
+    prefixes.forEach(p => localStorage.removeItem(p + now));
+    return result;
+  });
+  if (outcome.skipped) return check("the alias map migrates progress onto the current id",
+    true, "no aliases to test");
+  check("the alias map migrates progress onto the current id",
+    outcome.reviewed === "2026-01" && outcome.oldCleared, `moved ${outcome.moved}`);
+  check("a note survives the move, which is the one it used to lose",
+    outcome.note === "a note the reader wrote", outcome.note || "lost");
+  check("a second run with an unchanged map is a no-op",
+    outcome.secondRun === 0 && outcome.flags === 1, `${outcome.secondRun} moved, ${outcome.flags} flag(s)`);
+});
+
+// ── what's new since your last visit ────────────────────────────────────────
+// plan.md Phase 10 T8. Four behaviours, and the first is the one most likely to
+// be got wrong: a reader with nothing stored must be told nothing at all.
+await step("what's new stays quiet on a first visit and records the month", async () => {
+  const first = await page.evaluate(() => {
+    localStorage.removeItem("seen-through");
+    initWhatsNew();
+    return { hidden: document.getElementById("whatsnew").hidden,
+             seen: localStorage.getItem("seen-through") };
+  });
+  check("a first-time reader is not told the whole site is new",
+    first.hidden === true && /^\d{4}-\d{2}$/.test(first.seen || ""),
+    `hidden ${first.hidden}, stored ${first.seen}`);
+
+  const back = await page.evaluate(() => {
+    localStorage.setItem("seen-through", "2026-06");
+    document.getElementById("whatsnew").hidden = true;
+    initWhatsNew();
+    return { hidden: document.getElementById("whatsnew").hidden,
+             text: document.getElementById("whatsnew-text").textContent };
+  });
+  check("a returning reader is told how many topics changed",
+    back.hidden === false && /\d+ topics? updated since /.test(back.text), back.text);
+
+  const shown = await page.evaluate(() => {
+    document.getElementById("whatsnew-show").click();
+    return document.getElementById("search-input").value;
+  });
+  check("'show them' puts an editable query in the search box",
+    shown === "since:2026-06", shown);
+
+  const seen = await page.evaluate(() => {
+    document.getElementById("whatsnew-seen").click();
+    const s = localStorage.getItem("seen-through");
+    localStorage.removeItem("seen-through");
+    return { hidden: document.getElementById("whatsnew").hidden, seen: s };
+  });
+  check("'mark as seen' advances the stored month and hides the banner",
+    seen.hidden === true && seen.seen > "2026-06", `stored ${seen.seen}`);
+});
+
 // ── hygiene ─────────────────────────────────────────────────────────────────
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));

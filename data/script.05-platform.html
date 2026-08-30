@@ -242,6 +242,16 @@
                     <tr><td>Avoid <code>any</code></td><td>It silently disables checking for everything it touches. Reach for <code>unknown</code> + narrowing.</td></tr>
                     <tr><td>Types ≠ runtime validation</td><td>Types vanish at runtime — validate external data (API/JSON) with a library like Zod.</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    The payoff people actually feel is not caught bugs &mdash; it is
+                    <strong class="c-cyan">fearless refactoring</strong>. Renaming a field
+                    across forty files stops being an act of courage, because the compiler
+                    finds every use, and the editor's autocomplete becomes trustworthy rather
+                    than a guess assembled from strings elsewhere in the project. That is why
+                    TypeScript is the default for anything with more than one author, and why
+                    turning <code>strict</code> on late is so much harder than starting with
+                    it.
+                  </div>
                 </div>
               </div>
             </div>
@@ -853,7 +863,18 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                   <div class="concept-desc verdict">
                     Not for everything: WASM can't directly touch the DOM <span class="acro-exp">(Document Object Model)</span> (it calls back into JS
                     for that), and simple UI <span class="acro-exp">(User Interface)</span> logic is still easier in plain JavaScript. Reach for
-                    it when performance is the bottleneck.
+                    it when performance is the bottleneck &mdash; and remember that
+                    <strong class="c-amber">crossing the JS&harr;WASM boundary is not
+                    free</strong>. A hot loop that calls back into JavaScript on every
+                    iteration can be slower than the JavaScript it replaced; the win comes from
+                    handing WASM a large piece of work and leaving it alone.
+                  </div>
+                  <div class="concept-desc verdict">
+                    Its larger future may not be the browser at all. WASM plus WASI is a fast,
+                    sandboxed, language-agnostic runtime, which is why it keeps appearing
+                    server-side: edge functions, plugin systems inside other applications, and
+                    anywhere you want to run somebody else&rsquo;s code without giving it your
+                    process.
                   </div>
                 </div>
               </div>

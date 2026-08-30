@@ -32,12 +32,12 @@ for the reasoning rather than the tasks.
 | Calculus track | ~4500 | `math` domain and the TI-84 tooling | ✅ closed |
 | **What is actually outstanding** | ~4640 | The audit sections: defects, the lint trend, undersized domains, content age. All four now resolved and re-measured | ✅ closed |
 | Session records | ~5100–10,360 | Roughly forty of them. The reasoning behind every decision above | 📘 archive |
-| **Phase 7 — the next hundred cards** | ~10,365 | 96 specified cards, 15 tracks, ordered first ten, rejects | ⬜ **live** |
-| **Phase 8 — the depth problem** | ~10,754 | 330 thin topics measured; 244 queued for deepening | ⬜ **live** |
+| **Phase 7 — the next hundred cards** | ~10,365 | 96 specified cards, 15 tracks, ordered first ten, rejects | ⬜ **live — the only one left** |
+| **Phase 8 — the depth problem** | ~10,754 | 330 thin → **147**, eighteen waves, 144 cards. §8's target met | ✅ **closed** |
 | Worked specifications | ~10,897 | Four sessions written out to transcription depth | 📘 reference |
 | **The card rubric** | ~10,988 | What the good cards have, measured from forty written in one session | 📘 reference |
-| **Phase 9 — the duplication problem** | ~11,072 | 36 near-duplicate pairs, ~23 merges | ⬜ **live** |
-| **Phase 10 — the tooling** | ~11,175 | 9 tools that make Phases 8 and 9 measurable | ⬜ **live** |
+| **Phase 9 — the duplication problem** | ~11,072 | Queue C1–C6 complete: **12 merges, 1 move, 1 link**, a dozen documented refusals | ✅ **closed** |
+| **Phase 10 — the tooling** | ~11,175 | All nine shipped. **Five of them found a defect in something other than themselves** | ✅ **closed** |
 | Domain shape | ~11,322 | The connectivity graph: hubs, broadcasters, islands | 📘 reference |
 | **Phase 11 — the verification debt** | ~11,411 | 51 dated claims, and why the denominator is not countable | ⬜ **live** |
 | **The session operating manual** | ~11,522 | The loop, the ordering constraints, and ten failures with their guards | 📘 **start here** |
@@ -10517,12 +10517,12 @@ that get blamed when delivery slows.
 
 | Card | The argument it turns on |
 |---|---|
-| **Flaky Tests — A Reliability Problem in the Test Suite** | A suite that fails randomly teaches the team to re-run rather than to read, and once that habit forms the suite stops being a signal at all. Flakiness must be measured and quarantined with an owner and a date, or the test suite decays into ceremony |
-| **Test Data — The Constraint That Shapes Every Environment** | Production data cannot be copied and synthetic data does not find real bugs. Every strategy is a trade between fidelity, privacy and refresh cost, and choosing one deliberately is what makes environments usable |
-| **Ephemeral Environments — One Per Change, and What It Costs** | An environment per pull request removes the queue for the shared staging system, which is often the real bottleneck. It also requires that infrastructure and data can be created from code in minutes, which is why most teams cannot have it yet |
-| **Monorepo vs Many Repos — The Trade Is About Coordination, Not Storage** | One repo makes cross-cutting changes atomic and makes tooling a full-time job. Many repos make each team independent and make a shared change a project. Pick the failure you can staff |
-| **Build Caches &amp; Incremental Builds — Where the Minutes Actually Go** | Nobody optimises a build until it hurts, and by then the fix is architectural. The card gives the measurement first: which step, on which machine, on a cold cache and a warm one |
-| **Release Notes &amp; Changelogs as an Interface** | A changelog is the API of your release process, read by support, security and customers. Generated from commits it is noise; written per user-visible change it is the cheapest support tool you own |
+| ✅ **Flaky Tests — A Reliability Problem in the Test Suite** | A suite that fails randomly teaches the team to re-run rather than to read, and once that habit forms the suite stops being a signal at all. Flakiness must be measured and quarantined with an owner and a date, or the test suite decays into ceremony |
+| ✅ **Test Data — The Constraint That Shapes Every Environment** | Production data cannot be copied and synthetic data does not find real bugs. Every strategy is a trade between fidelity, privacy and refresh cost, and choosing one deliberately is what makes environments usable |
+| ✅ **Ephemeral Environments — One Per Change, and What It Costs** | An environment per pull request removes the queue for the shared staging system, which is often the real bottleneck. It also requires that infrastructure and data can be created from code in minutes, which is why most teams cannot have it yet |
+| ✅ **Monorepo vs Many Repos — The Trade Is About Coordination, Not Storage** | One repo makes cross-cutting changes atomic and makes tooling a full-time job. Many repos make each team independent and make a shared change a project. Pick the failure you can staff |
+| ✅ **Build Caches &amp; Incremental Builds — Where the Minutes Actually Go** | Nobody optimises a build until it hurts, and by then the fix is architectural. The card gives the measurement first: which step, on which machine, on a cold cache and a warm one |
+| ✅ **Release Notes &amp; Changelogs as an Interface** | A changelog is the API of your release process, read by support, security and customers. Generated from commits it is noise; written per user-visible change it is the cheapest support tool you own |
 
 ---
 
@@ -10535,10 +10535,10 @@ delegation, ladders, Conway's Law, managing up, calendars, planning. What is mis
 | Card | The argument it turns on |
 |---|---|
 | **RFCs &amp; Design Docs — Writing to Decide, Not to Record** | A design doc written after the decision is documentation; one written before it is a decision-making tool, and the difference is whether anyone was ever able to change the outcome by reading it. Includes the failure mode: the doc that circulates for comment after the work has started |
-| **Architecture Decision Records — The Format Whose Value Is the Rejected Options** | The decision matters less than the alternatives and the constraints that killed them, because in two years the constraints will have changed and only the ADR will say which ones they were |
-| **Build vs Buy — The Question Behind the Question** | The comparison is never build cost against licence cost. It is *total* cost against *total* cost, including the maintenance you will owe forever and the exit you will eventually want — and the honest version usually turns on whether this is your differentiator |
-| **The Staff Engineer Role — What It Is When It Is Not Management** | The individual-contributor track above senior is real and badly defined nearly everywhere. The card's job is to describe what the work actually is — scope, influence without authority, and the projects only this role can do — and what it is not |
-| **Goals That Survive the Quarter — OKRs Without the Theatre** | Most goal frameworks fail the same way: outputs written as outcomes, targets set to be achievable, and a review that nobody attends. The fix is fewer goals, a measure that could go the wrong way, and a named person |
+| ✅ **Architecture Decision Records — The Format Whose Value Is the Rejected Options** | The decision matters less than the alternatives and the constraints that killed them, because in two years the constraints will have changed and only the ADR will say which ones they were |
+| ✅ **Build vs Buy — The Question Behind the Question** | The comparison is never build cost against licence cost. It is *total* cost against *total* cost, including the maintenance you will owe forever and the exit you will eventually want — and the honest version usually turns on whether this is your differentiator |
+| ✅ **The Staff Engineer Role — What It Is When It Is Not Management** | The individual-contributor track above senior is real and badly defined nearly everywhere. The card's job is to describe what the work actually is — scope, influence without authority, and the projects only this role can do — and what it is not |
+| ✅ **Goals That Survive the Quarter — OKRs Without the Theatre** | Most goal frameworks fail the same way: outputs written as outcomes, targets set to be achievable, and a review that nobody attends. The fix is fewer goals, a measure that could go the wrong way, and a named person |
 | **Measuring Developer Productivity Without Doing Harm** | Every individual metric in this space is gameable and most are actively harmful. What can be measured is the *system* — lead time, review latency, time to first commit for a new joiner — and the card should be blunt about why the individual version keeps being attempted |
 
 ---
@@ -10550,12 +10550,12 @@ delegation, ladders, Conway's Law, managing up, calendars, planning. What is mis
 
 | Card | The argument it turns on |
 |---|---|
-| **Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot** | The recovery sequence is short and needs to be known cold, because it is used exactly when there is no time to look it up: boot media, mount, bind the pseudo-filesystems, chroot, fix, rebuild the initramfs, exit, unmount |
-| **sudoers &amp; PAM — The Two Files That Decide Who You Are** | Authentication and authorisation are separate stacks that people conflate. A card that explains the PAM stack's order and the sudoers grammar prevents the two mistakes that lock everyone out of a box |
-| **Journald, Logrotate &amp; the Disk That Filled With Logs** | Log retention on a single host is a configuration nobody sets until the disk is full at 3 a.m. Both mechanisms exist, they overlap confusingly, and the interaction is the part worth writing down |
-| **Moving Data Safely — rsync, Its Flags, and the Trailing Slash** | One character changes whether you copy a directory or its contents, and the mistake is unrecoverable when combined with `--delete`. The card is a short one built entirely around the dry run |
-| **strace &amp; ltrace — Watching a Program Ask the Kernel for Things** | When logs say nothing and the code is not yours, syscall tracing is the tool that answers "what file is it actually looking for". The subject is narrow, the payoff is a class of unsolvable problems becoming solvable |
-| **Linux on the Desktop, and WSL — Two Different Answers to the Same Wish** | Worth one card because the audience keeps asking, and because the honest answer is about workflows rather than about Linux: the subsystem removes the dual-boot decision and imposes a filesystem boundary people trip over |
+| ✅ **Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot** | The recovery sequence is short and needs to be known cold, because it is used exactly when there is no time to look it up: boot media, mount, bind the pseudo-filesystems, chroot, fix, rebuild the initramfs, exit, unmount |
+| ✅ **sudoers &amp; PAM — The Two Files That Decide Who You Are** | Authentication and authorisation are separate stacks that people conflate. A card that explains the PAM stack's order and the sudoers grammar prevents the two mistakes that lock everyone out of a box |
+| ✅ **Journald, Logrotate &amp; the Disk That Filled With Logs** | Log retention on a single host is a configuration nobody sets until the disk is full at 3 a.m. Both mechanisms exist, they overlap confusingly, and the interaction is the part worth writing down |
+| ✅ **Moving Data Safely — rsync, Its Flags, and the Trailing Slash** | One character changes whether you copy a directory or its contents, and the mistake is unrecoverable when combined with `--delete`. The card is a short one built entirely around the dry run |
+| ✅ **strace &amp; ltrace — Watching a Program Ask the Kernel for Things** | When logs say nothing and the code is not yours, syscall tracing is the tool that answers "what file is it actually looking for". The subject is narrow, the payoff is a class of unsolvable problems becoming solvable |
+| ✅ **Linux on the Desktop, and WSL — Two Different Answers to the Same Wish** | Worth one card because the audience keeps asking, and because the honest answer is about workflows rather than about Linux: the subsystem removes the dual-boot decision and imposes a filesystem boundary people trip over |
 
 ---
 
@@ -10567,11 +10567,11 @@ Dynamic Programming*, floating point inside *Number Representation*. Five are re
 
 | Card | The argument it turns on |
 |---|---|
-| **Compression — Why It Works, and Why It Sometimes Cannot** | Compression exploits redundancy, so incompressible data is data with none — which is why encrypted and already-compressed files do not shrink, and why "compress then encrypt" is the only order that works. Includes the security note that compressing attacker-influenced data alongside secrets leaks length |
-| **Consistent Hashing — Adding a Server Without Moving Everything** | Modulo-based sharding remaps nearly every key when the server count changes. The ring, and virtual nodes on top of it, is one of the small number of ideas that made horizontal scaling practical, and it recurs in caches, databases and load balancers |
-| **Byte Order &amp; Binary Layout — Endianness, Alignment &amp; Struct Packing** | The bug class where the data parses and is wrong, which the `infra` mainframe card meets from the other end. This is the general version: the same bytes mean different numbers depending on who wrote them |
-| **Catastrophic Backtracking — When a Regular Expression Is a Denial of Service** | A pattern with nested quantifiers can take exponential time on an input a user chooses. It is the rare bug that is simultaneously a performance problem, a security vulnerability, and invisible in code review unless you know the shape |
-| **Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full** | Utilisation and latency are not linear, and the knee is much earlier than intuition says. One equation explains queue length, why running a system at 90% is a choice about latency, and why adding one more worker sometimes fixes everything |
+| ✅ **Compression — Why It Works, and Why It Sometimes Cannot** | Compression exploits redundancy, so incompressible data is data with none — which is why encrypted and already-compressed files do not shrink, and why "compress then encrypt" is the only order that works. Includes the security note that compressing attacker-influenced data alongside secrets leaks length |
+| ✅ **Consistent Hashing — Adding a Server Without Moving Everything** | Modulo-based sharding remaps nearly every key when the server count changes. The ring, and virtual nodes on top of it, is one of the small number of ideas that made horizontal scaling practical, and it recurs in caches, databases and load balancers |
+| ✅ **Byte Order &amp; Binary Layout — Endianness, Alignment &amp; Struct Packing** | The bug class where the data parses and is wrong, which the `infra` mainframe card meets from the other end. This is the general version: the same bytes mean different numbers depending on who wrote them |
+| ✅ **Catastrophic Backtracking — When a Regular Expression Is a Denial of Service** | A pattern with nested quantifiers can take exponential time on an input a user chooses. It is the rare bug that is simultaneously a performance problem, a security vulnerability, and invisible in code review unless you know the shape |
+| ✅ **Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full** | Utilisation and latency are not linear, and the knee is much earlier than intuition says. One equation explains queue length, why running a system at 90% is a choice about latency, and why adding one more worker sometimes fixes everything |
 
 ---
 
@@ -10583,11 +10583,11 @@ a script survives being handed to someone else.
 
 | Card | The argument it turns on |
 |---|---|
-| **Type Hints &amp; a Type Checker — Documentation the Machine Verifies** | Hints that nothing checks are comments with better syntax. The value appears the moment a checker runs in CI, and the honest cost is the gradual-typing boundary where a large untyped codebase meets a typed edge |
-| **pathlib &amp; the End of String Paths** | Path manipulation with string concatenation is a portability bug waiting for a Windows user. A short card, because the argument is short and the habit change is total |
-| **subprocess Without Shell Injection** | The convenient form is the dangerous one. A list of arguments beats a shell string, and the card should show the exact case where interpolating a filename becomes remote code execution |
-| **Threads, Processes &amp; async — Choosing by Where the Time Goes** | Three concurrency models and one question that picks between them: is the program waiting on I/O or burning processor? Everything else is detail, and getting this wrong is why "we added threads and it got slower" |
-| **Packaging &amp; Dependency Pinning — Making It Installable by Someone Else** | The gap between "works on my machine" and "installs" is a project file and a lockfile. This is also the supply-chain surface, which connects to `eng`'s dependency-risk card |
+| ✅ **Type Hints &amp; a Type Checker — Documentation the Machine Verifies** | Hints that nothing checks are comments with better syntax. The value appears the moment a checker runs in CI, and the honest cost is the gradual-typing boundary where a large untyped codebase meets a typed edge |
+| ✅ **pathlib &amp; the End of String Paths** | Path manipulation with string concatenation is a portability bug waiting for a Windows user. A short card, because the argument is short and the habit change is total |
+| ✅ **subprocess Without Shell Injection** | The convenient form is the dangerous one. A list of arguments beats a shell string, and the card should show the exact case where interpolating a filename becomes remote code execution |
+| ✅ **Threads, Processes &amp; async — Choosing by Where the Time Goes** | Three concurrency models and one question that picks between them: is the program waiting on I/O or burning processor? Everything else is detail, and getting this wrong is why "we added threads and it got slower" |
+| ✅ **Packaging &amp; Dependency Pinning — Making It Installable by Someone Else** | The gap between "works on my machine" and "installs" is a project file and a lockfile. This is also the supply-chain surface, which connects to `eng`'s dependency-risk card |
 | **Pre-Commit, Formatters &amp; Linters — Ending the Style Argument** | A formatter removes an entire category of review comment by making style non-negotiable and automatic. The card's argument is social rather than technical: the tool is valuable because it stops humans discussing whitespace |
 | **Dates &amp; Times in Code — The Five Mistakes** | Naive datetimes, local-time arithmetic, storing offsets instead of zones, assuming days are 24 hours, and formatting for humans in a database. Pairs with the existing *Dates, Times & Time Zones* card, which covers the concepts rather than the code |
 
@@ -10601,11 +10601,11 @@ keeping track of any of it.
 
 | Card | The argument it turns on |
 |---|---|
-| **Failover Clustering — Quorum Is the Whole Subject** | Clusters do not fail because a node dies; they fail because the surviving nodes cannot agree that it did. Quorum, witnesses and split-brain are the content, and the card should say plainly that a two-node cluster without a witness is a coin toss |
-| **The Rack, the Power &amp; the Cooling** | Dual feeds are pointless if a single-supply device is plugged into one of them, hot air recirculates without blanking panels, and floor loading is a real limit in older buildings. A card of physical constraints that software people meet exactly once |
-| **Labelling &amp; Asset Tagging — The Boring Discipline That Pays Out at 3 a.m.** | Every recovery is faster in a room where the cables and devices are labelled, and nobody has ever regretted it. The argument is about when the cost is paid versus when the benefit lands |
-| **Tape, Archive &amp; the Restore Nobody Has Tested** | Tape did not die, it became the offline copy in the ransomware playbook. Restore rate, media ageing and drive availability are the questions, and the last one strands more archives than the first two |
-| **Decommissioning at Estate Scale** | The existing card covers one server. This is the programme version: finding what nobody owns, the notice period, the DNS entries and firewall rules that outlive the host, and the systems still pointing at it |
+| ✅ **Failover Clustering — Quorum Is the Whole Subject** | Clusters do not fail because a node dies; they fail because the surviving nodes cannot agree that it did. Quorum, witnesses and split-brain are the content, and the card should say plainly that a two-node cluster without a witness is a coin toss |
+| ✅ **The Rack, the Power &amp; the Cooling** | Dual feeds are pointless if a single-supply device is plugged into one of them, hot air recirculates without blanking panels, and floor loading is a real limit in older buildings. A card of physical constraints that software people meet exactly once |
+| ✅ **Labelling &amp; Asset Tagging — The Boring Discipline That Pays Out at 3 a.m.** | Every recovery is faster in a room where the cables and devices are labelled, and nobody has ever regretted it. The argument is about when the cost is paid versus when the benefit lands |
+| ✅ **Tape, Archive &amp; the Restore Nobody Has Tested** | Tape did not die, it became the offline copy in the ransomware playbook. Restore rate, media ageing and drive availability are the questions, and the last one strands more archives than the first two |
+| ✅ **Decommissioning at Estate Scale** | The existing card covers one server. This is the programme version: finding what nobody owns, the notice period, the DNS entries and firewall rules that outlive the host, and the systems still pointing at it |
 | **Patching a Server Estate — Windows, Rings &amp; the Ones That Cannot Reboot** | The endpoint domain has this for laptops. Servers are the harder case: dependency order, maintenance windows negotiated with a business, and the small population that will never be patched and needs a compensating control instead |
 
 ---
@@ -10649,11 +10649,11 @@ has almost nothing about *managing work*, which is the other half of what its ti
 
 | Card | The argument it turns on |
 |---|---|
-| **The Inbox — Why It Is Not a To-Do List, and What Replaces It** | An inbox sorts by arrival, which is the one ordering guaranteed not to match importance. Every workable system separates capture from decision from action, and the mechanism matters less than that separation existing |
-| **The Weekly Review — The Habit That Makes Every Other System Work** | Any capture system degrades into a graveyard without a scheduled moment to re-read it. The review is what converts a list into a plan, and it is the first thing dropped when busy — which is precisely when it pays most |
-| **Time Blocking &amp; Its Failure Modes** | Deciding when something happens converts an open-ended list into a finite day, which is honest and uncomfortable. The failure is over-scheduling: a plan with no slack survives the first interruption and then gets abandoned |
-| **Focus Blocks — Making Uninterrupted Time Possible in an Interrupt-Driven Job** | The existing *Attention* card covers what switching costs. This is the operational answer for someone on a rota: negotiating coverage, the shape of a realistic block, and why "I'll focus when it's quiet" never arrives |
-| **Notes That Get Reopened — Structure, Linking &amp; the Search Test** | The existing note-taking card is about learning. This is about the reference pile: if you cannot find it in ten seconds it does not exist, which makes search behaviour the design constraint rather than folder structure |
+| ✅ **The Inbox — Why It Is Not a To-Do List, and What Replaces It** | An inbox sorts by arrival, which is the one ordering guaranteed not to match importance. Every workable system separates capture from decision from action, and the mechanism matters less than that separation existing |
+| ✅ **The Weekly Review — The Habit That Makes Every Other System Work** | Any capture system degrades into a graveyard without a scheduled moment to re-read it. The review is what converts a list into a plan, and it is the first thing dropped when busy — which is precisely when it pays most |
+| ✅ **Time Blocking &amp; Its Failure Modes** | Deciding when something happens converts an open-ended list into a finite day, which is honest and uncomfortable. The failure is over-scheduling: a plan with no slack survives the first interruption and then gets abandoned |
+| ✅ **Focus Blocks — Making Uninterrupted Time Possible in an Interrupt-Driven Job** | The existing *Attention* card covers what switching costs. This is the operational answer for someone on a rota: negotiating coverage, the shape of a realistic block, and why "I'll focus when it's quiet" never arrives |
+| ✅ **Notes That Get Reopened — Structure, Linking &amp; the Search Test** | The existing note-taking card is about learning. This is about the reference pile: if you cannot find it in ten seconds it does not exist, which makes search behaviour the design constraint rather than folder structure |
 | **Goals, and the Difference Between a Goal and a Wish** | A goal names an outcome, a date, and the first action. Anything missing one of the three is a wish, and the card's value is that this test is applied in ten seconds to anything already written down |
 
 ---
@@ -10665,12 +10665,12 @@ cards about running security as an ongoing function rather than as a set of cont
 
 | Card | The argument it turns on |
 |---|---|
-| **Asset Discovery — You Cannot Protect What Nobody Listed** | Every control's coverage is a fraction with an unknown denominator until the estate is enumerated, and the enumeration is always wrong in the same direction. This is the card that makes every other coverage metric meaningful |
-| **Vulnerability Prioritisation — Severity Is Not Priority** | A high-severity finding on an isolated internal host loses to a medium on an internet-facing one, every time. Exploitability, exposure and asset value are the multipliers, and the card should name the specific published sources that carry them |
-| **Shadow IT — Finding It Without Making It Worse** | Unsanctioned tools exist because a sanctioned one was missing or slow. Discovery is easy and the response is the whole subject: a blocked service returns as an unmanaged one, so the sanctioned path has to be genuinely better |
-| **Break-Glass Accounts — The Ones That Must Work When Everything Else Does Not** | Excluded from conditional access, credentials split and sealed, monitored on use, and tested on a schedule. Every organisation has them, almost none tests them, and the day they are needed is the day the identity provider is down |
-| **Code Signing &amp; the Key That Cannot Leak** | A signing key is a trust anchor with a blast radius the size of your install base. The card covers where the key lives, who can invoke it, and why build-time signing in a pipeline needs the same treatment as a production credential |
-| **Security Champions — Making the Team Larger Than the Team** | A security function is always outnumbered by engineers, so influence scales and headcount does not. The programme works when champions get something real — early access, training, time — and fails when it is a title with meetings attached |
+| ✅ **Asset Discovery — You Cannot Protect What Nobody Listed** | Every control's coverage is a fraction with an unknown denominator until the estate is enumerated, and the enumeration is always wrong in the same direction. This is the card that makes every other coverage metric meaningful |
+| ✅ **Vulnerability Prioritisation — Severity Is Not Priority** | A high-severity finding on an isolated internal host loses to a medium on an internet-facing one, every time. Exploitability, exposure and asset value are the multipliers, and the card should name the specific published sources that carry them |
+| ✅ **Shadow IT — Finding It Without Making It Worse** | Unsanctioned tools exist because a sanctioned one was missing or slow. Discovery is easy and the response is the whole subject: a blocked service returns as an unmanaged one, so the sanctioned path has to be genuinely better |
+| ✅ **Break-Glass Accounts — The Ones That Must Work When Everything Else Does Not** | Excluded from conditional access, credentials split and sealed, monitored on use, and tested on a schedule. Every organisation has them, almost none tests them, and the day they are needed is the day the identity provider is down |
+| ✅ **Code Signing &amp; the Key That Cannot Leak** | A signing key is a trust anchor with a blast radius the size of your install base. The card covers where the key lives, who can invoke it, and why build-time signing in a pipeline needs the same treatment as a production credential |
+| ✅ **Security Champions — Making the Team Larger Than the Team** | A security function is always outnumbered by engineers, so influence scales and headcount does not. The programme works when champions get something real — early access, training, time — and fails when it is a title with meetings attached |
 
 ---
 
@@ -10699,16 +10699,18 @@ sitting and the early ones re-establish the method.
 
 | # | Card | Why here |
 |---|---|---|
-| 1 | `cs` **Little's Law &amp; Queueing** | Self-contained, one equation, and it explains three existing cards from underneath |
-| 2 | `threat` **State-Sponsored Operations** | The thinnest domain relative to its subject, and the card that anchors the rest of Track CA |
-| 3 | `sec` **Asset Discovery** | Every coverage metric elsewhere depends on it; writing it first makes later cards able to reference it |
-| 4 | `cloud` **Multi-Cloud — The Four Reasons** | The most-asked question in the domain and the one with the least written down |
-| 5 | `linux` **Rescuing a System That Will Not Boot** | Short, high-value, and the kind of card people return to |
-| 6 | `eng` **RFCs &amp; Design Docs** | Unlocks Track CF, since the ADR and build-vs-buy cards both reference it |
-| 7 | `productivity` **The Weekly Review** | The smallest card that makes the rest of Track CM coherent |
-| 8 | `redteam` **Operator OPSEC** | Reframes the whole tooling catalogue that already exists |
-| 9 | `script` **subprocess Without Shell Injection** | One clear security lesson, short, and overdue in the largest domain |
-| 10 | `blueteam` **SOC Metrics That Do Not Lie** | Pairs with `grc`'s new board-reporting card, and the two should cross-reference |
+| ✅ 1 | `cs` **Little's Law &amp; Queueing** | Self-contained, one equation, and it explains three existing cards from underneath |
+| ✅ 2 | `threat` **State-Sponsored Operations** | The thinnest domain relative to its subject, and the card that anchors the rest of Track CA |
+| ✅ 3 | `sec` **Asset Discovery** | Every coverage metric elsewhere depends on it; writing it first makes later cards able to reference it |
+| ✅ 4 | `cloud` **Multi-Cloud — The Four Reasons** | The most-asked question in the domain and the one with the least written down |
+| ✅ 5 | `linux` **Rescuing a System That Will Not Boot** | Short, high-value, and the kind of card people return to |
+| ✅ 6 | `eng` **RFCs &amp; Design Docs** | Unlocks Track CF, since the ADR and build-vs-buy cards both reference it |
+| ✅ 7 | `productivity` **The Weekly Review** | The smallest card that makes the rest of Track CM coherent |
+| ✅ 8 | `redteam` **Operator OPSEC** | Reframes the whole tooling catalogue that already exists |
+| ✅ 9 | `script` **subprocess Without Shell Injection** | One clear security lesson, short, and overdue in the largest domain |
+| ✅ 10 | `blueteam` **SOC Metrics That Do Not Lie** | Pairs with `grc`'s new board-reporting card, and the two should cross-reference |
+
+**✅ All ten shipped. Site 1,420 → 1,430.** See the session record at the end of this file.
 
 **After ten, re-run the audit rather than continuing down the list.** Eleven waves shipped
 this session and the site moved from 1,401 to 1,432 topics; a list written today describes a
@@ -10890,16 +10892,499 @@ weighted by how central the domain is to why anyone visits.
 
 | Wave | Domain | Cards | Why this position |
 |---|---|---|---|
-| **D1** | `data` | 40 | Worst ratio on the site, and the subject rewards depth: every one of these is a decision with a trade-off that the table does not state |
-| **D2** | `redteam` | 40 | The tooling catalogue is the domain's identity. Each card needs the same addition — *when would you not use this*, and *what does it look like to the defender* |
-| **D3** | `cloud` | 40 | Three providers, one card each. The deepening is provider-neutral: what the service is actually for, and the failure mode that is the same on all three |
-| **D4** | `blueteam` | 36 | The first 37 cards predate the detection-engineering track that follows them and now reads as a different domain |
-| **D5** | `web` | 35 | Median 1,415 characters against a mean of 2,622 — the clearest case of a bimodal domain in the file |
-| **D6** | `eng` | 33 | The early technical cards sit beside a management track written to a much higher standard |
-| **D7** | `devops` | 20 | Platform track deep, tool cards thin. Same shape as `blueteam` |
+| ✅ **D1** | `data` | ~~40~~ → **32** | Worst ratio on the site, and the subject rewards depth. **Eight shipped** — the W4 spec's exact list. 93% thin → 74% |
+| ✅ **D2** | `redteam` | ~~40~~ → **32** | The tooling catalogue is the domain's identity. **Eight shipped**, all with the same addition: *what it leaves behind* and *what the defender sees*. 77% thin → 62% |
+| ✅ **D3** | `cloud` | ~~40~~ → **32** | Three providers, one card each. **Eight shipped**, all provider-neutral: the failure mode that is the same on all three. 63% thin → 50% |
+| ✅ **D4** | `blueteam` | ~~36~~ → **28** | The first 37 cards predate the detection-engineering track that follows them. **Eight shipped**, all with the same addition: *what this tool cannot see, and what you pair it with*. 67% thin → 52% |
+| ✅ **D5** | `web` | ~~35~~ → **27** | Median 1,415 against a mean of 2,622 — the clearest bimodal domain in the file, and it is bimodal because of *where it was written*. **Eight shipped**, each naming an instrument. 85% thin → 66% |
+| ✅ **D6** | `eng` | ~~33~~ → **25** | The architecture cards sat beside a management track that had no choice but to be about trade-offs. **Eight shipped**, each naming a bill and a threshold. 43% thin → 32% |
+| ✅ **D7** | `devops` | ~~20~~ → **12** | Platform track deep, tool cards thin. **Eight shipped**, each on day two rather than day one. 47% thin → 28% |
 | — | `shortcut` | 20 | **Excluded.** Reference domain, see §4 |
 
 **244 cards across seven waves**, before counting the tail in `script`, `linux` and `ops`.
+
+**Status: all seven waves shipped — 56 cards, 288 thin → 231.** The queue as written is
+finished; the remaining 231 are the tail this table deliberately did not name, and they need
+a fresh census before anyone writes a wave D8. See the closing record for what that census
+should ask.
+
+### The D4 spec — written before the cards, like D1's, D2's and D3's
+
+`blueteam`'s thin cards share one structural gap and it is the mirror image of `redteam`'s.
+The offensive catalogue documented what a tool does and never what using it costs; the
+defensive catalogue documents what a tool **sees** and never what it **misses**. That gap is
+worse on this side, because a list of capabilities with no coverage gaps produces exactly the
+failure the domain exists to prevent: believing you have visibility you do not have.
+
+So the D4 addition is uniform, one card per topic:
+
+> **What this tool cannot see, and what you pair it with to cover the gap.**
+
+Three tests a D4 addition has to pass, all of which failed at least once while drafting:
+
+| Test | Why |
+|---|---|
+| The blind spot must be **structural**, not a configuration mistake | "You forgot to enable it" is a checklist item. "It sits at the perimeter and lateral movement never crosses the perimeter" is a property of where the sensor is |
+| It must name **what covers the gap** | A blind spot with no pairing is discouragement. The point is a defender who now knows which second source to go add |
+| It must not be **the same blind spot eight times** | "Encrypted traffic" is true of three network tools and would be lazy on the other five. If two cards want the same sentence, one of them is the wrong card to deepen |
+
+Eight chosen for the wave, each with a blind spot of a different *kind* — placement, retention,
+acquisition, translation, attribution, coverage-by-selection:
+
+| Card | The kind of blindness |
+|---|---|
+| Zeek | Placement — a sensor sees what crosses it, and less crosses it every year |
+| Wireshark | Retroactivity — it cannot analyse a capture nobody took |
+| Suricata & Snort | Prior knowledge — a signature is a description of something already named |
+| Windows Event Logs | Retention and defaults — the event you need is off, or already rolled over |
+| auditd | Attribution — syscalls are not intent, and containers muddy whose syscall it was |
+| Volatility | Acquisition — memory is gone the moment the machine is |
+| Sigma | Translation — portable rule, non-portable field names |
+| Honeypots | Selection — deception is silent against an attacker who does not look |
+
+### The D5 spec — the domain where the author's machine is the problem
+
+`web` is bimodal because of *where it was written*. Every thin card in the domain describes a
+feature correctly, from a fast laptop, on a fast network, in the current version of one
+browser, with no assistive technology attached and the dev server running on `localhost`. The
+deep cards in the same domain are the ones that eventually met a real user. That difference is
+the entire gap, and it is measurable rather than stylistic.
+
+So the D5 addition is:
+
+> **The number your own machine cannot show you** — what this looks like on the device the
+> user actually has, and the specific way to go measure it.
+
+The measurement clause is not optional. A card that says "it's slower on phones" is the
+padding this phase exists to avoid; a card that says *4× CPU throttle, Performance panel,
+16.7 ms per frame* hands the reader something to do this afternoon. **Every D5 addition must
+name an instrument, a setting, or a threshold.**
+
+| Card | The environment gap |
+|---|---|
+| Reflow & Jank | CPU — the median phone is several times slower than the machine the code was written on |
+| Web Storage | Policy — the browser can refuse or evict, and two of the three APIs have no quota you control |
+| Core Web Vitals | Lab vs field — Lighthouse is a simulation of one load; the field number is a p75 across real ones |
+| Fetch, REST & CORS | Origin — the dev proxy makes everything same-origin, so the preflight never happens until production |
+| Modules & Bundlers | Parse cost — bytes are what you measure and CPU time is what the user feels |
+| Responsive Design | Device vs viewport — DevTools device mode resizes a window; it does not give you a finger |
+| Accessibility | Automated vs human — a clean automated scan is the floor, and this repo's own 6/6 is exactly that |
+| Frontend Testing | Latency — `localhost` has none, and CI flake is usually the test discovering that |
+
+### The D6 spec — every pattern sends a bill, and most cards only print the benefit
+
+`eng`'s management track reads well because management writing has no choice but to be about
+trade-offs: there is no way to describe *influence without authority* that does not admit what
+it costs. The architecture track has a choice, and the thin cards took it. They name the
+pattern, explain the mechanism, and stop — which reads as endorsement, and endorsement is how a
+four-person team ends up running a saga orchestrator.
+
+The D6 addition:
+
+> **The bill this pattern sends, and the size below which it is a net loss.**
+
+Two required parts, and a card missing either was rewritten:
+
+| Part | Why it is required |
+|---|---|
+| A **concrete ongoing cost**, not a caveat | "It adds complexity" is true of everything and decides nothing. "Every feature now touches four files and a mapper" is a thing the reader can weigh |
+| A **threshold** — a team size, a service count, a moment | The trade genuinely flips somewhere. A card that says "it depends" has moved the work back onto the reader, which is what they came here to avoid |
+
+Eight chosen so the *kind* of bill differs each time — a wave of eight cards all saying
+"complexity" would be one idea in eight places:
+
+| Card | The kind of bill |
+|---|---|
+| Monolith vs Microservices | Organisational — the threshold is team count, not request rate |
+| CQRS & Event Sourcing | Permanence — an append-only log is a promise you cannot take back |
+| Domain-Driven Design | Access to people — without the domain expert it degrades to a folder layout |
+| Clean / Hexagonal | Indirection — the adapter you never swap is pure overhead |
+| Saga & Outbox | Business logic — compensation is not rollback, and somebody has to design every partial state |
+| Resilience Patterns | Load amplification — retries cause the outage they were added to survive |
+| Event-Driven | Observability — you trade the stack trace for a correlation ID |
+| SOLID | Speculative generality — an interface with one implementation is a guess about the future |
+
+### The D7 spec — day two, not day one
+
+`devops`'s thin cards all describe adoption: what the tool is, how you set it up, the commands.
+Not one of them describes what the thing **becomes**. That is the whole gap, because in this
+domain nothing fails at adoption — every tool here installs fine and demos well. They fail two
+years later, quietly, in a shape that was decided by one choice made in week one.
+
+> **What this looks like two years in, and the one decision now that prevents it.**
+
+This is deliberately *not* D6's bill-and-threshold, and the difference is worth stating because
+the two are easy to blur. D6 asks **whether to adopt at all** — a trade you make once, with a
+size below which it is a loss. D7 assumes adoption already happened and asks **what it decays
+into** — a failure that has no threshold, arrives on schedule, and is cheap to prevent and
+expensive to reverse.
+
+The preventive decision must be **something you can do this week**, and it must be genuinely
+cheaper now than later. If the fix is equally easy in year two, there is nothing to warn about
+and the card is not a D7 card.
+
+| Card | The decay |
+|---|---|
+| Helm & Kustomize | Charts become a templating language nobody can diff |
+| GitHub Actions | Forty copy-pasted workflows and unpinned third-party actions |
+| Secrets Management | Nothing can be rotated, because rotation was never once performed |
+| Kubernetes Security | Everyone is cluster-admin and the network is flat |
+| Policy as Code | Two hundred policies, all in audit mode |
+| CI/CD Pipeline | A slow pipeline makes batches bigger, which makes failures harder — the flywheel in reverse |
+| Docker | Images that cannot be rebuilt, running as root |
+| Platform Engineering | The platform team becomes the ticket queue it was built to abolish |
+
+### The D8 spec — the query that runs, returns a number, and is wrong
+
+The census that Phase 8's closing record asked for has now been run, and it changed the queue:
+184 of 227 remaining thin cards are inside the seven domains D1–D7 already worked, because each
+wave took eight and no domain was finished. So D8 goes back to `data` — worst ratio on the site
+at 74%, and the same domain D1 started with.
+
+`data` is unlike every other domain here in one specific way, and it is the way that makes it
+worth a second wave. **Everywhere else on this site, a mistake produces an error.** A misconfigured
+sensor logs nothing, a bad Dockerfile fails to build, a wrong subnet mask drops the packet. In a
+database, the overwhelmingly common failure is a query that runs to completion, returns a
+plausible number, and is wrong — and nobody finds out until the number reaches a meeting.
+
+> **The addition: name the silent wrong answer, and say how you would notice.**
+
+Both halves are required. A card that names a trap without a detection is a warning nobody can
+act on; the detection is what makes it a working card rather than a piece of folklore.
+
+The eight are chosen so the *mechanism* of wrongness differs each time — a wave of eight cards
+all about NULLs would be one idea in eight places, even though NULL is genuinely responsible for
+three of them:
+
+| Card | The silent wrong answer |
+|---|---|
+| SQL Joins | A `WHERE` on the right-hand table turns a LEFT JOIN back into an INNER JOIN |
+| Aggregation | Joining before aggregating multiplies rows, and `SUM` cannot tell |
+| Window Functions | The default frame is `RANGE`, and ties collapse into one bucket |
+| Subqueries & EXISTS | `NOT IN` against a subquery containing one NULL returns **zero rows** |
+| ACID & Transactions | Read-modify-write without a lock loses an update at any isolation level below `SERIALIZABLE` |
+| Reading Query Plans | `EXPLAIN` without `ANALYZE` prints an estimate, and the estimate is the thing that was wrong |
+| Indexes | A `UNIQUE` index does not prevent duplicate NULLs |
+| Time-Series | Grouping by day in the wrong time zone moves rows between days, and late arrivals change yesterday |
+
+**✅ D8 shipped** — 8 cards, `data` 31 → 23 thin (74% → 55%).
+
+### The D9 spec — the bug that sent you here
+
+`web`'s second wave takes the other half of the domain. D5 worked the tooling and performance
+cards, where the gap was the developer's own machine. What is left in the thin list splits
+cleanly into framework cards and **fundamentals** — Closures, Prototypes, the DOM and events,
+Promises, Flexbox, Grid, custom properties, how a page renders — and those have a different
+problem entirely.
+
+Nobody reads a closures card out of curiosity. They read it because a loop printed the same
+number five times, or a value went stale inside a callback, and something sent them looking.
+The thin fundamentals cards explain the mechanism and never name the symptom, which means
+**the reader who needs the card most cannot recognise that this is the card**.
+
+> **The addition: the bug that sent you here.** Symptom first, in the words someone would use
+> before they knew the cause; mechanism second.
+
+One test, and it is strict: the symptom has to be **recognisable without knowing the
+answer**. "You misunderstand the event loop" is not a symptom. "Your `forEach` finished
+instantly and nothing was saved" is.
+
+| Card | The symptom |
+|---|---|
+| Closures, Scope & `this` | The loop printed `5` five times; `this` became undefined when you passed the method somewhere |
+| Prototypes & Modern Classes | It worked as `obj.method()` and broke as `setTimeout(obj.method)` |
+| The DOM & Events | The click handler works, until the row was added after page load |
+| Async Deep | `forEach` returned immediately and nothing was saved; a loop of `await` took thirty seconds |
+| Flexbox | The flex item refuses to shrink and pushes the layout wider than the screen |
+| CSS Grid | One long word or a wide table blows the column out past `1fr` |
+| Modern CSS | A `var()` fallback did not apply, and the property came out `unset` rather than inherited |
+| How the Browser Renders a Page | The text jumps when the font loads, and the page is blank until the stylesheet arrives |
+
+**✅ D9 shipped** — 8 cards, `web` 25 → 17 thin (64% → 44%).
+
+### The D11 spec — what you must already have before this runs
+
+D2 gave `redteam`'s tool cards *what using this costs you*. Thirty-two remain, and they share a
+second gap that is arguably worse for a reader learning the subject: **every card is written as
+though you can simply run the tool.**
+
+You cannot. Mimikatz needs local administrator and a debug privilege. Rubeus needs a domain
+context. Impacket needs a credential or a hash you do not have yet. Hashcat needs the hash
+*first*, which is the entire problem. A catalogue that omits the precondition reads as a list of
+capabilities when the real subject is a **chain**, and the chain is the thing a learner cannot
+infer from the tool's own documentation.
+
+> **The addition: what you must already have before this runs, and the control that denies it.**
+
+The second clause is not decoration. A prerequisite is a control point by definition — the place
+a defender can stand — and naming it keeps these cards useful on both sides of the engagement,
+which is how the rest of this site treats offence.
+
+One test: the prerequisite must be **specific enough to be denied**. "Access to the network" is
+not a prerequisite; "a credential or NTLM hash, plus reachability to 445" is, because a defender
+can act on each half.
+
+| Card | The precondition | Kind |
+|---|---|---|
+| Mimikatz | Local admin *and* `SeDebugPrivilege`, on a host where LSASS is readable | Privilege |
+| BloodHound & SharpHound | **Any authenticated domain user** — that is the finding | None at all |
+| Impacket | A credential or hash, plus reachability to SMB/RPC | Credential |
+| Kerberos Attacks | A domain user, plus an account configured a particular way | Protocol configuration |
+| Hashcat | The hash, already stolen. Everything upstream is the hard part | Prior theft |
+| Pacu | Valid AWS credentials — usually long-lived keys that should not exist | Cloud key |
+| ADCS Abuse | A domain user plus one misconfigured certificate template | Misconfiguration |
+| Living off the Land | Code execution you already have, and nothing else | Existing foothold |
+
+**✅ D11 shipped** — 8 cards, `redteam` 32 → 24 thin (62% → 46%).
+
+### The D12 spec — the assumption you carry over from the other cloud
+
+D3 worked `cloud`'s *concept* cards — cost control, landing zones, CSPM, Terraform — and its
+rule was **provider-neutral**: write the failure mode that is the same on all three, because a
+service description dated on the day it was written is the thing on this site most certain to
+rot.
+
+The thirty-two that remain are the opposite kind of card. They are **service** cards, they come
+in matched pairs (AWS IAM and GCP IAM, AWS VPC and GCP VPC, and so on), and for them the
+provider *is* the subject. Writing those provider-neutral would be writing nothing.
+
+So D12 inverts D3's rule deliberately, and the inversion is the point:
+
+> **The addition: the assumption you carry over from the other cloud, and exactly where it is
+> wrong.**
+
+Anyone who learned one cloud and moved to another arrives with a working mental model that is
+about 80% right, and the 20% is not evenly distributed — it is concentrated in a handful of
+places where the two designs disagree at the root. Those places are almost never in the
+comparison table, because comparison tables map service *names*.
+
+The test: the difference has to be **structural, not a naming difference**. "AWS calls it a
+Security Group and GCP calls it a firewall rule" is a glossary entry. "GCP firewall rules are
+VPC-wide and priority-ordered with denies; AWS security groups are instance-attached, stateful
+and allow-only" is a different model of the same problem.
+
+| Card | The assumption that breaks |
+|---|---|
+| GCP IAM | You cannot attach a policy to an identity — permissions are bindings *on resources* |
+| AWS IAM Policies | A permission can be granted and still denied; five policy types are evaluated |
+| GCP VPC | The VPC is **global**. Subnets are regional. Firewall rules span the whole network |
+| AWS VPC | Everything is AZ-scoped, and a subnet is "public" only because of its route table |
+| GCP Service Accounts | A service account is an identity **and** a resource you grant access *to* |
+| AWS KMS | The key policy is the authority; the default one delegates to IAM, and a custom one may not |
+| GCP Load Balancing | One global anycast IP, and health checks arrive from ranges you must allow |
+| AWS Observability | Logs and Metrics are separate products with separate bills |
+
+**✅ D12 shipped** — 8 cards, `cloud` 32 → 24 thin (50% → 38%).
+
+### The D13 spec — what it means when it finds nothing
+
+D4 gave `blueteam`'s tool cards *what this tool cannot see*. The twenty-eight that remain are
+mostly the domain's **practices and outputs** — hunting, tuning, benchmarks, forensics,
+adversary emulation, threat intel — and they share a gap that is peculiar to defensive work and
+almost never written down.
+
+**Blue-team tools return a negative result most of the time.** The hunt finds nothing. The
+sandbox says clean. The benchmark passes. The coverage map is green. And nothing on this site,
+or in most of the documentation these tools ship with, says how to read that — so a negative
+result gets treated as reassurance when it is, at best, a statement about the question that was
+asked.
+
+> **The addition: what it means when this finds nothing, and what would have to be true for that
+> to be good news.**
+
+The second clause is the working half. "It might be a false negative" is a shrug; naming the
+conditions under which absence is genuinely evidence is a checklist somebody can run.
+
+The eight are chosen so the *mechanism* of the false negative differs each time:
+
+| Card | Why "nothing found" may mean nothing |
+|---|---|
+| Threat Hunting | The hypothesis was never written down, so nobody can say what was ruled out |
+| Windows Forensic Artifacts | Absence of an artefact is not absence of activity — rollover, defaults, anti-forensics |
+| Vulnerability Scanners | An unauthenticated scan is a guess from outside the host |
+| MITRE ATT&CK coverage | A green cell means a rule exists, not that it fires |
+| YARA | A rule is a hypothesis about bytes; no match means your description is wrong, not that the file is clean |
+| Malware Sandboxes | Evasion, time bombs, geofencing, and C2 that was already taken down |
+| Detection Tuning | Zero alerts after tuning: did you remove the noise or the detection? |
+| CIS Benchmarks & STIGs | A pass measures configuration against a checklist, and "not applicable" is doing a lot of work |
+
+**✅ D13 shipped** — 8 cards, `blueteam` 28 → 20 thin (52% → 37%).
+
+### The D14 spec — the number at which this stops being the right answer
+
+`data`'s remaining thin cards are mostly **product** cards: PostgreSQL, SQLite, Redis, MongoDB,
+Cassandra, DuckDB, graph databases. D1 gave each card a different missing thing and D8 gave the
+SQL cards their silent wrong answers. The product cards need a third thing, and it is the one
+that makes database advice either useful or worthless:
+
+> **The addition: the number at which this stops being the right answer, and what you move to.**
+
+Every one of these cards is currently written as though data volume and access pattern were
+details. In databases they are the *only* thing. "PostgreSQL is the default choice" is true and
+useless without the sentence that follows it — until *what*? "SQLite is everywhere" is true and
+the limit is not the one people assume: it handles hundreds of gigabytes comfortably and falls
+over on **concurrent writers**, which is a completely different axis.
+
+Two requirements, and a card missing either was rewritten:
+
+| Requirement | Why |
+|---|---|
+| A **named threshold** — rows, writes per second, working-set size, hop count, concurrent writers | "It depends on your workload" hands the work back. A number is arguable; a shrug is not |
+| **What you move to**, and what that costs | A limit with no next step is discouragement. The migration is the actual decision |
+
+The eight are chosen so the *dimension* differs each time — a wave where every threshold was
+"rows in the table" would be one idea eight times:
+
+| Card | The axis that actually binds |
+|---|---|
+| PostgreSQL | Connections and the single writer node, long before storage |
+| SQLite | Concurrent writers — not size |
+| Redis | Working set against RAM, and what eviction does at the boundary |
+| MongoDB | The moment the access pattern needs a join |
+| Cassandra & DynamoDB | Below a threshold as well as above one — knowing the queries first |
+| Partitioning & Sharding | Maintenance cost, not query time. And sharding is a one-way door |
+| Columnar Engines | Scan-heavy analytics, and DuckDB's single-node ceiling |
+| Graph Databases | Traversal depth: two hops is a join, five is a graph |
+
+**✅ D14 shipped** — 8 cards, `data` 23 → 15 thin (55% → 36%).
+
+### The D15 spec — show the artefact
+
+D6 took `eng`'s architecture patterns. What remains splits into more technical cards and a
+**craft and career** cluster — code review, ADRs, estimation, technical debt, Staff+ archetypes,
+influence without authority — and those are thin in a way that adding analysis will not fix.
+
+They already contain analysis. What they contain none of is **the thing itself**. A card explains
+that a good review comment is specific and kind, and never shows one. A card explains that an ADR
+records the decision and its context, and never contains an ADR. A card explains that estimates
+should carry assumptions, and gives no estimate.
+
+> **The addition: the artefact, written out. The review comment as it would be typed. The ADR
+> with its headings filled in. The estimate with its assumptions and its range.**
+
+This is the first spec in the phase that adds *concrete* rather than *analytical* content, and it
+is the right one here for a specific reason: craft is imitated before it is understood. A reader
+who has never seen a good design doc cannot produce one from a description of its qualities, and
+one worked example does more than a page of criteria.
+
+The test: **it has to be copy-pasteable.** Not "a review comment should explain the why" but the
+comment, in quotes, that somebody could adapt in thirty seconds.
+
+| Card | The artefact |
+|---|---|
+| Code Review | Three versions of the same comment: unhelpful, good, and blocking |
+| ADRs & Design Docs | A complete short ADR, all four headings filled in |
+| Estimation & Planning | An estimate with its assumptions listed and a range rather than a number |
+| Designing for Failure | A completed pre-mortem for one real dependency, rows and all |
+| Staff+ Archetypes | What evidence looks like per archetype, as sentences a manager could paste |
+| Influence Without Authority | The message that actually gets another team to act |
+| Back-of-the-Envelope | A full worked calculation with the numbers |
+| API-First | The contract, and the three questions to ask in review |
+
+**✅ D15 shipped** — 8 cards, `eng` 24 → 16 thin (32% → 21%).
+
+### The D16 spec — what this touches that your scope may not cover
+
+`redteam` has had two waves. D2 gave each tool card *what using it costs you and what the
+defender sees*; D11 gave *what you must already have before it runs*. The twenty-four remaining
+share a third gap, and it is the one the domain's own first card —
+**Rules of Engagement — Read This First** — exists to address and then never connects to any
+specific tool.
+
+Several of these tools reach past the target by their nature rather than by mistake. Radio does
+not respect a property line. OSINT about a company is mostly data about its **people**. A MITM
+on a network segment intercepts everyone on it. `sqlmap` writes. Proving exfiltration means
+actually moving data somewhere real.
+
+> **The addition: what this touches beyond the target, and the line the rules of engagement have
+> to contain before you run it.**
+
+The second clause keeps it practical rather than a caution: a boundary with no corresponding
+clause is a worry, and a boundary with one is a pre-engagement checklist.
+
+The test: the reach must be **inherent to the tool**, not a mistake an operator could avoid.
+"Do not scan out of scope" is discipline; "802.11 capture cannot exclude the neighbours' frames"
+is physics.
+
+| Card | What it reaches |
+|---|---|
+| Shodan & Censys | Third-party data about hosts, some of which are not yours and some of which is old |
+| Google Dorking, Maltego, SpiderFoot | Personal data about employees — the subject is people, not infrastructure |
+| Wifite & hcxdumptool | Radio geography, which ignores the property line entirely |
+| Bettercap | Every device on the segment, not just the one in scope |
+| sqlmap | The target's data, in write mode, on a system that may be production |
+| Flipper Zero & Sub-GHz/RFID | Physical premises, other tenants, and law that varies sharply by jurisdiction |
+| Data Exfiltration Channels | Real data leaving to a real destination you now hold |
+| msfvenom | An artefact that becomes public the moment somebody submits it to a scanner |
+
+**✅ D16 shipped** — 8 cards, `redteam` 24 → 16 thin (46% → 31%).
+
+### The D17 spec — what you are billed for, and which default is expensive
+
+`cloud` has had two waves: D3's provider-neutral failure modes for the concept cards, D12's
+cross-cloud assumptions for the service cards. The twenty-four remaining share a third gap, and
+it is the one thing that makes this domain unlike every other on the site.
+
+**Everywhere else, a mistake breaks something. Here, a mistake is billed** — quietly, monthly,
+by a service that is working exactly as designed. Not one of these cards says what the meter
+counts.
+
+> **The addition: the unit you are billed for, which default is expensive, and where the surprise
+> line item comes from.**
+
+One hard rule, and it is what makes this durable rather than the fastest-rotting content on the
+site: **name the unit, never the price.** Prices change quarterly and would put a stale number on
+1,420 pages. Billing *shapes* — per GB scanned, per hour whether or not it is used, per GB
+crossing a zone boundary, a 90-day minimum on an object stored for one — change on a scale of
+years, and they are what actually determines the invoice.
+
+| Card | The meter |
+|---|---|
+| GCP Storage | Storage class minimums — an Archive object deleted next week still bills for a year |
+| AWS Compute | The instance is the part you switch off. EBS, snapshots and a public IPv4 are not |
+| GCP Compute | Persistent disks bill provisioned, not used; discounts are a commitment decision |
+| GCP Observability | Log **ingestion** volume, and a default bucket that keeps everything |
+| BigQuery | Bytes **scanned**, not returned. `SELECT *` is the whole lesson |
+| Cloud CI/CD | Build minutes, and what a cache miss costs on every push |
+| Hybrid Connectivity | Data transfer — the line item that surprises people most, on every provider |
+| GCP Databases | HA doubles it, storage auto-grows and **never shrinks** |
+
+**✅ D17 shipped** — 8 cards, `cloud` 24 → 16 thin (38% → 25%). Site at **155 thin**.
+
+**✅ D18 shipped** — 8 cards, `blueteam` 20 → 12 thin (37% → 22%). Site at **147 thin — §8's target is met.**
+
+### The D18 spec — who owns it, how often, and what it becomes without that
+
+The wave that crosses §8's target goes back to `blueteam` for a third time. D4 gave its tool
+cards *what this tool cannot see*; D13 gave its practices *how to read a negative result*. The
+twenty remaining share the failure mode that actually kills defensive tooling in real
+organisations, and it is not technical.
+
+**These tools are deployed and then not operated.** A threat-intel platform whose feeds nobody
+curates fills with expired indicators. A SIEM's field extractions break silently the day an
+application changes its log format. A hardening scanner produces a report nobody opens. An
+adversary-emulation exercise run once proves something about a Tuesday in March.
+
+> **The addition: what this needs from a person every week or month, and what it silently becomes
+> without that.**
+
+The second clause is what stops this being a maintenance checklist. Every one of these degrades
+into a *specific* wrong thing — not "it gets worse" but "it becomes a list of indicators that
+were true last year", which is a claim somebody can go and check.
+
+The test: the cadence must be **nameable** — weekly, per release, per log-source change — and the
+degraded state must be **recognisable**, so a reader can tell whether they are already in it.
+
+| Card | Without an owner it becomes |
+|---|---|
+| MISP & OpenCTI | A database of indicators that were true last year |
+| Splunk / SPL | Dashboards that quietly stopped matching when a log format changed |
+| OSQuery | Packs that error on some platforms and return nothing, which looks like a clean fleet |
+| Lynis | A score nobody reads, instead of a diff somebody acts on |
+| Adversary Emulation | Evidence about one Tuesday, presented as coverage |
+| Chain of Custody | A process that exists in a document and has never been performed |
+| Purple Teaming | A workshop, rather than a loop that closes |
+| Elastic / ELK | A cluster with a mapping explosion and no index lifecycle |
 
 ## 7. The trap in this plan
 
@@ -10920,6 +11405,7 @@ criteria:
 ```
 before:  330 topics single-concept and under 1,800 chars   (23% of site)
 target:  under 150, with the remainder audited and confirmed as reference cards
+ACTUAL:  147 (10% of site) after 18 waves — ✅ target met, and the remainder audited in D10
 ```
 
 And the counter-metric, because §7's first failure mode is invisible in a length number:
@@ -11173,6 +11659,12 @@ Deleting a topic is not free, and this file has established exactly how not free
 | Related-map edges break | `suggest_related.py --check` will catch it; the fix is to repoint, not to delete the pair |
 | Learning-path steps break | `check_paths.py` catches it; same fix |
 
+**And a third option, added in wave C4 and absent from the table above: move.** When §3 says
+keep both and the two cards are in the wrong *places* rather than duplicated, changing a card's
+domain costs nothing at all — ids are `slugify(title)`, so the permalink, the five
+`localStorage` prefixes, the related edges and the path steps are all unchanged. Check whether
+the duplication is apparent before assuming it is real.
+
 **So the rule is: merge, never delete.** The surviving card absorbs whatever the other had
 that it lacked, the retired id goes into `slug-aliases.json` pointing at the survivor, and
 `renames.json` records why. A reader following an old link lands on the better card. Nobody
@@ -11184,10 +11676,10 @@ loses a note.
 |---|---|---|
 | **C1** — `script` internal | 6 | Web Scraping, OOP, Design Patterns, Regular Expressions, Git, Files. The largest domain and the worst offender, which is not a coincidence — 145 topics written across many sessions |
 | **C2** — `net` wireless and cloud | 5 | Three wireless cards is the clearest case on the site. Likely outcome: one beginner card, one deep card, one retired into them |
-| **C3** — `script`↔`shortcut` | 5 | Genuinely ambiguous: `shortcut` is a reference domain, so several of these may be §3's reference-plus-concept pattern. **Check before merging** |
-| **C4** — Kubernetes across `devops` and `linux` | 3 | Cross-domain, so the question is which domain owns the subject. Probably `devops`, with `linux` keeping a container-internals card that is genuinely its own |
-| **C5** — `sec` Zero Trust, `web`↔`script` WebAssembly and TypeScript | 4 | Small and clean |
-| **C6** — the tail | ~13 | Mostly below 0.6 overlap and mostly legitimate. Audit, expect to keep most |
+| ✅ **C3** — `script`↔`shortcut` | 5 | Checked before merging, and the check was right: **2 merged, 4 refused**. The pair that mattered most was not on the list — two `script` PowerShell cards scoring 0.25 on titles and nearly identical in content |
+| ✅ **C4** — Kubernetes across `devops` and `linux` | 3 | The guess was right and the action was not a merge. `devops` owns Kubernetes; `linux` owns container internals. **Moved, not merged** — §3 says keep both, and the card was in the wrong domain, not duplicated |
+| ✅ **C5** — `sec` Zero Trust, `web`↔`script` WebAssembly and TypeScript | 4 | Small and clean, and it turned out to overlap Phase 8: both `web` cards retired were on the **thin** list. **2 merged, 1 refused** |
+| ✅ **C6** — the tail | ~13 | Audited. The expectation held — **2 merged, the rest kept** — and the audit found a wrong acronym expansion that no check could see. **Phase 9's queue is complete** |
 
 **About 23 merges**, of which perhaps 15 are unambiguous.
 
@@ -11215,7 +11707,7 @@ measured by a throwaway script that nobody will find again. The rule this file h
 several times over: **a number stated in a plan and not produced by a committed script is a
 claim with a shelf life.**
 
-## T1 — `tools/depth_report.py`
+## ✅ T1 — `tools/depth_report.py` — shipped
 
 Phase 8's entire argument rests on a measurement that currently lives in this document and
 nowhere else. The script emits both numbers §8 asks for:
@@ -11232,7 +11724,7 @@ deepening pass that added words and no ideas.
 
 Not a gate. A census, printed by `make check` beside the acronym-breadth one.
 
-## T2 — `tools/near_duplicates.py`
+## ✅ T2 — `tools/near_duplicates.py` — shipped
 
 Phase 9 §6. Tokenise titles, strip stop-words and acronym expansions, compare pairwise,
 report above 0.5 overlap. Runs in under a second on 1,432 titles.
@@ -11242,7 +11734,7 @@ card is written — `near_duplicates.py --title "Spanning Tree — …"` — bec
 prevents is a session writing a card that already exists, and by review time the cost is
 already sunk. The full pairwise report is the secondary mode.
 
-## T3 — The verdict check, which is the rubric made mechanical
+## ✅ T3 — The verdict check, which is the rubric made mechanical — shipped
 
 Measured this session: **2,098 tables across the site, and 565 of them (27%) are followed by
 nothing at all.** No verdict, no prose, straight into the next block.
@@ -11259,7 +11751,7 @@ ever checked it. Worst offenders: `script` 69, `shortcut` 51, `net` 46, `sec` 39
 This is the highest-leverage check in the phase, because it enforces the one property §1 of
 the rubric identifies as the difference between a card and a search result.
 
-## T4 — The related-map orphan report
+## ✅ T4 — The related-map orphan report — shipped
 
 **902 of 1,432 topics (63%) have no related-topic link at all.** That is not automatically
 wrong — the map was built by hand and hand-built things are partial — but the interesting
@@ -11284,7 +11776,7 @@ them.
 from anywhere else" rather than "topics missing metadata". Roughly 159 topics × 2 pairs is a
 few sessions of genuinely high-return work.
 
-## T5 — A search-quality harness
+## ✅ T5 — A search-quality harness
 
 The site has search, acronym-aware search and a quiz built on the same index, and **nothing
 tests whether searching for a thing finds it**. Every other user-facing behaviour has a
@@ -11304,7 +11796,7 @@ Score is *expected topic in the top three*. It fails when a content change quiet
 retrieval — for example when two near-duplicate cards (Phase 9) both match a query and
 neither ranks first, which is a duplication symptom the title report cannot see.
 
-## T6 — Reading time on the topic header
+## ✅ T6 — Reading time on the topic header
 
 Derived at build time from character count, stamped as an attribute, rendered small beside
 the badge. Costs nothing and sets an expectation, which matters on a site where cards range
@@ -11313,7 +11805,7 @@ from 900 to 15,000 characters with no outward sign of which is which.
 **The honest caveat:** reading time is a proxy for length, not difficulty, and labelling a
 dense 2,000-character card "2 min" is a small lie. Worth it, but the plan should say so.
 
-## T7 — A difficulty attribute, and a filter for it
+## ✅ T7 — A difficulty attribute, and a filter for it
 
 The site teaches at two levels — Phase 9 §3 says so explicitly — and the only outward sign is
 a badge that sometimes reads *Beginner*. A `data-level` attribute with three values, stamped
@@ -11323,7 +11815,7 @@ from the badge where one exists and by hand elsewhere, would make the beginner l
 This also fixes something Phase 9 exposed: three wireless cards are confusing without levels
 and are a sensible progression with them.
 
-## T8 — "New since you last visited"
+## ✅ T8 — "New since you last visited"
 
 The changelog exists and is generated. A per-reader version is a timestamp in `localStorage`
 and a diff against the changelog's own dates — no new data, no server, one small view.
@@ -11332,7 +11824,7 @@ and a diff against the changelog's own dates — no new data, no server, one sma
 has no way to find them. The changelog answers "what changed"; this answers "what changed
 *for me*", which is the question people actually have.
 
-## T9 — A contradiction check across near-duplicates
+## ✅ T9 — A contradiction check across near-duplicates
 
 `check_contradictions.py` already compares claims across the site. Phase 9's pairs are the
 highest-probability place for two cards to disagree, because they were written by different
@@ -11348,9 +11840,11 @@ not a stylistic difference.
 | 2 | **T1** depth report | Phase 8 cannot start honestly without it |
 | 3 | **T2** near-duplicates | Phase 9 needs it, and the `--title` mode prevents the next instance |
 | 4 | **T4** orphan report | Turns a vague "the related map is partial" into 159 named cards |
-| 5 | **T9** contradiction pass | Ten minutes, reuses an existing tool, and finds real bugs if any exist |
-| 6 | **T5** search harness | The last untested user-facing behaviour |
-| 7–9 | T6, T7, T8 | Reader-facing; genuinely nice, and none of them is load-bearing |
+| 5 | ✅ **T9** contradiction pass | Ten minutes, reuses an existing tool, and finds real bugs if any exist. **It found two — in the tool** |
+| 6 | ✅ **T5** search harness | The last untested user-facing behaviour. **21 fixtures, 6 known misses, and one query that returned 90% of the site** |
+| 7 | ✅ **T6** reading time | Shipped, and it broke both contrast and the search index on the way in |
+| 8 | ✅ **T7** difficulty attribute | Shipped as `data-level` plus a `level:` search operator. 121 beginner, 8 advanced, 1,297 core |
+| 9 | ✅ **T8** new since last visit | Shipped as a banner plus a `since:` operator. **Phase 10 is complete — all nine items** |
 
 
 ---
@@ -11708,3 +12202,2295 @@ Three honest options, and the file has already picked one before:
 **Option 3 first, then option 1 when the live queue next empties.** Deleting is the option
 that loses the record of *why* things were decided, and this file's most-quoted sections are
 the ones explaining why something was rejected — which nobody would have written twice.
+
+
+## Session record — Phase 10, items T1–T4 shipped, and four numbers that moved
+
+The plan's own recommended order is **10, 9, 8, 7**, so this session started with the
+tooling. Four tools, three of them censuses, and every one of them disagreed with the number
+`plan.md` quoted — which is the entire argument for committing the script rather than the
+figure.
+
+| Number | Plan said | Tool says | Why they differ |
+|---|---|---|---|
+| Thin topics | 330 (23%) | **288 (20%)** | The plan counted `shortcut` and `acronym`; the tool excludes them, per Phase 8 §4's own rule about reference domains. Same population, honest denominator |
+| Tables with no verdict | 565 | **513** | Same exclusion, same reason |
+| Near-duplicate pairs | 36 | **54** | The tool folds plurals. "Regular Expressions" and "Regular Expression" were being counted as different subjects by the throwaway script that produced 36 |
+| Deep orphans | 159 | **158** | The tool counts a resolved `data-xref` as a link, because a reader can follow one. One card was reachable that way |
+
+Three of the four corrections make the site look *better* and one makes it look worse. That
+distribution is roughly what an honest instrument should produce, and it is the reason the
+plan's numbers are now marked as superseded rather than quietly edited.
+
+### T3 — the verdict check, and why it is a ceiling
+
+`style.css` has asserted *every table gets a verdict* since the `.verdict` class was
+introduced, and nothing had ever checked it. **513 tables are followed by no prose at all**,
+across every domain except the two reference ones.
+
+A ceiling rather than an error, for exactly the reason the inline-style counter is one: 513
+cannot be cleared in a pass, and a handful are legitimate. What the ceiling buys is that
+**no new table ships without a sentence saying what it means** — which is the single property
+the card rubric identifies as the difference between a card and a search result.
+
+### T2 — the mode that matters, and the version of it that was wrong
+
+`--title` is the point of the tool: run it *before* writing, because by review time the cost
+is sunk. The first version used Jaccard overlap and reported this:
+
+```
+$ near_duplicates.py --title "Spanning Tree Protocol — Loops and Convergence"
+  0.25  [net] Spanning Tree — Why a Loop Is Catastrophic, and What STP Does…
+  Nothing at or above 0.50; closest shown. Clear to write.
+```
+
+**"Clear to write", against a card the same session had written.** Jaccard is symmetric and
+punishes a short candidate against a long existing title, however completely the subject is
+covered. The measure for `--title` is *containment* — what share of the candidate's tokens
+already exist — which scores the same pair at 0.60 and refuses. Plural folding was needed
+too: `loops` against `loop`.
+
+That is the fifth check in this file whose first version measured something adjacent to the
+claim. The pattern is now reliable enough to plan around: **write the check, then run it
+against a case you already know the answer to**, before trusting a single number it produces.
+
+### T4 — what the orphan report actually found
+
+902 topics have no related link and no cross-reference pointing at them. The useful slice is
+the 158 that are deep, and the domain concentration is stark:
+
+```
+7 cards  7,137 chars  [productivity] Note-Taking for Learning
+7 cards  6,538 chars  [productivity] The Japanese Mastery Loop
+6 cards  6,222 chars  [productivity] The Memory Palace
+6 cards  6,028 chars  [productivity] Study Systems That Survive a Brain That Won't Cooperate
+6 cards  4,946 chars  [productivity] Attention — Task Switching, Residue
+```
+
+**Five of the top seven are `productivity`**, which the connectivity measurement already
+flagged as an island. The domain is among the best-written on the site and is reachable only
+by clicking its chip. That is now a named, ranked work queue rather than an impression.
+
+### Wiring
+
+`make census` runs all three; CI prints them in the log as a reports-only step, so the
+numbers move visibly in a pull request without gating it. `make check` gained the verdict
+ceiling. All three tools guard `SIGPIPE`, because a census is a thing people pipe into
+`head` and a `BrokenPipeError` traceback looks like a crash.
+
+**Remaining in Phase 10:** T5 search harness, T9 contradiction pass over the duplicate pairs,
+and the three reader-facing items T6–T8.
+
+
+## Session record — two bugs found by reading Phase 9's own preconditions
+
+Phase 9 §4 lists what a topic merge costs, and the list is what makes "merge, never delete"
+the rule: the permalink dies, and **five `localStorage` prefixes orphan** — `reviewed:`
+`bookmark:` `known:` `srs:` `note:`. The alias map exists to prevent both.
+
+Before doing a single merge, I read the code that does the preventing. It did not.
+
+### Bug one — `note:` was never migrated
+
+```js
+[REVIEWED_PREFIX, BOOKMARK_PREFIX, KNOWN_PREFIX, SRS_PREFIX].forEach(p => {
+```
+
+Four of the five. The missing one is the only piece of progress a reader **writes by hand**
+— everything else is a click. So every rename in the site's history has silently discarded
+the reader's own words while carefully preserving their checkboxes, and Phase 9 was about to
+do it twenty-three more times.
+
+### Bug two — the migration ran once per device, ever
+
+```js
+const ALIAS_MIGRATED_KEY = "migrated:slug-aliases-v1";
+if (localStorage.getItem(ALIAS_MIGRATED_KEY)) return 0;
+```
+
+A boolean. A device that had visited before the merge would never migrate an alias added
+after it — which is every device, for every future merge. The alias map's *hash redirect*
+would still work, so the link would resolve and the progress would not follow it.
+
+The flag is now keyed on the **contents** of the alias map — an FNV-1a hash of the sorted
+pairs — so it changes exactly when the map does, runs once more, and does nothing on a
+device that has already seen that map. Previous-generation flags are removed when the new
+one is written, so they do not accumulate one per revision.
+
+### And a test, because neither half had one
+
+Three checks, and the middle one is named for what it is: *a note survives the move, which is
+the one it used to lose*. The third proves a second run with an unchanged map moves nothing
+and leaves exactly one flag. **135 → 138 smoke checks.**
+
+### The general point
+
+Phase 9 is a queue of twenty-three merges. Reading the preconditions before starting cost
+twenty minutes and found a data-loss bug that had been live for the whole history of the
+alias map — **and it would have been invisible after the merges, because a lost note leaves
+nothing behind to notice.** The plan section that made this findable is the one listing what
+the work *costs*, which is the least interesting part of a plan to write and turned out to be
+the load-bearing one.
+
+
+## Session record — Phase 9, first wave: four merges and four refusals
+
+Eight candidate pairs examined with Phase 9 §3's test — *open both, write one sentence saying
+who each is for; if the sentence is the same, one should not exist.* **Four merged, four kept**,
+and the refusals took longer than the merges.
+
+### Merged
+
+| Retired | Into | Absorbed |
+|---|---|---|
+| `script` *Design Patterns — Named Solutions* | *Design Patterns — Reusable Solutions* | The over-engineering warning. The survivor had **no verdict at all** — it ended mid-code-block, which is the 513-table problem in its natural habitat |
+| `script` *Web Scraping — Extracting Data From Websites* | *…with Python* | One honest sentence the survivor lacked: personal or research use is a grey area, **commercial use of scraped data is frequently unlawful outright** — the distinction that decides whether a hobby project can become a product |
+| `net` *Wireless — 802.11 Standards & Security* | *Wireless Networking — 802.11…* | **Wi-Fi 7 (802.11be)**, which only the retired card had, the generation-name mapping, the 802.1X row, and two verdicts where there had been none |
+| `devops` *Kubernetes — Container Orchestration at Scale* | *…Fundamentals* | The complexity caveat, rebuilt as a full concept card: when Kubernetes earns its cost and when it does not, ending on *"Kubernetes because it is what serious teams use" is not a requirement* |
+
+Every merge left the survivor **better than either card was**, which is the test of whether
+consolidation is worth doing at all. Three of the four added a verdict that had never existed.
+
+### Kept, and why
+
+| Pair | Why it stays |
+|---|---|
+| `sec` Zero Trust ×2 | One `SEC • Architecture`, one `Beginner`. The site's two-level teaching model, working exactly as designed |
+| `script` OOP ×2 | One is a **language-agnostic reference** with a cross-language comparison table; one teaches it in Python. Different jobs — §3's reference-plus-concept case |
+| `net` DNS deep-dives ×2 | Titles overlap at 0.60; content does not. One is *what DNS is* — records, DNSSEC, zones. The other is *how to troubleshoot it* — the resolution chain, tracing, cache. Both Beginner-badged, neither redundant |
+| `net` Cloud Networking ×2 | Beginner and `NET • Cloud`. Same as Zero Trust |
+
+**Half the queue was not work.** That is the number worth carrying into the remaining waves:
+Phase 9 estimated "23 merges, of which perhaps 15 are unambiguous", and the first eight pairs
+returned a 50% rate. The estimate should probably be halved.
+
+### What the census says now
+
+```
+before  54 pairs at or above 0.50, across 1,373 titles
+after   48 pairs at or above 0.50, across 1,369 titles
+```
+
+Four merges removed six pairs, because the three-way wireless and Kubernetes clusters each
+collapsed more than one edge.
+
+### On the mechanics
+
+`slug-aliases.json` 103 → **107 entries**. `make check` passed without a single repointing:
+none of the four retired ids appeared in `related.json` or `paths.json`, which the checks
+would have named. That is luck rather than design — the next wave should check before
+deleting rather than after, and the merge helper should do it.
+
+Site total **1,432 → 1,428**. Smoke **138/138** · axe **6/6** · visual **2/2**. This is the
+only phase whose success makes the site smaller.
+
+
+## Session record — Phase 9 wave two, and the guard earning its place on first use
+
+Wave one ended on a note: *"`make check` passed with no repointing needed, which was luck
+rather than design — the merge helper should check `related.json` and `paths.json` before
+deleting, not after."*
+
+So the throwaway script became `tools/retire_topic.py`, with the check in front of the
+delete. **It refused the first merge it was asked to do.**
+
+```
+$ retire_topic.py ai --retire "Fine-Tuning vs RAG" --into "Fine-Tuning vs. Prompting"
+REFUSED — 3 reference(s) would break:
+  related.json has fine-tuning-vs-rag-vs-prompting-when-to-use-which as a source with 1 link(s)
+  related.json: training-pipeline-pretraining-sft-rlhf-dpo -> fine-tuning-vs-rag-…
+  ai.html cross-references it by title
+```
+
+Three real references, on the very next merge after the wave that got away with it. The
+repointing took two minutes with the list in front of me; finding them after the block was
+gone would have meant reading a failing lint run and reconstructing what had been deleted.
+
+The tool also refuses an ambiguous fragment — `"Zero Trust — Never Trust"` matched three
+topics, because one card's title contains another's — and it follows existing aliases
+forward, so no alias is left pointing at a topic that no longer exists.
+
+### Two more merges
+
+| Retired | Into | Absorbed |
+|---|---|---|
+| `ai` *Fine-Tuning vs RAG vs Prompting* | *…Picking the Right Tool* | The cost-ordered table and the rule underneath it: prompt, then retrieve, then fine-tune — plus the classic mistake, which is **fine-tuning to add knowledge** |
+| `linux` *Disk Management* | *Storage Management* | The two commands the survivor lacked, and a verdict it never had |
+
+The `linux` absorption is the one worth recording, because it nearly went wrong. The
+absorption edit missed its anchor — the file uses a literal `→`, not `&rarr;` — and printed
+an error, **but the retire ran anyway**, because they were two separate commands in one
+shell line. For a few minutes the `df`/`du` content existed only in Git.
+
+Recovering it turned out to improve the result. Reading the survivor properly showed it
+already had `df -h`, `df -i` and two forms of `du`; what it genuinely lacked was the
+largest-files command, `lsof +L1 | grep deleted`, and a verdict. So the absorbed content is
+three lines rather than a duplicated block:
+
+> When `df` and `du` disagree, the difference is a deleted file some process still has open —
+> a log rotated out from under a service that never reopened it. The space returns when that
+> process restarts, not when the file is removed, because it already was.
+
+**The lesson is about sequencing, not about the tool:** absorb first, verify the absorption
+landed, and only then retire. `retire_topic.py` cannot check that, because whether the
+survivor absorbed the right thing is a judgement.
+
+### Where the numbers are
+
+```
+topics        1,432 → 1,428 → 1,426     six merges
+duplicates       54 →    48 →    46
+thin topics     288 →   287              one survivor crossed the line by absorbing
+mean chars/card 1,196 → 1,198            the padding counter-metric, holding
+```
+
+`slug-aliases.json` 103 → **109**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+That thin-count line is the first evidence Phase 8's counter-metric works as designed:
+absorbing content into a survivor moved a card off the thin list and moved the mean by two
+characters. A padding pass would have moved the mean by a great deal more.
+
+
+## Session record — Phase 8 wave D1: the deepening pass, and the counter-metric holding
+
+The W4 worked specification named eight `data` cards and the one thing each was missing.
+All eight shipped, exactly as specified — which is the first evidence in this file that a
+*deepening* wave can be specified to transcription depth the same way a content wave can.
+
+| Card | Added | The sentence it now carries |
+|---|---|---|
+| *Locking & MVCC* | The failure mode | A lock wait does not look like an error — it looks like **nothing, for a while, and then a timeout** from a component several layers away |
+| *Connection Pooling* | The decision | Raising the pool size past a point buys wait time rather than throughput. Fifty small pools still sum to one large one |
+| *ER Modeling* | The trap | Model the invariant, not this year's process — and price belongs on the order line, because a product's price changing must not rewrite last year's revenue |
+| *Normalization* | The verdict | 3NF and stop for transactional; denormalise deliberately for analytical. **Duplication with an owner is different from duplication by accident** |
+| *Backups & PITR* | The failure mode | Backup jobs are monitored and restores are not, so the number nobody has measured is how long recovery takes |
+| *Replication & HA* | The decision | Synchronous makes the replica a dependency of every write — you traded data loss for availability, which is a different trade from the one most people think they are making |
+| *Monitoring a Database* | The trap | 10,000 queries at 2 ms and 100 at 4 s has a mean of 41 ms and a p99 of four seconds |
+| *The Semantic Layer* | The decision | A definition in a glossary is documentation; a definition queries cannot bypass is the thing itself |
+
+### The measurement, which is the point of having built the tool
+
+```
+                          before   after
+thin topics                  287     279      ← eight, exactly
+data domain             40 (93%)  32 (74%)
+mean chars/concept card    1,198   1,200      ← +2
+```
+
+**The counter-metric is the finding.** Phase 8 §7 names padding as the first failure mode —
+words added, nothing said — and predicted it would show up as the thin count falling while
+mean characters per concept card rises. Eight cards gained roughly 2,000 characters each and
+the mean moved by **two characters**, because every addition came as a *new concept card*
+rather than as more prose in the existing one.
+
+That is the difference between deepening and padding stated numerically, and it is now
+checkable on every future wave without anyone having to read the diff.
+
+### On the method
+
+Each addition took one of Phase 8 §5's steps — verdict, failure mode, decision, trap — and
+stopped there. None of the eight reached step 4 *and* step 5; several had exactly one honest
+thing to add and got exactly one. The step list is doing what a rubric should: giving
+permission to stop.
+
+The habit that made it fast was reading all eight cards first, in one pass, before writing
+anything. The eight are related — pooling, locking and monitoring are the same queueing
+problem from three angles — and writing them together let each one point at the others
+instead of repeating them.
+
+Site **1,426 topics** (unchanged — deepening adds no ids, which is the whole argument for
+doing it before Phase 7). Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+
+## Session record — Phase 8 wave D2: `redteam`, and the addition that changed the domain
+
+D2's spec was one sentence and it turned out to be the right one: *each card needs the same
+addition — when would you not use this, and what does it look like to the defender.* Eight
+tool cards, one uniform second concept card, and the domain now reads differently.
+
+| Tool | The sentence it gained |
+|---|---|
+| Masscan | There is no quiet configuration — there is a rate you chose and a rate somebody else notices |
+| Amass | Passive and active are two different engagements, and the forgotten host is usually already in certificate transparency, because the log is permanent |
+| ffuf | **Getting blocked invalidates the test** — the client learns their rate limiting works rather than whether their application is sound |
+| Nuclei | A template is a request and a match condition written by a stranger, and both halves can be wrong. Read the ones tagged intrusive before enabling them |
+| Responder | The defensive answer removes the technique rather than detecting it, and all three settings are free — which is why it still works everywhere |
+| Aircrack-ng | Every other tool is bounded by an address range; **radio is bounded by geography**, and geography does not respect the rules of engagement |
+| Sliver | Widely adopted means widely detected. What gets caught is beacon regularity, not framework choice |
+| Nikto | Run it once, early, and never as your evidence — every finding is a lead to confirm |
+
+### Why the uniform addition works here and would not elsewhere
+
+`data`'s eight cards each needed a *different* thing — a failure mode here, a decision there.
+`redteam`'s eight needed the same thing eight times, because the domain has a single
+structural gap: it documents what a tool does and never what using it costs. That is a
+property of the domain, not of the cards, and the spec caught it in one line.
+
+It also makes the domain more useful to the reader it did not previously serve. Half these
+tables now answer a defender's question — *what would I see if someone did this to me* — from
+cards filed under offence. **The `redteam` tooling catalogue has quietly become a detection
+reference**, which is a better outcome than the cards being individually longer.
+
+### The measurement
+
+```
+                          D1 end   D2 end
+thin topics                  279      271     ← eight, exactly, again
+redteam                 40 (77%)  32 (62%)
+mean chars/concept card    1,200    1,201     ← +1
+```
+
+Two waves, sixteen cards, and the padding counter-metric has moved **three characters in
+total**. Phase 8 §8's target was "under 150 thin, with the remainder audited"; the run so far
+is 288 → 271, which is sixteen cards of real progress and a reminder that the target is
+roughly fifteen more sessions of this.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D3: `cloud`, and the failure mode that is provider-neutral
+
+D3's spec asked for something harder than D1's or D2's: not *a* second card, but a second
+card that stays true across AWS, Azure and GCP. The domain's thin cards are thin for a
+specific reason — they were written as "here is the service, here is roughly what it costs",
+and a service description dated on the day it was written is the one thing on this site
+guaranteed to rot. A failure mode does not rot. The eight additions are all failure modes.
+
+| Card | The second card it gained |
+|---|---|
+| Choosing Compute | Operational cost, not compute cost, is what you are choosing — the instance price is the number you compare and the patching, scaling and on-call are the number you pay |
+| Cloud Cost Control | **A budget alert is not a budget control.** The alert fires after the spend, and every provider's story here is the same: the thing that stops spend is a quota, not a notification |
+| Landing Zones | Retrofitting one is a different project entirely. Most of the rows are inconvenient; **overlapping `10.0.0.0/16` ranges is the one that is unfixable** without renumbering a live network |
+| CSPM | Four thousand findings is the same as zero findings. The tool's default posture is "report everything", and a backlog nobody triages is indistinguishable from no tool at all |
+| Terraform on AWS & GCP | State is the thing that breaks, and drift is how you find out — the console change somebody made at 2am is not in state, and the next apply is where you learn that |
+| AWS Load Balancing & DNS | Failover is as fast as the slowest cache between you and the user, which is never your TTL alone: resolvers round up, and some clients pin for the life of the process |
+| AWS Databases | What "managed" covers, and the half it does not — backups and patching yes; your schema, your query plans and your connection count no |
+| AWS Serverless & Containers | **Scale-to-zero is a property of the function, not of the system.** The function scales to zero; the database it opens a connection to does not |
+
+### Why provider-neutrality was the right constraint
+
+The obvious way to deepen a cloud card is to add the other two providers' equivalents, and
+that produces a three-column table that needs re-checking every quarter — the site already
+carries 1,367 freshness stamps and does not need more surface that ages. Writing to the
+failure mode instead means the card is *more* durable after the deepening than before it:
+connection exhaustion behind a scale-to-zero function has been true since the first
+serverless runtime shipped and will outlast every service name in the domain.
+
+Three waves in, the three specs have each asked for a different addition — a per-card gap in
+`data`, one uniform sentence in `redteam`, a provider-neutral failure mode in `cloud` — and
+each was written *before* the cards were touched. The specs are doing real work; they are not
+decoration on the table.
+
+### The measurement
+
+```
+                          D1 end   D2 end   D3 end
+thin topics                  279      271      263     ← eight, exactly, three times
+cloud                                     40 (63%)  →  32 (50%)
+mean chars/concept card    1,200    1,201    1,202     ← +1 again
+```
+
+Twenty-four cards across three waves and the padding counter-metric has moved **two
+characters**. That number is the whole argument that this pass is adding content rather than
+inflating it, and it only holds because every addition arrives as a new concept card with a
+claim of its own rather than as extra sentences bolted onto an existing one.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D4: `blueteam`, and the mirror of D2
+
+D2 gave the offensive catalogue the sentence it was missing — *what using this costs you*.
+D4 gives the defensive catalogue the mirror of it, and the mirror turns out to matter more.
+A red-team card that omits its cost makes an operator careless. **A blue-team card that omits
+its blind spot makes a defender confident**, and confidence about coverage you do not have is
+the specific failure the whole domain exists to prevent.
+
+| Tool | What it cannot see |
+|---|---|
+| Zeek | A sensor sees what crosses it, and less crosses it every year — split-tunnel laptops, east-west inside a subnet, cloud-to-cloud that has no on-premise path |
+| Wireshark | **You cannot analyse a capture nobody took.** By the time an incident is declared the packets are gone; only what was already being written down survives |
+| Suricata & Snort | A signature is a description of something already named — the rule has to exist before the traffic does |
+| Windows Event Logs | The event you need is off (4688 command line, 4104) or already rolled over. **Local retention is not retention** |
+| auditd | Syscalls are not intent, and on a container host they arrive attributed to the host namespace unless something maps them back |
+| Volatility | Memory is gone the moment the machine is. Every plugin is downstream of one decision made by whoever touched the box first |
+| Sigma | Portable rule, non-portable field names — **a rule that converts cleanly and matches nothing looks identical to one that works** |
+| Honeypots | Deception is silent against an attacker who does not look. Silence from a canary is not evidence of absence |
+
+### The test that did the most work
+
+Of D4's three tests, *"not the same blind spot eight times"* rejected the most drafts.
+"Encrypted traffic" is a true and interesting limitation of Zeek, Suricata, Wireshark and
+Arkime, and writing it four times would have produced four cards that each said the same thing
+and a wave that added one idea rather than eight. Forcing a different **kind** of blindness per
+card — placement, retroactivity, prior knowledge, retention, attribution, acquisition,
+translation, selection — is what made the set worth eight cards instead of one.
+
+That taxonomy is now the reusable part. It is a checklist for any detection tool this site
+adds later: *which of these eight kinds of blind does it have?* Most tools have two, and the
+one they do not advertise is usually the one worth writing down.
+
+### Two additions that are load-bearing beyond their own card
+
+- **Zeek's coverage question.** "What percentage of your hosts' traffic physically traverses
+  this sensor?" — if nobody knows, that is the finding. It converts a vague unease into a
+  number somebody has to go get.
+- **Sigma's deployment test.** Fire the behaviour, confirm the rule alerts. Untested imported
+  rules are the most convincing coverage theatre in the domain, because the rule count rises
+  and the detection does not.
+
+### The measurement
+
+```
+                          D1     D2     D3     D4
+thin topics              279    271    263    255     ← eight, exactly, four times
+blueteam                                 36 →  28  (67% → 52%)
+mean chars/concept card 1,200  1,201  1,202  1,203    ← +1, every wave
+```
+
+Thirty-two cards, four waves, and the padding counter-metric has moved **three characters**.
+The regularity is not luck: the discipline is that a deepening arrives as a *new concept card
+with its own claim*, never as extra sentences inside an existing one, and a new card that says
+something carries roughly the domain mean by construction.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D5: `web`, and the machine the code was written on
+
+`web`'s bimodality had a cause, and finding it was most of the wave. The deep cards and the
+thin cards are not separated by effort or by subject — they are separated by whether the card
+ever met a real user. Every thin card describes its feature correctly from a fast laptop, on a
+fast network, in one current browser, with no assistive technology attached and the dev server
+on `localhost`. **The deep ones are the ones that had been to production.**
+
+That made the D5 addition write itself: *the number your own machine cannot show you*, with a
+hard requirement that every card name an instrument, a setting or a threshold.
+
+| Card | The gap, and the instrument |
+|---|---|
+| Reflow & Jank | Your laptop is not the device that will jank — **DevTools CPU 4–6× slowdown**, 16.7 ms per frame, long tasks over 50 ms |
+| Web Storage | The browser can refuse, and can take it back later — quota throws in private mode, ITP clears script-written storage, `localStorage` is synchronous |
+| Core Web Vitals | **Lighthouse is a lab, your users are the field** — field decides *whether*, lab finds *why*; LCP 2.5 s / INP 200 ms / CLS 0.1, all at p75 |
+| Fetch, REST & CORS | The dev proxy makes everything same-origin, so the first real preflight is made by a user; `credentials` plus wildcard origin is rejected outright |
+| Modules & Bundlers | Bytes are what you measure, CPU time is what the user feels — Coverage panel for unused bytes, throttled trace for parse cost |
+| Responsive Design | **Device mode resizes a window; it does not give you a finger** — 44×44 tap targets, `100dvh`, `env(safe-area-inset-*)`, 200% zoom |
+| Accessibility | A clean automated scan is the floor — the two free manual passes are unplugging the mouse and turning the display off |
+| Frontend Testing | `localhost` has no latency, and CI flake is the test finding out — a fixed `waitForTimeout` encodes a guess about speed |
+
+### The instrument requirement is what kept this wave honest
+
+"It's slower on phones" is exactly the padding Phase 8 §7 warns about: it reads like content,
+costs the reader time, and leaves them with nothing to do. Requiring a named instrument killed
+four drafts outright and forced the rest to be specific enough to act on this afternoon. It
+also produced the wave's most useful single sentence, which is a dropdown: **CPU throttling in
+DevTools is the cheapest device lab in existence.**
+
+### The uncomfortable one
+
+The accessibility card says a clean automated scan is the floor rather than the result — and
+this repository's own `make a11y` reports **6/6 scans clean** on every commit in this phase.
+Both things are true at once, and writing the card meant writing down that our own green check
+proves the machine-checkable subset and nothing about focus order, alt text that says
+`image1.png`, or colour used as the only signal. A check you rely on is the hardest thing to
+describe the limits of, which is a reason to do it rather than a reason not to.
+
+### The measurement
+
+```
+                          D1     D2     D3     D4     D5
+thin topics              279    271    263    255    247   ← eight, exactly, five times
+web                                            35 →  27  (85% → 66%)
+mean chars/concept card 1,200  1,201  1,202  1,203  1,204
+```
+
+Forty cards, five waves, **four characters** of movement in the padding counter-metric. Phase
+8 §8's target of "under 150 thin" is now 97 cards away — twelve more waves of this, which is
+worth saying plainly rather than implying the end is near.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D6: `eng`, and why the management track was already good
+
+The D6 diagnosis is the most transferable thing in this wave, and it is not about
+architecture. `eng`'s management cards read well because **management writing has no option
+but to be about trade-offs** — there is no way to describe *influence without authority* that
+does not admit what it costs you. Architecture writing has that option, and the thin cards took
+it: name the pattern, explain the mechanism, stop. That reads as endorsement, and endorsement is
+how a four-person team ends up running a saga orchestrator.
+
+| Pattern | The bill, and the threshold |
+|---|---|
+| Monolith vs Microservices | **The threshold is team count, not request rate.** One team at any traffic level should stay a monolith; several teams on one release train is the real signal |
+| CQRS & Event Sourcing | An append-only log is a promise you cannot take back — erasure requests, schema versions you must read forever, replay time that grows with history |
+| Domain-Driven Design | Without the domain expert it degrades into a folder layout. The cheap half — name things the way the business does — is worth doing everywhere |
+| Clean / Hexagonal | **The adapter you never swap is pure overhead.** Ports pay at payment providers and third-party APIs; the database is not going to change |
+| Saga & Outbox | Compensation is not rollback — a refund is not an un-charge, and every partial state needs a screen and a support answer |
+| Resilience Patterns | Retries cause the outage they were added to survive. Three layers retrying three times is twenty-seven requests for one action |
+| Event-Driven | You trade the stack trace for a correlation ID, and most brokers are at-least-once whatever the marketing says |
+| SOLID | An interface with one implementation is a guess about the future. **Name the second implementation** before adding the abstraction |
+
+### The threshold requirement, and what it rejected
+
+Requiring a *number or a moment* rather than a caveat is what stopped this wave becoming eight
+paragraphs about complexity. "It depends" hands the work back to the reader, which is precisely
+what they came here to avoid. Three drafts were rewritten for having a bill and no threshold —
+and the microservices card was rewritten twice, because the first version's threshold was
+request rate, which is the wrong axis and the single most common way this decision is got
+wrong.
+
+The SOLID card is the one that changed shape most: it became a three-column table — the letter,
+the failure when it is read as a rule, the use when it is read as pressure — because SOLID's
+actual problem is not that the principles are wrong but that they are applied as law.
+
+### The measurement
+
+```
+                          D1     D2     D3     D4     D5     D6
+thin topics              279    271    263    255    247    239   ← eight, exactly, six times
+eng                                                   33 →  25  (43% → 32%)
+mean chars/concept card 1,200  1,201  1,202  1,203  1,204  1,205
+```
+
+Forty-eight cards, six waves, **five characters** of movement. One card per wave, on average,
+is now being rewritten for failing its own spec's test rather than for being wrong — which is
+the sign the specs are doing more work than the drafting.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D7: `devops`, and the seven-wave queue closes
+
+D7's spec is the only one in the phase that assumes the decision has already been made.
+D1–D6 all ask some version of *should you, and at what size* — D7 asks what happens after you
+did. That distinction is the wave's whole content, because nothing in `devops` fails at
+adoption. Every tool in the domain installs cleanly and demos well. They fail two years later,
+quietly, in a shape decided by one choice made in week one.
+
+| Tool | Two years in | The week-one decision |
+|---|---|---|
+| Helm & Kustomize | A chart nobody can diff | Render and diff in CI on every PR |
+| GitHub Actions | Forty copy-pasted workflows, unpinned third-party actions | **Pin by commit SHA** — a tag is mutable |
+| Secrets Management | Nothing can be rotated | Rotate one real secret in the first week and watch what breaks |
+| Kubernetes Security | cluster-admin everywhere, flat network | **Default-deny NetworkPolicy before there is anything to break** |
+| Policy as Code | Two hundred policies, all in audit | Ship every policy with an enforcement date in the same PR |
+| CI/CD Pipeline | 45 minutes, so batches get bigger | Build time is a bug with an owner and a budget |
+| Docker | An image nobody can rebuild, running as root | Pin the base by digest; add the `USER` line now |
+| Platform Engineering | The platform team is the new ticket queue | A paved road, not a walled garden — there must be a way off it |
+
+### The one test that made this spec work
+
+*The preventive decision must be cheaper now than later.* If a fix is equally easy in year two,
+there is nothing to warn about and the card is not a D7 card — it is advice, and advice with no
+expiry date does not need a table. Two candidates were cut on exactly that: both were sensible
+practices that could be adopted at any point, which meant the card had no reason to be about
+time.
+
+The item that best survives the test is the default-deny NetworkPolicy. In an empty namespace it
+is one manifest. In a namespace with thirty running services it means discovering every
+undocumented dependency simultaneously, under load — which is precisely why that ticket is open
+in so many estates and closed in so few.
+
+### The counter-metric moved two, and that is worth saying
+
+```
+                          D1     D2     D3     D4     D5     D6     D7
+thin topics              279    271    263    255    247    239    231
+devops                                                       20 →  12  (47% → 28%)
+mean chars/concept card 1,200  1,201  1,202  1,203  1,204  1,205  1,207
+```
+
+Every previous wave moved the mean by exactly one. D7 moved it by two, because these cards
+carry five-row tables *and* a substantial verdict, which is a slightly heavier shape than D3's
+or D4's. It is still well inside noise, and it is recorded rather than smoothed over: the point
+of a counter-metric is that you report it when it moves the wrong way, otherwise it is
+decoration.
+
+### The queue is finished; the phase is not
+
+**Seven waves, 56 cards, 288 thin → 231.** §6's table is complete and every row is ticked. The
+target in §8 was *under 150*, so the honest position is that the plan's queue got 40% of the way
+there and 81 cards still stand between here and it.
+
+> **Correction, made when the D8 census was actually run.** The sentence that followed this one
+> said those 81 cards "live in the tail the table never named — `script`, `linux`, `ops`,
+> `sec`". That was a guess and it was wrong. The census puts **184 of the 227 remaining thin
+> cards inside the seven domains the queue already worked** — `data` 31, `redteam` 32, `cloud`
+> 32, `blueteam` 28, `web` 25, `eng` 24, `devops` 12 — because each wave took eight and the
+> domains were never finished. The unnamed tail is 43 cards, not 81. The queue's shape was
+> right and its depth per domain was not.
+
+Anyone writing a wave D8 should not extend this table by guessing. The census to run first:
+
+| Question | Why it changes the answer |
+|---|---|
+| Which domains are thin *and* frequently visited? | Six waves were chosen by thin count alone. Thin-and-unread is the cheapest thing on this list to leave alone |
+| Which thin topics are also **orphans**? | `orphan_report.py` already exists. A thin topic with no inbound link may want retiring rather than deepening |
+| Which are thin because they are **reference**, like `shortcut`? | §4 excluded two domains by hand. That judgement should be a rule by now, not a list |
+| Has the median moved, or only the mean? | The counter-metric watches the mean. A wave that deepened only the easiest cards would not show up in it |
+
+The last of those is the real risk in what has just been done: seven waves each picked eight
+cards, and *nothing forced them to be the eight hardest*. That is the honest limitation of this
+phase, written down at the point where it is still cheap to fix.
+
+Site **1,426 topics**. Smoke **138/138** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 10 T9: the pass found nothing, and the checker was why
+
+T9 was scoped as ten minutes of work: `check_contradictions.py` already compares claims across
+the site, so restrict it to the near-duplicate pairs and read what falls out. The restriction
+went in as a `--pairs` mode reusing `near_duplicates.py`'s own topic splitter and title regexes
+— deliberately importing them rather than growing a second splitter, because two splitters drift
+and the pair check would then quietly compare the wrong text.
+
+It reported **zero disagreements across 46 pairs**, first run.
+
+Zero is the right answer and is indistinguishable from a check that cannot find anything. So,
+per the rule this repo has now paid for five times, the next step was not to believe it.
+
+### What the two proofs found
+
+A `--self-test` with seven fixtures passed cleanly. That was not enough: fixtures test the
+comparison, not the plumbing that feeds it. The second proof was to **inject a known
+contradiction into a real pair** — `SSH on port 22` into one Zero Trust card, `SSH on port 2200`
+into the other — and re-run.
+
+It still reported zero. Two separate bugs, both in the checker, both older than T9:
+
+| Bug | What it meant |
+|---|---|
+| The port regex keyed on the **first** capitalised word before `port`, not the nearest | `In this estate SSH on port 22` was recorded as a claim about a service called `IN`. Quieter on real prose, but this is why the site's port table listed CAPTURE, DEFAULT, PRIVACY and SECURE as services |
+| `PRE_RE` strips `<pre>` and `<code>` — and the house style also writes code as **`div.code-block`** | Every shell sample written as a div has been read as prose by this checker since it was written. `# Default port 22` in a comment was a claim |
+
+Both are fixed: the gap between service and port must now contain no other capitalised word, and
+a nesting-aware `strip_code_divs()` removes the div form before anything else runs. A short
+`NOT_SERVICE` list handles the residue — `Ticket-Based Authentication (port 88)` and `Web pages
+use port 80/443` are not claims about services named AUTHENTICATION and WEB.
+
+### The measurement
+
+```
+                        before   after
+services keyed              27      15   ← 12 of the 27 were not services
+of which real protocols     15      14   + BB, from a MAC address "AA:BB on port 1"
+conflicts surfaced           0       1   ← DNS on 53 and 853, which is DNS-over-TLS
+```
+
+The conflict count going **up** is the point. The old table's zero was not a clean site; it was
+a table so noisy that a real pair of ports could not surface in it. DNS on 53 and 853 is exactly
+the legitimate case the tool's own text says to read rather than automate, and it is now visible
+enough to read.
+
+### What T9 actually delivered
+
+Not a content fix — after the repairs, the pair pass still reports zero, and that zero now means
+something. What it delivered is **two long-standing defects in a check that gates every build**,
+found by taking its clean result seriously enough to disbelieve it. Nine fixtures now stand
+guard, two of them regression tests written directly from the bugs.
+
+The reusable rule, which is now stated as a rule rather than re-derived each time: **a new check
+that passes on first run has not been tested. Fixtures prove the comparison; only injecting a
+known-bad case into real data proves the plumbing.**
+
+`make check` and CI both run `--self-test`, `--strict` and `--pairs --strict`.
+
+---
+
+## Session record — Phase 10 T5: there is no top three
+
+T5's spec scored fixtures as *expected topic in the top three*. Writing the harness found the
+first problem immediately: **there is no top three.** The search is substring matching over a
+per-domain index and hands back an unordered `Set`; nothing ranks. Scoring against a ranking
+that does not exist would have been the sixth check in this repo to measure something adjacent
+to its claim, so the spec's scoring was dropped rather than faked.
+
+What is actually true of an unranked result set is two things, and the harness measures both:
+
+| Measure | Why it is the honest one |
+|---|---|
+| **Found** — the expected topic is in the hits | This is the regression test T5 was for. A renamed card or a reworded phrase breaks it |
+| **Scan cost** — how many results the reader must read | With no ranking, result-set size *is* the quality metric. A per-fixture ceiling stops a query quietly widening to half the site |
+
+### The bug the harness found on its first run
+
+`"incident response"` returned **1,220 of 1,367 topics.**
+
+The cause is a guard that covers half of what it needs to. `searchTerms()` looks the query up in
+the acronym dictionary and adds what it finds — for "incident response", the alternate `IR`. Its
+docstring says, correctly, that the *lookup* must be exact, "a substring match would make IP pull
+in every expansion containing the word internet". But the alternate is then matched against topic
+text with `text.includes("ir")`, which is true of *requires*, *first*, *third* and *directory*.
+The lookup was guarded; the match was not.
+
+Fixed with a `matcher()` that keeps substring behaviour for terms over four characters — typing
+`kerber` should still find Kerberos — and requires word boundaries below that.
+
+```
+                       before   after
+"incident response"     1,220      49
+"mtu"                       5       3   ← two were "nmtui"
+"dns"                     120     109
+"kerberos"                 25      25   ← unchanged, as it should be
+```
+
+### The known misses are the deliverable, not a shortfall
+
+Six queries a reader plausibly types return nothing, and the harness prints them every run
+rather than hiding them:
+
+| Query | Why it misses |
+|---|---|
+| `tcp handshake` | Two words that never appear adjacent on the site |
+| `three way handshake` | The site writes it *three-way* |
+| `wifi 6` | The site writes it *Wi-Fi 6*; only the hyphenated form matches |
+| `why is my laptop slow` | A whole sentence, matched as one substring |
+| `page loads halfway` | The MTU card says *half-loading* |
+| `POAM` | The dictionary entry is now `POA&M`, and the map keys on that |
+
+They gate nothing. Four of the six are the same root cause — **whole-string substring matching
+has no notion of words** — which is the single largest available improvement to this site's
+search and is a bigger change than a harness. Writing it down here is what makes it a decision
+somebody takes rather than a thing nobody noticed. The harness also reports a miss that starts
+working, so the backlog cannot quietly grow.
+
+### Proved, not assumed
+
+Same rule as T9, applied without needing to relearn it. 21/21 passing is exactly the result a
+harness that cannot fail would produce, so: `one-way audio` was renamed out of `data/net.html`,
+the page rebuilt, and the fixture went `FAIL … 0 result(s) — NOT FOUND`. Restored, and the run
+returned to 21/21. That is the failure T5 exists to catch, demonstrated rather than asserted.
+
+`make search` and a CI step run it. `make test` is unchanged at **138/138**.
+
+---
+
+## Session record — Phase 10 T6: reading time, and the two things it broke
+
+T6 is the smallest item in Phase 10 and the one that broke the most. The feature itself is
+twelve lines: `stamp_reading_time()` in `build.py` walks each topic, divides the plain-text
+length by 1,000 characters a minute, stamps `data-read` on the `.topic` and renders a
+`<span class="topic-read">` before the chevron. It shipped with the caveat the plan asked for
+written next to the code rather than only here — **this is a proxy for length, not difficulty**,
+and a dense 2,000-character card marked "2 min" is a small lie that a total absence of signal
+would have been a larger one.
+
+Then two checks that already existed caught two failures neither of which was in the feature.
+
+### axe: 62 elements failing contrast, in both themes
+
+The first CSS was `color: var(--muted); opacity: 0.75` — quieter than the badge on purpose,
+since a size estimate should not compete with a title. `--muted` is already the quietest colour
+in the palette that passes contrast, so dimming it to three-quarters put 62 elements under the
+threshold in dark *and* light.
+
+The fix is a deletion, and the comment left in `style.css` says why so nobody re-adds it:
+**quieter than passing is not a design choice that exists.** If a thing must be visually
+subordinate beyond what colour allows, the lever is size or position, not opacity.
+
+### Search: `"min"` matched 1,337 of 1,367 topics
+
+The search index is built by `plainText()` over the raw topic block, so anything *rendered* into
+a topic is searchable — and the reading time is rendered into every one of them. One
+build-time addition turned a common English word into a query that returns the entire site.
+
+This is the same failure as T5's acronym-alternate bug, one day later and from the opposite
+direction: there, a short *term* matched everything; here, a short *string in the content*
+matched everything. `domainTopics()` now strips `.topic-read` before indexing, on the principle
+that **chrome is not content** — the index should carry what an author wrote, never what the
+build added.
+
+```
+"min"     1,337 → 27
+"3 min"     359 → 4
+```
+
+### The check that should have caught it, added
+
+T5's harness passed 21/21 through both of these, because every fixture asks *does this query
+find its card* and neither bug broke a fixture's card. So T5 gained a second section:
+**index hygiene** — a handful of strings that must stay narrow or return nothing at all.
+
+The first attempt got it wrong in the way this repo keeps getting it wrong. `"class"` looked
+like a markup probe and is not one: it is an English word, above the four-character substring
+threshold, and it legitimately matches 275 topics through *classes*, *classic* and
+*classification*. A ceiling that fails on correct behaviour teaches people to raise ceilings, so
+it was replaced with strings that appear **only** in markup — `concept-desc`, `topic-header`,
+`data-read` — each with a ceiling of zero.
+
+`make search` is now **25/25**: 21 retrieval fixtures, 4 hygiene ceilings, 6 known misses
+reported and gating nothing.
+
+### What this item is really evidence of
+
+Three separate checks — axe, the search harness, and the fixtures added because the harness did
+not catch it — each caught something a twelve-line feature broke somewhere else entirely. None
+of them was written for this feature. That is the argument for the checks being where the
+investment goes: the cost of adding a small visible thing to 1,426 cards is not in writing it.
+
+Site **1,426 topics**. Check PASS · smoke **138/138** · search **25/25** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 10 T7: three honest levels beat three invented ones
+
+T7 asked for `data-level` with three values, "stamped from the badge where one exists and by
+hand elsewhere". The first half is mechanical. **The second half is where the item would have
+gone wrong**, and it was not done as written.
+
+Hand-labelling the difficulty of 1,300 cards in one pass does not produce an assessment; it
+produces a confident-looking attribute that nobody actually evaluated, on a site whose whole
+argument is that its claims are checkable. So the rule stamps only what the badge says and
+labels the rest `core` — which is a statement that **the card is not marked as either**, not a
+claim that it sits in the middle:
+
+```
+core      1,297
+beginner    121   ← badge contains "Beginner"
+advanced      8   ← badge contains "Advanced", "Expert" or "Deep"
+```
+
+Eight advanced cards is a thin layer and it is reported as eight rather than padded out.
+`level:beginner` is the filter that carries this item; `level:advanced` is a byproduct that is
+honest about how small it is.
+
+### An operator, not a chip
+
+The plan implied a filter control. It shipped as a search operator instead — `level:beginner`,
+composing with `domain:` and with free text — for three reasons, in descending order of weight:
+
+| Reason | |
+|---|---|
+| It composes | `level:beginner domain:net` is ten cards, and no chip design gives you that intersection without a second row of controls |
+| The filter bar is full | Thirty domain chips in four labelled groups. A level control would either crowd it or hide below the fold, and `visual_test.mjs` pixel-diffs that bar for exactly this reason |
+| It lands where readers already look | `domain:` is documented in the search box's own tooltip. `level:` is now on the line beneath it, in the same place, learned the same way |
+
+An unknown level yields no matches rather than being silently ignored — the same rule
+`domain:` follows, and for the same reason: quietly dropping an operator answers a different
+question than the one asked. `level:nonsense` is a search-harness fixture with a ceiling of zero
+so it stays that way.
+
+### What T6 made possible here
+
+T7 took about a third of the effort it would have a day earlier, because T6 had already
+established the pattern: a build-time pass that walks topics, derives something from the block,
+and stamps an attribute on the `.topic`. `stamp_level()` is `stamp_reading_time()` with a
+different derivation, and `domainTopics()` already had the shape for indexing an attribute off
+the open tag. Two reader-facing features, one mechanism.
+
+`make search` is now **28/28** — 23 retrieval fixtures, 5 hygiene ceilings.
+
+Site **1,426 topics**. Check PASS · smoke **138/138** · search **28/28** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 10 T8: what changed *for me*, and Phase 10 closes
+
+T8 needed no new data, exactly as the plan predicted, but not from the source it named. The
+changelog holds only each domain's most recent month and at most three topic ids — enough for
+the "Updated" row on a domain intro card, far too little for a per-reader diff. The data that
+was already sufficient is **`data-reviewed`, which every one of the 1,426 topics carries**.
+`domainTopics()` now indexes it off the open tag, exactly as it indexes T7's `data-level`.
+
+### The operator is the feature; the banner is the doorway
+
+```
+since:2026-06                 → everything reviewed after June 2026
+since:2026-07 domain:net      → 31 topics
+since:2099-01                 → nothing, and a harness fixture pins it there
+```
+
+`since:` is *strictly after*, because that is what the English word means and it is what the
+banner needs — it passes the last month this reader acknowledged and wants what landed
+afterwards. Month strings compare correctly as strings because they are zero-padded, so the
+whole comparison is `t.reviewed > q.since`.
+
+The banner does not have a private code path. "Show them" **puts the query in the search box
+and runs it**, so the reader can see it, edit it, add `domain:` to it, or clear it with Esc like
+any other search. A feature that produces a view you cannot reach any other way is a feature you
+have to maintain twice.
+
+### The behaviour most likely to have been got wrong
+
+A reader with nothing stored must be told **nothing**. Every topic is new to them, the statement
+is useless, and a banner that opens by saying "1,426 topics updated" teaches people to dismiss
+it before it ever says anything worth reading. So a first visit records the newest month
+silently and shows no banner.
+
+That is the first of four new smoke checks, and it is the one worth having:
+
+```
+ok : a first-time reader is not told the whole site is new       — hidden true, stored 2026-08
+ok : a returning reader is told how many topics changed          — 1367 topics updated since June 2026
+ok : 'show them' puts an editable query in the search box        — since:2026-06
+ok : 'mark as seen' advances the stored month and hides the banner — stored 2026-08
+```
+
+Every `localStorage` access is inside `try/catch` and the banner simply never appears when
+storage throws — a private window must not be a broken page.
+
+### Phase 10 is complete
+
+Nine items, all shipped, and the pattern across them is worth stating once. **Five of the nine
+found a defect in something other than themselves**: T2's own first version measured the wrong
+thing; T9 found two long-standing bugs in the checker it was extending; T5 found a query
+returning 90% of the site; T6 broke contrast and the search index and was caught by axe and by
+T5's harness; T8 was clean only because T6 and T7 had already paid for the mechanism it used.
+
+The tooling items were justified as making the content phases honest. What they actually did as
+often was catch each other.
+
+| Item | | Shipped as |
+|---|---|---|
+| T1 | depth report | `tools/depth_report.py` — thin count and the padding counter-metric |
+| T2 | near-duplicates | `tools/near_duplicates.py` — census, and a `--title` pre-flight |
+| T3 | verdict check | A ceiling in `lint_content.py`, ratcheted |
+| T4 | orphan report | `tools/orphan_report.py` |
+| T5 | search harness | `tools/search_test.mjs` — 25 checks, 6 known misses |
+| T6 | reading time | `data-read` and a header span |
+| T7 | difficulty | `data-level` and the `level:` operator |
+| T8 | new since last visit | The banner and the `since:` operator |
+| T9 | contradiction pass | `--pairs` and `--self-test` in `check_contradictions.py` |
+
+Site **1,426 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 9 wave C3, and the pair the report could not see
+
+C3 was flagged in the queue as the ambiguous wave — `shortcut` is a reference domain, so §3's
+*reference-plus-concept* exemption was expected to cover most of it. That expectation held for
+four of the five and was wrong about the rest in a way worth writing down.
+
+### The two merges
+
+| Retired | Into | Why the §3 test said consolidate |
+|---|---|---|
+| `script` **PowerShell — Windows Automation** | `script` **PowerShell — Scripting Reference** | Both single-card references, same domain, 13 of 17 cmdlets shared. "Who is this for?" produces the identical sentence twice |
+| `shortcut` **Git Power User — Beyond add, commit, push** | `script` **Git Advanced Workflows – Beyond add, commit, push** | Same five subjects (stash, interactive rebase, reflog, bisect) and **the same subtitle**. Not a reference card: five prose concept cards, so the §3 exemption does not apply |
+
+Both absorbed first and verified before anything was retired, per the rule this phase learned
+the hard way. The PowerShell survivor gained discovery (`Get-Command`, `Get-Help`,
+`Get-Member`), `try`/`catch`, execution policy and WinRM remoting — none of which it had. The
+Git survivor gained 17 commands it lacked: `blame`, `log --grep/--author/-S`, `show`, `diff`,
+and the whole undo group (`restore`, `commit --amend`, `reset --soft/--mixed/--hard`, `revert`,
+`rebase --continue/--abort`).
+
+### The finding: title overlap is a proxy, and here it failed
+
+The two `script` PowerShell cards are the clearest duplicate in this wave. `near_duplicates.py`
+scores them **0.25** — nowhere near the 0.50 floor — because their titles diverge:
+
+```
+"PowerShell — Scripting Reference"    → {powershell, scripting}
+"PowerShell — Windows Automation"     → {powershell, window, automation}
+                                        overlap 0.25
+```
+
+Both were reachable only because each scored ≥ 0.50 against a *third* card in `shortcut`, which
+is how they came to be read side by side at all. **The pair that mattered most was found by
+accident.**
+
+That is a real limitation of the measurement, not a bug in it. §6 justified the tool as
+"tokenise titles, compare pairwise, report above a threshold" and titles are what the tool has.
+Content-similarity comparison over 1,365 topics is a different and much larger tool, and this
+file's standing rule is not to ship a measurement whose cost it has not counted. So the
+limitation is recorded here rather than papered over: **C3's real lesson is that the census
+finds duplicated *titles*, and duplicated *cards* are a superset of that.**
+
+### The tool gap that would have blocked wave C4 entirely
+
+`retire_topic.py` located both topics in one domain. The Git merge is `shortcut` → `script`,
+and it simply could not run — and **C4 is Kubernetes across `devops` and `linux`**, so the next
+wave in the queue was blocked by the same limitation.
+
+`--into-domain` fixes it in four lines. Ids are unique site-wide, so nothing else in the tool
+cared which file the survivor came from; only `locate()` did.
+
+### The four refusals, each with the sentence that saved it
+
+| Pair | Verdict |
+|---|---|
+| `shortcut` *tmux — Never Lose a Session Again* · `shortcut` *Tmux Survival Kit* | **Keep both.** One is badged `SHORTCUTS • Productivity` and is a keybinding reference; the other is badged `Beginner` and teaches sessions/windows/panes. §3's first row, exactly |
+| `script` *PowerShell — Scripting Reference* · `shortcut` *PowerShell — Windows (and Cross-Platform) Scripting* | **Keep both.** The shortcut card opens with *Why PowerShell Replaced Command Prompt* — it is for someone who has never used it. The reference is for someone who has |
+| `shortcut` *VS Code* · `shortcut` *VS Code — Debugging* | **Keep both.** A keybinding table and a `launch.json` how-to. A title artefact: "VS Code" is the entire first title, so containment is trivially high |
+| `shortcut` *Windows* · `endpoint` *Windows Administration Fundamentals* | **Keep both.** Same artefact, one shared token, two unrelated cards |
+
+Three of the four refusals are one-token titles scoring high for structural reasons. That is
+worth knowing about the census: **short titles inflate overlap**, and a `shortcut` domain full
+of one-word titles will keep producing these.
+
+```
+topics       1,426 → 1,424
+pairs ≥ 0.50    46 → 44
+aliases        109 → 111
+```
+
+Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 9 wave C4: the answer was a move, and a merge would have been wrong
+
+C4's single pair scores **1.00** — the highest on the site — and merging it would have been a
+mistake. That is worth more than the pair itself, because 1.00 is exactly the score that
+invites acting without reading.
+
+```
+1.00  [devops] Kubernetes – Container Orchestration Fundamentals   Beginner, 5 concept cards
+      [linux]  Kubernetes — Container Orchestration Reference      DEVOPS · CLOUD, 1 reference card
+```
+
+Both of §3's exemptions apply at once: **a Beginner card beside a deep card**, and **a reference
+card beside a concept card**. The titles are near-identical because both describe the same
+subject correctly; the cards are not the same card. §3's test — one sentence saying who each is
+for — gives two different sentences immediately.
+
+### So what *was* wrong
+
+The queue's own note guessed it: *"which domain owns the subject. Probably `devops`, with
+`linux` keeping a container-internals card that is genuinely its own."* The domain census
+confirms it exactly:
+
+| Domain | What it owns |
+|---|---|
+| `linux` | Docker, Podman & rootless, **Under the Hood — Namespaces & cgroups**, **Container Internals** — the layer beneath the orchestrator |
+| `devops` | Kubernetes Fundamentals, Objects, Networking & Storage, Helm & Kustomize, Secrets — five cards on the orchestrator |
+
+A Kubernetes *reference* was the only Kubernetes card outside `devops`, in the domain that owns
+everything **under** containers rather than above them. So it moved.
+
+### A move is cheaper than a merge, and this file has not said so before
+
+Topic ids are `slugify(title)`, so a card that changes domain **keeps its id**. That means:
+
+| Cost of a merge | Cost of this move |
+|---|---|
+| The retired permalink dies; `slug-aliases.json` grows | Nothing — the id is unchanged |
+| Five `localStorage` prefixes orphan | Nothing — same id, same keys |
+| Related edges and path steps break | Nothing — both are keyed by id, and neither records a domain |
+| Content has to be absorbed and verified first | Nothing — the card moves whole |
+
+**Where §3 says keep both and the cards are in the wrong places, move them.** That option was
+not in §4's cost table and belongs there: it is the correct answer whenever the duplication is
+apparent rather than real, and it costs nothing at all. `check_paths.py`,
+`suggest_related.py --check` and all 142 smoke checks pass unchanged, which is the evidence.
+
+What `devops` gained is also a real content win rather than bookkeeping: the reference card
+carries **13 `kubectl` verbs** — `get`, `describe`, `logs`, `exec`, `apply`, `delete`,
+`rollout`, `scale`, `top`, `port-forward`, `config`, `cluster-info` — and the domain's five
+existing Kubernetes cards had `kubectl apply` between them.
+
+```
+topics    1,424 (unchanged — a move creates and destroys nothing)
+devops       43 → 44
+linux        57 → 56
+pairs        44 (the pair remains, and is now correctly a keep-both)
+```
+
+Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 9 wave C5, where deduplication and deepening turn out to be the same work
+
+C5 was billed as "small and clean" and was, but it connects two phases that this file has kept
+apart. **Both `web` cards retired here were on Phase 8's thin list**: *WebAssembly — Native
+Speed in the Browser* (1,292 plain chars, one concept card) and *TypeScript — Types for
+JavaScript* (1,345, one card). Each duplicated a `script` card four to five times its size.
+
+| Retired | Into | Ratio |
+|---|---|---|
+| `web` **WebAssembly — Native Speed in the Browser** | `script` **WebAssembly (WASM) — Near-Native Speed in the Browser** | 1,990 → 4,815 chars |
+| `web` **TypeScript — Types for JavaScript** | `script` **TypeScript — JavaScript That Scales** | 2,343 → 9,094 chars |
+
+That is worth stating as a general observation rather than a coincidence, because it changes
+how the two phases should be sequenced:
+
+> **A thin card is a duplicate-shaped thing.** Both of these were written by a session that
+> covered a subject an earlier session had already covered *properly*, and produced a summary
+> of it. The thin card and the near-duplicate card are frequently the same card, and Phase 8's
+> census is therefore a second lens on Phase 9's population.
+
+The practical consequence: a wave D8 should cross-reference `depth_report.py --thin` against
+`near_duplicates.py` **before** deepening anything. Deepening a card that ought to be retired is
+the most expensive mistake available in either phase.
+
+### What was absorbed, and what was already there
+
+The discipline held and mostly found that the survivors were complete. TypeScript's survivor
+already covered erasure at runtime, `any`, `strict` and narrowing — the `web` card's entire
+content bar one idea. So the absorptions were small and precise rather than wholesale:
+
+- **WASM** gained the boundary cost — *a hot loop calling back into JavaScript every iteration
+  can be slower than the JavaScript it replaced* — and the server-side framing: WASI as a
+  sandbox for running somebody else's code without giving it your process.
+- **TypeScript** gained a verdict it did not have at all. Its last block was a bare table, which
+  the linter's `table with no verdict` counter had been counting for months. The `web` card's
+  framing supplied it: the payoff people feel is not caught bugs, it is **fearless refactoring**.
+
+That second one is a merge improving the survivor's structure rather than only its content,
+which is the best case for this phase and is not the usual one.
+
+### The refusal
+
+`sec` **Zero Trust — Never Trust, Always Verify** (badge `SEC • Architecture`, 5 cards) against
+`sec` **Zero Trust – "Never Trust, Always Verify" Explained Simply** (badge **Beginner**, 4
+cards), at 0.83 overlap. §3's first row, unambiguously: **keep both.** The near-identical titles
+are two sessions naming the same idea correctly, and the badges say plainly who each is for.
+
+### Two related edges repointed, which is the guard doing its job again
+
+`retire_topic.py` refused both merges on first attempt — `how-the-browser-renders-a-page →
+webassembly-native-speed-in-the-browser` and `prototypes-modern-classes →
+typescript-types-for-javascript`. Repointed at the survivors, and `suggest_related.py --check`
+reports **882 links, 0 one-way** afterwards. Third real use of that guard, third time it named
+something that would have broken silently.
+
+```
+topics       1,424 → 1,422
+thin           231 → 229    ← two of them left by retirement, not by deepening
+pairs ≥ 0.50    44 → 42
+aliases        111 → 113
+```
+
+Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 9 wave C6: the tail, and the ninth wrong acronym
+
+C6 was scoped as *"audit, expect to keep most"* and that expectation was correct. The wave's
+value is not in its two merges; it is in what auditing forty pairs turned up on the way.
+
+### The two merges, both found by C5's rule
+
+C5's finding was that **a thin card is a duplicate-shaped thing**, so this wave started by
+cross-referencing `depth_report.py --thin` against `near_duplicates.py` rather than reading the
+list top-down. Six of forty pairs had a thin side. Two were real:
+
+| Retired | Into | What was absorbed |
+|---|---|---|
+| `eng` **Testing Strategy — The Test Pyramid** (1 card) | `script` **Testing Strategy — Why and How to Test** (4 cards) | BDD and *given/when/then* — the survivor already had the pyramid, TDD, the ice-cream cone, and "test behaviour not implementation" |
+| `data` **Vector Databases — Embeddings & Similarity Search** (1 card) | `ai` **Vector Databases — Similarity Search at Scale** (4 cards) | **Nothing.** The survivor already covered pgvector, hybrid search, HNSW/IVF, cosine and the vendor list |
+
+That second row is the cleanest possible case for this phase: a card whose entire content
+already existed, better, one domain away — and whose own text said *"Direct bridge to the AI
+domain's RAG cards"*, which is a card describing itself as a pointer.
+
+### The ninth wrong acronym expansion, and why nothing could have caught it
+
+Reading both Vector Databases cards side by side surfaced this, in both of them:
+
+```
+ANN (Artificial Neural Network) index    HNSW/IVF — approximate nearest-neighbor for speed
+```
+
+**The row states the correct expansion in its own second column** and the annotator stamped the
+wrong one beside it. In a vector database, ANN is *Approximate Nearest Neighbour*. The
+dictionary held one meaning, the neural-network one, so every use on the site was annotated
+wrong — and there were exactly two uses, both in this sense.
+
+No check on this site could have found it. `check_contradictions.py` compares hand-written
+expansions against the dictionary; this expansion *came from* the dictionary. The
+`--pairs` mode compares two cards' claims; both cards agreed, and both were wrong. **A
+dictionary with one meaning cannot disagree with itself**, which is the shape of this whole
+class of error and the reason all nine were found by reading rather than by tooling.
+
+Fixed as a multi-meaning entry with `byDomain` for `ai` and `data`. The residual risk is
+recorded rather than hidden: if a future `ai` card writes ANN meaning a neural network, it will
+now be annotated wrong in the other direction. Every current use is the vector sense, and the
+neural-network cards spell the words out.
+
+### The refusal that became a link
+
+`data` **ER Modeling — Designing the Schema** and `data` **Designing a Schema From
+Requirements** score 0.50, and one is thin — which by this wave's own rule made it a merge
+candidate. Reading them says otherwise: one is entities, relationships and cardinality; the
+other is a six-step walkthrough from *"we sell stuff"* to tables, ending on the price-snapshot
+insight. Theory and process, two different sentences, **keep both**.
+
+So the constructive action was a related edge in both directions rather than a merge. That is
+worth naming as a third outcome alongside *merge* and *move*: **when two cards are genuinely
+adjacent rather than duplicated, link them.** A reader who lands on the theory should be one
+click from the walkthrough, and the near-duplicate census is a good place to find pairs that
+deserve an edge.
+
+### Phase 9's queue is complete
+
+| Wave | Merged | Refused |
+|---|---|---|
+| C1 `script` internal | 4 | 4 |
+| C2 `net` wireless and cloud | 2 | — |
+| C3 `script`↔`shortcut` | 2 | 4 |
+| C4 Kubernetes cross-domain | 0 (**1 moved**) | 1 |
+| C5 Zero Trust, WASM, TypeScript | 2 | 1 |
+| C6 the tail | 2 | the rest, one of them **linked** |
+
+**12 merges, one move, one new link, and roughly a dozen documented refusals.** §5 estimated
+"about 23 merges, of which perhaps 15 are unambiguous". The real number is half that, and the
+gap is the point: **the estimate was made from titles, and titles overstate duplication.**
+Every refusal above was a pair whose titles matched and whose cards did not — a beginner card
+beside a deep one, a reference beside a concept, a one-word `shortcut` title inflating overlap,
+theory beside a walkthrough.
+
+```
+topics       1,426 → 1,420   (six retired across C3–C6, one moved)
+thin           231 → 227     (four of them left by retirement)
+pairs ≥ 0.50    46 → 40
+aliases        109 → 115
+```
+
+Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2** · related **882 links, 0 one-way**.
+
+---
+
+## Session record — Phase 8 wave D8: the domain where mistakes do not raise errors
+
+D8 is the first wave chosen by census rather than by the queue, and the census sent it back to
+where D1 started. `data` was still the worst ratio on the site at 74%, because D1 took eight
+cards out of forty and stopped — which is the finding that corrected Phase 8's closing record
+higher up this file.
+
+The spec is the sharpest one in the phase, and it is specific to this domain in a way the others
+were not:
+
+> **Everywhere else on this site, a mistake produces an error.** A misconfigured sensor logs
+> nothing; a bad Dockerfile fails to build; a wrong subnet mask drops the packet. In a database,
+> the common failure is a query that runs to completion, returns a plausible number, and is
+> wrong.
+
+| Card | The silent wrong answer |
+|---|---|
+| SQL Joins | A `WHERE` on the right-hand table turns a LEFT JOIN back into an INNER JOIN — **filters on the right belong in `ON`** |
+| Aggregation | Join first, aggregate second, and `SUM` cannot tell. Two one-to-many joins multiply by the *product* |
+| Window Functions | The default frame is `RANGE`, so tied rows all get the total *after* all of them. Write `ROWS` explicitly |
+| Subqueries & EXISTS | **`NOT IN` against a subquery holding one NULL returns zero rows.** Use `NOT EXISTS` and never have to know |
+| ACID & Transactions | Read-modify-write loses an update at `READ COMMITTED`, which is the default in three of the big four |
+| Reading Query Plans | `EXPLAIN` prints the estimate that *was* the mistake. The finding is the largest estimated-to-actual ratio |
+| Indexes | A `UNIQUE` index does not stop duplicate NULLs — every constraint in SQL has a NULL-shaped hole |
+| Time-Series | Yesterday's number changes when late events arrive, and nobody reruns the report |
+
+### The second half of the spec did the work
+
+*Name the silent wrong answer, and say how you would notice.* The detection clause is what
+separates these from folklore, and writing it forced each card to be concrete:
+
+- Joins — run it without the `WHERE` and compare row counts; if the filter drops you to exactly
+  the inner-join count, the `LEFT` is decorative.
+- Aggregation — aggregate the fact table alone and compare totals.
+- Window functions — look for identical consecutive running totals on rows with different
+  amounts.
+- Indexes — `SELECT COUNT(*) FROM t WHERE email IS NULL`, one query, on any nullable column you
+  believed was unique.
+- Time-series — recompute a week-old day and compare it to what was reported at the time.
+
+**ACID is the honest exception and says so**: you usually do *not* notice, which is precisely
+why it is the entry worth remembering. A card that claimed a detection there would have been
+inventing one.
+
+### The median's first reading
+
+```
+                        before   after
+thin topics                227     219
+data                 31 (74%)  23 (55%)
+mean chars/card          1,207   1,209
+median topic             2,948   2,965      ← +17
+10th percentile          1,362   1,364      ← +2
+```
+
+The new metric behaves exactly as it should and the reading needs stating plainly: **eight cards
+out of 1,420 cannot move a median far.** Seventeen characters is the arithmetic, not a
+disappointment. What the number is for is the shape over many waves — a programme that only ever
+deepened easy cards would hold the median flat while the thin count fell, and that divergence is
+visible over ten waves and invisible over one.
+
+The 10th percentile moving by two is the more interesting reading: cards leaving the bottom
+decile are replaced by the next ones up, so **the floor barely rises until the tail is genuinely
+worked**. That is the number to watch, and it is the number this phase has least right to feel
+good about yet.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D9: the card the reader cannot recognise
+
+D5 worked `web`'s tooling and performance cards. What was left was the fundamentals —
+closures, prototypes, events, promises, Flexbox, Grid, custom properties, the render pipeline —
+and they were thin for a reason none of the earlier specs would have caught.
+
+**Nobody reads a closures card out of curiosity.** They read it because a loop printed the same
+number five times. The thin fundamentals cards explain the mechanism correctly and never name
+the symptom, which means the reader who needs the card most has no way to tell that this is the
+card. The page is searchable by cause and the reader only has the effect.
+
+| Card | The symptom, in the words used before the cause is known |
+|---|---|
+| Closures, Scope & `this` | The loop printed `5` five times; `this` went undefined when the method was passed somewhere |
+| Prototypes & Modern Classes | It worked as `obj.method()` and broke as `setTimeout(obj.method)` |
+| The DOM & Events | The click handler works, until the row was added after page load |
+| Async Deep | **`forEach` returned immediately and nothing was saved**; thirty `await`s took thirty seconds |
+| Flexbox | The flex item refuses to shrink and pushes the page wider than the screen |
+| CSS Grid | One long word blows a `1fr` column out past its share |
+| Modern CSS | A `var()` fallback did not apply, and the property came out `unset` |
+| How the Browser Renders a Page | The text jumps when the font loads; the page is blank until the CSS arrives |
+
+### The test that kept this honest
+
+*The symptom has to be recognisable without knowing the answer.* That rejected four first
+drafts, all of which had written the symptom from the far side of the explanation — "you have
+misunderstood the event loop" describes a reader who already knows what is wrong. It is
+surprisingly hard to write, because by the time you can explain a bug you have forgotten what it
+looked like before you could.
+
+The best evidence the constraint worked: **two pairs of cards turned out to share a root
+cause**, and neither would have surfaced without symptom-first writing. Flexbox's
+`min-width: auto` and Grid's `minmax(auto, 1fr)` are the same rule in two syntaxes, and both
+cards now say so explicitly:
+
+> `minmax(0, 1fr)` in Grid is `min-width: 0` in Flexbox. Both exist because both layout models
+> default to "never smaller than the content" — the right default for text, the wrong one for
+> anything that can be arbitrarily wide.
+
+And Closures and Prototypes both produce the same "`this` is undefined" error from two different
+directions, which is exactly why it confuses people: the two cards now separate *a closure
+captures the variable, not its value* from *`this` is supplied by the call, not the definition*.
+
+### The measurement
+
+```
+                        D8 end   D9 end
+thin topics                219      211
+web                                25 →  17   (64% → 44%)
+mean chars/concept card  1,209    1,210
+median topic             2,965    2,996      ← +31, the largest move yet
+10th percentile          1,364    1,365      ← +1
+```
+
+The median moved 31 this wave against 17 last, because `web`'s fundamentals cards were sitting
+just below it rather than at the very bottom — deepening a card at the 55th percentile does more
+to the median than deepening one at the 5th. **The 10th percentile moved by one**, which
+continues to be the honest number: nine waves in, the actual floor of this site has not moved,
+and it will not until a wave deliberately targets the shortest cards rather than the ones with
+the most to say.
+
+That is now a named commitment rather than an observation: **D10 goes to the bottom decile by
+character count, across whatever domains it falls in.**
+
+> **Retracted the same session, after actually looking.** `depth_report.py --bottom` was written
+> to execute this commitment and immediately showed it was the wrong target. The bottom decile
+> is not underdeveloped content: **64 of its 132 cards carry a badge that means deliberately
+> short** — `Beginner • Core`, `Linux+ • CLI`, `PenTest+ • Recon`, `Military • Reference`. They
+> are the beginner layer §3 of Phase 9 exists to protect, and the per-certification objective
+> skims. Deepening them would make the beginner cards stop being beginner cards and the syllabus
+> skims stop being skims. See the D10 record below.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D10: the wave that did not happen, and the metric that hid why
+
+D9 ended with a commitment: *the 10th percentile has moved three characters in nine waves, so
+D10 goes to the bottom decile by character count.* Executing that commitment needed a tool that
+did not exist — every existing mode of `depth_report.py` answers "which cards are **thin**",
+and thin is `one concept card AND under 1,800 characters`. So `--bottom` was written, listing
+the shortest topics regardless of card count.
+
+It answered the question in one screen, and the answer was that the commitment was wrong.
+
+```
+   317 · 0 card(s)  military   Common Codes Decoded              [Military • Reference]
+   443 · 1 card(s)  linux      Package Management                [Linux+ • Distros]
+   458 · 2 card(s)  linux      File Ops & Text Processing        [Linux+ • CLI]
+   475 · 1 card(s)  military   Staff Functions 1–9               [Military • Sections]
+   636 · 2 card(s)  script     Scope — Where Variables Live      [Beginner • Core]
+   710 · 2 card(s)  pentest    Web, Wireless & Reporting         [PenTest+ • Specialized]
+
+64 of the 132 in the bottom decile carry a badge that means deliberately short.
+```
+
+**The bottom of this site is not underdeveloped. It is two things that are supposed to be
+short**: the beginner layer that Phase 9 §3 exists to protect, and per-certification objective
+skims — a Linux+ candidate wants six package managers in a table, not an essay on repository
+signing. Deepening either would destroy the thing that makes it useful. The 10th percentile has
+not moved in nine waves because **nothing should have moved it.**
+
+### Two measurement failures, and only one of them was known
+
+The first was already suspected: nine waves picked eight cards each and nothing forced them to
+be the hardest. True, and it turns out not to be the interesting one.
+
+The second was invisible until `--bottom` existed. **The thin metric's `cc <= 1` clause means a
+458-character topic with two concept cards is not thin.** Of the 24 shortest topics on the site,
+**21 were never counted by the measurement that has driven ten waves of work.** T1's census
+answers "which cards are one card and short", and that has been silently standing in for "which
+cards are short" since Phase 8 began.
+
+That is not a reason to change the thin definition — a single-concept card genuinely is the
+signal that a subject was covered once and left — but it is a reason for the report to carry
+both numbers and say which is which. `--bottom` now does, and it marks the deliberate ones with
+a `·` so nobody re-derives this finding in three months.
+
+### What this says about the phase's target
+
+Phase 8 §8 wants "under 150 thin". At 211 that is 61 cards, or roughly eight more waves. What
+D10 establishes is that **the target should be read as a ceiling on genuinely thin cards, not as
+a claim about the site's floor** — and that the floor, measured honestly, is where it should be.
+A future session that sees "10th percentile: 1,365" and decides to attack it should read this
+record first.
+
+### D10 therefore ships tooling and a correction, and the wave moves on
+
+No content was deepened under this heading, which is the right outcome and is recorded as such
+rather than being quietly replaced with an easier wave under the same name. The next content
+wave takes the worst remaining ratio in a domain with no deliberate-short population:
+**`redteam`, 32 thin of 52.**
+
+`--bottom` is in `make census`. Nothing else changed.
+
+---
+
+## Session record — Phase 8 wave D11: a catalogue of tools is not an attack path
+
+D2 gave `redteam`'s tool cards *what using this costs you*. Thirty-two were left, and they shared
+a second gap that matters more to someone learning the subject: **every card was written as
+though you could simply run the tool.**
+
+You cannot. Mimikatz is not the start of an attack, it is what you do after you have already won
+on a host. Hashcat needs the hash, and stealing the hash was the hard part. Impacket assumes you
+are already somebody. Without the precondition, a catalogue of capabilities stands in for what is
+actually a chain — and the chain is the part the tool's own documentation never supplies.
+
+| Tool | What you must already have | The control that denies it |
+|---|---|---|
+| Mimikatz | Local admin **and** `SeDebugPrivilege`, with LSASS readable | Credential Guard and RunAsPPL remove the technique, not just detect it |
+| BloodHound | **Any authenticated domain user** | None — and that is the finding |
+| Impacket | A credential or hash, plus reach to 445/135 | LAPS kills the reuse; a host firewall kills the reach |
+| Kerberos Attacks | A domain user plus an account configured badly | gMSA and required pre-auth, both settings changes |
+| Hashcat | The hash, already stolen — and its algorithm decides everything | Length beats complexity; the KDF beats both |
+| Pacu | Valid AWS credentials, usually a long-lived key | Do not issue them; require IMDSv2 |
+| ADCS Abuse | A domain user and one unreviewed template | An ACL and a checkbox, set once during a migration |
+| Living off the Land | Code execution, and nothing else | The emptiest prerequisite, and therefore the hardest |
+
+### The test the spec needed
+
+*The prerequisite must be specific enough to be denied.* "Access to the network" is not a
+prerequisite. "A credential or NTLM hash, plus reachability to 445" is, because a defender can
+act on each half separately — and it turns out that the second half, **blocking
+workstation-to-workstation SMB at the host firewall**, is the single cheapest row in the whole
+wave. Nothing legitimate needs it.
+
+### The two cards that came out differently from the other six
+
+**BloodHound has no control.** Its precondition is a normal user account, Active Directory is
+readable by design, and no setting takes that away. The card had to say so, and then say what
+follows: this is the one entry in the domain where the defensive answer is to *run the tool
+yourself, first, and keep running it* — because the attack paths were already there and the win
+is deleting them, not detecting the enumeration.
+
+**ADCS behaves unlike everything else after the incident.** A certificate outlives a password
+reset. Rotating credentials does not revoke a certificate an attacker already holds, and the
+validity can be years — so the response order inverts: find the templates, then check what has
+already been issued, and be prepared to revoke rather than reset.
+
+Both were discovered by applying the spec rather than by knowing them in advance, which is the
+argument for writing the spec before the cards. Six of eight produced a tidy precondition-and-
+control pair; the two that refused to are the two worth reading.
+
+### The measurement
+
+```
+                        D9 end  D10   D11 end
+thin topics                211  211       203
+redteam                             32 →   24   (62% → 46%)
+mean chars/concept card  1,210  —       1,212
+median topic             2,996  —       3,014    ← crosses 3,000
+10th percentile          1,365  —       1,365    ← unchanged, and now expected to be
+```
+
+Eighty-eight cards across eleven waves, and the padding counter-metric has moved **twelve
+characters in total**. The 10th percentile did not move and D10 established that it should not:
+the floor of this site is the beginner layer and the certification skims, and both are the right
+length already.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D12: the wave that inverts D3's own rule
+
+D3's rule for `cloud` was **provider-neutral**, and it was right for the cards it covered: cost
+control, landing zones, CSPM, Terraform. Those are concept cards, and a service description
+dated on the day it was written is the thing on this site most certain to rot.
+
+D12 covers the other thirty-two, and they are the opposite kind of card. They come in matched
+pairs — AWS IAM and GCP IAM, AWS VPC and GCP VPC, AWS KMS and GCP KMS — and for them **the
+provider is the subject**. Writing those provider-neutral would be writing nothing at all. So
+this wave inverts the earlier rule on purpose, and the two rules are compatible because they
+apply to different kinds of card. That distinction is now written into the spec rather than
+being something a later session has to infer from a contradiction.
+
+| Card | The assumption that breaks on arrival |
+|---|---|
+| GCP IAM | **You cannot attach a policy to an identity.** You bind a role to a principal *on a resource*, and inheritance is additive |
+| AWS IAM Deep | A permission can be granted and still denied — five policy types evaluate, and one explicit `Deny` ends it |
+| GCP VPC | The VPC is **global**; subnets are regional; firewall rules are network-wide, priority-ordered, and have denies |
+| AWS VPC | Everything is AZ-scoped, and **a subnet is public only because its route table says so** |
+| GCP Service Accounts | A service account is an identity *and* a resource — `serviceAccountTokenCreator` is impersonation |
+| AWS KMS | The key policy is the authority; the default one delegates to IAM, and a custom one may not |
+| GCP Load Balancing | One global anycast IP, and health checks arrive from `35.191.0.0/16` and `130.211.0.0/22` |
+| AWS Observability | Logs and Metrics are separate products, and custom metrics bill per metric per month |
+
+### The test, and what it threw out
+
+*The difference has to be structural, not a naming difference.* "AWS calls it a Security Group
+and GCP calls it a firewall rule" is a glossary entry and was cut twice. What survives is where
+the two designs disagree at the root — global versus regional networks, additive-allow versus
+explicit-deny evaluation, resource-policy versus identity-policy authority.
+
+The clearest example of why this matters is the pair of network cards. Translating a design in
+either direction is not rewording: a GCP design that assumed global reach and tag-targeted rules
+becomes, in AWS, peering connections, per-subnet route tables and per-instance groups. **The
+provider decides how many boundaries the design has**, which is a thing to know before choosing
+one rather than after.
+
+### Two rows that are worth more than the cards they sit in
+
+- **AWS KMS**: a custom key policy that omits the root statement locks IAM out entirely, and a
+  key policy that names nobody is unrecoverable without AWS support. That is the one mistake in
+  this wave with no self-service repair.
+- **GCP load balancing**: allowing the two health-check ranges is the single most common cause of
+  "every backend is unhealthy and the config looks perfect". It is a firewall rule, and it should
+  be created with the load balancer rather than discovered during the outage.
+
+### The measurement
+
+```
+                        D11 end   D12 end
+thin topics                 203       195
+cloud                              32 →  24   (50% → 38%)
+mean chars/concept card   1,212     1,214
+median topic              3,014     3,027
+10th percentile           1,365     1,367
+```
+
+**Ninety-six cards across twelve waves, and the padding counter-metric has moved fourteen
+characters.** Phase 8 §8's target of "under 150 thin" is now 45 cards away — six more waves at
+the current rate, and for the first time in this phase the end is close enough to name.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D13: reading a negative result
+
+D4 gave `blueteam`'s tool cards *what this tool cannot see*. The twenty-eight left are mostly
+the domain's practices and outputs — hunting, tuning, benchmarks, forensics, coverage maps,
+detonation — and they share a gap that belongs to defensive work specifically.
+
+**Blue-team tools return a negative result most of the time.** The hunt finds nothing. The
+sandbox says clean. The benchmark passes. The matrix is green. Nothing on this site said how to
+read that, so the reassuring answer was being taken at face value in exactly the eight places
+where it deserves the most suspicion.
+
+| Card | What "nothing found" may actually mean |
+|---|---|
+| Threat Hunting | Nobody wrote the hypothesis down, so nothing was ruled out — **the output of a clean hunt should be a statement of coverage** |
+| Windows Forensic Artifacts | Prefetch is off by default on Server; the USN journal wraps in hours. Scope the conclusion to the artefacts examined |
+| Vulnerability Scanners | An unauthenticated scan infers versions from banners. **Report the denominator: what fraction was scanned, and credentialed** |
+| MITRE ATT&CK | A green cell means a rule was tagged. Colour the matrix from test results, not rule inventory |
+| YARA | A rule is a hypothesis about bytes; no match falsifies the rule, not the file |
+| Malware Sandboxes | A suspiciously empty report is itself a finding — evasion looks exactly like harmlessness |
+| Detection Tuning | **A well-tuned rule and a broken rule both produce silence.** Re-run the behaviour and confirm the alert still fires |
+| CIS Benchmarks | A fully hardened host running vulnerable software scores very well |
+
+### The clause that made the wave work
+
+The spec required two things: what a null result may mean, *and* what would have to be true for
+it to be good news. The first half alone is a shrug — "it might be a false negative" leaves the
+reader exactly where they started. The second half turns each card into something runnable:
+
+- A hunt is trustworthy if the hypothesis was falsifiable, the coverage was measured, and the
+  query is recorded verbatim.
+- A scan result is trustworthy in proportion to the fraction of assets reached **with
+  credentials**.
+- A tuning change is trustworthy once the behaviour has been re-run and the alert observed.
+
+Those are three checklists that did not exist on this site an hour ago, and each is a few minutes
+of work rather than a project.
+
+### The card that argues with a number the site elsewhere reports approvingly
+
+The MITRE ATT&CK card says an inventory-coloured coverage map typically overstates real coverage
+by around three to one, and that the honest number is the one that predicts incident outcomes.
+That sits alongside D6's accessibility finding — where this repository's own green `make a11y`
+was described as the floor rather than the result — and the two are the same argument in
+different domains: **a measurement that is easy to make green is the one to trust least**, and
+the site should say so about its own numbers as readily as about anyone else's.
+
+### The measurement
+
+```
+                        D12 end   D13 end
+thin topics                 195       187
+blueteam                           28 →  20   (52% → 37%)
+mean chars/concept card   1,214     1,215
+median topic              3,027     3,046
+10th percentile           1,367     1,373
+```
+
+**104 cards across thirteen waves; fifteen characters of movement in the counter-metric.** The
+"under 150 thin" target is 37 cards away — under five waves.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D14: the number, or it is not advice
+
+`data` has now had three waves and each one found a different missing thing, which is unusual —
+most domains here have one structural gap repeated across their cards. D1 gave eight cards eight
+different additions. D8 gave the SQL cards their silent wrong answers. D14 takes the **product**
+cards, and their gap is the one that decides whether database writing is useful at all.
+
+Every product card was written as though volume and access pattern were details. In databases
+they are the only thing. *"PostgreSQL is the default choice"* is true and useless without the
+sentence that follows it, and *"SQLite is everywhere"* is true with the limit on an axis nobody
+expects.
+
+| Card | The threshold, and what you move to |
+|---|---|
+| PostgreSQL | **Connections bind first** — a few hundred, long before storage. Pooler, then replicas, then partitioning, then distributed |
+| SQLite | **One writer at a time, database-wide.** Size is not the limit; hundreds of GB is ordinary. Funnel writes through one process, or move to Postgres |
+| Redis | Working set against RAM, and `noeviction` **fails writes** at the boundary. TTL on everything |
+| MongoDB | The moment a second access pattern needs a join. Write down the three queries first |
+| Cassandra & DynamoDB | **There is a floor as well as a ceiling** — three nodes of Cassandra do less than one good Postgres |
+| Partitioning & Sharding | You partition for *maintenance* long before speed. Sharding is a one-way door |
+| Columnar Engines | Scans win, point lookups lose. A laptop running DuckDB handles what gets proposed as a cluster |
+| Graph Databases | Two hops is a join; five is a graph. Try a recursive CTE first |
+
+### Why the second requirement mattered more than the first
+
+The spec asked for a threshold **and** what you move to. Thresholds alone would have produced
+eight cards of discouragement — "this will not scale" is not information. The migration path is
+the actual decision, and writing it forced an ordering that most of these cards were quietly
+skipping:
+
+> Pooler, then indexes and query fixes, then read replicas, then partitioning, then anything
+> distributed. **Most teams that believe they have outgrown Postgres have skipped step one.**
+
+### The two cards that invert the expected direction
+
+**SQLite's limit is not size.** It is dismissed on scale grounds and scale is where it does best.
+Getting that right meant contradicting the received framing rather than repeating it, and it
+changes what the card is for: the question is never "how big is the data" but "how many processes
+need to write".
+
+**Cassandra has a floor.** Every card of this kind describes the scale above which you need a
+distributed database. The more useful number for almost every reader is the one below which
+choosing one is a mistake — and that number is high.
+
+### The measurement
+
+```
+                        D13 end   D14 end
+thin topics                 187       179
+data                               23 →  15   (55% → 36%)
+mean chars/concept card   1,215     1,217
+median topic              3,046     3,070
+10th percentile           1,373     1,381    ← +8, the largest single move it has made
+```
+
+`data` has gone **40 → 15** across three waves, from the worst ratio on the site to below the
+median domain. And the 10th percentile moved eight characters, which is the first time it has
+moved meaningfully — not because this wave targeted the floor, but because `data`'s product cards
+were genuinely near it.
+
+**112 cards across fourteen waves; seventeen characters of counter-metric movement.** The "under
+150 thin" target is 29 cards away.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D15: the first wave that adds concrete rather than analysis
+
+Fourteen waves added *analysis* — a failure mode, a blind spot, a threshold, a bill, a
+prerequisite, a null result. D15 is the first that adds **the thing itself**, and `eng`'s craft
+cluster is where that was the only move available.
+
+Those cards do not lack analysis. They contain plenty. What they contain none of is an example. A
+card explains that a review comment should be specific and kind and never shows one; a card
+explains what an ADR records and contains no ADR; a card says estimates should carry assumptions
+and gives no estimate. **Craft is imitated before it is understood**, and a reader who has never
+seen a good design doc cannot produce one from a list of its qualities.
+
+| Card | The artefact now on the page |
+|---|---|
+| Code Review | The same N+1 comment written three ways — unhelpful, good, and blocking |
+| ADRs & Design Docs | A complete ADR-014, four headings, one screen |
+| Estimation & Planning | "3–5 weeks, 80% confidence", with what is excluded and what would break it |
+| Designing for Failure | A filled-in pre-mortem for a payment provider, four columns, five rows |
+| Staff+ Archetypes | Promotion-packet sentences per archetype — scope, outcome, artefact |
+| Influence Without Authority | The cross-team request that gets ignored, and the one that gets done |
+| Back-of-the-Envelope | 5M users → 36 TB/year → "not one Postgres table", worked through |
+| API-First | One endpoint's contract, then the three questions to ask of it |
+
+### The test, and the row it produced
+
+*It has to be copy-pasteable.* Not "a review comment should explain the why" but the comment, in
+quotes, that somebody could adapt in thirty seconds. That constraint is what turned the influence
+card from advice into a diagnosis: the message that works does so **because it removes the other
+team's work, not because it is more polite** — it arrives with the PR written, the flag defaulting
+to off, one specific ask, and an easy way to say no. Nothing in the abstract version of that card
+said any of it.
+
+The pre-mortem produced the wave's most useful single row, and it is the one nobody writes down:
+
+> *The provider succeeded and our write failed.* Every team has considered "the dependency is
+> down". Almost none have considered the case where money moved and the order did not — which is
+> where the fix has to be designed in (record intent, reconcile after) rather than added later.
+
+### One card was cut for duplicating a card that already existed
+
+Technical Debt was in the original eight, with a debt item written to compete with features. The
+domain already carries **Technical Debt as a Financial Argument — Language That Funds It**, which
+is that artefact, better. Caught by `retire_topic.py`'s ambiguity refusal on the title fragment —
+a guard written for Phase 9 turning up a Phase 8 duplication before it was written rather than
+after. Replaced with **Designing for Failure**.
+
+### The measurement
+
+```
+                        D14 end   D15 end
+thin topics                 179       171
+eng                                24 →  16   (32% → 21%)
+mean chars/concept card   1,217     1,218
+median topic              3,070     3,082
+10th percentile           1,381     1,389
+```
+
+**120 cards across fifteen waves; eighteen characters of counter-metric movement.** The "under
+150 thin" target is **21 cards away** — three waves.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D16: connecting the rules of engagement to the tools
+
+`redteam`'s first card is **Rules of Engagement — Read This First**, and until this wave it was
+the only card in the domain that mentioned scope. Fifty-one others described tools as though
+authorisation were a paperwork step that happens once, somewhere else. D16 connects the two.
+
+The spec's test did the discriminating: the reach must be **inherent to the tool**, not a mistake
+an operator could avoid. "Do not scan out of scope" is discipline and was cut twice. "802.11
+capture cannot exclude the neighbours' frames" is physics.
+
+| Card | What it reaches, and the clause that has to exist |
+|---|---|
+| Shodan & Censys | Third-party observations, some stale, some about recycled cloud IPs. **Ownership confirmed in writing before active testing** |
+| Google Dorking, Maltego, SpiderFoot | The subject is *people*. Lawful basis, and a deletion date for the corpus |
+| Wifite & hcxdumptool | **Radio does not respect the property line.** ESSIDs in scope, deauth authorised or not, out-of-scope captures discarded unanalysed |
+| Bettercap | The whole broadcast domain — printers, handsets, a contractor's phone. Segments named; third-party traffic handled |
+| sqlmap | It writes by default, and `--dump` extracts real personal data. **Prove with a version string, then stop** |
+| Flipper Zero & Sub-GHz | Premises, other tenants, and law that changes at the border. Physical authorisation, a letter carried on the person, a jurisdiction check |
+| Data Exfiltration | Real data to infrastructure you now own. **Plant a canary and exfiltrate that** |
+| msfvenom | An artefact that becomes public the moment anyone submits it to a scanner |
+
+### Three findings that were not obvious before writing them down
+
+- **"Passive" describes the effect on the target's systems, not on people.** OSINT tooling
+  returns personal data about named employees, and collecting it is regulated whether or not a
+  packet ever reached the client. The word has been doing damage by implying the wrong thing.
+- **The client cannot always authorise the test.** In a shared building they do not own the radio
+  environment or the car-park barrier, and this is the one area in the domain where a signed
+  scope document from the client is genuinely insufficient.
+- **The proof can be the harm.** Exfiltration is the only technique here where demonstrating the
+  finding *is* the finding's damage — which is why the canary-file habit matters more than any
+  clause: it proves the channel without the payload ever being a real record.
+
+### What the wave says about the domain
+
+Three waves in, `redteam`'s cards now answer four questions each: what the tool does, what using
+it costs and what the defender sees (D2), what you must already have (D11), and what it touches
+beyond the target (D16). That is the shape of a professional tool reference rather than a
+catalogue, and it arrived by applying a different lens each time rather than by making any single
+card longer.
+
+### The measurement
+
+```
+                        D15 end   D16 end
+thin topics                 171       163
+redteam                            24 →  16   (46% → 31%)
+mean chars/concept card   1,218     1,220
+median topic              3,082     3,105
+10th percentile           1,389     1,393
+```
+
+**128 cards across sixteen waves; twenty characters of counter-metric movement.** The "under 150
+thin" target is **13 cards away** — two waves.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D17: the domain where a mistake is billed
+
+Three waves on `cloud`, three lenses. D3: the failure mode that is the same on all three
+providers. D12: the assumption you carry over from the other cloud. D17: the meter.
+
+**Everywhere else on this site a mistake breaks something. Here it is billed** — quietly,
+monthly, by a service working exactly as designed — and not one of these twenty-four cards said
+what the meter counts.
+
+| Card | The meter, and the expensive default |
+|---|---|
+| GCP Storage | Minimum storage duration per class — **an Archive object deleted next week still bills for a year** |
+| AWS Compute | Stopping the instance stops the instance. EBS, snapshots and the public IPv4 keep billing |
+| GCP Compute | Persistent disks bill **provisioned**, not used, and cannot be shrunk in place |
+| GCP Observability | Log *ingestion* volume. Exclusions act before the meter; retention only acts after |
+| BigQuery | Bytes **scanned**, not returned. `LIMIT` does not reduce it; `--dry_run` is free |
+| Cloud CI/CD | Build minutes × machine size, and a cache that never hits re-downloads the world per push |
+| Hybrid Connectivity | Data transfer, on every boundary — the largest line on data-heavy invoices |
+| GCP Databases | HA is a second instance; storage auto-grows and **never shrinks** |
+
+### The rule that makes this durable instead of the fastest-rotting content on the site
+
+**Name the unit, never the price.** Prices change quarterly; a number here would be stale within
+a quarter and wrong on 1,420 pages. Billing *shapes* — per GB scanned, per hour whether used or
+not, per GB crossing a zone boundary, a 90-day minimum on an object stored for one — change on a
+scale of years, and they are what actually determines the invoice. Every draft that reached for a
+figure was rewritten to name the meter instead.
+
+That constraint also produced the wave's most transferable observations, none of which is a
+price:
+
+- **Exclusions beat retention**, because one acts before ingestion is counted and the other after.
+- **The cheapest byte is the one you are not storing** — a lifecycle rule that deletes outperforms
+  every class optimisation.
+- **Three architectural moves remove transfer charges rather than reducing them**: private
+  endpoints, a CDN in front of anything public, and keeping a request's path inside one zone.
+- **Everything expensive in CI is also everything slow**, which is the happy case — the same fixes
+  shorten the feedback loop, and that is the argument that gets them scheduled.
+
+### The measurement
+
+```
+                        D16 end   D17 end
+thin topics                 163       155
+cloud                              24 →  16   (38% → 25%)
+mean chars/concept card   1,220     1,221
+median topic              3,105     3,114
+10th percentile           1,393     1,404
+```
+
+**136 cards across seventeen waves; twenty-one characters of counter-metric movement.** The
+"under 150 thin" target is **five cards away** — it falls next wave.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 8 wave D18, and the target is met
+
+`blueteam`'s third wave takes the failure mode that actually kills defensive tooling in real
+organisations, and it is not technical. **These tools are deployed and then not operated.**
+
+| Card | Without an owner it becomes |
+|---|---|
+| MISP & OpenCTI | A database of indicators that were true last year |
+| Splunk / SPL | **Field extractions break silently the day a log format changes** — searches keep running and quietly go empty |
+| OSQuery | A query that errors returns nothing, which looks exactly like a clean fleet |
+| Lynis | A score nobody reads, instead of a diff somebody acts on |
+| Adversary Emulation | Evidence about one Tuesday in March, presented as coverage |
+| Chain of Custody | A process that exists in a document and has never been performed |
+| Purple Teaming | A workshop, rather than a loop that closes |
+| Elastic / ELK | A mapping explosion and no lifecycle policy |
+
+Three of the eight converged on the same shape without being written to, which is the wave's most
+useful result: **ask something you know must be true, and alert when it stops being true.** A
+SIEM's most valuable alert is "this log source has sent nothing for an hour". osquery's is a
+canary query for a file that exists on every host. Elasticsearch's is a snapshot restore that has
+actually been performed. In each case the tool cannot distinguish *nothing found* from *nothing
+asked*, and one deliberate known-true probe is what separates a healthy deployment from a silent
+one.
+
+The chain-of-custody card is the one to act on first, and it costs an hour a year: seize a spare
+laptop properly, fill in the real form, hash the image, store the record. That rehearsal finds
+the flat write-blocker battery and the person who did not know they were on the authorised list
+— and of everything in this domain, it is where the gap between *written* and *practised* carries
+the highest cost.
+
+---
+
+# Phase 8, closed: 144 cards, eighteen waves
+
+```
+before:  330 topics single-concept and under 1,800 plain chars   (23% of the site)
+target:  under 150
+ACTUAL:  147                                                     (10% of the site)
+```
+
+| | D1 | D5 | D9 | D13 | D18 |
+|---|---|---|---|---|---|
+| thin topics | 279 | 247 | 211 | 187 | **147** |
+| mean chars/concept card | 1,200 | 1,204 | 1,210 | 1,215 | **1,223** |
+| median topic | — | — | 2,996 | 3,046 | **3,133** |
+| 10th percentile | — | — | 1,365 | 1,373 | **1,415** |
+
+**The counter-metric moved twenty-three characters across 144 cards.** That is the number the
+phase should be judged on, because §7 named padding as the way this work fails and the mean is
+what detects it. It held because the discipline never changed: every addition arrived as a *new
+concept card with a claim of its own*, never as extra sentences inside an existing one.
+
+## What eighteen specs turned out to be worth
+
+The thing that transfers is not any individual card. It is that **each wave was given a written
+spec before any card was touched**, and that no spec was reused. Eighteen domains-and-clusters,
+eighteen different structural gaps:
+
+| | Domain | The gap |
+|---|---|---|
+| D1 | `data` | A different missing thing per card — the only wave without a uniform spec |
+| D2 | `redteam` | What using this costs you, and what the defender sees |
+| D3 | `cloud` | The failure mode that is the same on all three providers |
+| D4 | `blueteam` | What this tool cannot see |
+| D5 | `web` | The number your own machine cannot show you |
+| D6 | `eng` | The bill this pattern sends, and the size below which it is a net loss |
+| D7 | `devops` | What this looks like two years in |
+| D8 | `data` | The query that runs, returns a number, and is wrong |
+| D9 | `web` | The bug that sent you here |
+| D10 | — | **No wave.** The bottom decile is deliberately short, and the commitment was retracted |
+| D11 | `redteam` | What you must already have before this runs |
+| D12 | `cloud` | The assumption you carry over from the other cloud |
+| D13 | `blueteam` | What it means when it finds nothing |
+| D14 | `data` | The number at which this stops being the right answer |
+| D15 | `eng` | Show the artefact |
+| D16 | `redteam` | What this touches that your scope may not cover |
+| D17 | `cloud` | What you are billed for, and which default is expensive |
+| D18 | `blueteam` | Who owns it, how often, and what it becomes without that |
+
+Two of those rows matter more than the rest.
+
+**D10 is the wave that did not happen.** D9 committed the next wave to the bottom decile by
+character count; building the tool to execute that commitment showed the commitment was wrong,
+because the bottom of this site is the beginner layer and the certification skims and both are
+the right length already. It was retracted in the same session and recorded under its own
+heading rather than being quietly replaced with an easier wave under the same name.
+
+**D12 inverts D3's own rule**, deliberately, and the spec says why: provider-neutrality is right
+for concept cards and writes nothing for service cards. A later session reading both without that
+sentence would have found a contradiction instead of a distinction.
+
+## What is left, and what it is not
+
+147 thin topics remain, and the composition is now known rather than assumed:
+
+- **64 of the bottom decile are badged deliberately short** — `Beginner • Core`, `Linux+ • CLI`,
+  `PenTest+ • Recon`, `Military • Reference`. These are not debt. Phase 9 §3 exists to protect
+  the first group and D10 established the second.
+- The rest sit across `web` 17, `eng` 16, `redteam` 16, `cloud` 16, `data` 15, `script` 14,
+  `devops` 12, `blueteam` 12 and a long tail of single figures.
+
+Any future wave should start from `depth_report.py`, cross-reference `--thin` against
+`near_duplicates.py` (Phase 9 C5's finding: **a thin card is often a duplicate-shaped thing**),
+and check `--bottom` before assuming a short card is an underdeveloped one.
+
+Site **1,420 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7's first ten, and the checks that caught four mistakes
+
+The ordered ten shipped as specified. Each was pre-flighted with
+`near_duplicates.py --title` before a word was written &mdash; which is the mode T2 was built
+for, and this is the first session to have used it as intended rather than as a census.
+
+| # | Card | The argument it turns on |
+|---|---|---|
+| 1 | `cs` **Little's Law & Queueing** | `W = L / λ`, and the wall at 90% utilisation. Adding one worker is not a 15% improvement, it is a fourfold reduction in queueing delay |
+| 2 | `threat` **State-Sponsored Operations** | Criminals optimise for money per hour; states optimise for access and will spend a year being quiet. **"We're not a target" is a claim about value to a specific sponsor** |
+| 3 | `sec` **Asset Discovery** | Every coverage metric is a fraction with an unknown denominator — and inventories are always wrong in the same direction |
+| 4 | `cloud` **Multi-Cloud** | Four reasons, two of them real. **The abstraction that avoids lock-in is a dependency with one maintainer** |
+| 5 | `linux` **Rescuing a System That Will Not Boot** | Mount, bind, chroot, fix, rebuild, exit, unmount — and step three is the one people skip |
+| 6 | `eng` **RFCs & Design Docs** | Written before the decision, or it is documentation. The test is whether anyone could change the outcome by reading it |
+| 7 | `productivity` **The Weekly Review** | Capture without review is a graveyard, and reading back last week's *calendar* finds more than the inboxes do |
+| 8 | `redteam` **Operator OPSEC** | Detection on day one measures the client's response to a noisy operator. **Be hard to detect and trivially easy to identify once detected** |
+| 9 | `script` **subprocess Without Shell Injection** | The convenient form is the dangerous one, and a list of arguments removes the bug class rather than filtering it |
+| 10 | `blueteam` **SOC Metrics That Do Not Lie** | MTTD is gameable by narrowing what counts as detected. Four metrics that resist gaming, each uncomfortable |
+
+### Four mistakes, four different checks
+
+Writing ten new cards rather than deepening existing ones exercises a different set of guards,
+and every one of them fired:
+
+| Caught by | What it was |
+|---|---|
+| **The verdict ratchet** in `lint_content.py` | `table with no verdict: 514 exceeds the ceiling of 513`. Eight new tables had been written without one. Fixed by writing eight verdicts — the ratchet turned a style rule into content |
+| **The xref checker** | Three invented cross-reference titles: *Landing Zones — The Account Structure You Cannot Retrofit*, *Motivation — Why Waiting for It Fails and What Low-Motivation Systems Look Like*, and an ADR title with the acronym expansion inside it. All three were plausible and none existed |
+| **The acronym `byDomain` check** | Writing "a CI/CD supplier" in `threat` introduced `CD` to a domain with no decision recorded for it, and the linter refused to guess between Continuous Delivery and Continuous Deployment |
+| **`suggest_related.py --check`** | Ten new cards would have been ten orphans. Eleven bidirectional edges added, and the one-way count stayed at zero |
+
+The xref row is the one worth noting, because it is the **sixth** time this session that a
+cross-reference has been invented rather than looked up. The failure is consistent enough to
+name as a rule: **a title you can remember is a title you are reconstructing.** Grep for it
+first, every time — the linter will catch it, but at the cost of a build cycle each.
+
+### What the new cards were built to do
+
+Six of the ten exist to be referenced by other cards rather than read alone, which is why the
+ordering put them early. *Asset Discovery* gives every coverage metric elsewhere a denominator.
+*Little's Law* explains three existing cards from underneath — connection pools, CI queues and
+retry storms are one phenomenon. *RFCs & Design Docs* completes a pair with the existing ADR
+card: **the doc is the deliberation and the ADR is the residue**, and writing only one of the
+two loses either the record or the chance to influence it.
+
+```
+topics     1,420 → 1,430
+thin         147 → 147     (none of the ten is thin)
+mean chars/concept card  1,223 → 1,227
+related links  882 → 904, still 0 one-way
+```
+
+Site **1,430 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7, tracks CE and CI: the release factory and the toolchain
+
+Phase 7 says *&ldquo;after ten, re-run the audit rather than continuing down the list&rdquo;*, so
+the audit was re-run before this batch and it chose the tracks. `devops` was 27% thin with the
+best-specified remaining track; `script` was 143 topics teaching the language thoroughly and the
+environment around it barely. **Track CE is now complete (6 of 6) and CI is complete (5 of 5).**
+
+| Domain | Card | The argument |
+|---|---|---|
+| `devops` | Flaky Tests | A suite that fails randomly teaches the team to re-run rather than read — and **automatic retries are the fix that removes the evidence** |
+| `devops` | Test Data | Fidelity, privacy, refresh cost: pick two. Teams that never chose have all three at their worst |
+| `devops` | Ephemeral Environments | **The shared staging queue is often the real bottleneck**, and the prerequisites are the capabilities that make production recoverable |
+| `devops` | Monorepo vs Many Repos | The trade is about coordination, not storage. Pick the failure you can staff |
+| `devops` | Build Caches | Measure first — the minutes are in dependency install, not compile. **The cache key is the whole design** |
+| `devops` | Release Notes | A changelog is the API of your release process, read by five audiences with five different questions |
+| `script` | Type Hints & a Type Checker | Hints nothing checks are comments with better syntax. **A type annotation is not validation** |
+| `script` | pathlib | Always pass `encoding="utf-8"`; `resolve()` before comparing; check the path stays inside the directory you meant |
+| `script` | Threads, Processes & async | One diagnostic picks all three: is the program waiting, or computing? |
+| `script` | Packaging & Dependency Pinning | Pin for applications, range for libraries — and **this is the supply-chain surface** |
+
+### The verdict ratchet fired again, and harder
+
+Thirteen new tables without verdicts this time (520 against a ceiling of 513), after eight last
+batch. That is not carelessness twice; it is a **structural property of writing new cards**. A
+deepening wave adds one card with one table and one verdict, because the spec asks for a claim.
+A new card is three cards and three tables, and the middle one is always the reference table
+that feels like it speaks for itself.
+
+It does not. Writing the thirteen verdicts produced some of the better lines in the batch — the
+antisocial-pinning point, the GIL-is-not-a-lock warning, the observation that an unpinned
+`requirements.txt` failure gets debugged as though it were your code. **The ratchet is not a
+style rule with a content side effect; it is a content rule enforced by counting.**
+
+### And the seventh invented cross-reference
+
+*Software Supply Chain Security — SBOM, SLSA & Signing.* The real title ends *& Sigstore*. The
+linter's "Did you mean" caught it in one cycle, which is the third time this session that
+feature has paid for itself — but the rule stated after the last batch stands unchanged and was
+ignored one batch later: **grep for the title, do not remember it.**
+
+```
+topics     1,430 → 1,440
+thin         147 → 147   (none of the twenty new cards is thin)
+mean chars/concept card  1,227 → 1,231
+related links  904 → 924, still 0 one-way
+```
+
+Site **1,440 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7, tracks CG and CH complete: recovery, and five primitives
+
+Two more tracks closed. `linux`'s was **recovery** — the situations where the normal tools are
+not available — and `cs`'s was five primitives the domain genuinely lacked despite being the
+strongest in the file.
+
+| Domain | Card | The claim it turns on |
+|---|---|---|
+| `linux` | sudoers & PAM | Two separate stacks people conflate. **If nobody can authenticate, editing sudoers will not help** |
+| `linux` | Journald & Logrotate | Two overlapping retention systems, and the disk fills because of the one you did not configure |
+| `linux` | rsync & the trailing slash | One character decides directory-or-contents, and with `--delete` there is no undo. **A mirror is not a backup** |
+| `linux` | strace & ltrace | What is this program actually asking the kernel for? Grep for `ENOENT` first |
+| `linux` | Linux on the desktop, and WSL | The honest answer is about workflows. Hardware support is written for the OS the machine shipped with |
+| `cs` | Compression | Incompressible data is data with no redundancy — **if encrypted output compresses, the cipher is broken** |
+| `cs` | Consistent hashing | Modulo sharding gets *worse* as the cluster grows, and virtual nodes are a correctness requirement |
+| `cs` | Byte order & binary layout | Padding bytes are uninitialised, so writing a struct to a socket leaks memory |
+| `cs` | Catastrophic backtracking | Simultaneously a performance bug, a security vulnerability, and invisible in review |
+
+### The ratchet, a third time — and the pattern is now measurable
+
+Ten verdict-less tables this batch, after thirteen and eight before it. Three batches of new
+cards, three ratchet failures, and **the rate is essentially constant at about one per card**.
+That is no longer a lapse; it is the shape of the work. A new card is three concept cards and
+three tables, and the middle one is always the reference table that appears to speak for itself.
+
+The stated intention at the start of this batch was to write the verdicts as I went. It did not
+happen, and recording that is more useful than claiming it did: **an intention is not a control,
+and the ratchet is.** The right fix is the same one this file reaches for elsewhere — make the
+tool do it. A future session should teach the card scaffold to refuse a table with no verdict at
+the point of writing rather than at the point of linting.
+
+### Two more `byDomain` decisions the acronym checker demanded
+
+`CD` in `threat` last batch, `WAF` in `cs` this one — the ReDoS card mentions a web application
+firewall, and `cs` had no recorded decision between that and *Well-Architected Framework*. Both
+took ten seconds and both are the check working exactly as designed: **a new card in a new
+domain is where an ambiguous acronym first becomes ambiguous.**
+
+```
+topics     1,440 → 1,449
+thin         147 → 147   (none of the twenty-nine new cards is thin)
+mean chars/concept card  1,231 → 1,235
+related links  924 → 942, still 0 one-way
+```
+
+**Phase 7: 31 of 96 shipped.** Tracks CE, CG, CH and CI complete.
+
+Site **1,449 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7, tracks CJ and CM: and the scaffold that stopped the ratchet firing
+
+Two more tracks closed. `infra` was missing **everything that is not a server** — the room, the
+power, the labels, the process for keeping track of any of it. `productivity` was sixteen topics
+of learning science with almost nothing about *managing work*, which is the other half of what
+its title promises.
+
+| Domain | Card | The claim it turns on |
+|---|---|---|
+| `infra` | Failover Clustering | Clusters fail because the survivors cannot agree a node died. **A two-node cluster with no witness is a coin toss** |
+| `infra` | The Rack, the Power & the Cooling | Dual feeds are pointless if a single-supply device is plugged into one. Blanking panels are the cheapest cooling fix there is |
+| `infra` | Labelling & Asset Tagging | The cost is paid now and the benefit lands at 3 a.m. **Label the physical fact, not the logical role** |
+| `infra` | Tape & the Untested Restore | Tape became the offline copy. The question that strands archives is *will there be a drive that can read it* |
+| `infra` | Decommissioning at Estate Scale | The hard part is finding what nobody owns — and **a dangling DNS record is a subdomain takeover** |
+| `productivity` | The Inbox | An inbox is a list of other people's priorities, sorted by the one ordering guaranteed not to match importance |
+| `productivity` | Time Blocking | The failure is over-scheduling. Block 50–60% of the day; **move a lost block rather than deleting it** |
+| `productivity` | Focus Blocks | "I'll focus when it's quiet" never arrives. Uninterrupted time on a rota is a coverage negotiation |
+| `productivity` | Notes That Get Reopened | If you cannot find it in ten seconds it does not exist. **Write the title as the search you will type** |
+
+### The fix from the last record, applied and tested
+
+The previous session record said an intention is not a control, and that the right answer was to
+teach the card scaffold to refuse a table with no verdict at the point of writing. That was done
+before this batch, and it fired **four times in nine cards** — each time as an immediate error
+naming the card, rather than as a lint failure twenty minutes later after a build.
+
+The measurable result: `table with no verdict` **held at 509**, where the previous three batches
+took it to 521, 520 and 514. Three batches of the same mistake, one small change, and the
+mistake stopped. That is the same shape as every other guard in this file: *the cheapest place
+to catch something is where it is written, and the ratchet's job is to catch what escapes.*
+
+### One acronym decision, again from a new domain
+
+`PDU` in `infra` — the rack card uses power distribution units, and the dictionary held
+*Protocol Data Unit* as well. Third batch in a row where a new card in a new domain is the thing
+that first makes an acronym ambiguous, which is a pattern worth naming: **the acronym dictionary
+is only as decided as the domains it has been used in.**
+
+```
+topics     1,449 → 1,458
+thin         147 → 147   (none of the thirty-eight new cards is thin)
+mean chars/concept card  1,235 → 1,238
+related links  942 → 960, still 0 one-way
+table with no verdict  509 → 509
+```
+
+**Phase 7: 40 of 96 shipped.** Tracks CE, CG, CH, CI, CJ and CM complete.
+
+Site **1,458 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7, tracks CF and CN: and the census's second blind spot
+
+Tracks CF (`eng`, the decision-making machinery) and CN (`sec`, running security as a function)
+are complete. Eight new cards and **one card that turned out not to need writing** — which is
+the more interesting result.
+
+| Domain | Card | The claim it turns on |
+|---|---|---|
+| `eng` | Build vs Buy | Never build cost against licence cost. **The question behind it is whether this is your differentiator** |
+| `eng` | The Staff Engineer Role | Not a very good senior. A problem that crosses teams and belongs to none of them |
+| `eng` | Goals That Survive the Quarter | A goal you are confident of hitting carries no information |
+| `sec` | Vulnerability Prioritisation | Severity is a property of the flaw; priority is a property of your estate. **KEV first, then EPSS weighted by exposure** |
+| `sec` | Shadow IT | Every instance is a requirements document somebody wrote by spending money |
+| `sec` | Break-Glass Accounts | The day you need them is the day the identity provider is down — and **two accounts, not one** |
+| `sec` | Code Signing | You are not protecting a file, you are controlling an operation |
+| `sec` | Security Champions | Influence scales and headcount does not. Measured by consultations, not by headcount |
+
+### The card that already existed, and the reason the check missed it
+
+Track CF asks for *Architecture Decision Records — The Format Whose Value Is the Rejected
+Options*. The `--title` pre-flight said **clear to write**. The site already has
+**ADRs & Design Docs**.
+
+```
+tokens("ADRs & Design Docs")                          = {adr, design, doc}
+tokens("Architecture Decision Records — …")           = {architecture, decision, record, …}
+containment                                           = 0.00
+```
+
+**An abbreviation and its expansion share no characters**, so a token census cannot see they are
+the same subject. This is the second structural limitation the title census has shown this
+session — the first being the two `script` PowerShell cards at 0.25, where the titles diverged
+while the content did not. Different mechanism, same class: *the tool measures titles and the
+question is about subjects.*
+
+### Fixed, and the fix had to be asymmetric
+
+`tokens()` now takes `expand=`, pulling each acronym's dictionary meanings in. Turning that on
+everywhere was the obvious move and the measurement rejected it:
+
+```
+census pairs ≥ 0.50, expansion off  = 40
+census pairs ≥ 0.50, expansion on   = 80
+```
+
+Any two titles sharing an acronym now also share every word of its expansions, and the census
+doubled with almost all of the new pairs false. So the two modes now differ deliberately:
+**`--title` expands both sides, because a missed match costs a duplicate card; the census does
+not, because a false pair costs a reader's time and there are a million comparisons.**
+Asymmetric tools for asymmetric questions — and with the fix, the ADR candidate surfaces as the
+top hit at 0.38.
+
+The card itself became a **deepening** rather than a new topic: the existing ADR card had two
+concept cards and covered neither rejected options nor the constraints that killed them, so it
+gained a third. The right outcome, and one the plan's own queue would have got wrong.
+
+### The scaffold held again
+
+Four more refusals in this batch, and `table with no verdict` **stayed at 509** across seventeen
+new cards. One further byDomain decision — `CISA` in `sec`, which the dictionary also knows as
+*Certified Information Systems Auditor*.
+
+```
+topics     1,458 → 1,466
+thin         147 → 147
+mean chars/concept card  1,238 → 1,241
+related links  960 → 976, still 0 one-way
+```
+
+**Phase 7: 49 of 96 shipped.** Tracks CE, CF, CG, CH, CI, CJ, CM and CN complete.
+
+Site **1,466 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.

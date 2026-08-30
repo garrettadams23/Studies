@@ -105,10 +105,37 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Verdict</div>
+                <div class="concept-title">When to Stop, and When to Go Backwards on Purpose</div>
+                <div class="concept-desc">
+                  Normal forms are a ladder with no instruction about where to get off, which is
+                  why the subject produces both under- and over-engineered schemas. The honest
+                  guidance is short and depends entirely on what the table is <em>for</em>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Workload</th><th>Target</th><th>Why</th></tr></thead>
+                    <tbody>
+                      <tr><td>Transactional — orders, accounts, anything written often</td><td><strong>3NF, and stop</strong></td><td>Each fact stored once means a write touches one place. BCNF beyond this rarely changes the tables you would have drawn anyway</td></tr>
+                      <tr><td>Analytical — reporting, dashboards, a warehouse</td><td><strong>Denormalise deliberately</strong></td><td>Star schemas duplicate on purpose: joins are the cost at read time, and nothing is being updated in place</td></tr>
+                      <tr><td>A read-heavy path inside a transactional system</td><td>A derived column or a materialised view</td><td>Duplication with an owner and a refresh rule, which is different from duplication by accident</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Denormalisation is a decision, not a failure —
+                    provided it is written down.</strong> The distinction that matters is not
+                    normalised versus not; it is whether a duplicated value has a stated source of
+                    truth and something that keeps it honest. A copy nobody owns silently
+                    diverges, and the divergence surfaces as two dashboards disagreeing months
+                    later.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔒</span>
               <span class="topic-name">ACID <span class="acro-exp">(Atomicity, Consistency, Isolation, Durability)</span> &amp; Transactions — Isolation Levels</span>
@@ -142,10 +169,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Read, Modify, Write — and Lose the Other Update</div>
+                <div class="concept-desc">
+                  Wrapping two statements in a transaction does not make them atomic in the way people
+                  assume. At <code>READ COMMITTED</code>, the default in PostgreSQL, SQL <span class="acro-exp">(Structured Query Language)</span> Server and Oracle, two
+                  sessions can both read a balance of 100, both subtract 10, and both write 90.
+                  <strong class="c-amber">One update is gone, both transactions committed, and no error was
+                  raised</strong> &mdash; the database did exactly what each session asked.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Isolation level</th><th>What it still permits</th></tr>
+                    <tr><td><code>READ UNCOMMITTED</code></td><td>Dirty reads &mdash; other sessions' uncommitted values</td></tr>
+                    <tr><td><code>READ COMMITTED</code> (common default)</td><td>Non-repeatable reads, and <strong>lost updates</strong> on read-modify-write</td></tr>
+                    <tr><td><code>REPEATABLE READ</code> (MySQL default)</td><td>Phantom rows in some engines; MySQL uses gap locks to reduce them</td></tr>
+                    <tr><td><code>SERIALIZABLE</code></td><td>Nothing &mdash; but expect serialisation failures you must retry</td></tr>
+                    <tr><td><code>SELECT … FOR UPDATE</code></td><td>Locks the row now, at any level. The targeted fix for exactly this</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> you usually do not, which is why this is the entry
+                  worth remembering. It shows up as a balance, a stock count or a counter that drifts under
+                  concurrency and reconciles fine in testing, where nothing runs at the same time. Two reliable
+                  fixes: <strong>do the arithmetic in the database</strong>
+                  (<code>UPDATE … SET n = n - 10</code>, which is atomic), or take the row lock with
+                  <code>SELECT … FOR UPDATE</code> before reading.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🕸️</span>
               <span class="topic-name">ER Modeling — Designing the Schema</span>
@@ -178,10 +233,39 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Trap</div>
+                <div class="concept-title">Model the Invariant, Not the Current Process</div>
+                <div class="concept-desc">
+                  The most common schema mistake is not a missing normal form. It is
+                  <strong>modelling how the business works this year</strong> — the approval steps,
+                  the two regions, the one product line — instead of what is true about the domain
+                  regardless. Processes change every reorganisation; invariants do not, and the
+                  schema that encodes the second survives the first.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Process, which will change</th><th>Invariant, which will not</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>manager_approved</code>, <code>finance_approved</code> as columns</td><td>An <em>approvals</em> table: who approved what, when, in which role</td></tr>
+                      <tr><td><code>email</code> and <code>email_2</code> on the customer</td><td>Contact methods as rows, with a type and a primary flag</td></tr>
+                      <tr><td>A <code>status</code> column with eleven values the code branches on</td><td>A state and a transition history, because somebody will ask when it changed</td></tr>
+                      <tr><td>Price on the product</td><td>Price on the <em>order line</em> — the price at the time of sale is a fact about the sale, and a product's price changing must not rewrite history</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">That last row is the one that causes real damage.</strong>
+                    Storing a price only on the product means last year's revenue moves when
+                    somebody edits a price today — and nobody notices, because the report still
+                    runs. The general test: <em>if this value changes, should history change with
+                    it?</em> If no, it belongs on the transaction, not on the entity.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
               <span class="topic-name">SQL <span class="acro-exp">(Structured Query Language)</span> Joins — Every Type, and the NULL Traps</span>
@@ -217,10 +301,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">A WHERE on the Right-Hand Table Undoes Your LEFT JOIN</div>
+                <div class="concept-desc">
+                  This is the most common wrong answer in SQL and it produces no error at all. A
+                  <code>LEFT JOIN</code> keeps unmatched left rows and fills the right side with NULLs. Then a
+                  <code>WHERE</code> clause tests one of those NULL columns, NULL is not <em>true</em>, and
+                  <strong class="c-amber">every unmatched row is filtered straight back out</strong> &mdash;
+                  leaving you with an inner join wearing a left join's syntax.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Written</th><th>What you actually get</th></tr>
+                    <tr><td><code>LEFT JOIN o ON …<br>WHERE o.status = 'paid'</code></td><td><strong>Inner join.</strong> Customers with no order are gone</td></tr>
+                    <tr><td><code>LEFT JOIN o ON … AND o.status = 'paid'</code></td><td>Correct &mdash; the filter is part of the match, not applied after</td></tr>
+                    <tr><td><code>WHERE o.id IS NULL</code></td><td>Deliberate anti-join: rows on the left with nothing on the right. This one is on purpose</td></tr>
+                    <tr><td><code>WHERE o.total &gt; 100</code></td><td>Same trap. Any comparison against NULL drops the row</td></tr>
+                    <tr><td><code>COUNT(o.id)</code> vs <code>COUNT(*)</code></td><td>After a LEFT JOIN these differ, and the difference <em>is</em> the unmatched count</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> run the join with no <code>WHERE</code> and compare
+                  row counts. If adding the filter drops your row count to exactly the inner-join count, the
+                  <code>LEFT</code> is decorative. The habit that avoids it entirely: <strong>filters on the
+                  right-hand table belong in <code>ON</code>; filters on the left-hand table belong in
+                  <code>WHERE</code></strong>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🪟</span>
               <span class="topic-name">Window Functions — Analytics Without Collapsing Rows</span>
@@ -255,10 +366,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">The Default Frame Is RANGE, and Ties Collapse Into One Bucket</div>
+                <div class="concept-desc">
+                  <code>SUM(x) OVER (ORDER BY d)</code> looks like a running total and usually is one
+                  &mdash; until the <code>ORDER BY</code> column has duplicates. The default frame is
+                  <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>, and <em>RANGE</em> means
+                  &ldquo;all rows with the same ordering value&rdquo;, so
+                  <strong class="c-amber">every tied row gets the same total &mdash; the total after all of
+                  them</strong>. Two sales on the same date both show the day&rsquo;s closing figure.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Frame</th><th>Meaning</th></tr>
+                    <tr><td><code>RANGE … CURRENT ROW</code> (the default)</td><td>All peer rows sharing the current ordering value are included</td></tr>
+                    <tr><td><code>ROWS … CURRENT ROW</code></td><td>Exactly the rows up to this one. This is the running total people mean</td></tr>
+                    <tr><td>No <code>ORDER BY</code> in the OVER</td><td>The frame is the whole partition &mdash; a group total, not a running one</td></tr>
+                    <tr><td><code>ROW_NUMBER</code> vs <code>RANK</code> vs <code>DENSE_RANK</code></td><td>Ties: arbitrary distinct numbers, gaps after ties, no gaps</td></tr>
+                    <tr><td><code>LAG(x)</code> across a partition boundary</td><td>NULL, not the previous partition's last value &mdash; usually what you want, occasionally not</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> look for repeated values in a running-total
+                  column. Identical consecutive totals for rows with different amounts is the signature. Write
+                  <strong><code>ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> explicitly</strong>
+                  whenever you mean a running total &mdash; it costs eight words and removes the entire class of
+                  error.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">🧱</span>
               <span class="topic-name">CTEs <span class="acro-exp">(Common Table Expression)</span> &amp; Recursion — Readable, Composable Queries</span>
@@ -331,10 +470,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Join First, Aggregate Second, and SUM Cannot Tell</div>
+                <div class="concept-desc">
+                  If a query joins a one-to-many relationship and then aggregates, the &ldquo;one&rdquo;
+                  side is duplicated once per matching row before <code>SUM</code> ever sees it. The total comes
+                  back larger, in a way that looks entirely plausible, and
+                  <strong class="c-amber">no error is raised because nothing is wrong with the SQL <span class="acro-exp">(Structured Query Language)</span></strong>. An
+                  order joined to three shipments has its value counted three times.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>What it does to the number</th></tr>
+                    <tr><td>One join, one-to-many, then <code>SUM</code></td><td>Multiplies by the number of matches per row</td></tr>
+                    <tr><td><em>Two</em> such joins</td><td>Multiplies by the product &mdash; 3 shipments &times; 2 discounts = 6&times;</td></tr>
+                    <tr><td><code>COUNT(col)</code> vs <code>COUNT(*)</code></td><td><code>COUNT(col)</code> skips NULLs. On an outer join that is often the point, and often the bug</td></tr>
+                    <tr><td><code>AVG(col)</code> with NULLs</td><td>NULLs are excluded from both the total <em>and</em> the divisor &mdash; not treated as zero</td></tr>
+                    <tr><td><code>SUM</code> over an empty set</td><td>NULL, not 0. <code>COALESCE(SUM(x), 0)</code> if a caller will do arithmetic on it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> aggregate the fact table alone first and compare
+                  the total to the joined query&rsquo;s. If they differ, the join is fanning out. The fix is to
+                  <strong>aggregate in a subquery or CTE <span class="acro-exp">(Common Table Expression)</span> and join to the result</strong>, so each row arrives
+                  pre-summed &mdash; or use <code>SUM(DISTINCT …)</code> only when you can prove the duplicates
+                  are exact, which is rarely.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎯</span>
               <span class="topic-name">Subqueries, EXISTS &amp; Set Operations</span>
@@ -369,10 +535,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">NOT IN Against One NULL Returns Zero Rows</div>
+                <div class="concept-desc">
+                  <code>WHERE id NOT IN (SELECT customer_id FROM orders)</code> is the single most
+                  destructive NULL behaviour in SQL <span class="acro-exp">(Structured Query Language)</span>. If that subquery returns even one NULL, the comparison
+                  becomes <em>unknown</em> for every row, no row satisfies the predicate, and
+                  <strong class="c-amber">the query returns nothing at all</strong>. Not an error &mdash; an empty
+                  result, which reads as &ldquo;there are none&rdquo;.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Written</th><th>With a NULL in the subquery</th></tr>
+                    <tr><td><code>x NOT IN (1, 2, NULL)</code></td><td><strong>Never true.</strong> <code>x &lt;&gt; NULL</code> is unknown, and unknown fails the WHERE</td></tr>
+                    <tr><td><code>x IN (1, 2, NULL)</code></td><td>True if x is 1 or 2 &mdash; the NULL is harmless here, which is why the asymmetry surprises people</td></tr>
+                    <tr><td><code>NOT EXISTS (SELECT 1 …)</code></td><td><strong>Correct.</strong> Cares whether a row exists, not what is in it</td></tr>
+                    <tr><td><code>LEFT JOIN … WHERE right.id IS NULL</code></td><td>Also correct, and often the faster plan on large tables</td></tr>
+                    <tr><td><code>EXCEPT</code> / <code>MINUS</code></td><td>Correct, and treats NULLs as equal &mdash; different semantics again</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> an anti-join that returns exactly zero rows when
+                  you expected some is this bug until proven otherwise &mdash; check with
+                  <code>SELECT COUNT(*) FROM orders WHERE customer_id IS NULL</code>. The habit worth adopting
+                  outright: <strong>use <code>NOT EXISTS</code> and never <code>NOT IN</code> on a
+                  subquery</strong>. It is correct whether or not NULLs are present, so you never have to know.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📇</span>
               <span class="topic-name">Indexes Explained — B-tree, Hash &amp; Covering</span>
@@ -405,10 +598,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">A UNIQUE Index Does Not Stop Duplicate NULLs</div>
+                <div class="concept-desc">
+                  <code>UNIQUE</code> is the constraint people trust most and it has a gap wide enough to
+                  drive a data-quality incident through: in standard SQL <span class="acro-exp">(Structured Query Language)</span>, and in PostgreSQL, MySQL and SQLite,
+                  <strong class="c-amber">NULL is not equal to NULL, so any number of NULL rows satisfy a unique
+                  index</strong>. A nullable <code>email</code> column with a unique index will happily hold ten
+                  thousand rows with no email.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>What actually happens</th></tr>
+                    <tr><td><code>UNIQUE(email)</code>, email nullable</td><td>Unlimited NULL rows. Duplicates only blocked between non-NULL values</td></tr>
+                    <tr><td>SQL Server</td><td>The exception &mdash; it permits only <em>one</em> NULL, which surprises people moving the other way</td></tr>
+                    <tr><td>Composite <code>UNIQUE(a, b)</code> with b NULL</td><td>Same gap, one column further in</td></tr>
+                    <tr><td>The fix</td><td><code>NOT NULL</code>, or a partial index: <code>UNIQUE … WHERE email IS NOT NULL</code> plus a check</td></tr>
+                    <tr><td>Related trap</td><td>A function on the column (<code>WHERE lower(email) = …</code>) skips a plain index &mdash; slow, not wrong</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> one query, and it is worth running against any
+                  nullable column you believed was unique:
+                  <code>SELECT COUNT(*) FROM t WHERE email IS NULL</code>. If the answer is not zero and you
+                  thought the index guaranteed uniqueness, it never did. The general lesson is broader than
+                  indexes: <strong>every constraint in SQL has a NULL-shaped hole, and the constraint will not
+                  tell you.</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔍</span>
               <span class="topic-name">Reading Query Plans — EXPLAIN ANALYZE</span>
@@ -441,10 +662,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">EXPLAIN Without ANALYZE Prints the Estimate That Was Wrong</div>
+                <div class="concept-desc">
+                  A plan is a prediction, and a slow query is usually slow <em>because the prediction was
+                  wrong</em>. Plain <code>EXPLAIN</code> shows you the planner's estimated row counts &mdash; the
+                  very numbers that produced the bad plan &mdash; and nothing about what really happened.
+                  Reading it and concluding the plan looks reasonable is
+                  <strong class="c-amber">agreeing with the mistake</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What to run</th><th>What it tells you</th></tr>
+                    <tr><td><code>EXPLAIN</code></td><td>The plan and the <em>estimates</em>. No execution, no reality</td></tr>
+                    <tr><td><code>EXPLAIN ANALYZE</code></td><td>Runs it, and prints estimated <em>vs</em> actual rows per node</td></tr>
+                    <tr><td><code>EXPLAIN (ANALYZE, BUFFERS)</code></td><td>Adds pages read from cache vs disk &mdash; where the time actually went</td></tr>
+                    <tr><td>estimate 12, actual 1,240,000</td><td><strong>This is the finding.</strong> Stale statistics, or a correlation the planner cannot see</td></tr>
+                    <tr><td>Nested Loop over a large actual row count</td><td>The classic consequence of that estimate, and the reason it is slow</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  <strong>How you would notice:</strong> read the plan bottom-up and look only for the
+                  largest ratio between estimated and actual rows. That node is the problem; everything above it
+                  is a consequence. Then fix the estimate rather than the query &mdash;
+                  <code>ANALYZE</code> the table, add extended statistics for correlated columns, or index the
+                  predicate the planner is guessing about. <strong>An <code>EXPLAIN ANALYZE</code> on production-
+                  sized data is worth more than any amount of reading the query.</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🚀</span>
               <span class="topic-name">Query Optimization — Sargability &amp; N+1</span>
@@ -515,10 +764,43 @@
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Failure Mode</div>
+                <div class="concept-title">A Lock Wait Does Not Look Like an Error</div>
+                <div class="concept-desc">
+                  This is what makes lock contention expensive to diagnose: the application does
+                  not receive a lock error. It receives <strong>nothing, for a while, and then a
+                  timeout</strong> — from the connection pool, the HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> client, or the load
+                  balancer, depending on which gives up first. So the alert fires on a component
+                  several layers away from the cause, and the first three people to look at it
+                  are looking in the wrong place.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>What you see</th><th>What is happening</th></tr></thead>
+                    <tbody>
+                      <tr><td>Latency climbs on one endpoint, then everything</td><td>One slow transaction holds a lock; every request needing that row queues behind it, then the pool is exhausted and unrelated requests queue too</td></tr>
+                      <tr><td>The database looks idle — low processor, low disk</td><td>Waiting is not work. A blocked system is quiet, which is why resource dashboards say nothing is wrong</td></tr>
+                      <tr><td>It clears the moment you restart something</td><td>The blocking transaction was killed with its connection, so the evidence went with it</td></tr>
+                      <tr><td>A deadlock error, occasionally</td><td>The lucky case: the database detected a cycle and killed one side, so you get a message naming both statements</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The query to know before you need it</strong> is the
+                    one that lists blocked sessions and their blockers — <code>pg_locks</code>
+                    joined to <code>pg_stat_activity</code> in Postgres,
+                    <code>sys.innodb_lock_waits</code> in MySQL. And the important half of the
+                    answer is <em>the blocker</em>, which is nearly always a transaction left
+                    open by application code that did work between <code>BEGIN</code> and
+                    <code>COMMIT</code> it did not need to — an HTTP call, a file write, a
+                    user waiting on a form.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🍰</span>
               <span class="topic-name">Partitioning &amp; Sharding — Scaling One Big Table</span>
@@ -550,10 +832,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">You Partition for Maintenance Long Before You Partition for Speed</div>
+                <div class="concept-desc">
+                  The usual reason given for partitioning is query performance, and it is usually not the
+                  reason it actually becomes necessary. On a table of a few hundred gigabytes the queries are often
+                  fine and <strong class="c-amber">the maintenance is not</strong>: the vacuum takes all night, the
+                  index rebuild needs a window nobody will approve, the backup runs into the working day, and
+                  deleting last year's rows locks the table for hours.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Operation</th><th>Why partitioning changes it</th></tr>
+                    <tr><td>Deleting old data</td><td><code>DROP PARTITION</code> is instant; <code>DELETE</code> of 200M rows is an outage</td></tr>
+                    <tr><td>Vacuum and index maintenance</td><td>Runs per partition, so it fits in a window and can be parallelised</td></tr>
+                    <tr><td>Backups and restores</td><td>Older partitions are immutable, so they need copying once, not nightly</td></tr>
+                    <tr><td>Query performance</td><td>Only improves with <em>partition pruning</em> &mdash; the predicate must include the partition key</td></tr>
+                    <tr><td>Sharding across machines</td><td><strong>A one-way door.</strong> Cross-shard joins, transactions and re-sharding are all now your problem</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Partition on the column you will <strong>delete by</strong>, which is usually time, and
+                  which usually also serves pruning. And keep the two decisions apart in your head: partitioning is
+                  a local, reversible change to one table's storage; sharding is a distributed system with its own
+                  failure modes, and it should follow read replicas, caching, and every query fix &mdash; not
+                  precede them.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🐘</span>
               <span class="topic-name">PostgreSQL — The Default Choice</span>
@@ -585,10 +894,36 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   </table>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">Connections Bind Long Before Storage Does</div>
+                <div class="concept-desc">
+                  &ldquo;Use Postgres&rdquo; is close to always right and the limits are worth knowing
+                  before you meet them. The one that arrives first is not disk and not rows &mdash; it is
+                  <strong class="c-amber">connections</strong>. Each one is a process, and a few hundred idle
+                  connections consume real memory and scheduler time, which is why an application scaled to a
+                  hundred containers can bring down a database that is barely working.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Limit</th><th>Symptom, and the next step</th></tr>
+                    <tr><td>A few hundred connections</td><td>Memory pressure and context-switch overhead. <strong>PgBouncer in transaction mode</strong> &mdash; the cheapest fix on this list</td></tr>
+                    <tr><td>One writer node</td><td>Writes cannot scale horizontally. Read replicas take the read load; the write path stays single</td></tr>
+                    <tr><td>Vacuum and bloat on very hot tables</td><td>Autovacuum falls behind under sustained churn. Tune it per table before adding hardware</td></tr>
+                    <tr><td>Single tables past a few hundred GB</td><td>Maintenance windows dominate. <strong>Partition</strong> &mdash; the operation stops being about queries</td></tr>
+                    <tr><td>Genuine write scale-out</td><td>Citus or a purpose-built distributed engine. Do this last; it is a one-way door</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The order matters and is nearly always this: <strong>pooler, then indexes and query fixes,
+                  then read replicas, then partitioning, then anything distributed.</strong> Most teams that
+                  believe they have outgrown Postgres have skipped step one &mdash; and a single well-tuned node
+                  with a pooler comfortably serves workloads that people assume require a cluster.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧰</span>
               <span class="topic-name">Postgres Power Features — JSONB &amp; Full-Text</span>
@@ -694,10 +1029,36 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">Concurrent Writers, Not Size — the Limit Is Not the One People Assume</div>
+                <div class="concept-desc">
+                  SQLite is dismissed as a toy on the grounds of scale, and scale is the axis where it does
+                  best: databases of hundreds of gigabytes are ordinary, and reads are extremely fast because there
+                  is no network and no server. <strong class="c-amber">The real ceiling is exactly one writer at a
+                  time</strong>, database-wide, and no amount of hardware changes that.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Situation</th><th>How it behaves</th></tr>
+                    <tr><td>Many readers, one writer</td><td>Fine, with WAL <span class="acro-exp">(Write-Ahead Log)</span> mode &mdash; readers do not block the writer or each other</td></tr>
+                    <tr><td>Two processes writing at once</td><td>The second waits or gets <code>SQLITE_BUSY</code>. Set a <code>busy_timeout</code> or handle it</td></tr>
+                    <tr><td>A write-heavy multi-user application</td><td><strong>This is where it stops.</strong> Move to Postgres, or serialise writes through one process</td></tr>
+                    <tr><td>Database on NFS <span class="acro-exp">(Network File System)</span> or a network share</td><td><strong>Do not.</strong> File locking over the network is unreliable &mdash; this corrupts databases</td></tr>
+                    <tr><td>Analytics over a large local file</td><td>Consider DuckDB instead &mdash; same single-file convenience, columnar engine</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The right question is never &ldquo;how big is the data&rdquo; but <strong>how many
+                  processes need to write, and can they be funnelled through one</strong>. A single-writer service
+                  in front of SQLite covers an enormous range of real applications, and it keeps the properties
+                  that make it attractive: no server to run, one file to back up, and a copy that is trivially
+                  reproducible.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌊</span>
               <span class="topic-name">Connection Pooling — Surviving Many Clients</span>
@@ -729,10 +1090,40 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Sizing It — Why a Smaller Pool Is Usually Faster</div>
+                <div class="concept-desc">
+                  The instinct under load is to raise the pool size, and it makes things worse
+                  past a point that arrives earlier than anyone expects. A database serves
+                  queries with a finite number of cores and disks; connections beyond that do not
+                  add capacity, they add <strong>contention</strong> — context switches, lock
+                  waits, and a scheduler dividing the same work into more, smaller pieces.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Question</th><th>Answer</th></tr></thead>
+                    <tbody>
+                      <tr><td>How big should the pool be?</td><td>Start near <code>(cores &times; 2) + effective spindles</code> and measure. Two-digit numbers, not three</td></tr>
+                      <tr><td>Why does raising it help for ten minutes?</td><td>Queueing moved from your application into the database, where it is less visible. Total throughput did not change</td></tr>
+                      <tr><td>What if I have fifty application instances?</td><td>Fifty small pools still sum to one large one. This is where an external pooler earns its place</td></tr>
+                      <tr><td>Transaction mode or session mode?</td><td>Transaction mode multiplexes far better and forbids session state — prepared statements, temp tables, <code>SET</code>. Choose it deliberately, because the failure is a confusing runtime error rather than a config warning</td></tr>
+                      <tr><td>Serverless?</td><td>Instances &times; concurrency, with no coordination between them. A pooler is not optional here, it is the architecture</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The relationship between pool size and latency is the queueing one, not a
+                    linear one: <strong>utilisation past roughly 80% buys wait time rather than
+                    throughput</strong>, and the knee is steep. A pool sized to keep the database
+                    busy but not saturated finishes the same work sooner than one sized to keep
+                    every request from ever queuing.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗂️</span>
               <span class="topic-name">The NoSQL Landscape — Four Families</span>
@@ -803,10 +1194,38 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">The Moment Your Access Pattern Needs a Join</div>
+                <div class="concept-desc">
+                  Document databases are excellent when the document *is* the unit of access: fetch one,
+                  render it, write it back. The limit arrives when the same data has to be read a second way
+                  &mdash; by a field inside a nested array, or joined to another collection &mdash; because
+                  <strong class="c-amber">the embedding that made the first access pattern fast is what makes the
+                  second one hard</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Signal</th><th>What it means</th></tr>
+                    <tr><td><code>$lookup</code> appearing in your pipelines</td><td>You are doing joins in the application tier's database. Consider whether the model is relational</td></tr>
+                    <tr><td>The same fact duplicated in many documents</td><td>Denormalisation is the design; the cost is updating every copy, correctly, forever</td></tr>
+                    <tr><td>A document growing without bound</td><td>Arrays that append per event hit the 16 MB document limit. Model as a separate collection</td></tr>
+                    <tr><td>Transactions across collections</td><td>Supported since 4.0, and slower than the single-document case. Frequent use is a modelling signal</td></tr>
+                    <tr><td>Aggregations that scan everything</td><td>Indexes must match the pipeline's first stages, or <code>$match</code> reads the collection</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The honest test before choosing it: <strong>write down the three queries this data must
+                  answer</strong>. If they all start from the same identifier and return one document, a document
+                  store fits beautifully. If any of them start somewhere else, that query is either a second copy
+                  of the data or a join, and a relational model handles both without a decision. PostgreSQL's
+                  <code>JSONB</code> is also worth weighing here &mdash; document storage inside a database that
+                  can still join.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">⚡</span>
               <span class="topic-name">Redis — The In-Memory Multi-Tool</span>
@@ -839,10 +1258,37 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">The Working Set Must Fit in RAM, and Eviction Decides What Happens When It Does Not</div>
+                <div class="concept-desc">
+                  Redis is fast because everything is in memory, which makes memory the whole constraint.
+                  The moment the working set exceeds it, the behaviour is not &ldquo;a bit slower&rdquo; &mdash; it
+                  is whatever <code>maxmemory-policy</code> says, and <strong class="c-amber">the default on many
+                  installations is to start refusing writes</strong>. That surprises people mid-incident rather
+                  than during design.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Policy or limit</th><th>What actually happens</th></tr>
+                    <tr><td><code>noeviction</code> (a common default)</td><td>Writes fail with an OOM error once <code>maxmemory</code> is reached. Reads keep working</td></tr>
+                    <tr><td><code>allkeys-lru</code></td><td>Correct for a pure cache &mdash; the coldest keys go, silently</td></tr>
+                    <tr><td><code>volatile-lru</code></td><td>Only keys with a TTL are eligible. Keys without one are permanent, which is how caches fill up</td></tr>
+                    <tr><td>Using it as the system of record</td><td>Durability is a tuning choice (RDB snapshots, AOF). <strong>Neither is a transaction log</strong></td></tr>
+                    <tr><td>One big instance</td><td>Single-threaded for commands. A slow <code>KEYS</code> or a large <code>Lua</code> script blocks everything</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two rules keep it in the role it is good at. <strong>Set a TTL on everything you write to
+                  a cache</strong>, so the working set has a natural ceiling rather than growing until the policy
+                  decides for you. And <strong>never let it be the only copy of anything you cannot regenerate</strong>
+                  &mdash; when Redis is the source of truth, the interesting question stops being throughput and
+                  becomes what happens after a restart.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">Cassandra &amp; DynamoDB — Wide-Column at Scale</span>
@@ -875,10 +1321,38 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">There Is a Floor as Well as a Ceiling</div>
+                <div class="concept-desc">
+                  Most cards about distributed databases describe the scale above which you need one. The
+                  more useful number for most readers is the one <em>below</em> which choosing one is a mistake.
+                  <strong class="c-amber">Wide-column stores make you design the table from the query</strong>, and
+                  you get almost none of the benefit until the write rate genuinely exceeds what a single tuned
+                  node can absorb &mdash; which is a great deal more than most systems ever produce.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Constraint</th><th>What it costs you</th></tr>
+                    <tr><td>Partition key chosen first</td><td>The query determines the schema. A new query pattern usually means a new table with duplicated data</td></tr>
+                    <tr><td>No joins, no ad-hoc queries</td><td>Anything unanticipated is an application-side scatter-gather or a second table</td></tr>
+                    <tr><td>Eventual consistency by default</td><td>Tunable per query (<code>QUORUM</code>, <code>ONE</code>), and the tuning is a real design decision</td></tr>
+                    <tr><td>Operational weight (self-hosted)</td><td>Repairs, compaction and node replacement are ongoing work, not one-time setup</td></tr>
+                    <tr><td>Small deployments</td><td><strong>Three nodes of Cassandra do less for you than one good Postgres.</strong> The trade only pays at scale</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  DynamoDB removes the operational half and keeps the modelling half, which is often the
+                  right compromise &mdash; but the single-table design it rewards is a genuine skill, and getting
+                  it wrong shows up as hot partitions and surprise cost rather than as errors. <strong>Choose these
+                  when you know the queries, the write rate is real, and the operational answer is decided</strong>;
+                  choose them for anticipated scale and you have paid the whole cost up front for a benefit that
+                  may never arrive.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🕸️</span>
               <span class="topic-name">Graph Databases — When Relationships Are the Data</span>
@@ -913,10 +1387,38 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">Two Hops Is a Join. Five Is a Graph.</div>
+                <div class="concept-desc">
+                  The question is not whether the data has relationships &mdash; all relational data does
+                  &mdash; but <strong class="c-cyan">how deep and how variable the traversals are</strong>. A
+                  relational join across two or three tables is fast and well understood. It is the queries where
+                  the depth is not known in advance, or is large, where the cost curves cross:
+                  <strong class="c-amber">each additional hop multiplies the work in SQL and is roughly constant in
+                  a graph engine</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Query shape</th><th>Right tool</th></tr>
+                    <tr><td>One or two hops, known depth</td><td>SQL. A join is the answer; a graph database is overhead</td></tr>
+                    <tr><td>&ldquo;Shortest path between A and B&rdquo;</td><td>Graph. Expressing this in SQL requires recursion and gets slow quickly</td></tr>
+                    <tr><td>&ldquo;Everything within N hops&rdquo;, N variable</td><td>Graph &mdash; this is the canonical case</td></tr>
+                    <tr><td>Recursive CTE <span class="acro-exp">(Common Table Expression)</span> in Postgres</td><td>The honest middle ground, and often enough. Try it before adopting a second database</td></tr>
+                    <tr><td>Aggregations over the whole dataset</td><td>Not a graph strength. Most graph engines are poor analytical databases</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  Two established uses justify the second database on their own: <strong>fraud rings and
+                  access-path analysis</strong> &mdash; and the second is exactly what
+                  <span class="xref">BloodHound &amp; SharpHound — Attack-Path Graphing</span> does to Active
+                  Directory, which is a graph problem wearing a security hat. For everything else, start with a
+                  recursive CTE and adopt a graph engine when it stops finishing.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-07">
             <div class="topic-header">
               <span class="topic-icon">↔️</span>
               <span class="topic-name">OLTP <span class="acro-exp">(Online Transaction Processing)</span> vs OLAP <span class="acro-exp">(Online Analytical Processing)</span> — Rows vs Columns</span>
@@ -985,10 +1487,37 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Where it stops</div>
+                <div class="concept-title">Columnar Wins on Scans and Loses on Single Rows</div>
+                <div class="concept-desc">
+                  The trade is structural rather than a matter of tuning. Storing a column together makes
+                  reading one column of a hundred million rows enormously cheaper &mdash; and makes fetching one
+                  complete row more expensive, because it must be reassembled from every column file.
+                  <strong class="c-amber">A columnar engine used for point lookups is slower than the row store you
+                  left</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Workload</th><th>Where it belongs</th></tr>
+                    <tr><td>Aggregate over millions of rows, few columns</td><td>Columnar, decisively. Often 10&ndash;100&times; less I/O <span class="acro-exp">(Input/Output)</span> than a row store</td></tr>
+                    <tr><td>Fetch one row by primary key</td><td>Row store. This is what OLTP <span class="acro-exp">(Online Transaction Processing)</span> databases are built for</td></tr>
+                    <tr><td>Frequent single-row updates</td><td>Row store &mdash; columnar formats favour append and rewrite over in-place update</td></tr>
+                    <tr><td>Analytics that fits on one machine</td><td><strong>DuckDB</strong>, in-process, over Parquet. No cluster, no server</td></tr>
+                    <tr><td>Analytics that does not</td><td>ClickHouse or a warehouse. The jump from DuckDB is about node count, not about the model</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                  The most common good answer is smaller than people expect: <strong>a laptop running DuckDB
+                  over Parquet files handles datasets that get proposed as cluster projects</strong>, and the
+                  single-node ceiling is high enough that reaching it is a real result rather than an assumption.
+                  Measure before you distribute &mdash; and if the data is already in Postgres and the analytics are
+                  occasional, a read replica may end the conversation entirely.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏞️</span>
               <span class="topic-name">Warehouse vs Lake vs Lakehouse</span>
@@ -1053,10 +1582,40 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Where the Definition Lives Decides Whether It Holds</div>
+                <div class="concept-desc">
+                  Every organisation has a definition of revenue. The question is not whether one
+                  exists — it is how many places compute it, because each one is a copy that can
+                  drift, and drift is discovered in a meeting where two people have different
+                  numbers on the same slide.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Definition lives in</th><th>What happens</th></tr></thead>
+                    <tbody>
+                      <tr><td>Each dashboard</td><td>As many definitions as dashboards. Nobody knows which is right, and the answer depends on who built theirs most recently</td></tr>
+                      <tr><td>A glossary or wiki page</td><td>Correct on the day it is written. Nothing enforces it, and no query reads it</td></tr>
+                      <tr><td>Transformation code in the warehouse</td><td>One definition, version-controlled, reviewable — and only for tools that query <em>through</em> it</td></tr>
+                      <tr><td><strong>A semantic layer every tool queries</strong></td><td>One definition, and a spreadsheet exported by someone in finance gets the same answer as the executive dashboard</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">This is the same principle the rest of this site keeps
+                    arriving at:</strong> documentation not derived from the thing it documents
+                    will diverge from it. A metric definition in a glossary is documentation; a
+                    metric definition that queries cannot bypass is the thing itself. The
+                    practical first step is smaller than a platform, though — pick the ten numbers
+                    leadership actually quotes and give those a single home. The rest can wait,
+                    and most of it will never matter.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">✅</span>
               <span class="topic-name">Data Quality &amp; Observability</span>
@@ -1124,10 +1683,40 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Failure Mode</div>
+                <div class="concept-title">The Number Nobody Has Measured Is How Long a Restore Takes</div>
+                <div class="concept-desc">
+                  Backup jobs are monitored and restores are not, so an organisation typically
+                  knows its backups succeeded and has no idea what recovery costs. That gap is
+                  where the unpleasant surprises live, and all of them are arithmetic that could
+                  have been done in advance.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Discovered during the incident</th><th>Would have been obvious from one test</th></tr></thead>
+                    <tbody>
+                      <tr><td>A logical dump restores at a fraction of the speed it was taken</td><td>Restoring rebuilds every index. A 200&nbsp;GB dump can take most of a day</td></tr>
+                      <tr><td>Point-in-time recovery needs the whole archive since the base backup</td><td>If the base backup is a month old, recovery replays a month of write-ahead log</td></tr>
+                      <tr><td>The snapshot restored, and the database will not start</td><td>A volume snapshot taken without quiescing is a crash-consistent copy — usually fine, occasionally not, and you find out at the worst moment</td></tr>
+                      <tr><td>Nobody can find the credentials for the backup store</td><td>They were in the system that is down</td></tr>
+                      <tr><td>The restore worked; the application still fails</td><td>The database came back, and the object storage, the search index and the queue did not — they were never in the same plan</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">"We have backups" is a statement about last night. The
+                    question anyone should be able to answer is "how long until we are serving
+                    traffic again, and how much do we lose."</strong> Both numbers come from a
+                    restore that was actually performed, timed, and written down — ideally onto
+                    fresh infrastructure, because restoring beside a healthy primary tests a
+                    procedure you will not be running.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">👯</span>
               <span class="topic-name">Replication &amp; High Availability</span>
@@ -1159,10 +1748,38 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Synchronous or Asynchronous, Expressed as What You Lose</div>
+                <div class="concept-desc">
+                  Framed as a performance trade-off this is an argument nobody can settle. Framed
+                  as <em>what happens the moment the primary dies</em>, it usually settles itself
+                  in one sentence, because the two options fail in ways a business can compare.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Asynchronous</th><th>Synchronous</th></tr></thead>
+                    <tbody>
+                      <tr><td>Write latency</td><td>Local disk only</td><td>Local disk plus a network round trip, on every commit</td></tr>
+                      <tr><td>On primary failure</td><td><strong>You lose whatever had not shipped</strong> — usually milliseconds, occasionally minutes if the replica was lagging</td><td>Nothing committed is lost</td></tr>
+                      <tr><td>If the replica is slow or gone</td><td>The primary does not care</td><td><strong>Writes stall</strong> unless you allow a fallback — and a fallback makes it asynchronous again, quietly</td></tr>
+                      <tr><td>Suits</td><td>Nearly everything. Read scaling, geographic replicas, a tolerable recovery point</td><td>Money movement, and anything where a lost commit is a phone call</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The row people skip is the third.</strong> Synchronous
+                    replication makes the replica a dependency of every write, so a replica
+                    problem becomes a primary outage — you have traded data loss for
+                    availability, which is a reasonable trade and a different one from the one
+                    most people think they are making. Two synchronous replicas with a quorum
+                    rule is the usual way out, and it costs a third machine.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔀</span>
               <span class="topic-name">Schema Migrations — Zero-Downtime Change</span>
@@ -1264,10 +1881,45 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Trap</div>
+                <div class="concept-title">Averages Hide Exactly the Problem You Are Looking For</div>
+                <div class="concept-desc">
+                  Mean query time is the metric most often on the dashboard and the least capable
+                  of showing trouble. A database serving ten thousand fast queries and a hundred
+                  disastrous ones has a mean that looks healthy, and the hundred are the ones
+                  timing out a customer's checkout.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">10,000 queries at 2 ms  +  100 queries at 4,000 ms
+mean                = 41 ms      ← looks fine, alerts silent
+p50                 =  2 ms      ← looks excellent
+p99                 =  4,000 ms  ← this is what a user experiences
+</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Watch</th><th>Rather than</th></tr></thead>
+                    <tbody>
+                      <tr><td>p95 and p99 query time</td><td>Mean, which is dominated by the fast majority</td></tr>
+                      <tr><td>Total time per statement — calls &times; mean</td><td>Slowest single statement. A 5&nbsp;ms query run ten million times outranks a 3-second one run twice</td></tr>
+                      <tr><td>Wait events, grouped by what is being waited on</td><td>Processor utilisation, which is low precisely when the database is blocked</td></tr>
+                      <tr><td>Connection <em>saturation</em>, as a fraction of the limit</td><td>Connection count, which means nothing without the limit beside it</td></tr>
+                      <tr><td>Replication lag in bytes as well as seconds</td><td>Seconds alone, which reads as zero right up until the replica stops keeping up</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The single highest-value view is total time per
+                    normalised statement</strong> — <code>pg_stat_statements</code> or the
+                    performance schema — because it ranks queries by how much of the database's
+                    life they consume rather than by how slow any one of them felt. The query at
+                    the top of that list is almost never the one anybody complained about, and it
+                    is almost always the one worth fixing first.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧑‍💼</span>
               <span class="topic-name">Data Roles — Who Does What</span>
@@ -1369,46 +2021,39 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="topic" data-reviewed="2026-08">
-            <div class="topic-header">
-              <span class="topic-icon">🧭</span>
-              <span class="topic-name">Vector Databases — Embeddings &amp; Similarity Search</span>
-              <span class="topic-badge">AI Bridge</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
               <div class="concept-card">
-                <div class="concept-label">Concept</div>
-                <div class="concept-title">Searching by Meaning, Not Keywords</div>
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Yesterday's Number Changes, and Nobody Reruns the Report</div>
                 <div class="concept-desc">
-                  AI <span class="acro-exp">(Artificial Intelligence)</span> models turn text/images into <strong class="c-cyan">embeddings</strong> — vectors
-                  where similar meaning = nearby points. A vector database indexes these for fast
-                  <strong class="c-cyan">nearest-neighbor</strong> search, the backbone of RAG <span class="acro-exp">(Retrieval-Augmented Generation)</span> and
-                  semantic search.
+                  Two things make time-series totals quietly wrong, and both look like correct queries. The
+                  first is the time zone: grouping by day in UTC <span class="acro-exp">(Coordinated Universal Time)</span> when the business means local time
+                  <strong class="c-amber">moves every event near midnight into the wrong day</strong>, and the
+                  daily total is off by hours of traffic. The second is late arrival &mdash; a mobile client that
+                  was offline uploads yesterday's events today, so a number that was right when it was computed
+                  is no longer right, and nothing recomputes it.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Concept</th><th>Detail</th></tr>
-                    <tr><td>Embedding</td><td>A model maps content → a high-dimensional vector</td></tr>
-                    <tr><td>ANN <span class="acro-exp">(Artificial Neural Network)</span> index</td><td>HNSW/IVF — approximate nearest-neighbor for speed</td></tr>
-                    <tr><td>Similarity</td><td>Cosine / dot product ranks "closeness"</td></tr>
-                    <tr><td>Options</td><td>pgvector, Pinecone, Weaviate, Qdrant, Milvus</td></tr>
+                    <tr><th>Cause</th><th>Effect on the number</th></tr>
+                    <tr><td><code>date_trunc('day', ts)</code> on a UTC column</td><td>Days boundaries in UTC. For UTC&minus;8 that is 4pm to 4pm local</td></tr>
+                    <tr><td>Daylight saving transitions</td><td>One local day has 23 hours and another 25. A fixed offset gets both wrong</td></tr>
+                    <tr><td>Late-arriving events</td><td>Yesterday's total rises after it was reported. The report does not know</td></tr>
+                    <tr><td>Retries and at-least-once delivery</td><td>The same event counted twice unless something de-duplicates on an event id</td></tr>
+                    <tr><td>Clock skew on the producer</td><td>Events with timestamps in the future, which land in a bucket nobody looks at yet</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-green">Start simple:</strong> <code>pgvector</code> adds vector
-                    search to Postgres — often you don't need a separate vector DB at all.
-                    <strong class="c-amber">Hybrid search</strong> (vectors + keyword/filters) beats
-                    either alone. Direct bridge to the AI domain's RAG cards.
+                  <strong>How you would notice:</strong> recompute a day that is already a week old and
+                  compare it to what was reported at the time. If the two differ, you have late arrivals and no
+                  restatement policy. Two habits fix most of it: <strong>store UTC, convert at query time with a
+                  named zone</strong> (<code>AT TIME ZONE 'America/Los_Angeles'</code>, never a fixed offset), and
+                  <strong>keep both an event time and an ingest time</strong> so &ldquo;what did we know
+                  then&rdquo; and &ldquo;what is true now&rdquo; are separate, answerable questions.
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎓</span>
               <span class="topic-name">The Data Interview</span>

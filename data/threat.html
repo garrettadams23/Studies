@@ -3104,4 +3104,100 @@ so nothing was exploited, and every step was a legitimate user action.</pre>
             </div>
           </div>
 
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏛️</span>
+              <span class="topic-name">State-Sponsored Operations — Different Objectives, Different Tradecraft</span>
+              <span class="topic-badge">THREAT • Actors</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">The Objective Function Is Different, and Everything Follows From It</div>
+                <div class="concept-desc">
+                  Criminal operations optimise for <strong class="c-cyan">money per hour</strong>. They are
+                  businesses: they pick targets that pay, use tooling that scales, and leave when a job stops
+                  being profitable. State operations optimise for <strong class="c-cyan">access</strong> &mdash;
+                  to information, to a position, to an option that may be exercised years from now &mdash; and
+                  will spend twelve months being quiet to keep it. <strong class="c-amber">That single
+                  difference predicts almost every other observable.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Dimension</th><th>Criminal</th><th>State-aligned</th></tr>
+                    <tr><td>Objective</td><td>Revenue this quarter</td><td>Access, held and unused</td></tr>
+                    <tr><td>Dwell time</td><td>Days to weeks &mdash; monetise and leave</td><td>Months to years, deliberately</td></tr>
+                    <tr><td>Tooling</td><td>Commodity, reused across victims</td><td>Bespoke where it matters; commodity where it hides better</td></tr>
+                    <tr><td>On discovery</td><td>Move on. Another target pays as well</td><td>Re-enter. The target was chosen for a reason</td></tr>
+                    <tr><td>Noise tolerance</td><td>High &mdash; speed beats stealth</td><td>Very low &mdash; detection costs the whole investment</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The operational consequence for a defender is that <strong>the two require different
+                    detections</strong>. Criminal activity is loud, fast and pattern-matchable, which is what
+                    signature and behavioural tooling is good at. State activity looks like administration, uses
+                    credentials that belong there, and is found by noticing a small thing that does not fit &mdash;
+                    which is a hunting problem, not an alerting one.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Claim to Retire</div>
+                <div class="concept-title">&ldquo;We're Not a Target&rdquo; Is a Statement About Value to a Specific Sponsor</div>
+                <div class="concept-desc">
+                  The sentence is usually meant as &ldquo;we are too small&rdquo;, and size is not the variable.
+                  A sponsor is interested in what an organisation <em>holds</em> or <em>connects to</em>, and a
+                  fifty-person company can score highly on both. <strong>The question is not whether you are
+                  important; it is whether you are on the path to something that is.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What makes a small organisation interesting</th><th>Example</th></tr>
+                    <tr><td>Access to a larger customer</td><td>A managed service provider, a payroll vendor, a CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> supplier</td></tr>
+                    <tr><td>A component in someone else's product</td><td>A library, a driver, a firmware image, a build system</td></tr>
+                    <tr><td>Sector information with no obvious price</td><td>Research, negotiating positions, membership lists, legal strategy</td></tr>
+                    <tr><td>People</td><td>Employees with clearances, former posts, or family connections elsewhere</td></tr>
+                    <tr><td>Geography</td><td>Presence in a place, or a network path into one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    This is also why supply-chain intrusion is disproportionately state-associated: it converts one
+                    patient compromise into access to hundreds of organisations that were individually not worth
+                    the effort. The defensive reading is uncomfortable and short: <strong>your risk is partly a
+                    function of who your customers are</strong>, and it is not visible from inside your own threat
+                    model.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Attribution</div>
+                <div class="concept-title">Why It Is Slow, Contested, and Usually Not Your Job</div>
+                <div class="concept-desc">
+                  Public attribution is a political act with an evidentiary standard attached, and it takes
+                  governments months. Vendor naming &mdash; the animal names, the numbered groups &mdash; is
+                  <strong>clustering of observed activity</strong>, not identification of an organisation, and
+                  two vendors' clusters routinely disagree because they see different halves of the same
+                  operation.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What the evidence is</th><th>Why it is weak on its own</th></tr>
+                    <tr><td>Language and keyboard layout artefacts</td><td>Trivially faked, and routinely faked deliberately</td></tr>
+                    <tr><td>Working hours in the metadata</td><td>Suggestive at scale, meaningless for one sample</td></tr>
+                    <tr><td>Tool reuse</td><td>Tools are shared, sold, stolen and leaked between groups</td></tr>
+                    <tr><td>Infrastructure overlap</td><td>The strongest technical signal, and still rentable by anyone</td></tr>
+                    <tr><td>Targeting pattern over years</td><td>The most durable indicator, and the slowest to accumulate</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    For nearly every defender the practical answer is that <strong>attribution changes almost
+                    nothing about the response</strong>. Contain, evict, and fix the path in regardless. Where it
+                    does matter is expectation-setting: an actor who re-enters after eviction requires a different
+                    recovery plan &mdash; credential rotation across the estate, certificate revocation
+                    (<span class="xref">ADCS Abuse — Certipy &amp; the ESC Techniques</span> explains why those
+                    outlive a password reset), and monitoring that continues long after the incident is closed.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body threat -->
