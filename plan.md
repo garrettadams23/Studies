@@ -10601,11 +10601,11 @@ keeping track of any of it.
 
 | Card | The argument it turns on |
 |---|---|
-| **Failover Clustering — Quorum Is the Whole Subject** | Clusters do not fail because a node dies; they fail because the surviving nodes cannot agree that it did. Quorum, witnesses and split-brain are the content, and the card should say plainly that a two-node cluster without a witness is a coin toss |
-| **The Rack, the Power &amp; the Cooling** | Dual feeds are pointless if a single-supply device is plugged into one of them, hot air recirculates without blanking panels, and floor loading is a real limit in older buildings. A card of physical constraints that software people meet exactly once |
-| **Labelling &amp; Asset Tagging — The Boring Discipline That Pays Out at 3 a.m.** | Every recovery is faster in a room where the cables and devices are labelled, and nobody has ever regretted it. The argument is about when the cost is paid versus when the benefit lands |
-| **Tape, Archive &amp; the Restore Nobody Has Tested** | Tape did not die, it became the offline copy in the ransomware playbook. Restore rate, media ageing and drive availability are the questions, and the last one strands more archives than the first two |
-| **Decommissioning at Estate Scale** | The existing card covers one server. This is the programme version: finding what nobody owns, the notice period, the DNS entries and firewall rules that outlive the host, and the systems still pointing at it |
+| ✅ **Failover Clustering — Quorum Is the Whole Subject** | Clusters do not fail because a node dies; they fail because the surviving nodes cannot agree that it did. Quorum, witnesses and split-brain are the content, and the card should say plainly that a two-node cluster without a witness is a coin toss |
+| ✅ **The Rack, the Power &amp; the Cooling** | Dual feeds are pointless if a single-supply device is plugged into one of them, hot air recirculates without blanking panels, and floor loading is a real limit in older buildings. A card of physical constraints that software people meet exactly once |
+| ✅ **Labelling &amp; Asset Tagging — The Boring Discipline That Pays Out at 3 a.m.** | Every recovery is faster in a room where the cables and devices are labelled, and nobody has ever regretted it. The argument is about when the cost is paid versus when the benefit lands |
+| ✅ **Tape, Archive &amp; the Restore Nobody Has Tested** | Tape did not die, it became the offline copy in the ransomware playbook. Restore rate, media ageing and drive availability are the questions, and the last one strands more archives than the first two |
+| ✅ **Decommissioning at Estate Scale** | The existing card covers one server. This is the programme version: finding what nobody owns, the notice period, the DNS entries and firewall rules that outlive the host, and the systems still pointing at it |
 | **Patching a Server Estate — Windows, Rings &amp; the Ones That Cannot Reboot** | The endpoint domain has this for laptops. Servers are the harder case: dependency order, maintenance windows negotiated with a business, and the small population that will never be patched and needs a compensating control instead |
 
 ---
@@ -10649,11 +10649,11 @@ has almost nothing about *managing work*, which is the other half of what its ti
 
 | Card | The argument it turns on |
 |---|---|
-| **The Inbox — Why It Is Not a To-Do List, and What Replaces It** | An inbox sorts by arrival, which is the one ordering guaranteed not to match importance. Every workable system separates capture from decision from action, and the mechanism matters less than that separation existing |
-| **The Weekly Review — The Habit That Makes Every Other System Work** | Any capture system degrades into a graveyard without a scheduled moment to re-read it. The review is what converts a list into a plan, and it is the first thing dropped when busy — which is precisely when it pays most |
-| **Time Blocking &amp; Its Failure Modes** | Deciding when something happens converts an open-ended list into a finite day, which is honest and uncomfortable. The failure is over-scheduling: a plan with no slack survives the first interruption and then gets abandoned |
-| **Focus Blocks — Making Uninterrupted Time Possible in an Interrupt-Driven Job** | The existing *Attention* card covers what switching costs. This is the operational answer for someone on a rota: negotiating coverage, the shape of a realistic block, and why "I'll focus when it's quiet" never arrives |
-| **Notes That Get Reopened — Structure, Linking &amp; the Search Test** | The existing note-taking card is about learning. This is about the reference pile: if you cannot find it in ten seconds it does not exist, which makes search behaviour the design constraint rather than folder structure |
+| ✅ **The Inbox — Why It Is Not a To-Do List, and What Replaces It** | An inbox sorts by arrival, which is the one ordering guaranteed not to match importance. Every workable system separates capture from decision from action, and the mechanism matters less than that separation existing |
+| ✅ **The Weekly Review — The Habit That Makes Every Other System Work** | Any capture system degrades into a graveyard without a scheduled moment to re-read it. The review is what converts a list into a plan, and it is the first thing dropped when busy — which is precisely when it pays most |
+| ✅ **Time Blocking &amp; Its Failure Modes** | Deciding when something happens converts an open-ended list into a finite day, which is honest and uncomfortable. The failure is over-scheduling: a plan with no slack survives the first interruption and then gets abandoned |
+| ✅ **Focus Blocks — Making Uninterrupted Time Possible in an Interrupt-Driven Job** | The existing *Attention* card covers what switching costs. This is the operational answer for someone on a rota: negotiating coverage, the shape of a realistic block, and why "I'll focus when it's quiet" never arrives |
+| ✅ **Notes That Get Reopened — Structure, Linking &amp; the Search Test** | The existing note-taking card is about learning. This is about the reference pile: if you cannot find it in ten seconds it does not exist, which makes search behaviour the design constraint rather than folder structure |
 | **Goals, and the Difference Between a Goal and a Wish** | A goal names an outcome, a date, and the first action. Anything missing one of the three is a wish, and the card's value is that this test is applied in ten seconds to anything already written down |
 
 ---
@@ -14367,3 +14367,55 @@ related links  924 → 942, still 0 one-way
 **Phase 7: 31 of 96 shipped.** Tracks CE, CG, CH and CI complete.
 
 Site **1,449 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7, tracks CJ and CM: and the scaffold that stopped the ratchet firing
+
+Two more tracks closed. `infra` was missing **everything that is not a server** — the room, the
+power, the labels, the process for keeping track of any of it. `productivity` was sixteen topics
+of learning science with almost nothing about *managing work*, which is the other half of what
+its title promises.
+
+| Domain | Card | The claim it turns on |
+|---|---|---|
+| `infra` | Failover Clustering | Clusters fail because the survivors cannot agree a node died. **A two-node cluster with no witness is a coin toss** |
+| `infra` | The Rack, the Power & the Cooling | Dual feeds are pointless if a single-supply device is plugged into one. Blanking panels are the cheapest cooling fix there is |
+| `infra` | Labelling & Asset Tagging | The cost is paid now and the benefit lands at 3 a.m. **Label the physical fact, not the logical role** |
+| `infra` | Tape & the Untested Restore | Tape became the offline copy. The question that strands archives is *will there be a drive that can read it* |
+| `infra` | Decommissioning at Estate Scale | The hard part is finding what nobody owns — and **a dangling DNS record is a subdomain takeover** |
+| `productivity` | The Inbox | An inbox is a list of other people's priorities, sorted by the one ordering guaranteed not to match importance |
+| `productivity` | Time Blocking | The failure is over-scheduling. Block 50–60% of the day; **move a lost block rather than deleting it** |
+| `productivity` | Focus Blocks | "I'll focus when it's quiet" never arrives. Uninterrupted time on a rota is a coverage negotiation |
+| `productivity` | Notes That Get Reopened | If you cannot find it in ten seconds it does not exist. **Write the title as the search you will type** |
+
+### The fix from the last record, applied and tested
+
+The previous session record said an intention is not a control, and that the right answer was to
+teach the card scaffold to refuse a table with no verdict at the point of writing. That was done
+before this batch, and it fired **four times in nine cards** — each time as an immediate error
+naming the card, rather than as a lint failure twenty minutes later after a build.
+
+The measurable result: `table with no verdict` **held at 509**, where the previous three batches
+took it to 521, 520 and 514. Three batches of the same mistake, one small change, and the
+mistake stopped. That is the same shape as every other guard in this file: *the cheapest place
+to catch something is where it is written, and the ratchet's job is to catch what escapes.*
+
+### One acronym decision, again from a new domain
+
+`PDU` in `infra` — the rack card uses power distribution units, and the dictionary held
+*Protocol Data Unit* as well. Third batch in a row where a new card in a new domain is the thing
+that first makes an acronym ambiguous, which is a pattern worth naming: **the acronym dictionary
+is only as decided as the domains it has been used in.**
+
+```
+topics     1,449 → 1,458
+thin         147 → 147   (none of the thirty-eight new cards is thin)
+mean chars/concept card  1,235 → 1,238
+related links  942 → 960, still 0 one-way
+table with no verdict  509 → 509
+```
+
+**Phase 7: 40 of 96 shipped.** Tracks CE, CG, CH, CI, CJ and CM complete.
+
+Site **1,458 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
