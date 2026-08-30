@@ -11946,6 +11946,23 @@ this reason — `ops`, `data` and `cs` all need it and none of them currently co
 The mirror finding: `m365` at 21 out and 1 in is the most self-sufficient domain on the site,
 and the least discoverable from anywhere else.
 
+## 3. The See-also layer, filled from the writer's own cross-references
+
+The graph above counts cross-references authored in prose. Those same `<span class="xref">`
+edges are also the highest-quality seed for the *related-topics* strip — a writer saying
+"these two belong together", already proven to resolve by the linter — and
+`suggest_related.py --xrefs` exists precisely to emit them, both directions, in
+`related.json`'s own format.
+
+This session ran that mode and merged its output into `related.json` as a **union**: every
+existing curated link kept, **+122 writer-authored links added (976 → 1,098), all
+bidirectional (`--check`: 0 one-way), nothing removed.** The orphan census moved **898 → 866**
+topics with no inbound link and **151 → 148** deep dead-ends. The point of the wave was the 46
+new Phase 7 cards, which arrived carrying outbound xrefs and no inbound links: they are now
+reachable from every card they reference. The term-overlap *default* stays unshipped, exactly
+as the tool's docstring insists — only the deliberate edges were promoted, so the strip does
+not fill with the same four cards on every page.
+
 ## 3. Learning paths are one domain's story
 
 **`net` holds 25 of the 75 path steps.** `cs`, `eng`, `grc`, `web`, `ai`, `data`,
