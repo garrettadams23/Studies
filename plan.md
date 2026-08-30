@@ -12103,6 +12103,26 @@ near-matches in §2 are that second kind.
 it can, by rewriting. A rising volatile-span count is not automatically progress — it can
 mean the site is accumulating promises to re-check things that never needed a number.
 
+## 7. Audit pass — V1, V3 and V5 read after Phase 7 closed
+
+A pass over the three most concrete waves, done the way §4 prescribes — per class, by hand —
+and the finding is the same one this phase opened with: **the site is already disciplined, and
+the mechanical search over-matches exactly as predicted.**
+
+| Wave | What the grep returned | What was actually actionable |
+|---|---|---|
+| **V1 — tier gating** | `E5`/`E3`/`P1`/`P2` across `m365`, `endpoint`, `eng`, `ops`, `productivity` | **~none.** `ops`/`productivity` `P1`/`P2` are incident priorities; `eng` `(E3)` is a footnote marker; `m365`'s `E3`/`E5` are the *subject* of the licensing card, not a gating claim. The one real claim — `m365`'s litigation-hold tier note — is already written in the §5 style: *"holds generally require the enterprise tier … find out which you have before promising counsel a capability."* |
+| **V3 — prices** | `career` home-lab budgets, salary figures | The budget **tiers** (`$0` / `$0–50` / `$100–500`) are pedagogical anchors that do not age; the only genuinely volatile detail is the used-mini-PC range, already hedged with `~`. Rewriting the tier labels would damage the table it organises. Left as-is. |
+| **V5 — console paths** | `check_volatility.py`'s 2 candidates (`Teams Voice`, `Reporting & Usage Analytics`) | **False positives.** The flagged mentions are generic prose — *"wired in through the admin centre"*, *"data the admin centre has never heard of"* — not console-path claims. The real console names in those cards (`Teams admin centre`, `Entra admin centre`) already carry `volatile` spans. |
+
+Two things this pass also settled. **This session's 46 new cards are freshness-clean by
+construction** — they were written mechanism-first, per the card rubric, and introduce no
+undated price, limit or version claim (`check_volatility.py` still reports 46 spans, and its
+only two console candidates are the pre-existing `m365` cards above). And the phase stays
+**open as a standing discipline, not a queue** — §6's V5 grows with every `m365`/`cloud` wave,
+so there is nothing to mark closed. The right output of a Phase 11 pass is this table, not a
+pile of edits — which is the whole argument of §3.
+
 
 ---
 
