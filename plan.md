@@ -10550,12 +10550,12 @@ delegation, ladders, Conway's Law, managing up, calendars, planning. What is mis
 
 | Card | The argument it turns on |
 |---|---|
-| **Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot** | The recovery sequence is short and needs to be known cold, because it is used exactly when there is no time to look it up: boot media, mount, bind the pseudo-filesystems, chroot, fix, rebuild the initramfs, exit, unmount |
-| **sudoers &amp; PAM — The Two Files That Decide Who You Are** | Authentication and authorisation are separate stacks that people conflate. A card that explains the PAM stack's order and the sudoers grammar prevents the two mistakes that lock everyone out of a box |
-| **Journald, Logrotate &amp; the Disk That Filled With Logs** | Log retention on a single host is a configuration nobody sets until the disk is full at 3 a.m. Both mechanisms exist, they overlap confusingly, and the interaction is the part worth writing down |
-| **Moving Data Safely — rsync, Its Flags, and the Trailing Slash** | One character changes whether you copy a directory or its contents, and the mistake is unrecoverable when combined with `--delete`. The card is a short one built entirely around the dry run |
-| **strace &amp; ltrace — Watching a Program Ask the Kernel for Things** | When logs say nothing and the code is not yours, syscall tracing is the tool that answers "what file is it actually looking for". The subject is narrow, the payoff is a class of unsolvable problems becoming solvable |
-| **Linux on the Desktop, and WSL — Two Different Answers to the Same Wish** | Worth one card because the audience keeps asking, and because the honest answer is about workflows rather than about Linux: the subsystem removes the dual-boot decision and imposes a filesystem boundary people trip over |
+| ✅ **Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot** | The recovery sequence is short and needs to be known cold, because it is used exactly when there is no time to look it up: boot media, mount, bind the pseudo-filesystems, chroot, fix, rebuild the initramfs, exit, unmount |
+| ✅ **sudoers &amp; PAM — The Two Files That Decide Who You Are** | Authentication and authorisation are separate stacks that people conflate. A card that explains the PAM stack's order and the sudoers grammar prevents the two mistakes that lock everyone out of a box |
+| ✅ **Journald, Logrotate &amp; the Disk That Filled With Logs** | Log retention on a single host is a configuration nobody sets until the disk is full at 3 a.m. Both mechanisms exist, they overlap confusingly, and the interaction is the part worth writing down |
+| ✅ **Moving Data Safely — rsync, Its Flags, and the Trailing Slash** | One character changes whether you copy a directory or its contents, and the mistake is unrecoverable when combined with `--delete`. The card is a short one built entirely around the dry run |
+| ✅ **strace &amp; ltrace — Watching a Program Ask the Kernel for Things** | When logs say nothing and the code is not yours, syscall tracing is the tool that answers "what file is it actually looking for". The subject is narrow, the payoff is a class of unsolvable problems becoming solvable |
+| ✅ **Linux on the Desktop, and WSL — Two Different Answers to the Same Wish** | Worth one card because the audience keeps asking, and because the honest answer is about workflows rather than about Linux: the subsystem removes the dual-boot decision and imposes a filesystem boundary people trip over |
 
 ---
 
@@ -10567,11 +10567,11 @@ Dynamic Programming*, floating point inside *Number Representation*. Five are re
 
 | Card | The argument it turns on |
 |---|---|
-| **Compression — Why It Works, and Why It Sometimes Cannot** | Compression exploits redundancy, so incompressible data is data with none — which is why encrypted and already-compressed files do not shrink, and why "compress then encrypt" is the only order that works. Includes the security note that compressing attacker-influenced data alongside secrets leaks length |
-| **Consistent Hashing — Adding a Server Without Moving Everything** | Modulo-based sharding remaps nearly every key when the server count changes. The ring, and virtual nodes on top of it, is one of the small number of ideas that made horizontal scaling practical, and it recurs in caches, databases and load balancers |
-| **Byte Order &amp; Binary Layout — Endianness, Alignment &amp; Struct Packing** | The bug class where the data parses and is wrong, which the `infra` mainframe card meets from the other end. This is the general version: the same bytes mean different numbers depending on who wrote them |
-| **Catastrophic Backtracking — When a Regular Expression Is a Denial of Service** | A pattern with nested quantifiers can take exponential time on an input a user chooses. It is the rare bug that is simultaneously a performance problem, a security vulnerability, and invisible in code review unless you know the shape |
-| **Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full** | Utilisation and latency are not linear, and the knee is much earlier than intuition says. One equation explains queue length, why running a system at 90% is a choice about latency, and why adding one more worker sometimes fixes everything |
+| ✅ **Compression — Why It Works, and Why It Sometimes Cannot** | Compression exploits redundancy, so incompressible data is data with none — which is why encrypted and already-compressed files do not shrink, and why "compress then encrypt" is the only order that works. Includes the security note that compressing attacker-influenced data alongside secrets leaks length |
+| ✅ **Consistent Hashing — Adding a Server Without Moving Everything** | Modulo-based sharding remaps nearly every key when the server count changes. The ring, and virtual nodes on top of it, is one of the small number of ideas that made horizontal scaling practical, and it recurs in caches, databases and load balancers |
+| ✅ **Byte Order &amp; Binary Layout — Endianness, Alignment &amp; Struct Packing** | The bug class where the data parses and is wrong, which the `infra` mainframe card meets from the other end. This is the general version: the same bytes mean different numbers depending on who wrote them |
+| ✅ **Catastrophic Backtracking — When a Regular Expression Is a Denial of Service** | A pattern with nested quantifiers can take exponential time on an input a user chooses. It is the rare bug that is simultaneously a performance problem, a security vulnerability, and invisible in code review unless you know the shape |
+| ✅ **Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full** | Utilisation and latency are not linear, and the knee is much earlier than intuition says. One equation explains queue length, why running a system at 90% is a choice about latency, and why adding one more worker sometimes fixes everything |
 
 ---
 
@@ -14316,3 +14316,54 @@ related links  904 → 924, still 0 one-way
 ```
 
 Site **1,440 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — Phase 7, tracks CG and CH complete: recovery, and five primitives
+
+Two more tracks closed. `linux`'s was **recovery** — the situations where the normal tools are
+not available — and `cs`'s was five primitives the domain genuinely lacked despite being the
+strongest in the file.
+
+| Domain | Card | The claim it turns on |
+|---|---|---|
+| `linux` | sudoers & PAM | Two separate stacks people conflate. **If nobody can authenticate, editing sudoers will not help** |
+| `linux` | Journald & Logrotate | Two overlapping retention systems, and the disk fills because of the one you did not configure |
+| `linux` | rsync & the trailing slash | One character decides directory-or-contents, and with `--delete` there is no undo. **A mirror is not a backup** |
+| `linux` | strace & ltrace | What is this program actually asking the kernel for? Grep for `ENOENT` first |
+| `linux` | Linux on the desktop, and WSL | The honest answer is about workflows. Hardware support is written for the OS the machine shipped with |
+| `cs` | Compression | Incompressible data is data with no redundancy — **if encrypted output compresses, the cipher is broken** |
+| `cs` | Consistent hashing | Modulo sharding gets *worse* as the cluster grows, and virtual nodes are a correctness requirement |
+| `cs` | Byte order & binary layout | Padding bytes are uninitialised, so writing a struct to a socket leaks memory |
+| `cs` | Catastrophic backtracking | Simultaneously a performance bug, a security vulnerability, and invisible in review |
+
+### The ratchet, a third time — and the pattern is now measurable
+
+Ten verdict-less tables this batch, after thirteen and eight before it. Three batches of new
+cards, three ratchet failures, and **the rate is essentially constant at about one per card**.
+That is no longer a lapse; it is the shape of the work. A new card is three concept cards and
+three tables, and the middle one is always the reference table that appears to speak for itself.
+
+The stated intention at the start of this batch was to write the verdicts as I went. It did not
+happen, and recording that is more useful than claiming it did: **an intention is not a control,
+and the ratchet is.** The right fix is the same one this file reaches for elsewhere — make the
+tool do it. A future session should teach the card scaffold to refuse a table with no verdict at
+the point of writing rather than at the point of linting.
+
+### Two more `byDomain` decisions the acronym checker demanded
+
+`CD` in `threat` last batch, `WAF` in `cs` this one — the ReDoS card mentions a web application
+firewall, and `cs` had no recorded decision between that and *Well-Architected Framework*. Both
+took ten seconds and both are the check working exactly as designed: **a new card in a new
+domain is where an ambiguous acronym first becomes ambiguous.**
+
+```
+topics     1,440 → 1,449
+thin         147 → 147   (none of the twenty-nine new cards is thin)
+mean chars/concept card  1,231 → 1,235
+related links  924 → 942, still 0 one-way
+```
+
+**Phase 7: 31 of 96 shipped.** Tracks CE, CG, CH and CI complete.
+
+Site **1,449 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
