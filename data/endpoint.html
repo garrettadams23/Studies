@@ -2886,4 +2886,336 @@ Remove-PSSession $s
   </div>
 </div>
 
+
+          <!-- ── TOPIC: SHARED, KIOSK & FRONTLINE DEVICES ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">Shared, Kiosk &amp; Frontline Devices</span>
+              <span class="topic-badge">ENDPOINT • Device Classes</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Every Assumption in Endpoint Management Is About One Device, One User</div>
+                <div class="concept-desc">
+                  Compliance is evaluated per user-device pair, licences are assigned per user, and the wipe path
+                  assumes one owner whose data leaves with them. A shared device breaks all four at once —
+                  <strong class="c-amber">identity, compliance, licensing and the wipe path each assume a
+                  one-to-one relationship that a frontline tablet passed between three shifts does not have.</strong>
+                  Managing shared devices is not a harder version of managing laptops; it is a different
+                  configuration where the defaults are actively wrong.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Assumption</th><th>How a shared device breaks it</th></tr>
+                    <tr><td>One user's identity on the device</td><td>Many users, or a generic kiosk identity with no person behind it</td></tr>
+                    <tr><td>Compliance = this user's this device</td><td>Whose compliance? The device has no single owner</td></tr>
+                    <tr><td>Per-user app licensing</td><td>A device app used by fifty people needs device licensing</td></tr>
+                    <tr><td>Wipe removes the departing user's data</td><td>The next user must find it clean — session data must not persist</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Each device pattern needs its own answer: a true kiosk locks to one app and a generic identity,
+                    a shared frontline device uses fast sign-in and per-session data clearing, and a hot-desk PC
+                    leans on roaming profiles. Picking the pattern first, then configuring to it, is the whole job —
+                    the failure is applying the standard laptop baseline and watching it misbehave.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Name the Pattern Before You Enrol the First One</div>
+                <div class="concept-desc">
+                  The expensive mistake is enrolling a batch of shared tablets as if they were personal devices and
+                  discovering the mismatch in production — sign-in friction on a factory floor, licences consumed
+                  by a shared identity, one user's session bleeding into the next. The device-management platforms
+                  have specific enrolment modes for these, and choosing the right one is a design decision made
+                  once, up front.
+                </div>
+                <div class="concept-desc verdict">
+                  Decide kiosk vs shared vs hot-desk per device population, enrol into the matching mode, and test
+                  the handover between two users before rolling out fifty. Device trust still has to hold —
+                  <span class="xref">Device Trust End to End — Enrolment → Compliance → CA → Access</span> —
+                  but it has to hold for a device with no single human behind it, which is the part the standard
+                  flow was never built for.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: BYOD IN PRACTICE ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📱</span>
+              <span class="topic-name">BYOD <span class="acro-exp">(Bring Your Own Device)</span> in Practice — What You Can Actually Require</span>
+              <span class="topic-badge">ENDPOINT • Device Classes</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Control Surface on a Device You Do Not Own Is Small, and Mostly About the App</div>
+                <div class="concept-desc">
+                  Security teams reach for full device management by reflex and then hit a wall on personal devices:
+                  you cannot enforce disk encryption, wipe the whole phone, or inventory personal apps on hardware
+                  the employee owns — legally in many places, and practically everywhere, because people refuse.
+                  <strong class="c-amber">The honest control surface on a personal device is the corporate
+                  <em>application</em> and its data, not the device</strong>, and pretending otherwise produces a
+                  BYOD policy that legal will not sign and staff will not accept.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>You want to…</th><th>On a corporate device</th><th>On a personal device</th></tr>
+                    <tr><td>Encrypt storage</td><td>Enforce it</td><td>Cannot require it — encourage only</td></tr>
+                    <tr><td>Wipe on offboarding</td><td>Full device wipe</td><td>Only the corporate app &amp; its data (selective wipe)</td></tr>
+                    <tr><td>Control the app's data</td><td>Yes</td><td>Yes — via app protection, no enrolment needed</td></tr>
+                    <tr><td>Inventory installed apps</td><td>Yes</td><td>No — that is the employee's private business</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So the workable model manages the <em>application</em>: require the corporate app to encrypt its
+                    own data, block copy-out to personal apps, and allow a selective wipe of that container on
+                    offboarding. The mechanism is <span class="xref">App Protection Policies — MAM Without Enrolment</span>;
+                    this card is about why that boundary is the <em>only</em> one that survives the conversation with legal.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Decide With Legal What You Are Actually Requiring, in Writing</div>
+                <div class="concept-desc">
+                  BYOD goes wrong when the technical policy and the employment agreement disagree — IT quietly
+                  enrols personal phones into full management, and the first wiped personal device becomes an HR
+                  and legal incident. The requirement has to be co-authored: what the company can see, what it can
+                  wipe, and what the employee consents to, stated plainly enough that both sides understood it
+                  before enrolment.
+                </div>
+                <div class="concept-desc verdict">
+                  Offer a real choice — a managed corporate device, or app-level management on a personal one — and
+                  never full-manage a device you do not own. The strongest BYOD posture is the one that requires the
+                  least of the device, because it is the one people actually comply with instead of routing around.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: VIRTUAL DESKTOPS ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">☁️</span>
+              <span class="topic-name">Virtual Desktops — When the Endpoint Is a Session</span>
+              <span class="topic-badge">ENDPOINT • Device Classes</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Non-Persistent Desktop Inverts Almost Every Management Assumption</div>
+                <div class="concept-desc">
+                  When the endpoint is a session on a server rather than a device in a hand, the whole model turns
+                  inside out. A non-persistent desktop is rebuilt from a golden image every logon, which means
+                  <strong class="c-amber">nothing installed at runtime survives — including the very agents that
+                  usually do the managing</strong>. Profiles, licensing, patching and troubleshooting all move
+                  location, and a team that treats a virtual desktop like a thin laptop gets each one subtly wrong.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>On a physical PC</th><th>On a non-persistent virtual desktop</th></tr>
+                    <tr><td>Patch the device</td><td>Patch the <em>image</em>; the session is disposable</td></tr>
+                    <tr><td>Profile lives on the disk</td><td>Profile must be externalised or it is lost at logoff</td></tr>
+                    <tr><td>Install apps per machine</td><td>Apps are layered or baked into the image</td></tr>
+                    <tr><td>Troubleshoot the one device</td><td>Fix the image, or the host — the session is a symptom</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The profile problem is the one that sinks projects: without an external profile technology, a
+                    non-persistent desktop forgets the user every logoff, and the &ldquo;my settings keep
+                    disappearing&rdquo; tickets are a design gap, not a bug. Externalising state is the core of the
+                    build, not an add-on.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Choose It for a Reason, Because the Cost Model Is Different</div>
+                <div class="concept-desc">
+                  Virtual desktops are sometimes deployed as a default modernisation move, which is how
+                  organisations end up paying per-user compute and storage every month for users who needed a
+                  laptop. The technology earns its place for specific reasons — contractors and BYOD <span class="acro-exp">(Bring Your Own Device)</span> needing a
+                  controlled environment, data that must never leave the datacentre, bursty or specialised compute —
+                  and is expensive theatre without one.
+                </div>
+                <div class="concept-desc verdict">
+                  Pick virtual desktops for a named driver (data-locality, short-lived access, GPU on demand), size
+                  the ongoing compute cost honestly against a laptop's one-off price, and only then choose
+                  persistent vs non-persistent. It is a deliberate architecture, not the modern default it is
+                  sometimes sold as.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: BROWSER MANAGEMENT ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌐</span>
+              <span class="topic-name">Browser Management — The Most-Used Application in the Estate</span>
+              <span class="topic-badge">ENDPOINT • Applications</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The One Application Every User Runs All Day Is the One Least Often Managed</div>
+                <div class="concept-desc">
+                  Endpoint teams pour effort into managing applications that a few dozen people open occasionally,
+                  and leave the browser — which every user runs continuously and which handles the organisation's
+                  most sensitive sessions — on defaults. <strong class="c-amber">The browser is now the operating
+                  system most work actually happens in</strong>, and its extensions, its policies, its profile
+                  sync and its sign-in boundary are a management surface as real as the OS's, usually with nobody
+                  assigned to it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Browser surface</th><th>The risk when unmanaged</th></tr>
+                    <tr><td>Extensions</td><td>A single malicious or over-permissioned add-on reads every page — including the ones behind login</td></tr>
+                    <tr><td>Profile sync</td><td>Corporate bookmarks, passwords &amp; history sync to a personal account</td></tr>
+                    <tr><td>The sign-in boundary</td><td>Work and personal identity blur in one profile; data crosses without anyone deciding it should</td></tr>
+                    <tr><td>Policy (updates, settings)</td><td>An unpatched browser is the widest-exposed unpatched app you own</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The extension point is the sharpest: an extension with &ldquo;read and change all your
+                    data&rdquo; permission is a keylogger the user installed voluntarily, and the control — an
+                    allow-list of vetted extensions pushed by policy — is the same shape as application allow-listing
+                    everywhere else, just applied to the surface most teams forgot was one.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Manage the Browser as a Managed Application, With an Owner</div>
+                <div class="concept-desc">
+                  The browsers support central policy — extension allow-lists, forced updates, controlled sync, a
+                  separated work profile — through the same MDM <span class="acro-exp">(Mobile Device Management)</span> channel as everything else. The gap is rarely
+                  capability; it is that no one owns the browser as an application, so its policy set stays empty
+                  while every other app has a baseline.
+                </div>
+                <div class="concept-desc verdict">
+                  Assign the browser an owner and a policy baseline: allow-list extensions, force updates, and draw
+                  the work/personal profile boundary deliberately. It is the highest-traffic application in the
+                  estate and deserves at least the attention given to the ones nobody uses.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: APPLICATION COMPATIBILITY & THE LEGACY APP ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧩</span>
+              <span class="topic-name">Application Compatibility &amp; the Legacy App</span>
+              <span class="topic-badge">ENDPOINT • Applications</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Every Estate Has One Application Blocking an Upgrade</div>
+                <div class="concept-desc">
+                  The pattern is universal: a Windows feature update, a browser migration or a hardware refresh is
+                  held hostage by a single business-critical application that only runs on the old thing — an
+                  ancient line-of-business tool, a vendor app abandoned by its maker, a macro-laden spreadsheet
+                  someone built in 2009. <strong class="c-amber">The app cannot be changed and the platform cannot
+                  stand still</strong>, and the whole estate's modernisation stalls on it. The decision is a ladder
+                  of increasingly heavy containments, ending in the only permanent answer.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Option</th><th>What it buys</th><th>What it costs</th></tr>
+                    <tr><td>Compatibility mode / shims</td><td>Cheapest; sometimes enough</td><td>Fragile; may not survive the next update</td></tr>
+                    <tr><td>Application virtualisation / isolation</td><td>Runs the old app on a new OS <span class="acro-exp">(Operating System)</span></td><td>Packaging effort; not everything virtualises</td></tr>
+                    <tr><td>A contained VM <span class="acro-exp">(Virtual Machine)</span> or legacy host</td><td>Full old environment, quarantined</td><td>An old OS to secure and maintain forever</td></tr>
+                    <tr><td>Replace or rewrite the app</td><td>The only permanent fix</td><td>Time, money, and a vendor or a project</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The honest note the ladder hides: every option except the last is <strong>a way of carrying the
+                    problem forward</strong>, and a contained legacy VM is a security liability that outlives
+                    everyone who remembers why it exists. Containment buys time to do the replacement; treated as
+                    the destination, it becomes next decade's stuck upgrade.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Contain to Buy Time, and Fund the Replacement With It</div>
+                <div class="concept-desc">
+                  The trap is that containment works well enough that the replacement never gets funded, and the
+                  quarantined app quietly becomes permanent infrastructure — an unpatched OS with a firewall around
+                  it, one exploit away from being the way in. Containment should always ship with a decommission
+                  date and an owner for the replacement, or it is not a mitigation, it is a deferral with a
+                  security bill.
+                </div>
+                <div class="concept-desc verdict">
+                  Isolate the legacy app now, put a hard date and a named owner on retiring it, and treat the
+                  contained environment as debt accruing interest. The organisations that never escape are the ones
+                  that let &ldquo;temporary&rdquo; containment become the architecture.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: LOST, STOLEN & RETURNING DEVICES ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔎</span>
+              <span class="topic-name">Lost, Stolen &amp; Returning Devices</span>
+              <span class="topic-badge">ENDPOINT • Operations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Data Question Is Answered Before the Device Is Lost, or Not at All</div>
+                <div class="concept-desc">
+                  When a laptop is reported missing, the panic question is &ldquo;what was on it?&rdquo; — and if
+                  the answer depends on encryption and remote wipe that were configured <em>after</em> the loss, it
+                  is too late. <strong class="c-amber">A lost encrypted device with a strong pre-boot secret is a
+                  hardware loss; a lost unencrypted one is a data breach</strong>, and which of the two you are
+                  holding was decided at enrolment. The lost-device runbook is short only because the hard work was
+                  done in advance.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step on loss</th><th>What makes it work</th></tr>
+                    <tr><td>Confirm encryption status</td><td>Enforced at enrolment, key escrowed — or you are guessing</td></tr>
+                    <tr><td>Remote lock / wipe</td><td>Only reaches a device that checks in; offline devices never get the command</td></tr>
+                    <tr><td>Revoke sessions &amp; tokens</td><td>The device held live sessions a wipe cannot reach — revoke centrally</td></tr>
+                    <tr><td>Release the licence</td><td>Or you keep paying for a device in a taxi</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Note the third row: a remote wipe assumes the thief powers the device on and lets it phone home,
+                    which a competent one will not. The control that always works is not on the device — it is
+                    revoking the accounts and tokens centrally, so the stolen device is a paperweight even if the
+                    wipe never lands. Encryption plus token revocation, not the wipe, is the real protection.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Device That Comes Back Six Months Later, Still Enrolled</div>
+                <div class="concept-desc">
+                  The forgotten half of the lifecycle is return. A device written off as lost reappears — found in a
+                  drawer, returned by a leaver, recovered by police — and it is still enrolled, still trusted, and
+                  possibly still holding cached credentials for accounts that were never rotated. A returning device
+                  is not automatically safe just because it is back in the building.
+                </div>
+                <div class="concept-desc verdict">
+                  Treat a returned device as untrusted until wiped and re-enrolled, and make &ldquo;lost&rdquo; a
+                  state with a proper close-out — licence released, object cleaned up, credentials rotated — not an
+                  open ticket that lingers. The device found in a drawer a year later is the one nobody remembered
+                  still had a valid certificate on it.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body endpoint -->

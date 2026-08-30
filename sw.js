@@ -9,7 +9,7 @@
 // Deriving it means a release can never ship with a stale cache because someone
 // forgot to bump a number, and an unchanged build never invalidates a cache for
 // no reason.
-const CACHE_VERSION = "techref-9fe7bbaa9a44";
+const CACHE_VERSION = "techref-0cf2019d1b38";
 
 const PRECACHE = [
   "/",

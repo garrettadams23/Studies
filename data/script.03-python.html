@@ -3488,3 +3488,61 @@ console.print(table)
               </div>
             </div>
           </div>
+
+          <!-- ── TOPIC: PRE-COMMIT, FORMATTERS & LINTERS ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧹</span>
+              <span class="topic-name">Pre-Commit, Formatters &amp; Linters — Ending the Style Argument</span>
+              <span class="topic-badge">SCRIPT • Toolchain</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Formatter's Value Is Social, Not Technical</div>
+                <div class="concept-desc">
+                  An autoformatter is usually justified on tidiness, and that undersells it. Its real payoff is that
+                  it <strong class="c-amber">removes an entire category of human argument</strong> — where the
+                  brace goes, how long a line is, whether to align the equals signs — by making the answer
+                  automatic and non-negotiable. The code style stops being a matter of taste anyone can debate in a
+                  review, which is worth far more than the formatting itself. <strong class="c-cyan">The tool is
+                  valuable because it stops people discussing whitespace.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tool class</th><th>Job</th><th>Argument it ends</th></tr>
+                    <tr><td>Formatter (e.g. Black, Prettier)</td><td>Rewrites layout to one canonical form</td><td>&ldquo;Your style vs my style&rdquo; — there is now only one</td></tr>
+                    <tr><td>Linter (e.g. Ruff, ESLint)</td><td>Flags likely bugs &amp; bad patterns</td><td>&ldquo;Is this a problem?&rdquo; — the rule decides</td></tr>
+                    <tr><td>Pre-commit hook</td><td>Runs both before a commit is allowed</td><td>&ldquo;I forgot to run it&rdquo; — you cannot commit unformatted</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Keep the two straight: a <strong>formatter</strong> is not a linter. The formatter has no
+                    opinions worth arguing with and should run with zero configuration; the linter has opinions and
+                    every enabled rule is a small policy decision. Conflating them — trying to make the formatter
+                    enforce logic, or the linter enforce layout — is where teams reintroduce the argument they were
+                    trying to end.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Enforce It at the Gate, Not by Asking People to Remember</div>
+                <div class="concept-desc">
+                  A formatter nobody runs is a formatter that does nothing, and &ldquo;please run it before you
+                  push&rdquo; is a rule that fails on the busy day. The mechanism that makes it real is enforcement
+                  at a gate: a pre-commit hook locally for fast feedback, and the same check in CI so the hook
+                  cannot be skipped. The two together mean formatted code is the only code that can merge.
+                </div>
+                <div class="concept-desc verdict">
+                  Adopt the formatter with no config and let it win every layout question; add a linter and treat
+                  each rule you enable as a deliberate choice; and enforce both in a pre-commit hook backed by a CI
+                  check, so the standard is automatic rather than remembered. When you introduce it to an existing
+                  codebase, reformat everything in <strong>one separate commit</strong> and record it in
+                  <code>.git-blame-ignore-revs</code>, or every future <code>git blame</code> points at the
+                  reformat instead of the author.
+                </div>
+              </div>
+            </div>
+          </div>
+

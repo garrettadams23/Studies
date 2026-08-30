@@ -1947,6 +1947,294 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             </div>
           </div>
 
+
+          <!-- ── TOPIC: LOG RETENTION AS A DESIGN DECISION ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗄️</span>
+              <span class="topic-name">Log Retention as a Design Decision</span>
+              <span class="topic-badge">BLUETEAM • Operations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Retention Is Chosen by Cost and Then Discovered During an Incident</div>
+                <div class="concept-desc">
+                  Retention is almost always set as a storage-budget line — keep 30 days because 90 was expensive —
+                  and the number is never examined again until an investigator asks &ldquo;when did this start?&rdquo;
+                  and the answer is <strong class="c-amber">&ldquo;before our logs begin.&rdquo;</strong> Dwell time
+                  for a real intrusion is routinely longer than the retention window a budget picked, which means
+                  the decision that framed the investigation was made months earlier by someone optimising a bill.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The question retention should answer</th><th>The implied window</th></tr>
+                    <tr><td>How far back must we reconstruct an intrusion?</td><td>Longer than typical dwell time — months, not days</td></tr>
+                    <tr><td>What does the regulation require?</td><td>A floor, often a year or more, per data type</td></tr>
+                    <tr><td>What can we afford to keep hot &amp; searchable?</td><td>The expensive tier — keep it short and deliberate</td></tr>
+                    <tr><td>What must merely be recoverable, slowly?</td><td>The cheap tier — keep it long</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The right frame reverses the default: start from <strong>how far back you must be able to
+                    answer a question</strong>, then find the cheapest tier that still answers it — not from a
+                    storage number with a retention window backed out of it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Tiering Is What Makes Long Retention Affordable</div>
+                <div class="concept-desc">
+                  The false choice is &ldquo;keep everything searchable&rdquo; versus &ldquo;delete it&rdquo;.
+                  Between them sits tiering: a small hot tier for the queries you run daily, and progressively
+                  cheaper, slower tiers for the data you will only ever touch during an investigation. The art is
+                  putting the right source in the right tier, because the sources you need at incident time are not
+                  the ones you query day to day.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tier</th><th>Cost / speed</th><th>What belongs here</th></tr>
+                    <tr><td>Hot (searchable)</td><td>Expensive, instant</td><td>Recent, high-query sources — auth, EDR <span class="acro-exp">(Endpoint Detection and Response)</span> alerts</td></tr>
+                    <tr><td>Warm</td><td>Cheaper, slower</td><td>The last few months of detail</td></tr>
+                    <tr><td>Cold / frozen (archive)</td><td>Cheap, restore-to-search</td><td>Long-tail forensics &amp; compliance evidence</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Decide tiering per <strong>source</strong>, not per age alone: authentication and DNS <span class="acro-exp">(Domain Name System)</span> logs earn
+                    a long cheap tail because they answer &ldquo;how far back&rdquo;, while verbose debug logs can
+                    expire fast. This is the depth axis of the same problem
+                    <span class="xref">Log Volume &amp; Cost — The Detections a Budget Quietly Kills</span>
+                    frames as breadth — and the two budgets trade against each other.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: THREAT-FEED REALITY ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📡</span>
+              <span class="topic-name">Threat-Feed Reality — Why Most Indicators Are Worthless to You</span>
+              <span class="topic-badge">BLUETEAM • Intelligence</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">An Indicator's Value Decays With Time and Rises With Specificity to You</div>
+                <div class="concept-desc">
+                  A purchased threat feed feels like an asset — a million bad IPs <span class="acro-exp">(Internet Protocol)</span>, updated hourly. Most of it is
+                  worthless <em>to you</em>, for two reasons that compound. Indicators <strong class="c-cyan">decay</strong>:
+                  a malicious IP is reassigned, a domain is taken down, a hash is recompiled, and a stale indicator
+                  produces false positives, not detections. And generic indicators are not
+                  <strong class="c-cyan">specific</strong> to your environment — a list of hashes nobody in your
+                  estate will ever encounter is noise with a subscription fee. <strong class="c-amber">Volume is
+                  the metric feeds sell on and the one that matters least.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Indicator type</th><th>Decay rate</th><th>Defensive value</th></tr>
+                    <tr><td>File hash</td><td>Instant — one bit flips it</td><td>Low; confirms a known sample only</td></tr>
+                    <tr><td>IP address</td><td>Fast — reassigned, shared, proxied</td><td>Low–medium; high false positives</td></tr>
+                    <tr><td>Domain</td><td>Medium — cheap to spin up new ones</td><td>Medium</td></tr>
+                    <tr><td>TTP <span class="acro-exp">(Tactics, Techniques, and Procedures)</span> / behaviour</td><td>Slow — costs the adversary to change</td><td>High — the top of the Pyramid of Pain</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    This is <span class="xref">Detection Tuning &amp; the Pyramid of Pain</span> applied to buying:
+                    pay for behaviours and context, not for hashes and IPs. The cheapest indicators to collect are
+                    the cheapest for the adversary to change, and value runs the other way.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Questions That Separate a Feed Worth Paying For</div>
+                <div class="concept-desc">
+                  Rather than count indicators, interrogate a feed the way you would any supplier: does it tell you
+                  things that are true, timely, and relevant to <em>your</em> sector and stack? A short list of
+                  questions filters the market fast, and none of them is &ldquo;how many indicators&rdquo;.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Ask a feed</th><th>Why it matters</th></tr>
+                    <tr><td>How fresh, and how is stale data expired?</td><td>A feed that never ages out is a false-positive generator</td></tr>
+                    <tr><td>Is it relevant to my sector and geography?</td><td>Sector-specific intel beats a global firehose</td></tr>
+                    <tr><td>Does it carry context, not just a value?</td><td>An indicator with no story cannot be triaged</td></tr>
+                    <tr><td>What is the false-positive rate in practice?</td><td>Every bad indicator costs an analyst's attention</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The best feed for most organisations is often the free, high-context one from a sector sharing
+                    community, not the most expensive commercial firehose — because relevance, which you cannot buy
+                    in bulk, beats volume, which you can. Enrichment turns even a good indicator into a decision, as
+                    <span class="xref">Enrichment — The Context That Turns an Alert Into a Decision</span> covers.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: UEBA ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📈</span>
+              <span class="topic-name">User &amp; Entity Behaviour Analytics — What Baselining Can and Cannot Learn</span>
+              <span class="topic-badge">BLUETEAM • Detection</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Baseline Built During an Incident Learns the Incident as Normal</div>
+                <div class="concept-desc">
+                  UEBA <span class="acro-exp">(User and Entity Behavior Analytics)</span> promises to catch what rules miss by learning &ldquo;normal&rdquo; and flagging deviation.
+                  The catch is in the word <em>learn</em>: the model is only as good as the period it trained on.
+                  <strong class="c-amber">Train it while an attacker is already resident and it bakes the intrusion
+                  into the baseline</strong>, after which the malicious behaviour is, by definition, normal and
+                  invisible. The tool's core assumption — that the training window was clean — is the one thing it
+                  cannot verify.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Where UEBA works well</th><th>Where it fails politely</th></tr>
+                    <tr><td>Genuinely repetitive behaviour (service accounts, batch jobs)</td><td>Small populations — no statistical baseline to build</td></tr>
+                    <tr><td>Impossible-travel &amp; volume anomalies</td><td>Highly variable human roles — everything looks anomalous</td></tr>
+                    <tr><td>Peer-group outliers</td><td>A compromised account whose &ldquo;peers&rdquo; are also compromised</td></tr>
+                    <tr><td>Slow, additive changes flagged over time</td><td>An attacker who moves inside the noise band deliberately</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    UEBA is a hunting <em>aid</em>, not an alarm: it narrows where to look, and every output needs a
+                    human to ask &ldquo;is this a threat or just unusual?&rdquo; The failure mode is not a wrong
+                    alert — it is a confident, quiet baseline that learned the wrong normal.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">It Finds the Unusual, Which Is Not the Same as the Malicious</div>
+                <div class="concept-desc">
+                  The category error that wrecks UEBA deployments is treating &ldquo;anomalous&rdquo; as
+                  &ldquo;bad&rdquo;. Most anomalies are a person doing their job differently this week, and a SOC <span class="acro-exp">(Security Operations Center)</span>
+                  that pages on every deviation drowns. The value appears only when anomaly scores are
+                  <em>enrichment</em> feeding an investigation, not alerts firing on their own.
+                </div>
+                <div class="concept-desc verdict">
+                  Deploy UEBA to answer &ldquo;which accounts should a hunter look at first?&rdquo;, not
+                  &ldquo;which accounts do we alert on?&rdquo; It repays a mature team with a hunting practice and
+                  punishes an immature one with alert fatigue — the same tool, two outcomes, decided by whether a
+                  human sits between the score and the ticket.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: ANALYST BURNOUT AS A DETECTION PROBLEM ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔥</span>
+              <span class="topic-name">Analyst Burnout as a Detection Problem</span>
+              <span class="topic-badge">BLUETEAM • Operations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Alert Volume Is a Design Output, Not a Fact of Nature</div>
+                <div class="concept-desc">
+                  SOC <span class="acro-exp">(Security Operations Center)</span> turnover is usually explained as the nature of the work — shifts, stress, the grind. But the
+                  <em>volume</em> of alerts an analyst faces is not weather; it is the direct output of tuning
+                  decisions made months earlier by engineers who never worked the queue.
+                  <strong class="c-amber">Burnout is therefore a measurable consequence of detection design</strong>,
+                  and the fix lives in the detection pipeline, not in a wellbeing programme bolted on afterwards.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What the analyst experiences</th><th>The design decision behind it</th></tr>
+                    <tr><td>A queue of low-fidelity alerts</td><td>Rules shipped without false-positive analysis</td></tr>
+                    <tr><td>The same benign alert, endlessly</td><td>No tuning feedback loop from the SOC to engineering</td></tr>
+                    <tr><td>Alerts with no context to triage</td><td>No enrichment; the analyst does the enrichment by hand</td></tr>
+                    <tr><td>No runbook — improvise every time</td><td>Detections shipped without response documentation</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Each row is a decision that can be reversed. A SOC that treats turnover as inevitable is
+                    accepting a broken pipeline as a fact of life — and paying for it twice, in recruitment and in
+                    the missed alert a fatigued analyst waved through.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The SOC's Retention Number Is a Detection-Quality Metric</div>
+                <div class="concept-desc">
+                  The connection worth making explicit to management is that analyst attrition and detection
+                  precision are the same graph. Improve precision — fewer, better alerts, enriched and
+                  runbook-backed — and the human cost falls; ship volume, and it rises. This reframes a
+                  &ldquo;people problem&rdquo; as an engineering backlog with an owner.
+                </div>
+                <div class="concept-desc verdict">
+                  Fund the boring detection-quality work — false-positive analysis, enrichment, runbooks — as a
+                  retention control, because it is one. The metric that exposes the whole chain is precision, which
+                  <span class="xref">Measuring Detection Quality — Precision, Recall &amp; the Alert-to-Incident Ratio</span>
+                  makes countable; burnout is what an unmeasured precision problem feels like from inside the queue.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: SHIFT HANDOVER IN A SOC ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔄</span>
+              <span class="topic-name">Shift Handover in a SOC <span class="acro-exp">(Security Operations Center)</span></span>
+              <span class="topic-badge">BLUETEAM • Operations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Most Information Is Lost at the Moment It Is Most Needed</div>
+                <div class="concept-desc">
+                  A slow-burn intrusion unfolds across shifts, so the handover is exactly where a developing
+                  incident is dropped — the outgoing analyst is tired and wants to leave, the incoming one is cold,
+                  and the half-formed suspicion that would have connected two events dies in the gap between them.
+                  <strong class="c-amber">A handover format that survives fatigue is a small artefact with an
+                  outsized effect</strong>, because it is used precisely when nobody has the energy to reconstruct
+                  context from scratch.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>A handover must carry</th><th>What is lost without it</th></tr>
+                    <tr><td>Open investigations &amp; their current hypothesis</td><td>The next shift restarts triage from zero</td></tr>
+                    <tr><td>&ldquo;Watch this&rdquo; — the not-yet-an-incident hunch</td><td>The weak signal that only means something across shifts</td></tr>
+                    <tr><td>Suppressions &amp; temporary changes made this shift</td><td>A muted alert nobody knows is muted</td></tr>
+                    <tr><td>What was escalated, to whom, awaiting what</td><td>Duplicate escalations, or a dropped one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The &ldquo;watch this&rdquo; line is the one that matters most and is dropped first: a single
+                    odd logon is nothing on one shift and the second data point on the next. A structured handover
+                    is what lets a signal that spans people be seen at all.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Same Problem the Service Desk Already Solved</div>
+                <div class="concept-desc">
+                  This is not a new problem and it does not need a novel solution — operations solved it for
+                  escalation years ago. The mechanism transfers directly: a short, structured, mandatory format,
+                  written for the tired reader, that separates &ldquo;what is happening&rdquo; from &ldquo;what to
+                  do about it&rdquo;.
+                </div>
+                <div class="concept-desc verdict">
+                  Steal the format wholesale from <span class="xref">Escalation — Functional vs Hierarchical, and Handing Over Without Losing Context</span>:
+                  a handover is an escalation across time instead of across teams, and the same discipline —
+                  structured, brief, and never verbal-only — is what keeps context from evaporating at the shift
+                  boundary.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body blueteam -->
 
 <!-- ── TOPIC: WHAT DETECTION ENGINEERING IS ──────────────────── -->

@@ -2782,4 +2782,281 @@ Get-MgContext | Select-Object Account, Scopes</pre>
       </div>
     </div>
   </div>
+
+          <!-- ── TOPIC: POWER BI GOVERNANCE ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📊</span>
+              <span class="topic-name">Power BI <span class="acro-exp">(Business Intelligence)</span> Governance — Workspaces, Datasets &amp; the Gateway Nobody Owns</span>
+              <span class="topic-badge">M365 • Governance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Reports Proliferate Faster Than Any Other Artefact, Each Carrying Its Own Copy of the Truth</div>
+                <div class="concept-desc">
+                  Power BI is the workload that spreads fastest and is governed least, because every analyst can
+                  publish a report and each report quietly embeds <strong class="c-amber">its own copy of a metric
+                  definition</strong>. Within a year &ldquo;revenue&rdquo; means five subtly different things across
+                  five dashboards, all confidently wrong in different ways, and the meeting to reconcile them is the
+                  governance problem arriving too late. The sprawl is not the report count; it is the
+                  <strong class="c-cyan">uncontrolled duplication of what a number means</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Sprawl point</th><th>What goes wrong</th></tr>
+                    <tr><td>Duplicated dataset per report</td><td>Each report defines its own metrics; no single source of truth</td></tr>
+                    <tr><td>Personal workspaces</td><td>Business-critical reports living in one person's private space</td></tr>
+                    <tr><td>The data gateway</td><td>A shared on-prem connector installed on someone's PC, owned by nobody</td></tr>
+                    <tr><td>Row-level security, or its absence</td><td>Everyone sees everything, or the rules differ per report</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The gateway row is the operational landmine: an on-premises data gateway is often installed on a
+                    single workstation, tied to one person's account, and when they leave or their PC is rebuilt,
+                    every report that refreshes through it goes stale at once — a single point of failure nobody
+                    documented because nobody owned it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Govern the Semantic Layer, Not the Report Count</div>
+                <div class="concept-desc">
+                  The instinct is to limit who can publish, which fails — people export to spreadsheets and the
+                  sprawl leaves the platform entirely. The durable control is a governed, shared dataset (a
+                  semantic model) that certified reports build on, so the metric is defined once and reused, and a
+                  gateway run as managed infrastructure rather than as a favour from whoever set it up.
+                </div>
+                <div class="concept-desc verdict">
+                  Certify shared datasets, put the gateway on a server with a service account and an owner, and let
+                  people build freely on top of a governed definition. This is the same problem
+                  <span class="xref">Power Platform Governance — Environments, DLP Policies &amp; the Citizen Developer Problem</span>
+                  solves for apps and flows, arriving through the reporting door — and the answer is the same: govern
+                  the shared layer, not the citizens building on it.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: VIVA & THE EMPLOYEE-EXPERIENCE SURFACE ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧭</span>
+              <span class="topic-name">Viva &amp; the Employee-Experience Surface</span>
+              <span class="topic-badge">M365 • Governance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">It Is Switched On by Default, and It Surfaces Analytics About People</div>
+                <div class="concept-desc">
+                  Viva arrives inside the licence, enabled, before anyone has decided to use it — and unlike a file
+                  share, what it surfaces is <strong class="c-amber">analytics about how people work</strong>: hours
+                  active, meeting load, after-hours patterns, who collaborates with whom. That is a privacy question
+                  whether or not anyone opened the product, and the default-on posture means the decision gets made
+                  by inertia unless someone makes it deliberately.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Viva surface</th><th>The question it raises</th></tr>
+                    <tr><td>Personal productivity insights</td><td>Benign — visible only to the individual</td></tr>
+                    <tr><td>Manager / team analytics</td><td>Where monitoring-versus-support gets uncomfortable</td></tr>
+                    <tr><td>Organisation-wide analytics</td><td>Aggregated, de-identified — until someone asks to un-aggregate</td></tr>
+                    <tr><td>Third-party data connectors</td><td>Pulling in data the privacy notice never mentioned</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The line to hold is the one between <em>helping an individual</em> and <em>surveilling a
+                    team</em>: personal insights the employee alone sees are defensible; the same data surfaced to
+                    a manager as a performance signal is a different product with a different consent requirement.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Make a Deliberate Decision, So Somebody Did</div>
+                <div class="concept-desc">
+                  The card exists mostly so a real choice gets made about a product that otherwise governs itself by
+                  default. Decide which Viva modules are on, what analytics scope managers get, and whether the
+                  works council or employee representatives needed to be consulted — before an employee discovers
+                  their after-hours activity is visible to a manager and it becomes a trust incident.
+                </div>
+                <div class="concept-desc verdict">
+                  Turn off what you are not deliberately using, and where you keep team analytics, frame it as
+                  support rather than surveillance and say so plainly. This is the workplace-tooling face of
+                  the monitoring-versus-support line that governance has to draw wherever software watches people
+                  work — the technology is neutral, the framing and the consent are not.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: FORMS, BOOKINGS, LISTS & WHITEBOARD ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗂️</span>
+              <span class="topic-name">Forms, Bookings, Lists &amp; Whiteboard — The Small Apps and Their Data</span>
+              <span class="topic-badge">M365 • Governance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Each One Creates Records Somewhere, and None Appears in the Retention Conversation</div>
+                <div class="concept-desc">
+                  The governance effort goes to Exchange, SharePoint and Teams, while the second-tier apps that ship
+                  in the same licence — Forms, Bookings, Lists, Whiteboard, Planner — quietly collect data that
+                  nobody classified. <strong class="c-amber">A Form can gather personal data, a Booking page holds
+                  customers' details, a Whiteboard captures a confidential strategy session — and each has its own
+                  storage location and sharing default that the retention and DLP <span class="acro-exp">(Data Loss Prevention)</span> policies were never told
+                  about.</strong> They are governed by omission, which is to say not at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>App</th><th>Where its data lives</th><th>The default that bites</th></tr>
+                    <tr><td>Forms</td><td>The creator's account</td><td>Can collect personal data; owned by an individual, not the org</td></tr>
+                    <tr><td>Bookings</td><td>A shared mailbox / calendar</td><td>External-facing; holds customer PII <span class="acro-exp">(Personally Identifiable Information)</span> by design</td></tr>
+                    <tr><td>Lists</td><td>SharePoint / Teams under the hood</td><td>Inherits the site's sharing — sometimes wide open</td></tr>
+                    <tr><td>Whiteboard</td><td>OneDrive / dedicated storage</td><td>Sensitive sessions, minimal access control</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The recurring problem is <strong>ownership</strong>: a Form or a Booking page created by one
+                    person is tied to that person's account, so when they leave, the data — and any live external
+                    intake — leaves with them or is orphaned. The apps are useful; the gap is that nobody asked
+                    &ldquo;where does this store things, and who owns it when the creator is gone?&rdquo;
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Bring the Small Apps Into the Same Governance as the Big Ones</div>
+                <div class="concept-desc">
+                  These apps cannot each get a bespoke governance programme, but they can be brought under the
+                  existing one: decide which are enabled, prefer group-owned over personal creation where it exists,
+                  and check whether the tenant's retention and DLP policies actually reach their storage — often
+                  they do not by default.
+                </div>
+                <div class="concept-desc verdict">
+                  Inventory what is enabled, move business-critical Forms and Bookings to group ownership so they
+                  survive a leaver, and confirm the retention labels cover their storage. The point is not to lock
+                  the apps down but to make sure the data they gather is not sitting outside every policy the
+                  organisation thinks it has in place.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: DEFENDER FOR OFFICE IN DEPTH ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">Defender for Office in Depth — Policy Order &amp; Why a Message Got Through</span>
+              <span class="topic-badge">M365 • Exchange Online • Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">&ldquo;We Have Anti-Phishing On — So How Did This Land?&rdquo;</div>
+                <div class="concept-desc">
+                  The question every mail administrator is asked after a phish reaches an inbox, and few can answer
+                  quickly, is <em>which policy applied, and why did it allow this?</em> The answer is almost never
+                  &ldquo;protection was off&rdquo;. It is that protection is a <strong class="c-cyan">stack of
+                  policies evaluated in a specific order</strong>, and a message takes the verdict of the first one
+                  that matches — so a higher-priority policy, or an allow-entry someone added months ago, quietly
+                  overrode the protection everyone assumed was in force.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Evaluation stage</th><th>What decides the outcome</th></tr>
+                    <tr><td>Connection / tenant allow-block lists</td><td>An allowed sender or IP <span class="acro-exp">(Internet Protocol)</span> skips filtering entirely</td></tr>
+                    <tr><td>Anti-malware</td><td>Attachment verdict; safe-attachment detonation</td></tr>
+                    <tr><td>Anti-spam</td><td>Bulk &amp; spam thresholds — tunable, and often loosened</td></tr>
+                    <tr><td>Anti-phishing (spoof &amp; impersonation)</td><td>The policy that catches BEC-style mail — if it is the one that applied</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The two usual culprits: a policy with a <strong>higher priority number</strong> matched the
+                    recipient first and was weaker, or an <strong>allow-entry</strong> — a whitelisted domain added
+                    to fix one false positive — turned off filtering for a whole sender. Both are configuration
+                    history, not a product failure, and both are invisible until you trace them.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Prove It From the Trace, Then Fix the Precedence</div>
+                <div class="concept-desc">
+                  The operational skill is reconstructing the verdict from the evidence rather than guessing. The
+                  message trace and the message headers record which policy applied and what it decided, and reading
+                  them turns &ldquo;anti-phishing must be broken&rdquo; into &ldquo;this allow-entry, added in
+                  March, exempted the sender&rdquo;.
+                </div>
+                <div class="concept-desc verdict">
+                  Start from <span class="xref">Message Trace &amp; Header Analysis — Proving Where a Message Died</span>
+                  to find which policy applied, audit allow-entries and policy priority regularly, and keep the
+                  strict policies at the priority that actually wins. This is the operational half of
+                  <span class="xref">EOP &amp; Defender for Office — Anti-Spam, Anti-Phish, Safe Links &amp; Quarantine</span>:
+                  that card turns the protections on, this one explains why one of them did not fire.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: EXCHANGE HYBRID ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔗</span>
+              <span class="topic-name">Exchange Hybrid — The Coexistence Nobody Meant to Keep</span>
+              <span class="topic-badge">M365 • Migration</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Hybrid Is a Migration State That Becomes Permanent</div>
+                <div class="concept-desc">
+                  Exchange hybrid is sold and understood as a <em>bridge</em> — a temporary coexistence while
+                  mailboxes move to the cloud. The uncomfortable pattern is that the bridge becomes the
+                  destination. <strong class="c-amber">The last few mailboxes on-premises — the shared mailbox an
+                  app relies on, the mailbox tied to a legacy scanner, the one nobody dares touch — cost more to
+                  move than the previous thousand did</strong>, so the migration stalls at 98% and the on-premises
+                  Exchange server that was meant to be decommissioned runs forever, patched and licensed, for a
+                  handful of objects.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What keeps a hybrid alive</th><th>Why it resists the final cut</th></tr>
+                    <tr><td>Applications relaying mail through on-prem</td><td>Nobody knows every device's SMTP <span class="acro-exp">(Simple Mail Transfer Protocol)</span> settings</td></tr>
+                    <tr><td>Shared mailboxes &amp; public folders</td><td>Fiddly to migrate; low-priority until they break</td></tr>
+                    <tr><td>Directory sync writing back to on-prem</td><td>Attribute management still anchored on-premises</td></tr>
+                    <tr><td>&ldquo;We might need it&rdquo;</td><td>No named exit condition, so the state never ends</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The cost is not just the server: it is the extra attack surface, the extra thing to patch, and
+                    the coexistence complexity every mail-flow problem now has to be debugged through. A permanent
+                    hybrid is a decision nobody made, paid for monthly.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Name the Exit Condition, Because Nobody Plans One</div>
+                <div class="concept-desc">
+                  The fix is not technical brilliance; it is a decision at the start of the migration that hybrid
+                  <em>ends</em>, with a written exit condition: what has to be true — apps re-pointed, mailboxes
+                  moved, directory management moved to the cloud — for the on-premises Exchange to be switched off.
+                  Without that line, the last 2% is always someone else's problem next quarter.
+                </div>
+                <div class="concept-desc verdict">
+                  Define, before the first mailbox moves, what &ldquo;done&rdquo; means and who owns getting there —
+                  including the plan for app mail relay and the final directory-management move. The migration that
+                  finishes is the one that treated hybrid as a phase with an end date; the one that runs a legacy
+                  server for a decade treated it as an architecture. Choose honestly, as
+                  <span class="xref">Exchange Online Migration — Cutover, Staged, Hybrid &amp; Choosing Honestly</span> frames the entry.
+                </div>
+              </div>
+            </div>
+          </div>
+
 </div>
