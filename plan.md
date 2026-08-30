@@ -11944,15 +11944,23 @@ something the operational card cannot. Phase 7's W1 (Little's Law) was chosen pa
 this reason — `ops`, `data` and `cs` all need it and none of them currently connects.
 
 **Acted on this session (See-also layer).** Rather than edit prose in fifty cards, the inbound
-edge was added to `related.json`, bidirectionally, for the five most-applicable theory cards
-and the eighteen operational cards that rest on them: the queue, capacity and backpressure
-cards → *Little's Law & Queueing*; the latency, observability and load-testing cards →
-*Percentiles & Latency*; the sharding, blast-radius and load-balancer cards → *Consistent
-Hashing*; the detection-quality card → *Bayes' Theorem & Base Rates*; and the C/Rust systems
-cards → *Undefined Behaviour & Memory Safety*. `cs` went from **1 inbound reference to a
-See-also connection on five of its centres of gravity** — and because the edges are
-bidirectional, each operational card now surfaces the theory beneath it. Hand-curated, not
-term-overlap (§3), so the strip carries them without filling with noise.
+edge was added to `related.json`, bidirectionally, in two batches covering **fourteen `cs`
+theory cards** and the operational cards that rest on them:
+
+- queue / capacity / backpressure → *Little's Law & Queueing*
+- latency / observability / load-testing → *Percentiles & Latency*
+- sharding / blast-radius / load-balancers → *Consistent Hashing*
+- detection quality → *Bayes' Theorem & Base Rates*; C / Rust → *Undefined Behaviour & Memory Safety*
+- rounding gotchas → *Number Representation*; failover quorum → *Consensus*; saga & streaming ordering → *Time in Distributed Systems*; Redis → *Caches & the Memory Hierarchy*
+- embeddings/RAG → *Vectors & Embeddings*; ML fundamentals → *Derivatives & Gradient Descent*; ER modelling → *Sets & Relations*; data-structure choice & back-of-envelope → *Big-O in Practice*; hash-table choice → *Hash Tables & the DoS*
+
+`cs` went from **one inbound reference to a See-also connection on fourteen of its centres of
+gravity**, and because the edges are bidirectional, each operational card now surfaces the
+theory beneath it. Hand-curated, not term-overlap (§3), so the strip carries them without
+filling with noise. (The batch-2 pass also re-caught the acro-span title-truncation trap: three
+targets whose titles carry a *mid-title* acronym slugged short until resolved through build's
+own `topic_label` — the same trap the SOC-metrics duplicate sprang, and the reason ids must
+come from the stamper, never a naive `topic-name` match.)
 
 The mirror finding: `m365` at 21 out and 1 in is the most self-sufficient domain on the site,
 and the least discoverable from anywhere else.
