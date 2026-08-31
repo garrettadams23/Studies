@@ -2116,15 +2116,22 @@ function srsIsDue(id) {
   return !r || r.d <= srsToday();
 }
 
-/** How many topics are waiting today — drives the badge on the study button. */
+/** How many topics are waiting today — drives the badge on the study button.
+ *
+ * Runs at load, and the loop bound `localStorage.length` throws — not returns —
+ * when storage is blocked, which `srsGet`'s own guard below cannot catch because
+ * it never gets called. Wrapped so a blocked-storage visitor sees a zero badge
+ * instead of an uncaught error at load. */
 function srsDueCount() {
   let due = 0;
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (!k || !k.startsWith(SRS_PREFIX)) continue;
-    const r = srsGet(k.slice(SRS_PREFIX.length));
-    if (r && r.d <= srsToday()) due++;
-  }
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || !k.startsWith(SRS_PREFIX)) continue;
+      const r = srsGet(k.slice(SRS_PREFIX.length));
+      if (r && r.d <= srsToday()) due++;
+    }
+  } catch { /* storage blocked — nothing is due */ }
   return due;
 }
 

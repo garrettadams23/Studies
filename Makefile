@@ -76,8 +76,12 @@ og:
 visual:
 	$(NODE) tools/visual_test.mjs
 
+## resilience: the page must still work when the browser denies storage
+resilience:
+	$(NODE) tools/storage_denied_test.mjs
+
 ## all: build, then every check, then the browser tests
-all: build check test a11y visual
+all: build check test a11y visual resilience
 
 ## help: list these targets
 help:

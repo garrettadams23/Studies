@@ -12276,6 +12276,34 @@ load-time / core storage paths guarded via safeLS · smoke 142/142 (normal path 
 optional-feature storage coupling documented, out of scope for this fix
 ```
 
+### The test that caught the fix's own gap — `make resilience`
+
+The right response to a bug the existing tests could not see is a test that can — the same
+discipline as the lint gates above. `tools/storage_denied_test.mjs` overrides the `localStorage`
+and `sessionStorage` getters to **throw on access** before any page script runs, loads the page,
+and asserts the things that only work if init ran to completion: a topic expands on click, the
+theme toggles, search runs, and — the sharpest assertion — **no uncaught error at load**.
+
+It earned its place immediately. Against the `safeLS` fix above it reported **4 of 5**: the page
+was interactive, but one uncaught `SecurityError` still escaped at load. The stack was swallowed
+by the getter, so the site had to be found by instrumenting every access — and it was
+`srsDueCount()`, which drives the study-button badge at load and loops on
+`localStorage.length` / `.key(i)`. That is the exact trap the commit above called out and
+deferred: `srsGet` inside the loop is guarded, but **the loop bound throws first**, before any
+guard runs. One `try` around the loop, and the count is zero instead of a crash. This is why the
+"out of scope" boundary was drawn honestly rather than silently — and the one place it reached
+into load-critical territory, the test caught.
+
+The test was then proved to bite the way `check_markup`'s self-test insists: reintroduce the
+original unguarded theme read and it fails with `ReferenceError: Cannot access 'REVIEWED_PREFIX'
+before initialization` — the top-level `const`s after the throwing IIFE never initialise, which
+is the page-halt symptom in one line. Wired into the Makefile as `resilience` and into
+`make all`.
+
+```
+resilience 5/5 · a new browser gate: the page survives a storage-denied browser, forever
+```
+
 ---
 
 # Closing note for Phase 7–10
