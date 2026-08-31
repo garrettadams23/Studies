@@ -12154,6 +12154,20 @@ worked, *is* the predicted yield — the durable shape is a handful per audit, t
 wave. Site **1,518 → 1,519**. Check PASS · smoke **142/142** · axe **6/6** · visual **2/2** ·
 related **1,266 links, 0 one-way**.
 
+And then the confirming sweep, so the next audit does not re-probe this slice. Immediately after
+gossip, two more verification passes were run and **both stopped clean**. The database-concurrency
+frontier is covered — `data`'s isolation card already carries MVCC, read-committed / repeatable-read,
+and dirty / phantom reads — and the classic-structures frontier yields only the niche tail: skip
+lists, two-phase locking, snapshot isolation, write skew, bitmap indexes and the Chandy-Lamport
+snapshot are each either a sub-point of an existing card or genuinely advanced, none the
+five-cards-leaned-on-it gap gossip was. A final broad cross-domain sweep of ~21 durable
+&ldquo;a reference must have this&rdquo; subjects — QUIC, BGP, NAT, ARP, MTU, CDC, columnar/OLAP,
+STRIDE, zero-trust, eBPF, cgroups, namespaces, CDN, idempotency — returned **coverage on every one**;
+the sole 0-hit was `io_uring`, advanced Linux async I/O, which is niche tail by any honest reading.
+So gossip stands as the last *foundational* gap the site had, and the frontier is now worked out at
+that level. The remaining niche tail is the scheduled Routine's job, on its periodic fresh-context
+cadence — not this session's to manufacture.
+
 ---
 
 # Closing note for Phase 7–10
