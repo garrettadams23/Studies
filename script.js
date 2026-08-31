@@ -15,6 +15,17 @@
 // ── STATE ──────────────────────────────────────────────────────────────────
 let allExpanded = false;
 
+// Storage is not always available: blocked cookies, a hardened browser, or
+// Safari private mode make `localStorage` throw on access. Most call sites below
+// already guard it inline; these helpers cover the rest so a storage failure
+// degrades one feature instead of throwing — which, at the load-time theme IIFE,
+// would halt the whole script and leave the page inert.
+const safeLS = {
+  get(k)    { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch { /* blocked or full */ } },
+  remove(k) { try { localStorage.removeItem(k); } catch { /* blocked */ } },
+};
+
 const QUOTES = [
   "What stands in the way becomes the way. — Marcus Aurelius, Meditations 5.20",
   "The unexamined life is not worth living. — Socrates, in Plato's Apology",
@@ -492,9 +503,9 @@ function enhanceDomain(section) {
     header.removeAttribute("aria-expanded");
     toggle.setAttribute("aria-expanded", header.classList.contains("open") ? "true" : "false");
 
-    if (localStorage.getItem(REVIEWED_PREFIX + topic.id) === "1") topic.classList.add("reviewed");
-    if (localStorage.getItem(BOOKMARK_PREFIX + topic.id) === "1") topic.classList.add("bookmarked");
-    if (localStorage.getItem(NOTE_PREFIX + topic.id)) topic.classList.add("noted");
+    if (safeLS.get(REVIEWED_PREFIX + topic.id) === "1") topic.classList.add("reviewed");
+    if (safeLS.get(BOOKMARK_PREFIX + topic.id) === "1") topic.classList.add("bookmarked");
+    if (safeLS.get(NOTE_PREFIX + topic.id)) topic.classList.add("noted");
 
     if (!header.querySelector(".topic-tools")) {
       const tools = document.createElement("span");
@@ -784,7 +795,7 @@ function toggleTheme() {
   const doc  = document.documentElement;
   const next = doc.getAttribute("data-theme") === "light" ? "dark" : "light";
   doc.setAttribute("data-theme", next);
-  localStorage.setItem("theme", next);
+  safeLS.set("theme", next);
   updateThemeUI(next);
 }
 
@@ -795,7 +806,7 @@ function updateThemeUI(theme) {
 
 // ── INIT THEME (prevent flash) ─────────────────────────────────────────────
 (function () {
-  const saved = localStorage.getItem("theme") || "dark";
+  const saved = safeLS.get("theme") || "dark";
   document.documentElement.setAttribute("data-theme", saved);
 })();
 
@@ -968,7 +979,7 @@ const ACRO_MODES = ["always", "hover", "off"];
 const ACRO_KEY = "acro-density";
 
 function acroMode() {
-  const m = localStorage.getItem(ACRO_KEY);
+  const m = safeLS.get(ACRO_KEY);
   return ACRO_MODES.includes(m) ? m : "always";
 }
 
@@ -988,7 +999,7 @@ function applyAcroMode(mode) {
 
 function cycleAcroMode() {
   const next = ACRO_MODES[(ACRO_MODES.indexOf(acroMode()) + 1) % ACRO_MODES.length];
-  localStorage.setItem(ACRO_KEY, next);
+  safeLS.set(ACRO_KEY, next);
   applyAcroMode(next);
 }
 
@@ -1172,13 +1183,13 @@ function handleTopicTool(btn) {
   if (btn.classList.contains("topic-bookmark")) {
     const on = topic.classList.toggle("bookmarked");
     const key = BOOKMARK_PREFIX + topic.id;
-    on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
+    on ? safeLS.set(key, "1") : safeLS.remove(key);
     if (on) streakTouch();
     if (typeof stRefreshStudyList === "function") stRefreshStudyList();
   } else if (btn.classList.contains("topic-review")) {
     const on = topic.classList.toggle("reviewed");
     const key = REVIEWED_PREFIX + topic.id;
-    on ? localStorage.setItem(key, "1") : localStorage.removeItem(key);
+    on ? safeLS.set(key, "1") : safeLS.remove(key);
     if (on) streakTouch();
     updateDomainProgress(topic.closest(".domain-section"));
   } else if (btn.classList.contains("topic-note-btn")) {
@@ -1206,7 +1217,7 @@ function updateDomainProgress(domain) {
   if (!header) return;
   const ids = topicIndex()[domain.dataset.domain] || [];
   const done = ids.reduce(
-    (n, id) => n + (localStorage.getItem(REVIEWED_PREFIX + id) === "1" ? 1 : 0), 0);
+    (n, id) => n + (safeLS.get(REVIEWED_PREFIX + id) === "1" ? 1 : 0), 0);
   let badge = header.querySelector(".domain-progress");
   if (!badge) {
     badge = document.createElement("span");

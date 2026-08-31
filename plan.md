@@ -12235,6 +12235,47 @@ headers w/o icon   90 → 0   (now an error-level lint gate, alongside the chevr
 TREND line          header=90 warning retired — the skeleton is complete and enforced
 ```
 
+### The one real bug the code audit found — a page that dies when storage is blocked
+
+The markup audits (headers aside) came back clean — concept-card skeletons intact, no duplicate
+topic ids, and the one table flagged for uneven row widths was a **false positive**: it uses
+`rowspan`, which the audit did not model, and "fixing" it would have broken a correct table.
+That is the same discipline as every probe in this file: a finding is a hypothesis until it is
+read.
+
+The genuine defect was in `script.js`. Storage access is not guaranteed — blocked cookies, a
+hardened browser, or Safari private mode make `localStorage` **throw on access**, not merely
+return null. Most of the file already guards it (28 `try` blocks), but the **load-time theme
+IIFE did not**:
+
+```js
+(function () {
+  const saved = localStorage.getItem("theme") || "dark";   // throws → unhandled
+  ...
+})();
+```
+
+At the top level, an unhandled throw there halts the rest of the script — so none of the event
+wiring below it runs, and for a storage-blocked visitor **the entire page is inert**: no
+accordions, no search, no theme toggle. This is the worst kind of bug, invisible to everyone
+whose browser allows storage, which is almost everyone testing it.
+
+The fix matches the code's own convention: a small `safeLS` {get,set,remove} helper that
+swallows the throw, defined before its first (parse-time) use, with the **load-critical and
+core-render/interaction** paths routed through it — the theme IIFE and toggle, the acronym-density
+mode, the per-topic reviewed/bookmark/note reads in `enhanceDomain` (which run on every domain
+open), the domain progress counter, and the bookmark/review toggles. The boundary is deliberate:
+the optional feature handlers (export/import, quiz, stats) reach `localStorage.length` and
+`.key(i)` directly, so a mechanical `getItem` swap would give false safety — the loop bound
+throws first. Hardening those is a separate, per-function effort and is left as such rather than
+half-done. `build.py` hashes `script.js` into the service-worker cache version, so the bump
+reaches returning visitors.
+
+```
+load-time / core storage paths guarded via safeLS · smoke 142/142 (normal path unchanged)
+optional-feature storage coupling documented, out of scope for this fix
+```
+
 ---
 
 # Closing note for Phase 7–10
