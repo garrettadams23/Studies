@@ -2249,6 +2249,91 @@ valgrind --leak-check=full ./prog</pre>
   </div>
 </div>
 
+
+          <!-- ── TOPIC: MERKLE TREES ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌳</span>
+              <span class="topic-name">Merkle Trees — Verifying and Diffing Huge Data by Comparing Hashes</span>
+              <span class="topic-badge">CS • Data Structures</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Prove Two Copies of a Terabyte Are Identical by Comparing 32 Bytes</div>
+                <div class="concept-desc">
+                  The obvious way to check whether two large datasets match is to read both and compare them —
+                  linear in the size of the data, and impossible when the two copies are on different continents.
+                  A Merkle tree turns that into comparing <strong class="c-cyan">one hash</strong>. Hash every block,
+                  then hash each pair of hashes, and again, up to a single <strong>root hash</strong>. If two roots
+                  match, the datasets are identical, with the same confidence as the underlying hash function —
+                  <strong class="c-amber">and if they differ, the tree tells you not just <em>that</em> they differ
+                  but <em>where</em>, in a logarithmic walk rather than a full scan.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>Without a Merkle tree</th><th>With one</th></tr>
+                    <tr><td>Are these two copies identical?</td><td>Read and compare everything — O(n)</td><td>Compare the two root hashes — O(1)</td></tr>
+                    <tr><td>Which blocks differ?</td><td>Read and compare everything</td><td>Walk down the mismatching branches — O(log n) exchanges</td></tr>
+                    <tr><td>Prove one block belongs to the set</td><td>Send the whole set</td><td>Send the block + its sibling hashes to the root — O(log n)</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The recursive rule is the whole idea: <strong>if two subtree hashes are equal, everything under
+                    them is equal — skip it entirely.</strong> You only descend into the parts that changed, which
+                    is why a Merkle tree makes synchronising two nearly-identical copies cost a function of the
+                    <em>difference</em>, not of the total size.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Where It Shows Up</div>
+                <div class="concept-title">The Same Structure, Under Five Systems You Already Use</div>
+                <div class="concept-desc">
+                  Merkle trees rarely appear by name, which is why they are worth learning once: you meet them
+                  repeatedly wearing different clothes. Every one of these is the same "hash the children up to a
+                  root" trick applied to a different verify-or-sync problem.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>System</th><th>What the tree buys it</th></tr>
+                    <tr><td>Git</td><td>A commit is a hash of a tree of hashes; identical subtrees are stored once, and history is tamper-evident</td></tr>
+                    <tr><td>Blockchains</td><td>A block commits to all its transactions in one root; a light client verifies a payment without the whole chain</td></tr>
+                    <tr><td>Certificate Transparency</td><td>An append-only log proves a certificate was included, and proves the log never rewrote history</td></tr>
+                    <tr><td>Backup &amp; sync (rsync-style, ZFS, Dynamo)</td><td>Anti-entropy: two replicas compare trees and ship only the blocks that differ</td></tr>
+                    <tr><td>Content-addressed storage</td><td>Dedup for free — identical content has an identical hash, so it is stored and transferred once</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The unifying property is <strong>tamper-evidence plus cheap diffing</strong>: any change,
+                    anywhere, changes the root, and the tree localises the change without a linear scan. That is why
+                    the structure recurs anywhere data must be verified or reconciled across a slow or untrusted link.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">It Verifies and Diffs. It Does Not Search, and It Does Not Encrypt.</div>
+                <div class="concept-desc">
+                  A Merkle tree is easy to over-credit. It is not a search structure — it will not find an item by
+                  key the way a <span class="xref">Hash Tables — Collisions, Load Factor &amp; the DoS That Exploits Them</span>
+                  table or a B-tree does; it answers "are these the same?" and "what differs?", not "where is X?".
+                  It provides <em>integrity</em>, not <em>confidentiality</em> — the leaves can be plaintext, and the
+                  tree still detects tampering, but it hides nothing. And it is append-friendly, insert-hostile:
+                  adding to the end is cheap, but inserting at the front rewrites every hash above it.
+                </div>
+                <div class="concept-desc verdict">
+                  Its entire security rests on the hash being <strong>collision-resistant</strong> — the day the
+                  hash function breaks, the tree's guarantee breaks with it, which is why systems built on Merkle
+                  trees care so much about which hash they chose. Reach for one whenever you must verify or
+                  reconcile large, mostly-unchanged data over an expensive or untrusted channel; reach for something
+                  else when the job is lookup. It is the same "let the hash do the work" instinct that
+                  <span class="xref">Consistent Hashing — Adding a Server Without Moving Everything</span> applies to
+                  placement rather than verification.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cs -->
 
 <!-- ── TOPIC: MODULAR ARITHMETIC ─────────────────────────────── -->

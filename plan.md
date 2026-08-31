@@ -12066,6 +12066,29 @@ best-written domains and are the least connected, because their subjects genuine
 from the technical graph. The action for them is a **path**, not forced cross-references —
 manufacturing a link from a Kubernetes card to Stoicism would be worse than the island.
 
+## 5. New content after the structural sweep — one card from a two-round probe
+
+With connectivity and paths at their floor, a fresh new-content audit ran the Phase-7 method:
+probe durable subjects across all 30 domains, then **verify every apparent gap against the
+real content** rather than the title. Two rounds, ~130 probe terms. The verification did what
+the file always predicts it will — it killed most candidates as phrasing misses or
+already-covered:
+
+| Apparent gap | Verdict on reading the content |
+|---|---|
+| DDoS / SYN flood / amplification | Covered — the `threat` DoS card already tables SYN flood, Smurf, Slowloris and DNS/NTP amplification with defences |
+| The air gap | Covered — `sec`'s OT card already makes the erosion argument (*"USB is how air-gapped plants still get hit"*, data diodes), and the backup cards carry the offline/air-gapped copy |
+| break-glass, saga, canary, confidential computing | All present under a different phrasing than the probe used |
+| dead-letter queue, SPIFFE, TOCTOU, RED method | Real but narrow — sub-points of existing cards, not their own |
+
+**One genuine, foundational gap survived: `cs` had hashing and consistent hashing but no
+Merkle tree** — the structure under git, blockchains, Certificate Transparency, backup
+dedup and anti-entropy. Written to the rubric (*prove two copies of a terabyte match by
+comparing 32 bytes; when they differ, find where in log n*), and linked to consistent hashing,
+hash tables and git. Site **1,512 → 1,513**. The audit's real output is the table above: the
+site is saturated at the level a broad probe reaches, and the honest yield of a careful pass
+is one card, not a wave — which is exactly the closing note below.
+
 ---
 
 # Closing note for Phase 7–10
