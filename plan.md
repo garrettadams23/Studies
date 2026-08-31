@@ -11984,10 +11984,21 @@ the same bidirectional See-also method as `cs`:
   BI governance ↔ the data semantic-layer card, Teams call quality ↔ QoS, M365 backup ↔ the
   3-2-1-1-0 backup strategy.
 
-`related.json` finished the session at **1,198 links across 676 topics, still 0 one-way**, and
+A final pass took the **near-duplicate census** (the third `make census` report) and read it
+the way it is meant to be read — not as a merge queue but as a list of *pairs that should at
+least point at each other*. Ten cross-domain twins that were similar and unlinked are now
+cross-linked, non-destructively: `pentest`/`redteam` **sqlmap**, `net`/`blueteam` **packet
+analysis / Wireshark**, `threat`/`blueteam` **email authentication**, `devops`/`linux`
+**container security / Docker**, `pentest`/`redteam` **vulnerability scanning**, `grc`/`ops`
+**risk vs vulnerability lifecycle**, the two `data` **schema-design** cards, the two `ai`
+**machine-learning** cards, `devops`/`eng` **event-driven architecture**, and `script`/`eng`
+**clean code**. This is the Phase-9 duplication finding resolved the safe way: a 0.5–0.6
+similarity means *distinct-but-related*, so a link beats a merge and keeps every permalink.
+
+`related.json` finished the session at **1,216 links across 690 topics, still 0 one-way**, and
 the orphan census fell from **898 to the mid-800s** — the See-also layer now carries the
-writer's own cross-references *and* the graph's two structural gaps, without the term-overlap
-default ever shipping.
+writer's own cross-references, the graph's two structural gaps, and the near-duplicate twins,
+without the term-overlap default ever shipping.
 
 ## 3. The See-also layer, filled from the writer's own cross-references
 
