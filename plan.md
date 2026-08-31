@@ -12049,11 +12049,15 @@ A second paths pass extended the same §3 logic to the other large zero-path dom
 the JavaScript that trips people up → a component framework → data, auth, security,
 performance, accessibility, testing and deploy) and **`cs-for-working-engineers`** (18 steps:
 complexity → the data structures and algorithms worth knowing cold → scheduling, concurrency
-and memory → the distributed-systems and latency facts that decide real designs). Paths **8 →
-10, 108 → 145 steps**; `web` (19) and `cs` (18) join the covered domains. The remaining
-zero-path domains are either small enough that the chip is entry enough or are the islands
-§4 says want prose, not a forced sequence — so the paths programme, like the connectivity one,
-stops where a genuine reader-sequence does.
+and memory → the distributed-systems and latency facts that decide real designs), then a third
+adding **`llms-from-prompt-to-production`** (15 steps: what a model is → tokens and prompting →
+RAG → tools and structured output → the production concerns) and **`grc-end-to-end`** (15
+steps: risk from first principles → frameworks and the controls universe → classification and
+audit → the major regimes → the governance machinery). Paths went **6 → 12, 75 → 175 steps**;
+`web`, `data`, `cs`, `ai`, `grc` and the `productivity`/`mind` learning-science pair all gained
+the entry point they lacked. The remaining zero-path domains are either small enough that the
+chip is entry enough or are the islands §4 says want prose, not a forced sequence — so the
+paths programme, like the connectivity one, stops where a genuine reader-sequence does.
 
 ## 4. What this does not mean
 
