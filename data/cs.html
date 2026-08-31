@@ -2506,6 +2506,94 @@ valgrind --leak-check=full ./prog</pre>
             </div>
           </div>
 
+
+          <!-- ── TOPIC: BYZANTINE FAULT TOLERANCE ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎭</span>
+              <span class="topic-name">Byzantine Fault Tolerance — Agreement When Nodes Lie</span>
+              <span class="topic-badge">CS • Distributed Systems</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Raft and Paxos Assume Nodes Crash. They Promise Nothing If a Node Lies.</div>
+                <div class="concept-desc">
+                  The consensus algorithms most systems run —
+                  <span class="xref">Consensus — Raft and Paxos, Without the Paper</span> — tolerate a specific,
+                  polite kind of failure: a node <strong class="c-cyan">stops</strong>. It crashes, or the network
+                  drops it, but it never sends a <em>wrong</em> answer. <strong class="c-amber">Byzantine faults are
+                  the impolite kind: a node that is compromised, buggy, or malicious sends different answers to
+                  different peers, or plausible-looking lies.</strong> Against that, crash-fault consensus gives no
+                  guarantee at all — and whether you need protection from it is a question about your <em>trust
+                  model</em>, not your reliability target.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Fault model</th><th>A faulty node…</th><th>Tolerated by</th></tr>
+                    <tr><td>Crash / fail-stop</td><td>Halts, cleanly — never lies</td><td>Raft, Paxos — the common case</td></tr>
+                    <tr><td>Omission</td><td>Drops some messages</td><td>Still crash-fault territory</td></tr>
+                    <tr><td>Byzantine</td><td>Sends arbitrary, conflicting, or malicious data</td><td>BFT protocols (PBFT, and blockchains)</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The name comes from the <strong>Byzantine generals problem</strong>: several generals must agree
+                    to attack or retreat, some may be traitors sending conflicting orders, and messengers can be
+                    lost. Its answer is exact and sobering — the loyal generals can only be guaranteed to agree if
+                    <strong>fewer than a third</strong> are traitors. That one-third bound is the price of surviving
+                    lies, and it is why BFT systems need more nodes than crash-fault ones.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Cost</div>
+                <div class="concept-title">Surviving Lies Costs More Nodes and More Messages</div>
+                <div class="concept-desc">
+                  Byzantine tolerance is not a free upgrade you would always want; it is a strictly more expensive
+                  guarantee. Where crash-fault consensus needs <strong>2f+1</strong> nodes to survive
+                  <em>f</em> failures (a simple majority), Byzantine consensus needs <strong>3f+1</strong> — you
+                  cannot trust any single report, so you need enough honest nodes to outvote the liars even after
+                  removing the ones who might be lying. The message complexity rises too, because agreement now
+                  requires cross-checking who said what to whom.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Crash-fault (Raft/Paxos)</th><th>Byzantine (BFT)</th></tr>
+                    <tr><td>Nodes to survive f faults</td><td>2f+1 (majority)</td><td>3f+1 (super-majority)</td></tr>
+                    <tr><td>Assumes about nodes</td><td>Honest, may stop</td><td>Any may be adversarial</td></tr>
+                    <tr><td>Messages per decision</td><td>Linear</td><td>Higher — everyone cross-checks</td></tr>
+                    <tr><td>Where it fits</td><td>Your own data centre</td><td>Open, mutually-distrusting parties</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    This is the machinery under a blockchain: a permissionless ledger is the pure Byzantine setting —
+                    anonymous participants, any of whom may be an attacker — which is exactly why it needs Byzantine
+                    agreement (proof-of-work and proof-of-stake are Sybil-resistant ways of reaching it) and why it
+                    is so much slower than a database that trusts its own replicas.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">Inside a Trust Boundary, You Do Not Need It — and Paying for It Is Waste</div>
+                <div class="concept-desc">
+                  The common mistake is to reach for Byzantine tolerance because it sounds strictly safer. Inside
+                  infrastructure you own — replicas of your own database, nodes in your own cluster — the nodes are
+                  not adversaries; they crash, they do not conspire. There, crash-fault consensus is correct,
+                  cheaper and faster, and BFT would be paying, in nodes and latency, to defend against an attacker
+                  who is on your own payroll.
+                </div>
+                <div class="concept-desc verdict">
+                  So the decision is set by the trust boundary, not the stakes. Ask whether a participant could be
+                  actively malicious or arbitrarily broken in a way that produces <em>wrong</em> output, not just
+                  <em>absent</em> output — and note the deeper limit underneath both models, that even detecting a
+                  faulty node reliably is impossible in an asynchronous network, which
+                  <span class="xref">Failure Detection &amp; FLP — Why "Is It Down?" Has No Perfect Answer</span>
+                  explains. Across a trust boundary, pay for BFT; inside one, Raft or Paxos is the honest answer.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cs -->
 
 <!-- ── TOPIC: MODULAR ARITHMETIC ─────────────────────────────── -->

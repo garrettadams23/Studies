@@ -12111,11 +12111,15 @@ probe of common subjects finds only phrasing misses — but the *depth* frontier
 technical domain still holds real gaps, and they surface only when the probe targets the
 advanced layer and every hit is verified against the content. A fourth round added **Amdahl's
 Law** — `cs` had Little's Law for latency but not the parallelism ceiling (why more cores stop
-helping; the serial fraction sets the limit; Gustafson as the counterpoint). **Five cards from
-four careful rounds** (Merkle, CRDT, TCP congestion, LSM, Amdahl), each a foundational structure
-a neighbour merely gestured at. That is the durable shape of new content on a site this size:
-not waves, but a handful of real gaps per deliberate audit — which is exactly the loop the
-scheduled Routine runs. Site **1,512 → 1,517** over the five.
+helping; the serial fraction sets the limit; Gustafson as the counterpoint). A fifth round added **Byzantine Fault Tolerance** — `cs` had crash-fault consensus (Raft/Paxos)
+but not the Byzantine fault model (agreement when nodes lie; the Byzantine generals problem and
+its one-third bound; 3f+1 vs 2f+1; why blockchains need it and a trusted data centre does not),
+linked to Consensus and FLP. **Six cards from five careful rounds** (Merkle, CRDT, TCP
+congestion, LSM, Amdahl, BFT), each a foundational structure a neighbour merely gestured at —
+and five of the six clustered in `cs` and its neighbours, because the theory domain is where a
+mature site's remaining depth-gaps concentrate. That is the durable shape of new content on a
+site this size: not waves, but a handful of real gaps per deliberate audit, thinning as the vein
+is worked — which is exactly the loop the scheduled Routine runs. Site **1,512 → 1,518** over the six.
 
 ---
 
