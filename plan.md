@@ -12170,6 +12170,50 @@ cadence — not this session's to manufacture.
 
 ---
 
+## Session record — the code axis: 90 headers with no expand chevron, and the gate that ends it
+
+With the content frontier worked out, an engineering pass over the P1–P5 backlog (all 24 items
+marked applied) verified the applied fixes still hold — `DISORDER_DATA` is gone, the search is
+debounced, `highlightIn` walks text nodes — and then found something the backlog never named.
+
+**A structural audit of every `.topic-header` on the site found 90, across 15 domains, missing
+their `topic-chev` span entirely** — a different defect from P1 §4 (which was `topic-chevron`
+vs `topic-chev`, a *misnamed* class). These 90 are an older difficulty-badge card style
+(`Beginner`/`Intermediate`/`Advanced`, badge-first, no icon) that shipped before the header
+skeleton settled. The click handler is on the header, so they *did* still expand — but with no
+chevron there was no visual cue that they open, and nothing for `.topic-header.open .topic-chev`
+to rotate. A reader could not tell the card was expandable. The JS already tolerated the gap
+(`chev?.setAttribute`, and a ternary on insertion), which is exactly why it stayed invisible.
+
+The fix was mechanical and uniform: append `<span class="topic-chev">▶</span>` to each of the
+90 headers, giving `badge · name · chev` — the chevron lands on the right (name is `flex: 1`),
+the badge sits in the icon's slot, and every topic on the site now shows that it opens.
+
+**And the gate, so it cannot return.** `check_markup.py` proves a header is *well-formed*;
+nothing proved it was *complete*. `lint_content.py` now requires every `topic-header` to carry
+a `topic-chev` — an **error**, because the count is now zero and this file's discipline is that
+a warning graduates to an error the moment it reaches zero. The missing *icon* on those same 90
+is tracked as a **warning** (`header without topic-icon: 90`), not an error: an icon is a
+per-topic judgement and a wrong one is worse than a clean badge-led header, so it graduates the
+day someone gives them all a real icon. The gate was proved to have teeth the way every check
+in this repo must be — strip one chevron from a real domain file and lint reports
+`topic-header has no <span class="topic-chev">` and exits 1; restore, and it is clean. (The
+first negative test was invalid — a `_zzz`-named fixture is skipped because lint builds its file
+list from `domains.json`. A validator that passes because it never looked is the failure this
+file has recorded four times; the real test uses a real domain file.)
+
+```
+topics          1,519 → 1,519   (no new topics — 90 existing headers completed)
+headers w/o chev    90 → 0       (now an error-level lint gate)
+headers w/o icon    90 → 90      (tracked warning; graduates at zero)
+index.html      +11.6 KB (90 chevron spans, post-minify)
+```
+
+Check PASS · smoke **142/142** · axe **6/6** · visual **2/2** · determinism reproducible. The
+visual baseline is the filter-bar chips, which the collapsed-header change does not touch.
+
+---
+
 # Closing note for Phase 7–10
 
 Four phases, and they are not alternatives — they are the same site measured four ways.

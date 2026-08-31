@@ -441,6 +441,25 @@ def main():
 
         for line_no, block in topic_blocks(text):
             label, has_name = topic_label(block)
+            # The expand chevron is the affordance CSS rotates on open
+            # (.topic-header.open .topic-chev). A header without one still toggles
+            # — the click handler is on the header — but silently, with no visual
+            # cue that the card opens. 90 older difficulty-badge headers shipped
+            # without it across 15 domains; once fixed to zero this graduates to an
+            # error, the way this file's warnings do, so the gap cannot return.
+            # (check_markup.py proves the header is well-formed; this proves it is
+            # complete — the two do not check each other's rules.)
+            if 'class="topic-header"' in block:
+                if "topic-chev" not in block:
+                    errors.append(
+                        f"{name}:{line_no}: topic-header has no "
+                        f'<span class="topic-chev"> — every other topic carries the '
+                        f"expand chevron; add one so the card shows that it opens")
+                if "topic-icon" not in block:
+                    # Not an error: 90 headers legitimately lead with a difficulty
+                    # badge and no icon. Tracked so the day someone gives them all
+                    # an icon, this can graduate too.
+                    warns["header without topic-icon"] += 1
             if not has_name:
                 # Was a warning for two sessions and nobody acted on it. It only
                 # became interesting once it produced a visible bug: the label
