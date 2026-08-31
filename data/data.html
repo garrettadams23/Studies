@@ -2506,4 +2506,91 @@ changes that step 2 already contains, on purpose.</pre>
             </div>
           </div>
 
+
+          <!-- ── TOPIC: LSM TREES ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗜️</span>
+              <span class="topic-name">LSM Trees — Turning Random Writes Into Sequential Ones</span>
+              <span class="topic-badge">DATA • Storage Engines</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Never Update in Place — Only Ever Append</div>
+                <div class="concept-desc">
+                  A B-tree, the structure under most relational indexes, updates records where they live. That
+                  keeps reads fast and makes every write a <strong class="c-cyan">random seek</strong> to the right
+                  page — cheap on a small dataset, punishing when writes arrive faster than a disk can seek. A
+                  <strong>log-structured merge tree</strong> refuses to update in place at all: every write is
+                  <strong class="c-amber">appended</strong> to memory and to a log, and the sorted files on disk are
+                  never modified, only replaced. It converts a storm of random writes into a stream of sequential
+                  ones — the single access pattern every storage medium is fastest at.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>What happens</th></tr>
+                    <tr><td>Write</td><td>Appended to an in-memory <em>memtable</em> and a write-ahead log — no seek, no disk read</td></tr>
+                    <tr><td>Flush</td><td>Full memtable is written out as an immutable, sorted file (an SSTable)</td></tr>
+                    <tr><td>Read</td><td>Check the memtable, then each level of sorted files, newest first — several places, not one</td></tr>
+                    <tr><td>Compaction</td><td>Background merge of sorted files, dropping superseded and deleted keys</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    This is the engine under Cassandra, RocksDB, LevelDB and many time-series and event stores —
+                    exactly the write-heavy workloads that make a B-tree thrash. The append-only design is also why
+                    a delete is not a removal but a <strong>tombstone</strong>: a marker that says &ldquo;this key
+                    is gone,&rdquo; carried until compaction can finally drop it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">You Pay for Cheap Writes in Read and Space Amplification</div>
+                <div class="concept-desc">
+                  Nothing is free; the LSM tree moves the cost, it does not remove it. Because a key can live in
+                  several sorted files at once, a read may have to look in all of them — <strong>read
+                  amplification</strong> — which is why LSM engines lean on Bloom filters to skip files that cannot
+                  contain the key. And compaction rewrites data repeatedly (<strong>write amplification</strong>)
+                  and keeps superseded copies until it runs (<strong>space amplification</strong>), which is why an
+                  LSM database's disk use and I/O <span class="acro-exp">(Input/Output)</span> can spike when compaction kicks in.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>B-tree</th><th>LSM tree</th></tr>
+                    <tr><td>Writes</td><td>Random, in place</td><td>Sequential, append-only</td></tr>
+                    <tr><td>Reads</td><td>One place — fast, predictable</td><td>Several levels — needs Bloom filters</td></tr>
+                    <tr><td>Best workload</td><td>Read-heavy, point updates</td><td>Write-heavy, ingest &amp; time-series</td></tr>
+                    <tr><td>The tax</td><td>Write amplification on random writes</td><td>Read &amp; space amplification; compaction spikes</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    You cannot minimise read, write and space amplification all at once — improving one worsens
+                    another, and the storage engine's tuning is a choice of which two to favour. That trade is the
+                    whole reason both structures exist and neither won:
+                    <span class="xref">Indexes Explained — B-tree, Hash &amp; Covering</span> is the read-optimised
+                    default; this is its write-optimised opposite.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Choose by the Write-to-Read Ratio, Not by Fashion</div>
+                <div class="concept-desc">
+                  LSM is not &ldquo;the modern, better&rdquo; structure and B-tree the legacy one — they are two
+                  answers to opposite questions. A workload dominated by point lookups and in-place updates (a
+                  classic transactional database) is a B-tree's home ground; a workload dominated by high-volume
+                  ingest that is rarely updated (metrics, logs, event streams, a write-heavy wide-column store) is
+                  an LSM's.
+                </div>
+                <div class="concept-desc verdict">
+                  Ask what the access pattern actually is — writes versus reads, appends versus updates, point
+                  lookups versus scans — and let that pick the engine, because the choice is baked deep into a
+                  database and expensive to reverse. It is the same divide
+                  <span class="xref">Cassandra &amp; DynamoDB — Wide-Column at Scale</span> lands on from the
+                  distributed-database side: write-optimised storage is what makes their ingest rates possible.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body data -->

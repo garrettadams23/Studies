@@ -5878,6 +5878,89 @@ Nobody hears anything, so media did not.</pre>
   </div>
 </div>
 
+
+          <!-- ── TOPIC: TCP CONGESTION CONTROL ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🚦</span>
+              <span class="topic-name">TCP <span class="acro-exp">(Transmission Control Protocol)</span> Congestion Control — Why a Fast Link Can Still Be Slow</span>
+              <span class="topic-badge">NET • Transport</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Your Throughput Is Not Set by Your Bandwidth — It Is Set by an Algorithm Guessing</div>
+                <div class="concept-desc">
+                  A 1&nbsp;Gbps link does not give you 1&nbsp;Gbps. TCP has no idea what the network between two hosts
+                  can carry, so it <strong class="c-cyan">guesses, cautiously, and treats a lost packet as proof it
+                  guessed too high</strong>. The amount in flight is capped by a <em>congestion window</em> the
+                  sender grows and shrinks on its own — and <strong class="c-amber">a slow transfer over a fast
+                  link is almost never a bandwidth problem; it is the window and the round-trip time.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Phase</th><th>What the sender does</th></tr>
+                    <tr><td>Slow start</td><td>Double the window each round-trip — exponential ramp until the first loss</td></tr>
+                    <tr><td>Congestion avoidance</td><td>Additive increase: +1 per round-trip, probing gently for more</td></tr>
+                    <tr><td>On loss</td><td>Multiplicative decrease: halve the window — the network just said &ldquo;too much&rdquo;</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    That additive-increase / multiplicative-decrease rhythm is the famous TCP <strong>sawtooth</strong>:
+                    throughput climbs slowly, a single loss halves it, and it climbs again. It is why a lossy path
+                    feels far slower than its raw bandwidth suggests — every drop costs half the progress made since
+                    the last one.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Long Fat Network, and the Bufferbloat That Hides the Loss</div>
+                <div class="concept-desc">
+                  Two symptoms recur, and both look like &ldquo;the link is slow&rdquo; while the link is fine. The
+                  first is the <strong>bandwidth-delay product</strong>: on a high-bandwidth, high-latency path (a
+                  transcontinental or satellite link), the window must be large enough to keep the pipe full, and
+                  if it is not, the sender spends most of its time waiting for acknowledgements. The second is
+                  <strong>bufferbloat</strong>: oversized buffers in the middle absorb the loss that congestion
+                  control relies on as its signal, so latency balloons while throughput barely moves.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Algorithm family</th><th>Reads congestion from</th><th>Weakness</th></tr>
+                    <tr><td>Loss-based (Reno, CUBIC)</td><td>Dropped packets</td><td>Blind until the buffer overflows — feeds bufferbloat</td></tr>
+                    <tr><td>Delay / model-based (BBR)</td><td>Measured latency &amp; bandwidth</td><td>Estimates the pipe directly; can be unfair to loss-based flows sharing a link</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The recognisable tell: a fast link with high latency that never fills, or a link whose ping
+                    times soar the moment a big download starts. Both are congestion-control behaviour, not a
+                    bandwidth shortage — and this is the network-layer face of
+                    <span class="xref">Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full</span>,
+                    a queue whose depth is the buffer and whose service rate is the bottleneck link.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">Congestion Control Protects the Network. Flow Control Protects the Receiver.</div>
+                <div class="concept-desc">
+                  These two are constantly confused because both throttle the sender. <em>Flow</em> control is the
+                  receiver saying &ldquo;my buffer is nearly full, slow down&rdquo; — a private matter between the
+                  two endpoints. <em>Congestion</em> control is the sender inferring that the <em>network in
+                  between</em> is overloaded, from signals nobody sends it explicitly. The sender obeys whichever
+                  window is smaller, which is why diagnosing a slow transfer means asking which limit is binding.
+                </div>
+                <div class="concept-desc verdict">
+                  So when a transfer underperforms on a link you know is fast, suspect the round-trip time and the
+                  window before the bandwidth: compute the bandwidth-delay product, check for loss, and look at
+                  whether latency rises under load. More capacity does not fix a window that is too small for the
+                  distance — and the number that matters is the one
+                  <span class="xref">Percentiles &amp; Latency — Why p99 Beats the Mean, and How to Aggregate It Wrongly</span>
+                  insists you measure at the tail, because congestion lives there first.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body net -->
 <!-- ── TOPIC: DEVICE CONFIG MANAGEMENT ───────────────────────── -->
 <div class="topic" data-reviewed="2026-08">

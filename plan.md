@@ -12095,9 +12095,25 @@ conflict-free replicated data types that let offline replicas merge without coor
 (collaborative editors, offline-first apps). It is genuinely distinct from both neighbours —
 convergence, not ordering; eventual consistency, not consensus — and the card is built around
 that boundary (a CRDT cannot enforce a global invariant like &ldquo;no double-booking&rdquo;;
-for that you still need coordination). Site **1,513 → 1,514**. Two cards from two careful
-rounds, both in the one domain deep enough to still have a foundational gap — and the search
-stops there rather than reaching for thinner ones the neighbours already cover.
+for that you still need coordination). Site **1,513 → 1,514**.
+
+A third round refined the finding. Probing *advanced* topics — not fundamentals — turned up two
+more genuine gaps, this time outside `cs`: `net` taught the TCP handshake but not **congestion
+control** (why a fast link can still be slow — the congestion window, the sawtooth, bufferbloat,
+the bandwidth-delay product), and `data` taught **B-tree** indexes but not the **LSM tree** that
+is their write-optimised opposite (append-only storage, read/write/space amplification, the
+engine under Cassandra and RocksDB). Both are foundational, both were absent, both link cleanly
+into the existing graph (TCP congestion to Little's Law and percentiles; LSM to B-tree indexes
+and wide-column stores). Site **1,514 → 1,516**.
+
+So the sharpened conclusion: the site is saturated at the level of *fundamentals* — a broad
+probe of common subjects finds only phrasing misses — but the *depth* frontier of a mature
+technical domain still holds real gaps, and they surface only when the probe targets the
+advanced layer and every hit is verified against the content. **Four cards from three careful
+rounds** (Merkle, CRDT, TCP congestion, LSM), each a foundational structure a neighbour merely
+gestured at. That is the durable shape of new content on a site this size: not waves, but a
+handful of real gaps per deliberate audit — which is exactly the loop the scheduled Routine
+runs.
 
 ---
 
