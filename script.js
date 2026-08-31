@@ -1508,7 +1508,18 @@ function urlToolDecode() {
 function urlToolCopy() {
   const el = document.getElementById("url-codec-output");
   if (!el?.value) return _msg("⚠ Nothing to copy.", "var(--amber)");
-  navigator.clipboard.writeText(el.value).then(() => _msg("✓ Copied.", "var(--green)"));
+  // The Clipboard API is absent in an insecure context — file://, plain http,
+  // a permissionless iframe — where `navigator.clipboard` is undefined and an
+  // unguarded call throws. The other three copy buttons already guard and fall
+  // back; this one did not. Fall back to selecting the field for a manual copy.
+  const fallback = () => { el.select(); _msg("⌘/Ctrl-C to copy.", "var(--amber)"); };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(el.value)
+      .then(() => _msg("✓ Copied.", "var(--green)"))
+      .catch(fallback);
+  } else {
+    fallback();
+  }
 }
 
 function urlToolClear() {
