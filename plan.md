@@ -12409,8 +12409,31 @@ And the coverage gap that let it hide is now closed: `tools/mobile_test.mjs` (`m
 375px, opens a spread of table-heavy domains, expands every topic and asserts the document is no wider than
 the viewport — naming the widest uncontained element on a failure. Proved to bite: with the CSS rule removed
 it fails `script` (127px), `net` (43px) and `sec` (62px), each pointing at `TABLE.ref-table`; with it, 9/9
-domains fit. Wired into `make all`. The browser suite now guards four things a desktop screenshot never
-could — behaviour, accessibility, a storage-denied browser, and a phone's width.
+domains fit. Wired into `make all`.
+
+### The worst bug of the session: restoring a backup destroyed the data it restored
+
+A round-trip check — seed progress, export, wipe, import, compare — turned up a **silent data-loss bug** in
+the backup feature, the one feature whose entire job is not to lose data. `bkCollect` exports the JSON-valued
+keys (the SRS schedules, the notepad, the streak) **parsed into objects**, deliberately, so the downloaded
+file reads as nested JSON rather than a wall of escaped quotes. `localStorage` holds only strings, so the
+import has to re-serialise them — and it did not. `bkApply` wrote the object straight to
+`localStorage.setItem`, which stringifies it to the literal **`"[object Object]"`**. So importing your own
+backup overwrote every spaced-repetition schedule, every note and your streak with that string. The data
+most expensive to rebuild, erased by the act meant to protect it. `bkDiff`'s preview was wrong for the same
+reason — it compared a stored string against an exported object and reported every JSON key as an overwrite.
+
+The fix is a symmetric pair, `bkStored` (→ the string storage holds) and `bkObj` (→ the object a merge
+compares), each tolerant of a value already in the other form, applied at the three sites that had assumed a
+value was one or the other. And a regression test that would have caught it at birth: `tools/backup_test.mjs`
+(`make backup`) round-trips one of every key kind and asserts each returns byte for byte, checks the export
+is still a readable object file, and checks merge keeps the later SRS due date. It bites — revert the
+`setItem` fix and it fails with `study-streak: "[object Object]" != {…}` — and it is in `make all`.
+
+```
+backup import: SRS + notepad + streak → "[object Object]"  →  restored byte-for-byte
+make all now runs seven browser/gate suites; the two written today guard a phone and a backup
+```
 
 ---
 

@@ -84,8 +84,12 @@ resilience:
 mobile:
 	$(NODE) tools/mobile_test.mjs
 
+## backup: an export must restore exactly what it saved (no data loss)
+backup:
+	$(NODE) tools/backup_test.mjs
+
 ## all: build, then every check, then the browser tests
-all: build check test a11y visual resilience mobile
+all: build check test a11y visual resilience mobile backup
 
 ## help: list these targets
 help:

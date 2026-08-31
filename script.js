@@ -3510,6 +3510,17 @@ function bkIsJson(key) {
 
 function bkParse(raw) { try { return JSON.parse(raw); } catch { return null; } }
 
+// bkCollect exports JSON-valued keys (srs, notes, streak) *parsed*, so the file
+// reads as nested JSON rather than escaped strings — see bkIsJson. localStorage
+// only holds strings, so those values must be re-serialised on the way back in.
+// Without this, setItem(k, anObject) writes the literal "[object Object]" and a
+// restored backup silently loses every SRS schedule, the notepad and the streak.
+// bkStored gives the string localStorage stores; bkObj gives the parsed object a
+// merge comparison needs — each tolerating a value that is already in the other
+// form (a hand-edited file, or a non-JSON key).
+function bkStored(v) { return typeof v === "string" ? v : JSON.stringify(v); }
+function bkObj(v) { return typeof v === "string" ? bkParse(v) : v; }
+
 /** Every key we own, with JSON values expanded. */
 function bkCollect() {
   const data = {};
@@ -3650,10 +3661,10 @@ function bkDiff(kept, mode) {
     const mine = safeLS.get(k);
     if (mine === null) { d.add++; return; }
     if (mode === "merge" && k.startsWith(SRS_PREFIX)) {
-      const a = bkParse(mine), b = bkParse(kept[k]);
+      const a = bkParse(mine), b = bkObj(kept[k]);
       if (a && b && typeof a.d === "string" && a.d > b.d) { d.keepLocal++; return; }
     }
-    if (mine === kept[k]) d.keepLocal++; else d.overwrite++;
+    if (mine === bkStored(kept[k])) d.keepLocal++; else d.overwrite++;
   });
   return d;
 }
@@ -3670,11 +3681,11 @@ function bkApply(kept, mode) {
     if (mode === "merge" && k.startsWith(SRS_PREFIX)) {
       const mine = safeLS.get(k);
       if (mine) {
-        const a = bkParse(mine), b = bkParse(kept[k]);
+        const a = bkParse(mine), b = bkObj(kept[k]);
         if (a && b && typeof a.d === "string" && a.d > b.d) return;   // local is later
       }
     }
-    try { localStorage.setItem(k, kept[k]); } catch { /* quota — skip the rest of this key */ }
+    try { localStorage.setItem(k, bkStored(kept[k])); } catch { /* quota — skip the rest of this key */ }
   });
 }
 
