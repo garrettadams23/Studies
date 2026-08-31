@@ -514,7 +514,7 @@ out = <span class="fn">relu</span>(z)        <span class="com"># activation</spa
     <div class="concept-card">
       <div class="concept-label">PYTHON EXAMPLE</div>
       <div class="concept-title">Calling an LLM API with Python</div>
-      <div class="code-block"><span class="com"># pip install anthropic</span>
+      <pre class="code-block"><span class="com"># pip install anthropic</span>
 <span class="kw">import</span> anthropic
 
 client = anthropic.Anthropic()  <span class="com"># reads ANTHROPIC_API_KEY env var</span>
@@ -546,7 +546,7 @@ message = client.messages.create(
     messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Write a short Python function"</span>}]
 ) <span class="kw">as</span> stream:
     <span class="kw">for</span> text <span class="kw">in</span> stream.text_stream:
-        <span class="fn">print</span>(text, end=<span class="str">""</span>, flush=<span class="kw">True</span>)</div>
+        <span class="fn">print</span>(text, end=<span class="str">""</span>, flush=<span class="kw">True</span>)</pre>
     </div>
   </div>
 </div>
@@ -637,13 +637,13 @@ message = client.messages.create(
       <div class="concept-label">EMBEDDINGS</div>
       <div class="concept-title">Turning Meaning Into Numbers</div>
       <div class="concept-desc">An embedding is a list of numbers (a vector) that represents the <em>meaning</em> of a piece of text. Texts with similar meaning have vectors that are close together in mathematical space — even if they share no words. "How do I reset my password?" and "I forgot my login credentials" would have nearby embeddings. This is the foundation of modern semantic search, recommendations, and RAG.</div>
-      <div class="code-block"><span class="com"># Conceptually — each text becomes a vector of ~1536 numbers</span>
+      <pre class="code-block"><span class="com"># Conceptually — each text becomes a vector of ~1536 numbers</span>
 <span class="str">"cat"</span>      → [<span class="num">0.2</span>, -<span class="num">0.5</span>, <span class="num">0.8</span>, ...]
 <span class="str">"kitten"</span>   → [<span class="num">0.21</span>, -<span class="num">0.48</span>, <span class="num">0.79</span>, ...]   <span class="com"># very close to "cat"</span>
 <span class="str">"airplane"</span> → [-<span class="num">0.9</span>, <span class="num">0.3</span>, -<span class="num">0.1</span>, ...]   <span class="com"># far from "cat"</span>
 
 <span class="com"># Similarity = how close two vectors are (cosine similarity)</span>
-<span class="com"># Close vectors = similar meaning. This is "semantic search".</span></div>
+<span class="com"># Close vectors = similar meaning. This is "semantic search".</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">VECTOR DATABASES</div>
@@ -771,7 +771,7 @@ message = client.messages.create(
         scikit-learn is the most beginner-friendly ML library. This example
         predicts whether a customer will churn (leave) based on usage data.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="kw">import</span> pandas <span class="kw">as</span> pd
 <span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
 <span class="kw">from</span> sklearn.preprocessing  <span class="kw">import</span> StandardScaler
@@ -806,7 +806,7 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 <span class="fn">print</span>(classification_report(y_test, y_pred))
 <span class="com"># Output: precision, recall, F1-score per class</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -836,7 +836,7 @@ y_pred = model.predict(X_test)
         Once a model is trained, save it and wrap it in a tiny web service
         so other applications can call it.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="kw">import</span> joblib, numpy <span class="kw">as</span> np
 <span class="kw">from</span> flask <span class="kw">import</span> Flask, request, jsonify
 
@@ -867,7 +867,7 @@ _scaler = joblib.load(<span class="str">"scaler.pkl"</span>)
 <span class="com"># curl -X POST http://localhost:5000/predict \</span>
 <span class="com">#   -H "Content-Type: application/json" \</span>
 <span class="com">#   -d '{"monthly_spend": 45, "tenure_months": 6, "support_calls": 8}'</span>
-      </div>
+      </pre>
     </div>
 
   </div>

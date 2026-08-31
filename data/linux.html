@@ -1464,7 +1464,7 @@
         </table>
 
         <div class="dt">▸ DOCKERFILE — BUILD YOUR IMAGE</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># Dockerfile — instructions to build an image layer by layer</span>
 <span class="kw">FROM</span>    python:<span class="num">3.12</span>-slim          <span class="com"># base image (start here)</span>
 <span class="kw">WORKDIR</span> /app                     <span class="com"># set working directory</span>
@@ -1480,10 +1480,10 @@
 <span class="com"># ENTRYPOINT ["python"]     — fixed executable, cannot be overridden easily</span>
 <span class="com"># CMD ["app.py"]            — default args, overridden by: docker run img other.py</span>
 <span class="com"># ARG vs ENV: ARG is build-time only; ENV persists into running container</span>
-        </div>
+        </pre>
 
         <div class="dt">▸ ESSENTIAL DOCKER COMMANDS</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># ── Images ─────────────────────────────────────────────────</span>
 <span class="fn">docker</span> build -t myapp:<span class="num">1.0</span> .          <span class="com"># build image from Dockerfile in .</span>
 <span class="fn">docker</span> pull nginx:<span class="num">alpine</span>            <span class="com"># download image from registry</span>
@@ -1513,10 +1513,10 @@
 <span class="fn">docker</span> run -v $(<span class="fn">pwd</span>)/data:/data alpine  <span class="com"># bind mount (host path)</span>
 <span class="fn">docker</span> network create mynet
 <span class="fn">docker</span> run --network mynet nginx        <span class="com"># containers on same net can talk</span>
-        </div>
+        </pre>
 
         <div class="dt">▸ DOCKER COMPOSE — MULTI-CONTAINER APPS</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># docker-compose.yml — define all services in one file</span>
 version: <span class="str">"3.9"</span>
 services:
@@ -1548,7 +1548,7 @@ volumes:
 <span class="fn">docker</span> compose logs -f web    <span class="com"># follow logs for one service</span>
 <span class="fn">docker</span> compose exec web bash  <span class="com"># shell into service</span>
 <span class="fn">docker</span> compose ps             <span class="com"># status of all services</span>
-        </div>
+        </pre>
 
         <div class="dt">▸ DOCKER SECURITY HARDENING</div>
         <table class="ref-table">
@@ -1590,7 +1590,7 @@ volumes:
       <div class="dw">
 
         <div class="dt">▸ SYNTAX RULES &amp; DATA TYPES</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># ── Scalars (single values) ────────────────────────────────</span>
 name:     Alice               <span class="com"># string (no quotes needed)</span>
 age:      <span class="num">30</span>                  <span class="com"># integer</span>
@@ -1637,7 +1637,7 @@ web:
 api:
   &lt;&lt;: *defaults              <span class="com"># reuse same defaults</span>
   ports: ["8080:80"]
-        </div>
+        </pre>
 
         <div class="dt">▸ COMMON GOTCHAS</div>
         <table class="ref-table" style="margin-bottom:14px">
@@ -1650,7 +1650,7 @@ api:
         </table>
 
         <div class="dt">▸ YAML IN PRACTICE — GitHub Actions Example</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># .github/workflows/ci.yml</span>
 name: CI Pipeline
 
@@ -1678,7 +1678,7 @@ jobs:
         run: pytest --tb=short
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        </div>
+        </pre>
 
       </div>
     </div>
@@ -1738,18 +1738,18 @@ jobs:
     <div class="concept-card">
       <div class="concept-label">YOUR FIRST SCRIPT</div>
       <div class="concept-title">Hello World in Bash</div>
-      <div class="code-block"><span class="com">#!/bin/bash</span>
+      <pre class="code-block"><span class="com">#!/bin/bash</span>
 <span class="com"># The shebang line tells the OS which interpreter to use</span>
 
 <span class="fn">echo</span> <span class="str">"Hello, World!"</span>
-<span class="fn">echo</span> <span class="str">"Today is $(date)"</span>   <span class="com"># $() runs a command and inserts output</span></div>
+<span class="fn">echo</span> <span class="str">"Today is $(date)"</span>   <span class="com"># $() runs a command and inserts output</span></pre>
       <div class="concept-desc">Make it executable: <code>chmod +x hello.sh</code><br>
       Run it: <code>./hello.sh</code></div>
     </div>
     <div class="concept-card">
       <div class="concept-label">VARIABLES & INPUT</div>
       <div class="concept-title">Storing and Reading Values</div>
-      <div class="code-block"><span class="com">#!/bin/bash</span>
+      <pre class="code-block"><span class="com">#!/bin/bash</span>
 <span class="com"># Variables (no spaces around =)</span>
 name=<span class="str">"Alice"</span>
 count=<span class="num">5</span>
@@ -1764,12 +1764,12 @@ count=<span class="num">5</span>
 <span class="fn">echo</span> <span class="str">"Script: $0"</span>    <span class="com"># script name</span>
 <span class="fn">echo</span> <span class="str">"Arg 1: $1"</span>    <span class="com"># first argument</span>
 <span class="fn">echo</span> <span class="str">"All args: $@"</span> <span class="com"># all arguments</span>
-<span class="fn">echo</span> <span class="str">"Count: $#"</span>    <span class="com"># number of arguments</span></div>
+<span class="fn">echo</span> <span class="str">"Count: $#"</span>    <span class="com"># number of arguments</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">CONDITIONALS & LOOPS</div>
       <div class="concept-title">If/Else and For in Bash</div>
-      <div class="code-block"><span class="com">#!/bin/bash</span>
+      <pre class="code-block"><span class="com">#!/bin/bash</span>
 <span class="com"># If statement</span>
 <span class="kw">if</span> [ -f <span class="str">"/etc/passwd"</span> ]; <span class="kw">then</span>
     <span class="fn">echo</span> <span class="str">"File exists"</span>
@@ -1794,7 +1794,7 @@ i=<span class="num">1</span>
 <span class="kw">while</span> [ $i -le <span class="num">5</span> ]; <span class="kw">do</span>
     <span class="fn">echo</span> <span class="str">"Count: $i"</span>
     ((i++))
-<span class="kw">done</span></div>
+<span class="kw">done</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">TEST OPERATORS</div>
@@ -1817,7 +1817,7 @@ i=<span class="num">1</span>
     <div class="concept-card">
       <div class="concept-label">FUNCTIONS</div>
       <div class="concept-title">Reusable Blocks in Bash</div>
-      <div class="code-block"><span class="com">#!/bin/bash</span>
+      <pre class="code-block"><span class="com">#!/bin/bash</span>
 <span class="com"># Define a function</span>
 greet() {
     local name=<span class="str">"$1"</span>   <span class="com"># local vars don't leak</span>
@@ -1834,7 +1834,7 @@ greet <span class="str">"Bob"</span>
 
 <span class="kw">if</span> is_root; <span class="kw">then</span>
     <span class="fn">echo</span> <span class="str">"Running as root"</span>
-<span class="kw">fi</span></div>
+<span class="kw">fi</span></pre>
     </div>
   </div>
 </div>
@@ -1856,7 +1856,7 @@ greet <span class="str">"Bob"</span>
     <div class="concept-card">
       <div class="concept-label">CRONTAB SYNTAX</div>
       <div class="concept-title">Five Fields + Command</div>
-      <div class="code-block"><span class="com"># Cron format:</span>
+      <pre class="code-block"><span class="com"># Cron format:</span>
 <span class="com"># ┌─── minute (0-59)</span>
 <span class="com"># │ ┌─── hour (0-23)</span>
 <span class="com"># │ │ ┌─── day of month (1-31)</span>
@@ -1875,12 +1875,12 @@ greet <span class="str">"Bob"</span>
 <span class="num">0</span> <span class="num">9</span> * * <span class="num">1</span>  /usr/local/bin/weekly-report.sh
 
 <span class="com"># Run 1st of every month at midnight</span>
-<span class="num">0</span> <span class="num">0</span> <span class="num">1</span> * *  /usr/local/bin/monthly-cleanup.sh</div>
+<span class="num">0</span> <span class="num">0</span> <span class="num">1</span> * *  /usr/local/bin/monthly-cleanup.sh</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">MANAGING CRONTABS</div>
       <div class="concept-title">crontab Commands</div>
-      <div class="code-block"><span class="com"># Edit YOUR crontab (opens in default editor)</span>
+      <pre class="code-block"><span class="com"># Edit YOUR crontab (opens in default editor)</span>
 crontab -e
 
 <span class="com"># List your cron jobs</span>
@@ -1895,7 +1895,7 @@ crontab -u username -e
 <span class="com"># System-wide cron directory (any executable file runs)</span>
 ls /etc/cron.daily/
 ls /etc/cron.weekly/
-ls /etc/cron.monthly/</div>
+ls /etc/cron.monthly/</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">COMMON GOTCHAS</div>
@@ -1925,7 +1925,7 @@ ls /etc/cron.monthly/</div>
     <div class="concept-card">
       <div class="concept-label">VIEWING PROCESSES</div>
       <div class="concept-title">ps, top, htop</div>
-      <div class="code-block"><span class="com"># Snapshot of all running processes</span>
+      <pre class="code-block"><span class="com"># Snapshot of all running processes</span>
 ps aux
 
 <span class="com"># Process tree (parent-child relationships)</span>
@@ -1940,7 +1940,7 @@ top
 htop      <span class="com"># nicer version, install with: apt install htop</span>
 
 <span class="com"># See what a process has open</span>
-lsof -p PID</div>
+lsof -p PID</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SIGNALS</div>
@@ -1957,7 +1957,7 @@ lsof -p PID</div>
           <tr><td>SIGCONT</td><td>18</td><td>Continue</td><td>Resume a paused process</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># Polite stop (give process time to clean up)</span>
+      <pre class="code-block"><span class="com"># Polite stop (give process time to clean up)</span>
 kill -15 PID
 kill PID      <span class="com"># same — SIGTERM is default</span>
 
@@ -1968,12 +1968,12 @@ kill -9 PID
 pkill python3
 
 <span class="com"># Reload nginx config without downtime</span>
-kill -HUP $(pgrep nginx)</div>
+kill -HUP $(pgrep nginx)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">BACKGROUND & FOREGROUND</div>
       <div class="concept-title">Job Control</div>
-      <div class="code-block"><span class="com"># Run in background from the start</span>
+      <pre class="code-block"><span class="com"># Run in background from the start</span>
 python3 server.py &amp;
 
 <span class="com"># Ctrl+Z pauses a foreground process</span>
@@ -1987,7 +1987,7 @@ fg %1
 jobs
 
 <span class="com"># Keep running after logout (nohup)</span>
-nohup python3 server.py &gt; server.log 2&gt;&amp;1 &amp;</div>
+nohup python3 server.py &gt; server.log 2&gt;&amp;1 &amp;</pre>
     </div>
   </div>
 </div>
@@ -2016,7 +2016,7 @@ nohup python3 server.py &gt; server.log 2&gt;&amp;1 &amp;</div>
     <div class="concept-card">
       <div class="concept-label">systemctl COMMANDS</div>
       <div class="concept-title">Start, Stop, Enable, Status</div>
-      <div class="code-block"><span class="com"># Service status</span>
+      <pre class="code-block"><span class="com"># Service status</span>
 systemctl status nginx
 systemctl status ssh
 
@@ -2039,12 +2039,12 @@ sudo systemctl enable --now nginx
 systemctl list-units --type=service --state=running
 
 <span class="com"># List failed services</span>
-systemctl --failed</div>
+systemctl --failed</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">JOURNALCTL</div>
       <div class="concept-title">Reading Service Logs</div>
-      <div class="code-block"><span class="com"># All logs (most recent at bottom)</span>
+      <pre class="code-block"><span class="com"># All logs (most recent at bottom)</span>
 journalctl
 
 <span class="com"># Logs for a specific service</span>
@@ -2061,12 +2061,12 @@ journalctl -p err
 journalctl -b
 
 <span class="com"># From a time range</span>
-journalctl --since "2024-01-15 09:00" --until "2024-01-15 10:00"</div>
+journalctl --since "2024-01-15 09:00" --until "2024-01-15 10:00"</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">WRITE A UNIT FILE</div>
       <div class="concept-title">Run Your Script as a Service</div>
-      <div class="code-block"><span class="com"># Create /etc/systemd/system/myapp.service</span>
+      <pre class="code-block"><span class="com"># Create /etc/systemd/system/myapp.service</span>
 [Unit]
 Description=My Python Application
 After=network.target
@@ -2082,10 +2082,10 @@ StandardOutput=journal
 StandardError=journal
 
 [Install]
-WantedBy=multi-user.target</div>
-      <div class="code-block"><span class="com"># Reload systemd, start, enable</span>
+WantedBy=multi-user.target</pre>
+      <pre class="code-block"><span class="com"># Reload systemd, start, enable</span>
 sudo systemctl daemon-reload
-sudo systemctl enable --now myapp</div>
+sudo systemctl enable --now myapp</pre>
     </div>
   </div>
 </div>
@@ -2121,7 +2121,7 @@ sudo systemctl enable --now myapp</div>
     <div class="concept-card">
       <div class="concept-label">BASIC DOCKER COMMANDS</div>
       <div class="concept-title">Pull, Run, List, Stop, Remove</div>
-      <div class="code-block"><span class="com"># Pull an image from Docker Hub</span>
+      <pre class="code-block"><span class="com"># Pull an image from Docker Hub</span>
 docker pull ubuntu:22.04
 docker pull nginx:latest
 
@@ -2147,12 +2147,12 @@ docker start container_id
 docker rm container_id
 
 <span class="com"># Get a shell in a running container</span>
-docker exec -it container_id bash</div>
+docker exec -it container_id bash</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DOCKERFILE</div>
       <div class="concept-title">Recipe to Build Your Image</div>
-      <div class="code-block"><span class="com"># Dockerfile — simple Python app</span>
+      <pre class="code-block"><span class="com"># Dockerfile — simple Python app</span>
 FROM python:3.12-slim           <span class="com"># base image</span>
 
 WORKDIR /app                    <span class="com"># working directory inside container</span>
@@ -2165,17 +2165,17 @@ COPY . .                        <span class="com"># then copy app code</span>
 ENV PORT=8080                   <span class="com"># environment variable</span>
 EXPOSE 8080                     <span class="com"># document port (doesn't publish)</span>
 
-CMD [<span class="str">"python3"</span>, <span class="str">"app.py"</span>]       <span class="com"># default command</span></div>
-      <div class="code-block"><span class="com"># Build the image</span>
+CMD [<span class="str">"python3"</span>, <span class="str">"app.py"</span>]       <span class="com"># default command</span></pre>
+      <pre class="code-block"><span class="com"># Build the image</span>
 docker build -t myapp:latest .
 
 <span class="com"># Run it</span>
-docker run -d -p 8080:8080 myapp:latest</div>
+docker run -d -p 8080:8080 myapp:latest</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DOCKER COMPOSE</div>
       <div class="concept-title">Multi-Container Applications</div>
-      <div class="code-block"><span class="com"># docker-compose.yml</span>
+      <pre class="code-block"><span class="com"># docker-compose.yml</span>
 version: <span class="str">"3.9"</span>
 services:
   web:
@@ -2196,15 +2196,15 @@ services:
       - pgdata:/var/lib/postgresql/data
 
 volumes:
-  pgdata:</div>
-      <div class="code-block"><span class="com"># Start all services</span>
+  pgdata:</pre>
+      <pre class="code-block"><span class="com"># Start all services</span>
 docker compose up -d
 
 <span class="com"># Stop all services</span>
 docker compose down
 
 <span class="com"># View logs for all services</span>
-docker compose logs -f</div>
+docker compose logs -f</pre>
     </div>
   </div>
 </div>
@@ -2223,7 +2223,7 @@ docker compose logs -f</div>
     <div class="concept-card">
       <div class="concept-label">SED <span class="acro-exp">(Self-Encrypting Drive)</span></div>
       <div class="concept-title">Stream Editor — Find and Replace on Steroids</div>
-      <div class="code-block"><span class="com"># Basic substitution (first occurrence per line)</span>
+      <pre class="code-block"><span class="com"># Basic substitution (first occurrence per line)</span>
 sed <span class="str">'s/old/new/'</span> file.txt
 
 <span class="com"># Global (all occurrences)</span>
@@ -2242,13 +2242,13 @@ sed -n <span class="str">'10,20p'</span> file.txt   <span class="com"># lines 10
 
 <span class="com"># Insert text before/after line</span>
 sed <span class="str">'5i\New line above'</span> file.txt   <span class="com"># insert before line 5</span>
-sed <span class="str">'5a\New line below'</span> file.txt   <span class="com"># append after line 5</span></div>
+sed <span class="str">'5a\New line below'</span> file.txt   <span class="com"># append after line 5</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">AWK</div>
       <div class="concept-title">Field-Based Text Processing</div>
       <div class="concept-desc">AWK processes text line-by-line, splitting each line into fields ($1, $2, ..., $NF = last field). Powerful for structured text like logs and CSV <span class="acro-exp">(Comma-Separated Values)</span> files.</div>
-      <div class="code-block"><span class="com"># Print specific columns from a log</span>
+      <pre class="code-block"><span class="com"># Print specific columns from a log</span>
 awk <span class="str">'{print $1, $4}'</span> access.log     <span class="com"># IP and timestamp</span>
 
 <span class="com"># Sum the 5th column</span>
@@ -2264,12 +2264,12 @@ awk -F<span class="str">':'</span> <span class="str">'{print $1, $6}'</span> /et
 awk <span class="str">'{count[$1]++} END {for (k in count) print count[k], k}'</span> log.txt   | sort -rn | head -10
 
 <span class="com"># Process CSV: print name,email from CSV with header</span>
-awk -F<span class="str">','</span> <span class="str">'NR &gt; 1 {print $2, $3}'</span> users.csv</div>
+awk -F<span class="str">','</span> <span class="str">'NR &gt; 1 {print $2, $3}'</span> users.csv</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">CUT, SORT, UNIQ</div>
       <div class="concept-title">The Classic Pipeline Trio</div>
-      <div class="code-block"><span class="com"># cut: extract columns by delimiter</span>
+      <pre class="code-block"><span class="com"># cut: extract columns by delimiter</span>
 cut -d<span class="str">':'</span> -f1,3 /etc/passwd      <span class="com"># username and UID</span>
 cut -d<span class="str">','</span> -f1,2 data.csv          <span class="com"># first two CSV columns</span>
 
@@ -2286,7 +2286,7 @@ sort log.txt | uniq -c             <span class="com"># count occurrences</span>
 sort log.txt | uniq -d             <span class="com"># only show duplicates</span>
 
 <span class="com"># Classic combo: most common IPs in access log</span>
-awk <span class="str">'{print $1}'</span> access.log | sort | uniq -c | sort -rn | head -20</div>
+awk <span class="str">'{print $1}'</span> access.log | sort | uniq -c | sort -rn | head -20</pre>
     </div>
   </div>
 </div>
@@ -2308,7 +2308,7 @@ awk <span class="str">'{print $1}'</span> access.log | sort | uniq -c | sort -rn
     <div class="concept-card">
       <div class="concept-label">USER MANAGEMENT COMMANDS</div>
       <div class="concept-title">Create, Modify, Delete</div>
-      <div class="code-block"><span class="com"># Create user</span>
+      <pre class="code-block"><span class="com"># Create user</span>
 sudo useradd -m -s /bin/bash alice     <span class="com"># -m creates home, -s sets shell</span>
 sudo useradd -r -s /usr/sbin/nologin svc  <span class="com"># system account, no login</span>
 
@@ -2330,13 +2330,13 @@ id alice                               <span class="com"># UID, GID, groups</spa
 groups alice                           <span class="com"># group memberships</span>
 finger alice                           <span class="com"># detailed info (if installed)</span>
 who                                    <span class="com"># who is currently logged in</span>
-last alice                             <span class="com"># login history</span></div>
+last alice                             <span class="com"># login history</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SUDO</div>
       <div class="concept-title">Controlled Privilege Escalation</div>
       <div class="concept-desc"><code>sudo</code> lets authorized users run commands as root (or another user) without knowing root's password. The <code>/etc/sudoers</code> file controls who can use sudo and what they can run. Always edit with <code>visudo</code> — it validates syntax before saving (a broken sudoers file locks you out).</div>
-      <div class="code-block"><span class="com"># Common sudoers entries (in /etc/sudoers)</span>
+      <pre class="code-block"><span class="com"># Common sudoers entries (in /etc/sudoers)</span>
 alice    ALL=(ALL:ALL) ALL             <span class="com"># full sudo</span>
 bob      ALL=(ALL) NOPASSWD: /bin/systemctl restart nginx   <span class="com"># one command only</span>
 %ops     ALL=(ALL:ALL) ALL             <span class="com"># entire group ops</span>
@@ -2345,7 +2345,7 @@ bob      ALL=(ALL) NOPASSWD: /bin/systemctl restart nginx   <span class="com"># 
 sudo -l
 
 <span class="com"># Run as different user</span>
-sudo -u www-data whoami</div>
+sudo -u www-data whoami</pre>
     </div>
   </div>
 </div>
@@ -2380,7 +2380,7 @@ sudo -u www-data whoami</div>
       <div class="concept-label">APT COMMANDS</div>
       <div class="concept-title">Debian/Ubuntu Package Manager</div>
       <div class="concept-desc"><code>apt</code> (Advanced Package Tool) manages software on Debian-based systems. Always run <code>apt update</code> first to refresh the list of available packages before installing.</div>
-      <div class="code-block"><span class="com"># Update package index (does NOT upgrade software)</span>
+      <pre class="code-block"><span class="com"># Update package index (does NOT upgrade software)</span>
 sudo apt update
 
 <span class="com"># Upgrade all installed packages</span>
@@ -2411,12 +2411,12 @@ apt list --installed
 dpkg -l | grep nginx    <span class="com"># check if specific package installed</span>
 
 <span class="com"># Full system update (one-liner)</span>
-sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt autoremove -y</div>
+sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt autoremove -y</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DNF <span class="acro-exp">(Dandified YUM)</span> / YUM <span class="acro-exp">(Yellowdog Updater, Modified)</span> COMMANDS</div>
       <div class="concept-title">Red Hat Family Package Manager</div>
-      <div class="code-block"><span class="com"># dnf is the modern replacement for yum (same concepts)</span>
+      <pre class="code-block"><span class="com"># dnf is the modern replacement for yum (same concepts)</span>
 sudo dnf update                 <span class="com"># update package index AND upgrade</span>
 sudo dnf install httpd          <span class="com"># install (httpd = nginx equivalent)</span>
 sudo dnf remove httpd           <span class="com"># uninstall</span>
@@ -2425,13 +2425,13 @@ sudo dnf info nginx
 sudo dnf list installed
 
 <span class="com"># Enable EPEL (Extra Packages for Enterprise Linux)</span>
-sudo dnf install epel-release   <span class="com"># unlocks many extra packages</span></div>
+sudo dnf install epel-release   <span class="com"># unlocks many extra packages</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SNAP & FLATPAK</div>
       <div class="concept-title">Universal Package Formats</div>
       <div class="concept-desc">Snap and Flatpak are universal package formats that bundle all dependencies — they run the same on any Linux distro. Useful for software not in your distro's repos, or for getting the latest version of an app.</div>
-      <div class="code-block"><span class="com"># SNAP (Canonical/Ubuntu's universal packages)</span>
+      <pre class="code-block"><span class="com"># SNAP (Canonical/Ubuntu's universal packages)</span>
 sudo snap install code --classic   <span class="com"># VS Code</span>
 snap list                          <span class="com"># list installed snaps</span>
 snap find "media player"
@@ -2446,13 +2446,13 @@ flatpak update
 
 <span class="com"># APPIMAGE (no install needed — just download and run)</span>
 chmod +x SomeApp.AppImage         <span class="com"># make executable</span>
-./SomeApp.AppImage                <span class="com"># run directly, no installation</span></div>
+./SomeApp.AppImage                <span class="com"># run directly, no installation</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">COMPILING FROM SOURCE</div>
       <div class="concept-title">When Packages Don't Exist</div>
       <div class="concept-desc">Sometimes software isn't in any package manager. The classic way is to compile from source code. This requires build tools and is slower, but gives you the exact version you need.</div>
-      <div class="code-block"><span class="com"># Install build essentials first</span>
+      <pre class="code-block"><span class="com"># Install build essentials first</span>
 sudo apt install build-essential   <span class="com"># Ubuntu/Debian</span>
 sudo dnf groupinstall "Development Tools"  <span class="com"># Red Hat</span>
 
@@ -2468,7 +2468,7 @@ make -j$(nproc)                    <span class="com"># parallel compile — much
 sudo make install                  <span class="com"># copy to system</span>
 
 <span class="com"># Clean up</span>
-make clean                         <span class="com"># remove compiled objects</span></div>
+make clean                         <span class="com"># remove compiled objects</span></pre>
     </div>
   </div>
 </div>
@@ -2486,7 +2486,7 @@ make clean                         <span class="com"># remove compiled objects</
       <div class="concept-label">NANO</div>
       <div class="concept-title">The Beginner-Friendly Editor</div>
       <div class="concept-desc">Nano is simple and shows keyboard shortcuts at the bottom of the screen. No modes, no memorizing commands — just type. Perfect when you need to quickly edit a config file.</div>
-      <div class="code-block"><span class="com"># Open a file</span>
+      <pre class="code-block"><span class="com"># Open a file</span>
 nano /etc/hosts
 nano filename.txt
 
@@ -2498,13 +2498,13 @@ Ctrl+\   <span class="com"># Find and replace</span>
 Ctrl+K    <span class="com"># Cut line</span>
 Ctrl+U    <span class="com"># Paste (Un-cut)</span>
 Ctrl+G    <span class="com"># Help</span>
-Alt+U     <span class="com"># Undo</span></div>
+Alt+U     <span class="com"># Undo</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">VIM SURVIVAL GUIDE</div>
       <div class="concept-title">Enough Vim to Get Out Alive</div>
       <div class="concept-desc">Vim is powerful but modal — different keys do different things depending on which mode you're in. Knowing the basics is essential because many servers only have vi/vim available, and some programs (like git commit without EDITOR set) drop you into vim unexpectedly.</div>
-      <div class="code-block"><span class="com"># The famous "how to exit vim" — memorize these first</span>
+      <pre class="code-block"><span class="com"># The famous "how to exit vim" — memorize these first</span>
 :q        <span class="com"># quit (only if no changes)</span>
 :q!       <span class="com"># FORCE quit, discard changes</span>
 :wq       <span class="com"># save and quit</span>
@@ -2529,7 +2529,7 @@ yy        <span class="com"># yank (copy) current line</span>
 p         <span class="com"># paste after cursor</span>
 u         <span class="com"># undo</span>
 /pattern  <span class="com"># search forward</span>
-n         <span class="com"># next search result</span></div>
+n         <span class="com"># next search result</span></pre>
     </div>
   </div>
 </div>
@@ -2548,7 +2548,7 @@ n         <span class="com"># next search result</span></div>
       <div class="concept-label">THE PERMISSION MODEL</div>
       <div class="concept-title">Reading rwxr-xr-- at a Glance</div>
       <div class="concept-desc">Every Linux file has an owner, a group, and a set of permissions for three categories: user (owner), group, and others. Permissions are read (r), write (w), and execute (x). When you run <code>ls -l</code>, the first 10 characters tell the whole story.</div>
-      <div class="code-block"><span class="com"># ls -l output explained</span>
+      <pre class="code-block"><span class="com"># ls -l output explained</span>
 -rwxr-xr--  1  alice  devs  2048  Jan 15  script.sh
 ^└┬┘└┬┘└┬┘     └─┬─┘  └┬─┘
 │ │  │  │        │     └── group name
@@ -2562,12 +2562,12 @@ n         <span class="com"># next search result</span></div>
 rwx = 4+2+1 = 7
 r-x = 4+0+1 = 5
 r-- = 4+0+0 = 4
-<span class="com"># So rwxr-xr-- = 754</span></div>
+<span class="com"># So rwxr-xr-- = 754</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">CHMOD &amp; CHOWN</div>
       <div class="concept-title">Changing Permissions and Ownership</div>
-      <div class="code-block"><span class="com"># Numeric (octal) mode — set absolute permissions</span>
+      <pre class="code-block"><span class="com"># Numeric (octal) mode — set absolute permissions</span>
 chmod 755 script.sh        <span class="com"># rwxr-xr-x (common for scripts)</span>
 chmod 644 file.txt         <span class="com"># rw-r--r-- (common for files)</span>
 chmod 600 ~/.ssh/id_rsa    <span class="com"># rw------- (private keys MUST be this)</span>
@@ -2584,7 +2584,7 @@ chmod -R 755 /var/www      <span class="com"># recursive</span>
 chown alice file.txt           <span class="com"># change owner</span>
 chown alice:devs file.txt      <span class="com"># change owner AND group</span>
 chown -R www-data:www-data /var/www   <span class="com"># recursive</span>
-chgrp devs file.txt            <span class="com"># change group only</span></div>
+chgrp devs file.txt            <span class="com"># change group only</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SPECIAL PERMISSION BITS <span class="acro-exp">(Background Intelligent Transfer Service)</span></div>
@@ -2598,18 +2598,18 @@ chgrp devs file.txt            <span class="com"># change group only</span></div
           <tr><td>Sticky</td><td>1000</td><td>On dir: only the file owner can delete their files</td><td><code>/tmp</code> — anyone can write, but can't delete others' files</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># Set special bits</span>
+      <pre class="code-block"><span class="com"># Set special bits</span>
 chmod u+s binary       <span class="com"># SUID</span>
 chmod g+s shared_dir   <span class="com"># SGID</span>
 chmod +t /shared       <span class="com"># sticky bit</span>
 
 <span class="com"># SECURITY: hunt for SUID binaries (privilege escalation recon)</span>
-find / -perm -4000 -type f 2&gt;/dev/null</div>
+find / -perm -4000 -type f 2&gt;/dev/null</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">UMASK & ACLs <span class="acro-exp">(Access Control List)</span></div>
       <div class="concept-title">Default Permissions and Fine-Grained Control</div>
-      <div class="code-block"><span class="com"># umask — sets DEFAULT permissions for new files</span>
+      <pre class="code-block"><span class="com"># umask — sets DEFAULT permissions for new files</span>
 umask                  <span class="com"># show current (often 022)</span>
 <span class="com"># New files: 666 - umask. New dirs: 777 - umask</span>
 <span class="com"># umask 022 → files 644, dirs 755</span>
@@ -2619,13 +2619,13 @@ getfacl file.txt                        <span class="com"># view ACLs</span>
 setfacl -m u:bob:rw file.txt            <span class="com"># give bob read+write</span>
 setfacl -m g:contractors:r file.txt     <span class="com"># give a group read</span>
 setfacl -x u:bob file.txt               <span class="com"># remove bob's ACL</span>
-<span class="com"># A "+" after permissions in ls -l means ACLs are present</span></div>
+<span class="com"># A "+" after permissions in ls -l means ACLs are present</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">MANDATORY ACCESS CONTROL</div>
       <div class="concept-title">SELinux <span class="acro-exp">(Security-Enhanced Linux)</span> and AppArmor</div>
       <div class="concept-desc">Standard permissions are Discretionary Access Control (DAC) — owners decide. SELinux (Red Hat) and AppArmor (Ubuntu/SUSE) add Mandatory Access Control (MAC): a system-wide policy enforces what processes can do, regardless of file ownership. Even root is constrained. This contains compromised services — a hacked web server can only touch what its policy allows.</div>
-      <div class="code-block"><span class="com"># SELinux (Red Hat family)</span>
+      <pre class="code-block"><span class="com"># SELinux (Red Hat family)</span>
 getenforce                  <span class="com"># Enforcing / Permissive / Disabled</span>
 sestatus                    <span class="com"># detailed status</span>
 ls -Z file.txt              <span class="com"># show SELinux context</span>
@@ -2635,7 +2635,7 @@ setenforce 0                <span class="com"># temporarily permissive (testing)
 <span class="com"># AppArmor (Ubuntu/Debian/SUSE)</span>
 sudo aa-status              <span class="com"># list profiles and their mode</span>
 sudo aa-complain /path/to/program   <span class="com"># log violations, don't block</span>
-sudo aa-enforce /path/to/program    <span class="com"># enforce the profile</span></div>
+sudo aa-enforce /path/to/program    <span class="com"># enforce the profile</span></pre>
     </div>
   </div>
 </div>
@@ -2654,7 +2654,7 @@ sudo aa-enforce /path/to/program    <span class="com"># enforce the profile</spa
       <div class="concept-label">SSH BASICS</div>
       <div class="concept-title">The Universal Remote Access Protocol</div>
       <div class="concept-desc">SSH (Secure Shell) is how you remotely access and manage Linux/Unix servers over an encrypted connection. It's foundational — every sysadmin, DevOps engineer, and security professional lives in SSH. It replaced the old, insecure Telnet (which sent passwords in plaintext).</div>
-      <div class="code-block"><span class="com"># Connect to a server</span>
+      <pre class="code-block"><span class="com"># Connect to a server</span>
 ssh alice@server.example.com
 ssh -p 2222 alice@server.com      <span class="com"># custom port</span>
 
@@ -2664,13 +2664,13 @@ ssh alice@server "df -h"
 <span class="com"># Copy files over SSH</span>
 scp file.txt alice@server:/tmp/   <span class="com"># local → remote</span>
 scp alice@server:/var/log/app.log .   <span class="com"># remote → local</span>
-rsync -avz ./data/ alice@server:/backup/   <span class="com"># efficient sync</span></div>
+rsync -avz ./data/ alice@server:/backup/   <span class="com"># efficient sync</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">KEY-BASED AUTH</div>
       <div class="concept-title">Stop Using Passwords — Use Keys</div>
       <div class="concept-desc">SSH key pairs are far more secure than passwords: a private key (kept secret on your machine) and a public key (placed on servers). Authentication happens via cryptography, not a guessable password. This is THE standard for professional server access.</div>
-      <div class="code-block"><span class="com"># Generate a modern key pair (ed25519 preferred)</span>
+      <pre class="code-block"><span class="com"># Generate a modern key pair (ed25519 preferred)</span>
 ssh-keygen -t ed25519 -C "alice@laptop"
 <span class="com"># Creates ~/.ssh/id_ed25519 (private) and id_ed25519.pub (public)</span>
 
@@ -2687,12 +2687,12 @@ chmod 644 ~/.ssh/id_ed25519.pub   <span class="com"># public key</span>
 
 <span class="com"># Use ssh-agent so you don't retype the passphrase</span>
 eval $(ssh-agent)
-ssh-add ~/.ssh/id_ed25519</div>
+ssh-add ~/.ssh/id_ed25519</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SSH CONFIG</div>
       <div class="concept-title">Save Yourself Typing with ~/.ssh/config</div>
-      <div class="code-block"><span class="com"># ~/.ssh/config — define shortcuts and defaults</span>
+      <pre class="code-block"><span class="com"># ~/.ssh/config — define shortcuts and defaults</span>
 Host web
     HostName web1.example.com
     User alice
@@ -2709,7 +2709,7 @@ Host internal-db
     User dbadmin
     ProxyJump bastion
 
-<span class="com"># Now just:  ssh web   (instead of the full command)</span></div>
+<span class="com"># Now just:  ssh web   (instead of the full command)</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">HARDENING SSHD <span class="acro-exp">(Secure Shell Daemon)</span></div>
@@ -2726,14 +2726,14 @@ Host internal-db
           <tr><td><code>MaxAuthTries</code></td><td><code>3</code></td><td>Limit guesses per connection</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># Apply changes safely</span>
+      <pre class="code-block"><span class="com"># Apply changes safely</span>
 sudo nano /etc/ssh/sshd_config
 sudo sshd -t                      <span class="com"># test config syntax FIRST</span>
 sudo systemctl restart sshd
 
 <span class="com"># Add fail2ban to auto-ban brute-forcers</span>
 sudo apt install fail2ban
-<span class="com"># Bans IPs after repeated failed logins</span></div>
+<span class="com"># Bans IPs after repeated failed logins</span></pre>
     </div>
   </div>
 </div>
@@ -2782,7 +2782,7 @@ sudo apt install fail2ban
     <div class="concept-card">
       <div class="concept-label">JOURNALCTL</div>
       <div class="concept-title">Querying the systemd Journal</div>
-      <div class="code-block">journalctl                       <span class="com"># all logs (q to quit)</span>
+      <pre class="code-block">journalctl                       <span class="com"># all logs (q to quit)</span>
 journalctl -e                    <span class="com"># jump to end (newest)</span>
 journalctl -f                    <span class="com"># follow live (like tail -f)</span>
 journalctl -u nginx              <span class="com"># logs for one service</span>
@@ -2793,12 +2793,12 @@ journalctl -b                    <span class="com"># since this boot</span>
 journalctl -b -1                 <span class="com"># the PREVIOUS boot (for crash analysis)</span>
 journalctl -k                    <span class="com"># kernel messages (= dmesg)</span>
 journalctl --disk-usage          <span class="com"># how much space logs use</span>
-journalctl --vacuum-time=7d      <span class="com"># delete logs older than 7 days</span></div>
+journalctl --vacuum-time=7d      <span class="com"># delete logs older than 7 days</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">A TROUBLESHOOTING FLOW</div>
       <div class="concept-title">"The Server Is Acting Weird" — Where to Start</div>
-      <div class="code-block"><span class="com"># 1. Is it up? Can you reach it?</span>
+      <pre class="code-block"><span class="com"># 1. Is it up? Can you reach it?</span>
 ping host; ssh host
 
 <span class="com"># 2. What's the overall health?</span>
@@ -2817,7 +2817,7 @@ journalctl -u suspect-service -e
 top                 <span class="com"># or htop</span>
 
 <span class="com"># 6. Recent changes? (the usual culprit)</span>
-journalctl --since "30 min ago" | grep -i -E "error|fail|warn"</div>
+journalctl --since "30 min ago" | grep -i -E "error|fail|warn"</pre>
     </div>
   </div>
 </div>
@@ -2836,7 +2836,7 @@ journalctl --since "30 min ago" | grep -i -E "error|fail|warn"</div>
       <div class="concept-label">THE STACK</div>
       <div class="concept-title">From Physical Disk to Mounted Directory</div>
       <div class="concept-desc">Linux storage is layered: a physical disk is divided into partitions, each formatted with a filesystem, then mounted onto a directory in the unified tree. Understanding the layers is key to managing storage and troubleshooting "disk full" emergencies.</div>
-      <div class="code-block"><span class="com"># See block devices and their layout</span>
+      <pre class="code-block"><span class="com"># See block devices and their layout</span>
 lsblk                          <span class="com"># tree of disks/partitions/mounts</span>
 lsblk -f                       <span class="com"># include filesystem + UUID</span>
 fdisk -l                       <span class="com"># detailed partition tables</span>
@@ -2850,7 +2850,7 @@ du -h --max-depth=1 / | sort -h   <span class="com"># biggest dirs</span>
 <span class="com"># The ten largest files anywhere</span>
 find / -type f -printf '%s %p\n' 2>/dev/null | sort -rn | head -10
 <span class="com"># Deleted but still held open — space df counts and du cannot see</span>
-lsof +L1 | grep deleted</div>
+lsof +L1 | grep deleted</pre>
         <div class="concept-desc verdict">
           <strong class="c-amber">When <code>df</code> and <code>du</code> disagree, the last
           command is the answer.</strong> <code>df</code> reports the disk full,
@@ -2864,7 +2864,7 @@ lsof +L1 | grep deleted</div>
     <div class="concept-card">
       <div class="concept-label">PARTITION → FORMAT → MOUNT</div>
       <div class="concept-title">Adding a New Disk</div>
-      <div class="code-block"><span class="com"># 1. Partition the new disk (e.g., /dev/sdb)</span>
+      <pre class="code-block"><span class="com"># 1. Partition the new disk (e.g., /dev/sdb)</span>
 sudo fdisk /dev/sdb            <span class="com"># interactive: n, w (or use parted)</span>
 
 <span class="com"># 2. Create a filesystem</span>
@@ -2878,14 +2878,14 @@ sudo mount /dev/sdb1 /mnt/data
 blkid /dev/sdb1                <span class="com"># get the UUID</span>
 <span class="com"># /etc/fstab line:</span>
 <span class="com"># UUID=xxxx-xxxx  /mnt/data  ext4  defaults  0  2</span>
-sudo mount -a                  <span class="com"># test fstab WITHOUT rebooting</span></div>
+sudo mount -a                  <span class="com"># test fstab WITHOUT rebooting</span></pre>
       <div class="concept-desc"><strong>Always use UUIDs <span class="acro-exp">(Universally Unique Identifier)</span> in fstab</strong>, not <code>/dev/sdb1</code> — device names can change between boots, and a bad fstab can prevent the system from booting. Test with <code>mount -a</code> before rebooting.</div>
     </div>
     <div class="concept-card">
       <div class="concept-label">LVM</div>
       <div class="concept-title">Logical Volume Manager — Flexible Storage</div>
       <div class="concept-desc">LVM adds a layer of abstraction so you can resize volumes, span disks, and snapshot — without repartitioning. The hierarchy: Physical Volumes (PV) → grouped into a Volume Group (VG) → carved into Logical Volumes (LV) that you format and mount. The killer feature: grow a volume on the fly when you add a disk.</div>
-      <div class="code-block"><span class="com"># PV → VG → LV</span>
+      <pre class="code-block"><span class="com"># PV → VG → LV</span>
 sudo pvcreate /dev/sdb /dev/sdc       <span class="com"># mark disks as PVs</span>
 sudo vgcreate data_vg /dev/sdb /dev/sdc   <span class="com"># pool them into a VG</span>
 sudo lvcreate -L 50G -n data_lv data_vg   <span class="com"># carve a 50G LV</span>
@@ -2894,7 +2894,7 @@ sudo mount /dev/data_vg/data_lv /mnt/data
 
 <span class="com"># The magic: extend it later (no downtime)</span>
 sudo lvextend -L +20G /dev/data_vg/data_lv
-sudo resize2fs /dev/data_vg/data_lv   <span class="com"># grow the filesystem too</span></div>
+sudo resize2fs /dev/data_vg/data_lv   <span class="com"># grow the filesystem too</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">RAID LEVELS</div>
@@ -2942,7 +2942,7 @@ sudo resize2fs /dev/data_vg/data_lv   <span class="com"># grow the filesystem to
     <div class="concept-card">
       <div class="concept-label">ADDRESSES & LINKS</div>
       <div class="concept-title">Viewing and Configuring Interfaces</div>
-      <div class="code-block"><span class="com"># Show IP addresses</span>
+      <pre class="code-block"><span class="com"># Show IP addresses</span>
 ip addr                        <span class="com"># all interfaces (or: ip a)</span>
 ip addr show eth0              <span class="com"># one interface</span>
 ip -br addr                    <span class="com"># brief, clean output</span>
@@ -2957,12 +2957,12 @@ sudo ip link set eth0 down
 
 <span class="com"># Assign an IP (temporary — lost on reboot)</span>
 sudo ip addr add 192.168.1.50/24 dev eth0
-sudo ip addr del 192.168.1.50/24 dev eth0</div>
+sudo ip addr del 192.168.1.50/24 dev eth0</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">ROUTING & NEIGHBORS</div>
       <div class="concept-title">Inspecting the Routing Table</div>
-      <div class="code-block"><span class="com"># Show the routing table</span>
+      <pre class="code-block"><span class="com"># Show the routing table</span>
 ip route                       <span class="com"># (or: ip r)</span>
 ip route get 8.8.8.8           <span class="com"># which route/iface for this dest?</span>
 
@@ -2978,7 +2978,7 @@ ip neigh
 
 <span class="com"># Socket statistics (replaces netstat)</span>
 ss -tulpn                      <span class="com"># listening TCP/UDP + process</span>
-ss -tn state established       <span class="com"># active connections</span></div>
+ss -tn state established       <span class="com"># active connections</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PERSISTENT CONFIG</div>
@@ -3011,18 +3011,18 @@ ss -tn state established       <span class="com"># active connections</span></di
       <div class="concept-label">THE UNSAFE DEFAULT</div>
       <div class="concept-title">Bash Keeps Going After Errors</div>
       <div class="concept-desc">By default, a bash script continues after a command fails — which can be catastrophic (imagine <code>cd /backup; rm -rf *</code> where the <code>cd</code> silently failed). The first thing every serious bash script should do is enable strict mode. This one line prevents a huge class of disasters.</div>
-      <div class="code-block"><span class="com">#!/usr/bin/env bash</span>
+      <pre class="code-block"><span class="com">#!/usr/bin/env bash</span>
 <span class="kw">set</span> -euo pipefail
 <span class="com"># -e  : exit immediately if any command fails</span>
 <span class="com"># -u  : error on use of undefined variables (catches typos!)</span>
 <span class="com"># -o pipefail : a pipeline fails if ANY part fails (not just the last)</span>
 
-IFS=$'\n\t'   <span class="com"># safer word-splitting (avoid spaces breaking loops)</span></div>
+IFS=$'\n\t'   <span class="com"># safer word-splitting (avoid spaces breaking loops)</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">QUOTING & VARIABLES</div>
       <div class="concept-title">The #1 Source of Bash Bugs</div>
-      <div class="code-block"><span class="com"># ALWAYS quote variable expansions — unquoted breaks on spaces</span>
+      <pre class="code-block"><span class="com"># ALWAYS quote variable expansions — unquoted breaks on spaces</span>
 file=<span class="str">"my report.txt"</span>
 rm $file              <span class="com"># ✗ tries to rm "my" AND "report.txt"!</span>
 rm <span class="str">"$file"</span>            <span class="com"># ✓ correct</span>
@@ -3036,12 +3036,12 @@ count=$(grep -c ERROR app.log)
 today=$(date +%F)
 
 <span class="com"># Arithmetic</span>
-<span class="kw">if</span> (( count &gt; 10 )); <span class="kw">then</span> <span class="kw">echo</span> <span class="str">"too many"</span>; <span class="kw">fi</span></div>
+<span class="kw">if</span> (( count &gt; 10 )); <span class="kw">then</span> <span class="kw">echo</span> <span class="str">"too many"</span>; <span class="kw">fi</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">ARRAYS & LOOPS</div>
       <div class="concept-title">Handling Lists Safely</div>
-      <div class="code-block"><span class="com"># Arrays</span>
+      <pre class="code-block"><span class="com"># Arrays</span>
 servers=(<span class="str">"web1"</span> <span class="str">"web2"</span> <span class="str">"db1"</span>)
 <span class="kw">echo</span> <span class="str">"${servers[0]}"</span>       <span class="com"># web1</span>
 <span class="kw">echo</span> <span class="str">"${#servers[@]}"</span>      <span class="com"># length: 3</span>
@@ -3054,12 +3054,12 @@ servers=(<span class="str">"web1"</span> <span class="str">"web2"</span> <span c
 <span class="com"># Loop over files SAFELY (handles spaces/newlines)</span>
 <span class="kw">while</span> IFS= <span class="kw">read</span> -r -d <span class="str">''</span> f; <span class="kw">do</span>
     <span class="kw">echo</span> <span class="str">"Found: $f"</span>
-<span class="kw">done</span> &lt; &lt;(find . -name <span class="str">"*.log"</span> -print0)</div>
+<span class="kw">done</span> &lt; &lt;(find . -name <span class="str">"*.log"</span> -print0)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">CLEANUP & FUNCTIONS</div>
       <div class="concept-title">Traps and Reusable Code</div>
-      <div class="code-block"><span class="com"># trap — run cleanup on exit (even on error/Ctrl-C)</span>
+      <pre class="code-block"><span class="com"># trap — run cleanup on exit (even on error/Ctrl-C)</span>
 tmpdir=$(mktemp -d)
 cleanup() { rm -rf <span class="str">"$tmpdir"</span>; }
 <span class="kw">trap</span> cleanup EXIT       <span class="com"># guaranteed cleanup, no leftover temp files</span>
@@ -3070,7 +3070,7 @@ log() {
     <span class="kw">echo</span> <span class="str">"[$(date +%T)] $level: $*"</span> &gt;&amp;2
 }
 log INFO <span class="str">"Starting backup"</span>
-log ERROR <span class="str">"Disk full"</span></div>
+log ERROR <span class="str">"Disk full"</span></pre>
       <div class="concept-desc"><strong>Lint your scripts with <code>shellcheck</code></strong> — it catches quoting bugs, unsafe patterns, and common mistakes automatically. Run it on every script; it will make you a dramatically better bash author.</div>
     </div>
   </div>
@@ -3106,18 +3106,18 @@ log ERROR <span class="str">"Disk full"</span></div>
           <tr><td>USER</td><td>User/group IDs — can be root inside, unprivileged outside</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># See namespaces a process belongs to</span>
+      <pre class="code-block"><span class="com"># See namespaces a process belongs to</span>
 ls -l /proc/$$/ns        <span class="com"># $$ = current shell's PID</span>
 
 <span class="com"># Run a process in a new namespace (the raw primitive)</span>
 sudo unshare --pid --fork --mount-proc bash
-<span class="com"># Inside: ps aux shows almost nothing — isolated PID namespace</span></div>
+<span class="com"># Inside: ps aux shows almost nothing — isolated PID namespace</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">CGROUPS</div>
       <div class="concept-title">Limiting What a Process Can Use</div>
       <div class="concept-desc">Control groups (cgroups) limit and account for resource usage — CPU <span class="acro-exp">(Central Processing Unit)</span>, memory, disk I/O <span class="acro-exp">(Input/Output)</span>, network. This is how <code>docker run --memory 512m</code> works, and how the kernel prevents one container from starving the others. Hit a memory cgroup limit and the OOM killer terminates the process.</div>
-      <div class="code-block"><span class="com"># Docker resource limits are cgroups under the hood</span>
+      <pre class="code-block"><span class="com"># Docker resource limits are cgroups under the hood</span>
 docker run --memory 512m --cpus 1.5 myapp
 
 <span class="com"># systemd uses cgroups too — limit a service</span>
@@ -3125,7 +3125,7 @@ systemctl set-property nginx.service MemoryMax=1G CPUQuota=50%
 
 <span class="com"># Inspect cgroup hierarchy</span>
 systemd-cgls                 <span class="com"># tree of cgroups</span>
-systemd-cgtop                <span class="com"># top-like view of cgroup resource use</span></div>
+systemd-cgtop                <span class="com"># top-like view of cgroup resource use</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">THE SECURITY ANGLE</div>
@@ -3154,7 +3154,7 @@ systemd-cgtop                <span class="com"># top-like view of cgroup resourc
       <div class="concept-label">STRACE & LTRACE</div>
       <div class="concept-title">Watch a Process Talk to the Kernel</div>
       <div class="concept-desc"><code>strace</code> traces system calls (a process's requests to the kernel — open files, read, write, network). It's invaluable for "why is this hanging?" or "what file is it failing to find?" <code>ltrace</code> does the same for library calls.</div>
-      <div class="code-block"><span class="com"># Trace system calls of a command</span>
+      <pre class="code-block"><span class="com"># Trace system calls of a command</span>
 strace ls /tmp
 
 <span class="com"># Attach to a RUNNING process (find why it's stuck)</span>
@@ -3167,12 +3167,12 @@ strace -e trace=open,openat,stat myprogram
 strace -c myprogram
 
 <span class="com"># Classic use: a program fails silently → strace reveals</span>
-<span class="com"># ENOENT (missing file) or EACCES (permission denied)</span></div>
+<span class="com"># ENOENT (missing file) or EACCES (permission denied)</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">LSOF & FUSER</div>
       <div class="concept-title">Who Has That File/Port Open?</div>
-      <div class="code-block"><span class="com"># What files does a process have open?</span>
+      <pre class="code-block"><span class="com"># What files does a process have open?</span>
 lsof -p 12345
 
 <span class="com"># Which process is using a port? (the classic "port in use")</span>
@@ -3184,7 +3184,7 @@ lsof +D /mnt/data
 fuser -m /mnt/data
 
 <span class="com"># Find deleted-but-still-open files eating disk space</span>
-lsof | grep deleted        <span class="com"># common cause of "df full but du not"</span></div>
+lsof | grep deleted        <span class="com"># common cause of "df full but du not"</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DEEPER TOOLS</div>
@@ -3244,7 +3244,7 @@ lsof | grep deleted        <span class="com"># common cause of "df full but du n
         The NFS server exposes directories via <code>/etc/exports</code>.
         Each line names the directory and which clients may mount it.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Install NFS server (Debian/Ubuntu)</span>
 sudo apt install nfs-kernel-server
 
@@ -3271,7 +3271,7 @@ sudo mount <span class="num">192.168.1</span>.<span class="num">10</span>:/srv/s
 
 <span class="com"># Make it persistent (add to /etc/fstab)</span>
 <span class="num">192.168.1</span>.<span class="num">10</span>:/srv/share  /mnt/nfs  nfs  defaults,_netdev  <span class="num">0 0</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3282,7 +3282,7 @@ sudo mount <span class="num">192.168.1</span>.<span class="num">10</span>:/srv/s
         The <code>[global]</code> section sets domain-wide options;
         each <code>[share-name]</code> section defines one share.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Install Samba</span>
 sudo apt install samba
 
@@ -3312,7 +3312,7 @@ sudo systemctl restart smbd nmbd
 
 <span class="com"># Mount from Linux client (CIFS)</span>
 sudo mount -t cifs //fileserver/documents /mnt/docs   -o username=alice,password=secret,uid=$(id -u)
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3355,7 +3355,7 @@ sudo mount -t cifs //fileserver/documents /mnt/docs   -o username=alice,password
         Every production bash script should start with these four settings.
         They turn silent failures into loud, debuggable errors.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -3374,7 +3374,7 @@ readonly MAX_RETRIES=<span class="num">3</span>
 <span class="com"># ─── Example: fail loudly ────────────────────────────────────</span>
 # Without set -u:  echo $UNSET_VAR  → empty string (silent bug)
 # With    set -u:  echo $UNSET_VAR  → "unbound variable" error → exit
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3384,7 +3384,7 @@ readonly MAX_RETRIES=<span class="num">3</span>
         Good scripts have a <code>log</code> function, a <code>die</code>
         function, and small single-purpose helper functions.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -3417,7 +3417,7 @@ retry() {
 
 retry <span class="num">3</span> curl -sf https://api.example.com/health
 log <span class="str">"Health check passed"</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3428,7 +3428,7 @@ log <span class="str">"Health check passed"</span>
         input validation. Use <code>getopts</code> for short flags or
         manual <code>case</code> for long options.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 #!/usr/bin/env bash
 set -euo pipefail
 die() { echo "ERROR: $*" &gt;&amp;<span class="num">2</span>; exit <span class="num">1</span>; }
@@ -3462,7 +3462,7 @@ echo <span class="str">"Deploying to $ENV / $REGION (dryrun=$DRYRUN)"</span>
 <span class="kw">if</span> [[ <span class="str">"$DRYRUN"</span> == false ]]; then
     echo <span class="str">"... would deploy here ..."</span>
 fi
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3472,7 +3472,7 @@ fi
         Production scripts often run long background jobs and need to
         clean up temp files even if they are interrupted.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -3502,7 +3502,7 @@ job_pid=$!
 wait <span class="str">"$job_pid"
 job_exit=$?
 [[ $job_exit -eq 0 ]]</span> || die <span class="str">"my_job failed (exit $job_exit)"</span>
-      </div>
+      </pre>
     </div>
 
   </div>
@@ -3546,7 +3546,7 @@ job_exit=$?
         This walks through turning a raw disk into a mounted, growable
         filesystem.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># 1. Create a physical volume on a new disk</span>
 sudo pvcreate /dev/sdb
 
@@ -3571,7 +3571,7 @@ sudo pvdisplay     <span class="com"># physical volumes</span>
 sudo vgdisplay     <span class="com"># volume groups</span>
 sudo lvdisplay     <span class="com"># logical volumes</span>
 lsblk              <span class="com"># visual block-device tree</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3582,7 +3582,7 @@ lsblk              <span class="com"># visual block-device tree</span>
         no reboot required. <em>Always shrink with extreme care</em>
         (and a backup) — growing is safe, shrinking can destroy data.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Scenario: /data is filling up. Add a new disk and grow it live.</span>
 
 <span class="com"># 1. Add the new disk to the volume group</span>
@@ -3607,7 +3607,7 @@ sudo umount /data
 sudo e2fsck -f /dev/data_vg/app_data
 sudo resize2fs /dev/data_vg/app_data 30G
 sudo lvreduce -L 30G /dev/data_vg/app_data
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3622,7 +3622,7 @@ sudo lvreduce -L 30G /dev/data_vg/app_data
         against production, an LVM snapshot from five minutes earlier can
         save the day.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Create a snapshot before a risky change (10GB reserved for changes)</span>
 sudo lvcreate -L 10G -s -n app_data_snap /dev/data_vg/app_data
 
@@ -3642,7 +3642,7 @@ sudo lvremove /dev/data_vg/app_data_snap
 
 <span class="com"># Note: snapshots are NOT a substitute for off-site backups —</span>
 <span class="com"># they live on the same physical disks as the original data!</span>
-      </div>
+      </pre>
     </div>
 
   </div>
@@ -3687,7 +3687,7 @@ sudo lvremove /dev/data_vg/app_data_snap
         Postfix is the most widely deployed open-source MTA. Its main
         config file is <code>/etc/postfix/main.cf</code>.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Install Postfix (choose "Internet Site" during setup)</span>
 sudo apt install postfix mailutils
 
@@ -3720,7 +3720,7 @@ echo <span class="str">"Test body"</span> | mail -s <span class="str">"Test subj
 
 <span class="com"># Watch the mail log in real time</span>
 sudo tail -f /var/log/mail.log
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3744,7 +3744,7 @@ sudo tail -f /var/log/mail.log
         &bull; Check your IP against blacklists regularly:
           <code>https://mxtoolbox.com/blacklists.aspx</code>
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Test for open relay from an external host (use mail-tester.com</span>
 <span class="com"># or manually with telnet — should be REJECTED for unauth relay)</span>
 telnet mail.example.com <span class="num">25</span>
@@ -3757,7 +3757,7 @@ RCPT TO:&lt;victim@someoneelse.com&gt;
 <span class="com"># Check your sending IP reputation</span>
 dig +short mail.example.com
 <span class="com"># Then check at: mxtoolbox.com/blacklists.aspx</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3806,7 +3806,7 @@ dig +short mail.example.com
         noticing."<br><br>
         <strong>Availability is usually expressed in "nines":</strong>
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">Availability   Downtime per year    Downtime per month   Common label</span>
 99%            3.65 days            7.3 hours            "Two nines"
 99.9%          8.77 hours           43.8 minutes         "Three nines"
@@ -3817,7 +3817,7 @@ dig +short mail.example.com
 <span class="com"># but represents 10x more engineering effort and cost.</span>
 <span class="com"># Most businesses don't NEED five nines — that's a question</span>
 <span class="com"># for the business, not a default engineering goal.</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3850,7 +3850,7 @@ dig +short mail.example.com
         "virtual" IP address. If the active server dies, a standby
         instantly takes over the IP — clients never notice.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Install on both servers</span>
 sudo apt install keepalived
 
@@ -3880,7 +3880,7 @@ sudo journalctl -u keepalived -f
 <span class="com"># Test it: stop keepalived on the primary, watch the IP migrate</span>
 sudo systemctl stop keepalived
 ip addr show eth0   <span class="com"># run this on the backup — it now owns .100</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -3897,7 +3897,7 @@ ip addr show eth0   <span class="com"># run this on the backup — it now owns .
         cluster status directly; a "split-brain" scenario (both nodes
         think they're primary) can silently corrupt data.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># View overall cluster status</span>
 sudo pcs status
 
@@ -3918,7 +3918,7 @@ sudo pcs resource move WebServer node2
 <span class="com"># Check for "quorum" — without it, clusters refuse to act</span>
 <span class="com"># (this is the safety mechanism that PREVENTS split-brain)</span>
 sudo corosync-quorumtool
-      </div>
+      </pre>
     </div>
 
   </div>
@@ -3966,7 +3966,7 @@ sudo corosync-quorumtool
         Each namespace type isolates a different slice of what a process
         can see:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">Namespace   What it isolates                     What this means for a container</span>
 PID         Process IDs                          Container's PID 1 looks like the
                                                   only process on the system
@@ -3997,7 +3997,7 @@ ls -la /proc/1/ns/
 sudo unshare --pid --net --mount --uts --fork bash
 hostname my-fake-container       <span class="com"># changes hostname ONLY inside this shell</span>
 ps aux                           <span class="com"># shows almost nothing — your own PID namespace</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4008,7 +4008,7 @@ ps aux                           <span class="com"># shows almost nothing — yo
         <code>--cpus=1</code>. They live in a virtual filesystem you can
         explore directly.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Find a container's cgroup (modern systems use cgroup v2)</span>
 docker inspect --format '{{.Id}}' myapp_container
 
@@ -4029,7 +4029,7 @@ sudo mkdir /sys/fs/cgroup/my_limited_group
 echo "100000 100000" | sudo tee /sys/fs/cgroup/my_limited_group/cpu.max
 echo $$ | sudo tee /sys/fs/cgroup/my_limited_group/cgroup.procs
 <span class="com"># Now THIS SHELL is limited to 100% of one CPU core</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">

@@ -36,7 +36,7 @@
       <div class="concept-label">Syntax</div>
       <div class="concept-title">PowerShell Fundamentals</div>
       <div class="concept-desc">Variables, loops, conditionals, functions — the building blocks.</div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Variables start with $</span>
 $name   = <span class="str">"Alice"</span>
 $age    = <span class="num">30</span>
@@ -80,7 +80,7 @@ function Get-DiskUsage {
     Get-PSDrive -Name ($Path[<span class="num">0</span>]) | Select Used, Free
 }
 Get-DiskUsage -Path <span class="str">"D:\"</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -91,7 +91,7 @@ Get-DiskUsage -Path <span class="str">"D:\"</span>
         <em>properties</em> without parsing text. This is PowerShell's
         superpower.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Get all running services, filter, sort, format</span>
 Get-Service |
     Where-Object { $_.Status -eq <span class="str">"Running"</span> } |
@@ -115,7 +115,7 @@ Get-EventLog -LogName Security -Newest <span class="num">100</span> |
     Where-Object { $_.EventID -eq <span class="num">4625</span> } |  <span class="com"># failed logons</span>
     Select-Object TimeGenerated, Message |
     Export-Csv -Path failed_logons.csv -NoTypeInformation
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -126,7 +126,7 @@ Get-EventLog -LogName Security -Newest <span class="num">100</span> |
         languages. Use <code>-ErrorAction Stop</code> to make cmdlets throw
         catchable exceptions (by default many just warn and continue).
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Always use -ErrorAction Stop so errors are catchable</span>
 try {
     $result = Invoke-WebRequest -Uri <span class="str">"https://api.internal/health"</span> `
@@ -150,7 +150,7 @@ try {
 } catch {
     $_ | Out-File -Append <span class="str">"C:\Logs\errors.log"</span>
 }
-      </div>
+      </pre>
     </div>
 
   </div>
@@ -201,7 +201,7 @@ try {
         You cannot protect what you cannot see. These tools enumerate
         every device on the network:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Discover all hosts on the LAN (ping sweep)</span>
 nmap -sn <span class="num">192.168.1</span>.0/<span class="num">24</span>
 
@@ -221,7 +221,7 @@ curl -I http://<span class="num">192.168.1</span>.<span class="num">50</span>  <
 <span class="com"># Search Shodan for devices exposed to the internet</span>
 <span class="com"># (Shodan indexes internet-facing devices — use only for research)</span>
 <span class="com"># Web: shodan.io/search?query=camera+default+password</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -230,7 +230,7 @@ curl -I http://<span class="num">192.168.1</span>.<span class="num">50</span>  <
       <div class="concept-desc">
         Apply these controls to every IoT device you manage:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">MUST-DO IoT HARDENING CHECKLIST</span>
 <span class="com">───────────────────────────────────────────────────────────</span>
 
@@ -252,7 +252,7 @@ curl -I http://<span class="num">192.168.1</span>.<span class="num">50</span>  <
 <span class="com"># Allow IoT → internet but block IoT → corporate (192.168.1.0/24)</span>
 sudo iptables -I FORWARD -s <span class="num">192.168.10</span>.0/<span class="num">24</span>   -d <span class="num">192.168.1</span>.0/<span class="num">24</span> -j DROP
 sudo iptables -I FORWARD -s <span class="num">192.168.10</span>.0/<span class="num">24</span>   -d <span class="num">0</span>.0.0.0/<span class="num">0</span> -j ACCEPT
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -264,7 +264,7 @@ sudo iptables -I FORWARD -s <span class="num">192.168.10</span>.0/<span class="n
         credentials, old vulnerable software, and backdoors.
         <em>Only analyse firmware you have permission to test.</em>
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Install binwalk (firmware analysis tool)</span>
 sudo apt install binwalk
 
@@ -285,7 +285,7 @@ find _firmware.bin.extracted/ -name <span class="str">"*.pem"</span> -o -name <s
 
 <span class="com"># Find SUID binaries in the extracted filesystem</span>
 find _firmware.bin.extracted/ -perm -<span class="num">4000</span> <span class="num">2</span>&gt;/dev/null
-      </div>
+      </pre>
     </div>
 
   </div>
@@ -332,7 +332,7 @@ find _firmware.bin.extracted/ -perm -<span class="num">4000</span> <span class="
         it returns a coroutine object — it doesn't run until you
         <code>await</code> it or pass it to the event loop.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="kw">import</span> asyncio, time
 
 <span class="kw">async def</span> <span class="fn">fetch_data</span>(url: str) -&gt; str:
@@ -357,7 +357,7 @@ find _firmware.bin.extracted/ -perm -<span class="num">4000</span> <span class="
 
 asyncio.run(<span class="fn">main_sequential</span>())
 asyncio.run(<span class="fn">main_concurrent</span>())
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -368,7 +368,7 @@ asyncio.run(<span class="fn">main_concurrent</span>())
         Use <code>aiohttp</code> for async HTTP. This example fetches
         100 URLs <span class="acro-exp">(Uniform Resource Locator)</span> concurrently instead of one at a time.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># pip install aiohttp</span>
 <span class="kw">import</span> asyncio, aiohttp
 
@@ -395,7 +395,7 @@ URLS = [
 
 asyncio.run(<span class="fn">main</span>())
 <span class="com"># 3 × 1-second requests complete in ~1 second total</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -406,7 +406,7 @@ asyncio.run(<span class="fn">main</span>())
         exhaust file descriptors. Use a <em>Semaphore</em> to cap
         concurrent tasks.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="kw">import</span> asyncio, aiohttp
 
 <span class="kw">async def</span> <span class="fn">fetch_with_limit</span>(sem, session, url):
@@ -421,7 +421,7 @@ asyncio.run(<span class="fn">main</span>())
         <span class="kw">return</span> <span class="kw">await</span> asyncio.gather(*tasks, return_exceptions=<span class="kw">True</span>)
 
 <span class="com"># results = asyncio.run(main(my_url_list))</span>
-      </div>
+      </pre>
     </div>
 
   </div>
@@ -464,7 +464,7 @@ asyncio.run(<span class="fn">main</span>())
         Master these symbols and you can read 90% of regexes you'll
         encounter:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">Symbol   Meaning                          Example matches</span>
 .        Any single character             a.c   →  abc, a9c, a c
 *        Zero or more of previous         ab*   →  a, ab, abbb
@@ -486,7 +486,7 @@ $        End of line/string               \.com$  → ends with ".com"
 <span class="com"># Greedy vs lazy matching — a common gotcha:</span>
 <span class="com"># &lt;.+&gt;     greedy: matches "&lt;b&gt;text&lt;/b&gt;" (too much!)</span>
 <span class="com"># &lt;.+?&gt;    lazy:   matches "&lt;b&gt;" then "&lt;/b&gt;" separately (correct)</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -495,7 +495,7 @@ $        End of line/string               \.com$  → ends with ".com"
       <div class="concept-desc">
         These are battle-tested patterns for common IT/security tasks:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># IPv4 address (good enough for log filtering, not RFC-perfect)</span>
 \b(?:\d{1,3}\.){3}\d{1,3}\b
 
@@ -517,7 +517,7 @@ grep -oP <span class="str">'Failed password .* from \K[\d.]+'</span> /var/log/au
 
 <span class="com"># Extract all URLs from a block of text</span>
 https?://[^\s"'&lt;&gt;]+
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -528,7 +528,7 @@ https?://[^\s"'&lt;&gt;]+
         regex in scripts. <code>re.compile()</code> pre-compiles a pattern
         for reuse — important when matching against thousands of lines.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="kw">import</span> re
 
 log_line = <span class="str">"2026-06-06 09:14:32 Failed password for root from 203.0.113.7 port 51422"</span>
@@ -555,7 +555,7 @@ m = pattern.search(log_line)
     <span class="fn">print</span>(m.groupdict())                  <span class="com"># full dict of named captures</span>
 
 <span class="com"># Tip: test regexes interactively at regex101.com before deploying</span>
-      </div>
+      </pre>
     </div>
 
   </div>
@@ -598,7 +598,7 @@ m = pattern.search(log_line)
         commits introduced it, <code>git bisect</code> performs an
         automated binary search through history.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Start a bisect session</span>
 git bisect start
 
@@ -625,7 +625,7 @@ git bisect reset
 git bisect start HEAD v2.3.0
 git bisect run pytest tests/test_regression.py
 <span class="com"># git runs the test at each step and decides good/bad automatically</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -637,7 +637,7 @@ git bisect run pytest tests/test_regression.py
         combine, edit, or drop commits.
         <strong>Only rewrite history on branches you haven't shared.</strong>
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Interactively edit the last 5 commits</span>
 git rebase -i HEAD~5
 
@@ -663,7 +663,7 @@ fixup  bcdef12 Actually fix the bug
 drop   3456789 Remove debug prints
 
 <span class="com"># Result: one clean commit "Add login form" instead of five messy ones</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -678,7 +678,7 @@ drop   3456789 Remove debug prints
         commits, resets, rebases, checkouts — for about 90 days, even
         ones that seem to have "vanished."
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Show every recent HEAD movement (even "lost" commits)</span>
 git reflog
 
@@ -700,7 +700,7 @@ git branch feature-x &lt;commit-hash-from-reflog&gt;
 
 <span class="com"># Find "dangling" commits not referenced by any branch</span>
 git fsck --lost-found
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -710,7 +710,7 @@ git fsck --lost-found
         These commands solve the "I need to switch context without
         losing my work" problem in different ways.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># STASH — temporarily shelve uncommitted changes</span>
 git stash push -m <span class="str">"WIP: refactoring auth module"</span>
 git checkout main           <span class="com"># switch branches with a clean working tree</span>
@@ -731,7 +731,7 @@ git worktree add ../hotfix-dir hotfix/critical-bug
 <span class="com"># build/test the hotfix while your main feature work stays untouched</span>
 git worktree list
 git worktree remove ../hotfix-dir
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -747,7 +747,7 @@ git worktree remove ../hotfix-dir
       </div>
       <div class="dw">
         <div class="code-label">INVESTIGATION — WHO, WHEN, AND WHY</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># Who last touched each line, and in which commit</span>
 git blame path/to/file.py
 git blame -L 40,60 path/to/file.py   <span class="com"># just those lines</span>
@@ -762,9 +762,9 @@ git log -S<span class="str">"connect_timeout"</span>       <span class="com"># c
 <span class="com"># Look at one commit, or compare two states</span>
 git show a1b2c3d
 git diff main..feature -- path/
-        </div>
+        </pre>
         <div class="code-label">UNDO — FOUR TOOLS, AND THEY ARE NOT INTERCHANGEABLE</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># Not yet committed: throw away a working-tree change</span>
 git restore path/to/file.py
 git restore --staged path/to/file.py  <span class="com"># unstage, keep the edit</span>
@@ -781,7 +781,7 @@ git revert a1b2c3d
 <span class="com"># A rebase that went wrong mid-flight</span>
 git rebase --continue
 git rebase --abort                    <span class="com"># the exit that always exists</span>
-        </div>
+        </pre>
         <div class="concept-desc verdict">
           The rule that keeps this safe is one line: <strong class="c-amber">rewrite
           history only while it is still yours.</strong> <code>amend</code>,
@@ -841,7 +841,7 @@ git rebase --abort                    <span class="com"># the exit that always e
         of vendor CLIs <span class="acro-exp">(Command Line Interface)</span> (Cisco, Juniper, Arista, HP, and more) behind a
         consistent interface.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># pip install netmiko</span>
 <span class="kw">from</span> netmiko <span class="kw">import</span> ConnectHandler
 
@@ -872,7 +872,7 @@ device = {
 
     <span class="com"># Save the running config to startup config (don't lose changes on reload)</span>
     conn.save_config()
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -883,7 +883,7 @@ device = {
         to a fleet of devices — and capture results in a structured way
         for later analysis.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="kw">from</span> netmiko <span class="kw">import</span> ConnectHandler
 <span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
 <span class="kw">import</span> csv
@@ -916,7 +916,7 @@ DEVICES = [
     writer = csv.DictWriter(f, fieldnames=[<span class="str">"host"</span>, <span class="str">"status"</span>, <span class="str">"ntp_synced"</span>])
     writer.writeheader()
     writer.writerows(results)
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -992,7 +992,7 @@ DEVICES = [
         <code>requests</code> downloads the page; <code>BeautifulSoup</code>
         parses the HTML into something you can search.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># pip install requests beautifulsoup4</span>
 <span class="kw">import</span> requests
 <span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
@@ -1020,7 +1020,7 @@ soup = BeautifulSoup(resp.text, <span class="str">"html.parser"</span>)
 <span class="com"># soup.find("h1")                    -- first &lt;h1&gt; tag</span>
 <span class="com"># soup.find_all("a", class_="link")  -- all &lt;a class="link"&gt; tags</span>
 <span class="com"># soup.select("div#main &gt; p")        -- CSS selector syntax</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -1032,7 +1032,7 @@ soup = BeautifulSoup(resp.text, <span class="str">"html.parser"</span>)
         shell. <strong>Playwright</strong> drives a real browser, so it
         sees the page exactly as a human would.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># pip install playwright &amp;&amp; playwright install chromium</span>
 <span class="kw">from</span> playwright.sync_api <span class="kw">import</span> sync_playwright
 
@@ -1054,7 +1054,7 @@ soup = BeautifulSoup(resp.text, <span class="str">"html.parser"</span>)
     page.screenshot(path=<span class="str">"debug.png"</span>, full_page=<span class="kw">True</span>)
 
     browser.close()
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">

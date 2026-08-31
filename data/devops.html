@@ -36,7 +36,7 @@
     <div class="concept-card">
       <div class="concept-label">GITHUB ACTIONS</div>
       <div class="concept-title">Basic CI Workflow</div>
-      <div class="code-block"><span class="com"># .github/workflows/ci.yml</span>
+      <pre class="code-block"><span class="com"># .github/workflows/ci.yml</span>
 name: CI
 
 on:
@@ -65,7 +65,7 @@ jobs:
         run: pytest --cov=src --cov-report=xml
 
       - name: Security scan
-        run: pip-audit</div>
+        run: pip-audit</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DEVSECOPS</div>
@@ -128,7 +128,7 @@ jobs:
       <div class="concept-label">ANSIBLE BASICS</div>
       <div class="concept-title">The Most Beginner-Friendly IaC Tool</div>
       <div class="concept-desc">Ansible is popular for beginners because it's agentless (just needs SSH), uses readable YAML, and requires nothing installed on target machines. A "playbook" describes the desired state of a set of hosts.</div>
-      <div class="code-block"><span class="com"># inventory.ini — define your hosts</span>
+      <pre class="code-block"><span class="com"># inventory.ini — define your hosts</span>
 [webservers]
 web1.example.com
 web2.example.com
@@ -166,7 +166,7 @@ db1.example.com
         state: restarted
 
 <span class="com"># Run it</span>
-ansible-playbook -i inventory.ini playbook.yml</div>
+ansible-playbook -i inventory.ini playbook.yml</pre>
     </div>
   </div>
 </div>
@@ -200,7 +200,7 @@ ansible-playbook -i inventory.ini playbook.yml</div>
           <tr><td>Multi-stage builds</td><td>Don't ship build tools/source in the final image</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># Scan an image for known vulnerabilities</span>
+      <pre class="code-block"><span class="com"># Scan an image for known vulnerabilities</span>
 trivy image python:3.12
 grype nginx:latest
 
@@ -208,7 +208,7 @@ grype nginx:latest
 <span class="com"># FROM golang:1.22 AS build</span>
 <span class="com"># ... compile ...</span>
 <span class="com"># FROM gcr.io/distroless/static   # tiny, no shell, no package mgr</span>
-<span class="com"># COPY --from=build /app /app</span></div>
+<span class="com"># COPY --from=build /app /app</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">RUNTIME HARDENING</div>
@@ -304,7 +304,7 @@ grype nginx:latest
         <code>kubectl</code> is the CLI <span class="acro-exp">(Command Line Interface)</span> to interact with a Kubernetes cluster.
         Master these first.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Show cluster nodes</span>
 kubectl get nodes
 
@@ -334,7 +334,7 @@ kubectl rollout undo deployment/myapp -n production
 
 <span class="com"># Check rollout status</span>
 kubectl rollout status deployment/myapp -n production
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -344,7 +344,7 @@ kubectl rollout status deployment/myapp -n production
         This is the smallest production-style Kubernetes manifest —
         a Deployment (runs the app) and a Service (exposes it):
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># deployment.yaml</span>
 apiVersion: apps/v1
 kind: Deployment
@@ -385,7 +385,7 @@ spec:
   ports:
   - port: <span class="num">80</span>
     targetPort: <span class="num">8080</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -453,7 +453,7 @@ spec:
         </table>
 
         <div class="dt">▸ KUBECTL — ESSENTIAL COMMANDS</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># ── Context & cluster ──────────────────────────────────────</span>
 <span class="fn">kubectl</span> config get-contexts           <span class="com"># list clusters you're connected to</span>
 <span class="fn">kubectl</span> config use-context prod       <span class="com"># switch cluster</span>
@@ -480,10 +480,10 @@ spec:
 <span class="fn">kubectl</span> exec -it my-pod -- bash        <span class="com"># shell into pod</span>
 <span class="fn">kubectl</span> port-forward pod/my-pod 8080:<span class="num">80</span> <span class="com"># forward port to localhost</span>
 <span class="fn">kubectl</span> top pods                       <span class="com"># CPU/memory usage</span>
-        </div>
+        </pre>
 
         <div class="dt">▸ MINIMAL DEPLOYMENT MANIFEST</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># deployment.yaml — the most common K8s resource</span>
 apiVersion: apps/v1
 kind: Deployment
@@ -519,7 +519,7 @@ spec:
       securityContext:
         runAsNonRoot: true
         readOnlyRootFilesystem: true
-        </div>
+        </pre>
 
         <div class="dt">▸ K8s SECURITY — KEY CONTROLS</div>
         <table class="ref-table">
@@ -580,7 +580,7 @@ spec:
         lives in <code>.github/workflows/*.yml</code> right alongside your
         code.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># .github/workflows/ci.yml</span>
 name: CI Pipeline
 
@@ -629,7 +629,7 @@ jobs:
         run: |
           echo ${{ secrets.REGISTRY_TOKEN }} | docker login -u user --password-stdin
           docker push myapp:${{ github.sha }}
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">

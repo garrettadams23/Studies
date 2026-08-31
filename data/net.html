@@ -2753,7 +2753,7 @@
     <div class="concept-card">
       <div class="concept-label">USEFUL DNS TOOLS</div>
       <div class="concept-title">Dig, nslookup, host</div>
-      <div class="code-block"><span class="com"># Query A record for a domain</span>
+      <pre class="code-block"><span class="com"># Query A record for a domain</span>
 dig google.com A
 
 <span class="com"># Query MX records (mail servers)</span>
@@ -2767,7 +2767,7 @@ dig @8.8.8.8 google.com
 
 <span class="com"># Windows equivalent</span>
 nslookup google.com
-nslookup -type=MX google.com</div>
+nslookup -type=MX google.com</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">TTL</div>
@@ -2979,7 +2979,7 @@ nslookup -type=MX google.com</div>
     <div class="concept-card">
       <div class="concept-label">IPTABLES BASICS</div>
       <div class="concept-title">Linux Built-In Firewall</div>
-      <div class="code-block"><span class="com"># View current rules</span>
+      <pre class="code-block"><span class="com"># View current rules</span>
 sudo iptables -L -v -n
 
 <span class="com"># Allow established connections (critical — add first)</span>
@@ -2999,7 +2999,7 @@ sudo iptables -A INPUT -j DROP
 sudo ufw enable
 sudo ufw allow 22/tcp
 sudo ufw allow 443/tcp
-sudo ufw status verbose</div>
+sudo ufw status verbose</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DMZ <span class="acro-exp">(Demilitarized Zone)</span></div>
@@ -3119,7 +3119,7 @@ sudo ufw status verbose</div>
     <div class="concept-card">
       <div class="concept-label">THE DIAGNOSTIC TOOLKIT</div>
       <div class="concept-title">Commands Every Network Person Uses</div>
-      <div class="code-block"><span class="com"># Layer 1-2: Physical / Link</span>
+      <pre class="code-block"><span class="com"># Layer 1-2: Physical / Link</span>
 ip link show                    <span class="com"># interface status, MAC</span>
 ethtool eth0                    <span class="com"># speed, duplex, link detected</span>
 
@@ -3142,12 +3142,12 @@ telnet 192.168.1.1 80           <span class="com"># old-school port test</span>
 <span class="com"># DNS</span>
 dig google.com                  <span class="com"># DNS lookup</span>
 nslookup google.com             <span class="com"># Windows/Linux</span>
-resolvectl query google.com     <span class="com"># systemd-resolved</span></div>
+resolvectl query google.com     <span class="com"># systemd-resolved</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PACKET CAPTURE</div>
       <div class="concept-title">See What's Actually on the Wire</div>
-      <div class="code-block"><span class="com"># Capture on interface eth0</span>
+      <pre class="code-block"><span class="com"># Capture on interface eth0</span>
 sudo tcpdump -i eth0
 
 <span class="com"># Capture HTTP traffic</span>
@@ -3160,7 +3160,7 @@ sudo tcpdump -i any port 53 -n
 sudo tcpdump -i eth0 -A
 
 <span class="com"># Read saved capture</span>
-tcpdump -r capture.pcap</div>
+tcpdump -r capture.pcap</pre>
       <div class="concept-desc">Open <code>.pcap</code> files in Wireshark for graphical analysis. Wireshark's "Follow TCP <span class="acro-exp">(Transmission Control Protocol)</span> Stream" shows entire conversations. Filter: <code>http.request</code>, <code>tcp.flags.syn==1</code>, <code>dns</code>, <code>ip.addr==192.168.1.5</code></div>
     </div>
     <div class="concept-card">
@@ -3201,7 +3201,7 @@ tcpdump -r capture.pcap</div>
       <div class="concept-label">ADDRESS FORMAT</div>
       <div class="concept-title">Reading and Writing IPv6 Addresses</div>
       <div class="concept-desc">IPv6 addresses are 128 bits written as 8 groups of 4 hex digits separated by colons. Two simplification rules reduce the ugliness.</div>
-      <div class="code-block"><span class="com"># Full form — 8 groups of 4 hex digits</span>
+      <pre class="code-block"><span class="com"># Full form — 8 groups of 4 hex digits</span>
 2001:0db8:0000:0000:0000:ff00:0042:8329
 
 <span class="com"># Rule 1: Drop leading zeros in each group</span>
@@ -3217,7 +3217,7 @@ tcpdump -r capture.pcap</div>
 ::
 
 <span class="com"># IPv6 in URLs — brackets required to avoid port confusion</span>
-http://[2001:db8::1]:8080/path</div>
+http://[2001:db8::1]:8080/path</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">ADDRESS TYPES</div>
@@ -3254,7 +3254,7 @@ http://[2001:db8::1]:8080/path</div>
       <div class="concept-label">DUAL-STACK & TRANSITION</div>
       <div class="concept-title">Running IPv4 and IPv6 Together</div>
       <div class="concept-desc">Most networks today run <strong>dual-stack</strong> — both IPv4 and IPv6 simultaneously. When a client connects, it prefers IPv6 (via "Happy Eyeballs" algorithm). This lets networks migrate gradually without a hard cutover.</div>
-      <div class="code-block"><span class="com"># Check your IPv6 addresses (Linux)</span>
+      <pre class="code-block"><span class="com"># Check your IPv6 addresses (Linux)</span>
 ip -6 addr show
 
 <span class="com"># Ping using IPv6</span>
@@ -3269,7 +3269,7 @@ dig AAAA google.com
 nslookup -type=AAAA google.com
 
 <span class="com"># Curl over IPv6</span>
-curl -6 https://ipv6.google.com</div>
+curl -6 https://ipv6.google.com</pre>
     </div>
   </div>
 </div>
@@ -3377,7 +3377,7 @@ curl -6 https://ipv6.google.com</div>
       <div class="concept-label">SSH <span class="acro-exp">(Secure Shell)</span> TUNNELING</div>
       <div class="concept-title">The Poor Man's VPN</div>
       <div class="concept-desc">SSH can forward ports through its encrypted connection — a quick way to securely reach services without a full VPN. Essential for accessing internal services through a jump host.</div>
-      <div class="code-block"><span class="com"># Local port forward — reach a remote DB through SSH</span>
+      <pre class="code-block"><span class="com"># Local port forward — reach a remote DB through SSH</span>
 <span class="com"># "Make my localhost:5432 → db.internal:5432 via jumphost"</span>
 ssh -L 5432:db.internal:5432 user@jumphost
 <span class="com"># Now connect to localhost:5432 → actually hits db.internal</span>
@@ -3391,7 +3391,7 @@ ssh -D 1080 user@jumphost
 <span class="com"># Set browser SOCKS proxy to localhost:1080</span>
 
 <span class="com"># Jump through a bastion to reach an internal host</span>
-ssh -J bastion.example.com user@internal-host</div>
+ssh -J bastion.example.com user@internal-host</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">ZERO TRUST NETWORK ACCESS</div>
@@ -3420,7 +3420,7 @@ ssh -J bastion.example.com user@internal-host</div>
       <div class="concept-label">CIDR NOTATION</div>
       <div class="concept-title">The /24 Explained</div>
       <div class="concept-desc">An IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> address is 32 bits. CIDR (Classless Inter-Domain Routing) notation like <code>192.168.1.0/24</code> means "the first 24 bits are the network portion." The remaining bits (32 − 24 = 8) are for hosts. More network bits = smaller subnet = fewer hosts.</div>
-      <div class="code-block"><span class="com"># 192.168.1.0/24 in binary</span>
+      <pre class="code-block"><span class="com"># 192.168.1.0/24 in binary</span>
 192.168.1.0
 11000000.10101000.00000001.00000000
 └──────── 24 network bits ────────┘└8 host┘
@@ -3428,12 +3428,12 @@ ssh -J bastion.example.com user@internal-host</div>
 <span class="com"># The /24 tells you the subnet mask</span>
 /24 = 255.255.255.0
 <span class="com"># (24 ones, then 8 zeros)</span>
-11111111.11111111.11111111.00000000</div>
+11111111.11111111.11111111.00000000</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">THE KEY FORMULAS</div>
       <div class="concept-title">Hosts and Subnets — Memorize These</div>
-      <div class="code-block"><span class="com"># Number of usable hosts per subnet</span>
+      <pre class="code-block"><span class="com"># Number of usable hosts per subnet</span>
 usable hosts = 2^(host bits) − 2
 <span class="com"># (subtract 2: network address + broadcast address)</span>
 
@@ -3444,7 +3444,7 @@ usable hosts = 2^(host bits) − 2
 2^6 − 2 = 64 − 2 = 62 usable hosts
 
 <span class="com"># Number of subnets when you "borrow" bits</span>
-subnets = 2^(borrowed bits)</div>
+subnets = 2^(borrowed bits)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">CIDR CHEAT SHEET</div>
@@ -3468,7 +3468,7 @@ subnets = 2^(borrowed bits)</div>
       <div class="concept-label">WORKED EXAMPLE</div>
       <div class="concept-title">Finding Network, Broadcast, and Range</div>
       <div class="concept-desc">Given an IP and CIDR, here's how to find the key addresses. This is the most common subnetting question on exams and the job.</div>
-      <div class="code-block"><span class="com"># Given: 192.168.1.100/26  — what subnet is it in?</span>
+      <pre class="code-block"><span class="com"># Given: 192.168.1.100/26  — what subnet is it in?</span>
 
 <span class="com"># Step 1: /26 → block size. Host bits = 32-26 = 6. Block = 2^6 = 64</span>
 <span class="com"># Step 2: subnets start at multiples of the block size (64):</span>
@@ -3481,12 +3481,12 @@ Last usable host:  192.168.1.126
 Broadcast address: 192.168.1.127   <span class="com"># last address (not usable)</span>
 Next subnet:       192.168.1.128
 
-<span class="com"># Shortcut: "block size" trick — count by 64s. Done.</span></div>
+<span class="com"># Shortcut: "block size" trick — count by 64s. Done.</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">LET THE COMPUTER DO IT</div>
       <div class="concept-title">Tools That Calculate Subnets For You</div>
-      <div class="code-block"><span class="com"># Linux: ipcalc shows everything</span>
+      <pre class="code-block"><span class="com"># Linux: ipcalc shows everything</span>
 ipcalc 192.168.1.100/26
 <span class="com"># Address, Netmask, Network, Broadcast, HostMin, HostMax, Hosts/Net</span>
 
@@ -3502,7 +3502,7 @@ print(n.network_address, n.broadcast_address, n.num_addresses)"
 net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
 <span class="fn">print</span>(net.netmask)            <span class="com"># 255.255.255.192</span>
 <span class="fn">print</span>(<span class="fn">list</span>(net.hosts())[<span class="num">0</span>])    <span class="com"># first usable host</span>
-<span class="fn">print</span>(net.num_addresses)      <span class="com"># 64</span></div>
+<span class="fn">print</span>(net.num_addresses)      <span class="com"># 64</span></pre>
     </div>
   </div>
 </div>
@@ -3600,7 +3600,7 @@ net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
     <div class="concept-card">
       <div class="concept-label">DIG — THE DNS SWISS ARMY KNIFE</div>
       <div class="concept-title">Query DNS Like a Pro</div>
-      <div class="code-block">dig example.com                  <span class="com"># A record (default)</span>
+      <pre class="code-block">dig example.com                  <span class="com"># A record (default)</span>
 dig example.com +short           <span class="com"># just the answer</span>
 dig AAAA example.com             <span class="com"># IPv6</span>
 dig MX example.com               <span class="com"># mail servers</span>
@@ -3613,7 +3613,7 @@ dig example.com ANY              <span class="com"># all records (often restrict
 
 <span class="com"># Troubleshooting: is it a DNS problem or not?</span>
 <span class="com"># If dig resolves but the app fails → not DNS</span>
-<span class="com"># If dig fails → check resolver (/etc/resolv.conf)</span></div>
+<span class="com"># If dig fails → check resolver (/etc/resolv.conf)</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DNS SECURITY</div>
@@ -3679,7 +3679,7 @@ dig example.com ANY              <span class="com"># all records (often restrict
       <div class="concept-label">PORT FORWARDING</div>
       <div class="concept-title">Letting the Outside Reach In</div>
       <div class="concept-desc">By default, NAT blocks unsolicited inbound connections (a nice side-effect: a basic firewall). But sometimes you WANT external access to an internal service — a game server, a web server, SSH <span class="acro-exp">(Secure Shell)</span> to your home lab. Port forwarding tells the router: "traffic arriving on public port X → send to internal host:port Y."</div>
-      <div class="code-block"><span class="com"># Example port-forward rules on a router</span>
+      <pre class="code-block"><span class="com"># Example port-forward rules on a router</span>
 Public :443  → 192.168.1.10:443    <span class="com"># web server</span>
 Public :2222 → 192.168.1.20:22     <span class="com"># SSH to lab box</span>
 
@@ -3688,7 +3688,7 @@ Public :2222 → 192.168.1.20:22     <span class="com"># SSH to lab box</span>
 
 <span class="com"># Linux iptables DNAT (what routers do under the hood)</span>
 iptables -t nat -A PREROUTING -p tcp --dport 443 \
-  -j DNAT --to-destination 192.168.1.10:443</div>
+  -j DNAT --to-destination 192.168.1.10:443</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">NAT CHALLENGES</div>
@@ -3772,7 +3772,7 @@ iptables -t nat -A PREROUTING -p tcp --dport 443 \
     <div class="concept-card">
       <div class="concept-label">ANATOMY OF A REQUEST</div>
       <div class="concept-title">What Actually Goes Over the Wire</div>
-      <div class="code-block"><span class="com"># An HTTP request is plain text (in HTTP/1.1)</span>
+      <pre class="code-block"><span class="com"># An HTTP request is plain text (in HTTP/1.1)</span>
 GET /api/users?page=2 HTTP/1.1      <span class="com"># method, path, version</span>
 Host: example.com                    <span class="com"># required header</span>
 User-Agent: curl/8.0
@@ -3786,7 +3786,7 @@ HTTP/1.1 200 OK                      <span class="com"># version, status code, r
 Content-Type: application/json
 Content-Length: 142
 
-{"users": [...]}                     <span class="com"># body</span></div>
+{"users": [...]}                     <span class="com"># body</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">METHODS (VERBS)</div>
@@ -3880,7 +3880,7 @@ Content-Length: 142
       <div class="concept-label">PACKET CAPTURE</div>
       <div class="concept-title">The Full Truth on the Wire</div>
       <div class="concept-desc">When you need to see <em>exactly</em> what was sent — debugging an app, analyzing an attack — capture full packets. <code>tcpdump</code> on the CLI <span class="acro-exp">(Command Line Interface)</span>, Wireshark for deep GUI <span class="acro-exp">(Graphical User Interface)</span> analysis. The most detailed (and storage-heavy) option; usually targeted at a specific problem, not always-on.</div>
-      <div class="code-block"><span class="com"># tcpdump basics</span>
+      <pre class="code-block"><span class="com"># tcpdump basics</span>
 sudo tcpdump -i eth0                       <span class="com"># live capture</span>
 sudo tcpdump -i eth0 port 443              <span class="com"># filter by port</span>
 sudo tcpdump -i eth0 host 10.0.0.5         <span class="com"># filter by host</span>
@@ -3888,7 +3888,7 @@ sudo tcpdump -i eth0 -w capture.pcap       <span class="com"># save to file</spa
 sudo tcpdump -i eth0 'tcp[tcpflags] &amp; tcp-syn != 0'   <span class="com"># SYN packets</span>
 
 <span class="com"># Then open capture.pcap in Wireshark for deep analysis</span>
-<span class="com"># Wireshark display filters: http, dns, ip.addr==10.0.0.5, tcp.port==22</span></div>
+<span class="com"># Wireshark display filters: http, dns, ip.addr==10.0.0.5, tcp.port==22</span></pre>
     </div>
   </div>
 </div>
@@ -3940,7 +3940,7 @@ sudo tcpdump -i eth0 'tcp[tcpflags] &amp; tcp-syn != 0'   <span class="com"># SY
         &bull; <strong>Add / Modify / Delete</strong> – manage objects (admin only).<br><br>
         Port 389 = plain LDAP &nbsp;|&nbsp; Port 636 = LDAPS <span class="acro-exp">(Lightweight Directory Access Protocol over SSL)</span> (TLS encrypted — always prefer this).
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Query AD with Python ldap3 (read-only example)</span>
 <span class="kw">from</span> ldap3 <span class="kw">import</span> Server, Connection, ALL, SUBTREE
 
@@ -3963,7 +3963,7 @@ conn.search(
 
 conn.unbind()
 <span class="com"># The filter above: objectClass=user AND NOT disabled (bit 2 of UAC)</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4054,7 +4054,7 @@ conn.unbind()
         AWS CLI lets you build the entire network from the command line.
         This is the same thing the console does behind the scenes.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Create a VPC</span>
 aws ec2 create-vpc --cidr-block <span class="num">10.0.0</span>.0/<span class="num">16</span>   --query Vpc.VpcId --output text
 <span class="com"># Output: vpc-0abc1234def567890</span>
@@ -4073,7 +4073,7 @@ aws ec2 attach-internet-gateway   --internet-gateway-id igw-0xyz   --vpc-id vpc-
 aws ec2 create-security-group   --group-name web-sg   --description <span class="str">"Web server SG"</span>   --vpc-id vpc-0abc1234def567890
 
 aws ec2 authorize-security-group-ingress   --group-id sg-0xyz   --protocol tcp --port <span class="num">22</span>   --cidr <span class="num">203.0.113.5</span>/<span class="num">32</span>   <span class="com"># your IP only!</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4139,7 +4139,7 @@ aws ec2 authorize-security-group-ingress   --group-id sg-0xyz   --protocol tcp -
       <div class="concept-desc">
         DNS stores different information in different record types:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">Record  Purpose                        Example</span>
 A       IPv4 address                   www  A  93.184.216.34
 AAAA    IPv6 address                   www  AAAA  2606:2800::1
@@ -4159,7 +4159,7 @@ dig example.com TXT                 <span class="com"># SPF / DKIM / verificatio
 dig -x <span class="num">93.184.216.34</span>               <span class="com"># reverse lookup (PTR)</span>
 dig @<span class="num">8.8.8.8</span> www.example.com       <span class="com"># use Google's resolver</span>
 dig +trace www.example.com          <span class="com"># walk the full resolution chain</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4181,7 +4181,7 @@ dig +trace www.example.com          <span class="com"># walk the full resolution
         <em>"Assume" makes an ass out of you and me</em> — never assume DNS
         responses are authentic unless DNSSEC is validated end-to-end.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Check if a domain has DNSSEC enabled</span>
 dig example.com DNSKEY +short
 dig example.com DS +short
@@ -4194,7 +4194,7 @@ curl -sH <span class="str">"accept: application/dns-json"</span>   <span class="
 sudo tcpdump -i eth0 -w dns.pcap port <span class="num">53</span>
 <span class="com"># Then grep for names longer than 50 chars</span>
 tshark -r dns.pcap -T fields -e dns.qry.name |   awk <span class="str">'length &gt; 50'</span> | sort | uniq -c | sort -rn
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4271,7 +4271,7 @@ tshark -r dns.pcap -T fields -e dns.qry.name |   awk <span class="str">'length &
         &bull; Mutual authentication via certificates prevents evil-twin
           attacks.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># FreeRADIUS quick test (after setup)</span>
 radtest alice Password1 localhost 0 testing123
 <span class="com"># Output: Access-Accept → credentials valid</span>
@@ -4290,7 +4290,7 @@ Client (Supplicant)  →  AP (Authenticator)  →  RADIUS Server
        EAP-Success / Failure
 &lt;──────────────────────────────────────────────────────────
        [4-way handshake to derive per-session keys]
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4301,7 +4301,7 @@ Client (Supplicant)  →  AP (Authenticator)  →  RADIUS Server
         the Wi-Fi network you're on is the real one. Rogue APs can be
         set up in minutes.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">Attack          Description                          Defence</span>
 Evil Twin       Fake AP with same SSID captures creds  WPA3/EAP-TLS cert auth
 Deauth flood    Force clients to reconnect (DOS)        802.11w Management Frame Protection
@@ -4319,7 +4319,7 @@ sudo iwlist wlan0 scanning | grep -E <span class="str">"(ESSID|Address|Encryptio
 
 <span class="com"># Check if WPS is enabled (vulnerable)</span>
 sudo wash -i wlan0 -C   <span class="com"># part of reaver suite; scan for WPS-enabled APs</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4390,7 +4390,7 @@ sudo wash -i wlan0 -C   <span class="com"># part of reaver suite; scan for WPS-e
         select exactly the traffic you care about — capturing everything
         creates huge files and noise.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Capture all traffic on eth0, write to a file (analyse later in Wireshark)</span>
 sudo tcpdump -i eth0 -w capture.pcap
 
@@ -4411,7 +4411,7 @@ sudo tcpdump -i eth0 'tcp[tcpflags] == tcp-syn'
 
 <span class="com"># Rotate captures every 100MB, keep last 10 files (long-running capture)</span>
 sudo tcpdump -i eth0 -w /data/cap.pcap -C <span class="num">100</span> -W <span class="num">10</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4422,7 +4422,7 @@ sudo tcpdump -i eth0 -w /data/cap.pcap -C <span class="num">100</span> -W <span 
         is the most powerful tool — it narrows thousands of packets down
         to the handful you care about.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">─── Useful Wireshark display filters ─────────────────────────</span>
 ip.addr == <span class="num">192.168.1</span>.<span class="num">50</span>             <span class="com"># traffic to/from this host</span>
 tcp.port == <span class="num">443</span>                     <span class="com"># HTTPS traffic</span>
@@ -4441,7 +4441,7 @@ tls.handshake.extensions_server_name == <span class="str">"example.com"</span>  
 <span class="com"># Conversations: who talked to whom, how much data</span>
 <span class="com"># Protocol Hierarchy: breakdown of traffic by protocol</span>
 <span class="com"># IO Graph: visualise traffic volume over time (spot spikes)</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -4451,7 +4451,7 @@ tls.handshake.extensions_server_name == <span class="str">"example.com"</span>  
         For repeatable analysis or processing huge captures, script it
         with <code>tshark</code> instead of clicking through the GUI.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Extract all unique source/destination IP pairs</span>
 tshark -r capture.pcap -T fields -e ip.src -e ip.dst | sort -u
 
@@ -4466,7 +4466,7 @@ tshark -r capture.pcap -q -z conv,ip | head -<span class="num">20</span>
 
 <span class="com"># Extract files transferred over HTTP (incident response)</span>
 tshark -r capture.pcap --export-objects http,/tmp/extracted_files/
-      </div>
+      </pre>
     </div>
 
   </div>

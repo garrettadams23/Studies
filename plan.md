@@ -12331,6 +12331,42 @@ progress dialog + notepad: THREW → open cleanly · safeLS.keys() + safeSS adde
 resilience 7/7 · every raw storage access is now guarded or provably unreachable when blocked
 ```
 
+### The big one the minifier audit uncovered — hundreds of code blocks rendering collapsed
+
+Reviewing `build.py`'s minifier (does stripping indentation corrupt anything?) turned up something
+much larger than a minifier bug — the minifier is correct. A `<pre>` has `white-space: pre` by
+default and is protected verbatim; a `<div>` has `white-space: normal` and **collapses its
+newlines**. And the site had **422 `<div class="code-block">`** against 381 `<pre class="code-block">`
+— the same class on two different tags, one of which throws the layout away.
+
+The proof was stark: `script.03-python.html` used **97 `<div>` code-blocks and zero `<pre>`**. An
+eighteen-line Python example — with syntactic four- and eight-space indentation — was rendering as
+six wrapped lines of run-on text, its structure destroyed. A YAML reference with column-aligned
+keys, box-drawing dividers and nested mappings was a single collapsed smear. This had shipped
+because it is invisible to anyone reading the source and only wrong in the browser.
+
+The fix is a tag swap, but not a blind one — the distinction that matters is whether a block's line
+breaks are **semantic** (code, commands, diagrams) or **cosmetic** (prose wrapped to the file
+width). The tell is indentation: content authored as code sits **flush-left** in the data file
+(its only indentation is its own, real, structure); content authored as flowing prose is
+**file-indented**, nested under the div because the author knew it would collapse. So the safe,
+correct set is the flush-left multi-line blocks — **318 of them** — converted verbatim to
+`<pre class="code-block">` (flush-left means the swap needs no dedent, and a `<pre>` drops one
+leading newline, so nothing shifts). Every sampled one was genuine code: `kubectl get nodes`
+command references, `systemctl` blocks, the Python examples, the YAML card. None was prose.
+
+Verified by rendering, not assertion: the Python `dataclass` block went from **6 collapsed lines
+to 24 real ones**, `white-space` from `normal` to `pre`. Markup stayed balanced (the swap changes
+both tags together), determinism held, and every browser gate passed. Left for a separate,
+careful pass: **105 file-indented `<div>` code-blocks**, a mix of genuine code that needs a dedent
+and flowing-prose callouts (a TCP handshake description, wrapped mid-sentence) that would render
+*worse* as `<pre>` — the one place the tag swap is not mechanical.
+
+```
+div.code-block 422 → 105 (flush-left, structured: converted) · pre.code-block 381 → 698
+python reference: collapsed → real code · check PASS · smoke 142/142 · resilience 7/7
+```
+
 ---
 
 # Closing note for Phase 7–10

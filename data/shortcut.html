@@ -844,7 +844,7 @@
       <div class="concept-label">CORE CONCEPTS</div>
       <div class="concept-title">Cmdlets, Objects, and the Pipeline</div>
       <div class="concept-desc">PowerShell commands are called <strong>cmdlets</strong> (pronounced "command-lets"). They follow a Verb-Noun naming pattern (<code>Get-Process</code>, <code>Set-Item</code>, <code>New-Item</code>). Output is objects with properties — you can access, filter, and pipe them.</div>
-      <div class="code-block"><span class="com"># Get-Help is your best friend</span>
+      <pre class="code-block"><span class="com"># Get-Help is your best friend</span>
 Get-Help Get-Process
 Get-Help Get-Process -Examples
 Get-Help *service*          <span class="com"># find cmdlets about services</span>
@@ -862,12 +862,12 @@ mkdir NewFolder             <span class="com"># alias for New-Item -ItemType Dir
 Get-Process                             <span class="com"># list all processes</span>
 Get-Process | Where-Object {$_.CPU -gt 50}   <span class="com"># filter by CPU</span>
 Get-Process | Sort-Object CPU -Descending | Select-Object -First 10
-Get-Process | Select-Object Name, CPU, WorkingSet</div>
+Get-Process | Select-Object Name, CPU, WorkingSet</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">COMMON TASKS</div>
       <div class="concept-title">PowerShell Cheat Sheet</div>
-      <div class="code-block"><span class="com"># Services</span>
+      <pre class="code-block"><span class="com"># Services</span>
 Get-Service                             <span class="com"># list all services</span>
 Get-Service -Name "wuauserv"           <span class="com"># Windows Update service</span>
 Start-Service -Name "wuauserv"
@@ -896,12 +896,12 @@ Get-WmiObject -Class Win32_LogicalDisk  <span class="com"># disk info</span>
 <span class="com"># Users</span>
 Get-LocalUser                           <span class="com"># list local accounts</span>
 New-LocalUser -Name "alice" -Password (ConvertTo-SecureString "P@ss!" -AsPlainText -Force)
-Add-LocalGroupMember -Group "Administrators" -Member "alice"</div>
+Add-LocalGroupMember -Group "Administrators" -Member "alice"</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SCRIPTING</div>
       <div class="concept-title">Writing PowerShell Scripts</div>
-      <div class="code-block"><span class="com"># Variables start with $</span>
+      <pre class="code-block"><span class="com"># Variables start with $</span>
 $name = "Alice"
 $count = 42
 $pi = 3.14159
@@ -935,13 +935,13 @@ function Get-Greeting {
     param([string]$Name = "World")
     return "Hello, $Name!"
 }
-Get-Greeting -Name "Alice"</div>
+Get-Greeting -Name "Alice"</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">EXECUTION POLICY</div>
       <div class="concept-title">Why Your Script Won't Run</div>
       <div class="concept-desc">PowerShell's execution policy restricts which scripts can run. This is a security feature — not a permission system. On a new Windows machine, scripts are often blocked by default.</div>
-      <div class="code-block"><span class="com"># Check current policy</span>
+      <pre class="code-block"><span class="com"># Check current policy</span>
 Get-ExecutionPolicy
 
 <span class="com"># Policy levels (most to least restrictive)</span>
@@ -955,7 +955,7 @@ Bypass          <span class="com"># Nothing blocked (used in automation)</span>
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 <span class="com"># Run a script bypassing policy (one-time)</span>
-powershell.exe -ExecutionPolicy Bypass -File myscript.ps1</div>
+powershell.exe -ExecutionPolicy Bypass -File myscript.ps1</pre>
     </div>
   </div>
 </div>
@@ -979,7 +979,7 @@ powershell.exe -ExecutionPolicy Bypass -File myscript.ps1</div>
       <div class="concept-label">THE PREFIX KEY</div>
       <div class="concept-title">Everything Starts with Ctrl+b</div>
       <div class="concept-desc">tmux commands begin with a <strong>prefix</strong> — by default <code>Ctrl+b</code> — then a key. Notation: <code>C-b</code> means Ctrl+b, release, then press the next key. (Many people remap the prefix to <code>Ctrl+a</code> for ergonomics.)</div>
-      <div class="code-block"><span class="com"># Session management (from the shell)</span>
+      <pre class="code-block"><span class="com"># Session management (from the shell)</span>
 tmux                       <span class="com"># start a new session</span>
 tmux new -s work           <span class="com"># named session "work"</span>
 tmux ls                    <span class="com"># list sessions</span>
@@ -988,7 +988,7 @@ tmux kill-session -t work
 
 <span class="com"># THE killer feature: detach and reattach</span>
 <span class="com"># C-b d   → detach (session keeps running on the server)</span>
-<span class="com"># Later: tmux attach   → everything's still there</span></div>
+<span class="com"># Later: tmux attach   → everything's still there</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PANES & WINDOWS</div>
@@ -1013,7 +1013,7 @@ tmux kill-session -t work
     <div class="concept-card">
       <div class="concept-label">CONFIG</div>
       <div class="concept-title">A Sensible ~/.tmux.conf Starter</div>
-      <div class="code-block"><span class="com"># ~/.tmux.conf</span>
+      <pre class="code-block"><span class="com"># ~/.tmux.conf</span>
 <span class="com"># Remap prefix to Ctrl+a (easier reach)</span>
 unbind C-b
 set -g prefix C-a
@@ -1032,7 +1032,7 @@ bind | split-window -h -c "#{pane_current_path}"
 bind - split-window -v -c "#{pane_current_path}"
 
 <span class="com"># Reload config without restarting: C-a r</span>
-bind r source-file ~/.tmux.conf \; display "Reloaded!"</div>
+bind r source-file ~/.tmux.conf \; display "Reloaded!"</pre>
     </div>
   </div>
 </div>
@@ -1055,7 +1055,7 @@ bind r source-file ~/.tmux.conf \; display "Reloaded!"</div>
     <div class="concept-card">
       <div class="concept-label">GREP — FIND LINES</div>
       <div class="concept-title">Search Text Like a Pro</div>
-      <div class="code-block">grep "ERROR" app.log               <span class="com"># lines containing ERROR</span>
+      <pre class="code-block">grep "ERROR" app.log               <span class="com"># lines containing ERROR</span>
 grep -i "error" app.log            <span class="com"># case-insensitive</span>
 grep -r "TODO" ./src               <span class="com"># recursive through dir</span>
 grep -v "DEBUG" app.log            <span class="com"># INVERT — lines WITHOUT DEBUG</span>
@@ -1063,12 +1063,12 @@ grep -c "404" access.log           <span class="com"># count matching lines</spa
 grep -n "fail" app.log             <span class="com"># show line numbers</span>
 grep -A3 -B3 "panic" app.log       <span class="com"># 3 lines After + Before context</span>
 grep -E "warn|error|fatal" app.log <span class="com"># regex (extended) OR</span>
-grep -oE "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" log   <span class="com"># extract just IPs</span></div>
+grep -oE "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" log   <span class="com"># extract just IPs</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FIND — LOCATE FILES</div>
       <div class="concept-title">Search the Filesystem by Any Attribute</div>
-      <div class="code-block">find . -name "*.log"               <span class="com"># by name pattern</span>
+      <pre class="code-block">find . -name "*.log"               <span class="com"># by name pattern</span>
 find / -type f -size +100M         <span class="com"># files over 100MB</span>
 find . -mtime -1                   <span class="com"># modified in last 24h</span>
 find /var/log -mtime +30 -delete   <span class="com"># delete logs older than 30 days</span>
@@ -1076,12 +1076,12 @@ find . -type f -name "*.sh" -perm -u+x   <span class="com"># executable scripts<
 
 <span class="com"># find + exec / xargs — act on results</span>
 find . -name "*.tmp" -exec rm {} \;     <span class="com"># delete each match</span>
-find . -name "*.py" | xargs grep "import os"   <span class="com"># grep in matches</span></div>
+find . -name "*.py" | xargs grep "import os"   <span class="com"># grep in matches</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">THE CLASSIC PIPELINE</div>
       <div class="concept-title">cut · sort · uniq · awk — Together</div>
-      <div class="code-block"><span class="com"># "Top 10 IPs hitting my web server" — a legendary one-liner</span>
+      <pre class="code-block"><span class="com"># "Top 10 IPs hitting my web server" — a legendary one-liner</span>
 cut -d' ' -f1 access.log | sort | uniq -c | sort -rn | head -10
 <span class="com">#   cut field 1 (IP) → sort → count dups → sort by count desc → top 10</span>
 
@@ -1097,7 +1097,7 @@ grep "$(date +%Y-%m-%d)" auth.log | grep "session opened" \
 
 <span class="com"># Find the 5 largest files under /var, human-readable</span>
 find /var -type f -printf '%s %p\n' | sort -rn | head -5 \
-  | awk '{printf "%.1f MB  %s\n", $1/1048576, $2}'</div>
+  | awk '{printf "%.1f MB  %s\n", $1/1048576, $2}'</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">MODERN ALTERNATIVES</div>
@@ -1131,13 +1131,13 @@ find /var -type f -printf '%s %p\n' | sort -rn | head -5 \
       <div class="concept-label">THE BIG IDEA</div>
       <div class="concept-title">Vim Is a Language: Verb + Motion</div>
       <div class="concept-desc">Vim's power isn't memorizing hundreds of commands — it's that commands <em>compose</em> like a language. You combine a <strong>verb</strong> (operator: what to do) with a <strong>motion</strong> (where). Learn a handful of each and you can express thousands of edits. <code>d</code> (delete) + <code>w</code> (word) = <code>dw</code> "delete word." Once it clicks, editing becomes thought-speed.</div>
-      <div class="code-block"><span class="com"># GRAMMAR:  [count] operator motion</span>
+      <pre class="code-block"><span class="com"># GRAMMAR:  [count] operator motion</span>
 dw      <span class="com"># delete word</span>
 d3w     <span class="com"># delete 3 words</span>
 c$      <span class="com"># change to end of line</span>
 y}      <span class="com"># yank (copy) to next blank line</span>
 &gt;i{     <span class="com"># indent inside { } block</span>
-=G      <span class="com"># auto-indent to end of file</span></div>
+=G      <span class="com"># auto-indent to end of file</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">OPERATORS (VERBS)</div>
@@ -1175,7 +1175,7 @@ y}      <span class="com"># yank (copy) to next blank line</span>
     <div class="concept-card">
       <div class="concept-label">HIGH-VALUE COMMANDS</div>
       <div class="concept-title">Things That Save Real Time</div>
-      <div class="code-block">.            <span class="com"># REPEAT last change (incredibly powerful)</span>
+      <pre class="code-block">.            <span class="com"># REPEAT last change (incredibly powerful)</span>
 ciw          <span class="com"># change inner word, then . to repeat on others</span>
 *            <span class="com"># search for word under cursor</span>
 ggVG         <span class="com"># select entire file (gg, Visual, G)</span>
@@ -1185,7 +1185,7 @@ u  /  Ctrl-r <span class="com"># undo / redo</span>
 A            <span class="com"># jump to end of line + insert</span>
 o  /  O      <span class="com"># open new line below / above</span>
 &gt;G           <span class="com"># indent from cursor to end of file</span>
-Ctrl-v       <span class="com"># VISUAL BLOCK — edit columns (great for tables)</span></div>
+Ctrl-v       <span class="com"># VISUAL BLOCK — edit columns (great for tables)</span></pre>
       <div class="concept-desc"><strong>The <code>.</code> command</strong> repeats your last change — pair it with a motion-based edit and you can fix dozens of spots with single keystrokes. Mastering "edit once, repeat with <code>.</code>" is the hallmark of a fluent Vim user.</div>
     </div>
   </div>
@@ -1733,7 +1733,7 @@ exit   <span class="com"># closes the window/session from inside</span>
     <div class="concept-card">
       <div class="concept-label">HISTORY TRICKS</div>
       <div class="concept-title">Never Retype Long Commands</div>
-      <div class="code-block"><span class="com"># See your command history</span>
+      <pre class="code-block"><span class="com"># See your command history</span>
 history | tail -20
 
 <span class="com"># Run command #42 from history</span>
@@ -1747,13 +1747,13 @@ history | tail -20
 ^paaswd^passwd    <span class="com"># re-runs with correction</span>
 
 <span class="com"># Search history with fzf (install separately)</span>
-Ctrl+R   <span class="com"># built-in incremental search</span></div>
+Ctrl+R   <span class="com"># built-in incremental search</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">TMUX BASICS</div>
       <div class="concept-title">Multiple Terminals in One Window</div>
       <div class="concept-desc">tmux is a terminal multiplexer — splits your terminal into multiple panes, creates persistent sessions that survive network disconnects, and lets you detach/reattach from long-running tasks.</div>
-      <div class="code-block"><span class="com"># Start new session</span>
+      <pre class="code-block"><span class="com"># Start new session</span>
 tmux new -s mysession
 
 <span class="com"># Detach (leaves session running)</span>
@@ -1779,12 +1779,12 @@ Ctrl+B then C
 Ctrl+B then N / P
 
 <span class="com"># Kill current pane</span>
-Ctrl+B then X</div>
+Ctrl+B then X</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">ALIASES</div>
       <div class="concept-title">Shortcut Your Most-Used Commands</div>
-      <div class="code-block"><span class="com"># Add to ~/.bashrc or ~/.zshrc</span>
+      <pre class="code-block"><span class="com"># Add to ~/.bashrc or ~/.zshrc</span>
 
 <span class="com"># Shorter ls with detail</span>
 alias ll=<span class="str">'ls -lah --color=auto'</span>
@@ -1804,12 +1804,12 @@ alias ssha=<span class="str">'eval $(ssh-agent) &amp;&amp; ssh-add'</span>
 alias py=<span class="str">'python3'</span>
 
 <span class="com"># Apply changes</span>
-source ~/.bashrc</div>
+source ~/.bashrc</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PIPES & REDIRECTION</div>
       <div class="concept-title">Compose Powerful One-Liners</div>
-      <div class="code-block"><span class="com"># | pipes output of one command into next</span>
+      <pre class="code-block"><span class="com"># | pipes output of one command into next</span>
 ps aux | grep python | grep -v grep
 
 <span class="com"># &gt; overwrites file, &gt;&gt; appends</span>
@@ -1826,7 +1826,7 @@ command &gt; /dev/null 2&gt;&amp;1
 <span class="fn">ls</span> -la | tee listing.txt
 
 <span class="com"># xargs: turn output into arguments</span>
-find . -name <span class="str">"*.tmp"</span> | xargs rm -f</div>
+find . -name <span class="str">"*.tmp"</span> | xargs rm -f</pre>
     </div>
   </div>
 </div>

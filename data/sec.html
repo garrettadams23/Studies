@@ -907,7 +907,7 @@
         </table>
 
         <div class="dt">▸ AD ENUMERATION (POST-EXPLOITATION)</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># PowerShell AD module (requires RSAT or domain-joined machine)</span>
 <span class="fn">Get-ADDomain</span>                                  <span class="com"># domain info</span>
 <span class="fn">Get-ADForest</span>                                  <span class="com"># forest info, trusts</span>
@@ -929,7 +929,7 @@
 <span class="fn">Get-NetDomainController</span> <span class="com"># list DCs</span>
 <span class="fn">Find-LocalAdminAccess</span>  <span class="com"># where do I have local admin?</span>
 <span class="fn">Get-NetGPO</span>             <span class="com"># enumerate GPOs</span>
-        </div>
+        </pre>
 
         <div class="dt">▸ COMMON AD ATTACKS</div>
         <table class="ref-table" style="margin-bottom:14px">
@@ -1068,7 +1068,7 @@
         </table>
 
         <div class="dt">▸ CERTIFICATE CHAIN VALIDATION</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># Certificate chain: End-Entity → Intermediate CA → Root CA</span>
 <span class="com">#</span>
 <span class="com">#  Root CA (self-signed, in OS/browser trust store)</span>
@@ -1091,10 +1091,10 @@
 <span class="com"># Check cipher suite negotiated</span>
 <span class="fn">openssl</span> s_client -connect example.com:<span class="num">443</span> 2>&amp;1 | grep Cipher
 <span class="fn">nmap</span> --script ssl-enum-ciphers -p 443 example.com
-        </div>
+        </pre>
 
         <div class="dt">▸ CIPHER SUITE NOTATION</div>
-        <div class="code-block">
+        <pre class="code-block">
 <span class="com"># TLS 1.2 cipher suite breakdown:</span>
 TLS _ ECDHE _ RSA _ WITH _ AES_256_GCM _ SHA384
  │      │      │           │                 │
@@ -1107,7 +1107,7 @@ TLS _ ECDHE _ RSA _ WITH _ AES_256_GCM _ SHA384
 <span class="com"># TLS 1.3 suite (simpler — key exchange implicit ECDHE)</span>
 TLS_AES_256_GCM_SHA384         <span class="com"># 5 suites total in 1.3</span>
 TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware AES</span>
-        </div>
+        </pre>
 
         <div class="dt">▸ KEY CONCEPTS</div>
         <table class="ref-table" style="margin-bottom:14px">
@@ -1161,7 +1161,7 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
       <div class="concept-label">WHAT IS A HASH</div>
       <div class="concept-title">One-Way Fingerprint</div>
       <div class="concept-desc">A hash function takes any input and produces a fixed-length output. Same input ALWAYS produces same output. Even one character change completely changes the hash (avalanche effect). You cannot go from hash → original (one-way).</div>
-      <div class="code-block"><span class="kw">import</span> hashlib
+      <pre class="code-block"><span class="kw">import</span> hashlib
 
 text = <span class="str">"hunter2"</span>
 h = hashlib.sha256(text.encode()).hexdigest()
@@ -1170,7 +1170,7 @@ h = hashlib.sha256(text.encode()).hexdigest()
 text2 = <span class="str">"hunter3"</span>   <span class="com"># one char different</span>
 h2 = hashlib.sha256(text2.encode()).hexdigest()
 <span class="com"># 7a20f6f8c04b1a590a39c74b4f6b3c4a8e6a7f1c2d3e4f5a6b7c8d9e0f1a2b3</span>
-<span class="com"># Completely different — avalanche effect</span></div>
+<span class="com"># Completely different — avalanche effect</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SALTING</div>
@@ -1181,7 +1181,7 @@ h2 = hashlib.sha256(text2.encode()).hexdigest()
       <div class="concept-label">RIGHT TOOLS FOR PASSWORDS</div>
       <div class="concept-title">Use bcrypt, scrypt, or Argon2</div>
       <div class="concept-desc">SHA-256 is fast — that's GOOD for verifying file integrity, BAD for passwords (attackers can try billions/sec). <strong>bcrypt</strong>, <strong>scrypt</strong>, and <strong>Argon2</strong> are deliberately slow and memory-hard. They automatically handle salting. Never hand-roll password hashing.</div>
-      <div class="code-block"><span class="com"># pip install bcrypt</span>
+      <pre class="code-block"><span class="com"># pip install bcrypt</span>
 <span class="kw">import</span> bcrypt
 
 <span class="com"># Hash when user registers</span>
@@ -1191,7 +1191,7 @@ hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 <span class="com"># Verify on login</span>
 entered = <span class="str">"my_secure_pass"</span>
 <span class="kw">if</span> bcrypt.checkpw(entered.encode(), hashed):
-    <span class="fn">print</span>(<span class="str">"Login OK"</span>)</div>
+    <span class="fn">print</span>(<span class="str">"Login OK"</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">STRONG PASSWORDS</div>
@@ -1344,14 +1344,14 @@ entered = <span class="str">"my_secure_pass"</span>
       <div class="concept-label">LET'S ENCRYPT</div>
       <div class="concept-title">Free, Automated, Trusted Certificates</div>
       <div class="concept-desc">Let's Encrypt is a free, automated CA. Use the <code>certbot</code> tool to get and auto-renew certificates with zero cost. It changed the web — HTTPS adoption went from ~40% in 2015 to ~95%+ today, largely because Let's Encrypt eliminated the cost barrier.</div>
-      <div class="code-block"><span class="com"># Install certbot (Debian/Ubuntu)</span>
+      <pre class="code-block"><span class="com"># Install certbot (Debian/Ubuntu)</span>
 sudo apt install certbot python3-certbot-nginx
 
 <span class="com"># Get cert and auto-configure nginx</span>
 sudo certbot --nginx -d example.com -d www.example.com
 
 <span class="com"># Test auto-renewal</span>
-sudo certbot renew --dry-run</div>
+sudo certbot renew --dry-run</pre>
     </div>
   </div>
 </div>
@@ -1510,7 +1510,7 @@ sudo certbot renew --dry-run</div>
       <div class="concept-label">SQL <span class="acro-exp">(Structured Query Language)</span> INJECTION DEEP DIVE</div>
       <div class="concept-title">The Most Classic Vulnerability</div>
       <div class="concept-desc">SQL injection lets an attacker insert SQL commands into a query. If a login form does:</div>
-      <div class="code-block"><span class="com"># VULNERABLE — NEVER DO THIS</span>
+      <pre class="code-block"><span class="com"># VULNERABLE — NEVER DO THIS</span>
 query = <span class="str">f"SELECT * FROM users WHERE name='{username}' AND password='{password}'"</span>
 
 <span class="com"># If username = "' OR '1'='1'; -- "</span>
@@ -1520,7 +1520,7 @@ query = <span class="str">f"SELECT * FROM users WHERE name='{username}' AND pass
 <span class="com"># CORRECT — Parameterized query (Python sqlite3)</span>
 cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=?"</span>,
                (username, password_hash))
-<span class="com"># Parameters are treated as DATA, never as SQL code</span></div>
+<span class="com"># Parameters are treated as DATA, never as SQL code</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">XSS</div>
@@ -1667,7 +1667,7 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
     <div class="concept-card">
       <div class="concept-label">SECRET SCANNING</div>
       <div class="concept-title">Catch Leaks Before They Ship</div>
-      <div class="code-block"><span class="com"># Scan a repo for committed secrets</span>
+      <pre class="code-block"><span class="com"># Scan a repo for committed secrets</span>
 gitleaks detect --source .          <span class="com"># popular open-source scanner</span>
 trufflehog git file://.             <span class="com"># also scans git history</span>
 
@@ -1677,7 +1677,7 @@ trufflehog git file://.             <span class="com"># also scans git history</
 <span class="com"># 3. Add pre-commit hook to prevent recurrence</span>
 
 <span class="com"># Prevent future leaks with a pre-commit hook</span>
-<span class="com"># (gitleaks has a pre-commit integration)</span></div>
+<span class="com"># (gitleaks has a pre-commit integration)</span></pre>
     </div>
   </div>
 </div>
@@ -1720,30 +1720,30 @@ trufflehog git file://.             <span class="com"># also scans git history</
           <tr><td><code>SameSite=Strict/Lax</code></td><td>Not sent on cross-site requests — defeats CSRF</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># A well-secured session cookie</span>
-Set-Cookie: session=abc123; Secure; HttpOnly; SameSite=Strict; Path=/</div>
+      <pre class="code-block"><span class="com"># A well-secured session cookie</span>
+Set-Cookie: session=abc123; Secure; HttpOnly; SameSite=Strict; Path=/</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SAME-ORIGIN & CORS <span class="acro-exp">(Cross-Origin Resource Sharing)</span></div>
       <div class="concept-title">The Browser's Core Security Boundary</div>
       <div class="concept-desc">The <strong>Same-Origin Policy</strong> is the foundation of web security: a page from <code>siteA.com</code> can't read data from <code>siteB.com</code>. "Origin" = scheme + host + port. This stops a malicious site from reading your bank session. <strong>CORS</strong> (Cross-Origin Resource Sharing) is the controlled way to relax this — a server explicitly opts in to allow specific other origins to call it. CORS errors confuse beginners, but they're the browser <em>protecting</em> the user, not a bug.</div>
-      <div class="code-block"><span class="com"># Server allows a specific origin to call its API</span>
+      <pre class="code-block"><span class="com"># Server allows a specific origin to call its API</span>
 Access-Control-Allow-Origin: https://app.example.com
 Access-Control-Allow-Methods: GET, POST
 Access-Control-Allow-Credentials: true
 
 <span class="com"># Common beginner mistake (insecure!) — allow everything:</span>
-Access-Control-Allow-Origin: *    <span class="com"># OK for public APIs, dangerous with credentials</span></div>
+Access-Control-Allow-Origin: *    <span class="com"># OK for public APIs, dangerous with credentials</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">TESTING HEADERS</div>
       <div class="concept-title">Quickly Audit a Site's Headers</div>
-      <div class="code-block"><span class="com"># See response headers with curl</span>
+      <pre class="code-block"><span class="com"># See response headers with curl</span>
 curl -I https://example.com         <span class="com"># HEAD request, headers only</span>
 curl -sD - https://example.com -o /dev/null   <span class="com"># dump headers</span>
 
 <span class="com"># Online graders: securityheaders.com, Mozilla Observatory</span>
-<span class="com"># Browser DevTools → Network tab → click request → Headers</span></div>
+<span class="com"># Browser DevTools → Network tab → click request → Headers</span></pre>
     </div>
   </div>
 </div>
@@ -1783,10 +1783,10 @@ curl -sD - https://example.com -o /dev/null   <span class="com"># dump headers</
           <tr><td>Behavior-based</td><td>Detect malicious sequences of actions</td><td>+ Catches TTPs <span class="acro-exp">(Tactics, Techniques, and Procedures)</span>; − needs tuning</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># A simple Suricata/Snort rule (signature)</span>
+      <pre class="code-block"><span class="com"># A simple Suricata/Snort rule (signature)</span>
 alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
   content:"UNION SELECT"; nocase; sid:1000001;)
-<span class="com"># Triggers an alert when "UNION SELECT" appears in HTTP traffic</span></div>
+<span class="com"># Triggers an alert when "UNION SELECT" appears in HTTP traffic</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FALSE POSITIVES & TUNING</div>
@@ -2108,7 +2108,7 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
       <div class="concept-desc">
         Windows Security log event IDs tell a story. Learn these cold:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">Event ID  Meaning</span>
 <span class="num">4624</span>      Successful logon
 <span class="num">4625</span>      Failed logon  (watch for bursts = brute force)
@@ -2130,7 +2130,7 @@ Get-WinEvent -FilterHashtable @{
     Id        = <span class="num">4625</span>           <span class="com"># failed logons</span>
     StartTime = (Get-Date).AddHours(-<span class="num">1</span>)
 } | Select TimeCreated, Message | Format-List
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2140,7 +2140,7 @@ Get-WinEvent -FilterHashtable @{
         Every SIEM has a query language. Splunk uses SPL <span class="acro-exp">(Search Processing Language)</span>; Elastic uses KQL <span class="acro-exp">(Kusto Query Language)</span>.
         Here are equivalent queries to find brute-force attempts:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">─── Splunk SPL ──────────────────────────────────────────────</span>
 index=windows EventCode=<span class="num">4625</span>
 | stats count by src_ip, user
@@ -2161,7 +2161,7 @@ grep <span class="str">"Failed password"</span> /var/log/auth.log |   awk <span 
   &lt;description&gt;SSH brute force attack&lt;/description&gt;
   &lt;group&gt;authentication_failures&lt;/group&gt;
 &lt;/rule&gt;
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2228,7 +2228,7 @@ grep <span class="str">"Failed password"</span> /var/log/auth.log |   awk <span 
         These tools work on Linux and give you a lot of information
         before you ever execute anything.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># 1. Get a hash (share with VirusTotal)</span>
 sha256sum suspicious.exe
 md5sum suspicious.exe
@@ -2260,7 +2260,7 @@ python3 -c <span class="str">"import pefile; pe=pefile.PE('suspicious.exe'); [pr
 
 <span class="com"># 6. Submit to VirusTotal (no execution, just hash lookup)</span>
 curl -s --request GET   --url <span class="str">"https://www.virustotal.com/api/v3/files/$(sha256sum suspicious.exe | cut -d' ' -f1)"</span>   --header <span class="str">"x-apikey: YOUR_VT_KEY"</span> | python3 -m json.tool | grep -A2 last_analysis_stats
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2352,7 +2352,7 @@ curl -s --request GET   --url <span class="str">"https://www.virustotal.com/api/
         Most container vulnerabilities are introduced at build time.
         Compare an insecure Dockerfile to a hardened one:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">─── INSECURE (common beginner mistakes) ──────────────────────</span>
 FROM ubuntu:latest          <span class="com"># 'latest' = unpredictable, large attack surface</span>
 RUN apt-get update &amp;&amp; apt-get install -y python3 curl vim
@@ -2378,7 +2378,7 @@ USER appuser                <span class="com"># drop root privileges</span>
 EXPOSE <span class="num">8080</span>
 HEALTHCHECK --interval=<span class="num">30</span>s CMD curl -f http://localhost:<span class="num">8080</span>/health || exit <span class="num">1</span>
 CMD ["python3", "app.py"]
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2388,7 +2388,7 @@ CMD ["python3", "app.py"]
         Before deploying any image, scan it. Integrate scanning into your
         CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> pipeline so vulnerable images never reach production.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Trivy — fast, free, open-source vulnerability scanner</span>
 trivy image myapp:<span class="num">1.2</span>.<span class="num">3</span>
 
@@ -2410,7 +2410,7 @@ docker scout cves myapp:<span class="num">1.2</span>.<span class="num">3</span>
 <span class="com">#     image-ref: 'myapp:${{ github.sha }}'</span>
 <span class="com">#     severity: 'CRITICAL,HIGH'</span>
 <span class="com">#     exit-code: '1'</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2419,7 +2419,7 @@ docker scout cves myapp:<span class="num">1.2</span>.<span class="num">3</span>
       <div class="concept-desc">
         Docker run flags matter as much as the image itself:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># NEVER do this in production:</span>
 docker run --privileged -v /:/host myimage   <span class="com"># full host access!</span>
 
@@ -2435,7 +2435,7 @@ docker run   --read-only \                          <span class="com"># filesyst
 
 <span class="com"># Audit running containers for risky configurations</span>
 docker inspect myapp_container | python3 -c   <span class="str">"import sys,json; c=json.load(sys.stdin)[0]; print('Privileged:', c['HostConfig']['Privileged']); print('User:', c['Config']['User'] or 'root (DANGER)')"</span>
-      </div>
+      </pre>
     </div>
 
   </div>
@@ -2480,7 +2480,7 @@ docker inspect myapp_container | python3 -c   <span class="str">"import sys,json
         Modern phishing comes in many flavours — knowing the names helps
         you train others and write better detection rules.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">Type            Channel       Description</span>
 Phishing        Email         Mass email to many targets, generic content
 Spear phishing  Email         Targeted, personalised — uses real names/projects
@@ -2501,7 +2501,7 @@ Compromise (BEC)              ("Update our bank details for the next invoice")
 <span class="com"># [ ] Hover over links — does the URL match the displayed text?</span>
 <span class="com"># [ ] Unexpected attachment (.exe, .zip, .html, macro-enabled .docm)</span>
 <span class="com"># [ ] Request to bypass normal process ("don't tell finance, just wire it")</span>
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2520,7 +2520,7 @@ Compromise (BEC)              ("Update our bank details for the next invoice")
           — tells receiving servers what to do when SPF/DKIM checks fail
           (quarantine, reject) and where to send reports.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># SPF record — only these servers may send as @example.com</span>
 example.com.  TXT  "v=spf1 include:_spf.google.com include:sendgrid.net -all"
 <span class="com"># -all = hard fail anything not listed (strict)</span>
@@ -2538,7 +2538,7 @@ _dmarc.example.com.  TXT  "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@exam
 <span class="com"># Check your domain's current posture</span>
 dig example.com TXT | grep spf
 dig _dmarc.example.com TXT
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2605,7 +2605,7 @@ dig _dmarc.example.com TXT
         Each entry below: what it is, in plain language, with an
         everyday analogy.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">A01: Broken Access Control</span>
   Users can do things they shouldn't (view others' data, admin pages).
   Analogy: A hotel keycard that opens every room, not just yours.
@@ -2648,7 +2648,7 @@ dig _dmarc.example.com TXT
   often reaching internal systems the attacker couldn't reach directly.
   Analogy: Convincing the receptionist to walk into the vault and
   read you what's inside, since you're not allowed in yourself.
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2659,7 +2659,7 @@ dig _dmarc.example.com TXT
         <em>Only test against systems you own or have authorisation to
         test (e.g. DVWA, OWASP Juice Shop, your own lab).</em>
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">─── VULNERABLE CODE (Python/Flask, never do this) ────────────</span>
 username = request.form[<span class="str">'username'</span>]
 password = request.form[<span class="str">'password'</span>]
@@ -2681,7 +2681,7 @@ cursor.execute(query, (username, password))
 
 <span class="com"># SQLAlchemy ORM (also safe — handles parameterisation for you)</span>
 user = User.query.filter_by(username=username, password=password).first()
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2765,7 +2765,7 @@ user = User.query.filter_by(username=username, password=password).first()
         &bull; <em>Resource Server</em> — holds your data and checks
           tokens (e.g. the Google Calendar API).
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">─── The Authorization Code Flow (most common, most secure) ────</span>
 
 1. You click "Sign in with Google" on ScheduleApp
@@ -2794,7 +2794,7 @@ user = User.query.filter_by(username=username, password=password).first()
 
 8. ScheduleApp now calls the Calendar API with the access token —
    never touching your Google password at any point in this process
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -2807,7 +2807,7 @@ user = User.query.filter_by(username=username, password=password).first()
         legitimate without a database lookup, because the signature
         proves it hasn't been tampered with.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># A JWT looks like this (one long string with two dots):</span>
 eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGljZSIsInJvbGUiOiJhZG1pbiJ9.SflKxwRJSMeKKF2QT4f...
 
@@ -2841,7 +2841,7 @@ token = jwt.encode(
     <span class="fn">print</span>(<span class="str">"Token expired — request a new one"</span>)
 <span class="kw">except</span> jwt.InvalidTokenError:
     <span class="fn">print</span>(<span class="str">"Invalid token — reject the request"</span>)
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">

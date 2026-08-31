@@ -50,7 +50,7 @@
       <div class="concept-label">MAKING A REQUEST</div>
       <div class="concept-title">Python fetch example</div>
       <div class="concept-desc">Using the <code>requests</code> library (install with <code>pip install requests</code>):</div>
-      <div class="code-block"><span class="kw">import</span> requests
+      <pre class="code-block"><span class="kw">import</span> requests
 
 <span class="com"># Fetch a list of users from a free test API</span>
 response = requests.get(<span class="str">"https://jsonplaceholder.typicode.com/users"</span>)
@@ -61,18 +61,18 @@ response = requests.get(<span class="str">"https://jsonplaceholder.typicode.com/
     <span class="kw">for</span> user <span class="kw">in</span> users[:3]:
         <span class="fn">print</span>(user[<span class="str">"name"</span>], <span class="str">"-"</span>, user[<span class="str">"email"</span>])
 <span class="kw">else</span>:
-    <span class="fn">print</span>(<span class="str">f"Error: {response.status_code}"</span>)</div>
+    <span class="fn">print</span>(<span class="str">f"Error: {response.status_code}"</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">HEADERS & AUTH</div>
       <div class="concept-title">Talking With a Credential</div>
       <div class="concept-desc">Most real APIs require an API key or token. Send it in the header, NOT the URL (URLs can appear in logs):</div>
-      <div class="code-block"><span class="com"># Bearer token auth (most common for modern APIs)</span>
+      <pre class="code-block"><span class="com"># Bearer token auth (most common for modern APIs)</span>
 headers = {
     <span class="str">"Authorization"</span>: <span class="str">"Bearer YOUR_API_KEY_HERE"</span>,
     <span class="str">"Content-Type"</span>: <span class="str">"application/json"</span>,
 }
-response = requests.get(<span class="str">"https://api.example.com/data"</span>, headers=headers)</div>
+response = requests.get(<span class="str">"https://api.example.com/data"</span>, headers=headers)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">REST <span class="acro-exp">(Representational State Transfer)</span> vs SOAP vs GRAPHQL</div>
@@ -101,7 +101,7 @@ response = requests.get(<span class="str">"https://api.example.com/data"</span>,
     <div class="concept-card">
       <div class="concept-label">VALID JSON TYPES</div>
       <div class="concept-title">Six Data Types in JSON</div>
-      <div class="code-block"><span class="com">// JSON supports exactly these value types:</span>
+      <pre class="code-block"><span class="com">// JSON supports exactly these value types:</span>
 {
   <span class="str">"string"</span>:   <span class="str">"hello world"</span>,
   <span class="str">"number"</span>:   <span class="num">42</span>,
@@ -110,12 +110,12 @@ response = requests.get(<span class="str">"https://api.example.com/data"</span>,
   <span class="str">"nothing"</span>:  <span class="kw">null</span>,
   <span class="str">"array"</span>:    [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>],
   <span class="str">"object"</span>:   { <span class="str">"key"</span>: <span class="str">"value"</span> }
-}</div>
+}</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PARSE & SERIALIZE</div>
       <div class="concept-title">JSON in Python — Two Directions</div>
-      <div class="code-block"><span class="kw">import</span> json
+      <pre class="code-block"><span class="kw">import</span> json
 
 <span class="com"># JSON string → Python object (parse/deserialize)</span>
 text = <span class="str">'{"name": "Alice", "age": 30}'</span>
@@ -133,13 +133,13 @@ text = json.dumps(data, indent=<span class="num">2</span>)
 
 <span class="com"># Read JSON from a file</span>
 <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"output.json"</span>) <span class="kw">as</span> f:
-    loaded = json.load(f)</div>
+    loaded = json.load(f)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">NESTED JSON</div>
       <div class="concept-title">Digging Into Deep Structures</div>
       <div class="concept-desc">Real API data is often nested. Navigate with chained bracket notation, but always guard against missing keys using <code>.get()</code>:</div>
-      <div class="code-block"><span class="com"># Typical API response structure</span>
+      <pre class="code-block"><span class="com"># Typical API response structure</span>
 data = {
     <span class="str">"user"</span>: {
         <span class="str">"profile"</span>: {
@@ -151,7 +151,7 @@ data = {
 
 <span class="com"># Safe deep access</span>
 name = data.get(<span class="str">"user"</span>, {}).get(<span class="str">"profile"</span>, {}).get(<span class="str">"name"</span>, <span class="str">"unknown"</span>)
-first_tag = data[<span class="str">"user"</span>][<span class="str">"profile"</span>][<span class="str">"tags"</span>][<span class="num">0</span>]  <span class="com"># "admin"</span></div>
+first_tag = data[<span class="str">"user"</span>][<span class="str">"profile"</span>][<span class="str">"tags"</span>][<span class="num">0</span>]  <span class="com"># "admin"</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">COMMON GOTCHAS</div>
@@ -181,7 +181,7 @@ first_tag = data[<span class="str">"user"</span>][<span class="str">"profile"</s
     <div class="concept-card">
       <div class="concept-label">IMPORTING</div>
       <div class="concept-title">Five Import Patterns</div>
-      <div class="code-block"><span class="kw">import</span> math                     <span class="com"># import whole module</span>
+      <pre class="code-block"><span class="kw">import</span> math                     <span class="com"># import whole module</span>
 <span class="fn">print</span>(math.sqrt(<span class="num">16</span>))
 
 <span class="kw">from</span> math <span class="kw">import</span> sqrt            <span class="com"># import one thing</span>
@@ -191,12 +191,12 @@ first_tag = data[<span class="str">"user"</span>][<span class="str">"profile"</s
 
 <span class="kw">import</span> numpy <span class="kw">as</span> np              <span class="com"># alias (numpy convention)</span>
 
-<span class="kw">from</span> os.path <span class="kw">import</span> join, exists <span class="com"># from submodule</span></div>
+<span class="kw">from</span> os.path <span class="kw">import</span> join, exists <span class="com"># from submodule</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PIP</div>
       <div class="concept-title">Python's Package Installer</div>
-      <div class="code-block"><span class="com"># Install a package from PyPI</span>
+      <pre class="code-block"><span class="com"># Install a package from PyPI</span>
 pip install requests
 
 <span class="com"># Install a specific version</span>
@@ -212,13 +212,13 @@ pip list
 pip freeze &gt; requirements.txt
 
 <span class="com"># Uninstall</span>
-pip uninstall requests</div>
+pip uninstall requests</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">VIRTUAL ENVIRONMENTS</div>
       <div class="concept-title">Keep Projects Isolated</div>
       <div class="concept-desc">Never install packages globally. Use a virtual environment so Project A and Project B can have different versions of the same library without conflict.</div>
-      <div class="code-block"><span class="com"># Create venv (Python 3.3+)</span>
+      <pre class="code-block"><span class="com"># Create venv (Python 3.3+)</span>
 python3 -m venv .venv
 
 <span class="com"># Activate it</span>
@@ -229,7 +229,7 @@ source .venv/bin/activate       <span class="com"># macOS/Linux</span>
 pip install requests
 
 <span class="com"># Deactivate when done</span>
-deactivate</div>
+deactivate</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">USEFUL STDLIB</div>
@@ -273,7 +273,7 @@ deactivate</div>
     <div class="concept-card">
       <div class="concept-label">CLASS ANATOMY</div>
       <div class="concept-title">Your First Class</div>
-      <div class="code-block"><span class="kw">class</span> <span class="fn">Dog</span>:
+      <pre class="code-block"><span class="kw">class</span> <span class="fn">Dog</span>:
     <span class="com"># __init__ runs when you create a new Dog</span>
     <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name, breed):
         <span class="kw">self</span>.name  = name   <span class="com"># instance attribute</span>
@@ -296,7 +296,7 @@ buddy = <span class="fn">Dog</span>(<span class="str">"Buddy"</span>, <span clas
 rex.learn(<span class="str">"sit"</span>)
 rex.learn(<span class="str">"shake"</span>)
 rex.show_off()     <span class="com"># Rex knows: sit, shake</span>
-buddy.show_off()   <span class="com"># Buddy knows nothing yet.</span></div>
+buddy.show_off()   <span class="com"># Buddy knows nothing yet.</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FOUR PILLARS</div>
@@ -309,7 +309,7 @@ buddy.show_off()   <span class="com"># Buddy knows nothing yet.</span></div>
     <div class="concept-card">
       <div class="concept-label">INHERITANCE EXAMPLE</div>
       <div class="concept-title">Extend Without Duplicating</div>
-      <div class="code-block"><span class="kw">class</span> <span class="fn">Animal</span>:
+      <pre class="code-block"><span class="kw">class</span> <span class="fn">Animal</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name):
         <span class="kw">self</span>.name = name
 
@@ -326,7 +326,7 @@ buddy.show_off()   <span class="com"># Buddy knows nothing yet.</span></div>
 
 animals = [<span class="fn">Dog</span>(<span class="str">"Rex"</span>), <span class="fn">Cat</span>(<span class="str">"Whiskers"</span>), <span class="fn">Dog</span>(<span class="str">"Buddy"</span>)]
 <span class="kw">for</span> a <span class="kw">in</span> animals:
-    <span class="fn">print</span>(a.speak())   <span class="com"># polymorphism — same call, different result</span></div>
+    <span class="fn">print</span>(a.speak())   <span class="com"># polymorphism — same call, different result</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">WHEN TO USE OOP</div>
@@ -364,7 +364,7 @@ animals = [<span class="fn">Dog</span>(<span class="str">"Rex"</span>), <span cl
     <div class="concept-card">
       <div class="concept-label">DICT TRICKS</div>
       <div class="concept-title">Patterns You'll Use Weekly</div>
-      <div class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> defaultdict, Counter
+      <pre class="code-block"><span class="kw">from</span> collections <span class="kw">import</span> defaultdict, Counter
 
 <span class="com"># Count word frequencies (classic interview problem)</span>
 words = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"apple"</span>, <span class="str">"cherry"</span>, <span class="str">"banana"</span>, <span class="str">"apple"</span>]
@@ -382,12 +382,12 @@ squared = {x: x**<span class="num">2</span> <span class="kw">for</span> x <span 
 <span class="com"># Merge two dicts (Python 3.9+)</span>
 a = {<span class="str">"x"</span>: <span class="num">1</span>}
 b = {<span class="str">"y"</span>: <span class="num">2</span>}
-merged = a | b   <span class="com"># {"x": 1, "y": 2}</span></div>
+merged = a | b   <span class="com"># {"x": 1, "y": 2}</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SET USE CASES</div>
       <div class="concept-title">Membership Test is O(1)</div>
-      <div class="code-block"><span class="com"># De-duplicate a list instantly</span>
+      <pre class="code-block"><span class="com"># De-duplicate a list instantly</span>
 names = [<span class="str">"Alice"</span>, <span class="str">"Bob"</span>, <span class="str">"Alice"</span>, <span class="str">"Carol"</span>]
 unique = <span class="fn">list</span>(<span class="fn">set</span>(names))
 
@@ -402,7 +402,7 @@ b = {<span class="num">2</span>, <span class="num">3</span>, <span class="num">4
 a &amp; b   <span class="com"># {2, 3}   intersection</span>
 a | b   <span class="com"># {1,2,3,4} union</span>
 a - b   <span class="com"># {1}      difference</span>
-a ^ b   <span class="com"># {1, 4}  symmetric difference</span></div>
+a ^ b   <span class="com"># {1, 4}  symmetric difference</span></pre>
     </div>
   
     <!-- merged from the duplicate "Big O &amp; Algorithms" card -->
@@ -439,7 +439,7 @@ a ^ b   <span class="com"># {1, 4}  symmetric difference</span></div>
       <div class="concept-label">LIST COMPREHENSION</div>
       <div class="concept-title">Build a List in One Readable Line</div>
       <div class="concept-desc">A list comprehension is a concise way to create a list by applying an expression to each item in an iterable, with an optional filter. It replaces 4-6 lines of loop code with 1.</div>
-      <div class="code-block"><span class="com"># Old way</span>
+      <pre class="code-block"><span class="com"># Old way</span>
 squares = []
 <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>):
     squares.append(x ** <span class="num">2</span>)
@@ -456,12 +456,12 @@ upper = [n.upper() <span class="kw">for</span> n <span class="kw">in</span> name
 
 <span class="com"># Flatten a 2D list</span>
 matrix = [[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>],[<span class="num">5</span>,<span class="num">6</span>]]
-flat = [x <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> x <span class="kw">in</span> row]  <span class="com"># [1,2,3,4,5,6]</span></div>
+flat = [x <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> x <span class="kw">in</span> row]  <span class="com"># [1,2,3,4,5,6]</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DICT & SET COMPREHENSIONS</div>
       <div class="concept-title">Same Idea, Different Brackets</div>
-      <div class="code-block"><span class="com"># Dict comprehension: name → length</span>
+      <pre class="code-block"><span class="com"># Dict comprehension: name → length</span>
 names = [<span class="str">"Alice"</span>, <span class="str">"Bob"</span>, <span class="str">"Carol"</span>]
 lengths = {n: <span class="fn">len</span>(n) <span class="kw">for</span> n <span class="kw">in</span> names}
 <span class="com"># {'Alice': 5, 'Bob': 3, 'Carol': 5}</span>
@@ -473,13 +473,13 @@ firsts = {n[<span class="num">0</span>].lower() <span class="kw">for</span> n <s
 <span class="com"># Invert a dict</span>
 original = {<span class="str">"a"</span>: <span class="num">1</span>, <span class="str">"b"</span>: <span class="num">2</span>, <span class="str">"c"</span>: <span class="num">3</span>}
 inverted = {v: k <span class="kw">for</span> k, v <span class="kw">in</span> original.items()}
-<span class="com"># {1: 'a', 2: 'b', 3: 'c'}</span></div>
+<span class="com"># {1: 'a', 2: 'b', 3: 'c'}</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">GENERATORS</div>
       <div class="concept-title">Lazy Evaluation — Process One at a Time</div>
       <div class="concept-desc">A list comprehension builds the entire list in memory at once. A generator expression (<code>()</code> instead of <code>[]</code>) produces values <strong>one at a time on demand</strong>. Essential for large datasets (files with millions of lines, streaming data).</div>
-      <div class="code-block"><span class="com"># List: builds 1M items in memory immediately</span>
+      <pre class="code-block"><span class="com"># List: builds 1M items in memory immediately</span>
 big_list = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1_000_000</span>)]
 
 <span class="com"># Generator: computes each item only when asked</span>
@@ -495,7 +495,7 @@ big_gen = (x**<span class="num">2</span> <span class="kw">for</span> x <span cla
 
 <span class="kw">for</span> line <span class="kw">in</span> <span class="fn">read_big_file</span>(<span class="str">"huge.log"</span>):
     <span class="kw">if</span> <span class="str">"ERROR"</span> <span class="kw">in</span> line:
-        <span class="fn">print</span>(line)   <span class="com"># never loads whole file</span></div>
+        <span class="fn">print</span>(line)   <span class="com"># never loads whole file</span></pre>
     </div>
   </div>
 </div>
@@ -513,7 +513,7 @@ big_gen = (x**<span class="num">2</span> <span class="kw">for</span> x <span cla
       <div class="concept-label">CONTEXT MANAGERS</div>
       <div class="concept-title">with — Guaranteed Cleanup</div>
       <div class="concept-desc">The <code>with</code> statement ensures cleanup code runs even if an error occurs. It calls <code>__enter__</code> on open and <code>__exit__</code> on close (or exception).</div>
-      <div class="code-block"><span class="com"># Without context manager (bad)</span>
+      <pre class="code-block"><span class="com"># Without context manager (bad)</span>
 f = <span class="fn">open</span>(<span class="str">"data.txt"</span>)
 data = f.read()
 f.close()   <span class="com"># won't run if read() throws</span>
@@ -530,13 +530,13 @@ f.close()   <span class="com"># won't run if read() throws</span>
 <span class="com"># Database connection pattern</span>
 <span class="kw">with</span> db.connect() <span class="kw">as</span> conn:
     conn.execute(<span class="str">"INSERT INTO logs ..."</span>)
-<span class="com"># connection closed + transaction committed/rolled back</span></div>
+<span class="com"># connection closed + transaction committed/rolled back</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DECORATORS</div>
       <div class="concept-title">Functions That Wrap Functions</div>
       <div class="concept-desc">A decorator is a function that takes a function as input and returns a modified version. Used for: logging, timing, authentication checks, caching, retry logic — any cross-cutting concern you don't want to copy-paste.</div>
-      <div class="code-block"><span class="kw">import</span> time
+      <pre class="code-block"><span class="kw">import</span> time
 <span class="kw">from</span> functools <span class="kw">import</span> wraps
 
 <span class="com"># Simple timer decorator</span>
@@ -556,12 +556,12 @@ f.close()   <span class="com"># won't run if read() throws</span>
     time.sleep(<span class="num">1</span>)
     <span class="kw">return</span> <span class="str">"done"</span>
 
-<span class="fn">slow_operation</span>()   <span class="com"># prints: slow_operation took 1.002s</span></div>
+<span class="fn">slow_operation</span>()   <span class="com"># prints: slow_operation took 1.002s</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FUNCTOOLS CACHE</div>
       <div class="concept-title">Memoization in One Line</div>
-      <div class="code-block"><span class="kw">from</span> functools <span class="kw">import</span> cache, lru_cache
+      <pre class="code-block"><span class="kw">from</span> functools <span class="kw">import</span> cache, lru_cache
 
 <span class="com"># Cache all results forever</span>
 @cache
@@ -575,7 +575,7 @@ f.close()   <span class="com"># won't run if read() throws</span>
 <span class="com"># LRU cache: keeps only the N most recent results</span>
 @lru_cache(maxsize=<span class="num">128</span>)
 <span class="kw">def</span> <span class="fn">expensive_lookup</span>(key):
-    <span class="kw">return</span> database.fetch(key)</div>
+    <span class="kw">return</span> database.fetch(key)</pre>
     </div>
   </div>
 </div>
@@ -597,7 +597,7 @@ f.close()   <span class="com"># won't run if read() throws</span>
     <div class="concept-card">
       <div class="concept-label">ARGPARSE</div>
       <div class="concept-title">stdlib CLI Argument Parsing</div>
-      <div class="code-block"><span class="kw">import</span> argparse
+      <pre class="code-block"><span class="kw">import</span> argparse
 
 parser = argparse.ArgumentParser(
     description=<span class="str">"Scan a log file for errors"</span>
@@ -612,19 +612,19 @@ args = parser.parse_args()
 
 <span class="fn">print</span>(<span class="str">f"Scanning {args.logfile} for top {args.count} errors"</span>)
 <span class="kw">if</span> args.verbose:
-    <span class="fn">print</span>(<span class="str">"Verbose mode on"</span>)</div>
+    <span class="fn">print</span>(<span class="str">"Verbose mode on"</span>)</pre>
       <div class="concept-desc">Usage: <code>python3 scan.py app.log -n 20 -v</code><br>Help: <code>python3 scan.py --help</code> (auto-generated!)</div>
     </div>
     <div class="concept-card">
       <div class="concept-label">MAIN GUARD</div>
       <div class="concept-title">if __name__ == "__main__"</div>
       <div class="concept-desc">This pattern lets your file work as both a runnable script AND an importable module. When run directly, <code>__name__</code> is <code>"__main__"</code>. When imported, it's the module name. The <code>main()</code> function will NOT run on import — useful for testing.</div>
-      <div class="code-block"><span class="kw">def</span> <span class="fn">main</span>():
+      <pre class="code-block"><span class="kw">def</span> <span class="fn">main</span>():
     args = parser.parse_args()
     <span class="com"># ... do the work ...</span>
 
 <span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
-    <span class="fn">main</span>()</div>
+    <span class="fn">main</span>()</pre>
     </div>
   </div>
 </div>
@@ -644,7 +644,7 @@ args = parser.parse_args()
       <div class="concept-label">TYPE HINTS</div>
       <div class="concept-title">Optional but Powerful Annotations</div>
       <div class="concept-desc">Python is dynamically typed but supports optional type annotations. Type hints don't change runtime behavior — they're documentation AND they enable static analysis tools (mypy, pyright) to catch type errors before running.</div>
-      <div class="code-block"><span class="kw">from</span> typing <span class="kw">import</span> Optional, List, Dict, Tuple, Union
+      <pre class="code-block"><span class="kw">from</span> typing <span class="kw">import</span> Optional, List, Dict, Tuple, Union
 
 <span class="com"># Basic function with type hints</span>
 <span class="kw">def</span> <span class="fn">greet</span>(name: str, count: int = <span class="num">1</span>) -> str:
@@ -660,13 +660,13 @@ args = parser.parse_args()
 
 <span class="com"># Python 3.10+ — simpler union syntax</span>
 <span class="kw">def</span> <span class="fn">maybe</span>(val: str | <span class="kw">None</span>) -> int | str:
-    <span class="kw">return</span> <span class="fn">len</span>(val) <span class="kw">if</span> val <span class="kw">else</span> <span class="str">"empty"</span></div>
+    <span class="kw">return</span> <span class="fn">len</span>(val) <span class="kw">if</span> val <span class="kw">else</span> <span class="str">"empty"</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DATACLASSES</div>
       <div class="concept-title">Structured Data Without Boilerplate</div>
       <div class="concept-desc">Dataclasses auto-generate <code>__init__</code>, <code>__repr__</code>, <code>__eq__</code> based on your field definitions. Less code, more clarity.</div>
-      <div class="code-block"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+      <pre class="code-block"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
 <span class="kw">from</span> datetime <span class="kw">import</span> datetime
 
 @dataclass
@@ -693,12 +693,12 @@ bob2 = <span class="fn">User</span>(<span class="str">"Bob"</span>, <span class=
 @dataclass(frozen=<span class="kw">True</span>)
 <span class="kw">class</span> <span class="fn">Point</span>:
     x: float
-    y: float</div>
+    y: float</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">NAMED TUPLES</div>
       <div class="concept-title">Lightweight Immutable Records</div>
-      <div class="code-block"><span class="kw">from</span> typing <span class="kw">import</span> NamedTuple
+      <pre class="code-block"><span class="kw">from</span> typing <span class="kw">import</span> NamedTuple
 
 <span class="kw">class</span> <span class="fn">Color</span>(NamedTuple):
     red: int
@@ -709,7 +709,7 @@ bob2 = <span class="fn">User</span>(<span class="str">"Bob"</span>, <span class=
 red = <span class="fn">Color</span>(<span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>)
 <span class="fn">print</span>(red.red)      <span class="com"># 255  — named access</span>
 <span class="fn">print</span>(red[<span class="num">0</span>])       <span class="com"># 255  — index access</span>
-r, g, b, a = red    <span class="com"># unpacking works</span></div>
+r, g, b, a = red    <span class="com"># unpacking works</span></pre>
     </div>
   </div>
 </div>
@@ -731,7 +731,7 @@ r, g, b, a = red    <span class="com"># unpacking works</span></div>
     <div class="concept-card">
       <div class="concept-label">YOUR FIRST TEST</div>
       <div class="concept-title">Create test_math.py</div>
-      <div class="code-block"><span class="com"># File: test_math.py</span>
+      <pre class="code-block"><span class="com"># File: test_math.py</span>
 <span class="com"># Convention: test files start with test_, test functions start with test_</span>
 
 <span class="kw">def</span> <span class="fn">add</span>(a, b):
@@ -754,13 +754,13 @@ r, g, b, a = red    <span class="com"># unpacking works</span></div>
 <span class="kw">def</span> <span class="fn">test_divide_by_zero</span>():
     <span class="kw">import</span> pytest
     <span class="kw">with</span> pytest.raises(ValueError):
-        <span class="fn">divide</span>(<span class="num">5</span>, <span class="num">0</span>)</div>
+        <span class="fn">divide</span>(<span class="num">5</span>, <span class="num">0</span>)</pre>
       <div class="concept-desc">Run: <code>pip install pytest</code> then <code>pytest test_math.py -v</code></div>
     </div>
     <div class="concept-card">
       <div class="concept-label">FIXTURES</div>
       <div class="concept-title">Shared Setup Code</div>
-      <div class="code-block"><span class="kw">import</span> pytest
+      <pre class="code-block"><span class="kw">import</span> pytest
 
 @pytest.fixture
 <span class="kw">def</span> <span class="fn">sample_user</span>():
@@ -771,30 +771,30 @@ r, g, b, a = red    <span class="com"># unpacking works</span></div>
     <span class="kw">assert</span> sample_user[<span class="str">"name"</span>] == <span class="str">"Alice"</span>
 
 <span class="kw">def</span> <span class="fn">test_user_email</span>(sample_user):
-    <span class="kw">assert</span> <span class="str">"@"</span> <span class="kw">in</span> sample_user[<span class="str">"email"</span>]</div>
+    <span class="kw">assert</span> <span class="str">"@"</span> <span class="kw">in</span> sample_user[<span class="str">"email"</span>]</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PARAMETRIZE</div>
       <div class="concept-title">Run One Test With Many Inputs</div>
-      <div class="code-block">@pytest.mark.parametrize(<span class="str">"a, b, expected"</span>, [
+      <pre class="code-block">@pytest.mark.parametrize(<span class="str">"a, b, expected"</span>, [
     (<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>),
     (<span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>),
     (-<span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>),
     (<span class="num">100</span>, -<span class="num">50</span>, <span class="num">50</span>),
 ])
 <span class="kw">def</span> <span class="fn">test_add_many</span>(a, b, expected):
-    <span class="kw">assert</span> <span class="fn">add</span>(a, b) == expected</div>
+    <span class="kw">assert</span> <span class="fn">add</span>(a, b) == expected</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">COVERAGE</div>
       <div class="concept-title">How Much of Your Code Is Tested?</div>
-      <div class="code-block"><span class="com"># Install pytest-cov</span>
+      <pre class="code-block"><span class="com"># Install pytest-cov</span>
 pip install pytest-cov
 
 <span class="com"># Run tests with coverage report</span>
 pytest --cov=mymodule --cov-report=html
 
-<span class="com"># View htmlcov/index.html to see untested lines</span></div>
+<span class="com"># View htmlcov/index.html to see untested lines</span></pre>
       <div class="concept-desc">Aim for 80%+ coverage on core logic. 100% is rarely worth the diminishing returns. Coverage measures LINES tested, not BEHAVIOR tested — write meaningful tests, not box-checking tests.</div>
     </div>
   </div>
@@ -824,7 +824,7 @@ pytest --cov=mymodule --cov-report=html
     <div class="concept-card">
       <div class="concept-label">BASIC SQL</div>
       <div class="concept-title">CRUD in SQL — Create, Read, Update, Delete</div>
-      <div class="code-block"><span class="com">-- Create a table</span>
+      <pre class="code-block"><span class="com">-- Create a table</span>
 <span class="kw">CREATE TABLE</span> users (
     id      INTEGER <span class="kw">PRIMARY KEY</span> AUTOINCREMENT,
     name    TEXT <span class="kw">NOT NULL</span>,
@@ -846,12 +846,12 @@ pytest --cov=mymodule --cov-report=html
 <span class="kw">UPDATE</span> users <span class="kw">SET</span> age = <span class="num">31</span> <span class="kw">WHERE</span> email = <span class="str">'alice@example.com'</span>;
 
 <span class="com">-- Delete</span>
-<span class="kw">DELETE FROM</span> users <span class="kw">WHERE</span> id = <span class="num">5</span>;</div>
+<span class="kw">DELETE FROM</span> users <span class="kw">WHERE</span> id = <span class="num">5</span>;</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">JOINS</div>
       <div class="concept-title">Combine Data From Multiple Tables</div>
-      <div class="code-block"><span class="com">-- Users and their orders (one user, many orders)</span>
+      <pre class="code-block"><span class="com">-- Users and their orders (one user, many orders)</span>
 <span class="kw">CREATE TABLE</span> orders (
     id      INTEGER <span class="kw">PRIMARY KEY</span>,
     user_id INTEGER <span class="kw">REFERENCES</span> users(id),
@@ -874,12 +874,12 @@ pytest --cov=mymodule --cov-report=html
 <span class="kw">FROM</span> users
 <span class="kw">LEFT JOIN</span> orders <span class="kw">ON</span> users.id = orders.user_id
 <span class="kw">GROUP BY</span> users.id
-<span class="kw">ORDER BY</span> total <span class="kw">DESC</span>;</div>
+<span class="kw">ORDER BY</span> total <span class="kw">DESC</span>;</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PYTHON + SQLITE</div>
       <div class="concept-title">Embedded Database, No Server Required</div>
-      <div class="code-block"><span class="kw">import</span> sqlite3
+      <pre class="code-block"><span class="kw">import</span> sqlite3
 
 <span class="com"># Connect (creates file if not exists)</span>
 conn = sqlite3.connect(<span class="str">"mydb.sqlite"</span>)
@@ -905,7 +905,7 @@ rows = cursor.execute(<span class="str">"SELECT * FROM notes ORDER BY id DESC"</
 <span class="kw">for</span> row <span class="kw">in</span> rows:
     <span class="fn">print</span>(row[<span class="str">"title"</span>], row[<span class="str">"body"</span>])
 
-conn.close()</div>
+conn.close()</pre>
       <div class="concept-desc">The <code>?</code> placeholder is critical. <strong>Never</strong> build SQL with string formatting — that's how SQL injection happens: <code>f"WHERE name = '{user_input}'"</code> lets attackers inject arbitrary SQL.</div>
     </div>
     <div class="concept-card">
@@ -946,7 +946,7 @@ conn.close()</div>
     <div class="concept-card">
       <div class="concept-label">DAILY WORKFLOW</div>
       <div class="concept-title">The Commands You Use Every Day</div>
-      <div class="code-block"><span class="com"># Start: clone an existing repo</span>
+      <pre class="code-block"><span class="com"># Start: clone an existing repo</span>
 git clone https://github.com/user/repo.git
 
 <span class="com"># Check current state</span>
@@ -968,12 +968,12 @@ git push origin feature/my-feature
 git pull origin main
 
 <span class="com"># View history</span>
-git log --oneline --graph -20</div>
+git log --oneline --graph -20</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">BRANCHING</div>
       <div class="concept-title">Feature → Review → Merge</div>
-      <div class="code-block"><span class="com"># Create and switch to new branch</span>
+      <pre class="code-block"><span class="com"># Create and switch to new branch</span>
 git checkout -b feature/add-search
 <span class="com"># (modern equivalent)</span>
 git switch -c feature/add-search
@@ -990,12 +990,12 @@ git switch main
 git merge feature/add-search
 
 <span class="com"># Delete merged branch</span>
-git branch -d feature/add-search</div>
+git branch -d feature/add-search</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">UNDO</div>
       <div class="concept-title">Getting Out of Trouble</div>
-      <div class="code-block"><span class="com"># Unstage a file (keep changes in working directory)</span>
+      <pre class="code-block"><span class="com"># Unstage a file (keep changes in working directory)</span>
 git restore --staged myfile.py
 
 <span class="com"># Discard local changes to a file (destructive!)</span>
@@ -1010,7 +1010,7 @@ git revert abc1234    <span class="com"># safe for shared branches</span>
 <span class="com"># See which commit introduced a bug (binary search)</span>
 git bisect start
 git bisect bad         <span class="com"># current commit is bad</span>
-git bisect good v1.2   <span class="com"># this tag was good</span></div>
+git bisect good v1.2   <span class="com"># this tag was good</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">COMMIT MESSAGES</div>
@@ -1045,7 +1045,7 @@ git bisect good v1.2   <span class="com"># this tag was good</span></div>
     <div class="concept-card">
       <div class="concept-label">ENVIRONMENT VARIABLES</div>
       <div class="concept-title">OS-Level Key-Value Pairs</div>
-      <div class="code-block"><span class="com"># Set in shell (temporary)</span>
+      <pre class="code-block"><span class="com"># Set in shell (temporary)</span>
 export DB_PASSWORD=<span class="str">"supersecret"</span>
 export API_KEY=<span class="str">"abc123xyz"</span>
 
@@ -1060,12 +1060,12 @@ port    = os.environ.get(<span class="str">"PORT"</span>, <span class="str">"808
 required = [<span class="str">"DB_HOST"</span>, <span class="str">"DB_PASSWORD"</span>, <span class="str">"SECRET_KEY"</span>]
 missing = [k <span class="kw">for</span> k <span class="kw">in</span> required <span class="kw">if</span> k <span class="kw">not in</span> os.environ]
 <span class="kw">if</span> missing:
-    <span class="kw">raise</span> RuntimeError(<span class="str">f"Missing env vars: {missing}"</span>)</div>
+    <span class="kw">raise</span> RuntimeError(<span class="str">f"Missing env vars: {missing}"</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">.ENV FILES</div>
       <div class="concept-title">python-dotenv — Local Development</div>
-      <div class="code-block"><span class="com"># .env file (NEVER commit this!)</span>
+      <pre class="code-block"><span class="com"># .env file (NEVER commit this!)</span>
 DB_HOST=localhost
 DB_PASSWORD=dev_password_123
 API_KEY=test_key_abc
@@ -1074,18 +1074,18 @@ DEBUG=true
 <span class="com"># .gitignore should have:</span>
 .env
 .env.*
-*.env</div>
-      <div class="code-block"><span class="com"># In Python: pip install python-dotenv</span>
+*.env</pre>
+      <pre class="code-block"><span class="com"># In Python: pip install python-dotenv</span>
 <span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
 load_dotenv()   <span class="com"># loads .env into os.environ</span>
 
 <span class="kw">import</span> os
-db_host = os.environ[<span class="str">"DB_HOST"</span>]   <span class="com"># now available</span></div>
+db_host = os.environ[<span class="str">"DB_HOST"</span>]   <span class="com"># now available</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">CONFIG FILES</div>
       <div class="concept-title">TOML, YAML <span class="acro-exp">(YAML Ain't Markup Language)</span>, JSON <span class="acro-exp">(JavaScript Object Notation)</span> for Non-Secret Config</div>
-      <div class="code-block"><span class="com"># config.toml (Python 3.11+ has built-in tomllib)</span>
+      <pre class="code-block"><span class="com"># config.toml (Python 3.11+ has built-in tomllib)</span>
 [database]
 host = "localhost"
 port = 5432
@@ -1093,14 +1093,14 @@ name = "myapp"
 
 [server]
 port = 8080
-debug = false</div>
-      <div class="code-block"><span class="kw">import</span> tomllib
+debug = false</pre>
+      <pre class="code-block"><span class="kw">import</span> tomllib
 
 <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"config.toml"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
     config = tomllib.load(f)
 
 db_host = config[<span class="str">"database"</span>][<span class="str">"host"</span>]
-server_port = config[<span class="str">"server"</span>][<span class="str">"port"</span>]</div>
+server_port = config[<span class="str">"server"</span>][<span class="str">"port"</span>]</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">12-FACTOR APP</div>
@@ -1127,7 +1127,7 @@ server_port = config[<span class="str">"server"</span>][<span class="str">"port"
     <div class="concept-card">
       <div class="concept-label">BASIC SETUP</div>
       <div class="concept-title">Configure Once at Entry Point</div>
-      <div class="code-block"><span class="kw">import</span> logging
+      <pre class="code-block"><span class="kw">import</span> logging
 
 <span class="com"># Configure at application startup (once)</span>
 logging.basicConfig(
@@ -1148,13 +1148,13 @@ logger.debug(<span class="str">"Detailed debugging info"</span>)   <span class="
 logger.info(<span class="str">"User Alice logged in"</span>)
 logger.warning(<span class="str">"Config not found, using defaults"</span>)
 logger.error(<span class="str">"Failed to connect to database"</span>)
-logger.critical(<span class="str">"System cannot start — exiting"</span>)</div>
+logger.critical(<span class="str">"System cannot start — exiting"</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">STRUCTURED LOGGING</div>
       <div class="concept-title">JSON <span class="acro-exp">(JavaScript Object Notation)</span> Logs for Modern Observability</div>
       <div class="concept-desc">Plain text logs are for humans to read. JSON logs are for machines to search. Modern stacks (ELK, Splunk, Datadog) ingest JSON and let you query <code>user_id:42 AND action:login</code> instead of grepping strings.</div>
-      <div class="code-block"><span class="com"># pip install structlog</span>
+      <pre class="code-block"><span class="com"># pip install structlog</span>
 <span class="kw">import</span> structlog
 
 logger = structlog.get_logger()
@@ -1163,7 +1163,7 @@ logger.info(<span class="str">"user_login"</span>,
             user_id=<span class="num">42</span>,
             ip=<span class="str">"192.168.1.5"</span>,
             success=<span class="kw">True</span>)
-<span class="com"># Output: {"event": "user_login", "user_id": 42, "ip": "...", "success": true, "timestamp": "..."}</span></div>
+<span class="com"># Output: {"event": "user_login", "user_id": 42, "ip": "...", "success": true, "timestamp": "..."}</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">LOG LEVELS IN PRODUCTION</div>
@@ -1192,7 +1192,7 @@ logger.info(<span class="str">"user_login"</span>,
     <div class="concept-card">
       <div class="concept-label">REQUIREMENTS FILES</div>
       <div class="concept-title">Pin Exact Versions for Production</div>
-      <div class="code-block"><span class="com"># requirements.txt — exact versions (production)</span>
+      <pre class="code-block"><span class="com"># requirements.txt — exact versions (production)</span>
 requests==2.31.0
 flask==3.0.0
 sqlalchemy==2.0.23
@@ -1210,7 +1210,7 @@ pip freeze &gt; requirements.txt
 <span class="com"># Recreate environment exactly</span>
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt</div>
+pip install -r requirements.txt</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PYPROJECT.TOML</div>
@@ -1241,7 +1241,7 @@ pip install -r requirements.txt</div>
       <div class="concept-label">ASYNC / AWAIT</div>
       <div class="concept-title">Coroutines in Python</div>
       <div class="concept-desc">An <code>async def</code> function is a coroutine — it can pause itself at <code>await</code> points while other coroutines run. The event loop switches between them, never blocking the thread.</div>
-      <div class="code-block"><span class="kw">import</span> asyncio
+      <pre class="code-block"><span class="kw">import</span> asyncio
 <span class="kw">import</span> aiohttp   <span class="com"># pip install aiohttp</span>
 
 <span class="kw">async def</span> <span class="fn">fetch_url</span>(session, url):
@@ -1261,12 +1261,12 @@ pip install -r requirements.txt</div>
         tasks = [<span class="fn">fetch_url</span>(session, url) <span class="kw">for</span> url <span class="kw">in</span> urls]
         results = <span class="kw">await</span> asyncio.gather(*tasks)
 
-asyncio.run(<span class="fn">main</span>())</div>
+asyncio.run(<span class="fn">main</span>())</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">asyncio ESSENTIALS</div>
       <div class="concept-title">The Key Building Blocks</div>
-      <div class="code-block"><span class="com"># asyncio.gather — run coroutines concurrently</span>
+      <pre class="code-block"><span class="com"># asyncio.gather — run coroutines concurrently</span>
 results = <span class="kw">await</span> asyncio.gather(coro1(), coro2(), coro3())
 
 <span class="com"># asyncio.create_task — fire and forget</span>
@@ -1282,13 +1282,13 @@ result = <span class="kw">await</span> task
 
 <span class="com"># asyncio.sleep — non-blocking wait</span>
 <span class="kw">await</span> asyncio.sleep(<span class="num">1</span>)    <span class="com"># other tasks run during this second</span>
-<span class="com"># vs time.sleep(1)        # BLOCKS the whole thread!</span></div>
+<span class="com"># vs time.sleep(1)        # BLOCKS the whole thread!</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">THREADING FOR I/O</div>
       <div class="concept-title">When You Can't Use Async</div>
       <div class="concept-desc">Not all libraries support async. For blocking I/O calls with regular (synchronous) libraries, use threads:</div>
-      <div class="code-block"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+      <pre class="code-block"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
 <span class="kw">import</span> requests
 
 <span class="kw">def</span> <span class="fn">fetch</span>(url):
@@ -1298,7 +1298,7 @@ urls = [<span class="str">"https://example.com"</span>] * <span class="num">10</
 
 <span class="com"># Run up to 5 requests concurrently</span>
 <span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">5</span>) <span class="kw">as</span> pool:
-    results = <span class="fn">list</span>(pool.map(<span class="fn">fetch</span>, urls))</div>
+    results = <span class="fn">list</span>(pool.map(<span class="fn">fetch</span>, urls))</pre>
     </div>
   </div>
 </div>
@@ -1339,7 +1339,7 @@ urls = [<span class="str">"https://example.com"</span>] * <span class="num">10</
     <div class="concept-card">
       <div class="concept-label">PYTHON RE MODULE</div>
       <div class="concept-title">Core Functions</div>
-      <div class="code-block"><span class="kw">import</span> re
+      <pre class="code-block"><span class="kw">import</span> re
 
 text = <span class="str">"Call 555-123-4567 or email alice@example.com today!"</span>
 
@@ -1362,12 +1362,12 @@ redacted = re.sub(<span class="str">r'\d{3}-\d{3}-\d{4}'</span>, <span class="st
 
 <span class="com"># compile for performance (reuse pattern)</span>
 phone_re = re.compile(<span class="str">r'\d{3}-\d{3}-\d{4}'</span>)
-phones = phone_re.findall(big_text)</div>
+phones = phone_re.findall(big_text)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">CAPTURE GROUPS</div>
       <div class="concept-title">Extract Specific Parts of a Match</div>
-      <div class="code-block"><span class="kw">import</span> re
+      <pre class="code-block"><span class="kw">import</span> re
 
 log_line = <span class="str">"2024-01-15 09:23:41 ERROR user_service: login failed for alice"</span>
 
@@ -1382,12 +1382,12 @@ m = pattern.match(log_line)
     <span class="fn">print</span>(m.group(<span class="str">"date"</span>))     <span class="com"># 2024-01-15</span>
     <span class="fn">print</span>(m.group(<span class="str">"level"</span>))    <span class="com"># ERROR</span>
     <span class="fn">print</span>(m.group(<span class="str">"message"</span>))  <span class="com"># login failed for alice</span>
-    <span class="fn">print</span>(m.groupdict())         <span class="com"># all groups as dict</span></div>
+    <span class="fn">print</span>(m.groupdict())         <span class="com"># all groups as dict</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PRACTICAL PATTERNS</div>
       <div class="concept-title">Patterns You'll Use Often</div>
-      <div class="code-block"><span class="com"># Email validation (simplified — perfect email regex is insane)</span>
+      <pre class="code-block"><span class="com"># Email validation (simplified — perfect email regex is insane)</span>
 email_re = re.compile(<span class="str">r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'</span>)
 
 <span class="com"># IPv4 address</span>
@@ -1401,12 +1401,12 @@ phone_re = re.compile(<span class="str">r'\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}'</sp
 
 <span class="com"># Strip HTML tags</span>
 tag_re = re.compile(<span class="str">r'&lt;[^&gt;]+&gt;'</span>)
-clean = tag_re.sub(<span class="str">''</span>, html_string)</div>
+clean = tag_re.sub(<span class="str">''</span>, html_string)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FLAGS</div>
       <div class="concept-title">Modify Matching Behavior</div>
-      <div class="code-block"><span class="com"># re.IGNORECASE — case-insensitive matching</span>
+      <pre class="code-block"><span class="com"># re.IGNORECASE — case-insensitive matching</span>
 re.findall(<span class="str">r'error'</span>, log, re.IGNORECASE)
 
 <span class="com"># re.MULTILINE — ^ and $ match line boundaries</span>
@@ -1424,7 +1424,7 @@ phone_re = re.compile(<span class="str">r&quot;&quot;&quot;
     (\d{3})    # exchange
     [-.\s]?    # separator
     (\d{4})    # number
-&quot;&quot;&quot;</span>, re.VERBOSE)</div>
+&quot;&quot;&quot;</span>, re.VERBOSE)</pre>
     </div>
   </div>
 </div>
@@ -1441,7 +1441,7 @@ phone_re = re.compile(<span class="str">r&quot;&quot;&quot;
     <div class="concept-card">
       <div class="concept-label">ESSENTIAL STRING METHODS</div>
       <div class="concept-title">Python String API <span class="acro-exp">(Application Programming Interface)</span> Cheatsheet</div>
-      <div class="code-block">s = <span class="str">"  Hello, World!  "</span>
+      <pre class="code-block">s = <span class="str">"  Hello, World!  "</span>
 
 <span class="com"># Cleaning</span>
 s.strip()              <span class="com"># "Hello, World!"  (removes whitespace)</span>
@@ -1470,12 +1470,12 @@ s.strip().split(<span class="str">", "</span>)  <span class="com"># ["Hello", "W
 name = <span class="str">"Alice"</span>
 <span class="str">f"Hello, {name}!"</span>               <span class="com"># f-string (Python 3.6+)</span>
 <span class="str">"Hello, {}!".format(name)</span>       <span class="com"># .format()</span>
-<span class="str">"Hello, %s!" % name</span>             <span class="com"># old %-style</span></div>
+<span class="str">"Hello, %s!" % name</span>             <span class="com"># old %-style</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">F-STRING TRICKS</div>
       <div class="concept-title">Format Numbers and Debug</div>
-      <div class="code-block">pi = <span class="num">3.14159265</span>
+      <pre class="code-block">pi = <span class="num">3.14159265</span>
 big = <span class="num">1234567890</span>
 score = <span class="num">0.8756</span>
 
@@ -1488,7 +1488,7 @@ score = <span class="num">0.8756</span>
 <span class="com"># Debug mode (Python 3.8+) — print name = value</span>
 x = <span class="num">42</span>
 <span class="fn">print</span>(<span class="str">f"{x=}"</span>)              <span class="com"># x=42</span>
-<span class="fn">print</span>(<span class="str">f"{x*2=}"</span>)            <span class="com"># x*2=84</span></div>
+<span class="fn">print</span>(<span class="str">f"{x*2=}"</span>)            <span class="com"># x*2=84</span></pre>
     </div>
   </div>
 </div>
@@ -1508,7 +1508,7 @@ x = <span class="num">42</span>
       <div class="concept-label">WHY EXCEPTIONS MATTER</div>
       <div class="concept-title">The Real World Is Messy</div>
       <div class="concept-desc">Programs fail. Files don't exist. Networks time out. Users enter garbage. Exceptions are Python's way of signaling that something went wrong at runtime. Good code anticipates failures and handles them gracefully — instead of crashing with a wall of red text.</div>
-      <div class="code-block"><span class="com"># Without exception handling — crashes if file missing</span>
+      <pre class="code-block"><span class="com"># Without exception handling — crashes if file missing</span>
 <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"config.txt"</span>) <span class="kw">as</span> f:
     data = f.read()   <span class="com"># FileNotFoundError kills the program</span>
 
@@ -1518,12 +1518,12 @@ x = <span class="num">42</span>
         data = f.read()
 <span class="kw">except</span> FileNotFoundError:
     <span class="fn">print</span>(<span class="str">"Config not found, using defaults"</span>)
-    data = <span class="str">""</span></div>
+    data = <span class="str">""</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">TRY/EXCEPT ANATOMY</div>
       <div class="concept-title">The Full try Block Structure</div>
-      <div class="code-block"><span class="kw">try</span>:
+      <pre class="code-block"><span class="kw">try</span>:
     result = risky_operation()         <span class="com"># code that might fail</span>
 <span class="kw">except</span> ValueError <span class="kw">as</span> e:
     <span class="fn">print</span>(<span class="str">f"Bad value: </span>{e}<span class="str">"</span>)              <span class="com"># handle specific exception</span>
@@ -1535,7 +1535,7 @@ x = <span class="num">42</span>
 <span class="kw">else</span>:
     <span class="fn">print</span>(<span class="str">"Success!"</span>)                    <span class="com"># runs only if NO exception</span>
 <span class="kw">finally</span>:
-    cleanup()                           <span class="com"># ALWAYS runs — perfect for cleanup</span></div>
+    cleanup()                           <span class="com"># ALWAYS runs — perfect for cleanup</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">EXCEPTION HIERARCHY</div>
@@ -1562,7 +1562,7 @@ x = <span class="num">42</span>
       <div class="concept-label">CUSTOM EXCEPTIONS</div>
       <div class="concept-title">Create Your Own Exception Types</div>
       <div class="concept-desc">Custom exceptions make your code's error vocabulary explicit. When a caller sees <code>InsufficientFundsError</code>, they know exactly what went wrong — no guessing from a generic <code>ValueError</code>.</div>
-      <div class="code-block"><span class="com"># Define custom exceptions by inheriting from Exception</span>
+      <pre class="code-block"><span class="com"># Define custom exceptions by inheriting from Exception</span>
 <span class="kw">class</span> <span class="fn">AppError</span>(Exception):
     <span class="str">&quot;&quot;&quot;Base class for all app-specific errors.&quot;&quot;&quot;</span>
 
@@ -1587,7 +1587,7 @@ x = <span class="num">42</span>
     <span class="fn">withdraw</span>(my_account, <span class="num">500</span>)
 <span class="kw">except</span> InsufficientFundsError <span class="kw">as</span> e:
     <span class="fn">print</span>(e)              <span class="com"># "Need $500.00 but only $23.50 available"</span>
-    <span class="fn">print</span>(e.needed)       <span class="com"># 500</span></div>
+    <span class="fn">print</span>(e.needed)       <span class="com"># 500</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">BEST PRACTICES</div>
@@ -1603,7 +1603,7 @@ x = <span class="num">42</span>
           <tr><td>EAFP vs LBYL</td><td>Python prefers EAFP (try it)</td><td>Checking every condition first</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># LBYL (Look Before You Leap) — C/Java style</span>
+      <pre class="code-block"><span class="com"># LBYL (Look Before You Leap) — C/Java style</span>
 <span class="kw">if</span> <span class="str">"key"</span> <span class="kw">in</span> my_dict:
     value = my_dict[<span class="str">"key"</span>]
 
@@ -1614,7 +1614,7 @@ x = <span class="num">42</span>
     value = default
 
 <span class="com"># Even better — use .get()</span>
-value = my_dict.get(<span class="str">"key"</span>, default)</div>
+value = my_dict.get(<span class="str">"key"</span>, default)</pre>
     </div>
   </div>
 </div>
@@ -1632,7 +1632,7 @@ value = my_dict.get(<span class="str">"key"</span>, default)</div>
       <div class="concept-label">PATHLIB</div>
       <div class="concept-title">The Modern Way to Handle File Paths</div>
       <div class="concept-desc"><code>pathlib.Path</code> is the Python 3 way to work with files and directories. It's object-oriented, cross-platform (handles Windows/Linux path separators), and far cleaner than string concatenation or the old <code>os.path</code> module.</div>
-      <div class="code-block"><span class="kw">from</span> pathlib <span class="kw">import</span> Path
+      <pre class="code-block"><span class="kw">from</span> pathlib <span class="kw">import</span> Path
 
 p = Path(<span class="str">"/home/alice/documents/report.txt"</span>)
 
@@ -1665,7 +1665,7 @@ data = p.read_bytes()
     <span class="fn">print</span>(f)
 
 <span class="com"># Create directories</span>
-Path(<span class="str">"output/reports"</span>).mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)</div>
+Path(<span class="str">"output/reports"</span>).mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FILE MODES</div>
@@ -1686,7 +1686,7 @@ Path(<span class="str">"output/reports"</span>).mkdir(parents=<span class="kw">T
     <div class="concept-card">
       <div class="concept-label">CSV <span class="acro-exp">(Comma-Separated Values)</span> AND JSON <span class="acro-exp">(JavaScript Object Notation)</span> FILES</div>
       <div class="concept-title">Working with Structured Data Files</div>
-      <div class="code-block"><span class="kw">import</span> csv, json
+      <pre class="code-block"><span class="kw">import</span> csv, json
 
 <span class="com"># ── CSV ──────────────────────────────────────────────────</span>
 <span class="com"># Read CSV into list of dicts</span>
@@ -1711,7 +1711,7 @@ Path(<span class="str">"output/reports"</span>).mkdir(parents=<span class="kw">T
 
 <span class="com"># JSON string ↔ Python object</span>
 data = json.loads(<span class="str">'{"key": "value"}'</span>)  <span class="com"># string → dict</span>
-text = json.dumps(data, indent=<span class="num">2</span>)       <span class="com"># dict → string</span></div>
+text = json.dumps(data, indent=<span class="num">2</span>)       <span class="com"># dict → string</span></pre>
     </div>
   </div>
 </div>
@@ -1745,7 +1745,7 @@ text = json.dumps(data, indent=<span class="num">2</span>)       <span class="co
       <div class="concept-label">PRINT DEBUGGING</div>
       <div class="concept-title">The Humble print() — Still Useful</div>
       <div class="concept-desc">Don't be ashamed of print debugging — even senior engineers use it. The trick is to print the right things: variable values, types, and "I got here" markers.</div>
-      <div class="code-block"><span class="com"># Print value AND type (the type often reveals the bug)</span>
+      <pre class="code-block"><span class="com"># Print value AND type (the type often reveals the bug)</span>
 <span class="fn">print</span>(<span class="str">f"DEBUG x = {x!r} (type: {type(x).__name__})"</span>)
 
 <span class="com"># f-string = debugging (Python 3.8+) — prints name AND value</span>
@@ -1758,13 +1758,13 @@ text = json.dumps(data, indent=<span class="num">2</span>)       <span class="co
 
 <span class="com"># Pretty-print complex structures</span>
 <span class="kw">from</span> pprint <span class="kw">import</span> pprint
-pprint(complicated_nested_dict)</div>
+pprint(complicated_nested_dict)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">THE DEBUGGER (pdb)</div>
       <div class="concept-title">Pause and Inspect Live Execution</div>
       <div class="concept-desc">A debugger lets you pause execution and inspect everything at that exact moment — variables, the call stack, step through line by line. Far more powerful than print for complex bugs.</div>
-      <div class="code-block"><span class="com"># Drop a breakpoint anywhere (Python 3.7+)</span>
+      <pre class="code-block"><span class="com"># Drop a breakpoint anywhere (Python 3.7+)</span>
 <span class="kw">def</span> <span class="fn">process</span>(data):
     result = transform(data)
     <span class="fn">breakpoint</span>()        <span class="com"># execution pauses here, opens pdb</span>
@@ -1781,13 +1781,13 @@ w     <span class="com"># where am I (show call stack)</span>
 q     <span class="com"># quit debugging</span>
 
 <span class="com"># Run a whole script under the debugger</span>
-python -m pdb myscript.py</div>
+python -m pdb myscript.py</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">READING TRACEBACKS</div>
       <div class="concept-title">The Error Message Is a Map, Not an Insult</div>
       <div class="concept-desc">Python tracebacks read bottom-up for the error type, and the call chain top-to-bottom. The most useful line is usually the LAST line of YOUR code before it enters a library.</div>
-      <div class="code-block">Traceback (most recent call last):
+      <pre class="code-block">Traceback (most recent call last):
   File <span class="str">"app.py"</span>, line 42, <span class="kw">in</span> &lt;module&gt;
     main()                          <span class="com"># ← call chain starts here</span>
   File <span class="str">"app.py"</span>, line 30, <span class="kw">in</span> main
@@ -1799,7 +1799,7 @@ KeyError: 'name'                    <span class="com"># ← WHAT went wrong</spa
 <span class="com"># Reading strategy:</span>
 <span class="com"># 1. Last line  = the error type and message</span>
 <span class="com"># 2. Line above = exactly where it broke</span>
-<span class="com"># 3. Work upward to understand HOW you got there</span></div>
+<span class="com"># 3. Work upward to understand HOW you got there</span></pre>
     </div>
   </div>
 </div>
@@ -1817,7 +1817,7 @@ KeyError: 'name'                    <span class="com"># ← WHAT went wrong</spa
       <div class="concept-label">THE PROBLEM THEY SOLVE</div>
       <div class="concept-title">Dependency Hell</div>
       <div class="concept-desc">Project A needs Django 3.2. Project B needs Django 4.2. If you install packages globally, they conflict — you can only have one version. Virtual environments give each project its own isolated set of packages, so they never interfere. <strong>Rule: never <code>pip install</code> into your system Python.</strong> Always use a virtual environment.</div>
-      <div class="code-block"><span class="com"># Create a virtual environment (built into Python 3)</span>
+      <pre class="code-block"><span class="com"># Create a virtual environment (built into Python 3)</span>
 python -m venv .venv
 
 <span class="com"># Activate it</span>
@@ -1835,7 +1835,7 @@ pip freeze &gt; requirements.txt
 pip install -r requirements.txt
 
 <span class="com"># Leave the environment</span>
-deactivate</div>
+deactivate</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">MODERN TOOLING</div>
@@ -1874,7 +1874,7 @@ deactivate</div>
       <div class="concept-label">RUNNING SYSTEM COMMANDS</div>
       <div class="concept-title">subprocess — Python Talking to the Shell</div>
       <div class="concept-desc">The <code>subprocess</code> module runs external commands from Python. Use it to wrap CLI <span class="acro-exp">(Command Line Interface)</span> tools, automate system tasks, and glue together programs. Always prefer the list form (not a string) to avoid shell injection.</div>
-      <div class="code-block"><span class="kw">import</span> subprocess
+      <pre class="code-block"><span class="kw">import</span> subprocess
 
 <span class="com"># Run a command, capture output (the modern way)</span>
 result = subprocess.run(
@@ -1896,12 +1896,12 @@ result = subprocess.run([<span class="str">"ping"</span>, <span class="str">"-c"
     <span class="fn">print</span>(<span class="str">"Host is up"</span>)
 
 <span class="com"># DANGER: shell=True allows injection if input is untrusted</span>
-<span class="com"># subprocess.run(f"rm {user_input}", shell=True)  # NEVER do this</span></div>
+<span class="com"># subprocess.run(f"rm {user_input}", shell=True)  # NEVER do this</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FILE SYSTEM AUTOMATION</div>
       <div class="concept-title">Bulk File Operations</div>
-      <div class="code-block"><span class="kw">from</span> pathlib <span class="kw">import</span> Path
+      <pre class="code-block"><span class="kw">from</span> pathlib <span class="kw">import</span> Path
 <span class="kw">import</span> shutil, datetime
 
 <span class="com"># Find and clean up old log files (&gt; 30 days)</span>
@@ -1926,12 +1926,12 @@ shutil.make_archive(<span class="str">"backup"</span>, <span class="str">"gztar"
 
 <span class="com"># Disk usage check</span>
 total, used, free = shutil.disk_usage(<span class="str">"/"</span>)
-<span class="fn">print</span>(<span class="str">f"Free: {free // (2**30)} GB"</span>)</div>
+<span class="fn">print</span>(<span class="str">f"Free: {free // (2**30)} GB"</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">A REAL AUTOMATION SCRIPT</div>
       <div class="concept-title">Putting It Together — A Disk Space Alert</div>
-      <div class="code-block"><span class="com">#!/usr/bin/env python3</span>
+      <pre class="code-block"><span class="com">#!/usr/bin/env python3</span>
 <span class="str">&quot;&quot;&quot;Alert if any mounted disk exceeds 85% usage.&quot;&quot;&quot;</span>
 <span class="kw">import</span> shutil, smtplib, sys
 <span class="kw">from</span> pathlib <span class="kw">import</span> Path
@@ -1964,7 +1964,7 @@ MOUNTS = [<span class="str">"/"</span>, <span class="str">"/var"</span>, <span c
 <span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
     main()
 
-<span class="com"># Schedule it with cron: */15 * * * * /usr/bin/python3 /opt/disk_check.py</span></div>
+<span class="com"># Schedule it with cron: */15 * * * * /usr/bin/python3 /opt/disk_check.py</span></pre>
     </div>
   </div>
 </div>
@@ -1982,7 +1982,7 @@ MOUNTS = [<span class="str">"/"</span>, <span class="str">"/var"</span>, <span c
       <div class="concept-label">FASTAPI</div>
       <div class="concept-title">The Modern Way to Build APIs in Python</div>
       <div class="concept-desc">FastAPI is the most popular modern Python web framework for building APIs. It's fast, gives you automatic interactive docs (Swagger UI), and validates request data automatically using type hints. Perfect for building internal tools, automation endpoints, and microservices.</div>
-      <div class="code-block"><span class="com"># pip install fastapi uvicorn</span>
+      <pre class="code-block"><span class="com"># pip install fastapi uvicorn</span>
 <span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException
 <span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
 
@@ -2017,7 +2017,7 @@ servers = {}
     <span class="kw">return</span> {<span class="str">"created"</span>: server.hostname}
 
 <span class="com"># Run it:  uvicorn main:app --reload</span>
-<span class="com"># Auto docs at: http://localhost:8000/docs</span></div>
+<span class="com"># Auto docs at: http://localhost:8000/docs</span></pre>
     </div>
   </div>
 </div>
@@ -2036,7 +2036,7 @@ servers = {}
       <div class="concept-label">WHY TIME IS HARD</div>
       <div class="concept-title">Time Zones, DST, and Other Nightmares</div>
       <div class="concept-desc">Date/time handling is famously error-prone: time zones, daylight saving time, leap years, leap seconds, and ambiguous formats. The golden rules: <strong>store and compute in UTC <span class="acro-exp">(Coordinated Universal Time)</span>, display in local time</strong>, and <strong>always use timezone-aware datetimes</strong> (never naive ones in production). Logs, certificates, and security events all depend on getting this right.</div>
-      <div class="code-block"><span class="kw">from</span> datetime <span class="kw">import</span> datetime, timezone, timedelta
+      <pre class="code-block"><span class="kw">from</span> datetime <span class="kw">import</span> datetime, timezone, timedelta
 
 <span class="com"># Get current time — ALWAYS timezone-aware</span>
 now = datetime.now(timezone.utc)        <span class="com"># aware, in UTC ✓</span>
@@ -2057,7 +2057,7 @@ elapsed = (end - start).total_seconds()
 
 <span class="com"># Unix timestamps (seconds since 1970-01-01 UTC)</span>
 ts = now.timestamp()                    <span class="com"># 1.78e9</span>
-datetime.fromtimestamp(ts, timezone.utc)</div>
+datetime.fromtimestamp(ts, timezone.utc)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">STRFTIME CHEAT SHEET</div>
@@ -2093,7 +2093,7 @@ datetime.fromtimestamp(ts, timezone.utc)</div>
       <div class="concept-label">WHY PANDAS</div>
       <div class="concept-title">Excel, But Programmable and Unlimited</div>
       <div class="concept-desc">pandas is the standard Python library for working with tabular data (think spreadsheets/CSVs/database tables). It handles millions of rows, automates repetitive analysis, and integrates with everything. For IT, it's invaluable for analyzing logs, parsing CSV <span class="acro-exp">(Comma-Separated Values)</span> exports, generating reports, and crunching security data. The core object is the <strong>DataFrame</strong> — a table with labeled rows and columns.</div>
-      <div class="code-block"><span class="com"># pip install pandas</span>
+      <pre class="code-block"><span class="com"># pip install pandas</span>
 <span class="kw">import</span> pandas <span class="kw">as</span> pd
 
 <span class="com"># Load data</span>
@@ -2106,12 +2106,12 @@ df.head()              <span class="com"># first 5 rows</span>
 df.shape               <span class="com"># (rows, columns)</span>
 df.columns             <span class="com"># column names</span>
 df.info()              <span class="com"># types and non-null counts</span>
-df.describe()          <span class="com"># summary statistics</span></div>
+df.describe()          <span class="com"># summary statistics</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FILTERING & ANALYSIS</div>
       <div class="concept-title">Answering Questions About Your Data</div>
-      <div class="code-block"><span class="com"># Select columns</span>
+      <pre class="code-block"><span class="com"># Select columns</span>
 df[<span class="str">"src_ip"</span>]                       <span class="com"># one column</span>
 df[[<span class="str">"src_ip"</span>, <span class="str">"action"</span>]]           <span class="com"># multiple</span>
 
@@ -2132,7 +2132,7 @@ top_attackers = (df[df[<span class="str">"action"</span>] == <span class="str">"
 df[<span class="str">"action"</span>].value_counts()      <span class="com"># DENY: 5021, ALLOW: 88210</span>
 
 <span class="com"># Export results</span>
-top_attackers.to_csv(<span class="str">"top_attackers.csv"</span>)</div>
+top_attackers.to_csv(<span class="str">"top_attackers.csv"</span>)</pre>
     </div>
   </div>
 </div>
@@ -2170,7 +2170,7 @@ top_attackers.to_csv(<span class="str">"top_attackers.csv"</span>)</div>
     <div class="concept-card">
       <div class="concept-label">USING THEM</div>
       <div class="concept-title">Run Them From the Command Line</div>
-      <div class="code-block"><span class="com"># Format code automatically</span>
+      <pre class="code-block"><span class="com"># Format code automatically</span>
 black .                       <span class="com"># reformat everything</span>
 ruff format .                 <span class="com"># ruff's formatter (black-compatible)</span>
 
@@ -2185,13 +2185,13 @@ mypy myproject/
 bandit -r myproject/
 
 <span class="com"># Run tests with coverage</span>
-pytest --cov=myproject</div>
+pytest --cov=myproject</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PRE-COMMIT HOOKS</div>
       <div class="concept-title">Automate Quality on Every Commit</div>
       <div class="concept-desc">pre-commit runs your quality tools automatically every time you <code>git commit</code>. If something fails, the commit is blocked until you fix it. This catches problems at the earliest possible moment.</div>
-      <div class="code-block"><span class="com"># .pre-commit-config.yaml</span>
+      <pre class="code-block"><span class="com"># .pre-commit-config.yaml</span>
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.4.0
@@ -2207,7 +2207,7 @@ repos:
 <span class="com"># Install once, then it runs on every commit</span>
 pip install pre-commit
 pre-commit install
-pre-commit run --all-files    <span class="com"># run manually on whole repo</span></div>
+pre-commit run --all-files    <span class="com"># run manually on whole repo</span></pre>
     </div>
   </div>
 </div>
@@ -2225,7 +2225,7 @@ pre-commit run --all-files    <span class="com"># run manually on whole repo</sp
       <div class="concept-label">THE PROBLEM</div>
       <div class="concept-title">How Do You Test Code That Calls an API <span class="acro-exp">(Application Programming Interface)</span>?</div>
       <div class="concept-desc">Your function calls a real API, queries a database, or reads the system clock. You can't have your tests hitting a real server (slow, flaky, costs money, may not exist in CI). The solution is <strong>mocking</strong>: replacing the real dependency with a fake that you control, so you can test YOUR logic in isolation.</div>
-      <div class="code-block"><span class="kw">from</span> unittest.mock <span class="kw">import</span> patch, MagicMock
+      <pre class="code-block"><span class="kw">from</span> unittest.mock <span class="kw">import</span> patch, MagicMock
 <span class="kw">import</span> requests
 
 <span class="com"># The function under test — calls a real API</span>
@@ -2244,7 +2244,7 @@ pre-commit run --all-files    <span class="com"># run manually on whole repo</sp
 
     <span class="com"># Assert YOUR logic worked</span>
     <span class="kw">assert</span> result == <span class="num">42</span>
-    mock_get.assert_called_once_with(<span class="str">"https://api.example.com/users"</span>)</div>
+    mock_get.assert_called_once_with(<span class="str">"https://api.example.com/users"</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">MOCKING CONCEPTS</div>
@@ -2296,7 +2296,7 @@ pre-commit run --all-files    <span class="com"># run manually on whole repo</sp
     <div class="concept-card">
       <div class="concept-label">THREADING — I/O BOUND</div>
       <div class="concept-title">Run Many Network Calls Concurrently</div>
-      <div class="code-block"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+      <pre class="code-block"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
 <span class="kw">import</span> requests
 
 urls = [<span class="str">"https://api.example.com/a"</span>,
@@ -2309,12 +2309,12 @@ urls = [<span class="str">"https://api.example.com/a"</span>,
 <span class="com"># 3 requests run concurrently instead of one-by-one</span>
 <span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">5</span>) <span class="kw">as</span> pool:
     results = <span class="fn">list</span>(pool.map(fetch, urls))
-<span class="fn">print</span>(results)   <span class="com"># much faster than sequential for I/O</span></div>
+<span class="fn">print</span>(results)   <span class="com"># much faster than sequential for I/O</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">MULTIPROCESSING — CPU BOUND</div>
       <div class="concept-title">Use All Your Cores for Heavy Computation</div>
-      <div class="code-block"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
+      <pre class="code-block"><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ProcessPoolExecutor
 
 <span class="kw">def</span> <span class="fn">heavy_compute</span>(n):
     <span class="kw">return</span> <span class="fn">sum</span>(i*i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n))   <span class="com"># CPU-intensive</span>
@@ -2325,13 +2325,13 @@ numbers = [<span class="num">10_000_000</span>] * <span class="num">8</span>
 <span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> pool:
     results = <span class="fn">list</span>(pool.map(heavy_compute, numbers))
 
-<span class="com"># For CPU work this is ~Ncores faster. Threads would NOT help here.</span></div>
+<span class="com"># For CPU work this is ~Ncores faster. Threads would NOT help here.</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">RACE CONDITIONS</div>
       <div class="concept-title">The Classic Concurrency Bug</div>
       <div class="concept-desc">When multiple threads modify shared data without coordination, you get race conditions — results depend on unpredictable timing. The fix is a <strong>lock</strong> (mutex) that ensures only one thread touches the shared data at a time. Race conditions are notoriously hard to debug because they're intermittent.</div>
-      <div class="code-block"><span class="kw">import</span> threading
+      <pre class="code-block"><span class="kw">import</span> threading
 
 counter = <span class="num">0</span>
 lock = threading.Lock()
@@ -2342,7 +2342,7 @@ lock = threading.Lock()
         counter += <span class="num">1</span>            <span class="com"># this is NOT atomic without the lock</span>
 
 <span class="com"># Without the lock, the final count would be unpredictably wrong</span>
-<span class="com"># because += is read-modify-write (three steps that can interleave)</span></div>
+<span class="com"># because += is read-modify-write (three steps that can interleave)</span></pre>
     </div>
   </div>
 </div>
@@ -2360,7 +2360,7 @@ lock = threading.Lock()
       <div class="concept-label">WHAT IS A SOCKET</div>
       <div class="concept-title">The Endpoint of a Network Connection</div>
       <div class="concept-desc">A socket is the programming interface for network communication — an endpoint defined by an IP <span class="acro-exp">(Internet Protocol)</span> address and a port. Every network app (browsers, servers, SSH) uses sockets under the hood. Understanding raw sockets demystifies how all higher-level networking works, and it's invaluable for network tools, scanners, and security testing.</div>
-      <div class="code-block"><span class="kw">import</span> socket
+      <pre class="code-block"><span class="kw">import</span> socket
 
 <span class="com"># ── A simple TCP client ──────────────────────────────────</span>
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  <span class="com"># IPv4, TCP</span>
@@ -2380,12 +2380,12 @@ s.close()
 
 <span class="kw">for</span> port <span class="kw">in</span> [<span class="num">22</span>, <span class="num">80</span>, <span class="num">443</span>, <span class="num">3306</span>]:
     state = <span class="str">"open"</span> <span class="kw">if</span> scan_port(<span class="str">"127.0.0.1"</span>, port) <span class="kw">else</span> <span class="str">"closed"</span>
-    <span class="fn">print</span>(<span class="str">f"Port {port}: {state}"</span>)</div>
+    <span class="fn">print</span>(<span class="str">f"Port {port}: {state}"</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">A MINIMAL SERVER</div>
       <div class="concept-title">Listening for Connections</div>
-      <div class="code-block"><span class="kw">import</span> socket
+      <pre class="code-block"><span class="kw">import</span> socket
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, <span class="num">1</span>)
@@ -2398,7 +2398,7 @@ server.listen(<span class="num">5</span>)                  <span class="com"># q
     <span class="fn">print</span>(<span class="str">f"Connection from {addr}"</span>)
     data = conn.recv(<span class="num">1024</span>)
     conn.sendall(<span class="str">b"Hello from server\n"</span>)
-    conn.close()</div>
+    conn.close()</pre>
     </div>
   </div>
 </div>
@@ -2417,7 +2417,7 @@ server.listen(<span class="num">5</span>)                  <span class="com"># q
       <div class="concept-label">FROM SNIPPET TO TOOL</div>
       <div class="concept-title">What Separates a Script from a Tool</div>
       <div class="concept-desc">A throwaway script has hardcoded values and prints with <code>print()</code>. A real tool that others can use has: command-line arguments, configuration, proper logging, error handling, and a clear exit code. Here's a complete example that ties together everything — argparse, logging, config, and exit codes — into a tool you'd actually deploy.</div>
-      <div class="code-block"><span class="com">#!/usr/bin/env python3</span>
+      <pre class="code-block"><span class="com">#!/usr/bin/env python3</span>
 <span class="str">&quot;&quot;&quot;logcheck — scan a log file for error patterns and report.&quot;&quot;&quot;</span>
 <span class="kw">import</span> argparse, logging, sys, re
 <span class="kw">from</span> pathlib <span class="kw">import</span> Path
@@ -2469,12 +2469,12 @@ log = logging.getLogger(<span class="str">"logcheck"</span>)
     <span class="kw">return</span> <span class="num">0</span>
 
 <span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
-    sys.exit(main())</div>
+    sys.exit(main())</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">USING IT</div>
       <div class="concept-title">Why This Design Pays Off</div>
-      <div class="code-block"><span class="com"># Self-documenting — argparse generates --help for free</span>
+      <pre class="code-block"><span class="com"># Self-documenting — argparse generates --help for free</span>
 ./logcheck.py --help
 
 <span class="com"># Flexible without editing code</span>
@@ -2485,7 +2485,7 @@ log = logging.getLogger(<span class="str">"logcheck"</span>)
 ./logcheck.py app.log -t 10 || echo "ALERT: too many errors!"
 
 <span class="com"># Composes with other tools (the Unix philosophy)</span>
-for f in /var/log/*.log; do ./logcheck.py "$f"; done</div>
+for f in /var/log/*.log; do ./logcheck.py "$f"; done</pre>
       <div class="concept-desc"><strong>The key lessons:</strong> accept input via arguments (not hardcoding), use <code>logging</code> (not print) so output levels are controllable, return meaningful <strong>exit codes</strong> (0 = success, non-zero = problem) so the tool plays well with shell scripts and monitoring, and guard <code>main()</code> with <code>if __name__ == "__main__"</code> so it's also importable. This is the anatomy of every good CLI tool.</div>
     </div>
   </div>
@@ -2514,7 +2514,7 @@ for f in /var/log/*.log; do ./logcheck.py "$f"; done</div>
           <tr><td>HMAC <span class="acro-exp">(Hash-based Message Authentication Code)</span> signature</td><td>Sign each request with a shared secret</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> API requests</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="kw">import</span> requests, os
+      <pre class="code-block"><span class="kw">import</span> requests, os
 
 <span class="com"># Read the key from env — NEVER hardcode</span>
 api_key = os.environ[<span class="str">"API_KEY"</span>]
@@ -2523,13 +2523,13 @@ headers = {<span class="str">"Authorization"</span>: <span class="str">f"Bearer 
 resp = requests.get(<span class="str">"https://api.example.com/v1/users"</span>,
                     headers=headers, timeout=<span class="num">10</span>)
 resp.raise_for_status()        <span class="com"># raise on 4xx/5xx</span>
-data = resp.json()</div>
+data = resp.json()</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">PAGINATION</div>
       <div class="concept-title">Getting ALL the Results, Not Just Page 1</div>
       <div class="concept-desc">APIs return data in pages to avoid huge responses. You must loop until there's no more data. The two common styles are offset/page-based and cursor-based.</div>
-      <div class="code-block"><span class="com"># Cursor/next-link pagination (common in modern APIs)</span>
+      <pre class="code-block"><span class="com"># Cursor/next-link pagination (common in modern APIs)</span>
 <span class="kw">def</span> <span class="fn">get_all_users</span>(session):
     users = []
     url = <span class="str">"https://api.example.com/v1/users"</span>
@@ -2549,13 +2549,13 @@ page = <span class="num">1</span>
     <span class="kw">if</span> <span class="kw">not</span> items:
         <span class="kw">break</span>
     process(items)
-    page += <span class="num">1</span></div>
+    page += <span class="num">1</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">RETRIES & BACKOFF</div>
       <div class="concept-title">Networks Fail — Handle It Gracefully</div>
       <div class="concept-desc">Transient failures (timeouts, 503s, brief network blips) are normal. Robust clients retry with <strong>exponential backoff</strong> — wait longer between each attempt — so they recover automatically without hammering a struggling server.</div>
-      <div class="code-block"><span class="kw">import</span> requests
+      <pre class="code-block"><span class="kw">import</span> requests
 <span class="kw">from</span> requests.adapters <span class="kw">import</span> HTTPAdapter
 <span class="kw">from</span> urllib3.util.retry <span class="kw">import</span> Retry
 
@@ -2570,13 +2570,13 @@ session = requests.Session()
 adapter = HTTPAdapter(max_retries=retry)
 session.mount(<span class="str">"https://"</span>, adapter)
 
-resp = session.get(<span class="str">"https://api.example.com/data"</span>, timeout=<span class="num">10</span>)</div>
+resp = session.get(<span class="str">"https://api.example.com/data"</span>, timeout=<span class="num">10</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">RATE LIMITING</div>
       <div class="concept-title">Respect the API's Limits (HTTP 429)</div>
       <div class="concept-desc">APIs cap how many requests you can make. Exceed it and you get <code>429 Too Many Requests</code>, often with a <code>Retry-After</code> header telling you how long to wait. Good clients track rate-limit headers and slow down <em>before</em> getting blocked.</div>
-      <div class="code-block"><span class="kw">import</span> time
+      <pre class="code-block"><span class="kw">import</span> time
 
 resp = session.get(url)
 <span class="kw">if</span> resp.status_code == <span class="num">429</span>:
@@ -2587,7 +2587,7 @@ resp = session.get(url)
 
 <span class="com"># Many APIs expose remaining quota in headers — watch them</span>
 remaining = resp.headers.get(<span class="str">"X-RateLimit-Remaining"</span>)
-reset_at  = resp.headers.get(<span class="str">"X-RateLimit-Reset"</span>)</div>
+reset_at  = resp.headers.get(<span class="str">"X-RateLimit-Reset"</span>)</pre>
     </div>
   </div>
 </div>
@@ -2606,7 +2606,7 @@ reset_at  = resp.headers.get(<span class="str">"X-RateLimit-Reset"</span>)</div>
       <div class="concept-label">BYTES VS TEXT</div>
       <div class="concept-title">The Distinction That Trips Up Everyone</div>
       <div class="concept-desc">Computers store everything as bytes (numbers 0-255). Text is bytes <em>interpreted</em> through an encoding. <code>str</code> is human-readable text; <code>bytes</code> is raw binary. You <strong>encode</strong> text → bytes (to send/store) and <strong>decode</strong> bytes → text (to read). Confusing the two causes the classic <code>UnicodeDecodeError</code> and garbled "mojibake" text.</div>
-      <div class="code-block"><span class="com"># Text (str) ↔ raw bytes</span>
+      <pre class="code-block"><span class="com"># Text (str) ↔ raw bytes</span>
 text = <span class="str">"café"</span>
 data = text.encode(<span class="str">"utf-8"</span>)        <span class="com"># str → bytes: b'caf\xc3\xa9'</span>
 back = data.decode(<span class="str">"utf-8"</span>)        <span class="com"># bytes → str: 'café'</span>
@@ -2616,7 +2616,7 @@ back = data.decode(<span class="str">"utf-8"</span>)        <span class="com"># 
 <span class="com"># (files, network, subprocess).</span>
 
 <span class="com"># Always specify encoding explicitly — don't rely on defaults</span>
-<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"f.txt"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> f: ...</div>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"f.txt"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> f: ...</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">UTF-8 & UNICODE</div>
@@ -2635,7 +2635,7 @@ back = data.decode(<span class="str">"utf-8"</span>)        <span class="com"># 
           <tr><td>URL encoding</td><td>Make text safe in URLs (% escaping)</td><td><code>%20</code> = space, <code>%40</code> = @</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="kw">import</span> base64, urllib.parse
+      <pre class="code-block"><span class="kw">import</span> base64, urllib.parse
 
 <span class="com"># Base64</span>
 base64.b64encode(<span class="str">b"Hello"</span>)              <span class="com"># b'SGVsbG8='</span>
@@ -2652,20 +2652,20 @@ urllib.parse.unquote(<span class="str">"a%20b%40c"</span>)       <span class="co
 <span class="com"># Command-line equivalents (handy in pentest/CTF)</span>
 <span class="com"># echo -n "Hello" | base64</span>
 <span class="com"># echo "SGVsbG8=" | base64 -d</span>
-<span class="com"># echo -n "Hello" | xxd -p</span></div>
+<span class="com"># echo -n "Hello" | xxd -p</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">HASHING (NOT ENCODING)</div>
       <div class="concept-title">One-Way by Design</div>
       <div class="concept-desc">Don't confuse hashing with encoding/encryption. <strong>Encoding</strong> is reversible (anyone can decode). <strong>Encryption</strong> is reversible with a key. <strong>Hashing</strong> is one-way — you cannot get the input back from the hash. Hashing is for integrity checks and password storage, never for "hiding" data you need to recover.</div>
-      <div class="code-block"><span class="kw">import</span> hashlib
+      <pre class="code-block"><span class="kw">import</span> hashlib
 
 <span class="com"># Integrity check — verify a file wasn't altered</span>
 data = Path(<span class="str">"file.iso"</span>).read_bytes()
 <span class="fn">print</span>(hashlib.sha256(data).hexdigest())
 
 <span class="com"># Command line equivalent</span>
-<span class="com"># sha256sum file.iso</span></div>
+<span class="com"># sha256sum file.iso</span></pre>
     </div>
   </div>
 </div>
@@ -2702,7 +2702,7 @@ data = Path(<span class="str">"file.iso"</span>).read_bytes()
     <div class="concept-card">
       <div class="concept-label">SRP <span class="acro-exp">(Single Responsibility Principle)</span> IN ACTION</div>
       <div class="concept-title">Single Responsibility — Before &amp; After</div>
-      <div class="code-block"><span class="com"># BAD — one class does everything (hard to test/change)</span>
+      <pre class="code-block"><span class="com"># BAD — one class does everything (hard to test/change)</span>
 <span class="kw">class</span> <span class="fn">Report</span>:
     <span class="kw">def</span> <span class="fn">fetch_data</span>(self): ...      <span class="com"># talks to DB</span>
     <span class="kw">def</span> <span class="fn">format_html</span>(self): ...     <span class="com"># formatting</span>
@@ -2713,12 +2713,12 @@ data = Path(<span class="str">"file.iso"</span>).read_bytes()
 <span class="kw">class</span> <span class="fn">ReportRepository</span>:     <span class="kw">def</span> <span class="fn">fetch</span>(self): ...
 <span class="kw">class</span> <span class="fn">ReportFormatter</span>:      <span class="kw">def</span> <span class="fn">to_html</span>(self, data): ...
 <span class="kw">class</span> <span class="fn">EmailSender</span>:          <span class="kw">def</span> <span class="fn">send</span>(self, html): ...
-<span class="com"># Each is independently testable and replaceable</span></div>
+<span class="com"># Each is independently testable and replaceable</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DEPENDENCY INVERSION</div>
       <div class="concept-title">Inject Dependencies — Don't Hardcode Them</div>
-      <div class="code-block"><span class="com"># BAD — hardcoded dependency, impossible to test without a real DB</span>
+      <pre class="code-block"><span class="com"># BAD — hardcoded dependency, impossible to test without a real DB</span>
 <span class="kw">class</span> <span class="fn">UserService</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(self):
         self.db = PostgresDatabase()   <span class="com"># locked to Postgres</span>
@@ -2729,7 +2729,7 @@ data = Path(<span class="str">"file.iso"</span>).read_bytes()
         self.db = db
 <span class="com"># In tests, pass a fake DB. In prod, pass the real one.</span>
 service = UserService(PostgresDatabase())
-test    = UserService(FakeInMemoryDatabase())</div>
+test    = UserService(FakeInMemoryDatabase())</pre>
     </div>
   </div>
 </div>
@@ -2747,7 +2747,7 @@ test    = UserService(FakeInMemoryDatabase())</div>
       <div class="concept-label">CLOUD SDKs <span class="acro-exp">(Software Development Kit)</span></div>
       <div class="concept-title">Every Cloud Action Is an API <span class="acro-exp">(Application Programming Interface)</span> Call</div>
       <div class="concept-desc">Everything you can click in a cloud console (AWS/Azure/GCP) is really an API call underneath. Cloud SDKs let you make those calls from code — so you can automate provisioning, build self-service tools, generate reports, and respond to events programmatically. <code>boto3</code> is the AWS <span class="acro-exp">(Amazon Web Services)</span> SDK for Python and the most common starting point.</div>
-      <div class="code-block"><span class="com"># pip install boto3</span>
+      <pre class="code-block"><span class="com"># pip install boto3</span>
 <span class="kw">import</span> boto3
 
 <span class="com"># Credentials come from env vars, ~/.aws/credentials, or IAM role</span>
@@ -2767,13 +2767,13 @@ ec2 = boto3.resource(<span class="str">"ec2"</span>)
 <span class="kw">for</span> inst <span class="kw">in</span> ec2.instances.<span class="fn">filter</span>(
     Filters=[{<span class="str">"Name"</span>: <span class="str">"instance-state-name"</span>, <span class="str">"Values"</span>: [<span class="str">"running"</span>]}]
 ):
-    <span class="fn">print</span>(inst.id, inst.instance_type, inst.public_ip_address)</div>
+    <span class="fn">print</span>(inst.id, inst.instance_type, inst.public_ip_address)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SECURITY-RELEVANT AUTOMATION</div>
       <div class="concept-title">A Practical Example — Find Public S3 <span class="acro-exp">(Simple Storage Service)</span> Buckets</div>
       <div class="concept-desc">Misconfigured public S3 buckets are a classic breach cause. Automation lets you audit at scale — exactly the kind of high-value script a cloud security engineer writes.</div>
-      <div class="code-block"><span class="kw">import</span> boto3
+      <pre class="code-block"><span class="kw">import</span> boto3
 <span class="kw">from</span> botocore.exceptions <span class="kw">import</span> ClientError
 
 s3 = boto3.client(<span class="str">"s3"</span>)
@@ -2787,7 +2787,7 @@ s3 = boto3.client(<span class="str">"s3"</span>)
             <span class="kw">if</span> grantee.get(<span class="str">"URI"</span>, <span class="str">""</span>).endswith(<span class="str">"AllUsers"</span>):
                 <span class="fn">print</span>(<span class="str">f"⚠️  PUBLIC bucket: {name}"</span>)
     <span class="kw">except</span> ClientError <span class="kw">as</span> e:
-        <span class="fn">print</span>(<span class="str">f"Could not check {name}: {e}"</span>)</div>
+        <span class="fn">print</span>(<span class="str">f"Could not check {name}: {e}"</span>)</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">SCHEDULING WORK</div>
@@ -2826,7 +2826,7 @@ s3 = boto3.client(<span class="str">"s3"</span>)
       <div class="concept-label">PYDANTIC</div>
       <div class="concept-title">Validation via Type Hints</div>
       <div class="concept-desc">Pydantic is the most popular Python validation library (and the engine behind FastAPI). You declare the shape of your data with types; Pydantic validates, coerces, and gives clear errors — turning messy input into trusted objects.</div>
-      <div class="code-block"><span class="com"># pip install pydantic</span>
+      <pre class="code-block"><span class="com"># pip install pydantic</span>
 <span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, EmailStr, Field, field_validator
 
 <span class="kw">class</span> <span class="fn">User</span>(BaseModel):
@@ -2850,7 +2850,7 @@ u = User(name=<span class="str">"Alice"</span>, age=<span class="str">"30"</span
 <span class="kw">try</span>:
     User(name=<span class="str">"Bob3"</span>, age=<span class="num">-5</span>, email=<span class="str">"not-an-email"</span>)
 <span class="kw">except</span> Exception <span class="kw">as</span> e:
-    <span class="fn">print</span>(e)             <span class="com"># lists every validation failure</span></div>
+    <span class="fn">print</span>(e)             <span class="com"># lists every validation failure</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">VALIDATION PRINCIPLES</div>
@@ -2884,7 +2884,7 @@ u = User(name=<span class="str">"Alice"</span>, age=<span class="str">"30"</span
       <div class="concept-label">WEBHOOKS</div>
       <div class="concept-title">"Don't Call Us, We'll Call You"</div>
       <div class="concept-desc">Polling means repeatedly asking "anything new yet?" — wasteful and slow. A webhook flips it: you give a service a URL <span class="acro-exp">(Uniform Resource Locator)</span>, and it sends an HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> POST to that URL when an event happens (a push, a payment, an alert). It's the backbone of modern integrations — GitHub→CI, Stripe→your app, monitoring→Slack. Your side just needs an endpoint that listens.</div>
-      <div class="code-block"><span class="com"># A minimal webhook RECEIVER (Flask)</span>
+      <pre class="code-block"><span class="com"># A minimal webhook RECEIVER (Flask)</span>
 <span class="kw">from</span> flask <span class="kw">import</span> Flask, request, abort
 <span class="kw">import</span> hmac, hashlib, os
 
@@ -2905,7 +2905,7 @@ SECRET = os.environ[<span class="str">"WEBHOOK_SECRET"</span>].encode()
         handle_new_issue(event)
 
     <span class="com"># 3. Respond FAST (2xx) — do slow work in the background</span>
-    <span class="kw">return</span> <span class="str">""</span>, <span class="num">204</span></div>
+    <span class="kw">return</span> <span class="str">""</span>, <span class="num">204</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">WEBHOOK BEST PRACTICES</div>
@@ -2924,7 +2924,7 @@ SECRET = os.environ[<span class="str">"WEBHOOK_SECRET"</span>].encode()
     <div class="concept-card">
       <div class="concept-label">SENDING NOTIFICATIONS</div>
       <div class="concept-title">ChatOps — Pipe Events to Slack/Discord</div>
-      <div class="code-block"><span class="kw">import</span> requests, os
+      <pre class="code-block"><span class="kw">import</span> requests, os
 
 <span class="com"># Slack incoming webhook — post an alert from any script</span>
 <span class="kw">def</span> <span class="fn">notify_slack</span>(text, level=<span class="str">"info"</span>):
@@ -2940,7 +2940,7 @@ SECRET = os.environ[<span class="str">"WEBHOOK_SECRET"</span>].encode()
     notify_slack(<span class="str">f"Disk at {disk_usage}% on web1"</span>, level=<span class="str">"error"</span>)
 
 <span class="com"># This is "ChatOps" — operations surfaced and run from chat.</span>
-<span class="com"># Alerts, deploy notifications, even running commands via bots.</span></div>
+<span class="com"># Alerts, deploy notifications, even running commands via bots.</span></pre>
     </div>
   </div>
 </div>
@@ -2974,7 +2974,7 @@ SECRET = os.environ[<span class="str">"WEBHOOK_SECRET"</span>].encode()
       <div class="concept-label">THE PICKLE TRAP</div>
       <div class="concept-title">Deserializing Untrusted Data = Remote Code Execution</div>
       <div class="concept-desc">Python's <code>pickle</code> can reconstruct arbitrary objects — including ones that run code on load. <strong>Never unpickle data from an untrusted source</strong> (uploaded files, network input, caches an attacker can touch). The same danger exists in other languages (Java deserialization, .NET, PHP). It's a top cause of critical CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span>.</div>
-      <div class="code-block"><span class="com"># DANGER — a malicious pickle can run ANY code on load</span>
+      <pre class="code-block"><span class="com"># DANGER — a malicious pickle can run ANY code on load</span>
 <span class="kw">import</span> pickle
 data = pickle.loads(untrusted_bytes)   <span class="com"># ✗ may execute attacker code!</span>
 
@@ -2983,13 +2983,13 @@ data = pickle.loads(untrusted_bytes)   <span class="com"># ✗ may execute attac
 obj = json.loads(untrusted_string)        <span class="com"># ✓ data only</span>
 cfg = yaml.safe_load(untrusted_yaml)      <span class="com"># ✓ safe_load, NOT load</span>
 
-<span class="com"># yaml.load() (without SafeLoader) is the dangerous one — avoid</span></div>
+<span class="com"># yaml.load() (without SafeLoader) is the dangerous one — avoid</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">FRIENDLY CLI <span class="acro-exp">(Command Line Interface)</span> OUTPUT</div>
       <div class="concept-title">Make Your Tools Pleasant to Use</div>
       <div class="concept-desc">Good output makes tools far more usable. The <code>rich</code> library adds color, tables, progress bars, and pretty tracebacks with almost no effort; <code>click</code>/<code>typer</code> build polished command-line interfaces.</div>
-      <div class="code-block"><span class="com"># pip install rich</span>
+      <pre class="code-block"><span class="com"># pip install rich</span>
 <span class="kw">from</span> rich.console <span class="kw">import</span> Console
 <span class="kw">from</span> rich.table <span class="kw">import</span> Table
 
@@ -3007,7 +3007,7 @@ console.print(table)
 <span class="com"># Progress bar for long operations</span>
 <span class="kw">from</span> rich.progress <span class="kw">import</span> track
 <span class="kw">for</span> item <span class="kw">in</span> track(items, description=<span class="str">"Processing..."</span>):
-    process(item)</div>
+    process(item)</pre>
     </div>
   </div>
 </div>
@@ -3044,7 +3044,7 @@ console.print(table)
       <div class="concept-label">TDD</div>
       <div class="concept-title">Test-Driven Development — Red, Green, Refactor</div>
       <div class="concept-desc">TDD flips the usual order: write the test <em>first</em>, watch it fail, then write just enough code to pass. It forces you to clarify what the code should do before writing it, and guarantees test coverage. Not everyone does strict TDD, but the cycle is a valuable tool to know.</div>
-      <div class="code-block"><span class="com"># 1. RED — write a failing test first</span>
+      <pre class="code-block"><span class="com"># 1. RED — write a failing test first</span>
 <span class="kw">def</span> <span class="fn">test_celsius_to_fahrenheit</span>():
     <span class="kw">assert</span> c_to_f(<span class="num">100</span>) == <span class="num">212</span>
     <span class="kw">assert</span> c_to_f(<span class="num">0</span>) == <span class="num">32</span>
@@ -3056,7 +3056,7 @@ console.print(table)
 <span class="com"># Run it → passes ✓</span>
 
 <span class="com"># 3. REFACTOR — clean up, tests keep you safe</span>
-<span class="com"># (add type hints, edge cases, docstring — re-run tests)</span></div>
+<span class="com"># (add type hints, edge cases, docstring — re-run tests)</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">WHAT MAKES A GOOD TEST</div>

@@ -1177,7 +1177,7 @@
           <tr><td>Documentation</td><td>Log every transfer: who, what, when, where, why — signed</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># Create a forensic disk image and hash it (Linux)</span>
+      <pre class="code-block"><span class="com"># Create a forensic disk image and hash it (Linux)</span>
 sudo dd if=/dev/sdb of=evidence.img bs=4M status=progress
 
 <span class="com"># Hash BEFORE and AFTER to prove integrity</span>
@@ -1185,7 +1185,7 @@ sha256sum /dev/sdb        <span class="com"># hash of original</span>
 sha256sum evidence.img    <span class="com"># must match — proves a faithful copy</span>
 
 <span class="com"># Better: use a tool that images AND hashes in one step</span>
-<span class="com"># dc3dd, ewfacquire (E01 format), or FTK Imager</span></div>
+<span class="com"># dc3dd, ewfacquire (E01 format), or FTK Imager</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">ARTIFACTS TO EXAMINE</div>
@@ -1314,7 +1314,7 @@ sha256sum evidence.img    <span class="com"># must match — proves a faithful c
           <tr><td><strong>DMARC</strong><br>Domain-based Message Auth</td><td>"What do I do if SPF/DKIM fail?"</td><td>DNS policy: none / quarantine / reject + reporting</td></tr>
         </tbody>
       </table>
-      <div class="code-block"><span class="com"># Example DNS records</span>
+      <pre class="code-block"><span class="com"># Example DNS records</span>
 <span class="com"># SPF — only these may send for example.com</span>
 example.com TXT "v=spf1 include:_spf.google.com ip4:203.0.113.5 -all"
 
@@ -1323,7 +1323,7 @@ _dmarc.example.com TXT "v=DMARC1; p=reject; rua=mailto:dmarc@example.com"
 
 <span class="com"># Check a domain's records</span>
 dig TXT example.com +short
-dig TXT _dmarc.example.com +short</div>
+dig TXT _dmarc.example.com +short</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DMARC POLICIES</div>
@@ -1389,7 +1389,7 @@ dig TXT _dmarc.example.com +short</div>
     <div class="concept-card">
       <div class="concept-label">GOOGLE DORKING</div>
       <div class="concept-title">Advanced Search Operators</div>
-      <div class="code-block"><span class="com"># Find exposed files on your own domain</span>
+      <pre class="code-block"><span class="com"># Find exposed files on your own domain</span>
 site:example.com filetype:pdf
 site:example.com filetype:xlsx
 site:example.com ext:sql | ext:env | ext:log
@@ -1403,7 +1403,7 @@ site:example.com intitle:"index of"
 <span class="com"># Find exposed config / git</span>
 site:example.com inurl:.git
 
-<span class="com"># Do this against YOUR OWN org to find leaks before attackers</span></div>
+<span class="com"># Do this against YOUR OWN org to find leaks before attackers</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DEFENSIVE ACTIONS</div>
@@ -1453,7 +1453,7 @@ site:example.com inurl:.git
     <div class="concept-card">
       <div class="concept-label">STATIC ANALYSIS TOOLKIT</div>
       <div class="concept-title">First Look at a Sample</div>
-      <div class="code-block"><span class="com"># Hash it (identify + look up reputation — never UPLOAD if sensitive)</span>
+      <pre class="code-block"><span class="com"># Hash it (identify + look up reputation — never UPLOAD if sensitive)</span>
 sha256sum sample.exe
 <span class="com"># Check the hash on VirusTotal (hash lookup, not file upload)</span>
 
@@ -1468,7 +1468,7 @@ file sample.exe
 <span class="com"># Tools: PEStudio, pefile (Python), CFF Explorer</span>
 
 <span class="com"># Detect packing/obfuscation (high entropy = likely packed)</span>
-<span class="com"># Tools: DIE (Detect It Easy)</span></div>
+<span class="com"># Tools: DIE (Detect It Easy)</span></pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">DYNAMIC ANALYSIS</div>
@@ -1582,7 +1582,7 @@ file sample.exe
       <div class="concept-desc">
         Every hunt follows the same loop:
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com">1. FORM HYPOTHESIS</span>
    "Attackers using PowerShell for lateral movement would show
     powershell.exe spawned by a non-interactive parent process
@@ -1609,7 +1609,7 @@ file sample.exe
 <span class="com">6. CREATE DETECTION RULE</span>
    Turn confirmed attacker behaviour into an automated SIEM rule
    so the hunt never needs to be repeated manually
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -1631,7 +1631,7 @@ file sample.exe
         4. Hunt.<br>
         5. Document coverage on your ATT&amp;CK matrix.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># Splunk hunt: T1053.005 – Scheduled Task/Job (Windows)</span>
 index=windows (EventCode=<span class="num">4698</span> OR EventCode=<span class="num">4702</span>)
 | eval suspicious=if(like(TaskContent,<span class="str">"%powershell%"</span>)
@@ -1650,7 +1650,7 @@ index=dns
 | where qlen &gt; <span class="num">50</span>
 | stats count, values(query) by src_ip
 | sort -count
-      </div>
+      </pre>
     </div>
 
     <div class="concept-card">
@@ -1669,7 +1669,7 @@ index=dns
         Hunters write SIGMA rules to share TTP <span class="acro-exp">(Tactics, Techniques, and Procedures)</span> detection across SIEM
         platforms.
       </div>
-      <div class="code-block">
+      <pre class="code-block">
 <span class="com"># osquery – live process inspection (runs on Windows/Linux/macOS)</span>
 osqueryi
 <span class="kw">SELECT</span> name, pid, parent, cmdline
@@ -1683,7 +1683,7 @@ osqueryi
 <span class="kw">JOIN</span>  processes p <span class="kw">ON</span> p.pid = n.pid
 <span class="kw">WHERE</span> n.remote_port <span class="kw">NOT IN</span> (<span class="num">80</span>, <span class="num">443</span>, <span class="num">53</span>, <span class="num">123</span>)
   <span class="kw">AND</span> n.state = <span class="str">'ESTABLISHED'</span>;
-      </div>
+      </pre>
     </div>
 
   </div>
