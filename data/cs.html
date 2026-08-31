@@ -2422,6 +2422,90 @@ valgrind --leak-check=full ./prog</pre>
             </div>
           </div>
 
+
+          <!-- ── TOPIC: AMDAHL'S LAW ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📉</span>
+              <span class="topic-name">Amdahl's Law — Why More Cores Stop Helping</span>
+              <span class="topic-badge">CS • Performance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Ceiling on Speedup Is Set by the Part You Cannot Parallelise</div>
+                <div class="concept-desc">
+                  The instinct is that doubling the cores should roughly halve the time. It does not, and the reason
+                  is brutally simple: <strong class="c-cyan">some fraction of the work must run in sequence</strong> —
+                  setup, coordination, the one lock everyone waits on — and no number of cores speeds that part up.
+                  <strong class="c-amber">A task that is 10% serial can never run more than 10× faster, on ten
+                  cores or ten thousand.</strong> The serial fraction, not the core count, is what sets the limit,
+                  and it does so long before you run out of cores to add.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Serial fraction</th><th>Max speedup, ever (infinite cores)</th></tr>
+                    <tr><td>5%</td><td>20×</td></tr>
+                    <tr><td>10%</td><td>10×</td></tr>
+                    <tr><td>25%</td><td>4×</td></tr>
+                    <tr><td>50%</td><td>2×</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Read that table as a wall, not a trend: at 10% serial, the 1000th core and the 10th core buy you
+                    almost exactly the same total speed. The money spent on cores past the knee is spent on nothing —
+                    which is why &ldquo;we added more workers and it barely got faster&rdquo; is not a bug, it is
+                    Amdahl's Law arriving on schedule.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Attack the Serial Fraction, Not the Core Count</div>
+                <div class="concept-desc">
+                  The law reframes the whole optimisation. If the ceiling is the serial part, then more hardware is
+                  the <em>wrong</em> lever past a point, and the win is in shrinking what must run in sequence —
+                  removing the global lock, cutting the coordination round-trip, parallelising the setup. This is
+                  where Amdahl meets <span class="xref">Concurrency Primitives — Mutexes, Semaphores, Conditions &amp; Atomics</span>:
+                  a single coarse lock is often the serial fraction, and splitting it is worth more than any number
+                  of extra threads contending on it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Instinct</th><th>What Amdahl says instead</th></tr>
+                    <tr><td>It's slow — add more cores</td><td>Measure the serial fraction first; cores past the knee do nothing</td></tr>
+                    <tr><td>Parallelise the hot loop</td><td>Worth it only if the loop is a big share of the total; a fast 90% barely helps</td></tr>
+                    <tr><td>More threads = more speed</td><td>Overhead and contention make real speedup <em>worse</em> than the ceiling, never better</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    That last row is the honest correction the clean formula omits: coordination, cache contention
+                    and scheduling mean measured speedup falls <em>short</em> of Amdahl's optimistic ceiling. The
+                    curve is the best case, and the real one bends down sooner.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">It Assumes a Fixed Problem — Grow the Problem and the Ceiling Lifts</div>
+                <div class="concept-desc">
+                  Amdahl's Law holds a crucial thing constant: the <em>size</em> of the workload. Its pessimism is
+                  about running the <strong>same</strong> task faster. The counterpoint — Gustafson's Law — observes
+                  that in practice people use bigger machines to solve bigger problems in the same time, and when
+                  the parallel part grows with the hardware, the serial fraction shrinks in proportion and the
+                  ceiling recedes. Both are true; they answer different questions.
+                </div>
+                <div class="concept-desc verdict">
+                  So the decision hinges on which question you are actually asking. Making a fixed job finish sooner
+                  is Amdahl's world, and there you profile the serial fraction before you buy a single core. Doing
+                  more work in the same wall-clock time is Gustafson's, and there scaling out genuinely pays. It is
+                  the same &ldquo;the intuition is linear, the reality is not&rdquo; lesson that
+                  <span class="xref">Little's Law &amp; Queueing — Why the Wait Explodes Before the Server Is Full</span>
+                  teaches for latency — two small laws that between them explain most surprised capacity plans.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cs -->
 
 <!-- ── TOPIC: MODULAR ARITHMETIC ─────────────────────────────── -->

@@ -12109,11 +12109,13 @@ and wide-column stores). Site **1,514 → 1,516**.
 So the sharpened conclusion: the site is saturated at the level of *fundamentals* — a broad
 probe of common subjects finds only phrasing misses — but the *depth* frontier of a mature
 technical domain still holds real gaps, and they surface only when the probe targets the
-advanced layer and every hit is verified against the content. **Four cards from three careful
-rounds** (Merkle, CRDT, TCP congestion, LSM), each a foundational structure a neighbour merely
-gestured at. That is the durable shape of new content on a site this size: not waves, but a
-handful of real gaps per deliberate audit — which is exactly the loop the scheduled Routine
-runs.
+advanced layer and every hit is verified against the content. A fourth round added **Amdahl's
+Law** — `cs` had Little's Law for latency but not the parallelism ceiling (why more cores stop
+helping; the serial fraction sets the limit; Gustafson as the counterpoint). **Five cards from
+four careful rounds** (Merkle, CRDT, TCP congestion, LSM, Amdahl), each a foundational structure
+a neighbour merely gestured at. That is the durable shape of new content on a site this size:
+not waves, but a handful of real gaps per deliberate audit — which is exactly the loop the
+scheduled Routine runs. Site **1,512 → 1,517** over the five.
 
 ---
 
