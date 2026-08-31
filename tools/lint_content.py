@@ -456,10 +456,14 @@ def main():
                         f'<span class="topic-chev"> — every other topic carries the '
                         f"expand chevron; add one so the card shows that it opens")
                 if "topic-icon" not in block:
-                    # Not an error: 90 headers legitimately lead with a difficulty
-                    # badge and no icon. Tracked so the day someone gives them all
-                    # an icon, this can graduate too.
-                    warns["header without topic-icon"] += 1
+                    # Graduated from a warning the moment its count hit zero: the 90
+                    # badge-led headers that led with no icon were each given a
+                    # subject-appropriate one, so an icon is now part of the header
+                    # skeleton every topic shares, the way the chevron is.
+                    errors.append(
+                        f"{name}:{line_no}: topic-header has no "
+                        f'<span class="topic-icon"> — every topic carries one; add a '
+                        f"subject-appropriate icon as the header's first span")
             if not has_name:
                 # Was a warning for two sessions and nobody acted on it. It only
                 # became interesting once it produced a visible bug: the label

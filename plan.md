@@ -12212,6 +12212,29 @@ index.html      +11.6 KB (90 chevron spans, post-minify)
 Check PASS · smoke **142/142** · axe **6/6** · visual **2/2** · determinism reproducible. The
 visual baseline is the filter-bar chips, which the collapsed-header change does not touch.
 
+### And then finishing the same 90 headers — the icons, and the gate closed
+
+The 90 headers were also the only topics on the site with no `topic-icon` — the same incomplete
+older style. Having restored the chevron, the honest thing was to finish them, not leave them
+half-normalised. Each got a **subject-appropriate icon**, chosen by keyword (`☸️` Kubernetes,
+`🐘` PostgreSQL, `🎣` phishing, `🦠` malware analysis, `⛓️` the kill chain, `🧨` ransomware,
+`🎛️` fine-tuning) with a per-domain fallback for the rest — a mapping dry-run and eyeballed
+before applying, which caught two substring collisions that are worth recording: `nist` matched
+*admi**nist**ration* (PostgreSQL's card), and `retrieval-augmented` matched the RAG expansion
+inside the *Fine-Tuning vs Prompting vs RAG* title. Both are the same lesson as failure #5 — a
+keyword is not a word boundary — and both were fixed by making the key more specific before a
+single file was written.
+
+With the count at zero, the icon check **graduated from warning to error** too, exactly as the
+chevron did. So the header skeleton — icon · name · badge · chevron — is now enforced whole:
+`lint_content.py` rejects a topic-header missing either the icon or the chevron, and both gates
+were proved to bite on a real domain file before being trusted.
+
+```
+headers w/o icon   90 → 0   (now an error-level lint gate, alongside the chevron)
+TREND line          header=90 warning retired — the skeleton is complete and enforced
+```
+
 ---
 
 # Closing note for Phase 7–10
