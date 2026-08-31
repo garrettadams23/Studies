@@ -12029,14 +12029,20 @@ term-overlap noise the tool refuses, so the pass stops where confidence does.
 
 ## 3. Learning paths are one domain's story
 
-**`net` holds 25 of the 75 path steps.** `cs`, `eng`, `grc`, `web`, `ai`, `data`,
-`philosophy`, `mind` and `productivity` hold **none**.
+**`net` held 25 of the 75 path steps.** `cs`, `eng`, `grc`, `web`, `ai`, `data`,
+`philosophy`, `mind` and `productivity` held **none**.
 
-Six paths exist and they are, in effect, network-and-operations paths. That is a legitimate
-first cut and it is now the constraint: a reader whose interest is data, security governance
-or frontend has no path at all. Two or three new paths — **a data path, a defender path, a
-"learning how to learn" path drawing on `productivity` and `mind`** — would use the existing
-machinery to reach the parts of the site that currently have no entry point.
+Six paths existed and they were, in effect, network-and-operations paths. That was a
+legitimate first cut and it became the constraint: a reader whose interest is data or study
+skills had no path at all. **Acted on this session:** two of the three paths §3 named were
+added — **`data-from-first-principles`** (18 steps: how a database works → the relational
+model → SQL from joins to window functions → the performance layer → the NoSQL/analytics
+landscape) and **`study-that-sticks`** (15 steps drawing on `productivity` and `mind`:
+retrieval and spacing → memory and attention → study systems → the mindset that sustains
+them). The defender path §3 also named already exists as `soc-analyst-starter`, so it was not
+duplicated. Paths went **6 → 8, 75 → 108 steps**, and `data` (18) and `productivity` (13) now
+have the entry point they lacked. `check_paths.py` green: 108 distinct topics, every step
+resolves.
 
 ## 4. What this does not mean
 
