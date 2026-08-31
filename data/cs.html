@@ -4835,3 +4835,94 @@ valgrind --leak-check=full ./prog</pre>
     </div>
   </div>
 </div>
+
+<!-- ── TOPIC: GOSSIP PROTOCOLS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🗣️</span>
+    <span class="topic-name">Gossip Protocols — Spreading State Without a Coordinator</span>
+    <span class="topic-badge">CS • Distributed Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Nobody Announces It to Everyone — Each Node Tells a Few Random Peers, and It Spreads Like a Rumour</div>
+      <div class="concept-desc">
+        The instinct for &ldquo;get this fact to all N nodes&rdquo; is a <strong class="c-cyan">broadcast</strong>
+        — one sender messaging everyone — or a central registry every node checks. Both break at scale: a
+        broadcast is N messages from a single origin, and one slow or partitioned node stalls it; a registry is
+        a bottleneck and a single point of failure. <strong class="c-amber">Gossip inverts the goal — no node
+        ever tries to reach everyone.</strong> On a timer, each node picks a few peers at random and tells them
+        what it knows; those peers do the same next round. A fact injected anywhere reaches the whole cluster in
+        <strong>O(log n)</strong> rounds, the way an infection reaches a population — no coordinator, no node
+        that has to stay up, no message storm from one source.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Approach</th><th>How the fact spreads</th><th>What breaks it</th></tr>
+          <tr><td>Broadcast</td><td>One sender → all N, directly</td><td>N messages per origin; one stalled receiver holds it up</td></tr>
+          <tr><td>Central registry</td><td>Everyone reads from one place</td><td>Bottleneck and single point of failure</td></tr>
+          <tr><td>Gossip</td><td>Each node → a few random peers, every round</td><td>Nothing single — there is no path it depends on</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          This is how real clusters keep track of themselves: Cassandra, Consul, Serf and DynamoDB's internals
+          gossip so that every node learns which peers are alive and what state they hold, without any one of
+          them owning the list. The membership table is not published — it <em>diffuses</em>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Fingerprint</div>
+      <div class="concept-title">O(log n) and Unkillable — but Eventually-Consistent, with No &ldquo;Done&rdquo; Signal</div>
+      <div class="concept-desc">
+        The properties are the tell. Spread is exponential — each round roughly doubles the set of nodes that
+        know — so time to full coverage grows only <strong>logarithmically</strong> with cluster size, and it is
+        stubbornly <strong class="c-cyan">robust</strong>: lose a third of the nodes mid-spread and the rumour
+        still gets through, because it never depended on a single path. The costs are the same coin's other
+        face: delivery is only <strong class="c-amber">probabilistic and eventual</strong> — there is no instant
+        at which a node knows everyone has heard — redundant messages are constant as peers re-hear what they
+        already know, and gossip will spread wrong or stale state exactly as efficiently as correct state.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th></th><th>Broadcast</th><th>Central coordinator</th><th>Gossip</th></tr>
+          <tr><td>Scales to large N</td><td>Poorly</td><td>Bottlenecks</td><td>Yes — O(log n) rounds</td></tr>
+          <tr><td>Survives node loss</td><td>Fragile</td><td>Single point of failure</td><td>Yes — no critical path</td></tr>
+          <tr><td>Delivery guarantee</td><td>Per-message</td><td>Authoritative</td><td>Eventual, probabilistic</td></tr>
+          <tr><td>&ldquo;Everyone has it&rdquo; signal</td><td>Possible</td><td>Possible</td><td>None — there is no receipt</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The recognisable shape: a node you just added shows up &ldquo;a few seconds later, everywhere,&rdquo;
+          and killing random nodes never stops propagation but also never hands you a receipt. That
+          eventual-not-immediate, robust-not-guaranteed profile is the signature of gossip — and it is why
+          gossip is what carries <strong>anti-entropy</strong>, the background reconciliation that
+          <span class="xref">Merkle Trees — Verifying and Diffing Huge Data by Comparing Hashes</span> makes
+          cheap, rather than anything that needs an answer this instant.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Scope Line</div>
+      <div class="concept-title">Gossip Spreads and Detects. It Does Not Agree, and It Does Not Order.</div>
+      <div class="concept-desc">
+        The trap is treating gossip as a stand-in for consensus because it &ldquo;gets everyone the same data
+        eventually.&rdquo; It decides nothing. If two nodes gossip conflicting updates, gossip faithfully
+        spreads <em>both</em> — reconciling them needs either a data type that merges deterministically
+        (<span class="xref">CRDTs — Merging Without Coordination, and What They Cannot Do</span>) or an actual
+        agreement protocol (<span class="xref">Consensus — Raft and Paxos, Without the Paper</span>). Gossip is
+        a transport and a membership mechanism, not an arbiter.
+      </div>
+      <div class="concept-desc verdict">
+        So the division of labour is clean. Use gossip for what tolerates &ldquo;eventually&rdquo; and must
+        survive nodes dying — cluster membership, failure detection (the SWIM family gossips <em>suspicions</em>,
+        which is the scalable answer to the problem
+        <span class="xref">Failure Detection &amp; FLP — Why "Is It Down?" Has No Perfect Answer</span> proves
+        has no perfect one), and propagating anti-entropy. Reach for consensus the moment you need one agreed
+        value or a total order. The deciding question is which one you are asking: <em>has everyone roughly
+        heard?</em> or <em>have we all decided?</em> — gossip answers the first and is the wrong tool for the
+        second.
+      </div>
+    </div>
+  </div>
+</div>

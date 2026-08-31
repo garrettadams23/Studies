@@ -12134,6 +12134,26 @@ the increasingly-niche long tail to the scheduled Routine's periodic fresh-conte
 than manufacture borderline cards — the counter-discipline this file has stated since Phase 8:
 *a rising count is not automatically progress.*
 
+**An eighth round, run later with fresh context — the same loop the scheduled Routine runs —**
+probed the distributed-systems depth frontier once more and returned a single survivor. `cs`
+taught consensus (Raft/Paxos), logical clocks, CRDTs, Merkle trees / anti-entropy and FLP
+failure detection, but never the **gossip / epidemic dissemination** primitive all five lean on:
+the propagation-and-membership mechanism under Cassandra, Consul, Serf and DynamoDB, where each
+node tells a few random peers and a fact reaches the whole cluster in O(log n) rounds — no
+coordinator, no critical path, eventual and probabilistic with no completion signal. A content
+grep confirmed the gap was real, not phrasing: **zero hits for `gossip` anywhere on the site**,
+while the round's other candidates verified as already covered — rate limiting is `sec`'s *API
+Abuse & Rate Limiting* (token and leaky bucket both), distributed transactions are `eng`'s *Saga
+& Outbox* (2PC named), and Lamport/vector clocks live inside the `cs` *Time in Distributed
+Systems* card. The one card was written to the rubric — the inversion (spread like a rumour, not
+a broadcast), the fingerprint (O(log n), unkillable, but no receipt), the scope line (gossip
+disseminates and detects; it does not agree or order) — and linked bidirectionally to its five
+neighbours (consensus, FLP, Merkle, CRDTs, consistent hashing). This does **not** reopen the
+pass. One genuine card from a careful, fully-verified round, on the exact vein the previous six
+worked, *is* the predicted yield — the durable shape is a handful per audit, thinning — not a new
+wave. Site **1,518 → 1,519**. Check PASS · smoke **142/142** · axe **6/6** · visual **2/2** ·
+related **1,266 links, 0 one-way**.
+
 ---
 
 # Closing note for Phase 7–10
