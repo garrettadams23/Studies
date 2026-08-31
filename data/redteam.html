@@ -2141,6 +2141,323 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             </div>
           </div>
 
+
+          <!-- ── TOPIC: PAYLOAD DEVELOPMENT & EVASION ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧬</span>
+              <span class="topic-name">Payload Development &amp; Evasion — Why Signatures Stopped Mattering</span>
+              <span class="topic-badge">REDTEAM • Tradecraft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Novel Binary Is Not the Win It Once Was</div>
+                <div class="concept-desc">
+                  The old evasion model was about the <em>file</em>: recompile, pack, obfuscate until the
+                  antivirus signature no longer matches, and you are in. Modern endpoint detection barely looks at
+                  the file. It watches <strong class="c-cyan">behaviour</strong> — the sequence of actions a
+                  process takes — so a brand-new, never-seen binary that then injects into another process, reads
+                  LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span> and beacons out is caught not for <em>what it is</em> but for <em>what it does</em>.
+                  <strong class="c-amber">Evasion moved from the payload to the behaviour</strong>, and operators
+                  who did not move with it get caught with a fresh binary every time.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Detection era</th><th>Looks at</th><th>Evasion that works</th></tr>
+                    <tr><td>Signature AV</td><td>Bytes of the file</td><td>Obfuscation, packing — now nearly irrelevant</td></tr>
+                    <tr><td>Heuristic / ML <span class="acro-exp">(Machine Learning)</span> static</td><td>File features</td><td>Harder; still a file-level game</td></tr>
+                    <tr><td>Behavioural EDR <span class="acro-exp">(Endpoint Detection and Response)</span></td><td>Process actions in sequence</td><td>Change what you do, not what you send</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    This reframes the whole subject. The question is no longer &ldquo;is my payload detected&rdquo;
+                    but &ldquo;does my <em>chain of actions</em> look like an attack&rdquo; — and the answer to that
+                    is blending in, which is why <span class="xref">Living off the Land — LOLBAS &amp; GTFOBins</span>
+                    became the dominant tradecraft rather than custom malware.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">What Actually Gets You Caught Is the Suspicious Sequence</div>
+                <div class="concept-desc">
+                  If you want to know what to avoid, look at what EDR alerts on — and it is almost always a
+                  <em>relationship</em> between actions, not a single act. Word spawning PowerShell is fine in
+                  isolation and damning in sequence with a network connection to a fresh domain.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Behaviour that lights up EDR</th><th>Why it is a tell</th></tr>
+                    <tr><td>Office app spawning a shell or script host</td><td>Documents do not run PowerShell in normal work</td></tr>
+                    <tr><td>Process reading LSASS memory</td><td>Almost nothing legitimate does this</td></tr>
+                    <tr><td>Unsigned code injected into a signed process</td><td>The classic hide-in-a-trusted-host move</td></tr>
+                    <tr><td>A beacon's regular, jittered callback</td><td>Machine-like timing a human session never has</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The advanced techniques — direct/indirect syscalls, unhooking, sleep obfuscation, BYOVD —
+                    are all attempts to make these actions <em>invisible to the sensor</em> rather than acceptable.
+                    They are an arms race with the specific EDR in the environment, which is why an operator tests
+                    against a copy of the target's product before the engagement, not during it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">Evasion Is a Fidelity Tool, Not the Point of the Job</div>
+                <div class="concept-desc">
+                  It is easy to sink an engagement into out-teching the EDR and forget that the client is paying to
+                  learn whether their <em>detection and response</em> works, not whether one operator can beat one
+                  product this week. If the threat you are emulating would not have a bleeding-edge loader, using
+                  one tests the wrong thing.
+                </div>
+                <div class="concept-desc verdict">
+                  Match the evasion to the adversary you agreed to emulate: a commodity-crimeware profile should
+                  get caught doing commodity things, because that is the realistic test. Spending the budget on
+                  evasion the modelled actor would never possess is <span class="xref">Avoiding Emulation Theatre — When a Green Dashboard Means Nothing</span>
+                  in reverse — a red flag dressed as sophistication.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: PHISHING INFRASTRUCTURE ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎣</span>
+              <span class="topic-name">Phishing Infrastructure — Domains, Certificates, Categorisation &amp; Ageing</span>
+              <span class="topic-badge">REDTEAM • Tradecraft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Email Is the Easy Part. The Infrastructure Has a Lead Time.</div>
+                <div class="concept-desc">
+                  New operators plan a phishing engagement backwards from the pretext — the clever email — and
+                  discover a week in that the <em>delivery</em> is what fails. A freshly registered domain with no
+                  category and no sending history lands in spam or gets blocked outright, and no amount of clever
+                  copy survives that. <strong class="c-amber">The infrastructure is the part with a lead time
+                  measured in weeks, and forgetting it is what makes an engagement slip.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Component</th><th>Lead time</th><th>What it does</th></tr>
+                    <tr><td>Domain with age &amp; reputation</td><td>Weeks to months</td><td>Old domains are trusted; brand-new ones are suspect by default</td></tr>
+                    <tr><td>Web categorisation</td><td>Days to weeks</td><td>&ldquo;Uncategorised&rdquo; is blocked by many proxies</td></tr>
+                    <tr><td>TLS <span class="acro-exp">(Transport Layer Security)</span> certificate</td><td>Minutes</td><td>Free and instant — its absence is the tell, not its presence</td></tr>
+                    <tr><td>Sending reputation (SPF/DKIM/DMARC aligned, warmed IP)</td><td>Weeks</td><td>Decides inbox vs spam vs reject</td></tr>
+                    <tr><td>Redirectors in front of the C2 <span class="acro-exp">(Command and Control)</span></td><td>Setup time</td><td>Keeps the real server off the first thing a defender clicks</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The planning consequence is blunt: <strong>buy and warm the infrastructure first, write the
+                    email last</strong>. A category-aged domain with clean sending reputation and a plausible
+                    look-alike name is 80% of whether the mail is read; the pretext is the last 20% and the only
+                    part beginners spend time on.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Everything That Makes a Phish Land Also Makes It Detectable</div>
+                <div class="concept-desc">
+                  The same properties an operator engineers are the ones a defender hunts for, which is why this
+                  card is as useful blue as red. Certificate transparency logs publish every new look-alike
+                  certificate; newly registered domain feeds flag the fresh registrations; and DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span> tells the
+                  defender when someone spoofs their exact domain rather than a look-alike.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Operator move</th><th>Defender's matching signal</th></tr>
+                    <tr><td>Register a look-alike domain</td><td>Newly-registered-domain feeds; typo-squat monitoring</td></tr>
+                    <tr><td>Issue a certificate for it</td><td>Certificate Transparency log watching your brand strings</td></tr>
+                    <tr><td>Spoof the real domain</td><td>DMARC at <code>p=reject</code> — the control that ends exact-domain spoofing</td></tr>
+                    <tr><td>Warm a sending IP <span class="acro-exp">(Internet Protocol)</span></td><td>Reputation services; first-contact-from-new-sender rules</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Note the split DMARC makes: it decisively stops spoofing of <em>your own</em> domain and does
+                    nothing about a <em>look-alike</em>, because a look-alike is a different domain the attacker
+                    controls and can pass its own checks. Worth doing, and not a phishing cure — the same honest
+                    boundary <span class="xref">Business Email Compromise — The Attack With No Malware</span> draws.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: PERSISTENCE — CHOOSING A MECHANISM YOU CAN REMOVE ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📌</span>
+              <span class="topic-name">Persistence — Choosing a Mechanism You Can Also Remove</span>
+              <span class="topic-badge">REDTEAM • Tradecraft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Every Persistence Choice Is a Promise to Clean Up</div>
+                <div class="concept-desc">
+                  The catalogue of persistence techniques is usually taught as an offensive menu — how to survive a
+                  reboot. On an authorised engagement the more important axis is the opposite:
+                  <strong class="c-amber">can you reliably remove it, and prove you did?</strong> A mechanism you
+                  cannot cleanly reverse leaves the client with an attacker-installed artefact that nobody
+                  documented, which is the failure mode that ends the relationship and, occasionally, ends up in
+                  someone else's incident report.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mechanism</th><th>Removability</th><th>Evidence trail</th></tr>
+                    <tr><td>Scheduled task / cron entry</td><td>Clean — delete the entry</td><td>Named, logged, easy to list</td></tr>
+                    <tr><td>Run key / autostart</td><td>Clean — delete the value</td><td>Enumerable; standard tooling finds it</td></tr>
+                    <tr><td>New / modified service</td><td>Clean if documented</td><td>Logged on creation</td></tr>
+                    <tr><td>Registry / WMI <span class="acro-exp">(Windows Management Instrumentation)</span> event subscription</td><td>Removable but easy to miss</td><td>Needs a record or it is orphaned</td></tr>
+                    <tr><td>Bootkit / firmware implant</td><td>Hard, sometimes irreversible</td><td>Out of scope for almost every engagement</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Rank persistence by <strong>cleanup cost</strong>, not by stealth, and prefer the mechanism you
+                    can list, log and delete over the one that survives a wipe. The clever, deeply hidden
+                    technique is the one you forget you planted.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Document at the Moment You Plant It, Not at the Debrief</div>
+                <div class="concept-desc">
+                  The reason artefacts get left behind is never a decision to leave them — it is that the record
+                  was going to be written up later, and later the operator misremembered which host, which key,
+                  which task. The discipline that prevents it is boring and total: an artefact log written as each
+                  mechanism is planted, with host, technique, exact location, and how to remove it.
+                </div>
+                <div class="concept-desc verdict">
+                  Treat the artefact log as a safety control, not paperwork: it is what lets you hand the client a
+                  complete list at the end, and what lets <em>them</em> confirm eviction if the same estate is
+                  later breached for real. An engagement that cannot produce that list has left the client less
+                  secure than it found them, which is the one outcome the <span class="xref">Rules of Engagement — Read This First</span>
+                  exist to prevent.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: LATERAL MOVEMENT AS A DECISION ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">♟️</span>
+              <span class="topic-name">Lateral Movement as a Decision, Not a Technique</span>
+              <span class="topic-badge">REDTEAM • Tradecraft</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Operators Who Get Caught Moved Because They Could, Not Because They Had To</div>
+                <div class="concept-desc">
+                  The tooling for lateral movement is exhaustively documented — the passing of hashes, the remote
+                  execution, the tunnels. What is not taught is <strong class="c-cyan">when to move at all</strong>.
+                  Every hop is a fresh chance to be detected, and it buys nothing unless it advances the objective.
+                  <strong class="c-amber">The operators who get burned are usually the ones who spread across a
+                  network because the access was there, turning a quiet foothold into a noisy sprawl the defender
+                  finally noticed.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Before each hop, ask</th><th>If the answer is no</th></tr>
+                    <tr><td>Does this move advance the objective?</td><td>Do not move — you are adding risk for nothing</td></tr>
+                    <tr><td>Is there a quieter path to the same place?</td><td>Take it — the loud path is a choice</td></tr>
+                    <tr><td>What new detection surface does this expose?</td><td>Price it against the gain before committing</td></tr>
+                    <tr><td>Can I move later if I wait?</td><td>Waiting is a move; patience is cheap and quiet</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Lateral movement is a <strong>trade of detection risk against objective progress</strong>, and
+                    like any trade it can be a bad one. The mature operator moves deliberately along the shortest
+                    path to the goal, not opportunistically across everything reachable.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Path You Choose Is the Detection You Hand the Defender</div>
+                <div class="concept-desc">
+                  Because the tools are known, the defender's detections are keyed to them, and the choice of
+                  technique is a choice of which alert you risk. Knowing the detection cost of each move is what
+                  separates picking a path from stumbling down one — and it is exactly the graph
+                  <span class="xref">BloodHound &amp; SharpHound — Attack-Path Graphing</span> makes visible to
+                  both sides.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>The signal it tends to leave</th></tr>
+                    <tr><td>Pass-the-hash / remote exec</td><td>Anomalous auth; new admin logon to a host</td></tr>
+                    <tr><td>Kerberoasting a path forward</td><td>Service-ticket requests with weak encryption</td></tr>
+                    <tr><td>Reusing an admin's live session</td><td>Quietest — no new credential, no new logon</td></tr>
+                    <tr><td>Tunnelling to reach a segment</td><td>Unusual internal connections; a proxy where none belongs</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Note the quietest option is usually <em>not</em> a tool at all — it is reusing access that
+                    already exists, which is why credential hygiene and session control do more against lateral
+                    movement than any single detection. Once inside <span class="xref">Pivoting &amp; Tunneling — Chisel, ligolo-ng &amp; proxychains</span>
+                    covers the mechanics; this card is about whether to reach for them.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: THE ENGAGEMENT DEBRIEF FOR A HOSTILE ROOM ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🗣️</span>
+              <span class="topic-name">The Engagement Debrief for a Hostile Room</span>
+              <span class="topic-badge">REDTEAM • Delivery</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Some Findings Land in a Room Where Somebody's Decision Is Being Criticised</div>
+                <div class="concept-desc">
+                  A clean debrief assumes a receptive audience. Often the audience is not: the finding implies that
+                  the team in the room built it wrong, chose the vulnerable product, or waved through the exception
+                  you walked through. <strong class="c-amber">In that room the technical truth of the finding is
+                  not enough — a correct finding, delivered as an accusation, gets argued into the ground and
+                  never fixed.</strong> Delivering it without losing it is a skill with a method.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Move</th><th>Why it keeps the finding alive</th></tr>
+                    <tr><td>Separate the system from the person</td><td>&ldquo;This path was open&rdquo;, never &ldquo;you left this open&rdquo;</td></tr>
+                    <tr><td>Lead with what worked</td><td>A team that hears its wins first can hear its gaps</td></tr>
+                    <tr><td>No surprises in the room</td><td>Never present a finding the technical team has not already seen privately</td></tr>
+                    <tr><td>Frame as the adversary's win, not yours</td><td>You are the messenger for a real threat, not the person who beat them</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The goal of the debrief is not to be <em>right</em> — you already are, that is what the
+                    evidence is for. The goal is for the finding to become a fixed control, and a finding the room
+                    rejects for social reasons is as unfixed as one you never found.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">This Is the Delivery, Not the Report</div>
+                <div class="concept-desc">
+                  The written artefact — evidence, reproduction steps, ranked remediation — is a separate craft,
+                  covered where the findings become backlog items. This card is only about the room: the live
+                  conversation where a defensive audience decides whether to accept or resist what the report says.
+                  The best report in the world dies if the meeting that presents it makes the team defensive.
+                </div>
+                <div class="concept-desc verdict">
+                  Prepare the room like part of the engagement: pre-brief the technical team so the group session
+                  holds no surprises, put the most senior sceptic's likely objection in your own mouth first, and
+                  end on the shared enemy. <span class="xref">Evidence Capture &amp; the Debrief — Findings That Become Backlog Items</span>
+                  makes the finding durable on paper; this makes it survive contact with people.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body redteam -->
 
 <!-- ── TOPIC: EMULATION VS SIMULATION VS PENTEST ─────────────── -->

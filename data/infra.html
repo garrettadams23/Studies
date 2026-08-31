@@ -4254,4 +4254,70 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             </div>
           </div>
 
+
+          <!-- ── TOPIC: PATCHING A SERVER ESTATE ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🩹</span>
+              <span class="topic-name">Patching a Server Estate — Windows, Rings &amp; the Ones That Cannot Reboot</span>
+              <span class="topic-badge">INFRA • Operations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Server Is Not a Laptop That Happens to Be in a Rack</div>
+                <div class="concept-desc">
+                  Laptop patching is a solved, largely automatic problem: rings, deferrals, a nudge to reboot.
+                  Servers break every one of those assumptions, because <strong class="c-amber">a server reboot is
+                  a negotiated event with a business, not a notification a user dismisses.</strong> Servers have
+                  dependencies on each other, maintenance windows that belong to someone else's revenue, and a
+                  minority that genuinely cannot take a scheduled reboot at all. The mechanism is the same; the
+                  constraints are entirely different.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Laptop patching assumes</th><th>A server estate instead requires</th></tr>
+                    <tr><td>Reboot whenever; the user re-opens their apps</td><td>A window negotiated with the service owner</td></tr>
+                    <tr><td>Devices are independent</td><td>Dependency order — the database before the app that needs it</td></tr>
+                    <tr><td>One ring model fits all</td><td>Rings that follow criticality and tolerance for risk</td></tr>
+                    <tr><td>Everything can eventually reboot</td><td>A population that cannot — needing a different answer entirely</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Rings still apply — canary servers first, then progressively more critical tiers — but the ring
+                    boundaries are drawn by <strong>blast radius and dependency</strong>, not by department. Patch
+                    the thing that everything else depends on last, in its own window, after its dependents have
+                    proven the patch is safe.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Server That Cannot Reboot Needs a Compensating Control, Not an Exception</div>
+                <div class="concept-desc">
+                  Every estate has the machine that must not go down — the legacy application server, the OT gateway,
+                  the box running something nobody can rebuild. The wrong answer is a permanent patching exception,
+                  which is a quiet decision to leave a known vulnerability in place indefinitely. The right answer
+                  treats un-patchability as a risk to be <em>compensated</em>, not waived.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Instead of an exception…</th><th>Compensate with</th></tr>
+                    <tr><td>&ldquo;It can never reboot&rdquo;</td><td>Network isolation — shrink what can reach it</td></tr>
+                    <tr><td>&ldquo;The vendor won't support the patch&rdquo;</td><td>Virtual patching / IPS <span class="acro-exp">(Intrusion Prevention System)</span> in front; tighter monitoring</td></tr>
+                    <tr><td>&ldquo;We'll get to it&rdquo;</td><td>A named owner and a review date, so the risk is tracked, not forgotten</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    An unpatched server that is isolated, monitored, and on a register with an owner is a managed
+                    risk; the same server as a silent exception is an incident waiting for a date. The distinction
+                    is whether someone is accountable for it. For hypervisor hosts, the reboot problem has a
+                    different answer —
+                    <span class="xref">Live Migration &amp; Maintenance Mode — Patching Hosts Without an Outage</span>
+                    — because the workloads can move off first.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body infra -->

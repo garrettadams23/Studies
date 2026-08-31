@@ -3694,6 +3694,332 @@ dsregcmd /status
             </div>
           </div>
 
+
+          <!-- ── TOPIC: EXIT PLANNING & LOCK-IN ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🚪</span>
+              <span class="topic-name">Exit Planning &amp; Lock-In — Pricing the Door Before You Need It</span>
+              <span class="topic-badge">CLOUD • Operating Model</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Lock-In Is Not Binary. It Is a Cost With a Number.</div>
+                <div class="concept-desc">
+                  &ldquo;Are we locked in?&rdquo; is the wrong question, because the answer is always yes, to
+                  varying degrees, and the yes/no framing leads to the expensive mistake of paying to avoid all of
+                  it. The right question is <strong class="c-cyan">what would it cost, in weeks of engineering, to
+                  leave?</strong> — and the answer differs enormously by layer. <strong class="c-amber">Compute is
+                  portable, managed data services are not, and the identity layer is the hardest of all.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Layer</th><th>Portability</th><th>Exit cost</th></tr>
+                    <tr><td>Compute (VMs, containers)</td><td>High — a container runs anywhere</td><td>Low</td></tr>
+                    <tr><td>Object &amp; block storage</td><td>Medium — egress fees and time to copy</td><td>Medium — data has gravity</td></tr>
+                    <tr><td>Managed databases &amp; analytics</td><td>Low — proprietary features, formats, tuning</td><td>High — a re-platforming project</td></tr>
+                    <tr><td>Identity, IAM <span class="acro-exp">(Identity and Access Management)</span> &amp; org structure</td><td>Very low — everything references it</td><td>Highest — rewires every permission</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So lock-in is a portfolio, not a switch. You can accept deep lock-in where the managed service
+                    is worth it (a serverless data warehouse you would never operate yourself) and stay portable
+                    where it is cheap to (stateless compute), as long as the choice is <em>priced and deliberate</em>
+                    rather than discovered at renewal.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Run the Exit Exercise Once, on Paper, While Nobody Is Leaving</div>
+                <div class="concept-desc">
+                  The value is not a portability abstraction layer — those usually cost more than the lock-in they
+                  avoid, the same trap the multi-cloud argument falls into. The value is a one-time, honest estimate
+                  of the exit cost per workload, which turns lock-in from a fear into a line item you can weigh
+                  against the benefit the managed service actually delivers.
+                </div>
+                <div class="concept-desc verdict">
+                  Do the exercise, write the number down, and revisit it only when the benefit or the price
+                  changes. A team that knows leaving its data warehouse is a six-month project has made an informed
+                  bet; one that assumes it is a weekend has made an uninformed one. This is the fourth of
+                  <span class="xref">Multi-Cloud — The Four Reasons, and Which Ones Survive Contact</span> —
+                  fear of lock-in — answered with arithmetic instead of an abstraction layer.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: TAGGING & COST ALLOCATION ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏷️</span>
+              <span class="topic-name">Tagging &amp; Cost Allocation — The Policy That Has to Be Enforced at Creation</span>
+              <span class="topic-badge">CLOUD • Operating Model</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Retro-Tagging Never Completes</div>
+                <div class="concept-desc">
+                  Every organisation eventually tries to allocate cloud spend and discovers half its resources have
+                  no owner tag. The instinct is a clean-up project — go back and tag everything — and that project
+                  <strong class="c-amber">never finishes</strong>, because resources are created faster than a
+                  human backfills them and nobody remembers who owns a two-year-old orphan. The only tag policy
+                  that produces usable cost data is one <strong class="c-cyan">enforced at the moment of
+                  creation</strong>, so an untagged resource cannot exist in the first place.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Approach</th><th>Outcome</th></tr>
+                    <tr><td>Tag retroactively, by hand</td><td>Asymptotically incomplete; the gap never closes</td></tr>
+                    <tr><td>Tag by convention, unenforced</td><td>Works for the diligent, fails for everyone else</td></tr>
+                    <tr><td>Enforce required tags at creation (policy)</td><td>Complete by construction — no tag, no resource</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    This is one of the few governance controls where <strong>&ldquo;block it&rdquo; is genuinely
+                    the right answer</strong>. A policy that refuses to create a resource missing its owner and
+                    cost-centre tags is mildly annoying on day one and the reason you have clean allocation data
+                    forever after.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Tag for the Questions You Will Ask, and No More</div>
+                <div class="concept-desc">
+                  A tagging schema fails the other direction too — thirty optional tags nobody fills in are as
+                  useless as none. Decide the small set of tags that answer the questions the business actually
+                  asks (who pays, which environment, which service), make exactly those mandatory, and enforce
+                  them. Everything else is optional and will be sparse, which is fine.
+                </div>
+                <div class="concept-desc verdict">
+                  Keep the mandatory set to the three or four tags that drive a chargeback report, enforce them at
+                  creation, and let the rest be advisory. The detail belongs in
+                  <span class="xref">Cloud Cost Control — Budgets, Tags &amp; Rightsizing</span>; the point here is
+                  narrower and load-bearing — allocation data is only ever as good as enforcement at creation makes it.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: COMMITMENT DISCOUNTS ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📉</span>
+              <span class="topic-name">Commitment Discounts — Reserved, Savings Plans &amp; the Forecast They Require</span>
+              <span class="topic-badge">CLOUD • Operating Model</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Commitment Is a Bet on Your Own Capacity Forecast</div>
+                <div class="concept-desc">
+                  Reserved instances and savings plans are presented as a discount, and the framing hides what they
+                  actually are: <strong class="c-cyan">a promise to keep paying for capacity for one or three
+                  years, in exchange for the provider taking that demand risk off its own books.</strong> The
+                  discount is the premium you earn for absorbing the risk. <strong class="c-amber">Which means
+                  buying them without a capacity forecast is not saving money — it is gambling on it</strong>, and
+                  the losing outcome is paying for reserved capacity you have already stopped using.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Instrument</th><th>Flexibility</th><th>Best when</th></tr>
+                    <tr><td>On-demand</td><td>Total — pay per hour</td><td>Spiky or unknown demand; the baseline you measure first</td></tr>
+                    <tr><td>Savings plan (spend commitment)</td><td>Medium — flexes across instance types</td><td>A stable spend floor, uncertain shape</td></tr>
+                    <tr><td>Reserved (specific capacity)</td><td>Low — locked to a type/region</td><td>A predictable, long-lived workload</td></tr>
+                    <tr><td>Spot / preemptible</td><td>None — can be reclaimed</td><td>Fault-tolerant, interruptible batch</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The order is the method: run on-demand long enough to <em>measure</em> a stable baseline, commit
+                    only to that floor, and leave the variable top on-demand or spot. Committing to peak is how
+                    organisations end up paying for capacity they no longer run.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">Commit the Floor, Never the Ceiling</div>
+                <div class="concept-desc">
+                  The failure is always the same shape: an enthusiastic first commitment sized to current usage,
+                  made before anyone knew whether that usage was a floor or a peak. A commitment should trail a
+                  measured baseline, not lead a hoped-for one, and it should be revisited each cycle as the
+                  baseline moves.
+                </div>
+                <div class="concept-desc verdict">
+                  Treat commitments as a rolling instrument tied to a forecast someone owns, not a one-off
+                  purchase: cover the stable base load, review coverage quarterly, and accept that the last slice
+                  of variable demand is cheaper left flexible than locked cheap and stranded.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: QUOTAS & SERVICE LIMITS ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🚧</span>
+              <span class="topic-name">Quotas &amp; Service Limits — The Outage That Is Not a Failure</span>
+              <span class="topic-badge">CLOUD • Operating Model</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Nothing Broke. You Hit a Number.</div>
+                <div class="concept-desc">
+                  The symptom is bewildering the first time: the platform is healthy, your code is correct, and yet
+                  the API <span class="acro-exp">(Application Programming Interface)</span> returns an error and new resources will not launch. <strong class="c-amber">You did not
+                  hit a bug — you hit a quota</strong>, an administrative ceiling the provider sets per account and
+                  per region. It is invisible until you reach it, silently different between regions, and raising
+                  it is a support ticket with a lead time, not a config change you can make at 2 a.m. during the launch.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property of a service limit</th><th>Why it surprises people</th></tr>
+                    <tr><td>Per-account and per-region</td><td>Tested fine in one region; failed in the launch region</td></tr>
+                    <tr><td>Silent until hit</td><td>No warning at 80% — you learn at 100%</td></tr>
+                    <tr><td>Raised via a support ticket</td><td>Lead time of hours to days; not self-service in a hurry</td></tr>
+                    <tr><td>Some are soft, some are hard</td><td>A soft limit lifts; a hard one is an architecture constraint</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The recognisable tell: it works in staging and fails in production, or works in one region and
+                    fails in another, with a quota or throttling error rather than a crash. Once you know the shape,
+                    the error message names the limit and the fix is a request, not a debugging session.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Make Limit Review a Pre-Launch Checklist Item, Not a Launch-Night Discovery</div>
+                <div class="concept-desc">
+                  Because raising a limit has a lead time, the only place to deal with it is <em>before</em> the
+                  event that needs the headroom. Any launch, migration or scale-up that will materially increase
+                  resource counts should carry a limits review as a gate, comparing projected usage against the
+                  current ceilings in the <em>target</em> region.
+                </div>
+                <div class="concept-desc verdict">
+                  Add &ldquo;check and pre-raise quotas in the launch region&rdquo; to the launch runbook, and
+                  monitor usage against limits so 80% pages a human days ahead. A quota is the one outage you can
+                  schedule away entirely, and the only reason it takes anyone down is that nobody looked until it did.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: REGION FAILOVER & CLOUD DR ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌍</span>
+              <span class="topic-name">Region Failover &amp; Cloud DR — What &ldquo;Multi-Region&rdquo; Actually Requires</span>
+              <span class="topic-badge">CLOUD • Operating Model</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Most &ldquo;Multi-Region&rdquo; Architectures Are Single-Region With a Cold Copy</div>
+                <div class="concept-desc">
+                  &ldquo;We're multi-region&rdquo; is claimed far more often than it is true, because the phrase
+                  describes an outcome most architectures have not paid for. Real active-active multi-region means
+                  serving live traffic from two places at once, which forces you to solve
+                  <strong class="c-cyan">data replication and consistency</strong> — and data has gravity and
+                  consistency has a price. <strong class="c-amber">What most teams actually have is a warm or cold
+                  standby: a legitimate, cheaper choice, and a different one</strong> that should be named in the
+                  runbook rather than discovered during the event.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>Recovery time</th><th>Cost &amp; complexity</th></tr>
+                    <tr><td>Backup &amp; restore</td><td>Hours to days</td><td>Cheapest; a real plan for many workloads</td></tr>
+                    <tr><td>Pilot light / warm standby</td><td>Minutes to hours</td><td>Moderate; scaled-down copy kept ready</td></tr>
+                    <tr><td>Active-active multi-region</td><td>Near-zero</td><td>Highest; you own the consistency problem</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The consistency problem is the wall: synchronous replication across regions adds latency to
+                    every write, and asynchronous replication means a failover can lose the last few seconds of
+                    data. Whichever you pick is a decision about acceptable data loss (RPO) — and pretending you
+                    have zero when you bought async is the dangerous version.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Choose the Tier per Workload, Then Test the Failover</div>
+                <div class="concept-desc">
+                  Not everything needs active-active, and paying for it everywhere is how DR budgets get burned on
+                  systems that could tolerate a day offline. Set each workload's recovery targets (RTO/RPO) from
+                  the business impact, choose the cheapest pattern that meets them, and — the step everyone skips —
+                  actually fail over to prove it works.
+                </div>
+                <div class="concept-desc verdict">
+                  An untested failover is a hypothesis, not a plan; the first real test during an outage is where
+                  the unreplicated dependency, the hard-coded region, and the missing quota in the standby region
+                  all surface at once. This is the availability half of
+                  <span class="xref">Well-Architected &amp; the Architecture Framework</span> — decide the tier
+                  deliberately, then rehearse it before the region does it for you.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: DATA RESIDENCY & SOVEREIGNTY ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚖️</span>
+              <span class="topic-name">Data Residency &amp; Sovereignty — Where the Bytes Are, and Who Can Compel Them</span>
+              <span class="topic-badge">CLOUD • Operating Model</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Two Separate Questions That Get Merged Into One</div>
+                <div class="concept-desc">
+                  &ldquo;Data residency&rdquo; and &ldquo;data sovereignty&rdquo; are used interchangeably and are
+                  not the same thing. Residency asks <strong class="c-cyan">where is the data physically stored</strong> —
+                  answered by choosing a region. Sovereignty asks <strong class="c-cyan">whose law can compel access
+                  to it</strong> — and that is <em>not</em> answered by choosing a region.
+                  <strong class="c-amber">A provider headquartered under one government may be legally compellable
+                  to hand over data no matter which region stores it</strong>, which is the part that surprises
+                  people and the part a region setting cannot fix.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>What answers it</th><th>What does not</th></tr>
+                    <tr><td>Where is it stored? (residency)</td><td>Region selection; data-location controls</td><td>—</td></tr>
+                    <tr><td>Whose law reaches it? (sovereignty)</td><td>Provider's legal domicile; sovereign-cloud offerings</td><td>Region selection alone</td></tr>
+                    <tr><td>Can it move for processing/support?</td><td>Contract terms; support-access controls</td><td>Assuming &ldquo;stored here&rdquo; means &ldquo;stays here&rdquo;</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Keeping the two apart is the whole card. A regulator asking about residency wants a region; a
+                    regulator asking about sovereignty wants to know which government could serve a warrant — and
+                    the second is a legal and contractual question that a dropdown in the console cannot settle.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Get the Requirement Stated in Legal Terms Before Choosing a Region</div>
+                <div class="concept-desc">
+                  The mistake is to receive &ldquo;the data must stay in-country&rdquo; and treat it as an
+                  engineering task solved by a region setting. Push back for the actual requirement: is this about
+                  physical location, about which law applies, or about who can be compelled? Each has a different
+                  technical and contractual answer, and building for the wrong one is expensive to unwind.
+                </div>
+                <div class="concept-desc verdict">
+                  Make legal name the requirement precisely, then map it: residency to a region, sovereignty to a
+                  provider's legal structure or a sovereign-cloud product, and access-during-support to contract
+                  terms. This is where the operating model meets compliance — the same boundary
+                  <span class="xref">Managed Service Trust Boundaries — What the Provider Secures, and Precisely What You Do</span>
+                  draws for security responsibilities.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cloud -->
 
 <!-- ── TOPIC: SECRETS IN KUBERNETES ──────────────────────────── -->

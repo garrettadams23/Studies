@@ -3200,4 +3200,665 @@ so nothing was exploited, and every step was a legitimate user action.</pre>
             </div>
           </div>
 
+
+          <!-- ── TOPIC: ATTRIBUTION ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🧭</span>
+              <span class="topic-name">Attribution — How It Is Actually Done, and Why It Is Usually Wrong</span>
+              <span class="topic-badge">THREAT • Intelligence</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Attribution Is a Judgement With a Confidence Level, Not a Forensic Result</div>
+                <div class="concept-desc">
+                  A fingerprint identifies a person; a set of network indicators identifies
+                  <em>an activity cluster</em>, which is a very different claim. Real attribution is an
+                  intelligence assessment — analysts weigh evidence, argue about it, and publish a
+                  <strong class="c-cyan">confidence level</strong> (low / moderate / high) rather than a verdict.
+                  <strong class="c-amber">The instinct to treat it as CSI, where the evidence decides, is the
+                  single most common mistake</strong>, and it is the reason confident public attributions age badly.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Layer of attribution</th><th>What it answers</th><th>How firm it gets</th></tr>
+                    <tr><td>Tactical</td><td>Which activity cluster (the animal name / numbered group)</td><td>Firm — this is clustering of observables</td></tr>
+                    <tr><td>Operational</td><td>Which unit or crew ran it</td><td>Soft — needs signals humans rarely leak</td></tr>
+                    <tr><td>Strategic</td><td>Which country or sponsor directed it</td><td>A government judgement, months in the making</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Almost everything a vendor publishes is the <strong>tactical</strong> layer wearing a
+                    strategic name. &ldquo;APT-something did this&rdquo; means &ldquo;this matches a cluster we
+                    have named&rdquo; — a useful, checkable claim — not &ldquo;we have identified the operators&rdquo;.
+                    Keep the two apart and most attribution arguments dissolve.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Everything Cheap to Observe Is Cheap to Fake</div>
+                <div class="concept-desc">
+                  The tell that an attribution is weak is that it rests on evidence an adversary controls.
+                  Language strings, compile timestamps and working hours are all authored artefacts — they say
+                  what the author wanted them to say, and sophisticated actors plant them deliberately to point
+                  at someone else. The technical name for it is a <strong class="c-cyan">false flag</strong>,
+                  and the better the operator, the more you should distrust the obvious clue.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Evidence</th><th>What it seems to show</th><th>Why it is weak alone</th></tr>
+                    <tr><td>Language / keyboard artefacts</td><td>Author's nationality</td><td>Trivially set; routinely planted</td></tr>
+                    <tr><td>Compile / activity timestamps</td><td>Author's timezone</td><td>Editable, and suggestive only at scale</td></tr>
+                    <tr><td>Malware code overlap</td><td>Same developer</td><td>Tools are shared, sold, stolen and leaked</td></tr>
+                    <tr><td>Infrastructure reuse (IPs, domains, TLS certs)</td><td>Same operator</td><td>Strongest technical signal — and rentable by anyone</td></tr>
+                    <tr><td>Targeting pattern across years</td><td>A sponsor's standing interest</td><td>The most durable indicator, and the slowest to build</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Confidence comes from <strong>convergence</strong>, not from any one line: infrastructure that
+                    overlaps <em>and</em> code that overlaps <em>and</em> a target set that fits a known interest,
+                    over time. A single strong clue pointing at a country is the shape of a false flag, not the
+                    shape of a finding.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">For a Defender, the Right Question Is Never &ldquo;Who&rdquo;</div>
+                <div class="concept-desc">
+                  This card is not an argument that attribution is worthless — for sanctions, indictments and
+                  diplomacy it is the whole point, and states invest in it for good reason. It is an argument
+                  about <strong>whose job it is</strong>. Chasing a country name mid-incident spends the scarcest
+                  resource you have, analyst attention, on the one output that changes nothing you are about to do.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question</th><th>Actionable?</th><th>Who owns it</th></tr>
+                    <tr><td>Which country?</td><td>No — same containment either way</td><td>Governments, over months</td></tr>
+                    <tr><td>What did they touch?</td><td>Yes — scopes the eviction</td><td>You, now</td></tr>
+                    <tr><td>How did they get in?</td><td>Yes — closes the door</td><td>You, now</td></tr>
+                    <tr><td>Will they come back?</td><td>Yes — sets the recovery plan</td><td>You, now</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Spend the incident answering <em>what</em> and <em>how</em>; let attribution accrete afterwards
+                    from the evidence you preserved. The one place the country matters to <em>you</em> is
+                    expectation-setting: an actor who re-enters after eviction — the pattern
+                    <span class="xref">State-Sponsored Operations — Different Objectives, Different Tradecraft</span>
+                    describes — needs estate-wide credential rotation and long-tail monitoring, not a press release.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: THE EXTORTION ECONOMY ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">💰</span>
+              <span class="topic-name">The Extortion Economy — Double Extortion, Leak Sites &amp; the Payment Question</span>
+              <span class="topic-badge">THREAT • Economy</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Encryption Stopped Being the Leverage. The Leak Site Is.</div>
+                <div class="concept-desc">
+                  For years the ransomware business ran on one threat: we have locked your files, pay to unlock
+                  them. Good backups answered it, so the criminals changed the product.
+                  <strong class="c-cyan">Double extortion</strong> steals the data <em>before</em> encrypting, and
+                  the second threat — publish it — is one a backup cannot answer.
+                  <strong class="c-amber">A restored network with the stolen data already on a leak site is a
+                  network that recovered from the wrong attack.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Generation</th><th>The leverage</th><th>What defeats it</th></tr>
+                    <tr><td>Single extortion</td><td>Your files are encrypted</td><td>Tested, offline backups</td></tr>
+                    <tr><td>Double extortion</td><td>…and we will publish them</td><td>Nothing, once exfiltrated — only prevention</td></tr>
+                    <tr><td>Triple / multi</td><td>…and we will tell your customers, regulator and press, and DDoS <span class="acro-exp">(Distributed Denial of Service)</span> you meanwhile</td><td>Legal &amp; comms readiness, not IT</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The strategic consequence is that ransomware moved out of the IT department. Once the threat
+                    is disclosure, the questions are legal, regulatory and reputational, and the person who should
+                    own the response is not the one holding the restore runbook.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Exfiltration Is the Attack; the Encryption Is the Invoice</div>
+                <div class="concept-desc">
+                  Because the money is now in the stolen copy, the damaging work happens <em>before</em> anything
+                  visibly breaks. By the time files lock — the loud, obvious event — the harm that cannot be
+                  undone is already done. This reorders where detection has to sit.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Phase</th><th>Visible?</th><th>Reversible?</th></tr>
+                    <tr><td>Access &amp; spread</td><td>No</td><td>Yes — evict</td></tr>
+                    <tr><td>Bulk data staging &amp; exfiltration</td><td>Rarely noticed</td><td><strong>No</strong> — the copy is gone</td></tr>
+                    <tr><td>Encryption &amp; ransom note</td><td>Unmissable</td><td>Yes, if backups held</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The detection that matters is the one on <strong>large outbound transfers of internal data</strong> —
+                    a rclone or a mega-upload from a file server at 2 a.m. — not the one on the encryptor. The
+                    encryptor detection fires when it is already too late to change the outcome.
+                    <span class="xref">Infostealers — The Malware That Runs Once and Sells the Result</span>
+                    is the same lesson at credential scale.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Paying Is a Business Decision With a Technical Input, Not a Technical One</div>
+                <div class="concept-desc">
+                  Whether to pay is decided by lawyers, insurers and executives, and IT supplies facts, not the
+                  verdict. The uncomfortable truths that shape it are worth knowing in advance, because they are
+                  discovered under pressure otherwise.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Fact</th><th>Why it changes the maths</th></tr>
+                    <tr><td>Paying does not delete the data</td><td>You are buying a promise from a criminal; copies may remain and resurface</td></tr>
+                    <tr><td>A decryptor is slow and buggy</td><td>Even when paid, restoring from backup is often faster than the tool they send</td></tr>
+                    <tr><td>Payment may be sanctioned</td><td>Paying certain groups is itself unlawful in some jurisdictions — a legal question before a moral one</td></tr>
+                    <tr><td>Payment funds the next attack</td><td>And marks you as a payer, which some groups record and revisit</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Decide the <em>policy</em> before the incident, when nobody is panicking: who is authorised to
+                    approve a payment, what legal checks gate it, and what the insurer requires. The organisations
+                    that handle extortion worst are the ones improvising that governance at 3 a.m. See
+                    <span class="xref">Ransomware Negotiation — What Actually Happens</span> for the conversation
+                    that follows if the answer is not a flat no.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: RANSOMWARE NEGOTIATION ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🤝</span>
+              <span class="topic-name">Ransomware Negotiation — What Actually Happens</span>
+              <span class="topic-badge">THREAT • Response</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">It Is a Business Transaction, Not a Hostage Film</div>
+                <div class="concept-desc">
+                  The mental model people bring is the kidnap thriller — a frantic, one-off, life-or-death
+                  exchange. The reality is closer to a <strong class="c-cyan">debt collection call</strong>: a
+                  chat portal, a case number, an operator with a script, a price ladder, and a reputation to
+                  protect because the next victim reads reviews.
+                  <strong class="c-amber">Knowing it is a transaction changes the posture from terror to
+                  process</strong>, and process is where you have leverage.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Film model (wrong)</th><th>What actually happens</th></tr>
+                    <tr><td>Unhinged, unpredictable captor</td><td>Bored operator running a workflow across many victims</td></tr>
+                    <tr><td>One demand, take it or leave it</td><td>A ladder — the first number is not the last number</td></tr>
+                    <tr><td>Silence is safest</td><td>Silence forfeits the free proof and the discount window</td></tr>
+                    <tr><td>They want to hurt you</td><td>They want the fastest clean payment with the least attention</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The group's incentive is a quiet, complete payment and a working decryptor — because a group
+                    that takes the money and vanishes gets a reputation that ends future payments. That shared
+                    incentive is the only thing making the transaction possible, and it is what a negotiator works with.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The First Hour</div>
+                <div class="concept-title">The Opening Messages Set the Frame for Everything After</div>
+                <div class="concept-desc">
+                  Almost nobody negotiates their own incident, and the reason is the same reason you do not
+                  represent yourself in court: the first messages, sent by a frightened victim, routinely
+                  <em>raise</em> the price. Professional negotiators exist as a service and are usually engaged
+                  through the insurer or incident-response retainer.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Opening mistake</th><th>Why it costs</th></tr>
+                    <tr><td>Revealing you have cyber insurance</td><td>The demand rises to the policy limit — they read the same market you do</td></tr>
+                    <tr><td>Naming your revenue or urgency</td><td>Every fact about your pain is a number in their favour</td></tr>
+                    <tr><td>Emotional or threatening messages</td><td>Confirms leverage and hardens the operator</td></tr>
+                    <tr><td>Skipping the proof-of-decryption test</td><td>You lose the one free check that they can actually restore your files</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The professional opening does the opposite: buys time (legitimately — validating backups and
+                    scoping the theft takes days), extracts free proof by decrypting a sample, and reveals nothing.
+                    The first hour is not for deciding whether to pay; it is for not making the later decision worse.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">A Negotiation Is Not a Recovery, and Buys You Nothing but Options</div>
+                <div class="concept-desc">
+                  Talking to the group is a parallel track, not the response. It runs alongside — never instead of —
+                  restoring from backup, scoping the data theft, and the legal and regulatory clock. Even a
+                  successful negotiation leaves the intrusion to be evicted and the way in to be closed, or the
+                  same group walks back in a fortnight later, as several publicly have.
+                </div>
+                <div class="concept-desc verdict">
+                  Treat the chat window as the least important of the three tracks running at once: recover,
+                  investigate, and — only if policy allows — negotiate. If the recovery track succeeds, the chat
+                  window becomes a source of threat intelligence about how they got in, and nothing more.
+                  <span class="xref">The Extortion Economy — Double Extortion, Leak Sites &amp; the Payment Question</span>
+                  sets the decision this conversation serves.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: DARK-WEB MARKETS ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🛒</span>
+              <span class="topic-name">Dark-Web Markets &amp; Forums — What Is Sold, and What That Means for You</span>
+              <span class="topic-badge">THREAT • Economy</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Your Credentials Appear on a Market Before Your Incident Does</div>
+                <div class="concept-desc">
+                  People picture the dark web as where attacks are planned. More usefully, it is where the
+                  <em>inputs</em> to attacks are traded — and the reason it matters to a defender is timing.
+                  <strong class="c-amber">A valid login to your VPN <span class="acro-exp">(Virtual Private Network)</span> is often for sale weeks before anyone uses it
+                  against you.</strong> That gap is the one monitoring feed with a clear action attached: buy back
+                  the warning, and reset before the buyer arrives.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Sold</th><th>Rough price signal</th><th>What it tells you about your value</th></tr>
+                    <tr><td>Stolen credential pairs (bulk)</td><td>Cents each</td><td>Commodity — reused-password risk, not targeting</td></tr>
+                    <tr><td>Infostealer logs (one victim's whole session)</td><td>A few to tens of dollars</td><td>Cookies and tokens that skip your MFA <span class="acro-exp">(Multi-Factor Authentication)</span></td></tr>
+                    <tr><td>Corporate network access (a broker's listing)</td><td>Hundreds to thousands</td><td>Someone already has a foothold and is pricing it</td></tr>
+                    <tr><td>A working zero-day exploit</td><td>Five to seven figures</td><td>Not your threat — the price rules you out</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The prices are a threat model you can read. Cheap commodity data means your exposure is
+                    password reuse; a network-access listing naming your sector means someone is already inside the
+                    funnel <span class="xref">The Criminal Economy — Access Brokers, Affiliates &amp; How Breaches Get Sold</span>
+                    describes. The step change in price between them is the step change in how worried to be.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Action</div>
+                <div class="concept-title">Monitoring Is Only Useful If a Hit Triggers Something</div>
+                <div class="concept-desc">
+                  Buying a dark-web monitoring service and doing nothing with the alerts is a common and expensive
+                  way to feel protected. The value is entirely in the response that a hit sets off, and that
+                  response has to be defined before the first alert, or the alert becomes noise.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Alert</th><th>The automatic response it should trigger</th></tr>
+                    <tr><td>Employee credential in a breach dump</td><td>Force reset; check for reuse on corporate SSO <span class="acro-exp">(Single Sign-On)</span></td></tr>
+                    <tr><td>Infostealer log naming your domain</td><td>Revoke sessions and tokens — not just reset the password</td></tr>
+                    <tr><td>Access broker listing your company</td><td>Treat as an active incident: hunt, do not wait</td></tr>
+                    <tr><td>Executive's personal account exposed</td><td>Watch for the pivot into BEC <span class="acro-exp">(Business Email Compromise)</span> and account recovery abuse</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Note the second row: a password reset does not help against a stolen session token, because the
+                    token authenticated a login that already happened. <strong>Revoke before you reset</strong> —
+                    the same order <span class="xref">Infostealers — The Malware That Runs Once and Sells the Result</span>
+                    insists on — or the reset locks the door behind the intruder.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">This Is a Feed to Act On, Not a Place to Go</div>
+                <div class="concept-desc">
+                  Independently browsing criminal markets is a legal and safety hazard for almost every
+                  organisation, and there is nothing to gain from it that a reputable monitoring provider does not
+                  supply more safely. The skill worth having is not access — it is turning a provider's hit into
+                  the right, fast, pre-agreed action.
+                </div>
+                <div class="concept-desc verdict">
+                  Buy the feed, wire each alert type to a specific response, and test it once with a seeded
+                  credential so you know the pipe works before it carries something real. A monitoring service
+                  whose alerts nobody has rehearsed answering is a subscription, not a control.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: ZERO-DAYS & THE EXPLOIT MARKET ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🕳️</span>
+              <span class="topic-name">Zero-Days &amp; the Exploit Market — Who Buys, and What a Zero-Day Costs</span>
+              <span class="topic-badge">THREAT • Economy</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Zero-Day Is an Expensive, Perishable Asset — Which Is Why Almost Nothing Uses One</div>
+                <div class="concept-desc">
+                  &ldquo;Zero-day&rdquo; is the word for a vulnerability the vendor does not yet know about, and it
+                  carries an aura of inevitability — the unstoppable attack. The economics say the opposite.
+                  A reliable zero-day for a major platform costs a fortune to develop or buy, and it
+                  <strong class="c-cyan">burns the moment it is used and noticed</strong>, because that is what
+                  starts the patch clock. <strong class="c-amber">An asset that expensive and that fragile is
+                  spent only where nothing else will do</strong> — which is almost never against you.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Who buys zero-days</th><th>Why</th><th>Are you the target?</th></tr>
+                    <tr><td>Nation-state intelligence services</td><td>Access to hard targets that patch fast</td><td>Only if you are a hard target</td></tr>
+                    <tr><td>Exploit brokers / spyware vendors</td><td>Resale to governments</td><td>Via a client's interest, not yours</td></tr>
+                    <tr><td>Elite criminal crews</td><td>Mass exploitation in the hours before a patch</td><td>Yes — but through <em>known</em> bugs, fast</td></tr>
+                    <tr><td>Everyone else</td><td>They cannot afford it</td><td>They use last month's patched CVE <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The criminal use of true zero-days is real but narrow: a brief mass-exploitation window on an
+                    internet-facing appliance before the fix lands. Even there, the durable defence is the same —
+                    reduce exposure and patch fast — because the window closes with the patch either way.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Patch the Known, Because the Known Is What Is Being Used</div>
+                <div class="concept-desc">
+                  The unfashionable, correct conclusion is that defensive attention spent worrying about zero-days
+                  is attention stolen from the vulnerabilities actually being exploited — the ones with a patch
+                  available that has not been applied. The published record is blunt about this: the mass of real
+                  intrusions ride <strong>n-day</strong> vulnerabilities (known, patched, unpatched-by-you), not
+                  zero-days.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>If your effort goes to…</th><th>You defend against…</th><th>Share of real attacks</th></tr>
+                    <tr><td>Fast patching of known CVEs</td><td>n-day exploitation</td><td>The overwhelming majority</td></tr>
+                    <tr><td>Reducing internet-facing surface</td><td>Both n-day and zero-day windows</td><td>High leverage, cheap</td></tr>
+                    <tr><td>Zero-day-specific tooling</td><td>A rare, targeted case</td><td>A sliver — and only if you are a target</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So the verdict is a reallocation: the exposure-reduction and patch-speed work you were tempted
+                    to skip <em>because</em> zero-days feel scarier is the work that answers zero-days too, since a
+                    zero-day becomes an n-day the day the patch ships and the race is on either way.
+                    <span class="xref">Vulnerability Management — Finding and Fixing Weaknesses</span> is where that
+                    speed is engineered.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: DISINFORMATION & INFLUENCE OPERATIONS ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📣</span>
+              <span class="topic-name">Disinformation &amp; Influence Operations — The Attack on the Decision, Not the System</span>
+              <span class="topic-badge">THREAT • Actors</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Nothing Is Compromised, and the Outcome Is Still Achieved</div>
+                <div class="concept-desc">
+                  Every threat model in this domain assumes the objective is to breach a system. An influence
+                  operation has no such step. It targets <strong class="c-cyan">a decision — a vote, a purchase, a
+                  panic, a resignation</strong> — by shaping what people believe, and it can succeed without
+                  touching a single machine you own. <strong class="c-amber">It is the threat class most technical
+                  readers have no model for, precisely because there is no exploit to find.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Cyberattack</th><th>Influence operation</th></tr>
+                    <tr><td>Target</td><td>A system</td><td>A belief, and the decision it drives</td></tr>
+                    <tr><td>Success looks like</td><td>Access, data, disruption</td><td>People act against their interest, freely</td></tr>
+                    <tr><td>Evidence</td><td>Logs, artefacts</td><td>Engagement metrics, narrative spread</td></tr>
+                    <tr><td>Owned by</td><td>Security team</td><td>Comms, trust &amp; safety, leadership</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The two overlap in <strong>hack-and-leak</strong>: breach to obtain material, then run an
+                    influence operation to weaponise it. The intrusion is ordinary; the damage is done by the
+                    narrative built on top, which is why treating it as only a breach under-scopes the response.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Controls Are Editorial and Procedural, Not Technical</div>
+                <div class="concept-desc">
+                  Because the payload is a story rather than a file, the defences are not firewalls. They are the
+                  same practices a newsroom or a fraud team uses: verify before amplifying, control who can speak
+                  for the organisation, and have a rehearsed way to correct a false claim quickly.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Tactic</th><th>The defensive answer</th></tr>
+                    <tr><td>Fabricated leak or forged document</td><td>A pre-agreed verification-and-response plan; speed beats accuracy of tone</td></tr>
+                    <tr><td>Impersonated executive or brand account</td><td>Verified channels; a known place the truth lives</td></tr>
+                    <tr><td>Coordinated inauthentic amplification</td><td>Platform reporting; do not debate bots, deny them oxygen</td></tr>
+                    <tr><td>Seeding a false narrative before an event</td><td>Monitor your own name and sector; pre-bunk the predictable lines</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The one genuinely technical contribution security makes is authenticity infrastructure —
+                    domain and email authentication, verified accounts, content provenance — so that
+                    <em>impersonation</em> is hard and the real channel is unmistakable. Everything else is a
+                    communications discipline the security team supports rather than owns.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: CRITICAL INFRASTRUCTURE & OT THREAT ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏭</span>
+              <span class="topic-name">Critical Infrastructure &amp; OT Threat — Why Consequence Changes Everything</span>
+              <span class="topic-badge">THREAT • OT / ICS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Availability Outranks Confidentiality, and an Incident Can Hurt Someone</div>
+                <div class="concept-desc">
+                  In IT, the reflex on suspicion of compromise is to isolate, patch, reboot — take the thing
+                  offline to make it safe. In operational technology — the systems running a plant, a grid, a
+                  pipeline — <strong class="c-amber">taking it offline may be the dangerous act</strong>. The
+                  priority order inverts: <strong class="c-cyan">safety first, then availability, then
+                  integrity, and confidentiality last</strong>. Every instinct trained on IT security is either
+                  wrong here or dangerously mistimed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>IT reflex</th><th>Why it can be wrong in OT</th></tr>
+                    <tr><td>Patch immediately</td><td>Patching may need a plant shutdown scheduled a year out; vendor certification can forbid it</td></tr>
+                    <tr><td>Isolate the infected host</td><td>That host may be controlling a physical process that must not stop uncontrolled</td></tr>
+                    <tr><td>Reboot to clear it</td><td>A restart can drop a process into an unsafe state</td></tr>
+                    <tr><td>Prioritise data confidentiality</td><td>The asset is a physical outcome; a leaked setpoint matters less than a wrong one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The mediating idea is <strong>safety</strong>, which IT security does not have as a category.
+                    An OT incident can injure a person or damage equipment that takes months to replace, so the
+                    response is led by process-safety engineers with security advising — not the other way round.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Long Lives, Fragile Protocols, and a Patch Window Measured in Years</div>
+                <div class="concept-desc">
+                  OT environments look nothing like a data centre and break the assumptions security tooling is
+                  built on. The equipment is old on purpose (a controller runs for twenty years), the protocols
+                  predate authentication, and a vulnerability scan aggressive enough to be routine in IT can crash
+                  a controller that has never seen an unexpected packet.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>Consequence for defence</th></tr>
+                    <tr><td>20–30 year equipment lifespans</td><td>&ldquo;Unsupported&rdquo; is normal; you defend around it, not by upgrading</td></tr>
+                    <tr><td>Protocols with no authentication (Modbus, DNP3, and kin)</td><td>Anyone on the wire can command a device — segmentation is the control</td></tr>
+                    <tr><td>Fragile stacks</td><td>Active scanning is itself a hazard; passive monitoring is the norm</td></tr>
+                    <tr><td>The IT/OT boundary</td><td>The one crossing most attacks use — and the place to spend the defensive budget</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The single highest-value control is <strong>segmentation of the IT/OT boundary</strong> — the
+                    Purdue-model separation that stops an ordinary IT ransomware outbreak from reaching the plant
+                    floor, which is how most OT incidents actually happen: not a targeted ICS <span class="acro-exp">(Industrial Control System)</span> exploit, but
+                    commodity malware crossing a flat network into machinery.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">This Is Not a Harder Version of IT Security. It Is a Different Discipline.</div>
+                <div class="concept-desc">
+                  The mistake organisations make when they extend IT security into the plant is assuming the same
+                  playbook applies with the numbers turned up. It does not: the objective function is human safety
+                  and physical continuity, the tools are constrained, and the people who must lead an incident are
+                  engineers, not analysts.
+                </div>
+                <div class="concept-desc verdict">
+                  If you take one thing across the boundary, take humility: ask the process-safety engineers what
+                  must never stop and what must never change state, and design every control to respect those two
+                  answers first. A defender who treats an OT network like a slower IT network is the second threat
+                  in the room.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: HACKTIVISM & IDEOLOGICAL ACTORS ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">✊</span>
+              <span class="topic-name">Hacktivism &amp; Ideological Actors — Low Capability, High Publicity</span>
+              <span class="topic-badge">THREAT • Actors</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Technical Bar Is Low and the Reputational Impact Is Not</div>
+                <div class="concept-desc">
+                  Every other actor in this domain is ranked by capability, and hacktivists sit near the bottom of
+                  it — defacements, DDoS <span class="acro-exp">(Distributed Denial of Service)</span>, opportunistic data dumps, rarely a novel technique.
+                  <strong class="c-amber">Their impact is not correlated with their skill</strong>, because the
+                  objective is not access but attention. A trivial defacement of the right page, at the right
+                  moment, achieves the goal that a sophisticated intrusion would not: it is <em>seen</em>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Usual capability</th><th>Usual impact</th><th>Why the mismatch</th></tr>
+                    <tr><td>Low — commodity tools, known bugs</td><td>High — headlines, embarrassment, lost trust</td><td>The win condition is publicity, not persistence</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    This inverts the usual risk maths, where you spend most on the most capable adversary.
+                    Against hacktivism the cheap attack has an expensive consequence, so the defence is about
+                    removing easy wins and controlling the narrative, not about out-teching a low-skill opponent.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Response Is a Communications Plan With a Technical Component</div>
+                <div class="concept-desc">
+                  Because the objective is reputational, the response is led by communications, with security
+                  supplying the technical facts and the fixes. The two failure modes are over-reacting (amplifying
+                  a nothing incident by treating it as a catastrophe) and under-preparing (having no rehearsed way
+                  to correct the record when a fake or exaggerated claim spreads).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Threat</th><th>Cheap technical control</th><th>The real defence</th></tr>
+                    <tr><td>Website defacement</td><td>Patch the CMS <span class="acro-exp">(Content Management System)</span>; least-privilege the web host</td><td>A pre-agreed statement and a fast rollback</td></tr>
+                    <tr><td>DDoS for attention</td><td>Upstream scrubbing / CDN <span class="acro-exp">(Content Delivery Network)</span></td><td>Do not confirm impact you did not suffer</td></tr>
+                    <tr><td>Exaggerated &ldquo;breach&rdquo; claim</td><td>Verify what was actually accessed</td><td>State the truth quickly, before the claim sets</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The tell of a mature response is that it is <em>proportionate and fast</em>: confirm what
+                    really happened, fix the cheap hole they walked through, and let the comms team decide how
+                    loudly to respond — often the correct volume is very low. Panic is the outcome the actor was
+                    buying; denying it is most of the win.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: FRAUD & MONEY MOVEMENT ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🏦</span>
+              <span class="topic-name">Fraud &amp; Money Movement — Where the Money Actually Goes</span>
+              <span class="topic-badge">THREAT • Economy</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Every Financial Intrusion Ends at a Payment Rail, and the Rails Have Brakes</div>
+                <div class="concept-desc">
+                  Defenders study the intrusion and stop at the theft, as if the money vanishes at the moment of
+                  the breach. It does not: it has to <strong class="c-cyan">move, convert, and come out clean</strong>,
+                  and that cash-out journey runs across banking rails, card networks and crypto exchanges that have
+                  delays, limits and — crucially — <strong class="c-amber">reversal windows</strong>. Understanding
+                  the last step explains attacker behaviour the intrusion never would, and it is where the money
+                  can still be stopped after everything else has failed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Cash-out path</th><th>The brake that exists</th></tr>
+                    <tr><td>Fraudulent wire / BEC <span class="acro-exp">(Business Email Compromise)</span> transfer</td><td>A recall window — the first 24–72 hours are when banks can claw it back</td></tr>
+                    <tr><td>Card fraud</td><td>Chargebacks and issuer fraud models shrink the usable window</td></tr>
+                    <tr><td>Crypto ransom / theft</td><td>Public ledger; exchanges enforce KYC at the fiat off-ramp</td></tr>
+                    <tr><td>Money mules</td><td>Human accounts that freeze, get reported, and leave a trail</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    This is why the first call after a fraudulent transfer is to the <strong>bank</strong>, not the
+                    IT team — the money is recoverable for hours, not days, and every hour spent investigating the
+                    email instead of calling the bank is an hour of the recall window spent.
+                    <span class="xref">Business Email Compromise — The Attack With No Malware</span> is the intrusion
+                    that most often ends here.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Cash-Out Step Explains Why Attacks Target Odd Systems</div>
+                <div class="concept-desc">
+                  Once you know money must be moved and laundered, otherwise puzzling target choices make sense.
+                  The attacker is not always after the obvious asset; sometimes they are after the system that
+                  makes the money <em>movable</em> — the payroll platform, the vendor-payment portal, the account
+                  that can change bank details without a second signature.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Odd-looking target</th><th>Why the cash-out step wants it</th></tr>
+                    <tr><td>Payroll / HR system</td><td>Redirect salary or expenses to a controlled account</td></tr>
+                    <tr><td>Vendor master data</td><td>Change a supplier's bank details before a large invoice run</td></tr>
+                    <tr><td>Email of one finance clerk</td><td>The approval authority is the asset, not the mailbox</td></tr>
+                    <tr><td>Loyalty points / gift cards</td><td>A liquid, low-scrutiny value store that launders itself</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The intervention point follows: put the second signature on the actions that <em>move</em> money
+                    or <em>change where it goes</em> — a bank-detail change, a first payment to a new payee — because
+                    that is the control the whole cash-out chain has to defeat, and the one most estates leave to a
+                    single click.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body threat -->

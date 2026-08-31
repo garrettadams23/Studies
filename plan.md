@@ -32,7 +32,7 @@ for the reasoning rather than the tasks.
 | Calculus track | ~4500 | `math` domain and the TI-84 tooling | ✅ closed |
 | **What is actually outstanding** | ~4640 | The audit sections: defects, the lint trend, undersized domains, content age. All four now resolved and re-measured | ✅ closed |
 | Session records | ~5100–10,360 | Roughly forty of them. The reasoning behind every decision above | 📘 archive |
-| **Phase 7 — the next hundred cards** | ~10,365 | 96 specified cards, 15 tracks, ordered first ten, rejects | ⬜ **live — the only one left** |
+| **Phase 7 — the next hundred cards** | ~10,365 | 93 cards shipped across 15 tracks; 3 rejected as duplicates. The probe over-counted again | ✅ **closed** |
 | **Phase 8 — the depth problem** | ~10,754 | 330 thin → **147**, eighteen waves, 144 cards. §8's target met | ✅ **closed** |
 | Worked specifications | ~10,897 | Four sessions written out to transcription depth | 📘 reference |
 | **The card rubric** | ~10,988 | What the good cards have, measured from forty written in one session | 📘 reference |
@@ -10400,6 +10400,17 @@ returns, and unlike everything else on the card it costs one decision rather tha
 
 # Phase 7 — the next hundred cards
 
+> **✅ CLOSED.** Every card in this phase is now built. The ordered first ten shipped, then
+> the tracks were worked through to the end: **93 cards across all 15 tracks**, with **3
+> candidates rejected** as duplicates of cards a neighbouring domain already held (the
+> `script` dates card, the `career` contracting-admin card, and the `math` reading-the-question
+> card — all recorded in *Rejected, with reasons* below, and in the closing session record).
+> The site reached **1,512 topics**. The header said 96; the honest built count is 93, and the
+> gap is the file correcting its own probe again — the recurring lesson of this whole phase.
+>
+> The original plan follows, unchanged for the record. Track tables now carry ✅ on every card
+> that shipped; the three without a tick are the documented rejections.
+
 > The live backlog emptied this session. §8's appendix is closed, §2's counters are settled,
 > §4's content-age number is re-measured, and eleven domains took a wave. This phase
 > replenishes the queue with **specified** work: every entry names the card, the domain, and
@@ -10446,16 +10457,16 @@ subject. This session added the technique layer; what remains missing is **who**
 
 | Card | The argument it turns on |
 |---|---|
-| **State-Sponsored Operations — Different Objectives, Different Tradecraft** | Criminals optimise for money per hour and leave when it stops paying; state operations optimise for access and will spend a year being quiet. That single difference predicts everything else — dwell time, tooling investment, target selection, and why "we're not a target" is a claim about value to a *specific* sponsor rather than about size |
-| **Attribution — How It Is Actually Done, and Why It Is Usually Wrong** | Attribution is an intelligence judgement with a confidence level, not a forensic result. Infrastructure, tooling, language and timezone are all cheap to fake and are faked deliberately. The useful question for a defender is never *who* — it is *what did they do*, which is actionable and does not require being right about a country |
-| **The Extortion Economy — Double Extortion, Leak Sites &amp; the Payment Question** | Encryption stopped being the leverage; the leak site is. That is why good backups no longer end the incident, and why the decision to pay is a legal, insurance and reputational question with a technical input rather than a technical decision |
-| **Ransomware Negotiation — What Actually Happens** | The negotiation is a business transaction run by people with a process, a price ladder and a reputation to protect. Knowing that changes the posture: it is not a hostage film, and the first hour's messages set the frame for everything after |
-| **Dark-Web Markets &amp; Forums — What Is Sold, and What That Means for You** | Access, data and tooling are commodities with prices, and the prices tell you what you are worth to an attacker. This is also where your credentials appear before your incident does — the monitoring feed with the clearest action attached |
-| **Zero-Days &amp; the Exploit Market — Who Buys, and What "Zero-Day" Costs** | A zero-day is an expensive, perishable asset, which is why almost nothing you defend against uses one. The operational conclusion is unfashionable and correct: patch the known, because the known is what is being used |
-| **Disinformation &amp; Influence Operations — The Attack on the Decision, Not the System** | Nothing is compromised, and the outcome is still achieved. Worth a card because it is the threat class most technical readers have no model for, and because the defensive controls are editorial and procedural rather than technical |
-| **Critical Infrastructure &amp; OT Threat — Why Consequence Changes Everything** | Availability outranks confidentiality, patching windows are measured in years, and an incident can hurt someone physically. Every instinct from IT security is either wrong or dangerously mistimed here |
-| **Hacktivism &amp; Ideological Actors — Low Capability, High Publicity** | The technical bar is usually low and the reputational impact is not, which inverts the usual risk maths. Defacements and leaks are cheap; the response is a communications problem with a technical component |
-| **Fraud &amp; Money Movement — Where the Money Actually Goes** | Every financially motivated intrusion ends in a payment rail, and the rails have controls, delays and reversal windows. Understanding the cash-out step explains why some attacks target odd systems, and where the intervention points are |
+| ✅ **State-Sponsored Operations — Different Objectives, Different Tradecraft** | Criminals optimise for money per hour and leave when it stops paying; state operations optimise for access and will spend a year being quiet. That single difference predicts everything else — dwell time, tooling investment, target selection, and why "we're not a target" is a claim about value to a *specific* sponsor rather than about size |
+| ✅ **Attribution — How It Is Actually Done, and Why It Is Usually Wrong** | Attribution is an intelligence judgement with a confidence level, not a forensic result. Infrastructure, tooling, language and timezone are all cheap to fake and are faked deliberately. The useful question for a defender is never *who* — it is *what did they do*, which is actionable and does not require being right about a country |
+| ✅ **The Extortion Economy — Double Extortion, Leak Sites &amp; the Payment Question** | Encryption stopped being the leverage; the leak site is. That is why good backups no longer end the incident, and why the decision to pay is a legal, insurance and reputational question with a technical input rather than a technical decision |
+| ✅ **Ransomware Negotiation — What Actually Happens** | The negotiation is a business transaction run by people with a process, a price ladder and a reputation to protect. Knowing that changes the posture: it is not a hostage film, and the first hour's messages set the frame for everything after |
+| ✅ **Dark-Web Markets &amp; Forums — What Is Sold, and What That Means for You** | Access, data and tooling are commodities with prices, and the prices tell you what you are worth to an attacker. This is also where your credentials appear before your incident does — the monitoring feed with the clearest action attached |
+| ✅ **Zero-Days &amp; the Exploit Market — Who Buys, and What "Zero-Day" Costs** | A zero-day is an expensive, perishable asset, which is why almost nothing you defend against uses one. The operational conclusion is unfashionable and correct: patch the known, because the known is what is being used |
+| ✅ **Disinformation &amp; Influence Operations — The Attack on the Decision, Not the System** | Nothing is compromised, and the outcome is still achieved. Worth a card because it is the threat class most technical readers have no model for, and because the defensive controls are editorial and procedural rather than technical |
+| ✅ **Critical Infrastructure &amp; OT Threat — Why Consequence Changes Everything** | Availability outranks confidentiality, patching windows are measured in years, and an incident can hurt someone physically. Every instinct from IT security is either wrong or dangerously mistimed here |
+| ✅ **Hacktivism &amp; Ideological Actors — Low Capability, High Publicity** | The technical bar is usually low and the reputational impact is not, which inverts the usual risk maths. Defacements and leaks are cheap; the response is a communications problem with a technical component |
+| ✅ **Fraud &amp; Money Movement — Where the Money Actually Goes** | Every financially motivated intrusion ends in a payment rail, and the rails have controls, delays and reversal windows. Understanding the cash-out step explains why some attacks target odd systems, and where the intervention points are |
 
 ---
 
@@ -10467,12 +10478,12 @@ tools work, which is also the part that transfers when the tools change.
 
 | Card | The argument it turns on |
 |---|---|
-| **Operator OPSEC — Not Being Caught Is Part of the Objective** | An engagement that is detected on day one still produces findings, and produces the *wrong* ones: you have tested the client's response to a noisy operator rather than to a realistic adversary. OPSEC is therefore a fidelity requirement, not vanity |
-| **Payload Development &amp; Evasion — Why Signatures Stopped Mattering** | Modern detection is behavioural, so a novel binary is not the win it once was. What gets caught is the sequence of actions, which means evasion is about *what you do* rather than *what you send* — and that reframes the whole subject |
-| **Phishing Infrastructure — Domains, Certificates, Categorisation &amp; Ageing** | The email is the easy part. The infrastructure — a domain with age and a category, a certificate, a redirector, a sending reputation — is the part with a lead time measured in weeks, and forgetting that is what makes an engagement slip |
-| **Persistence — Choosing a Mechanism You Can Also Remove** | Every persistence choice is a promise to clean up. The mechanisms are ranked here by how reliably they can be removed and evidenced, because leaving a client with an artefact nobody documented is the failure mode that ends relationships |
-| **Lateral Movement as a Decision, Not a Technique** | The tools are covered; the judgement is not. Each hop trades detection risk against objective progress, and the operators who get caught are usually the ones who moved because they could rather than because the objective required it |
-| **The Engagement Debrief for a Hostile Room** | Some findings land in a room where somebody's decision is being criticised. Delivering those without losing the finding is a skill with a method — separate the system from the person, lead with what worked, and never present a finding the technical team has not already seen |
+| ✅ **Operator OPSEC — Not Being Caught Is Part of the Objective** | An engagement that is detected on day one still produces findings, and produces the *wrong* ones: you have tested the client's response to a noisy operator rather than to a realistic adversary. OPSEC is therefore a fidelity requirement, not vanity |
+| ✅ **Payload Development &amp; Evasion — Why Signatures Stopped Mattering** | Modern detection is behavioural, so a novel binary is not the win it once was. What gets caught is the sequence of actions, which means evasion is about *what you do* rather than *what you send* — and that reframes the whole subject |
+| ✅ **Phishing Infrastructure — Domains, Certificates, Categorisation &amp; Ageing** | The email is the easy part. The infrastructure — a domain with age and a category, a certificate, a redirector, a sending reputation — is the part with a lead time measured in weeks, and forgetting that is what makes an engagement slip |
+| ✅ **Persistence — Choosing a Mechanism You Can Also Remove** | Every persistence choice is a promise to clean up. The mechanisms are ranked here by how reliably they can be removed and evidenced, because leaving a client with an artefact nobody documented is the failure mode that ends relationships |
+| ✅ **Lateral Movement as a Decision, Not a Technique** | The tools are covered; the judgement is not. Each hop trades detection risk against objective progress, and the operators who get caught are usually the ones who moved because they could rather than because the objective required it |
+| ✅ **The Engagement Debrief for a Hostile Room** | Some findings land in a room where somebody's decision is being criticised. Delivering those without losing the finding is a skill with a method — separate the system from the person, lead with what worked, and never present a finding the technical team has not already seen |
 
 ---
 
@@ -10483,12 +10494,12 @@ tools work, which is also the part that transfers when the tools change.
 
 | Card | The argument it turns on |
 |---|---|
-| **Log Retention as a Design Decision** | Retention is chosen by cost and then discovered during an incident, always in that order. The right frame is: how far back must we be able to answer a question, and what is the cheapest tier that still answers it? |
-| **Threat-Feed Reality — Why Most Indicators Are Worthless to You** | An indicator's value decays with time and rises with specificity to your environment. Most purchased feeds are neither timely nor specific, and the card's job is to give a reader the questions that separate a feed worth paying for from a list of hashes |
-| **User &amp; Entity Behaviour Analytics — What Baselining Can and Cannot Learn** | A baseline built during an incident learns the incident as normal, and a baseline built on a small population learns nothing at all. UEBA works where behaviour is genuinely repetitive and fails politely everywhere else |
-| **Analyst Burnout as a Detection Problem** | Alert volume is a design output, not a fact of nature, and turnover in a SOC is a measurable consequence of tuning decisions made months earlier. This is the card that connects §CC's engineering to the human cost of getting it wrong |
-| **Shift Handover in a SOC** | The most information is lost at the moment it is most needed. A handover format that survives fatigue is a small artefact with an outsized effect, and it is the same problem `ops` solved for escalation |
-| **SOC Metrics That Do Not Lie** | Mean time to detect is gameable by narrowing what counts as detected. The honest set measures coverage, dwell time and the alert-to-incident ratio — and each one is uncomfortable in a way the gameable ones are not |
+| ✅ **Log Retention as a Design Decision** | Retention is chosen by cost and then discovered during an incident, always in that order. The right frame is: how far back must we be able to answer a question, and what is the cheapest tier that still answers it? |
+| ✅ **Threat-Feed Reality — Why Most Indicators Are Worthless to You** | An indicator's value decays with time and rises with specificity to your environment. Most purchased feeds are neither timely nor specific, and the card's job is to give a reader the questions that separate a feed worth paying for from a list of hashes |
+| ✅ **User &amp; Entity Behaviour Analytics — What Baselining Can and Cannot Learn** | A baseline built during an incident learns the incident as normal, and a baseline built on a small population learns nothing at all. UEBA works where behaviour is genuinely repetitive and fails politely everywhere else |
+| ✅ **Analyst Burnout as a Detection Problem** | Alert volume is a design output, not a fact of nature, and turnover in a SOC is a measurable consequence of tuning decisions made months earlier. This is the card that connects §CC's engineering to the human cost of getting it wrong |
+| ✅ **Shift Handover in a SOC** | The most information is lost at the moment it is most needed. A handover format that survives fatigue is a small artefact with an outsized effect, and it is the same problem `ops` solved for escalation |
+| ✅ **SOC Metrics That Do Not Lie** | Mean time to detect is gameable by narrowing what counts as detected. The honest set measures coverage, dwell time and the alert-to-incident ratio — and each one is uncomfortable in a way the gameable ones are not |
 
 ---
 
@@ -10500,13 +10511,13 @@ the part that transfers between providers and outlives any console.
 
 | Card | The argument it turns on |
 |---|---|
-| **Multi-Cloud — The Four Reasons, and Which Ones Survive Contact** | Regulatory requirement, acquisition, deliberate best-of-breed, and fear of lock-in. Only the first two are usually real; the fourth buys an abstraction layer that costs more than the lock-in it avoids, and the card should say so plainly |
-| **Exit Planning &amp; Lock-In — Pricing the Door Before You Need It** | Lock-in is not binary, it is a cost with a number. Compute is portable, managed data services are not, and the identity layer is the hardest of all. The exercise worth doing once is: what would it cost, in weeks, to leave? |
-| **Tagging &amp; Cost Allocation — The Policy That Has to Be Enforced at Creation** | Retro-tagging never completes. A tag policy that is enforced at resource creation is the only kind that produces usable cost data, and this is one of the few governance controls where "block it" is genuinely the right answer |
-| **Commitment Discounts — Reserved, Savings Plans &amp; the Forecast They Require** | A commitment is a bet on your own capacity forecast, and the discount is the premium for taking the risk off the provider. Buying them without a forecast is how organisations end up paying for capacity they stopped using |
-| **Quotas &amp; Service Limits — The Outage That Is Not a Failure** | Nothing broke; you hit a number. Limits are per-account, per-region, silently different between them, and raising one takes a support ticket with a lead time. The card's job is to make this a pre-launch checklist item rather than a launch-night discovery |
-| **Region Failover &amp; Cloud DR — What "Multi-Region" Actually Requires** | Data has gravity and consistency has a price. Most "multi-region" architectures are single-region with a cold copy, which is a legitimate choice and a different one — and the difference should be stated in the runbook rather than discovered during the event |
-| **Data Residency &amp; Sovereignty — Where the Bytes Are, and Who Can Compel Them** | Two separate questions that get merged: *where is it stored* and *whose law reaches it*. The second is the one that surprises people, and it is not answered by choosing a region |
+| ✅ **Multi-Cloud — The Four Reasons, and Which Ones Survive Contact** | Regulatory requirement, acquisition, deliberate best-of-breed, and fear of lock-in. Only the first two are usually real; the fourth buys an abstraction layer that costs more than the lock-in it avoids, and the card should say so plainly |
+| ✅ **Exit Planning &amp; Lock-In — Pricing the Door Before You Need It** | Lock-in is not binary, it is a cost with a number. Compute is portable, managed data services are not, and the identity layer is the hardest of all. The exercise worth doing once is: what would it cost, in weeks, to leave? |
+| ✅ **Tagging &amp; Cost Allocation — The Policy That Has to Be Enforced at Creation** | Retro-tagging never completes. A tag policy that is enforced at resource creation is the only kind that produces usable cost data, and this is one of the few governance controls where "block it" is genuinely the right answer |
+| ✅ **Commitment Discounts — Reserved, Savings Plans &amp; the Forecast They Require** | A commitment is a bet on your own capacity forecast, and the discount is the premium for taking the risk off the provider. Buying them without a forecast is how organisations end up paying for capacity they stopped using |
+| ✅ **Quotas &amp; Service Limits — The Outage That Is Not a Failure** | Nothing broke; you hit a number. Limits are per-account, per-region, silently different between them, and raising one takes a support ticket with a lead time. The card's job is to make this a pre-launch checklist item rather than a launch-night discovery |
+| ✅ **Region Failover &amp; Cloud DR — What "Multi-Region" Actually Requires** | Data has gravity and consistency has a price. Most "multi-region" architectures are single-region with a cold copy, which is a legitimate choice and a different one — and the difference should be stated in the runbook rather than discovered during the event |
+| ✅ **Data Residency &amp; Sovereignty — Where the Bytes Are, and Who Can Compel Them** | Two separate questions that get merged: *where is it stored* and *whose law reaches it*. The second is the one that surprises people, and it is not answered by choosing a region |
 
 ---
 
@@ -10534,12 +10545,12 @@ delegation, ladders, Conway's Law, managing up, calendars, planning. What is mis
 
 | Card | The argument it turns on |
 |---|---|
-| **RFCs &amp; Design Docs — Writing to Decide, Not to Record** | A design doc written after the decision is documentation; one written before it is a decision-making tool, and the difference is whether anyone was ever able to change the outcome by reading it. Includes the failure mode: the doc that circulates for comment after the work has started |
+| ✅ **RFCs &amp; Design Docs — Writing to Decide, Not to Record** | A design doc written after the decision is documentation; one written before it is a decision-making tool, and the difference is whether anyone was ever able to change the outcome by reading it. Includes the failure mode: the doc that circulates for comment after the work has started |
 | ✅ **Architecture Decision Records — The Format Whose Value Is the Rejected Options** | The decision matters less than the alternatives and the constraints that killed them, because in two years the constraints will have changed and only the ADR will say which ones they were |
 | ✅ **Build vs Buy — The Question Behind the Question** | The comparison is never build cost against licence cost. It is *total* cost against *total* cost, including the maintenance you will owe forever and the exit you will eventually want — and the honest version usually turns on whether this is your differentiator |
 | ✅ **The Staff Engineer Role — What It Is When It Is Not Management** | The individual-contributor track above senior is real and badly defined nearly everywhere. The card's job is to describe what the work actually is — scope, influence without authority, and the projects only this role can do — and what it is not |
 | ✅ **Goals That Survive the Quarter — OKRs Without the Theatre** | Most goal frameworks fail the same way: outputs written as outcomes, targets set to be achievable, and a review that nobody attends. The fix is fewer goals, a measure that could go the wrong way, and a named person |
-| **Measuring Developer Productivity Without Doing Harm** | Every individual metric in this space is gameable and most are actively harmful. What can be measured is the *system* — lead time, review latency, time to first commit for a new joiner — and the card should be blunt about why the individual version keeps being attempted |
+| ✅ **Measuring Developer Productivity Without Doing Harm** | Every individual metric in this space is gameable and most are actively harmful. What can be measured is the *system* — lead time, review latency, time to first commit for a new joiner — and the card should be blunt about why the individual version keeps being attempted |
 
 ---
 
@@ -10588,7 +10599,7 @@ a script survives being handed to someone else.
 | ✅ **subprocess Without Shell Injection** | The convenient form is the dangerous one. A list of arguments beats a shell string, and the card should show the exact case where interpolating a filename becomes remote code execution |
 | ✅ **Threads, Processes &amp; async — Choosing by Where the Time Goes** | Three concurrency models and one question that picks between them: is the program waiting on I/O or burning processor? Everything else is detail, and getting this wrong is why "we added threads and it got slower" |
 | ✅ **Packaging &amp; Dependency Pinning — Making It Installable by Someone Else** | The gap between "works on my machine" and "installs" is a project file and a lockfile. This is also the supply-chain surface, which connects to `eng`'s dependency-risk card |
-| **Pre-Commit, Formatters &amp; Linters — Ending the Style Argument** | A formatter removes an entire category of review comment by making style non-negotiable and automatic. The card's argument is social rather than technical: the tool is valuable because it stops humans discussing whitespace |
+| ✅ **Pre-Commit, Formatters &amp; Linters — Ending the Style Argument** | A formatter removes an entire category of review comment by making style non-negotiable and automatic. The card's argument is social rather than technical: the tool is valuable because it stops humans discussing whitespace |
 | **Dates &amp; Times in Code — The Five Mistakes** | Naive datetimes, local-time arithmetic, storing offsets instead of zones, assuming days are 24 hours, and formatting for humans in a database. Pairs with the existing *Dates, Times & Time Zones* card, which covers the concepts rather than the code |
 
 ---
@@ -10606,7 +10617,7 @@ keeping track of any of it.
 | ✅ **Labelling &amp; Asset Tagging — The Boring Discipline That Pays Out at 3 a.m.** | Every recovery is faster in a room where the cables and devices are labelled, and nobody has ever regretted it. The argument is about when the cost is paid versus when the benefit lands |
 | ✅ **Tape, Archive &amp; the Restore Nobody Has Tested** | Tape did not die, it became the offline copy in the ransomware playbook. Restore rate, media ageing and drive availability are the questions, and the last one strands more archives than the first two |
 | ✅ **Decommissioning at Estate Scale** | The existing card covers one server. This is the programme version: finding what nobody owns, the notice period, the DNS entries and firewall rules that outlive the host, and the systems still pointing at it |
-| **Patching a Server Estate — Windows, Rings &amp; the Ones That Cannot Reboot** | The endpoint domain has this for laptops. Servers are the harder case: dependency order, maintenance windows negotiated with a business, and the small population that will never be patched and needs a compensating control instead |
+| ✅ **Patching a Server Estate — Windows, Rings &amp; the Ones That Cannot Reboot** | The endpoint domain has this for laptops. Servers are the harder case: dependency order, maintenance windows negotiated with a business, and the small population that will never be patched and needs a compensating control instead |
 
 ---
 
@@ -10617,12 +10628,12 @@ and the documentation does not.
 
 | Card | The argument it turns on |
 |---|---|
-| **Shared, Kiosk &amp; Frontline Devices** | Every assumption in endpoint management is about one device with one user. Shared devices break identity, compliance, licensing and the wipe path simultaneously, and each needs a separate answer |
-| **BYOD in Practice — What You Can Actually Require** | The control surface on a device you do not own is small, legally constrained, and mostly about the *application* rather than the device. The card's job is to be honest about which controls survive the conversation with legal |
-| **Virtual Desktops — When the Endpoint Is a Session** | Non-persistent desktops invert almost every management assumption: profiles, licensing, patching and troubleshooting all move, and the cost model is different enough that it should be chosen for a reason rather than as a default |
-| **Browser Management — The Most-Used Application in the Estate** | Extensions, policy, profile sync and the sign-in boundary between work and personal identity. It is the single application every user runs all day and the one least often managed deliberately |
-| **Application Compatibility &amp; the Legacy App** | Every estate has one application blocking an upgrade. The card is a decision tree — compatibility mode, virtualisation, isolation, containment, replacement — and the honest note that the last option is the only permanent one |
-| **Lost, Stolen &amp; Returning Devices** | The wipe path, the data question, the licence release, and what happens when the device comes back six months later still enrolled. A short operational card that prevents a specific expensive mess |
+| ✅ **Shared, Kiosk &amp; Frontline Devices** | Every assumption in endpoint management is about one device with one user. Shared devices break identity, compliance, licensing and the wipe path simultaneously, and each needs a separate answer |
+| ✅ **BYOD in Practice — What You Can Actually Require** | The control surface on a device you do not own is small, legally constrained, and mostly about the *application* rather than the device. The card's job is to be honest about which controls survive the conversation with legal |
+| ✅ **Virtual Desktops — When the Endpoint Is a Session** | Non-persistent desktops invert almost every management assumption: profiles, licensing, patching and troubleshooting all move, and the cost model is different enough that it should be chosen for a reason rather than as a default |
+| ✅ **Browser Management — The Most-Used Application in the Estate** | Extensions, policy, profile sync and the sign-in boundary between work and personal identity. It is the single application every user runs all day and the one least often managed deliberately |
+| ✅ **Application Compatibility &amp; the Legacy App** | Every estate has one application blocking an upgrade. The card is a decision tree — compatibility mode, virtualisation, isolation, containment, replacement — and the honest note that the last option is the only permanent one |
+| ✅ **Lost, Stolen &amp; Returning Devices** | The wipe path, the data question, the licence release, and what happens when the device comes back six months later still enrolled. A short operational card that prevents a specific expensive mess |
 
 ---
 
@@ -10633,11 +10644,11 @@ second-tier workloads that arrive switched on, spread quietly, and are never gov
 
 | Card | The argument it turns on |
 |---|---|
-| **Power BI Governance — Workspaces, Datasets &amp; the Gateway Nobody Owns** | Reports proliferate faster than any other artefact in the suite, each embedding its own copy of a metric definition. The governance problem is the same one `data`'s semantic-layer card describes, arriving through a different door |
-| **Viva &amp; the Employee-Experience Surface** | It is switched on by default, it surfaces analytics about people, and the privacy question is real. Worth a card mostly so somebody has made a deliberate decision about it, which `ops`'s surveillance-versus-monitoring card frames |
-| **Forms, Bookings, Lists &amp; Whiteboard — The Small Apps and Their Data** | Each one creates records somewhere, each has a sharing default, and none appears in the retention conversation. A single card covering "where does this actually store things" for four apps people use without asking |
-| **Defender for Office in Depth — Policy Order &amp; Why a Message Got Through** | The existing card introduces it. This is the operational half: which policy applied, in what order, and how to prove it from the message trace — the question every mail administrator is asked and few can answer quickly |
-| **Exchange Hybrid — The Coexistence Nobody Meant to Keep** | Hybrid is a migration state that becomes permanent, and the last mailbox on-premises costs more than the previous thousand. The card should name the exit condition, because nobody plans one |
+| ✅ **Power BI Governance — Workspaces, Datasets &amp; the Gateway Nobody Owns** | Reports proliferate faster than any other artefact in the suite, each embedding its own copy of a metric definition. The governance problem is the same one `data`'s semantic-layer card describes, arriving through a different door |
+| ✅ **Viva &amp; the Employee-Experience Surface** | It is switched on by default, it surfaces analytics about people, and the privacy question is real. Worth a card mostly so somebody has made a deliberate decision about it, which `ops`'s surveillance-versus-monitoring card frames |
+| ✅ **Forms, Bookings, Lists &amp; Whiteboard — The Small Apps and Their Data** | Each one creates records somewhere, each has a sharing default, and none appears in the retention conversation. A single card covering "where does this actually store things" for four apps people use without asking |
+| ✅ **Defender for Office in Depth — Policy Order &amp; Why a Message Got Through** | The existing card introduces it. This is the operational half: which policy applied, in what order, and how to prove it from the message trace — the question every mail administrator is asked and few can answer quickly |
+| ✅ **Exchange Hybrid — The Coexistence Nobody Meant to Keep** | Hybrid is a migration state that becomes permanent, and the last mailbox on-premises costs more than the previous thousand. The card should name the exit condition, because nobody plans one |
 
 ---
 
@@ -10654,7 +10665,7 @@ has almost nothing about *managing work*, which is the other half of what its ti
 | ✅ **Time Blocking &amp; Its Failure Modes** | Deciding when something happens converts an open-ended list into a finite day, which is honest and uncomfortable. The failure is over-scheduling: a plan with no slack survives the first interruption and then gets abandoned |
 | ✅ **Focus Blocks — Making Uninterrupted Time Possible in an Interrupt-Driven Job** | The existing *Attention* card covers what switching costs. This is the operational answer for someone on a rota: negotiating coverage, the shape of a realistic block, and why "I'll focus when it's quiet" never arrives |
 | ✅ **Notes That Get Reopened — Structure, Linking &amp; the Search Test** | The existing note-taking card is about learning. This is about the reference pile: if you cannot find it in ten seconds it does not exist, which makes search behaviour the design constraint rather than folder structure |
-| **Goals, and the Difference Between a Goal and a Wish** | A goal names an outcome, a date, and the first action. Anything missing one of the three is a wish, and the card's value is that this test is applied in ten seconds to anything already written down |
+| ✅ **Goals, and the Difference Between a Goal and a Wish** | A goal names an outcome, a date, and the first action. Anything missing one of the three is a wish, and the card's value is that this test is applied in ten seconds to anything already written down |
 
 ---
 
@@ -10681,14 +10692,14 @@ actual title list.
 
 | Domain | Card | The argument |
 |---|---|---|
-| `hw` | **Warranty, RMA &amp; the Refurbished Question** | The commercial half of hardware: what a warranty actually covers, how an advance replacement changes downtime, and when refurbished is a good decision rather than a cheap one |
-| `hw` | **Labels, Cables &amp; the Toolkit for the Bench** | Complements the new handling card with the consumables and the cable-management practice that decides whether the next person can work on it |
-| `career` | **Asking for a Raise — The Case, Not the Conversation** | The existing card covers a first offer. A raise inside a company is a different exercise: it is a written case about market and contribution, delivered before the budget cycle rather than during a review |
+| `hw` | ✅ **Warranty, RMA &amp; the Refurbished Question** | The commercial half of hardware: what a warranty actually covers, how an advance replacement changes downtime, and when refurbished is a good decision rather than a cheap one |
+| `hw` | ✅ **Labels, Cables &amp; the Toolkit for the Bench** | Complements the new handling card with the consumables and the cable-management practice that decides whether the next person can work on it |
+| `career` | ✅ **Asking for a Raise — The Case, Not the Conversation** | The existing card covers a first offer. A raise inside a company is a different exercise: it is a written case about market and contribution, delivered before the budget cycle rather than during a review |
 | `career` | **Contracting Admin — Invoicing, Tax, Insurance &amp; the Boring Protections** | The consulting track covers pricing, proposals and scope. This is the machinery underneath, which is where independents actually get hurt |
-| `ops` | **Compliance Evidence as an Operational Output** | Auditors want proof a control ran, not a description of it. Designing the evidence at the same time as the control converts an annual scramble into a byproduct — and this is `grc`'s audit card seen from the operations side |
-| `military` | **Transitioning Out — The Timeline, and What to Start When** | The domain has GI Bill and résumé-translation cards. This is the calendar version, because the decisions with the longest lead times are the ones people make last |
+| `ops` | ✅ **Compliance Evidence as an Operational Output** | Auditors want proof a control ran, not a description of it. Designing the evidence at the same time as the control converts an annual scramble into a byproduct — and this is `grc`'s audit card seen from the operations side |
+| `military` | ✅ **Transitioning Out — The Timeline, and What to Start When** | The domain has GI Bill and résumé-translation cards. This is the calendar version, because the decisions with the longest lead times are the ones people make last |
 | `math` | **Reading the Question — Where Marks Are Lost That Are Not About Maths** | The domain is a calculus course, so this stays in scope: the marks lost to misread instructions, unstated units and unshown working, which is a different failure from not knowing the material |
-| `quotes` | **Sourcing a Quotation — Finding the Original, and the Ones That Are Not Real** | Five topics and the domain's own thesis is that an unsourced quote is a rumour with good grammar. The method card is missing: how to actually chase an attribution to a primary source, and the tells of a fabricated one |
+| `quotes` | ✅ **Sourcing a Quotation — Finding the Original, and the Ones That Are Not Real** | Five topics and the domain's own thesis is that an unsourced quote is a rumour with good grammar. The method card is missing: how to actually chase an attribution to a primary source, and the tells of a fabricated one |
 
 ---
 
@@ -10733,6 +10744,9 @@ Recorded so they do not have to be re-argued.
 | `sec`: TPM as its own card | **Rejected.** Covered by `linux`'s measured-boot card and `endpoint`'s BitLocker card from both ends |
 | `blueteam`: malware detonation | **Rejected.** *Malware Sandboxes — VirusTotal, Any.Run & Hybrid Analysis* already exists |
 | Anything about this site's own architecture | **Rejected permanently.** It is a study site, not a case study. The engineering record belongs in this file |
+| `script`: *Dates & Times in Code — The Five Mistakes* | **Rejected (built-out duplicate).** *Dates & Times — Trickier Than You Think* already teaches UTC storage, timezone-aware datetimes, `strftime`/`strptime` and the naive-datetime trap. The five mistakes *are* that card. The spec paired it with the concept card and missed that the code card already existed |
+| `career`: *Contracting Admin — Invoicing, Tax, Insurance & the Boring Protections* | **Rejected (built-out duplicate).** The consulting track already carries *The Business Side — Cash Flow, Contracts & the Boring Protections That Matter* — same machinery, same phrase |
+| `math`: *Reading the Question — Where Marks Are Lost That Are Not About Maths* | **Rejected (built-out duplicate).** *Chapter Tests & the Final — Where the Marks Actually Go* already covers answering the wrong question, units, degree-mode and showing working — the whole of the proposed card |
 
 ---
 
@@ -10785,6 +10799,49 @@ it as a check.
 `IR` and `SMB` are now multi-meaning entries with exhaustive `byDomain` maps, which brings
 them under the ratchet: **83 recorded decisions**, up from 81. Site total unchanged at
 **1,432**. Smoke **135/135** · axe **6/6** · visual **2/2**.
+
+
+---
+
+## Session record — Phase 7 closed, and three duplicates the probe did not catch
+
+The remaining **46 cards** of Phase 7 shipped this session, across all fifteen tracks, taking
+the site **1,466 → 1,512 topics**. The full-track writes: `threat` (9 — the actors and the
+economy), `redteam` (5 — the tradecraft between the tools), `blueteam` (5), `cloud` (6 — the
+provider-neutral operating model), `endpoint` (6 — the device classes that are not laptops),
+`m365` (5 — the workloads nobody governs), and the singletons in `eng`, `script`, `infra`,
+`productivity`, `hw` (×2), `career`, `ops`, `military` and `quotes`.
+
+**Three candidates were rejected**, every one for the reason this phase keeps rediscovering:
+the probe named a gap a neighbouring card already filled, and reading the target's actual
+content — not its title — settled it. They are in *Rejected, with reasons* above:
+
+- `script` **Dates & Times in Code** — *Dates & Times — Trickier Than You Think* is already the
+  code card: UTC storage, timezone-aware datetimes, `strftime`, the naive-datetime trap.
+- `career` **Contracting Admin** — *The Business Side — Cash Flow, Contracts & the Boring
+  Protections That Matter* already carries the machinery underneath, phrase and all.
+- `math` **Reading the Question** — *Chapter Tests & the Final — Where the Marks Actually Go*
+  already covers answering the wrong question, units, degree-mode and showing working.
+
+### A fourth correction, and the verification lesson behind it
+
+`blueteam` **SOC Metrics That Do Not Lie** was on the Track-CC list as unbuilt. It was not — it
+shipped in the ordered first ten. A duplicate got written and then **caught by the
+slug-collision linter**, not by the plan. The cause is worth recording: the pre-flight check
+that produced the CC list matched card titles with a regex that stopped at the first
+annotated acronym, so `SOC <span…>(Security Operations Center)</span> Metrics That Do Not Lie`
+read as `SOC`, and the card looked absent. **Verify a card's existence against its slug or its
+de-annotated title, never against a naive `topic-name` match** — the same acronym-truncation
+trap the title census was built to watch, arriving through the tooling this time. The linter
+did exactly the job the *card rubric* claims for it: it caught the invented duplicate the
+moment it was built.
+
+The header specified 96; the honest built count is **93**. The gap is three documented
+rejections, which is the file correcting its own probe once more — the single most repeated
+lesson of Phase 7, now closing it as it opened it.
+
+`make check` green across every static gate; determinism reproducible; page budget **15% raw /
+16% gzip headroom**. Smoke **120/120** · axe **6/6** · visual **2/2**.
 
 
 ---
@@ -11886,8 +11943,79 @@ That is a one-line fix per card and it is the highest-value linking work availab
 something the operational card cannot. Phase 7's W1 (Little's Law) was chosen partly for
 this reason — `ops`, `data` and `cs` all need it and none of them currently connects.
 
+**Acted on this session (See-also layer).** Rather than edit prose in fifty cards, the inbound
+edge was added to `related.json`, bidirectionally, in two batches covering **fourteen `cs`
+theory cards** and the operational cards that rest on them:
+
+- queue / capacity / backpressure → *Little's Law & Queueing*
+- latency / observability / load-testing → *Percentiles & Latency*
+- sharding / blast-radius / load-balancers → *Consistent Hashing*
+- detection quality → *Bayes' Theorem & Base Rates*; C / Rust → *Undefined Behaviour & Memory Safety*
+- rounding gotchas → *Number Representation*; failover quorum → *Consensus*; saga & streaming ordering → *Time in Distributed Systems*; Redis → *Caches & the Memory Hierarchy*
+- embeddings/RAG → *Vectors & Embeddings*; ML fundamentals → *Derivatives & Gradient Descent*; ER modelling → *Sets & Relations*; data-structure choice & back-of-envelope → *Big-O in Practice*; hash-table choice → *Hash Tables & the DoS*
+
+`cs` went from **one inbound reference to a See-also connection on fourteen of its centres of
+gravity**, and because the edges are bidirectional, each operational card now surfaces the
+theory beneath it. Hand-curated, not term-overlap (§3), so the strip carries them without
+filling with noise. (The batch-2 pass also re-caught the acro-span title-truncation trap: three
+targets whose titles carry a *mid-title* acronym slugged short until resolved through build's
+own `topic_label` — the same trap the SOC-metrics duplicate sprang, and the reason ids must
+come from the stamper, never a naive `topic-name` match.)
+
 The mirror finding: `m365` at 21 out and 1 in is the most self-sufficient domain on the site,
 and the least discoverable from anywhere else.
+
+### The two mirror findings, worked
+
+The graph's §1 named two under-connected shapes to fix, and both took a wave this session, by
+the same bidirectional See-also method as `cs`:
+
+- **`web`, the island (0 inbound).** A large technical domain nothing pointed at. Thirteen
+  high-confidence pairs now link its security, auth, storage, edge, performance and testing
+  cards inbound from the operational and security domains that rest on them — Frontend Security
+  from the injection/WAF/pentest cards, Frontend Auth from OAuth and sessions, Web Storage from
+  the cookie-consent card, edge rendering from caching and cloud networking, Core Web Vitals
+  from load testing.
+- **`m365`, the broadcaster (21 out / 1 in).** The most self-sufficient, least discoverable
+  domain. Eleven pairs now point at it from the compliance and identity cards that share its
+  subjects — DLP labels ↔ data classification, retention ↔ deletion, eDiscovery ↔ subject-access
+  requests, PIM ↔ privileged access management, EOP/Defender ↔ BEC and email authentication,
+  M365 joiner-mover-leaver ↔ offboarding, Multi-Geo ↔ the new cloud data-residency card, Power
+  BI governance ↔ the data semantic-layer card, Teams call quality ↔ QoS, M365 backup ↔ the
+  3-2-1-1-0 backup strategy.
+
+A final pass took the **near-duplicate census** (the third `make census` report) and read it
+the way it is meant to be read — not as a merge queue but as a list of *pairs that should at
+least point at each other*. Ten cross-domain twins that were similar and unlinked are now
+cross-linked, non-destructively: `pentest`/`redteam` **sqlmap**, `net`/`blueteam` **packet
+analysis / Wireshark**, `threat`/`blueteam` **email authentication**, `devops`/`linux`
+**container security / Docker**, `pentest`/`redteam` **vulnerability scanning**, `grc`/`ops`
+**risk vs vulnerability lifecycle**, the two `data` **schema-design** cards, the two `ai`
+**machine-learning** cards, `devops`/`eng` **event-driven architecture**, and `script`/`eng`
+**clean code**. This is the Phase-9 duplication finding resolved the safe way: a 0.5–0.6
+similarity means *distinct-but-related*, so a link beats a merge and keeps every permalink.
+
+`related.json` finished the session at **1,216 links across 690 topics, still 0 one-way**, and
+the orphan census fell from **898 to the mid-800s** — the See-also layer now carries the
+writer's own cross-references, the graph's two structural gaps, and the near-duplicate twins,
+without the term-overlap default ever shipping.
+
+## 3. The See-also layer, filled from the writer's own cross-references
+
+The graph above counts cross-references authored in prose. Those same `<span class="xref">`
+edges are also the highest-quality seed for the *related-topics* strip — a writer saying
+"these two belong together", already proven to resolve by the linter — and
+`suggest_related.py --xrefs` exists precisely to emit them, both directions, in
+`related.json`'s own format.
+
+This session ran that mode and merged its output into `related.json` as a **union**: every
+existing curated link kept, **+122 writer-authored links added (976 → 1,098), all
+bidirectional (`--check`: 0 one-way), nothing removed.** The orphan census moved **898 → 866**
+topics with no inbound link and **151 → 148** deep dead-ends. The point of the wave was the 46
+new Phase 7 cards, which arrived carrying outbound xrefs and no inbound links: they are now
+reachable from every card they reference. The term-overlap *default* stays unshipped, exactly
+as the tool's docstring insists — only the deliberate edges were promoted, so the strip does
+not fill with the same four cards on every page.
 
 ## 3. Learning paths are one domain's story
 
@@ -12045,6 +12173,26 @@ near-matches in §2 are that second kind.
 **And the counter-discipline:** every wave should *reduce* the number of dated claims where
 it can, by rewriting. A rising volatile-span count is not automatically progress — it can
 mean the site is accumulating promises to re-check things that never needed a number.
+
+## 7. Audit pass — V1, V3 and V5 read after Phase 7 closed
+
+A pass over the three most concrete waves, done the way §4 prescribes — per class, by hand —
+and the finding is the same one this phase opened with: **the site is already disciplined, and
+the mechanical search over-matches exactly as predicted.**
+
+| Wave | What the grep returned | What was actually actionable |
+|---|---|---|
+| **V1 — tier gating** | `E5`/`E3`/`P1`/`P2` across `m365`, `endpoint`, `eng`, `ops`, `productivity` | **~none.** `ops`/`productivity` `P1`/`P2` are incident priorities; `eng` `(E3)` is a footnote marker; `m365`'s `E3`/`E5` are the *subject* of the licensing card, not a gating claim. The one real claim — `m365`'s litigation-hold tier note — is already written in the §5 style: *"holds generally require the enterprise tier … find out which you have before promising counsel a capability."* |
+| **V3 — prices** | `career` home-lab budgets, salary figures | The budget **tiers** (`$0` / `$0–50` / `$100–500`) are pedagogical anchors that do not age; the only genuinely volatile detail is the used-mini-PC range, already hedged with `~`. Rewriting the tier labels would damage the table it organises. Left as-is. |
+| **V5 — console paths** | `check_volatility.py`'s 2 candidates (`Teams Voice`, `Reporting & Usage Analytics`) | **False positives.** The flagged mentions are generic prose — *"wired in through the admin centre"*, *"data the admin centre has never heard of"* — not console-path claims. The real console names in those cards (`Teams admin centre`, `Entra admin centre`) already carry `volatile` spans. |
+
+Two things this pass also settled. **This session's 46 new cards are freshness-clean by
+construction** — they were written mechanism-first, per the card rubric, and introduce no
+undated price, limit or version claim (`check_volatility.py` still reports 46 spans, and its
+only two console candidates are the pre-existing `m365` cards above). And the phase stays
+**open as a standing discipline, not a queue** — §6's V5 grows with every `m365`/`cloud` wave,
+so there is nothing to mark closed. The right output of a Phase 11 pass is this table, not a
+pile of edits — which is the whole argument of §3.
 
 
 ---
