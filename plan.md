@@ -12121,6 +12121,19 @@ mature site's remaining depth-gaps concentrate. That is the durable shape of new
 site this size: not waves, but a handful of real gaps per deliberate audit, thinning as the vein
 is worked — which is exactly the loop the scheduled Routine runs. Site **1,512 → 1,518** over the six.
 
+A seventh round probed the *less-mined* domains — engineering, architecture, ops, security — and
+**came back empty**, which is the finding that stops the pass. Every strong candidate verified as
+already covered: SOLID has its own `eng` card (Dependency Inversion included), dependency injection
+is `script`'s *Inject Dependencies* card, and strangler-fig, hexagonal, bounded-context,
+domain-driven, graceful-degradation, golden-signals and secure-by-default are all present. What
+was left absent — anti-corruption layer, dark launch, YAGNI, game day, key rotation — are narrow
+sub-topics of existing cards, not standalone gaps. So the honest stop: **the foundational level is
+saturated across every domain, and the depth-gaps that remain concentrate in the theory domain and
+are now largely worked.** Six genuine cards, then a round that finds none, is the signal to hand
+the increasingly-niche long tail to the scheduled Routine's periodic fresh-context audits rather
+than manufacture borderline cards — the counter-discipline this file has stated since Phase 8:
+*a rising count is not automatically progress.*
+
 ---
 
 # Closing note for Phase 7–10
