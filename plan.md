@@ -12087,7 +12087,17 @@ dedup and anti-entropy. Written to the rubric (*prove two copies of a terabyte m
 comparing 32 bytes; when they differ, find where in log n*), and linked to consistent hashing,
 hash tables and git. Site **1,512 → 1,513**. The audit's real output is the table above: the
 site is saturated at the level a broad probe reaches, and the honest yield of a careful pass
-is one card, not a wave — which is exactly the closing note below.
+is a card or two, not a wave — which is exactly the closing note below.
+
+A second-round probe on advanced distributed-systems topics found the neighbouring gap:
+`cs` had ordering (clocks, causality) and consensus (Raft/Paxos) but not **CRDTs** — the
+conflict-free replicated data types that let offline replicas merge without coordination
+(collaborative editors, offline-first apps). It is genuinely distinct from both neighbours —
+convergence, not ordering; eventual consistency, not consensus — and the card is built around
+that boundary (a CRDT cannot enforce a global invariant like &ldquo;no double-booking&rdquo;;
+for that you still need coordination). Site **1,513 → 1,514**. Two cards from two careful
+rounds, both in the one domain deep enough to still have a foundational gap — and the search
+stops there rather than reaching for thinner ones the neighbours already cover.
 
 ---
 

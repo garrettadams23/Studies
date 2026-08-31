@@ -2334,6 +2334,94 @@ valgrind --leak-check=full ./prog</pre>
             </div>
           </div>
 
+
+          <!-- ── TOPIC: CRDTs ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🔀</span>
+              <span class="topic-name">CRDTs — Merging Without Coordination, and What They Cannot Do</span>
+              <span class="topic-badge">CS • Distributed Systems</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Give Up Ordering. Design the Data So Every Merge Order Lands on the Same Answer.</div>
+                <div class="concept-desc">
+                  Two replicas edit the same document offline — a phone in a tunnel, a laptop on a plane — and
+                  later reconnect. The usual answers are to pick a winner (last-write-wins, which
+                  <span class="xref">Time in Distributed Systems — Why Timestamps Cannot Order Events</span> shows
+                  silently discards the loser's work) or to force coordination (nobody edits without a lock).
+                  A <strong class="c-cyan">conflict-free replicated data type</strong> takes a third path: it
+                  makes the merge operation <strong>commutative, associative and idempotent</strong>, so that
+                  <strong class="c-amber">applying the updates in any order, any number of times, converges to the
+                  same state</strong> — no central authority, no locks, no conflict dialog. The ordering problem is
+                  not solved; it is designed out.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Merge property</th><th>What it guarantees</th></tr>
+                    <tr><td>Commutative (a·b = b·a)</td><td>The order updates arrive in does not matter</td></tr>
+                    <tr><td>Associative</td><td>How you group and batch merges does not matter</td></tr>
+                    <tr><td>Idempotent (a·a = a)</td><td>Re-delivering the same update — which unreliable networks do — changes nothing</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Those three properties are the whole trick: together they mean replicas that have seen the same
+                    <em>set</em> of updates are in the same state, regardless of the path each took to get there.
+                    That is <strong>strong eventual consistency</strong> — convergence with no coordination on the
+                    write path — and it is why an offline-first app can let everyone edit and still agree later.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Families, and the Cost Each One Hides</div>
+                <div class="concept-desc">
+                  &ldquo;CRDT&rdquo; is a family, not a single structure, and the interesting part is what each
+                  member gives up to guarantee convergence. The recurring cost is <strong>metadata</strong>: to
+                  merge correctly without a coordinator, a CRDT often has to remember more than the value itself —
+                  and that bookkeeping can outgrow the data.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Type</th><th>Merges by</th><th>The catch</th></tr>
+                    <tr><td>Counter (G-Counter / PN-Counter)</td><td>Per-replica tallies, summed</td><td>Grows with the number of replicas, not the count</td></tr>
+                    <tr><td>Set (G-Set, OR-Set)</td><td>Union, with add/remove tags</td><td>Removes need tombstones, or a re-add is lost</td></tr>
+                    <tr><td>Register (LWW / multi-value)</td><td>A rule for concurrent writes</td><td>LWW drops data; multi-value hands you the conflict to resolve</td></tr>
+                    <tr><td>Sequence (text / RGA)</td><td>Stable positions between elements</td><td>Tombstones for deletes; metadata can dwarf the text</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The tombstone problem is the fingerprint: a naive set CRDT that deletes an element must
+                    <em>remember</em> it deleted it, forever, or a concurrent add resurrects it. That is why
+                    production CRDTs work hard at garbage-collecting metadata — and why &ldquo;just use a CRDT&rdquo;
+                    is a bigger commitment than it sounds.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Scope Line</div>
+                <div class="concept-title">CRDTs Give Convergence, Not Consensus — They Cannot Enforce a Global Invariant</div>
+                <div class="concept-desc">
+                  This is the boundary that matters and the one most often crossed. A CRDT guarantees the replicas
+                  <em>agree</em> eventually; it cannot guarantee the agreed-on state satisfies a rule that spans
+                  replicas. Two people can both book the last seat offline, and both merges succeed — the set
+                  happily contains both bookings. <strong class="c-amber">You cannot express &ldquo;balance never
+                  goes negative&rdquo; or &ldquo;at most one winner&rdquo; as a CRDT</strong>, because enforcing it
+                  requires seeing all the concurrent updates <em>before</em> deciding, which is coordination —
+                  exactly what a CRDT was designed to avoid.
+                </div>
+                <div class="concept-desc verdict">
+                  So the decision is clean. Reach for a CRDT when concurrent, possibly-offline edits must merge
+                  without a central authority and eventual consistency is acceptable — collaborative editors,
+                  presence, shopping carts, multi-region caches. Reach for
+                  <span class="xref">Consensus — Raft and Paxos, Without the Paper</span> when a hard invariant must
+                  hold globally, and pay the coordination cost knowingly. Most real systems use both: consensus for
+                  the few operations that need an invariant, CRDTs for the many that only need to converge.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body cs -->
 
 <!-- ── TOPIC: MODULAR ARITHMETIC ─────────────────────────────── -->
