@@ -12405,6 +12405,13 @@ overflow at 768, 900, 1024), so desktop layout is untouched and the visual basel
 scoped to ≤640px (fits unaided at 768px+) · desktop untouched · gates green
 ```
 
+And the coverage gap that let it hide is now closed: `tools/mobile_test.mjs` (`make mobile`) renders at
+375px, opens a spread of table-heavy domains, expands every topic and asserts the document is no wider than
+the viewport — naming the widest uncontained element on a failure. Proved to bite: with the CSS rule removed
+it fails `script` (127px), `net` (43px) and `sec` (62px), each pointing at `TABLE.ref-table`; with it, 9/9
+domains fit. Wired into `make all`. The browser suite now guards four things a desktop screenshot never
+could — behaviour, accessibility, a storage-denied browser, and a phone's width.
+
 ---
 
 # Closing note for Phase 7–10

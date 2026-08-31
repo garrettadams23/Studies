@@ -80,8 +80,12 @@ visual:
 resilience:
 	$(NODE) tools/storage_denied_test.mjs
 
+## mobile: the page must not scroll sideways at a phone's width (375px)
+mobile:
+	$(NODE) tools/mobile_test.mjs
+
 ## all: build, then every check, then the browser tests
-all: build check test a11y visual resilience
+all: build check test a11y visual resilience mobile
 
 ## help: list these targets
 help:
