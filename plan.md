@@ -12382,6 +12382,29 @@ last block the conversion had missed**, a `<div class="code-block" style="margin
 extra attribute slipped past the exact-match rewrite. The gate's pattern is attribute-tolerant where the
 rewrite was not, which is exactly the asymmetry you want: convert conservatively, forbid broadly.
 
+### The phone was scrolling sideways — wide tables pushing the whole page
+
+The desktop gates are green because the desktop gates are all there are: `visual_test.mjs` screenshots the
+filter bar, and nothing renders the page at a phone's width. Doing so found a real defect nobody had
+measured. At **375px**, the `script` domain's body was **127px wider than the viewport** and `net`'s 43px —
+the page scrolled sideways, the jarring kind where the text drifts under your thumb. The cause was tables:
+an `ai-table` has a `white-space: nowrap` first column of labels and lives in no scroll container, so a
+five-column table simply overran the screen and dragged the page with it. `<pre>` code blocks did **not** do
+this — they already carry `overflow-x: auto`, so the same phone that overflowed on `script` was clean on
+`linux` and `cs`, which is what ruled the fresh conversion out as the cause.
+
+The fix is the standard responsive-table one, and it is CSS-only — no wrapper div, no build change. Under
+`@media (max-width: 640px)`, `.ai-table` / `.ref-table` become `display: block; overflow-x: auto`. A
+block-level table still has table-row and table-cell descendants, so the browser wraps them in an anonymous
+table box — the columns stay aligned (verified: two cells in a column share a left edge to the pixel) while
+the block itself scrolls. It is scoped to phones because the tables fit natively from ~700px up (measured 0
+overflow at 768, 900, 1024), so desktop layout is untouched and the visual baseline never moves.
+
+```
+375px page overflow: script 127px → 0 · net 43px → 0 · every domain 0 · columns stay aligned
+scoped to ≤640px (fits unaided at 768px+) · desktop untouched · gates green
+```
+
 ---
 
 # Closing note for Phase 7–10

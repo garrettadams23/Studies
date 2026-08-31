@@ -487,6 +487,19 @@ header p {
     padding: 6px 10px;
     font-size: 10px;
   }
+  /* Wide reference tables (many columns, a nowrap first column of labels) push
+     the whole page sideways on a phone — measured at 375px, a 5-column table
+     overran the viewport by ~100px. Making the table itself a block-level
+     scroller confines the overflow to the table: a browser wraps the still-
+     table-row/-cell descendants in an anonymous table box, so the columns stay
+     aligned while the block scrolls. Only phones need it; tables fit from ~700px
+     up, so this is scoped here and desktop layout is untouched. */
+  .ai-table,
+  .ref-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 .sw-btn {
   display: flex;
