@@ -12376,6 +12376,12 @@ div.code-block 422 → 0 · pre.code-block 381 → 803 · the class now lives on
 python reference & every command/config/diagram: collapsed → real code · check PASS · gates green
 ```
 
+And a gate, because the count is zero and this file's discipline is that a zero graduates: `lint_content.py`
+now rejects `<div … class="code-block">` outright. It earned its keep on the first run — it caught **one
+last block the conversion had missed**, a `<div class="code-block" style="margin-bottom: 14px">` whose
+extra attribute slipped past the exact-match rewrite. The gate's pattern is attribute-tolerant where the
+rewrite was not, which is exactly the asymmetry you want: convert conservatively, forbid broadly.
+
 ---
 
 # Closing note for Phase 7–10

@@ -439,6 +439,16 @@ def main():
         if "topic-chevron" in text:
             errors.append(f"{name}: uses banned class 'topic-chevron' (use 'topic-chev')")
 
+        # A code block belongs in a <pre>, never a <div>: a <div> defaults to
+        # white-space:normal and collapses the newlines, so multi-line code and
+        # aligned diagrams render as one run-on line. The whole site was converted
+        # to <pre class="code-block"> once the count hit zero; this keeps it there.
+        for m in re.finditer(r'<div\b[^>]*class="code-block"', text):
+            line = text.count("\n", 0, m.start()) + 1
+            errors.append(
+                f"{name}:{line}: <div class=\"code-block\"> collapses whitespace — "
+                f"use <pre class=\"code-block\"> so newlines and indentation survive")
+
         for line_no, block in topic_blocks(text):
             label, has_name = topic_label(block)
             # The expand chevron is the affordance CSS rotates on open
