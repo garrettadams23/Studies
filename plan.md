@@ -11965,6 +11965,30 @@ come from the stamper, never a naive `topic-name` match.)
 The mirror finding: `m365` at 21 out and 1 in is the most self-sufficient domain on the site,
 and the least discoverable from anywhere else.
 
+### The two mirror findings, worked
+
+The graph's §1 named two under-connected shapes to fix, and both took a wave this session, by
+the same bidirectional See-also method as `cs`:
+
+- **`web`, the island (0 inbound).** A large technical domain nothing pointed at. Thirteen
+  high-confidence pairs now link its security, auth, storage, edge, performance and testing
+  cards inbound from the operational and security domains that rest on them — Frontend Security
+  from the injection/WAF/pentest cards, Frontend Auth from OAuth and sessions, Web Storage from
+  the cookie-consent card, edge rendering from caching and cloud networking, Core Web Vitals
+  from load testing.
+- **`m365`, the broadcaster (21 out / 1 in).** The most self-sufficient, least discoverable
+  domain. Eleven pairs now point at it from the compliance and identity cards that share its
+  subjects — DLP labels ↔ data classification, retention ↔ deletion, eDiscovery ↔ subject-access
+  requests, PIM ↔ privileged access management, EOP/Defender ↔ BEC and email authentication,
+  M365 joiner-mover-leaver ↔ offboarding, Multi-Geo ↔ the new cloud data-residency card, Power
+  BI governance ↔ the data semantic-layer card, Teams call quality ↔ QoS, M365 backup ↔ the
+  3-2-1-1-0 backup strategy.
+
+`related.json` finished the session at **1,198 links across 676 topics, still 0 one-way**, and
+the orphan census fell from **898 to the mid-800s** — the See-also layer now carries the
+writer's own cross-references *and* the graph's two structural gaps, without the term-overlap
+default ever shipping.
+
 ## 3. The See-also layer, filled from the writer's own cross-references
 
 The graph above counts cross-references authored in prose. Those same `<span class="xref">`
