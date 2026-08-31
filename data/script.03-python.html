@@ -3097,24 +3097,23 @@ console.print(table)
                 </div>
                 <div class="dw">
                   <div class="code-label">THE SAME COMMAND, TWO WAYS</div>
-                  <div class="code-block">
-                  <span class="kw">import</span> subprocess
-                  
-                  <span class="com"># DANGEROUS — a shell parses this string, and the filename is part of it</span>
-                  filename = <span class="str">"report.pdf; rm -rf ~"</span>       <span class="com"># it came from a form field</span>
-                  subprocess.run(<span class="str">f"pdfinfo {filename}"</span>, shell=<span class="kw">True</span>)
-                  <span class="com"># the shell sees two commands. The second one runs.</span>
-                  
-                  <span class="com"># SAFE — a list of arguments. No shell, no parsing, no metacharacters</span>
-                  subprocess.run([<span class="str">"pdfinfo"</span>, filename], check=<span class="kw">True</span>)
-                  <span class="com"># pdfinfo receives one argument, which is a very strange filename. Nothing else happens.</span>
-                  
-                  <span class="com"># Also safe, and better: capture output and fail loudly</span>
-                  r = subprocess.run([<span class="str">"pdfinfo"</span>, filename],
-                                     capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>,
-                                     timeout=<span class="num">10</span>, check=<span class="kw">True</span>)
-                  <span class="kw">print</span>(r.stdout)
-                  </div>
+                  <pre class="code-block"><span class="kw">import</span> subprocess
+
+<span class="com"># DANGEROUS — a shell parses this string, and the filename is part of it</span>
+filename = <span class="str">"report.pdf; rm -rf ~"</span>       <span class="com"># it came from a form field</span>
+subprocess.run(<span class="str">f"pdfinfo {filename}"</span>, shell=<span class="kw">True</span>)
+<span class="com"># the shell sees two commands. The second one runs.</span>
+
+<span class="com"># SAFE — a list of arguments. No shell, no parsing, no metacharacters</span>
+subprocess.run([<span class="str">"pdfinfo"</span>, filename], check=<span class="kw">True</span>)
+<span class="com"># pdfinfo receives one argument, which is a very strange filename. Nothing else happens.</span>
+
+<span class="com"># Also safe, and better: capture output and fail loudly</span>
+r = subprocess.run([<span class="str">"pdfinfo"</span>, filename],
+                   capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>,
+                   timeout=<span class="num">10</span>, check=<span class="kw">True</span>)
+<span class="kw">print</span>(r.stdout)
+</pre>
                   <div class="concept-desc verdict">
                     Notice what the safe version does <em>not</em> need: no escaping, no allowlist of characters,
                     no regex to strip semicolons. <strong>The metacharacters stop being special because nothing is
@@ -3174,21 +3173,20 @@ console.print(table)
                 </div>
                 <div class="dw">
                   <div class="code-label">HINTS, AND WHAT A CHECKER DOES WITH THEM</div>
-                  <div class="code-block">
-                  <span class="com"># Hints alone change nothing at runtime — this happily returns a string</span>
-                  <span class="kw">def</span> <span class="fn">total</span>(items: list[<span class="type">int</span>]) -&gt; <span class="type">int</span>:
-                      <span class="kw">return</span> <span class="str">"oops"</span>          <span class="com"># Python: fine. mypy: error, line 2</span>
-                  
-                  <span class="com"># The value appears when a checker runs. Optional is the common catch:</span>
-                  <span class="kw">def</span> <span class="fn">find_user</span>(uid: <span class="type">int</span>) -&gt; <span class="type">User</span> | <span class="kw">None</span>:
-                      ...
-                  
-                  user = find_user(<span class="num">7</span>)
-                  <span class="kw">print</span>(user.name)              <span class="com"># error: item "None" has no attribute "name"</span>
-                  
-                  <span class="kw">if</span> user <span class="kw">is not</span> <span class="kw">None</span>:      <span class="com"># narrowing — now it is a User</span>
-                      <span class="kw">print</span>(user.name)          <span class="com"># fine</span>
-                  </div>
+                  <pre class="code-block"><span class="com"># Hints alone change nothing at runtime — this happily returns a string</span>
+<span class="kw">def</span> <span class="fn">total</span>(items: list[<span class="type">int</span>]) -&gt; <span class="type">int</span>:
+    <span class="kw">return</span> <span class="str">"oops"</span>          <span class="com"># Python: fine. mypy: error, line 2</span>
+
+<span class="com"># The value appears when a checker runs. Optional is the common catch:</span>
+<span class="kw">def</span> <span class="fn">find_user</span>(uid: <span class="type">int</span>) -&gt; <span class="type">User</span> | <span class="kw">None</span>:
+    ...
+
+user = find_user(<span class="num">7</span>)
+<span class="kw">print</span>(user.name)              <span class="com"># error: item "None" has no attribute "name"</span>
+
+<span class="kw">if</span> user <span class="kw">is not</span> <span class="kw">None</span>:      <span class="com"># narrowing — now it is a User</span>
+    <span class="kw">print</span>(user.name)          <span class="com"># fine</span>
+</pre>
                   <div class="concept-desc verdict">
                     The largest single win is the third example: <strong>a checker forces you to handle
                     <code>None</code></strong>, which is the source of a very large share of runtime errors in
@@ -3270,29 +3268,28 @@ console.print(table)
                 </div>
                 <div class="dw">
                   <div class="code-label">THE HABIT CHANGE, IN FULL</div>
-                  <div class="code-block">
-                  <span class="kw">from</span> pathlib <span class="kw">import</span> Path
-                  
-                  <span class="com"># String paths: separator bugs, and every operation is a different function</span>
-                  <span class="kw">import</span> os
-                  p = base + <span class="str">"/"</span> + name + <span class="str">".txt"</span>            <span class="com"># breaks on Windows, breaks on a trailing slash</span>
-                  p = os.path.join(base, name + <span class="str">".txt"</span>)      <span class="com"># better, still stringly typed</span>
-                  
-                  <span class="com"># pathlib: one object, operators that read like the thing they do</span>
-                  p = Path(base) / <span class="str">f"{name}.txt"</span>
-                  
-                  p.suffix                 <span class="com"># '.txt'</span>
-                  p.stem                   <span class="com"># the name without the suffix</span>
-                  p.parent                 <span class="com"># the directory, as a Path</span>
-                  p.with_suffix(<span class="str">".bak"</span>)     <span class="com"># same path, different extension</span>
-                  p.exists(), p.is_file()
-                  p.read_text(encoding=<span class="str">"utf-8"</span>)
-                  p.write_text(data, encoding=<span class="str">"utf-8"</span>)
-                  p.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
-                  
-                  <span class="kw">for</span> f <span class="kw">in</span> Path(<span class="str">"logs"</span>).glob(<span class="str">"**/*.log"</span>):   <span class="com"># recursive, no os.walk</span>
-                      <span class="kw">print</span>(f.resolve())
-                  </div>
+                  <pre class="code-block"><span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+<span class="com"># String paths: separator bugs, and every operation is a different function</span>
+<span class="kw">import</span> os
+p = base + <span class="str">"/"</span> + name + <span class="str">".txt"</span>            <span class="com"># breaks on Windows, breaks on a trailing slash</span>
+p = os.path.join(base, name + <span class="str">".txt"</span>)      <span class="com"># better, still stringly typed</span>
+
+<span class="com"># pathlib: one object, operators that read like the thing they do</span>
+p = Path(base) / <span class="str">f"{name}.txt"</span>
+
+p.suffix                 <span class="com"># '.txt'</span>
+p.stem                   <span class="com"># the name without the suffix</span>
+p.parent                 <span class="com"># the directory, as a Path</span>
+p.with_suffix(<span class="str">".bak"</span>)     <span class="com"># same path, different extension</span>
+p.exists(), p.is_file()
+p.read_text(encoding=<span class="str">"utf-8"</span>)
+p.write_text(data, encoding=<span class="str">"utf-8"</span>)
+p.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
+
+<span class="kw">for</span> f <span class="kw">in</span> Path(<span class="str">"logs"</span>).glob(<span class="str">"**/*.log"</span>):   <span class="com"># recursive, no os.walk</span>
+    <span class="kw">print</span>(f.resolve())
+</pre>
                   <div class="concept-desc verdict">
                     Three habits worth adopting wholesale. <strong>Always pass <code>encoding="utf-8"</code></strong>
                     to <code>read_text</code> and <code>write_text</code> &mdash; the default is

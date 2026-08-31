@@ -749,25 +749,24 @@
                 </div>
                 <div class="dw">
                   <div class="dt">▸ SPL SYNTAX STRUCTURE</div>
-                  <div class="code-block">
-                    <span class="com"># Basic search (find keyword in an index)</span>
-                    <span class="fn">index</span>=cybersecurity hacker
+                  <pre class="code-block"><span class="com"># Basic search (find keyword in an index)</span>
+<span class="fn">index</span>=cybersecurity hacker
 
-                    <span class="com"># Pipe (|) chains commands: output of left feeds into
-                      right</span>
-                    <span class="fn">index</span>=* sourcetype=syslog |
-                    <span class="fn">search</span> Failed |
-                    <span class="fn">head</span> 100
+<span class="com"># Pipe (|) chains commands: output of left feeds into
+  right</span>
+<span class="fn">index</span>=* sourcetype=syslog |
+<span class="fn">search</span> Failed |
+<span class="fn">head</span> 100
 
-                    <span class="com"># Field=value filtering (implicit AND between
-                      terms)</span>
-                    <span class="fn">source</span>=<span class="str">"/var/log/auth.log"</span>
-                    status=<span class="num">404</span>
+<span class="com"># Field=value filtering (implicit AND between
+  terms)</span>
+<span class="fn">source</span>=<span class="str">"/var/log/auth.log"</span>
+status=<span class="num">404</span>
 
-                    <span class="com"># Filter by specific index with multiple conditions</span>
-                    <span class="fn">index</span>=<span class="str">"customer_feedback"</span>
-                    Code=<span class="str">RED</span> host=<span class="str">"myblog"</span>
-                  </div>
+<span class="com"># Filter by specific index with multiple conditions</span>
+<span class="fn">index</span>=<span class="str">"customer_feedback"</span>
+Code=<span class="str">RED</span> host=<span class="str">"myblog"</span>
+</pre>
 
                   <div class="dt">▸ COMMON SEARCH COMMANDS</div>
                   <table class="ref-table" style="margin-bottom: 14px">
@@ -848,28 +847,27 @@
                     </tr>
                   </table>
                   <div class="dt">▸ SPL FILTERING (search vs regex)</div>
-                  <div class="code-block">
-                    <span class="com"># search — keyword and field matching</span>
-                    <span class="fn">index</span>=names |
-                    <span class="fn">search</span> Chris
-                    <span class="fn">index</span>=emails |
-                    <span class="fn">search</span> emailAddr=<span class="str">"*@mysite.com"</span>
+                  <pre class="code-block"><span class="com"># search — keyword and field matching</span>
+<span class="fn">index</span>=names |
+<span class="fn">search</span> Chris
+<span class="fn">index</span>=emails |
+<span class="fn">search</span> emailAddr=<span class="str">"*@mysite.com"</span>
 
-                    <span class="com"># regex — match/exclude with regular expression on
-                      _raw</span>
-                    <span class="fn">index</span>=syslogs |
-                    <span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
+<span class="com"># regex — match/exclude with regular expression on
+  _raw</span>
+<span class="fn">index</span>=syslogs |
+<span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
 
-                    <span class="com"># rex — EXTRACT into new named field for further
-                      use</span>
-                    source=<span class="str">"email_dump.txt"</span> |
-                    <span class="fn">rex</span> field=_raw
-                    <span class="str">"From: &lt;(?P&lt;from&gt;.*)&gt; To:
-                      &lt;(?P&lt;to&gt;.*)&gt;"</span>
+<span class="com"># rex — EXTRACT into new named field for further
+  use</span>
+source=<span class="str">"email_dump.txt"</span> |
+<span class="fn">rex</span> field=_raw
+<span class="str">"From: &lt;(?P&lt;from&gt;.*)&gt; To:
+  &lt;(?P&lt;to&gt;.*)&gt;"</span>
 
-                    <span class="com"># key difference: search/regex FILTER events; rex
-                      EXTRACTS new fields</span>
-                  </div>
+<span class="com"># key difference: search/regex FILTER events; rex
+  EXTRACTS new fields</span>
+</pre>
 
                   <div class="dt">▸ STATISTICAL &amp; EVAL FUNCTIONS</div>
                   <table class="ref-table" style="margin-bottom: 14px">
@@ -940,37 +938,36 @@
                     </tr>
                   </table>
                   <div class="dt">▸ PRACTICAL SECURITY QUERIES</div>
-                  <div class="code-block">
-                    <span class="com"># Failed login attempts in last 24h, grouped by source
-                      IP</span>
-                    <span class="fn">index</span>=security
-                    sourcetype=linux_secure
-                    <span class="str">"Failed password"</span> |
-                    <span class="fn">stats</span> count by src_ip |
-                    <span class="fn">sort</span> -count |
-                    <span class="fn">head</span> 20
+                  <pre class="code-block"><span class="com"># Failed login attempts in last 24h, grouped by source
+  IP</span>
+<span class="fn">index</span>=security
+sourcetype=linux_secure
+<span class="str">"Failed password"</span> |
+<span class="fn">stats</span> count by src_ip |
+<span class="fn">sort</span> -count |
+<span class="fn">head</span> 20
 
-                    <span class="com"># Top 10 destination IPs by byte volume (potential
-                      exfil)</span>
-                    <span class="fn">index</span>=network |
-                    <span class="fn">stats</span>
-                    <span class="fn">sum</span>(bytes_out) as total_bytes by
-                    dst_ip | <span class="fn">sort</span> -total_bytes |
-                    <span class="fn">head</span> 10
+<span class="com"># Top 10 destination IPs by byte volume (potential
+  exfil)</span>
+<span class="fn">index</span>=network |
+<span class="fn">stats</span>
+<span class="fn">sum</span>(bytes_out) as total_bytes by
+dst_ip | <span class="fn">sort</span> -total_bytes |
+<span class="fn">head</span> 10
 
-                    <span class="com"># Alert: accounts with 5+ failed logins in 60
-                      seconds</span>
-                    <span class="fn">index</span>=auth action=failure |
-                    <span class="fn">transaction</span> user maxspan=60s |
-                    <span class="fn">where</span> eventcount &gt;= 5 |
-                    <span class="fn">table</span> _time, user, src_ip,
-                    eventcount
+<span class="com"># Alert: accounts with 5+ failed logins in 60
+  seconds</span>
+<span class="fn">index</span>=auth action=failure |
+<span class="fn">transaction</span> user maxspan=60s |
+<span class="fn">where</span> eventcount &gt;= 5 |
+<span class="fn">table</span> _time, user, src_ip,
+eventcount
 
-                    <span class="com"># Find logs not containing valid IPv4 (malformed
-                      entries)</span>
-                    <span class="fn">index</span>=syslogs |
-                    <span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
-                  </div>
+<span class="com"># Find logs not containing valid IPv4 (malformed
+  entries)</span>
+<span class="fn">index</span>=syslogs |
+<span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
+</pre>
                 </div>
               </div>
             </div>

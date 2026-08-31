@@ -209,8 +209,8 @@ visitor is never told that 1,426 things are new. -->
 <span class="ctag ctag-netplus">Net+</span>
 </div>
 <span class="domain-sub">OSI · TCP/IP · Topologies · DHCP · Ports · DNS · Cabling · Wireless</span>
-<span class="domain-meta" aria-label="73 topics, about 2h 50m to read"
->73 topics · ~2h 50m</span>
+<span class="domain-meta" aria-label="73 topics, about 2h 45m to read"
+>73 topics · ~2h 45m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -518,12 +518,12 @@ style="padding: 5px 14px; font-size: 11px">
 </div>
 </div>
 <!-- TOPIC: TCP vs UDP + 3-Way Handshake -->
-<div class="topic" id="tcp-vs-udp-transport-layer" data-reviewed="2026-07" data-read="4" data-level="core">
+<div class="topic" id="tcp-vs-udp-transport-layer" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤝</span>
 <span class="topic-name">TCP <span class="acro-exp">(Transmission Control Protocol)</span> vs UDP <span class="acro-exp">(User Datagram Protocol)</span> — Transport Layer</span>
 <span class="topic-badge">NETWORK+</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -581,20 +581,21 @@ need for reliability vs speed.
 </tr>
 </table>
 <div class="dt">▸ TCP 3-WAY HANDSHAKE &amp; FLAGS</div>
-<div class="code-block">
-<span class="com"># 3-Way Handshake (connection establishment)</span>
+<pre class="code-block"><span class="com"># 3-Way Handshake (connection establishment)</span>
 Client → Server <span class="str">SYN</span> seq=100 Server
 → Client <span class="str">SYN-ACK</span> seq=200, ack=101
 Client → Server <span class="str">ACK</span> seq=101,
 ack=201
 <span class="com"># Connection established
-──────────────────────────────</span>
+  ──────────────────────────────</span>
+
 <span class="com"># 4-Way Teardown (graceful close)</span>
 Client → Server <span class="str">FIN</span> Server → Client
 <span class="str">ACK</span> Server → Client
 <span class="str">FIN</span> Client → Server
 <span class="str">ACK</span>
 <span class="com"># TIME_WAIT state follows</span>
+
 <span class="com"># TCP Flags (URG ACK PSH RST SYN FIN)</span>
 <span class="str">SYN</span> - Synchronize (start
 connection) <span class="str">ACK</span> - Acknowledge
@@ -605,11 +606,12 @@ immediately) <span class="str">URG</span> - Urgent pointer
 valid <span class="str">ECE</span> - ECN echo (congestion
 notification) <span class="str">CWR</span> - Congestion
 window reduced
+
 <span class="com"># SYN scan (Nmap -sS) — half-open, sends SYN, reads
-SYN-ACK/RST</span>
+  SYN-ACK/RST</span>
 <span class="com"># SYN-ACK = open port; RST = closed; no reply =
-filtered</span>
-</div>
+  filtered</span>
+</pre>
 </div>
 </div>
 </div>
@@ -1234,22 +1236,24 @@ addresses).
 </tr>
 </table>
 <div class="dt">▸ SUBNET MATH</div>
-<div class="code-block">
-<span class="com"># Given: 192.168.10.200/26 — find network, broadcast,
-range</span>
+<pre class="code-block"><span class="com"># Given: 192.168.10.200/26 — find network, broadcast,
+  range</span>
+
 Prefix = /26 → 26 network bits, 6 host bits Hosts = 2^6 − 2
 = <span class="num">62</span> Block size = 2^6 =
 <span class="num">64</span> (256 − 192 = 64) Subnets = 2^2 =
 <span class="num">4</span> (26 − 24 borrowed bits)
+
 <span class="com"># Blocks: .0, .64, .128, .192</span>
 <span class="com"># .200 falls in block .192</span>
 Network = <span class="str">192.168.10.192</span> Broadcast
 = <span class="str">192.168.10.255</span> Host range =
 <span class="str">192.168.10.193 – 192.168.10.254</span>
+
 <span class="com"># Subnet mask from CIDR</span>
 /26 = 11111111.11111111.11111111.<span class="str">11000000</span>
 = <span class="str">255.255.255.192</span>
-</div>
+</pre>
 <div class="dt">▸ IPv6 ESSENTIALS</div>
 <table class="ref-table">
 <tr>
@@ -1385,25 +1389,26 @@ Dijkstra SPF; fast convergence; enterprise standard
 </tr>
 </table>
 <div class="dt">▸ VLANS &amp; TRUNKING</div>
-<div class="code-block">
-<span class="com"># VLAN — logical L2 segmentation on a switch</span>
+<pre class="code-block"><span class="com"># VLAN — logical L2 segmentation on a switch</span>
 <span class="com"># Access port — carries 1 VLAN (end devices)</span>
 <span class="com"># Trunk port — carries multiple VLANs (switch-to-switch,
-switch-to-router)</span>
+  switch-to-router)</span>
 <span class="com"># 802.1Q tag — 4-byte VLAN tag added to Ethernet frame on
-trunk links</span>
+  trunk links</span>
+
 <span class="com"># Common VLAN design</span>
 VLAN 1 = Default (avoid using for production) VLAN 10 = Data
 / Users VLAN 20 = Voice (VoIP — QoS priority) VLAN 30 =
 Management (network devices) VLAN 40 = DMZ / Guest VLAN 99 =
 Native VLAN (untagged traffic on trunk)
+
 <span class="com"># Inter-VLAN routing: "router-on-a-stick" OR L3 switch
-SVIs</span>
+  SVIs</span>
 <span class="com"># Spanning Tree Protocol (STP 802.1D) — prevents L2
-loops</span>
+  loops</span>
 <span class="com"># RSTP (802.1w) — rapid convergence (&lt;1s vs 30-50s
-STP)</span>
-</div>
+  STP)</span>
+</pre>
 <div class="dt">▸ NETWORK DEVICE COMPARISON</div>
 <table class="ref-table">
 <tr>
@@ -1833,21 +1838,24 @@ Arbitrary text; used for SPF, DKIM <span class="acro-exp">(DomainKeys Identified
 </tr>
 </table>
 <div class="code-label">DNS FOOTPRINTING COMMANDS</div>
-<div class="code-block">
-<span class="com"># Forward lookup</span>
+<pre class="code-block"><span class="com"># Forward lookup</span>
 <span class="fn">nslookup</span> example.com
 <span class="fn">dig</span> example.com A
+
 <span class="com"># Reverse lookup (PTR record)</span>
 <span class="fn">dig</span> -x 93.184.216.34
+
 <span class="com"># Zone transfer attempt (TCP 53) — reveals all
-records</span>
+  records</span>
 <span class="fn">dig</span> axfr @ns1.example.com
 example.com
+
 <span class="com"># All record types</span>
 <span class="fn">dig</span> example.com ANY
+
 <span class="com"># Domain/IP ownership</span>
 <span class="fn">whois</span> example.com
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -2186,8 +2194,7 @@ Maps firewall rules; determines filtered/unfiltered
 </tr>
 </table>
 <div class="dt">▸ USEFUL NMAP OPTIONS</div>
-<div class="code-block">
-<span class="com"># Speed / Timing: -T0 (paranoid) → -T5 (insane)</span>
+<pre class="code-block"><span class="com"># Speed / Timing: -T0 (paranoid) → -T5 (insane)</span>
 <span class="fn">nmap</span> -T4 -A 10.5.23.0/24
 <span class="com"># Aggressive: OS detect + version + scripts</span>
 <span class="fn">nmap</span> -sS -p 22,80,443 10.5.23.1
@@ -2208,7 +2215,7 @@ Maps firewall rules; determines filtered/unfiltered
 <span class="com"># Normal text output</span>
 <span class="fn">nmap</span> -6 target
 <span class="com"># IPv6 scan</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -2650,12 +2657,12 @@ subcarriers
 NEW TOPIC: Network Device CLI Commands
 Source: Net+ Cheat Sheet PDF
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="network-device-cli-show-commands" data-reviewed="2026-07" data-read="4" data-level="core">
+<div class="topic" id="network-device-cli-show-commands" data-reviewed="2026-07" data-read="2" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⌨️</span>
 <span class="topic-name">Network Device CLI <span class="acro-exp">(Command Line Interface)</span> — Show Commands</span>
 <span class="topic-badge">CLI REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -2673,8 +2680,7 @@ review configs, and troubleshoot network issues.
 </div>
 <div class="dw">
 <div class="code-label">SWITCH COMMANDS</div>
-<div class="code-block">
-<span class="fn">show</span> mac-address-table
+<pre class="code-block"><span class="fn">show</span> mac-address-table
 <span class="com"># CAM table: MAC → port mappings</span>
 <span class="fn">show</span> vlan brief
 <span class="com"># All VLANs, ports assigned to each</span>
@@ -2690,10 +2696,9 @@ review configs, and troubleshoot network issues.
 <span class="com"># PoE status and power draw per port</span>
 <span class="fn">show</span> cdp neighbors detail
 <span class="com"># Connected Cisco devices, IP, platform</span>
-</div>
+</pre>
 <div class="code-label">ROUTER COMMANDS</div>
-<div class="code-block">
-<span class="fn">show</span> ip route
+<pre class="code-block"><span class="fn">show</span> ip route
 <span class="com"># Routing table: all known routes</span>
 <span class="fn">show</span> ip interface brief
 <span class="com"># All interfaces: IP, status, protocol</span>
@@ -2711,18 +2716,18 @@ review configs, and troubleshoot network issues.
 <span class="com"># All ACLs and match counts</span>
 <span class="fn">show</span> version
 <span class="com"># IOS version, uptime, hardware info</span>
-</div>
+</pre>
 <div class="code-label">
 TROUBLESHOOTING TOOLS (LINUX / WINDOWS)
 </div>
-<div class="code-block">
-<span class="com"># Connectivity testing</span>
+<pre class="code-block"><span class="com"># Connectivity testing</span>
 <span class="fn">ping</span> 8.8.8.8
 <span class="com"># ICMP echo test</span>
 <span class="fn">traceroute</span> 8.8.8.8
 <span class="com"># Linux: path tracing (UDP by default)</span>
 tracert 8.8.8.8
 <span class="com"># Windows equivalent</span>
+
 <span class="com"># Interface and routing</span>
 <span class="fn">ip</span> addr show
 <span class="com"># Linux: IP addresses on all interfaces</span>
@@ -2730,11 +2735,13 @@ tracert 8.8.8.8
 <span class="com"># Linux: routing table</span>
 <span class="fn">netstat</span> -rn
 <span class="com"># Routing table (cross-platform)</span>
+
 <span class="com"># Name resolution</span>
 <span class="fn">nslookup</span> google.com
 <span class="com"># Quick DNS lookup</span>
 <span class="fn">dig</span> google.com
 <span class="com"># Detailed DNS query</span>
+
 <span class="com"># Packet capture</span>
 <span class="fn">tcpdump</span> -i eth0 -n
 <span class="com"># Capture on interface, no DNS resolve</span>
@@ -2742,7 +2749,7 @@ tracert 8.8.8.8
 <span class="com"># Filter by port</span>
 <span class="fn">tcpdump</span> -w capture.pcap
 <span class="com"># Write to file for Wireshark</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -2752,12 +2759,12 @@ NEW TOPIC: TCPDump Packet Capture Reference
 Source: TCPDump Cheat Sheet — 241-400pg PDF
 Domain: Networking
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="tcpdump-packet-capture-reference" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="tcpdump-packet-capture-reference" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📡</span>
 <span class="topic-name">TCPDump — Packet Capture Reference</span>
 <span class="topic-badge">COMPLETE REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -2778,8 +2785,7 @@ Wireshark.
 </div>
 <div class="dw">
 <div class="code-label">CAPTURE FLAGS</div>
-<div class="code-block">
-<span class="fn">tcpdump</span> -i any
+<pre class="code-block"><span class="fn">tcpdump</span> -i any
 <span class="com"># Capture on ALL interfaces (needs root)</span>
 <span class="fn">tcpdump</span> -i eth0
 <span class="com"># Capture on specific interface</span>
@@ -2797,10 +2803,9 @@ Wireshark.
 <span class="com"># Monitor mode (Wi-Fi sniffing)</span>
 <span class="fn">tcpdump</span> -r capture.pcap
 <span class="com"># Read &amp; analyze saved capture file</span>
-</div>
+</pre>
 <div class="code-label">FILTER EXPRESSIONS</div>
-<div class="code-block">
-<span class="com"># Host filters</span>
+<pre class="code-block"><span class="com"># Host filters</span>
 <span class="fn">tcpdump</span> host 192.168.1.1
 <span class="com"># Any traffic to/from IP</span>
 <span class="fn">tcpdump</span> src host 10.0.0.5
@@ -2809,6 +2814,7 @@ Wireshark.
 <span class="com"># Destination IP only</span>
 <span class="fn">tcpdump</span> net 192.168.0.0/24
 <span class="com"># Entire subnet</span>
+
 <span class="com"># Port filters</span>
 <span class="fn">tcpdump</span> port 443
 <span class="com"># Any traffic on port 443</span>
@@ -2818,10 +2824,12 @@ Wireshark.
 <span class="com"># Port range</span>
 <span class="fn">tcpdump</span> tcp dst port 22
 <span class="com"># TCP to port 22 (SSH)</span>
+
 <span class="com"># MAC/Layer 2 filters</span>
 <span class="fn">tcpdump</span> ether host 00:11:22:33:44:55
 <span class="fn">tcpdump</span> ether broadcast
 <span class="com"># Ethernet broadcast frames</span>
+
 <span class="com"># Logical operators</span>
 <span class="fn">tcpdump</span> src 10.0.0.1 and port 443
 <span class="com"># AND</span>
@@ -2831,10 +2839,9 @@ Wireshark.
 192.168.1.5 <span class="com"># NOT</span>
 <span class="fn">tcpdump</span> dst host 10.0.0.1 and
 greater 128 <span class="com"># Packet &gt; 128 bytes</span>
-</div>
+</pre>
 <div class="code-label">DISPLAY &amp; OUTPUT FLAGS</div>
-<div class="code-block">
-<span class="fn">tcpdump</span> -n
+<pre class="code-block"><span class="fn">tcpdump</span> -n
 <span class="com"># Don't resolve IPs to hostnames (faster)</span>
 <span class="fn">tcpdump</span> -nn
 <span class="com"># Also don't resolve port names</span>
@@ -2856,6 +2863,7 @@ greater 128 <span class="com"># Packet &gt; 128 bytes</span>
 <span class="com"># Suppress timestamp</span>
 <span class="fn">tcpdump</span> -tttt
 <span class="com"># Full date+time timestamp</span>
+
 <span class="com"># Write/read pcap files</span>
 <span class="fn">tcpdump</span> -i eth0 -w capture.pcap
 <span class="com"># Write to file (for Wireshark)</span>
@@ -2863,29 +2871,33 @@ greater 128 <span class="com"># Packet &gt; 128 bytes</span>
 <span class="com"># -U: write packets immediately (no buffer)</span>
 <span class="fn">tcpdump</span> -r capture.pcap port 443
 <span class="com"># Read file with filter</span>
-</div>
+</pre>
 <div class="code-label">PRACTICAL EXAMPLES</div>
-<div class="code-block">
-<span class="com"># Capture all HTTP traffic (show payload in ASCII)</span>
+<pre class="code-block"><span class="com"># Capture all HTTP traffic (show payload in ASCII)</span>
 <span class="fn">tcpdump</span> -i eth0 -A port 80
+
 <span class="com"># Capture SSH attempts to this host (no DNS
-resolution)</span>
+  resolution)</span>
 <span class="fn">tcpdump</span> -nn -i eth0 tcp dst port 22
+
 <span class="com"># Capture all traffic EXCEPT SSH (avoid capturing your
-own session)</span>
+  own session)</span>
 <span class="fn">tcpdump</span> -i eth0 not port 22
+
 <span class="com"># Save 30 large packets to file, no DNS resolution</span>
 <span class="fn">tcpdump</span> -i eth0 -n greater 32 -w
 out.pcap -c 30
+
 <span class="com"># Pipe remote traffic to local Wireshark in real
-time</span>
+  time</span>
 <span class="fn">ssh</span> user@router
 <span class="str">"tcpdump -U -s 65535 -w - 'not port 22'"</span>
 | wireshark -k -i -
+
 <span class="com"># Find all HTTP GET requests (show source IP + URL)</span>
 <span class="fn">tcpdump</span> -i eth0 -A 'tcp port 80 and
 (tcp[((tcp[12:1] &amp; 0xf0) &gt;&gt; 2):4] = 0x47455420)'
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -22675,8 +22687,8 @@ and the design-side principle is
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Service Desk · SOC · Incident Response · Vulnerability Mgmt · BCP/DR · Forensics · ITIL · SRE · Observability</span>
-<span class="domain-meta" aria-label="77 topics, about 3h 20m to read"
->77 topics · ~3h 20m</span>
+<span class="domain-meta" aria-label="77 topics, about 3h 15m to read"
+>77 topics · ~3h 15m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -23404,12 +23416,12 @@ NEW TOPIC: Splunk SPL Reference
 Source: Splunk Cheat Sheet — 241-400pg PDF
 Domain: Security Operations
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="splunk-spl-search-language-reference" data-reviewed="2026-07" data-read="8" data-level="core">
+<div class="topic" id="splunk-spl-search-language-reference" data-reviewed="2026-07" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔎</span>
 <span class="topic-name">Splunk — SPL <span class="acro-exp">(Search Processing Language)</span> Search Language Reference</span>
 <span class="topic-badge">SIEM TOOL</span>
-<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -23433,22 +23445,24 @@ logs from sources).
 </div>
 <div class="dw">
 <div class="dt">▸ SPL SYNTAX STRUCTURE</div>
-<div class="code-block">
-<span class="com"># Basic search (find keyword in an index)</span>
+<pre class="code-block"><span class="com"># Basic search (find keyword in an index)</span>
 <span class="fn">index</span>=cybersecurity hacker
+
 <span class="com"># Pipe (|) chains commands: output of left feeds into
-right</span>
+  right</span>
 <span class="fn">index</span>=* sourcetype=syslog |
 <span class="fn">search</span> Failed |
 <span class="fn">head</span> 100
+
 <span class="com"># Field=value filtering (implicit AND between
-terms)</span>
+  terms)</span>
 <span class="fn">source</span>=<span class="str">"/var/log/auth.log"</span>
 status=<span class="num">404</span>
+
 <span class="com"># Filter by specific index with multiple conditions</span>
 <span class="fn">index</span>=<span class="str">"customer_feedback"</span>
 Code=<span class="str">RED</span> host=<span class="str">"myblog"</span>
-</div>
+</pre>
 <div class="dt">▸ COMMON SEARCH COMMANDS</div>
 <table class="ref-table" style="margin-bottom: 14px">
 <tr>
@@ -23528,25 +23542,27 @@ Code=<span class="str">RED</span> host=<span class="str">"myblog"</span>
 </tr>
 </table>
 <div class="dt">▸ SPL FILTERING (search vs regex)</div>
-<div class="code-block">
-<span class="com"># search — keyword and field matching</span>
+<pre class="code-block"><span class="com"># search — keyword and field matching</span>
 <span class="fn">index</span>=names |
 <span class="fn">search</span> Chris
 <span class="fn">index</span>=emails |
 <span class="fn">search</span> emailAddr=<span class="str">"*@mysite.com"</span>
+
 <span class="com"># regex — match/exclude with regular expression on
-_raw</span>
+  _raw</span>
 <span class="fn">index</span>=syslogs |
 <span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
+
 <span class="com"># rex — EXTRACT into new named field for further
-use</span>
+  use</span>
 source=<span class="str">"email_dump.txt"</span> |
 <span class="fn">rex</span> field=_raw
 <span class="str">"From: &lt;(?P&lt;from&gt;.*)&gt; To:
-&lt;(?P&lt;to&gt;.*)&gt;"</span>
+  &lt;(?P&lt;to&gt;.*)&gt;"</span>
+
 <span class="com"># key difference: search/regex FILTER events; rex
-EXTRACTS new fields</span>
-</div>
+  EXTRACTS new fields</span>
+</pre>
 <div class="dt">▸ STATISTICAL &amp; EVAL FUNCTIONS</div>
 <table class="ref-table" style="margin-bottom: 14px">
 <tr>
@@ -23616,34 +23632,36 @@ EXTRACTS new fields</span>
 </tr>
 </table>
 <div class="dt">▸ PRACTICAL SECURITY QUERIES</div>
-<div class="code-block">
-<span class="com"># Failed login attempts in last 24h, grouped by source
-IP</span>
+<pre class="code-block"><span class="com"># Failed login attempts in last 24h, grouped by source
+  IP</span>
 <span class="fn">index</span>=security
 sourcetype=linux_secure
 <span class="str">"Failed password"</span> |
 <span class="fn">stats</span> count by src_ip |
 <span class="fn">sort</span> -count |
 <span class="fn">head</span> 20
+
 <span class="com"># Top 10 destination IPs by byte volume (potential
-exfil)</span>
+  exfil)</span>
 <span class="fn">index</span>=network |
 <span class="fn">stats</span>
 <span class="fn">sum</span>(bytes_out) as total_bytes by
 dst_ip | <span class="fn">sort</span> -total_bytes |
 <span class="fn">head</span> 10
+
 <span class="com"># Alert: accounts with 5+ failed logins in 60
-seconds</span>
+  seconds</span>
 <span class="fn">index</span>=auth action=failure |
 <span class="fn">transaction</span> user maxspan=60s |
 <span class="fn">where</span> eventcount &gt;= 5 |
 <span class="fn">table</span> _time, user, src_ip,
 eventcount
+
 <span class="com"># Find logs not containing valid IPv4 (malformed
-entries)</span>
+  entries)</span>
 <span class="fn">index</span>=syslogs |
 <span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -32294,8 +32312,8 @@ ten seconds spends the first twenty minutes finding out.
 <span class="ctag ctag-ptplus">PT+</span>
 </div>
 <span class="domain-sub">5-Phase Methodology · OWASP Top 10 · Engagement Types</span>
-<span class="domain-meta" aria-label="34 topics, about 1h 10m to read"
->34 topics · ~1h 10m</span>
+<span class="domain-meta" aria-label="34 topics, about 1h 05m to read"
+>34 topics · ~1h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -32609,35 +32627,40 @@ Flag: <code>-technique=T</code>
 </tr>
 </table>
 <div class="code-label">BASIC USAGE PATTERN</div>
-<div class="code-block">
-<span class="com"># Syntax</span>
+<pre class="code-block"><span class="com"># Syntax</span>
 sqlmap [target] [options]
+
 <span class="com"># Step 1: Fingerprint the database</span>
 sqlmap -u
 <span class="str">"http://target.com/page.php?id=1"</span>
 -f --batch
+
 <span class="com"># Step 2: List all databases</span>
 sqlmap -u
 <span class="str">"http://target.com/page.php?id=1"</span>
 --dbs --batch
+
 <span class="com"># Step 3: List tables in specific database</span>
 sqlmap -u
 <span class="str">"http://target.com/page.php?id=1"</span>
 -D mydb --tables --batch
+
 <span class="com"># Step 4: Dump specific table columns</span>
 sqlmap -u
 <span class="str">"http://target.com/page.php?id=1"</span>
 -D mydb -T users --columns --batch
+
 <span class="com"># Step 5: Dump all data from table</span>
 sqlmap -u
 <span class="str">"http://target.com/page.php?id=1"</span>
 -D mydb -T users --dump --batch
+
 <span class="com"># With session cookie (authenticated scan)</span>
 sqlmap -u
 <span class="str">"http://target.com/page?id=1"</span> \
 --cookie=<span class="str">"PHPSESSID=abc123; security=low"</span>
 \ --tables --batch
-</div>
+</pre>
 <div class="dt">▸ KEY OPTIONS REFERENCE</div>
 <table class="ref-table" style="margin-bottom: 14px">
 <tr>
@@ -34203,8 +34226,8 @@ equivalent of all this paperwork is
 <span class="ctag ctag-aplus">A+</span>
 </div>
 <span class="domain-sub">FHS · Permissions · Boot Process · Signals · systemd · RAID · Hardware</span>
-<span class="domain-meta" aria-label="62 topics, about 1h 55m to read"
->62 topics · ~1h 55m</span>
+<span class="domain-meta" aria-label="62 topics, about 1h 50m to read"
+>62 topics · ~1h 50m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -34558,12 +34581,12 @@ NEW TOPIC: SSH Commands Reference
 Source: SSH Commands Cheat Sheet — 241-400pg PDF
 Domain: Linux & Systems
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="ssh-commands-keys-tunneling" data-reviewed="2026-07" data-read="7" data-level="core">
+<div class="topic" id="ssh-commands-keys-tunneling" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔐</span>
 <span class="topic-name">SSH <span class="acro-exp">(Secure Shell)</span> — Commands, Keys &amp; Tunneling</span>
 <span class="topic-badge">COMPLETE REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -34585,8 +34608,7 @@ data. Replaces Telnet/FTP/rsh. Config files:
 </div>
 <div class="dw">
 <div class="code-label">BASIC CONNECTION COMMANDS</div>
-<div class="code-block">
-<span class="com"># Connect to remote host</span>
+<pre class="code-block"><span class="com"># Connect to remote host</span>
 <span class="fn">ssh</span> user@hostname
 <span class="com"># Default port 22</span>
 <span class="fn">ssh</span> -p 3344 user@hostname
@@ -34598,24 +34620,27 @@ data. Replaces Telnet/FTP/rsh. Config files:
 <span class="com"># Execute remote command inline</span>
 <span class="fn">ssh</span> user@host bash &lt; script.sh
 <span class="com"># Run local script remotely</span>
+
 <span class="com"># Compress traffic (useful on slow links)</span>
 <span class="fn">ssh</span> -C user@hostname
+
 <span class="com"># X11 forwarding (run GUI apps remotely)</span>
 <span class="fn">ssh</span> -X user@hostname
 <span class="com"># Trusted X11 forwarding</span>
 <span class="fn">ssh</span> -Y user@hostname
 <span class="com"># Less secure — full display forward</span>
-</div>
+</pre>
 <div class="code-label">SSH KEY MANAGEMENT (ssh-keygen)</div>
-<div class="code-block">
-<span class="com"># Generate key pair (RSA 4096-bit, labeled with
-email)</span>
+<pre class="code-block"><span class="com"># Generate key pair (RSA 4096-bit, labeled with
+  email)</span>
 <span class="fn">ssh-keygen</span> -t rsa -b 4096 -C
 <span class="str">"you@email.com"</span>
+
 <span class="com"># Generate modern Ed25519 key (preferred — smaller,
-faster)</span>
+  faster)</span>
 <span class="fn">ssh-keygen</span> -t ed25519 -C
 <span class="str">"you@email.com"</span>
+
 <span class="com"># Other key management commands</span>
 <span class="fn">ssh-keygen</span> -F hostname
 <span class="com"># Check if host is in known_hosts</span>
@@ -34627,18 +34652,18 @@ faster)</span>
 <span class="com"># Change key passphrase</span>
 <span class="fn">ssh-copy-id</span> user@server
 <span class="com"># Install public key to remote host</span>
+
 <span class="com"># Key files reference</span>
 <span class="com"># ~/.ssh/id_rsa — private key (protect with chmod
-600)</span>
+  600)</span>
 <span class="com"># ~/.ssh/id_rsa.pub — public key (safe to share)</span>
 <span class="com"># ~/.ssh/known_hosts — trusted hosts
-(auto-populated)</span>
+  (auto-populated)</span>
 <span class="com"># ~/.ssh/authorized_keys — keys permitted to log in
-here</span>
-</div>
+  here</span>
+</pre>
 <div class="code-label">SCP — SECURE COPY</div>
-<div class="code-block">
-<span class="fn">scp</span> user@server:/remote/file.txt
+<pre class="code-block"><span class="fn">scp</span> user@server:/remote/file.txt
 ./local/ <span class="com"># Remote → local</span>
 <span class="fn">scp</span> ./local/file.txt
 user@server:/remote/
@@ -34652,44 +34677,46 @@ user@server:/remote/
 <span class="fn">scp</span> user1@host1:/file
 user2@host2:/dest
 <span class="com"># Server-to-server</span>
-</div>
+</pre>
 <div class="code-label">SSH TUNNELING — PORT FORWARDING</div>
-<div class="code-block">
-<span class="com"># LOCAL (-L): Forward local_port →
-remote_host:remote_port via SSH server</span>
+<pre class="code-block"><span class="com"># LOCAL (-L): Forward local_port →
+  remote_host:remote_port via SSH server</span>
 <span class="com"># Access internal service on remote network as if it were
-local</span>
+  local</span>
 <span class="fn">ssh</span> -L 8080:internal-db:5432
 user@jump-host
 <span class="com"># → localhost:8080 now reaches internal-db port
-5432</span>
+  5432</span>
+
 <span class="com"># REMOTE (-R): Forward remote_port on SSH server → local
-machine</span>
+  machine</span>
 <span class="com"># Expose a local service through a remote public
-server</span>
+  server</span>
 <span class="fn">ssh</span> -R 9090:localhost:3000 -N -f
 user@public-server
 <span class="com"># → public-server:9090 now reaches your local port
-3000</span>
+  3000</span>
+
 <span class="com"># DYNAMIC (-D): Create a SOCKS proxy on local_port</span>
 <span class="com"># Route browser/app traffic through SSH server</span>
 <span class="fn">ssh</span> -D 8888 -q -C -N -f
 user@remote-host
 <span class="com"># → Set browser SOCKS5 proxy to 127.0.0.1:8888</span>
+
 <span class="com"># PROXY JUMP (-J): Multi-hop through bastion host</span>
 <span class="fn">ssh</span> -J user@bastion
 user@internal-host <span class="fn">ssh</span> -J
 user@hop1:port1,user@hop2:port2 user@target
 <span class="com"># Multi-hop</span>
+
 <span class="com"># Flags used in tunneling</span>
 <span class="com"># -N No remote commands — dedicated tunnel only</span>
 <span class="com"># -f Fork to background after authentication</span>
 <span class="com"># -q Quiet mode — suppress all warnings</span>
 <span class="com"># -C Compress tunnel data</span>
-</div>
+</pre>
 <div class="dt">▸ SSH CONFIG FILE — ~/.ssh/config</div>
-<div class="code-block">
-<span class="com"># ~/.ssh/config — per-host connection settings</span>
+<pre class="code-block"><span class="com"># ~/.ssh/config — per-host connection settings</span>
 <span class="com"># Avoids typing long flags every time</span>
 <span class="kw">Host</span> myserver
 <span class="kw">HostName</span> 192.168.1.50
@@ -34697,7 +34724,9 @@ user@hop1:port1,user@hop2:port2 user@target
 <span class="kw">Port</span> 2222
 <span class="kw">IdentityFile</span> ~/.ssh/id_ed25519
 <span class="kw">ForwardAgent</span> yes
+
 <span class="com"># Now connect with just: ssh myserver</span>
+
 <span class="com"># Hardening options in /etc/ssh/sshd_config</span>
 <span class="kw">PermitRootLogin</span> no
 <span class="com"># Never allow root SSH login</span>
@@ -34711,7 +34740,7 @@ user@hop1:port1,user@hop2:port2 user@target
 <span class="com"># Limit brute-force attempts</span>
 <span class="kw">Port</span> 2222
 <span class="com"># Change from default 22</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -34721,12 +34750,12 @@ NEW TOPIC: Tmux Terminal Multiplexer
 Source: Tmux Cheat Sheet — 241-400pg PDF
 Domain: Linux & Systems
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="tmux-terminal-multiplexer" data-reviewed="2026-07" data-read="7" data-level="core">
+<div class="topic" id="tmux-terminal-multiplexer" data-reviewed="2026-07" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">Tmux — Terminal Multiplexer</span>
 <span class="topic-badge">COMPLETE REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -34790,8 +34819,7 @@ independently.
 </div>
 </div>
 <div class="code-label">SESSION COMMANDS (from CLI)</div>
-<div class="code-block">
-<span class="fn">tmux</span>
+<pre class="code-block"><span class="fn">tmux</span>
 <span class="com"># Start new session</span>
 <span class="fn">tmux</span> new -s mysession
 <span class="com"># New named session</span>
@@ -34805,7 +34833,7 @@ independently.
 <span class="com"># Kill named session</span>
 <span class="fn">tmux</span> kill-session -a
 <span class="com"># Kill ALL except current</span>
-</div>
+</pre>
 <div class="dt">
 ▸ KEYBOARD SHORTCUTS (all prefixed with Ctrl+b)
 </div>
@@ -34962,25 +34990,28 @@ COPY MODE (vi keys)
 <div class="code-label">
 ~/.tmux.conf — USEFUL CUSTOMISATIONS
 </div>
-<div class="code-block">
-<span class="com"># Change prefix key from Ctrl+b to Ctrl+a
-(screen-style)</span>
+<pre class="code-block"><span class="com"># Change prefix key from Ctrl+b to Ctrl+a
+  (screen-style)</span>
 <span class="kw">unbind</span> C-b
 <span class="kw">set -g prefix</span> C-a
+
 <span class="com"># Intuitive pane splits: | for vertical, - for
-horizontal</span>
+  horizontal</span>
 <span class="kw">unbind</span> %
 <span class="kw">bind</span> | split-window -h
 <span class="kw">unbind</span> '"'
 <span class="kw">bind</span> - split-window -v
+
 <span class="com"># Enable vi keys in copy mode</span>
 <span class="kw">setw -g mode-keys</span> vi
+
 <span class="com"># Enable mouse support (click to select
-panes/windows)</span>
+  panes/windows)</span>
 <span class="kw">set -g mouse</span> on
+
 <span class="com"># Reload config without restarting tmux</span>
 <span class="com"># Run: tmux source-file ~/.tmux.conf</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -34990,12 +35021,12 @@ NEW TOPIC: Unix / Linux Commands Quick Reference
 Source: Unix Commands Cheat Sheet — 241-400pg PDF
 Domain: Linux & Systems
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="unix-linux-commands-quick-reference" data-reviewed="2026-07" data-read="11" data-level="core">
+<div class="topic" id="unix-linux-commands-quick-reference" data-reviewed="2026-07" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⌨️</span>
 <span class="topic-name">Unix / Linux Commands — Quick Reference</span>
 <span class="topic-badge">COMPLETE REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">11 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -35080,8 +35111,7 @@ class).
 </tr>
 </table>
 <div class="dt">▸ FILE &amp; DIRECTORY MANAGEMENT</div>
-<div class="code-block">
-<span class="com"># Listing and navigation</span>
+<pre class="code-block"><span class="com"># Listing and navigation</span>
 <span class="fn">ls</span>
 <span class="com"># List current directory</span>
 <span class="fn">ls</span> -l
@@ -35104,6 +35134,7 @@ class).
 <span class="com"># Toggle to previous directory</span>
 <span class="fn">pwd</span>
 <span class="com"># Print working directory</span>
+
 <span class="com"># Create, copy, move, delete</span>
 <span class="fn">mkdir</span> -p dir/sub/leaf
 <span class="com"># Create directory tree (no error if exists)</span>
@@ -35125,10 +35156,9 @@ class).
 <span class="com"># Create symbolic link</span>
 <span class="fn">touch</span> file.txt
 <span class="com"># Create empty file or update timestamp</span>
-</div>
+</pre>
 <div class="dt">▸ TEXT VIEWING &amp; SEARCHING</div>
-<div class="code-block">
-<span class="com"># View file content</span>
+<pre class="code-block"><span class="com"># View file content</span>
 <span class="fn">cat</span> file.txt
 <span class="com"># Print entire file to stdout</span>
 <span class="fn">less</span> file.txt
@@ -35139,6 +35169,7 @@ class).
 <span class="com"># Last 20 lines</span>
 <span class="fn">tail</span> -f /var/log/syslog
 <span class="com"># Follow live log output</span>
+
 <span class="com"># Search and filter</span>
 <span class="fn">grep</span>
 <span class="str">"pattern"</span> file.txt
@@ -35161,6 +35192,7 @@ class).
 <span class="fn">grep</span> -E
 <span class="str">"\d{1,3}\.\d{1,3}"</span> log.txt
 <span class="com"># Extended regex</span>
+
 <span class="com"># Text manipulation</span>
 <span class="fn">sed</span>
 <span class="str">'s/old/new/g'</span> file.txt
@@ -35191,10 +35223,9 @@ class).
 <span class="com"># Translate chars (lowercase to upper)</span>
 <span class="fn">tee</span> output.txt
 <span class="com"># Write stdin to file AND stdout</span>
-</div>
+</pre>
 <div class="dt">▸ PROCESS MANAGEMENT</div>
-<div class="code-block">
-<span class="fn">ps</span> aux
+<pre class="code-block"><span class="fn">ps</span> aux
 <span class="com"># All running processes (detailed)</span>
 <span class="fn">ps</span> aux |
 <span class="fn">grep</span> nginx
@@ -35223,10 +35254,9 @@ class).
 <span class="com"># Show which process uses port 8080</span>
 <span class="fn">strace</span> -p 1234
 <span class="com"># Trace system calls of running process</span>
-</div>
+</pre>
 <div class="dt">▸ DISK, ARCHIVES &amp; MISC</div>
-<div class="code-block">
-<span class="com"># Disk usage</span>
+<pre class="code-block"><span class="com"># Disk usage</span>
 <span class="fn">df</span> -h
 <span class="com"># Disk free space (human readable)</span>
 <span class="fn">du</span> -sh dir/
@@ -35234,6 +35264,7 @@ class).
 <span class="fn">du</span> -sh * |
 <span class="fn">sort</span> -rh
 <span class="com"># Sort by size (largest first)</span>
+
 <span class="com"># Archives and compression</span>
 <span class="fn">tar</span> -czf archive.tar.gz dir/
 <span class="com"># Create gzip-compressed tar</span>
@@ -35247,6 +35278,7 @@ class).
 <span class="com"># Create zip archive recursively</span>
 <span class="fn">unzip</span> archive.zip -d /target
 <span class="com"># Extract zip to target directory</span>
+
 <span class="com"># System info</span>
 <span class="fn">uname</span> -a
 <span class="com"># Kernel name, version, arch</span>
@@ -35270,6 +35302,7 @@ class).
 <span class="com"># Search command history</span>
 <span class="fn">man</span> tcpdump
 <span class="com"># Manual page for any command</span>
+
 <span class="com"># Finding files</span>
 <span class="fn">find</span> / -name
 <span class="str">"*.conf"</span> 2&gt;/dev/null
@@ -35284,7 +35317,7 @@ class).
 <span class="com"># Fast find (uses database)</span>
 <span class="fn">updatedb</span>
 <span class="com"># Rebuild locate database</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -39066,27 +39099,31 @@ chroot, fix, rebuild, exit, unmount</strong>. Step three is the one people skip,
 </div>
 <div class="dw">
 <div class="code-label">THE SEQUENCE, IN ORDER</div>
-<div class="code-block">
-<span class="com"># 1. Boot the live/rescue media, become root, find the root filesystem</span>
+<pre class="code-block"><span class="com"># 1. Boot the live/rescue media, become root, find the root filesystem</span>
 lsblk -f
 blkid
+
 <span class="com"># 2. Mount it. Add /boot and the EFI partition if they are separate</span>
 mount /dev/nvme0n1p3 /mnt
 mount /dev/nvme0n1p2 /mnt/boot
 mount /dev/nvme0n1p1 /mnt/boot/efi
+
 <span class="com"># 3. Bind the pseudo-filesystems — the step people forget, and nothing works without it</span>
 <span class="kw">for</span> d <span class="kw">in</span> /dev /dev/pts /proc /sys /run; <span class="kw">do</span> mount --bind $d /mnt$d; <span class="kw">done</span>
+
 <span class="com"># 4. Enter the broken system</span>
 chroot /mnt /bin/bash
+
 <span class="com"># 5. Fix it — then rebuild what depends on the fix</span>
 grub-install /dev/nvme0n1          <span class="com"># Debian/Ubuntu; grub2-install on RHEL</span>
 update-grub                        <span class="com"># grub2-mkconfig -o /boot/grub2/grub.cfg on RHEL</span>
 update-initramfs -u -k all         <span class="com"># dracut -f --regenerate-all on RHEL</span>
+
 <span class="com"># 6. Leave cleanly, in reverse order</span>
 <span class="kw">exit</span>
 umount -R /mnt
 reboot
-</div>
+</pre>
 <div class="concept-desc verdict">
 The rebuild in step five is not optional. Repairing a bootloader without regenerating the
 initramfs fixes the menu and leaves the kernel unable to mount root, which produces a different
@@ -39195,21 +39232,23 @@ The grammar is four fields and reads badly until you know the shape:
 </div>
 <div class="dw">
 <div class="code-label">EDIT SUDOERS THE ONLY SAFE WAY</div>
-<div class="code-block">
-<span class="com"># visudo validates before saving. A syntax error saved directly = nobody has sudo.</span>
+<pre class="code-block"><span class="com"># visudo validates before saving. A syntax error saved directly = nobody has sudo.</span>
 visudo
 visudo -f /etc/sudoers.d/10-deploy    <span class="com"># drop-in files are safer than editing the main file</span>
+
 <span class="com"># Grammar:  who   where = (as-whom[:group])  what</span>
 alice     ALL = (ALL:ALL) ALL              <span class="com"># full sudo, prompts for password</span>
 %wheel    ALL = (ALL:ALL) ALL              <span class="com"># % means a group</span>
 deploy    ALL = (root) NOPASSWD: /usr/bin/systemctl restart myapp
+
 <span class="com"># DANGEROUS — every one of these grants a root shell</span>
 bob       ALL = (ALL) NOPASSWD: /usr/bin/vim      <span class="com"># :!sh</span>
 bob       ALL = (ALL) NOPASSWD: /usr/bin/find     <span class="com"># -exec sh</span>
 bob       ALL = (ALL) NOPASSWD: /usr/bin/less     <span class="com"># !sh</span>
+
 <span class="com"># Check what a user actually has, before you believe the file</span>
 sudo -l -U bob
-</div>
+</pre>
 <div class="concept-desc verdict">
 The bottom block is the part worth internalising, and it is the whole content of GTFOBins:
 <strong class="c-amber">granting <code>NOPASSWD</code> on any program that can spawn a shell,
@@ -39362,13 +39401,14 @@ nested directory you did not want. <strong class="c-amber">Combined with
 </div>
 <div class="dw">
 <div class="code-label">THE TRAILING SLASH, AND THE DRY RUN</div>
-<div class="code-block">
-<span class="com"># These two are NOT the same command.</span>
+<pre class="code-block"><span class="com"># These two are NOT the same command.</span>
 rsync -a /src/data  /dest/     <span class="com"># -&gt; /dest/data/...   copies the DIRECTORY</span>
 rsync -a /src/data/ /dest/     <span class="com"># -&gt; /dest/...        copies its CONTENTS</span>
+
 <span class="com"># Always, before anything with --delete. Always.</span>
 rsync -avn --delete /src/data/ /dest/data/   <span class="com"># -n = dry run. Read the output.</span>
 rsync -av  --delete /src/data/ /dest/data/   <span class="com"># only after the -n looked right</span>
+
 <span class="com"># The flags worth knowing</span>
 <span class="com">#  -a  archive: recursive, preserves times, perms, symlinks, owner (as root)</span>
 <span class="com">#  -v  verbose      -n  dry run      -z  compress in transit</span>
@@ -39376,9 +39416,10 @@ rsync -av  --delete /src/data/ /dest/data/   <span class="com"># only after the 
 <span class="com">#  --delete           remove files at the destination not present at the source</span>
 <span class="com">#  --exclude='*.tmp'  repeatable; put excludes BEFORE --delete decides</span>
 <span class="com">#  --checksum         compare contents not size+mtime. Slow, and sometimes the only way</span>
+
 <span class="com"># Over ssh, resumable, showing progress</span>
 rsync -azP --delete -e ssh /src/data/ user@host:/dest/data/
-</div>
+</pre>
 <div class="concept-desc verdict">
 The habit that makes this safe is not caution, it is <strong>a dry run every single
 time</strong>. <code>-n</code> costs one keystroke and prints exactly what would happen,
@@ -39440,12 +39481,12 @@ a question about recovery.
 </div>
 </div>
 </div>
-<div class="topic" id="strace-ltrace-watching-a-program-ask-the-kernel-for-things" data-reviewed="2026-08" data-read="6" data-level="advanced">
+<div class="topic" id="strace-ltrace-watching-a-program-ask-the-kernel-for-things" data-reviewed="2026-08" data-read="5" data-level="advanced">
 <div class="topic-header">
 <span class="topic-icon">🔬</span>
 <span class="topic-name">strace &amp; ltrace — Watching a Program Ask the Kernel for Things</span>
 <span class="topic-badge">LINUX • Advanced</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -39461,21 +39502,23 @@ routine.
 </div>
 <div class="dw">
 <div class="code-label">WHAT FILE IS IT ACTUALLY LOOKING FOR?</div>
-<div class="code-block">
-<span class="com"># The single most useful invocation: every file the program tries to open</span>
+<pre class="code-block"><span class="com"># The single most useful invocation: every file the program tries to open</span>
 strace -f -e trace=openat,open,stat -o /tmp/out.txt ./myprogram
 grep ENOENT /tmp/out.txt          <span class="com"># the ones that were not there</span>
+
 <span class="com"># -f  follow forks (almost always wanted)   -o  to a file, not the terminal</span>
 <span class="com"># -e trace=network   sockets, connects, DNS</span>
 <span class="com"># -e trace=file      anything with a path</span>
 <span class="com"># -s 200             show more of each string, not the truncated default</span>
 <span class="com"># -T                 time spent in each call — finds the slow one</span>
 <span class="com"># -c                 summary table instead of a firehose. Start here.</span>
+
 <span class="com"># Attach to something already running and stuck</span>
 strace -f -p 12345
+
 <span class="com"># Library calls rather than syscalls — where strace shows nothing useful</span>
 ltrace ./myprogram
-</div>
+</pre>
 <div class="concept-desc verdict">
 Start with <code>-c</code> rather than the full trace. The summary shows call counts and time,
 which usually points at the answer in one screen; the firehose is for after you know what to
@@ -42657,8 +42700,8 @@ separated by design rather than by filtering.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Regex · PowerShell · Bash · HTML · CSS · JavaScript · JSON · SQL</span>
-<span class="domain-meta" aria-label="148 topics, about 4h 25m to read"
->148 topics · ~4h 25m</span>
+<span class="domain-meta" aria-label="148 topics, about 3h 55m to read"
+>148 topics · ~3h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -42668,12 +42711,12 @@ Full regex reference retained from original index.html.
 Anchors, character classes, quantifiers, groups, flags, and
 common patterns (email, IPv4, URL, password, MAC address).
 ──────────────────────────────────────────────────────────────── -->
-<div class="topic" id="regular-expressions-regex" data-reviewed="2026-08" data-read="8" data-level="core">
+<div class="topic" id="regular-expressions-regex" data-reviewed="2026-08" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔤</span>
 <span class="topic-name">Regular Expressions (Regex)</span>
 <span class="topic-badge">PATTERN MATCHING</span>
-<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -42895,28 +42938,30 @@ world$ matches "Hello world" but not "world class"
 </tr>
 </table>
 <div class="dt">▸ COMMON PATTERNS</div>
-<div class="code-block">
-<span class="com"># Email address</span>
+<pre class="code-block"><span class="com"># Email address</span>
 <span class="rx-anc">^</span><span class="rx-cls">[\w.+\-]</span><span class="rx-q">+</span>@<span class="rx-cls">[\w\-]</span><span class="rx-q">+</span>\.<span class="rx-cls">[\w.\-]</span><span class="rx-q">+</span><span class="rx-anc">$</span>
+
 <span class="com"># IPv4 address</span>
 <span class="rx-anc">^</span><span class="rx-g">(</span><span class="rx-q">(?:</span><span class="rx-cls">25[0-5]</span>|<span class="rx-cls">2[0-4]\d</span>|<span class="rx-cls">[01]?\d\d?</span><span class="rx-q">)</span>\.<span class="rx-q">)</span><span class="rx-q">{3}</span><span class="rx-q">(?:</span><span class="rx-cls">25[0-5]</span>|<span class="rx-cls">2[0-4]\d</span>|<span class="rx-cls">[01]?\d\d?</span><span class="rx-q">)</span><span class="rx-anc">$</span>
+
 <span class="com"># Strong password: 8+ chars, upper, lower, digit,
-special</span>
+  special</span>
 <span class="rx-anc">^</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[A-Z]</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[a-z]</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">\d</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[\W_]</span><span class="rx-g">)</span><span class="rx-cls">.{8,}</span><span class="rx-anc">$</span>
+
 <span class="com"># MAC address (colon-separated)</span>
 <span class="rx-anc">^</span><span class="rx-g">(</span><span class="rx-cls">[0-9A-Fa-f]{2}</span>:<span
-class="rx-q">){5}</span><span class="rx-cls">[0-9A-Fa-f]{2}</span><span class="rx-anc">$</span>
+  class="rx-q">){5}</span><span class="rx-cls">[0-9A-Fa-f]{2}</span><span class="rx-anc">$</span>
+</pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="topic" id="html-hypertext-markup-language" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="html-hypertext-markup-language" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌐</span>
 <span class="topic-name">HTML — HyperText Markup Language</span>
 <span class="topic-badge">WEB STRUCTURE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -42932,8 +42977,7 @@ for styling.
 </div>
 <div class="dw">
 <div class="code-label">DOCUMENT STRUCTURE</div>
-<div class="code-block">
-<span class="com">&lt;!-- Minimal HTML5 boilerplate --&gt;</span>
+<pre class="code-block"><span class="com">&lt;!-- Minimal HTML5 boilerplate --&gt;</span>
 <span class="tag">&lt;!DOCTYPE html&gt;</span>
 <span class="tag">&lt;html</span>
 <span class="attr">lang</span>=<span class="val">"en"</span><span class="tag">&gt;</span>
@@ -42947,7 +42991,7 @@ for styling.
 <span class="attr">name</span>=<span class="val">"description"</span>
 <span class="attr">content</span>=<span class="val">"Page description"</span><span class="tag">/&gt;</span>
 <span class="tag">&lt;title&gt;</span>Page Title<span
-class="tag">&lt;/title&gt;</span>
+  class="tag">&lt;/title&gt;</span>
 <span class="tag">&lt;link</span>
 <span class="attr">rel</span>=<span class="val">"stylesheet"</span>
 <span class="attr">href</span>=<span class="val">"style.css"</span><span class="tag">/&gt;</span>
@@ -42956,7 +43000,7 @@ class="tag">&lt;/title&gt;</span>
 <span class="tag">&lt;header&gt;</span><span class="tag">&lt;nav&gt;</span>...<span class="tag">&lt;/nav&gt;</span><span class="tag">&lt;/header&gt;</span>
 <span class="tag">&lt;main&gt;</span>
 <span class="tag">&lt;article&gt;</span><span class="tag">&lt;section&gt;</span>...<span
-class="tag">&lt;/section&gt;</span><span class="tag">&lt;/article&gt;</span>
+  class="tag">&lt;/section&gt;</span><span class="tag">&lt;/article&gt;</span>
 <span class="tag">&lt;aside&gt;</span>...<span class="tag">&lt;/aside&gt;</span>
 <span class="tag">&lt;/main&gt;</span>
 <span class="tag">&lt;footer&gt;</span>...<span class="tag">&lt;/footer&gt;</span>
@@ -42965,10 +43009,9 @@ class="tag">&lt;/section&gt;</span><span class="tag">&lt;/article&gt;</span>
 <span class="attr">defer</span><span class="tag">&gt;</span><span class="tag">&lt;/script&gt;</span>
 <span class="tag">&lt;/body&gt;</span>
 <span class="tag">&lt;/html&gt;</span>
-</div>
+</pre>
 <div class="code-label">SEMANTIC ELEMENTS</div>
-<div class="code-block">
-<span class="com">&lt;!-- Block-level semantics --&gt;</span>
+<pre class="code-block"><span class="com">&lt;!-- Block-level semantics --&gt;</span>
 <span class="tag">&lt;header&gt;</span>
 <span class="tag">&lt;nav&gt;</span>
 <span class="tag">&lt;main&gt;</span>
@@ -42981,6 +43024,7 @@ class="tag">&lt;/section&gt;</span><span class="tag">&lt;/article&gt;</span>
 <span class="tag">&lt;summary&gt;</span>
 <span class="tag">&lt;dialog&gt;</span>
 <span class="tag">&lt;template&gt;</span>
+
 <span class="com">&lt;!-- Text semantics --&gt;</span>
 <span class="tag">&lt;h1&gt;</span>-<span class="tag">&lt;h6&gt;</span>
 <span class="tag">&lt;p&gt;</span>
@@ -42993,14 +43037,16 @@ class="tag">&lt;/section&gt;</span><span class="tag">&lt;/article&gt;</span>
 <span class="tag">&lt;abbr&gt;</span>
 <span class="tag">&lt;time&gt;</span>
 <span class="tag">&lt;cite&gt;</span>
+
 <span class="com">&lt;!-- Lists --&gt;</span>
 <span class="tag">&lt;ul&gt;</span><span class="tag">&lt;li&gt;</span>unordered<span
-class="tag">&lt;/li&gt;</span><span class="tag">&lt;/ul&gt;</span>
+  class="tag">&lt;/li&gt;</span><span class="tag">&lt;/ul&gt;</span>
 <span class="tag">&lt;ol</span>
 <span class="attr">start</span>=<span class="val">"3"</span>
 <span class="attr">reversed</span><span class="tag">&gt;</span><span class="tag">&lt;li&gt;</span>ordered<span class="tag">&lt;/li&gt;</span><span class="tag">&lt;/ol&gt;</span>
 <span class="tag">&lt;dl&gt;</span><span class="tag">&lt;dt&gt;</span>term<span class="tag">&lt;/dt&gt;</span><span class="tag">&lt;dd&gt;</span>definition<span
-class="tag">&lt;/dd&gt;</span><span class="tag">&lt;/dl&gt;</span>
+  class="tag">&lt;/dd&gt;</span><span class="tag">&lt;/dl&gt;</span>
+
 <span class="com">&lt;!-- Media --&gt;</span>
 <span class="tag">&lt;img</span>
 <span class="attr">src</span>=<span class="val">"img.jpg"</span>
@@ -43024,10 +43070,9 @@ class="tag">&lt;/dd&gt;</span><span class="tag">&lt;/dl&gt;</span>
 <span class="attr">src</span>=<span class="val">"sm.jpg"</span>
 <span class="attr">alt</span>=<span class="val">"responsive"</span><span class="tag">/&gt;</span>
 <span class="tag">&lt;/picture&gt;</span>
-</div>
+</pre>
 <div class="code-label">FORMS</div>
-<div class="code-block">
-<span class="tag">&lt;form</span>
+<pre class="code-block"><span class="tag">&lt;form</span>
 <span class="attr">action</span>=<span class="val">"/submit"</span>
 <span class="attr">method</span>=<span class="val">"post"</span>
 <span class="attr">enctype</span>=<span class="val">"multipart/form-data"</span><span class="tag">&gt;</span>
@@ -43077,6 +43122,7 @@ class="tag">&lt;/dd&gt;</span><span class="tag">&lt;/dl&gt;</span>
 <span class="tag">&lt;button</span>
 <span class="attr">type</span>=<span class="val">"reset"</span><span class="tag">&gt;</span>Reset<span class="tag">&lt;/button&gt;</span>
 <span class="tag">&lt;/form&gt;</span>
+
 <span class="com">&lt;!-- Data attributes / ARIA --&gt;</span>
 <span class="tag">&lt;div</span>
 <span class="attr">data-id</span>=<span class="val">"42"</span>
@@ -43087,17 +43133,17 @@ class="tag">&lt;/dd&gt;</span><span class="tag">&lt;/dl&gt;</span>
 <span class="attr">aria-live</span>=<span class="val">"polite"</span>
 <span class="attr">aria-hidden</span>=<span class="val">"true"</span>
 <span class="attr">aria-expanded</span>=<span class="val">"false"</span><span class="tag">&gt;</span><span class="tag">&lt;/div&gt;</span>
+</pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="topic" id="css-cascading-style-sheets" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="css-cascading-style-sheets" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎨</span>
 <span class="topic-name">CSS — Cascading Style Sheets</span>
 <span class="topic-badge">WEB STYLING</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -43114,8 +43160,7 @@ CSS controls visual presentation. The cascade order: inline
 </div>
 <div class="dw">
 <div class="code-label">SELECTORS &amp; SPECIFICITY</div>
-<div class="code-block">
-<span class="com">/* Universal, type, class, id */</span>
+<pre class="code-block"><span class="com">/* Universal, type, class, id */</span>
 <span class="sel">*</span> {
 <span class="prop">box-sizing</span>: border-box; }
 <span class="sel">h1</span> {
@@ -43127,6 +43172,7 @@ CSS controls visual presentation. The cascade order: inline
 <span class="sel">#hero</span> {
 <span class="prop">background</span>:
 <span class="val">blue</span>; }
+
 <span class="com">/* Combinators */</span>
 <span class="sel">div p</span> { }
 <span class="com">/* descendant */</span>
@@ -43136,6 +43182,7 @@ CSS controls visual presentation. The cascade order: inline
 <span class="com">/* adjacent sibling */</span>
 <span class="sel">h1 ~ p</span> { }
 <span class="com">/* general sibling */</span>
+
 <span class="com">/* Pseudo-classes */</span>
 <span class="sel">a:hover</span> {
 <span class="prop">color</span>:
@@ -43150,6 +43197,7 @@ CSS controls visual presentation. The cascade order: inline
 <span class="sel">:focus-visible</span> {
 <span class="prop">outline</span>:
 <span class="num">2px</span> solid cyan; }
+
 <span class="com">/* Pseudo-elements */</span>
 <span class="sel">p::before</span> {
 <span class="prop">content</span>:
@@ -43161,10 +43209,9 @@ CSS controls visual presentation. The cascade order: inline
 <span class="sel">::selection</span> {
 <span class="prop">background</span>:
 <span class="val">#00d4ff</span>; }
-</div>
+</pre>
 <div class="code-label">CUSTOM PROPERTIES &amp; CALC</div>
-<div class="code-block">
-<span class="sel">:root</span> {
+<pre class="code-block"><span class="sel">:root</span> {
 <span class="prop">--color-primary</span>:
 <span class="val">#00d4ff</span>;
 <span class="prop">--spacing-md</span>:
@@ -43183,10 +43230,9 @@ CSS controls visual presentation. The cascade order: inline
 <span class="prop">font-size</span>:
 <span class="fn">min</span>(<span class="num">4vw</span>,
 <span class="num">2rem</span>); }
-</div>
+</pre>
 <div class="code-label">FLEXBOX</div>
-<div class="code-block">
-<span class="sel">.flex-container</span> {
+<pre class="code-block"><span class="sel">.flex-container</span> {
 <span class="prop">display</span>: flex;
 <span class="prop">flex-direction</span>: row;
 <span class="com">/* row|column|row-reverse */</span>
@@ -43204,10 +43250,9 @@ CSS controls visual presentation. The cascade order: inline
 <span class="prop">align-self</span>: flex-start;
 <span class="prop">order</span>: <span class="num">2</span>;
 }
-</div>
+</pre>
 <div class="code-label">CSS GRID</div>
-<div class="code-block">
-<span class="sel">.grid</span> {
+<pre class="code-block"><span class="sel">.grid</span> {
 <span class="prop">display</span>: grid;
 <span class="prop">grid-template-columns</span>:
 <span class="fn">repeat</span>(auto-fit,
@@ -43227,16 +43272,16 @@ CSS controls visual presentation. The cascade order: inline
 <span class="num">1</span> / <span class="num">-1</span>;
 <span class="prop">grid-row</span>: span
 <span class="num">2</span>; }
-</div>
+</pre>
 <div class="code-label">ANIMATIONS &amp; TRANSITIONS</div>
-<div class="code-block">
-<span class="sel">.btn</span> {
+<pre class="code-block"><span class="sel">.btn</span> {
 <span class="prop">transition</span>: all
 <span class="num">0.3s</span> ease-in-out;
 <span class="prop">transform</span>:
 <span class="fn">translateX</span>(<span class="num">0</span>) <span class="fn">scale</span>(<span class="num">1</span>); } <span class="sel">.btn:hover</span> {
 <span class="prop">transform</span>:
 <span class="fn">translateY</span>(<span class="num">-4px</span>) <span class="fn">scale</span>(<span class="num">1.05</span>); }
+
 <span class="sel">@keyframes</span>
 <span class="fn">fadeIn</span> {
 <span class="num">from</span> {
@@ -43252,6 +43297,7 @@ CSS controls visual presentation. The cascade order: inline
 <span class="num">0.6s</span> ease forwards;
 <span class="prop">animation-delay</span>:
 <span class="num">0.2s</span>; }
+
 <span class="com">/* Media queries */</span>
 <span class="sel">@media</span> (max-width:
 <span class="num">768px</span>) {
@@ -43265,17 +43311,17 @@ CSS controls visual presentation. The cascade order: inline
 <span class="sel">@media</span> (prefers-reduced-motion:
 reduce) { <span class="sel">*</span> {
 <span class="prop">animation</span>: none; } }
+</pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="topic" id="javascript-es6-through-es2025" data-reviewed="2026-07" data-read="8" data-level="core">
+<div class="topic" id="javascript-es6-through-es2025" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚡</span>
 <span class="topic-name">JavaScript — ES6 through ES2025</span>
 <span class="topic-badge">SCRIPTING LANGUAGE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -43292,14 +43338,14 @@ arrow functions, classes, modules, Promises.
 </div>
 <div class="dw">
 <div class="code-label">VARIABLES &amp; TYPES</div>
-<div class="code-block">
-<span class="com">// Declarations — always prefer const, use let when
-reassigning</span>
+<pre class="code-block"><span class="com">// Declarations — always prefer const, use let when
+  reassigning</span>
 <span class="kw">const</span> <span class="var">PI</span> =
 <span class="num">3.14</span>; <span class="kw">let</span>
 <span class="var">count</span> = <span class="num">0</span>;
 <span class="com">// var — function-scoped, hoisted — avoid in modern
-code</span>
+  code</span>
+
 <span class="com">// Primitives</span>
 <span class="kw">typeof</span>
 <span class="str">"hello"</span>
@@ -43317,6 +43363,7 @@ code</span>
 <span class="com">// "symbol"</span>
 <span class="kw">typeof</span> <span class="num">42n</span>
 <span class="com">// "bigint"</span>
+
 <span class="com">// Destructuring</span>
 <span class="kw">const</span> [<span class="var">a</span>,
 <span class="var">b</span>, ...<span class="var">rest</span>] = [<span class="num">1</span>,
@@ -43331,10 +43378,9 @@ coords; <span class="com">// rename</span>
 <span class="kw">const</span> { <span class="var">a</span>:
 { <span class="var">b</span> } } = nested;
 <span class="com">// deep</span>
-</div>
+</pre>
 <div class="code-label">FUNCTIONS</div>
-<div class="code-block">
-<span class="com">// Arrow functions (no own this/arguments)</span>
+<pre class="code-block"><span class="com">// Arrow functions (no own this/arguments)</span>
 <span class="kw">const</span> <span class="fn">add</span> =
 (<span class="var">a</span>, <span class="var">b</span>) =>
 <span class="var">a</span> + <span class="var">b</span>;
@@ -43343,14 +43389,16 @@ coords; <span class="com">// rename</span>
 <span class="var">name</span> =>
 <span class="str">`Hello <span class="var">${name}</span>`</span>; <span class="kw">const</span>
 <span class="fn">noop</span> = () => {};
+
 <span class="com">// Default, rest, spread</span>
 <span class="kw">function</span>
 <span class="fn">log</span>(<span class="var">msg</span> =
 <span class="str">"default"</span>, ...<span class="var">args</span>) {} <span class="fn">Math.max</span>(...[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]);
 <span class="com">// spread</span>
+
 <span class="com">// Higher-order functions</span>
 [<span class="num">1</span>,<span class="num">2</span>,<span
-class="num">3</span>].<span class="fn">map</span>(<span class="var">x</span> =>
+  class="num">3</span>].<span class="fn">map</span>(<span class="var">x</span> =>
 <span class="var">x</span> * <span class="num">2</span>)
 <span class="com">// [2,4,6]</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">filter</span>(<span class="var">x</span>
 => <span class="var">x</span> > <span class="num">1</span>)
@@ -43362,10 +43410,9 @@ class="num">3</span>].<span class="fn">map</span>(<span class="var">x</span> =>
 <span class="com">// [1,2,3]</span> arr.<span class="fn">flatMap</span>(<span class="var">x</span> => [<span class="var">x</span>,
 <span class="var">x</span>*<span class="num">2</span>])
 <span class="com">// ES2019</span>
-</div>
+</pre>
 <div class="code-label">OBJECTS &amp; CLASSES</div>
-<div class="code-block">
-<span class="com">// Object methods (ES6+)</span>
+<pre class="code-block"><span class="com">// Object methods (ES6+)</span>
 <span class="kw">const</span> <span class="var">obj</span> =
 { <span class="var">x</span>, <span class="var">y</span>,
 <span class="fn">greet</span>() {
@@ -43376,10 +43423,11 @@ overrides); <span class="kw">const</span>
 <span class="var">clone</span> = { ...<span class="var">original</span>, <span class="var">extra</span>:
 <span class="num">1</span> };
 <span class="fn">Object.keys</span>(<span class="var">obj</span>) / <span class="fn">Object.values</span>(<span class="var">obj</span>) / <span class="fn">Object.entries</span>(<span
-class="var">obj</span>) <span class="fn">Object.fromEntries</span>([[<span
-class="str">"a"</span>,<span class="num">1</span>],[<span class="str">"b"</span>,<span class="num">2</span>]])
+  class="var">obj</span>) <span class="fn">Object.fromEntries</span>([[<span
+  class="str">"a"</span>,<span class="num">1</span>],[<span class="str">"b"</span>,<span class="num">2</span>]])
 <span class="com">// ES2019</span>
 <span class="fn">Object.freeze</span>(<span class="var">obj</span>) <span class="com">// immutable</span>
+
 <span class="com">// Classes (syntactic sugar over prototypes)</span>
 <span class="kw">class</span>
 <span class="type">Animal</span> { #sound =
@@ -43407,11 +43455,10 @@ name) {} <span class="com">// TypeScript-style</span>
 <span class="fn">speak</span>() {
 <span class="kw">return</span>
 <span class="str">`<span class="var">${<span class="kw">super</span>.speak()}</span>
-Woof!`</span>; } }
-</div>
+  Woof!`</span>; } }
+</pre>
 <div class="code-label">ASYNC &amp; PROMISES</div>
-<div class="code-block">
-<span class="com">// Promise chain → async/await (preferred)</span>
+<pre class="code-block"><span class="com">// Promise chain → async/await (preferred)</span>
 <span class="kw">async function</span>
 <span class="fn">fetchUser</span>(<span class="var">id</span>) { <span class="kw">try</span> {
 <span class="kw">const</span> <span class="var">res</span> =
@@ -43421,6 +43468,7 @@ Woof!`</span>; } }
 <span class="kw">await</span>
 <span class="var">res</span>.<span class="fn">json</span>();
 } <span class="kw">catch</span> (<span class="var">err</span>) { <span class="fn">console.error</span>(<span class="var">err</span>); } }
+
 <span class="com">// Parallel execution</span>
 <span class="kw">const</span> [<span class="var">u</span>,
 <span class="var">p</span>] = <span class="kw">await</span>
@@ -43437,22 +43485,23 @@ Woof!`</span>; } }
 <span class="kw">await</span>
 <span class="fn">Promise.any</span>([p1, p2]);
 <span class="com">// first resolved</span>
+
 <span class="com">// Optional chaining &amp; nullish coalescing
-(ES2020)</span>
+  (ES2020)</span>
 <span class="kw">const</span> <span class="var">zip</span> =
 user?.<span class="var">address</span>?.<span class="var">zip</span>
 ?? <span class="str">"unknown"</span>; user?.<span
-class="fn">save</span>?.();
+  class="fn">save</span>?.();
 <span class="com">// call only if method exists</span>
-</div>
+</pre>
 <div class="code-label">DOM &amp; EVENTS</div>
-<div class="code-block">
-<span class="com">// Query</span>
+<pre class="code-block"><span class="com">// Query</span>
 <span class="fn">document.querySelector</span>(<span
-class="str">".card"</span>) <span class="fn">document.querySelectorAll</span>(<span
-class="str">"li"</span>) <span class="com">// NodeList</span>
+  class="str">".card"</span>) <span class="fn">document.querySelectorAll</span>(<span
+  class="str">"li"</span>) <span class="com">// NodeList</span>
 <span class="fn">document.getElementById</span>(<span
-class="str">"main"</span>)
+  class="str">"main"</span>)
+
 <span class="com">// Manipulate</span>
 <span class="var">el</span>.textContent =
 <span class="str">"safe text"</span>;
@@ -43463,37 +43512,40 @@ class="str">"main"</span>)
 <span class="num">42</span>);
 <span class="var">el</span>.style.color =
 <span class="str">"cyan"</span>;
+
 <span class="com">// Create / insert</span>
 <span class="kw">const</span> <span class="var">div</span> =
 <span class="fn">document.createElement</span>(<span
-class="str">"div"</span>); <span class="var">parent</span>.<span class="fn">append</span>(<span class="var">div</span>);
+  class="str">"div"</span>); <span class="var">parent</span>.<span class="fn">append</span>(<span class="var">div</span>);
 <span class="com">// at end</span>
 <span class="var">parent</span>.<span class="fn">prepend</span>(<span class="var">div</span>);
 <span class="com">// at start</span>
 <span class="var">el</span>.<span class="fn">insertAdjacentHTML</span>(<span class="str">"beforeend"</span>, html);
 <span class="var">el</span>.<span class="fn">remove</span>();
+
 <span class="com">// Events</span>
 <span class="var">btn</span>.<span class="fn">addEventListener</span>(<span class="str">"click"</span>,
 <span class="var">e</span> => {
 <span class="var">e</span>.<span class="fn">preventDefault</span>(); <span class="var">e</span>.<span class="fn">stopPropagation</span>(); }, { once: <span class="kw">true</span>, passive:
 <span class="kw">true</span> });
+
 <span class="com">// Storage / History / Location</span>
 <span class="fn">localStorage.setItem</span>(<span
-class="str">"k"</span>, <span class="fn">JSON.stringify</span>(<span class="var">val</span>)); <span class="fn">JSON.parse</span>(<span class="fn">localStorage.getItem</span>(<span class="str">"k"</span>));
+  class="str">"k"</span>, <span class="fn">JSON.stringify</span>(<span class="var">val</span>)); <span class="fn">JSON.parse</span>(<span class="fn">localStorage.getItem</span>(<span class="str">"k"</span>));
 <span class="fn">history.pushState</span>({},
 <span class="str">""</span>,
 <span class="str">"/new-path"</span>);
+</pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="topic" id="json-javascript-object-notation" data-reviewed="2026-07" data-read="5" data-level="core">
+<div class="topic" id="json-javascript-object-notation" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📋</span>
 <span class="topic-name">JSON — JavaScript Object Notation</span>
 <span class="topic-badge">DATA FORMAT</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -43510,8 +43562,7 @@ undefined/functions. MIME <span class="acro-exp">(Multipurpose Internet Mail Ext
 </div>
 <div class="dw">
 <div class="code-label">SYNTAX &amp; DATA TYPES</div>
-<div class="code-block">
-{
+<pre class="code-block">{
 <span class="str">"string"</span>:
 <span class="str">"hello world"</span>,
 <span class="str">"number"</span>:
@@ -43535,18 +43586,19 @@ undefined/functions. MIME <span class="acro-exp">(Multipurpose Internet Mail Ext
 <span class="str">"id"</span>: <span class="num">2</span>,
 <span class="str">"name"</span>:
 <span class="str">"Bob"</span> } ] }
+
 <span class="com">// NOT valid JSON:</span>
 <span class="com">// { key: "no quotes on key" } ← must quote keys</span>
 <span class="com">// { "a": 1, } ← no trailing comma</span>
 <span class="com">// { "fn": function(){} } ← no functions</span>
 <span class="com">// { "date": new Date() } ← no JS expressions</span>
-</div>
+</pre>
 <div class="code-label">JAVASCRIPT PARSE / STRINGIFY</div>
-<div class="code-block">
-<span class="com">// Parse JSON string → JS value</span>
+<pre class="code-block"><span class="com">// Parse JSON string → JS value</span>
 <span class="kw">const</span> <span class="var">obj</span> =
 <span class="fn">JSON.parse</span>(<span class="str">'{"name":"Alice","age":30}'</span>);
 <span class="com">// → { name: "Alice", age: 30 }</span>
+
 <span class="com">// Stringify JS value → JSON string</span>
 <span class="kw">const</span>
 <span class="var">json</span> =
@@ -43556,9 +43608,11 @@ undefined/functions. MIME <span class="acro-exp">(Multipurpose Internet Mail Ext
 <span class="var">age</span>:
 <span class="num">30</span> });
 <span class="com">// → '{"name":"Alice","age":30}'</span>
+
 <span class="com">// Pretty-print with indentation</span>
 <span class="fn">JSON.stringify</span>(<span class="var">obj</span>, <span class="kw">null</span>,
 <span class="num">2</span>);
+
 <span class="com">// Replacer function — filter/transform values</span>
 <span class="fn">JSON.stringify</span>(<span class="var">obj</span>, (<span class="var">key</span>,
 <span class="var">val</span>) => {
@@ -43569,6 +43623,7 @@ undefined/functions. MIME <span class="acro-exp">(Multipurpose Internet Mail Ext
 <span class="com">// omit</span>
 <span class="kw">return</span> <span class="var">val</span>;
 });
+
 <span class="com">// Reviver function — parse Date strings etc.</span>
 <span class="fn">JSON.parse</span>(<span class="var">str</span>, (<span class="var">key</span>,
 <span class="var">val</span>) =>
@@ -43580,17 +43635,17 @@ undefined/functions. MIME <span class="acro-exp">(Multipurpose Internet Mail Ext
 <span class="type">Date</span>(<span class="var">val</span>)
 : <span class="var">val</span>
 );
+
 <span class="com">// Deep clone (simple objects only)</span>
 <span class="kw">const</span>
 <span class="var">clone</span> =
 <span class="fn">JSON.parse</span>(<span class="fn">JSON.stringify</span>(<span class="var">original</span>));
 <span class="com">// Note: loses undefined, functions, Dates, Map, Set,
-etc.</span>
+  etc.</span>
 <span class="com">// Prefer structuredClone() for modern environments</span>
-</div>
+</pre>
 <div class="code-label">COMMAND-LINE — JQ</div>
-<div class="code-block">
-<span class="fn">cat</span> data.json |
+<pre class="code-block"><span class="fn">cat</span> data.json |
 <span class="fn">jq</span> <span class="str">'.'</span>
 <span class="com"># pretty-print</span>
 <span class="fn">jq</span>
@@ -43610,22 +43665,23 @@ etc.</span>
 <span class="fn">jq</span>
 <span class="str">'.[] | @base64'</span> data.json
 <span class="com"># encode values</span>
+
 <span class="com"># Python quick-parse from terminal</span>
 <span class="fn">python3</span> -m json.tool data.json
 <span class="com"># validate + pretty-print</span>
 <span class="fn">curl</span> api.example.com |
 <span class="fn">python3</span> -m json.tool
+</pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="topic" id="python-scripting-automation" data-reviewed="2026-08" data-read="9" data-level="core">
+<div class="topic" id="python-scripting-automation" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🐍</span>
 <span class="topic-name">Python — Scripting &amp; Automation</span>
 <span class="topic-badge">GENERAL PURPOSE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">9 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -43642,8 +43698,7 @@ CPython 3.10+ for match/case, 3.12 for f-string improvements.
 </div>
 <div class="dw">
 <div class="code-label">CORE SYNTAX</div>
-<div class="code-block">
-<span class="com"># Variables — duck-typed, no declaration needed</span>
+<pre class="code-block"><span class="com"># Variables — duck-typed, no declaration needed</span>
 <span class="var">name</span> =
 <span class="str">"Alice"</span>
 <span class="var">age</span> = <span class="num">30</span>
@@ -43654,10 +43709,12 @@ CPython 3.10+ for match/case, 3.12 for f-string improvements.
 <span class="var">empty</span> =
 <span class="kw">None</span>
 <span class="com"># null equivalent</span>
+
 <span class="com"># F-strings (3.6+) — preferred string formatting</span>
 <span class="fn">print</span>(<span class="str">f"Hello <span class="var">{name}</span>, age
-<span class="var">{age}</span>"</span>) <span class="fn">print</span>(<span class="str">f"PI = <span class="var">{pi:.2f}</span>"</span>) <span class="com"># format spec</span>
+  <span class="var">{age}</span>"</span>) <span class="fn">print</span>(<span class="str">f"PI = <span class="var">{pi:.2f}</span>"</span>) <span class="com"># format spec</span>
 <span class="fn">print</span>(<span class="str">f"Debug: <span class="var">{age = }</span>"</span>) <span class="com"># 3.8+ self-doc</span>
+
 <span class="com"># Multiple assignment / unpacking</span>
 <span class="var">a</span>, <span class="var">b</span>,
 *<span class="var">rest</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>,
@@ -43667,10 +43724,9 @@ CPython 3.10+ for match/case, 3.12 for f-string improvements.
 <span class="var">x</span> = <span class="var">y</span> =
 <span class="var">z</span> = <span class="num">0</span>
 <span class="com"># chain assign</span>
-</div>
+</pre>
 <div class="code-label">DATA STRUCTURES</div>
-<div class="code-block">
-<span class="com"># List — ordered, mutable, O(1) append</span>
+<pre class="code-block"><span class="com"># List — ordered, mutable, O(1) append</span>
 <span class="var">lst</span> = [<span class="num">1</span>,
 <span class="num">2</span>, <span class="num">3</span>]
 <span class="var">lst</span>.<span class="fn">append</span>(<span class="num">4</span>);
@@ -43681,11 +43737,12 @@ CPython 3.10+ for match/case, 3.12 for f-string improvements.
 <span class="com"># slice [2,3]</span>
 <span class="var">lst</span>[::<span class="num">-1</span>]
 <span class="com"># reversed</span>
+
 <span class="com"># Dict — ordered (3.7+), key→value</span>
 <span class="var">d</span> = {<span class="str">"a"</span>:
 <span class="num">1</span>, <span class="str">"b"</span>:
 <span class="num">2</span>} <span class="var">d</span>.<span
-class="fn">get</span>(<span class="str">"c"</span>, <span class="num">0</span>)
+  class="fn">get</span>(<span class="str">"c"</span>, <span class="num">0</span>)
 <span class="com"># safe get with default</span>
 <span class="var">d</span>.<span class="fn">setdefault</span>(<span class="str">"c"</span>, []).<span class="fn">append</span>(<span class="num">1</span>)
 <span class="var">d</span>.<span class="fn">update</span>({<span class="str">"c"</span>:
@@ -43693,7 +43750,8 @@ class="fn">get</span>(<span class="str">"c"</span>, <span class="num">0</span>)
 <span class="var">merged</span> = {**<span class="var">d</span>, **<span class="var">e</span>} <span class="kw">for</span>
 <span class="var">k</span>, <span class="var">v</span>
 <span class="kw">in</span> <span class="var">d</span>.<span
-class="fn">items</span>(): <span class="fn">print</span>(<span class="var">k</span>, <span class="var">v</span>)
+  class="fn">items</span>(): <span class="fn">print</span>(<span class="var">k</span>, <span class="var">v</span>)
+
 <span class="com"># Set, Tuple, Named Tuple</span>
 <span class="var">s</span> = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>} |
 {<span class="num">3</span>,<span class="num">4</span>}
@@ -43705,16 +43763,16 @@ class="fn">items</span>(): <span class="fn">print</span>(<span class="var">k</sp
 <span class="kw">import</span> namedtuple
 <span class="type">Point</span> =
 <span class="fn">namedtuple</span>(<span class="str">"Point"</span>, [<span class="str">"x"</span>,<span class="str">"y"</span>])
-</div>
+</pre>
 <div class="code-label">
 CONTROL FLOW &amp; COMPREHENSIONS
 </div>
-<div class="code-block">
-<span class="com"># Conditionals</span>
+<pre class="code-block"><span class="com"># Conditionals</span>
 <span class="kw">if</span> <span class="var">x</span> >
 <span class="num">0</span>: ... <span class="kw">elif</span>
 <span class="var">x</span> == <span class="num">0</span>:
 ... <span class="kw">else</span>: ...
+
 <span class="com"># Structural pattern matching (3.10+)</span>
 <span class="kw">match</span>
 <span class="var">command</span>:
@@ -43728,13 +43786,14 @@ CONTROL FLOW &amp; COMPREHENSIONS
 <span class="fn">move</span>(<span class="var">x</span>,
 <span class="var">y</span>) <span class="kw">case</span> _:
 <span class="fn">print</span>(<span class="str">"unknown"</span>)
+
 <span class="com"># Loops</span>
 <span class="kw">for</span> <span class="var">i</span>,
 <span class="var">v</span> <span class="kw">in</span>
 <span class="fn">enumerate</span>(<span class="var">lst</span>): ... <span class="kw">for</span>
 <span class="var">a</span>, <span class="var">b</span>
 <span class="kw">in</span> <span class="fn">zip</span>(<span
-class="var">l1</span>, <span class="var">l2</span>): ...
+  class="var">l1</span>, <span class="var">l2</span>): ...
 <span class="kw">while</span> <span class="var">x</span> >
 <span class="num">0</span>: <span class="var">x</span> -=
 <span class="num">1</span> [<span class="var">x</span>
@@ -43744,16 +43803,15 @@ class="var">l1</span>, <span class="var">l2</span>): ...
 <span class="num">0</span>]
 <span class="com"># list comp</span> {<span class="var">k</span>: <span class="var">v</span>*<span class="num">2</span>
 <span class="kw">for</span> <span class="var">k</span>,<span
-class="var">v</span>
+  class="var">v</span>
 <span class="kw">in</span> <span class="var">d</span>.<span
-class="fn">items</span>()} <span class="com"># dict comp</span> (<span class="var">x</span>**<span class="num">2</span> <span class="kw">for</span>
+  class="fn">items</span>()} <span class="com"># dict comp</span> (<span class="var">x</span>**<span class="num">2</span> <span class="kw">for</span>
 <span class="var">x</span> <span class="kw">in</span>
 <span class="fn">range</span>(<span class="num">10</span>))
 <span class="com"># generator</span>
-</div>
+</pre>
 <div class="code-label">FUNCTIONS, DECORATORS &amp; OOP</div>
-<div class="code-block">
-<span class="kw">def</span>
+<pre class="code-block"><span class="kw">def</span>
 <span class="fn">greet</span>(<span class="var">name</span>:
 <span class="type">str</span>, *,
 <span class="var">loud</span>:
@@ -43767,9 +43825,11 @@ class="fn">items</span>()} <span class="com"># dict comp</span> (<span class="va
 <span class="var">msg</span>.<span class="fn">upper</span>()
 <span class="kw">if</span> <span class="var">loud</span>
 <span class="kw">else</span> <span class="var">msg</span>
+
 <span class="com"># *args / **kwargs</span>
 <span class="kw">def</span>
 <span class="fn">variadic</span>(*<span class="var">args</span>, **<span class="var">kwargs</span>): ...
+
 <span class="com"># Decorators</span>
 <span class="kw">from</span> functools
 <span class="kw">import</span> wraps, lru_cache
@@ -43794,9 +43854,10 @@ class="fn">items</span>()} <span class="com"># dict comp</span> (<span class="va
 <span class="kw">if</span> <span class="var">n</span> <
 <span class="num">2</span> <span class="kw">else</span>
 <span class="fn">fib</span>(<span class="var">n</span>-<span
-class="num">1</span>)+<span class="fn">fib</span>(<span class="var">n</span>-<span class="num">2</span>)
+  class="num">1</span>)+<span class="fn">fib</span>(<span class="var">n</span>-<span class="num">2</span>)
+
 <span class="com"># Dataclass (3.7+) — concise class with
-auto-methods</span>
+  auto-methods</span>
 <span class="kw">from</span> dataclasses
 <span class="kw">import</span> dataclass, field
 @dataclass(frozen=<span class="kw">True</span>)
@@ -43808,10 +43869,9 @@ auto-methods</span>
 <span class="var">tags</span>:
 <span class="type">list</span> =
 <span class="fn">field</span>(default_factory=list)
-</div>
+</pre>
 <div class="code-label">FILE I/O &amp; COMMON STDLIB</div>
-<div class="code-block">
-<span class="com"># File I/O — always use context manager</span>
+<pre class="code-block"><span class="com"># File I/O — always use context manager</span>
 <span class="kw">with</span>
 <span class="fn">open</span>(<span class="str">"file.txt"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> <span class="var">f</span>:
 <span class="var">content</span> =
@@ -43822,9 +43882,10 @@ auto-methods</span>
 <span class="kw">with</span>
 <span class="fn">open</span>(<span class="str">"out.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span>
 <span class="var">f</span>: <span class="var">f</span>.<span
-class="fn">write</span>(<span class="str">"hello "</span>)
+  class="fn">write</span>(<span class="str">"hello "</span>)
+
 <span class="com"># Path manipulation (pathlib — preferred over
-os.path)</span>
+  os.path)</span>
 <span class="kw">from</span> pathlib
 <span class="kw">import</span> Path
 <span class="var">p</span> =
@@ -43838,6 +43899,7 @@ os.path)</span>
 <span class="fn">list</span>(<span class="type">Path</span>(<span class="str">"."</span>).<span class="fn">glob</span>(<span class="str">"**/*.py"</span>))
 <span class="com"># recursive find</span>
 <span class="var">p</span>.<span class="fn">read_text</span>(); <span class="var">p</span>.<span class="fn">write_text</span>(<span class="str">"data"</span>)
+
 <span class="com"># Common imports</span>
 <span class="kw">import</span> os, sys, re, json, csv, time,
 datetime <span class="kw">from</span> collections
@@ -43846,13 +43908,12 @@ datetime <span class="kw">from</span> collections
 <span class="kw">import</span> chain, product, combinations
 <span class="kw">import</span> subprocess
 <span class="fn">subprocess.run</span>([<span class="str">"ls"</span>,<span class="str">"-la"</span>], capture_output=<span
-class="kw">True</span>, text=<span class="kw">True</span>)
-</div>
+  class="kw">True</span>, text=<span class="kw">True</span>)
+</pre>
 <div class="code-label">
 ERROR HANDLING &amp; CONTEXT MANAGERS
 </div>
-<div class="code-block">
-<span class="kw">try</span>:
+<pre class="code-block"><span class="kw">try</span>:
 <span class="var">result</span> =
 <span class="fn">int</span>(<span class="str">"bad"</span>)
 <span class="kw">except</span> (<span class="type">ValueError</span>, <span class="type">TypeError</span>)
@@ -43866,6 +43927,7 @@ ERROR HANDLING &amp; CONTEXT MANAGERS
 <span class="fn">print</span>(<span class="str">"success"</span>) <span class="com"># runs if no exception</span>
 <span class="kw">finally</span>:
 <span class="fn">print</span>(<span class="str">"always runs"</span>)
+
 <span class="com"># Custom context manager</span>
 <span class="kw">from</span> contextlib
 <span class="kw">import</span> contextmanager
@@ -43875,17 +43937,17 @@ ERROR HANDLING &amp; CONTEXT MANAGERS
 <span class="fn">print</span>(<span class="str">"exit"</span>) <span class="kw">with</span>
 <span class="fn">managed</span>():
 <span class="fn">print</span>(<span class="str">"inside"</span>)
+</pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="topic" id="bash-bourne-again-shell" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="bash-bourne-again-shell" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔶</span>
 <span class="topic-name">Bash — Bourne Again Shell</span>
 <span class="topic-badge">SHELL SCRIPTING</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -43904,17 +43966,18 @@ safe scripting. POSIX-compatible subset runs everywhere.
 </div>
 <div class="dw">
 <div class="code-label">SCRIPT HEADER &amp; VARIABLES</div>
-<div class="code-block">
-<span class="com">#!/usr/bin/env bash</span>
+<pre class="code-block"><span class="com">#!/usr/bin/env bash</span>
 <span class="fn">set</span> -euo pipefail
 <span class="com"># exit on error, unset var, pipe fail</span>
 <span class="kw">IFS</span>=$<span class="str">' '</span>
 <span class="com"># safer field splitting</span>
+
 <span class="com"># Variables — no spaces around =</span>
 <span class="var">NAME</span>=<span class="str">"Alice"</span>
 <span class="var">COUNT</span>=<span class="num">42</span>
 <span class="kw">readonly</span>
 <span class="var">PI</span>=<span class="num">3.14</span>
+
 <span class="com"># Special variables</span>
 <span class="var">$0</span>
 <span class="com"># script name</span>
@@ -43935,10 +43998,9 @@ safe scripting. POSIX-compatible subset runs everywhere.
 <span class="com"># last background PID</span>
 <span class="var">$_</span>
 <span class="com"># last argument of previous command</span>
-</div>
+</pre>
 <div class="code-label">PARAMETER EXPANSION</div>
-<div class="code-block">
-<span class="var">${var:-default}</span>
+<pre class="code-block"><span class="var">${var:-default}</span>
 <span class="com"># use default if unset/empty</span>
 <span class="var">${var:=default}</span>
 <span class="com"># set AND use default if unset</span>
@@ -43964,16 +44026,16 @@ safe scripting. POSIX-compatible subset runs everywhere.
 <span class="com"># strip shortest suffix</span>
 <span class="var">${var:2:5}</span>
 <span class="com"># substring: offset:length</span>
-</div>
+</pre>
 <div class="code-label">CONDITIONALS &amp; TESTS</div>
-<div class="code-block">
-<span class="com"># [[ ]] preferred over [ ] — no word splitting</span>
+<pre class="code-block"><span class="com"># [[ ]] preferred over [ ] — no word splitting</span>
 <span class="kw">if</span> [[
 <span class="var">$x</span> -gt
 <span class="num">10</span> ]];
 <span class="kw">then</span> ...;
 <span class="kw">elif</span> ...;
 <span class="kw">else</span> ...; <span class="kw">fi</span>
+
 <span class="com"># File tests</span>
 [[ -f <span class="var">$file</span> ]]
 <span class="com"># exists and is regular file</span> [[ -d
@@ -43986,22 +44048,24 @@ safe scripting. POSIX-compatible subset runs everywhere.
 <span class="com"># string is empty</span> [[ -n
 <span class="var">$str</span> ]]
 <span class="com"># string is non-empty</span>
+
 <span class="com"># Numeric comparisons</span>
 -eq -ne -lt -le -gt -ge
+
 <span class="com"># String comparisons</span>
 == != &lt; &gt;
 <span class="var">$str</span> =~
 <span class="str">^[0-9]+$</span>
 <span class="com"># regex match</span>
+
 <span class="com"># Logical</span>
 &amp;&amp; || ! [[ <span class="var">$a</span> -gt
 <span class="num">0</span> &amp;&amp;
 <span class="var">$b</span> -lt
 <span class="num">10</span> ]]
-</div>
+</pre>
 <div class="code-label">LOOPS &amp; FUNCTIONS</div>
-<div class="code-block">
-<span class="com"># For loops</span>
+<pre class="code-block"><span class="com"># For loops</span>
 <span class="kw">for</span> <span class="var">i</span>
 <span class="kw">in</span> {<span class="num">1</span>..<span class="num">5</span>}; <span class="kw">do</span>
 <span class="fn">echo</span> <span class="var">$i</span>;
@@ -44017,6 +44081,7 @@ i++)); <span class="kw">do</span> ...;
 <span class="kw">in</span> "<span class="var">${!assoc[@]}</span>"; <span class="kw">do</span> <span class="fn">echo</span>
 <span class="var">${assoc[$key]}</span>;
 <span class="kw">done</span>
+
 <span class="com"># While / until / read lines</span>
 <span class="kw">while</span>
 <span class="fn">read</span> -r
@@ -44028,6 +44093,7 @@ i++)); <span class="kw">do</span> ...;
 &amp;&amp; <span class="kw">break</span>;
 <span class="fn">sleep</span> <span class="num">5</span>;
 <span class="kw">done</span>
+
 <span class="com"># Functions</span>
 <span class="fn">greet</span>() {
 <span class="kw">local</span>
@@ -44039,6 +44105,7 @@ i++)); <span class="kw">do</span> ...;
 }
 <span class="fn">result</span>=$(<span class="fn">greet</span>
 Alice) <span class="com"># capture stdout</span>
+
 <span class="com"># Arrays &amp; associative arrays</span>
 <span class="var">arr</span>=(<span class="str">"a"</span>
 <span class="str">"b"</span> <span class="str">"c"</span>)
@@ -44050,17 +44117,17 @@ Alice) <span class="com"># capture stdout</span>
 <span class="var">map</span>=([<span class="str">key</span>]=<span class="str">"val"</span>)
 <span class="fn">echo</span>
 <span class="var">${map[key]}</span>
+</pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="topic" id="zsh-z-shell" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="zsh-z-shell" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🐚</span>
 <span class="topic-name">ZSH — Z Shell</span>
 <span class="topic-badge">INTERACTIVE SHELL</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -44077,19 +44144,20 @@ tab-completion, globbing, plugins, themes. Config file:
 </div>
 <div class="dw">
 <div class="code-label">~/.ZSHRC ESSENTIALS</div>
-<div class="code-block">
-<span class="com"># History</span>
+<pre class="code-block"><span class="com"># History</span>
 <span class="kw">HISTSIZE</span>=<span class="num">10000</span>
 <span class="kw">SAVEHIST</span>=<span class="num">10000</span>
 <span class="kw">HISTFILE</span>=~/.zsh_history
 <span class="fn">setopt</span> HIST_IGNORE_DUPS
 HIST_IGNORE_SPACE SHARE_HISTORY
+
 <span class="com"># Navigation</span>
 <span class="fn">setopt</span> AUTO_CD
 <span class="com"># type dir name to cd into it</span>
 <span class="fn">setopt</span> AUTO_PUSHD
 <span class="com"># cd pushes to directory stack</span>
 <span class="fn">setopt</span> PUSHD_IGNORE_DUPS
+
 <span class="com"># Completion</span>
 <span class="fn">autoload</span> -Uz compinit &amp;&amp;
 <span class="fn">compinit</span>
@@ -44099,16 +44167,16 @@ HIST_IGNORE_SPACE SHARE_HISTORY
 <span class="str">':completion:*'</span> matcher-list
 <span class="str">'m:{a-zA-Z}={A-Za-z}'</span>
 <span class="com"># case-insensitive</span>
+
 <span class="com"># Key bindings</span>
 <span class="fn">bindkey</span> -v
 <span class="com"># vi mode (or -e for emacs)</span>
 <span class="fn">bindkey</span>
 <span class="str">'^R'</span>
 history-incremental-search-backward
-</div>
+</pre>
 <div class="code-label">ALIASES &amp; FUNCTIONS</div>
-<div class="code-block">
-<span class="com"># Aliases</span>
+<pre class="code-block"><span class="com"># Aliases</span>
 <span class="kw">alias</span>
 <span class="var">ll</span>=<span class="str">'ls -lAFh --color=auto'</span>
 <span class="kw">alias</span>
@@ -44123,10 +44191,12 @@ history-incremental-search-backward
 <span class="var">grep</span>=<span class="str">'grep --color=auto'</span>
 <span class="kw">alias</span>
 <span class="var">ports</span>=<span class="str">'ss -tulanp'</span>
+
 <span class="com"># Suffix aliases — run file by extension</span>
 <span class="kw">alias</span> -s {yml,yaml}=<span
-class="var">$EDITOR</span>
+  class="var">$EDITOR</span>
 <span class="kw">alias</span> -s py=python3
+
 <span class="com"># Global aliases — used anywhere on command line</span>
 <span class="kw">alias</span> -g
 <span class="var">L</span>=<span class="str">'| less'</span>
@@ -44134,8 +44204,9 @@ class="var">$EDITOR</span>
 <span class="var">G</span>=<span class="str">'| grep'</span>
 <span class="kw">alias</span> -g
 <span class="var">NUL</span>=<span class="str">'> /dev/null 2>&1'</span>
+
 <span class="com"># ZSH functions (superior to aliases for complex
-logic)</span>
+  logic)</span>
 <span class="fn">mkcd</span>() {
 <span class="fn">mkdir</span> -p
 <span class="str">"$1"</span> &amp;&amp;
@@ -44145,10 +44216,10 @@ logic)</span>
 <span class="str">"%0.s../"</span> $(<span class="fn">seq</span>
 <span class="num">1</span> <span class="var">$1</span>)); }
 <span class="com"># up 3 = cd ../../..</span>
-</div>
+</pre>
 <div class="code-label">ADVANCED GLOBBING</div>
-<div class="code-block">
-<span class="fn">setopt</span> EXTENDED_GLOB NULL_GLOB
+<pre class="code-block"><span class="fn">setopt</span> EXTENDED_GLOB NULL_GLOB
+
 <span class="com"># Extended glob patterns</span>
 <span class="fn">ls</span> **/*.py
 <span class="com"># recursive glob (setopt GLOB_STAR)</span>
@@ -44168,13 +44239,13 @@ logic)</span>
 <span class="com"># files larger than 1MB</span>
 <span class="fn">ls</span> *(mh-1)
 <span class="com"># modified in last hour</span>
-</div>
+</pre>
 <div class="code-label">OH MY ZSH &amp; PLUGINS</div>
-<div class="code-block">
-<span class="com"># Install</span>
+<pre class="code-block"><span class="com"># Install</span>
 <span class="fn">sh</span> -c
 <span class="str">"$(curl -fsSL
-https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</span>
+  https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</span>
+
 <span class="com"># ~/.zshrc config</span>
 <span class="kw">ZSH_THEME</span>=<span class="str">"robbyrussell"</span>
 <span class="com"># popular themes: agnoster, powerlevel10k</span>
@@ -44184,6 +44255,7 @@ https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</spa
 <span class="var">python</span>
 <span class="var">zsh-autosuggestions</span>
 <span class="var">zsh-syntax-highlighting</span>)
+
 <span class="com"># Useful OMZ git aliases (from git plugin)</span>
 <span class="kw">gst</span>
 <span class="com"># git status</span>
@@ -44197,17 +44269,17 @@ https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</spa
 <span class="com"># git pull</span>
 <span class="kw">glog</span>
 <span class="com"># git log --oneline --graph</span>
+</pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="topic" id="go-systems-cloud-language" data-reviewed="2026-07" data-read="8" data-level="core">
+<div class="topic" id="go-systems-cloud-language" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🐹</span>
 <span class="topic-name">Go — Systems &amp; Cloud Language</span>
 <span class="topic-badge">COMPILED LANGUAGE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -44224,13 +44296,14 @@ concurrency model (goroutines + channels). Toolchain:
 </div>
 <div class="dw">
 <div class="code-label">PROGRAM STRUCTURE &amp; TYPES</div>
-<div class="code-block">
-<span class="kw">package</span> main
+<pre class="code-block"><span class="kw">package</span> main
+
 <span class="kw">import</span> (
 <span class="str">"fmt"</span>
 <span class="str">"os"</span>
 <span class="str">"net/http"</span>
 )
+
 <span class="kw">func</span> <span class="fn">main</span>()
 {
 <span class="com">// Short variable declaration (type inferred)</span>
@@ -44238,12 +44311,14 @@ concurrency model (goroutines + channels). Toolchain:
 <span class="str">"Alice"</span>
 <span class="var">age</span> := <span class="num">30</span>
 <span class="var">pi</span> := <span class="num">3.14</span>
+
 <span class="com">// Explicit declaration</span>
 <span class="kw">var</span> <span class="var">count</span>
 <span class="type">int</span> = <span class="num">0</span>
 <span class="kw">var</span> (<span class="var">x</span>,
 <span class="var">y</span>
 <span class="type">float64</span>)
+
 <span class="com">// Constants</span>
 <span class="kw">const</span>
 <span class="var">MaxSize</span> =
@@ -44254,14 +44329,14 @@ concurrency model (goroutines + channels). Toolchain:
 <span class="var">StatusErr</span> =
 <span class="num">500</span>
 )
+
 <span class="fn">fmt.Printf</span>(<span class="str">"Hello %s, age %d "</span>, <span class="var">name</span>,
 <span class="var">age</span>)
 <span class="fn">fmt.Println</span>(<span class="var">count</span>, <span class="var">x</span>, <span class="var">y</span>,
 <span class="var">pi</span>) }
-</div>
+</pre>
 <div class="code-label">FUNCTIONS &amp; ERROR HANDLING</div>
-<div class="code-block">
-<span class="com">// Multiple return values — idiomatic Go</span>
+<pre class="code-block"><span class="com">// Multiple return values — idiomatic Go</span>
 <span class="kw">func</span>
 <span class="fn">divide</span>(<span class="var">a</span>,
 <span class="var">b</span>
@@ -44273,6 +44348,7 @@ concurrency model (goroutines + channels). Toolchain:
 <span class="var">a</span> / <span class="var">b</span>,
 <span class="kw">nil</span>
 }
+
 <span class="com">// Error handling pattern — always check errors</span>
 <span class="var">result</span>,
 <span class="var">err</span> :=
@@ -44285,6 +44361,7 @@ concurrency model (goroutines + channels). Toolchain:
 <span class="var">err</span>)
 <span class="fn">os.Exit</span>(<span class="num">1</span>)
 }
+
 <span class="com">// Named return values + defer</span>
 <span class="kw">func</span>
 <span class="fn">readFile</span>(<span class="var">path</span>
@@ -44302,6 +44379,7 @@ concurrency model (goroutines + channels). Toolchain:
 <span class="com">// runs when function returns</span>
 <span class="kw">return</span>
 <span class="fn">io.ReadAll</span>(<span class="var">f</span>) }
+
 <span class="com">// Variadic + first-class functions</span>
 <span class="kw">func</span>
 <span class="fn">sum</span>(<span class="var">nums</span>
@@ -44320,12 +44398,11 @@ concurrency model (goroutines + channels). Toolchain:
 <span class="kw">return</span>
 <span class="var">x</span>*<span class="num">2</span> },
 <span class="num">5</span>)
-</div>
+</pre>
 <div class="code-label">
 STRUCTS, INTERFACES &amp; METHODS
 </div>
-<div class="code-block">
-<span class="com">// Struct definition</span>
+<pre class="code-block"><span class="com">// Struct definition</span>
 <span class="kw">type</span> <span class="type">User</span>
 <span class="kw">struct</span> {
 <span class="var">Name</span>
@@ -44337,6 +44414,7 @@ STRUCTS, INTERFACES &amp; METHODS
 <span class="type">string</span>
 <span class="com">// unexported (lowercase)</span>
 }
+
 <span class="com">// Methods (receiver on value or pointer)</span>
 <span class="kw">func</span> (<span class="var">u</span>
 <span class="type">User</span>)
@@ -44350,6 +44428,7 @@ STRUCTS, INTERFACES &amp; METHODS
 <span class="fn">Birthday</span>() {
 <span class="var">u</span>.<span class="var">Age</span>++ }
 <span class="com">// pointer = mutate</span>
+
 <span class="com">// Interface — satisfied implicitly</span>
 <span class="kw">type</span>
 <span class="type">Stringer</span>
@@ -44361,6 +44440,7 @@ STRUCTS, INTERFACES &amp; METHODS
 <span class="fn">print</span>(<span class="var">s</span>
 <span class="type">Stringer</span>) {
 <span class="fn">fmt.Println</span>(<span class="var">s</span>.<span class="fn">String</span>()) }
+
 <span class="com">// Embedding (composition over inheritance)</span>
 <span class="kw">type</span> <span class="type">Admin</span>
 <span class="kw">struct</span> {
@@ -44369,12 +44449,12 @@ STRUCTS, INTERFACES &amp; METHODS
 }
 <span class="var">a</span>.<span class="var">Name</span>
 <span class="com">// promoted from User</span>
-</div>
+</pre>
 <div class="code-label">GOROUTINES &amp; CHANNELS</div>
-<div class="code-block">
-<span class="com">// Goroutine — lightweight thread (go keyword)</span>
+<pre class="code-block"><span class="com">// Goroutine — lightweight thread (go keyword)</span>
 <span class="kw">go</span> <span class="fn">func</span>() {
 <span class="fn">fmt.Println</span>(<span class="str">"async"</span>) }()
+
 <span class="com">// Unbuffered channel — sync sender and receiver</span>
 <span class="var">ch</span> :=
 <span class="fn">make</span>(<span class="kw">chan</span>
@@ -44383,11 +44463,13 @@ STRUCTS, INTERFACES &amp; METHODS
 <span class="var">ch</span> &lt;-
 <span class="num">42</span> }()
 <span class="var">v</span> := &lt;-<span class="var">ch</span>
+
 <span class="com">// Buffered channel</span>
 <span class="var">bch</span> :=
 <span class="fn">make</span>(<span class="kw">chan</span>
 <span class="type">string</span>,
 <span class="num">10</span>)
+
 <span class="com">// Select — multiplex channels</span>
 <span class="kw">select</span> {
 <span class="kw">case</span> <span class="var">msg</span> :=
@@ -44399,6 +44481,7 @@ STRUCTS, INTERFACES &amp; METHODS
 <span class="kw">return</span>
 <span class="kw">default</span>:
 <span class="fn">fmt.Println</span>(<span class="str">"no-op"</span>) }
+
 <span class="com">// WaitGroup — wait for goroutines</span>
 <span class="kw">var</span>
 <span class="var">wg</span> sync.WaitGroup
@@ -44411,10 +44494,9 @@ STRUCTS, INTERFACES &amp; METHODS
 <span class="var">wg</span>.<span class="fn">Done</span>()
 <span class="fn">process</span>(<span class="var">i</span>)
 }() } <span class="var">wg</span>.<span class="fn">Wait</span>()
-</div>
+</pre>
 <div class="code-label">SLICES, MAPS &amp; HTTP</div>
-<div class="code-block">
-<span class="com">// Slices (dynamic arrays)</span>
+<pre class="code-block"><span class="com">// Slices (dynamic arrays)</span>
 <span class="var">s</span> := []<span class="type">int</span>{<span class="num">1</span>, <span class="num">2</span>,
 <span class="num">3</span>} <span class="var">s</span> =
 <span class="fn">append</span>(<span class="var">s</span>,
@@ -44424,6 +44506,7 @@ STRUCTS, INTERFACES &amp; METHODS
 <span class="com">// len=0, cap=10</span>
 <span class="fn">copy</span>(<span class="var">dst</span>,
 <span class="var">src</span>)
+
 <span class="com">// Maps</span>
 <span class="var">m</span> :=
 <span class="fn">map</span>[<span class="type">string</span>]<span class="type">int</span>{<span class="str">"a"</span>: <span class="num">1</span>}
@@ -44433,6 +44516,7 @@ STRUCTS, INTERFACES &amp; METHODS
 <span class="var">m</span>[<span class="str">"c"</span>];
 <span class="var">ok</span> {
 <span class="fn">fmt.Println</span>(<span class="var">v</span>) } <span class="kw">delete</span>(<span class="var">m</span>, <span class="str">"a"</span>)
+
 <span class="com">// HTTP server</span>
 <span class="fn">http.HandleFunc</span>(<span class="str">"/health"</span>, <span class="fn">func</span>(<span class="var">w</span>
 http.ResponseWriter,
@@ -44443,8 +44527,8 @@ http.ResponseWriter,
 <span class="fn">json.NewEncoder</span>(<span class="var">w</span>).<span class="fn">Encode</span>(<span class="fn">map</span>[<span class="type">string</span>]<span class="type">any</span>{<span class="str">"status"</span>:
 <span class="str">"ok"</span>}) })
 <span class="fn">http.ListenAndServe</span>(<span
-class="str">":8080"</span>, <span class="kw">nil</span>)
-</div>
+  class="str">":8080"</span>, <span class="kw">nil</span>)
+</pre>
 </div>
 </div>
 </div>
@@ -44453,12 +44537,12 @@ class="str">":8080"</span>, <span class="kw">nil</span>)
 <!-- ═══════════════════════════════════════════════
 TOPIC: PowerShell
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="powershell-scripting-reference" data-reviewed="2026-07" data-read="11" data-level="core">
+<div class="topic" id="powershell-scripting-reference" data-reviewed="2026-07" data-read="8" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💙</span>
 <span class="topic-name">PowerShell — Scripting Reference</span>
 <span class="topic-badge">WINDOWS / CROSS-PLATFORM</span>
-<span class="topic-read" title="Rough reading time, estimated from length">11 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -44476,8 +44560,7 @@ text) between commands. Cross-platform: Windows, macOS, Linux
 </div>
 <div class="dw">
 <div class="dt">▸ VARIABLES &amp; DATA TYPES</div>
-<div class="code-block">
-<span class="com"># Variables always start with $</span>
+<pre class="code-block"><span class="com"># Variables always start with $</span>
 <span class="var">$name</span> =
 <span class="str">"Alice"</span>
 <span class="var">$count</span> = <span class="num">42</span>
@@ -44485,13 +44568,15 @@ text) between commands. Cross-platform: Windows, macOS, Linux
 <span class="var">$flag</span> =
 <span class="var">$true</span>
 <span class="com"># $true / $false / $null</span>
+
 <span class="com"># Typed declaration</span>
 [<span class="type">int</span>]<span class="var">$n</span> =
 <span class="num">10</span> [<span class="type">string</span>]<span class="var">$s</span> =
 <span class="str">"hello"</span> [<span class="type">bool</span>]<span class="var">$b</span> =
 <span class="var">$false</span> [<span class="type">array</span>]<span class="var">$arr</span> =
 <span class="num">1</span>,<span class="num">2</span>,<span
-class="num">3</span>
+  class="num">3</span>
+
 <span class="com"># Arrays</span>
 <span class="var">$fruits</span> = @(<span class="str">"apple"</span>, <span class="str">"banana"</span>,
 <span class="str">"cherry"</span>)
@@ -44502,6 +44587,7 @@ class="num">3</span>
 <span class="var">$fruits</span> +=
 <span class="str">"date"</span>
 <span class="com"># append</span>
+
 <span class="com"># Hash tables (dictionaries)</span>
 <span class="var">$user</span> = @{ Name =
 <span class="str">"Bob"</span>; Age =
@@ -44514,16 +44600,17 @@ class="num">3</span>
 <span class="var">$user</span>.Role =
 <span class="str">"Dev"</span>
 <span class="com"># add key</span>
-</div>
+</pre>
 <div class="dt">▸ STRING OPERATIONS</div>
-<div class="code-block">
-<span class="com"># Interpolation (double quotes only)</span>
+<pre class="code-block"><span class="com"># Interpolation (double quotes only)</span>
 <span class="var">$msg</span> =
 <span class="str">"Hello, </span><span class="var">$name</span><span class="str">!"</span> <span class="var">$msg</span> =
 <span class="str">"Count is </span><span class="var">$($arr.Count)</span><span class="str"> items"</span>
 <span class="com"># expression inside $()</span>
+
 <span class="com"># Here-string (multiline)</span>
 <span class="var">$text</span> = @<span class="str">" Line one Line two — value is $name "</span>@
+
 <span class="com"># Common string methods</span>
 <span class="str">"hello world"</span>.ToUpper()
 <span class="com"># HELLO WORLD</span>
@@ -44542,10 +44629,9 @@ class="num">3</span>
 <span class="com"># "abc"</span> (<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>)
 -<span class="fn">join</span> <span class="str">"-"</span>
 <span class="com"># "a-b-c"</span>
-</div>
+</pre>
 <div class="dt">▸ FLOW CONTROL</div>
-<div class="code-block">
-<span class="com"># If / elseif / else</span>
+<pre class="code-block"><span class="com"># If / elseif / else</span>
 <span class="kw">if</span> (<span class="var">$x</span> -gt
 <span class="num">10</span>) {
 <span class="fn">Write-Host</span>
@@ -44558,25 +44644,29 @@ class="num">3</span>
 <span class="fn">Write-Host</span>
 <span class="str">"small"</span>
 }
+
 <span class="com"># Comparison operators (not symbols)</span>
 <span class="com"># -eq -ne -gt -ge -lt -le (numbers)</span>
 <span class="com"># -like -notlike -match -notmatch (strings/regex)</span>
 <span class="com"># -and -or -not (logical)</span>
 <span class="com"># -contains -in (arrays)</span>
+
 <span class="com"># Foreach loop</span>
 <span class="kw">foreach</span> (<span class="var">$item</span>
 <span class="kw">in</span> <span class="var">$fruits</span>) {
 <span class="fn">Write-Host</span>
 <span class="var">$item</span>
 }
+
 <span class="com"># For / While</span>
 <span class="kw">for</span> (<span class="var">$i</span>=<span
-class="num">0</span>; <span class="var">$i</span> -lt <span class="num">5</span>;
+  class="num">0</span>; <span class="var">$i</span> -lt <span class="num">5</span>;
 <span class="var">$i</span>++) {
 <span class="fn">Write-Host</span>
 <span class="var">$i</span> }
 <span class="kw">while</span> (<span class="var">$x</span> -gt
 <span class="num">0</span>) { <span class="var">$x</span>-- }
+
 <span class="com"># Switch</span>
 <span class="kw">switch</span> (<span class="var">$day</span>)
 { <span class="str">"Mon"</span> {
@@ -44585,10 +44675,9 @@ class="num">0</span>; <span class="var">$i</span> -lt <span class="num">5</span>
 <span class="str">"End of week"</span> }
 <span class="kw">default</span> {
 <span class="str">"Midweek"</span> } }
-</div>
+</pre>
 <div class="dt">▸ FUNCTIONS &amp; PIPELINE</div>
-<div class="code-block">
-<span class="com"># Function definition</span>
+<pre class="code-block"><span class="com"># Function definition</span>
 <span class="kw">function</span>
 <span class="fn">Get-Greeting</span> {
 <span class="kw">param</span>( [<span class="type">string</span>]<span class="var">$Name</span> =
@@ -44596,10 +44685,11 @@ class="num">0</span>; <span class="var">$i</span> -lt <span class="num">5</span>
 )
 <span class="var">$msg</span> =
 <span class="str">"Hello, </span><span class="var">$Name</span><span class="str">!"</span> <span class="kw">if</span> (<span
-class="var">$Loud</span>) { <span class="var">$msg</span>.ToUpper() }
+  class="var">$Loud</span>) { <span class="var">$msg</span>.ToUpper() }
 <span class="kw">else</span> { <span class="var">$msg</span> }
 } <span class="fn">Get-Greeting</span> -Name
 <span class="str">"Alice"</span> -Loud
+
 <span class="com"># Pipeline — pass objects between cmdlets</span>
 <span class="fn">Get-Process</span> |
 <span class="fn">Where-Object</span> CPU -gt
@@ -44617,7 +44707,7 @@ class="var">$Loud</span>) { <span class="var">$msg</span>.ToUpper() }
 <span class="fn">Select-String</span>
 <span class="str">"ERROR"</span> |
 <span class="fn">Measure-Object</span> -Line
-</div>
+</pre>
 <div class="dt">
 ▸ FILE SYSTEM &amp; SECURITY COMMON CMDLETS
 </div>
@@ -44716,42 +44806,44 @@ without a search engine.
 </div>
 <div class="dw">
 <div class="code-label">DISCOVERY &mdash; THE THREE THAT REPLACE A SEARCH</div>
-<div class="code-block">
-<span class="com"># What cmdlets exist for this?</span>
+<pre class="code-block"><span class="com"># What cmdlets exist for this?</span>
 <span class="fn">Get-Command</span> *service*
 <span class="fn">Get-Command</span> -Module Microsoft.PowerShell.Management
+
 <span class="com"># How does this one work? -Full includes every example</span>
 <span class="fn">Get-Help</span> Get-Process -Full
 <span class="fn">Get-Help</span> Get-Process -Examples
+
 <span class="com"># What is actually in this object? The one people skip</span>
 <span class="fn">Get-Process</span> | <span class="fn">Get-Member</span>
 <span class="fn">Get-Service</span> | <span class="fn">Select-Object</span> -First 1 | <span class="fn">Format-List</span> *
-</div>
+</pre>
 <div class="code-label">ERRORS &mdash; FAILING QUIETLY IS WORSE THAN CRASHING</div>
-<div class="code-block">
-<span class="com"># Most cmdlets warn and carry on. -ErrorAction Stop makes them throwable</span>
+<pre class="code-block"><span class="com"># Most cmdlets warn and carry on. -ErrorAction Stop makes them throwable</span>
 <span class="kw">try</span> {
 <span class="fn">Get-Item</span> <span class="str">"missing"</span> -ErrorAction Stop }
 <span class="kw">catch</span> [<span class="type">System.IO.FileNotFoundException</span>] { <span class="str">"not found"</span> }
 <span class="kw">catch</span> { <span class="str">"anything else"</span> }
 <span class="kw">finally</span> { <span class="str">"always runs"</span> }
+
 <span class="com"># Script-wide, at the top: turn warnings into failures</span>
 <span class="var">$ErrorActionPreference</span> = <span class="str">"Stop"</span>
-</div>
+</pre>
 <div class="code-label">EXECUTION POLICY &amp; REMOTING</div>
-<div class="code-block">
-<span class="com"># Not a security boundary — it stops accidents, not attackers</span>
+<pre class="code-block"><span class="com"># Not a security boundary — it stops accidents, not attackers</span>
 <span class="fn">Get-ExecutionPolicy</span>
 <span class="fn">Set-ExecutionPolicy</span> RemoteSigned -Scope CurrentUser
 <span class="com"># Restricted | AllSigned | RemoteSigned | Unrestricted | Bypass</span>
+
 <span class="com"># Remoting over WinRM</span>
 <span class="fn">Enable-PSRemoting</span> -Force
 <span class="fn">Enter-PSSession</span> -ComputerName SERVER01 -Credential <span class="var">$cred</span>
 <span class="fn">Invoke-Command</span> -ComputerName SERVER01 -ScriptBlock { <span class="fn">Get-Service</span> }
 <span class="fn">New-PSSession</span>; <span class="fn">Disconnect-PSSession</span>
+
 <span class="com"># Credential object</span>
 <span class="var">$cred</span> = <span class="fn">Get-Credential</span>
-</div>
+</pre>
 <div class="concept-desc verdict">
 Two of these are worth knowing as much for reading someone else&rsquo;s script
 as for writing your own. <code>-ExecutionPolicy Bypass</code> and
@@ -44769,12 +44861,12 @@ matters.
 <!-- ═══════════════════════════════════════════════
 TOPIC: Bash (Debian/Ubuntu)
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="bash-scripting-debian-ubuntu-reference" data-reviewed="2026-08" data-read="6" data-level="core">
+<div class="topic" id="bash-scripting-debian-ubuntu-reference" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🟢</span>
 <span class="topic-name">Bash Scripting — Debian / Ubuntu Reference</span>
 <span class="topic-badge">SHELL SCRIPTING</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -44794,14 +44886,14 @@ Prefer <code style="color: var(--cyan)">[[ ]]</code> over
 </div>
 <div class="dw">
 <div class="dt">▸ VARIABLES &amp; QUOTING</div>
-<div class="code-block">
-<span class="com"># Assign — no spaces around =</span>
+<pre class="code-block"><span class="com"># Assign — no spaces around =</span>
 <span class="var">name</span>=<span class="str">"Alice"</span>
 <span class="var">count</span>=<span class="num">42</span>
 <span class="var">files</span>=(<span class="str">"a.txt"</span>
 <span class="str">"b.txt"</span>
 <span class="str">"c.txt"</span>)
 <span class="com"># indexed array</span>
+
 <span class="com"># Read variables</span>
 <span class="fn">echo</span> <span class="str">"Hello </span><span class="var">$name</span><span class="str">"</span>
 <span class="com"># interpolation in double quotes</span>
@@ -44810,11 +44902,13 @@ Prefer <code style="color: var(--cyan)">[[ ]]</code> over
 <span class="com"># single quotes = no interpolation</span>
 <span class="fn">echo</span> <span class="str">"Count: </span><span class="var">${count}</span><span class="str">"</span>
 <span class="com"># braces for clarity/adjacency</span>
+
 <span class="com"># Default values</span>
 <span class="fn">echo</span> <span class="str">"</span><span class="var">${var:-default}</span><span class="str">"</span>
 <span class="com"># use default if var unset/empty</span>
 <span class="fn">echo</span> <span class="str">"</span><span class="var">${var:=default}</span><span class="str">"</span>
 <span class="com"># assign default if unset</span>
+
 <span class="com"># Special variables</span>
 <span class="var">$0</span>
 <span class="com"># script name</span>
@@ -44830,10 +44924,9 @@ Prefer <code style="color: var(--cyan)">[[ ]]</code> over
 <span class="com"># PID of current script</span>
 <span class="var">$!</span>
 <span class="com"># PID of last background job</span>
-</div>
+</pre>
 <div class="dt">▸ CONDITIONALS</div>
-<div class="code-block">
-<span class="com"># if / elif / else</span>
+<pre class="code-block"><span class="com"># if / elif / else</span>
 <span class="kw">if</span> [[ <span class="var">$x</span> -gt
 <span class="num">10</span> ]]; <span class="kw">then</span>
 <span class="fn">echo</span> <span class="str">"big"</span>
@@ -44844,15 +44937,18 @@ Prefer <code style="color: var(--cyan)">[[ ]]</code> over
 <span class="kw">else</span>
 <span class="fn">echo</span> <span class="str">"small"</span>
 <span class="kw">fi</span>
+
 <span class="com"># Integer tests: -eq -ne -gt -ge -lt -le</span>
 <span class="com"># String tests: == != &lt; &gt; -z (empty) -n (not
-empty)</span>
+  empty)</span>
 <span class="com"># File tests: -f (file) -d (dir) -e (exists) -r -w -x</span>
+
 <span class="kw">if</span> [[ -f <span class="str">"</span><span class="var">$file</span><span class="str">"</span> &&
 -r <span class="str">"</span><span class="var">$file</span><span class="str">"</span> ]]; <span class="kw">then</span>
 <span class="fn">echo</span>
 <span class="str">"readable file"</span>
 <span class="kw">fi</span>
+
 <span class="com"># One-liner shortcuts</span>
 [[ -d <span class="str">"/tmp/work"</span> ]] ||
 <span class="fn">mkdir</span> -p
@@ -44862,42 +44958,44 @@ empty)</span>
 <span class="fn">echo</span>
 <span class="str">"git found"</span>
 <span class="com"># check command exists</span>
-</div>
+</pre>
 <div class="dt">▸ LOOPS</div>
-<div class="code-block">
-<span class="com"># for — iterate array</span>
+<pre class="code-block"><span class="com"># for — iterate array</span>
 <span class="kw">for</span> <span class="var">fruit</span>
 <span class="kw">in</span> apple banana cherry;
 <span class="kw">do</span> <span class="fn">echo</span>
 <span class="str">"</span><span class="var">$fruit</span><span class="str">"</span>
 <span class="kw">done</span>
+
 <span class="com"># for — C-style</span>
 <span class="kw">for</span> ((<span class="var">i</span>=<span
-class="num">0</span>; <span class="var">i</span>&lt;<span class="num">5</span>;
+  class="num">0</span>; <span class="var">i</span>&lt;<span class="num">5</span>;
 <span class="var">i</span>++)); <span class="kw">do</span>
 <span class="fn">echo</span> <span class="var">$i</span>
 <span class="kw">done</span>
+
 <span class="com"># for — glob / find</span>
 <span class="kw">for</span> <span class="var">f</span>
 <span class="kw">in</span> /var/log/*.log;
 <span class="kw">do</span> <span class="fn">echo</span>
 <span class="str">"Processing: </span><span class="var">$f</span><span class="str">"</span>
 <span class="kw">done</span>
+
 <span class="com"># while</span>
 <span class="kw">while</span> <span class="fn">read</span> -r
 <span class="var">line</span>; <span class="kw">do</span>
 <span class="fn">echo</span> <span class="str">"Line: </span><span class="var">$line</span><span class="str">"</span>
 <span class="kw">done</span> < file.txt
+
 <span class="com"># until</span>
 <span class="kw">until</span> [[
 <span class="var">$count</span> -ge
 <span class="num">5</span> ]]; <span class="kw">do</span> ((
 <span class="var">count</span>++ ))
 <span class="kw">done</span>
-</div>
+</pre>
 <div class="dt">▸ FUNCTIONS</div>
-<div class="code-block">
-<span class="fn">greet</span>() {
+<pre class="code-block"><span class="fn">greet</span>() {
 <span class="kw">local</span>
 <span class="var">name</span>=<span class="str">"</span><span class="var">$1</span><span class="str">"</span>
 <span class="com"># local = scoped to function</span> [[ -z
@@ -44907,27 +45005,30 @@ class="num">0</span>; <span class="var">i</span>&lt;<span class="num">5</span>;
 <span class="kw">return</span> <span class="num">1</span>; }
 <span class="fn">echo</span> <span class="str">"Hello, </span><span class="var">$name</span><span class="str">!"</span>
 }
+
 <span class="fn">greet</span> <span class="str">"Alice"</span>
 <span class="com"># Hello, Alice!</span>
 <span class="fn">greet</span>
 <span class="com"># prints usage, returns 1</span>
+
 <span class="com"># Return values via echo + command substitution</span>
 <span class="fn">get_date</span>() {
 <span class="fn">date</span> +<span class="str">"%Y-%m-%d"</span>; } <span class="var">today</span>=$(<span class="fn">get_date</span>) <span class="fn">echo</span>
 <span class="str">"Today: </span><span class="var">$today</span><span class="str">"</span>
-</div>
+</pre>
 <div class="dt">▸ SCRIPT BEST PRACTICES</div>
-<div class="code-block">
-<span class="com">#!/usr/bin/env bash</span>
+<pre class="code-block"><span class="com">#!/usr/bin/env bash</span>
 <span class="fn">set</span> -euo pipefail
 <span class="com"># -e exit on error, -u error on unset var, -o
-pipefail</span>
+  pipefail</span>
 <span class="fn">IFS</span>=<span class="var">$'\n\t'</span>
 <span class="com"># safer word splitting</span>
+
 <span class="com"># Trap for cleanup</span>
 <span class="fn">cleanup</span>() {
 <span class="fn">rm</span> -f /tmp/work.$$; }
 <span class="fn">trap</span> cleanup EXIT INT TERM
+
 <span class="com"># Logging helper</span>
 <span class="fn">log</span>() { <span class="fn">echo</span>
 <span class="str">"[INFO] </span><span class="var">$*</span><span class="str">"</span>; } <span class="fn">warn</span>()
@@ -44936,6 +45037,7 @@ pipefail</span>
 <span class="fn">die</span>() { <span class="fn">echo</span>
 <span class="str">"[ERROR] </span><span class="var">$*</span><span class="str">"</span> >&2; <span class="kw">exit</span>
 <span class="num">1</span>; }
+
 <span class="com"># Require dependencies</span>
 <span class="kw">for</span> <span class="var">cmd</span>
 <span class="kw">in</span> curl jq git;
@@ -44943,7 +45045,7 @@ pipefail</span>
 <span class="str">"</span><span class="var">$cmd</span><span class="str">"</span> &>/dev/null ||
 <span class="fn">die</span> <span class="str">"</span><span class="var">$cmd</span><span class="str"> is required"</span>
 <span class="kw">done</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -44951,12 +45053,12 @@ pipefail</span>
 <!-- ═══════════════════════════════════════════════
 TOPIC: HTML
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="html-structure-semantic-elements" data-reviewed="2026-07" data-read="5" data-level="core">
+<div class="topic" id="html-structure-semantic-elements" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏷️</span>
 <span class="topic-name">HTML <span class="acro-exp">(HyperText Markup Language)</span> — Structure &amp; Semantic Elements</span>
 <span class="topic-badge">WEB MARKUP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -44977,8 +45079,7 @@ include <code style="color: var(--cyan)">lang</code>,
 </div>
 <div class="dw">
 <div class="dt">▸ DOCUMENT BOILERPLATE</div>
-<div class="code-block">
-<span class="tag">&lt;!doctype</span>
+<pre class="code-block"><span class="tag">&lt;!doctype</span>
 <span class="attr">html</span><span class="tag">&gt;</span>
 <span class="tag">&lt;html</span>
 <span class="attr">lang</span>=<span class="val">"en"</span><span class="tag">&gt;</span>
@@ -44992,7 +45093,7 @@ include <code style="color: var(--cyan)">lang</code>,
 <span class="attr">name</span>=<span class="val">"description"</span>
 <span class="attr">content</span>=<span class="val">"Page description for SEO"</span><span class="tag">&gt;</span>
 <span class="tag">&lt;title&gt;</span>Page Title<span
-class="tag">&lt;/title&gt;</span>
+  class="tag">&lt;/title&gt;</span>
 <span class="tag">&lt;link</span>
 <span class="attr">rel</span>=<span class="val">"stylesheet"</span>
 <span class="attr">href</span>=<span class="val">"style.css"</span><span class="tag">&gt;</span>
@@ -45008,7 +45109,7 @@ class="tag">&lt;/title&gt;</span>
 <span class="attr">src</span>=<span class="val">"script.js"</span>
 <span class="attr">defer</span><span class="tag">&gt;&lt;/script&gt;</span>
 <span class="tag">&lt;/body&gt;&lt;/html&gt;</span>
-</div>
+</pre>
 <div class="dt">▸ SEMANTIC ELEMENTS</div>
 <table class="ref-table" style="margin-bottom: 14px">
 <tr>
@@ -45075,11 +45176,11 @@ class="tag">&lt;/title&gt;</span>
 </tr>
 </table>
 <div class="dt">▸ FORMS &amp; INPUTS</div>
-<div class="code-block">
-<span class="tag">&lt;form</span>
+<pre class="code-block"><span class="tag">&lt;form</span>
 <span class="attr">action</span>=<span class="val">"/submit"</span>
 <span class="attr">method</span>=<span class="val">"post"</span>
 <span class="attr">novalidate</span><span class="tag">&gt;</span>
+
 <span class="tag">&lt;label</span>
 <span class="attr">for</span>=<span class="val">"email"</span><span class="tag">&gt;</span>Email<span class="tag">&lt;/label&gt;</span>
 <span class="tag">&lt;input</span>
@@ -45089,6 +45190,7 @@ class="tag">&lt;/title&gt;</span>
 <span class="attr">placeholder</span>=<span class="val">"you@example.com"</span>
 <span class="attr">required</span>
 <span class="attr">autocomplete</span>=<span class="val">"email"</span><span class="tag">&gt;</span>
+
 <span class="tag">&lt;select</span>
 <span class="attr">name</span>=<span class="val">"role"</span><span class="tag">&gt;</span>
 <span class="tag">&lt;option</span>
@@ -45098,23 +45200,27 @@ class="tag">&lt;/title&gt;</span>
 <span class="tag">&lt;option</span>
 <span class="attr">value</span>=<span class="val">"admin"</span><span class="tag">&gt;</span>Admin<span class="tag">&lt;/option&gt;</span>
 <span class="tag">&lt;/select&gt;</span>
+
 <span class="tag">&lt;textarea</span>
 <span class="attr">name</span>=<span class="val">"notes"</span>
 <span class="attr">rows</span>=<span class="val">"4"</span>
 <span class="attr">maxlength</span>=<span class="val">"500"</span><span class="tag">&gt;&lt;/textarea&gt;</span>
+
 <span class="tag">&lt;input</span>
 <span class="attr">type</span>=<span class="val">"checkbox"</span>
 <span class="attr">id</span>=<span class="val">"agree"</span>
 <span class="attr">required</span><span class="tag">&gt;</span>
 <span class="tag">&lt;label</span>
 <span class="attr">for</span>=<span class="val">"agree"</span><span class="tag">&gt;</span>I agree<span class="tag">&lt;/label&gt;</span>
+
 <span class="tag">&lt;button</span>
 <span class="attr">type</span>=<span class="val">"submit"</span><span class="tag">&gt;</span>Submit<span class="tag">&lt;/button&gt;</span>
 <span class="tag">&lt;/form&gt;</span>
+
 <span class="com">&lt;!-- Input types: text email password number tel url
-date range color file search checkbox radio hidden submit
---&gt;</span>
-</div>
+  date range color file search checkbox radio hidden submit
+  --&gt;</span>
+</pre>
 </div>
 </div>
 </div>
@@ -45122,12 +45228,12 @@ date range color file search checkbox radio hidden submit
 <!-- ═══════════════════════════════════════════════
 TOPIC: CSS
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="css-selectors-layout-variables" data-reviewed="2026-07" data-read="4" data-level="core">
+<div class="topic" id="css-selectors-layout-variables" data-reviewed="2026-07" data-read="2" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎨</span>
 <span class="topic-name">CSS <span class="acro-exp">(Cascading Style Sheets)</span> — Selectors, Layout &amp; Variables</span>
 <span class="topic-badge">WEB STYLING</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -45147,8 +45253,7 @@ for theming.
 </div>
 <div class="dw">
 <div class="dt">▸ SELECTORS &amp; SPECIFICITY</div>
-<div class="code-block">
-<span class="sel">p</span> { }
+<pre class="code-block"><span class="sel">p</span> { }
 <span class="com">/* element (0,0,0,1) */</span>
 <span class="sel">.card</span> { }
 <span class="com">/* class (0,0,1,0) */</span>
@@ -45176,10 +45281,9 @@ for theming.
 <span class="com">/* negation */</span>
 <span class="sel">:has(img)</span> { }
 <span class="com">/* parent selector (modern) */</span>
-</div>
+</pre>
 <div class="dt">▸ CUSTOM PROPERTIES &amp; CALC</div>
-<div class="code-block">
-<span class="sel">:root</span> {
+<pre class="code-block"><span class="sel">:root</span> {
 <span class="prop">--color-primary</span>:
 <span class="val">#00d4ff</span>;
 <span class="prop">--spacing-md</span>:
@@ -45193,10 +45297,9 @@ for theming.
 <span class="fn">calc</span>(<span class="val">100% - 2rem</span>); <span class="com">/* arithmetic */</span>
 <span class="prop">font-size</span>:
 <span class="fn">clamp</span>(<span class="val">1rem, 2.5vw, 2rem</span>); <span class="com">/* fluid type */</span> }
-</div>
+</pre>
 <div class="dt">▸ FLEXBOX</div>
-<div class="code-block">
-<span class="sel">.container</span> {
+<pre class="code-block"><span class="sel">.container</span> {
 <span class="prop">display</span>:
 <span class="val">flex</span>;
 <span class="prop">flex-direction</span>:
@@ -45218,10 +45321,9 @@ for theming.
 <span class="prop">align-self</span>:
 <span class="val">flex-start</span>;
 <span class="prop">order</span>: <span class="val">2</span>; }
-</div>
+</pre>
 <div class="dt">▸ CSS GRID</div>
-<div class="code-block">
-<span class="sel">.grid</span> {
+<pre class="code-block"><span class="sel">.grid</span> {
 <span class="prop">display</span>:
 <span class="val">grid</span>;
 <span class="prop">grid-template-columns</span>:
@@ -45234,7 +45336,7 @@ for theming.
 <span class="com">/* span all columns */</span>
 <span class="prop">grid-row</span>:
 <span class="val">1 / 3</span>; }
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -45242,12 +45344,12 @@ for theming.
 <!-- ═══════════════════════════════════════════════
 TOPIC: JavaScript ES2022+
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="javascript-es2022-reference" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="javascript-es2022-reference" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚡</span>
 <span class="topic-name">JavaScript — ES2022+ Reference</span>
 <span class="topic-badge">ES2022 · ES2023 · ES2025</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -45267,30 +45369,34 @@ Modules use
 </div>
 <div class="dw">
 <div class="dt">▸ VARIABLES &amp; DESTRUCTURING</div>
-<div class="code-block">
-<span class="kw">const</span> <span class="var">name</span> =
+<pre class="code-block"><span class="kw">const</span> <span class="var">name</span> =
 <span class="str">"Alice"</span> <span class="kw">let</span>
 <span class="var">count</span> = <span class="num">0</span>
+
 <span class="com">// Array destructuring</span>
 <span class="kw">const</span> [<span class="var">first</span>,
 <span class="var">second</span>, ...<span class="var">rest</span>] = [<span class="num">1</span>, <span class="num">2</span>,
 <span class="num">3</span>, <span class="num">4</span>]
+
 <span class="com">// Object destructuring</span>
 <span class="kw">const</span> { <span class="var">name</span>:
 <span class="var">n</span>, <span class="var">age</span> =
 <span class="num">25</span> } = user
 <span class="com">// rename + default</span>
+
 <span class="com">// Optional chaining (?.) — ES2020</span>
 <span class="kw">const</span> <span class="var">city</span> =
 user<span class="oper">?.</span>address<span class="oper">?.</span>city <span class="com">// no throw if undefined</span>
 <span class="kw">const</span> <span class="var">n</span> =
 arr<span class="oper">?.[</span><span class="num">0</span><span class="oper">]</span>
 <span class="com">// optional index</span>
+
 <span class="com">// Nullish coalescing (??) — ES2020</span>
 <span class="kw">const</span> <span class="var">label</span> =
 value <span class="oper">??</span>
 <span class="str">"default"</span>
 <span class="com">// only falls back on null/undefined</span>
+
 <span class="com">// Logical assignment — ES2021</span>
 <span class="var">a</span> <span class="oper">||=</span>
 <span class="str">"fallback"</span>
@@ -45300,28 +45406,30 @@ value <span class="oper">??</span>
 <span class="var">a</span> <span class="oper">??=</span>
 <span class="str">"default"</span>
 <span class="com">// assign if null/undefined</span>
-</div>
+</pre>
 <div class="dt">▸ FUNCTIONS &amp; ARROWS</div>
-<div class="code-block">
-<span class="com">// Arrow — implicit return when no braces</span>
+<pre class="code-block"><span class="com">// Arrow — implicit return when no braces</span>
 <span class="kw">const</span> <span class="fn">double</span> =
 <span class="var">x</span> => <span class="var">x</span> *
 <span class="num">2</span> <span class="kw">const</span>
 <span class="fn">add</span> = (<span class="var">a</span>,
 <span class="var">b</span>) => <span class="var">a</span> +
 <span class="var">b</span>
+
 <span class="com">// Default params + rest</span>
 <span class="kw">function</span>
 <span class="fn">greet</span>(<span class="var">name</span> =
 <span class="str">"World"</span>, ...<span class="var">extras</span>) { <span class="kw">return</span>
 <span class="str">`Hello, <span class="var">${name}</span>! Extras:
-<span class="var">${extras.join(", ")}</span>`</span>
+  <span class="var">${extras.join(", ")}</span>`</span>
 }
+
 <span class="com">// Spread</span>
 <span class="kw">const</span>
 <span class="var">merged</span> = { ...<span class="var">defaults</span>, ...<span class="var">overrides</span> }
 <span class="kw">const</span> <span class="var">copy</span> =
 [...<span class="var">arr</span>, newItem]
+
 <span class="com">// Async / await — ES2017+</span>
 <span class="kw">async function</span>
 <span class="fn">fetchUser</span>(<span class="var">id</span>)
@@ -45332,10 +45440,9 @@ value <span class="oper">??</span>
 <span class="var">res</span>.<span class="fn">json</span>() }
 <span class="kw">catch</span> (<span class="var">e</span>) {
 <span class="fn">console</span>.error(<span class="str">"Fetch failed:"</span>, <span class="var">e</span>) } }
-</div>
+</pre>
 <div class="dt">▸ ARRAY &amp; OBJECT METHODS</div>
-<div class="code-block">
-<span class="com">// Array — non-mutating</span>
+<pre class="code-block"><span class="com">// Array — non-mutating</span>
 arr.<span class="fn">map</span>(<span class="var">x</span> =>
 <span class="var">x</span> * <span class="num">2</span>)
 <span class="com">// transform each → new array</span>
@@ -45346,14 +45453,14 @@ arr.<span class="fn">reduce</span>((<span class="var">acc</span>, <span class="v
 <span class="var">acc</span> + <span class="var">v</span>,
 <span class="num">0</span>)
 <span class="com">// fold to single value</span> arr.<span
-class="fn">find</span>(<span class="var">x</span> =>
+  class="fn">find</span>(<span class="var">x</span> =>
 <span class="var">x</span>.<span class="var">id</span> ===
 <span class="var">id</span>)
 <span class="com">// first match or undefined</span> arr.<span
-class="fn">findIndex</span>(<span class="var">x</span> => <span class="var">x</span> >
+  class="fn">findIndex</span>(<span class="var">x</span> => <span class="var">x</span> >
 <span class="num">5</span>)
 <span class="com">// first matching index</span> arr.<span
-class="fn">every</span>(<span class="var">x</span> => <span class="var">x</span> >
+  class="fn">every</span>(<span class="var">x</span> => <span class="var">x</span> >
 <span class="num">0</span>)
 <span class="com">// all pass?</span> arr.<span class="fn">some</span>(<span class="var">x</span> => <span class="var">x</span> >
 <span class="num">0</span>)
@@ -45365,6 +45472,7 @@ arr.<span class="fn">flatMap</span>(<span class="var">x</span>
 <span class="com">// map then flatten — ES2019</span>
 arr.<span class="fn">at</span>(-<span class="num">1</span>)
 <span class="com">// last element — ES2022</span>
+
 <span class="com">// Object</span>
 <span class="fn">Object</span>.<span class="fn">keys</span>(<span class="var">obj</span>)
 <span class="com">// string[] of own keys</span>
@@ -45375,10 +45483,9 @@ arr.<span class="fn">at</span>(-<span class="num">1</span>)
 <span class="fn">Object</span>.<span class="fn">assign</span>({}, <span class="var">src</span>)
 <span class="com">// shallow clone/merge</span>
 <span class="fn">structuredClone</span>(<span class="var">obj</span>) <span class="com">// deep clone — ES2022</span>
-</div>
+</pre>
 <div class="dt">▸ ES2023 – ES2025 HIGHLIGHTS</div>
-<div class="code-block">
-<span class="com">// ES2023 — Array methods by copy (non-mutating)</span>
+<pre class="code-block"><span class="com">// ES2023 — Array methods by copy (non-mutating)</span>
 arr.<span class="fn">toSorted</span>()
 <span class="com">// like sort() but returns new array</span>
 arr.<span class="fn">toReversed</span>()
@@ -45387,8 +45494,9 @@ arr.<span class="fn">with</span>(<span class="num">2</span>,
 <span class="str">"x"</span>)
 <span class="com">// replace index 2, returns new array</span>
 arr.<span class="fn">findLast</span>(<span class="var">fn</span>) <span class="com">// find from end</span> arr.<span
-class="fn">findLastIndex</span>(<span class="var">fn</span>)
+  class="fn">findLastIndex</span>(<span class="var">fn</span>)
 <span class="com">// findIndex from end</span>
+
 <span class="com">// ES2024</span>
 <span class="fn">Promise</span>.<span class="fn">withResolvers</span>()
 <span class="com">// {promise, resolve, reject} object</span>
@@ -45396,6 +45504,7 @@ class="fn">findLastIndex</span>(<span class="var">fn</span>)
 <span class="com">// group array into object by key</span>
 <span class="fn">Map</span>.<span class="fn">groupBy</span>(<span class="var">arr</span>, <span class="var">fn</span>)
 <span class="com">// group into Map</span>
+
 <span class="com">// ES2025 (Stage 4)</span>
 <span class="kw">import</span> source
 <span class="kw">from</span>
@@ -45407,7 +45516,7 @@ class="fn">findLastIndex</span>(<span class="var">fn</span>)
 <span class="var">iter</span>[<span class="fn">Symbol.iterator</span>]() <span class="com">// explicit iterator protocol</span>
 <span class="fn">RegExp</span>.<span class="fn">escape</span>(<span class="var">str</span>)
 <span class="com">// escape special regex chars (Stage 4)</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -45415,12 +45524,12 @@ class="fn">findLastIndex</span>(<span class="var">fn</span>)
 <!-- ═══════════════════════════════════════════════
 TOPIC: JSON / jq
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="json-jq-data-format-cli-processor" data-reviewed="2026-07" data-read="4" data-level="core">
+<div class="topic" id="json-jq-data-format-cli-processor" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📦</span>
 <span class="topic-name">JSON <span class="acro-exp">(JavaScript Object Notation)</span> &amp; jq — Data Format &amp; CLI <span class="acro-exp">(Command Line Interface)</span> Processor</span>
 <span class="topic-badge">DATA FORMAT</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -45440,8 +45549,7 @@ CLI tool for parsing and transforming JSON. Install:
 </div>
 <div class="dw">
 <div class="dt">▸ JSON SYNTAX &amp; TYPES</div>
-<div class="code-block">
-{
+<pre class="code-block">{
 <span class="attr">"string"</span>:
 <span class="str">"hello world"</span>,
 <span class="attr">"number"</span>:
@@ -45459,15 +45567,16 @@ CLI tool for parsing and transforming JSON. Install:
 <span class="kw">true</span>,
 <span class="attr">"count"</span>: <span class="num">3</span>
 } }
+
 <span class="com">// Rules: keys must be double-quoted strings,</span>
 <span class="com">// trailing commas are NOT allowed,</span>
 <span class="com">// comments are NOT part of JSON spec.</span>
-</div>
+</pre>
 <div class="dt">▸ JQ FILTERS</div>
-<div class="code-block">
-<span class="com"># Identity — pretty-print</span>
+<pre class="code-block"><span class="com"># Identity — pretty-print</span>
 <span class="fn">jq</span>
 <span class="str">'.'</span> data.json
+
 <span class="com"># Field access</span>
 <span class="fn">jq</span> <span class="str">'.name'</span>
 <span class="com"># top-level field</span>
@@ -45488,6 +45597,7 @@ CLI tool for parsing and transforming JSON. Install:
 <span class="fn">jq</span>
 <span class="str">'.items[].name'</span>
 <span class="com"># field from each element</span>
+
 <span class="com"># Pipe and transform</span>
 <span class="fn">jq</span>
 <span class="str">'.users[] | .email'</span>
@@ -45504,6 +45614,7 @@ CLI tool for parsing and transforming JSON. Install:
 <span class="fn">jq</span>
 <span class="str">'[.[] | select(.role=="admin")]'</span>
 <span class="com"># collect into new array</span>
+
 <span class="com"># Construct new shapes</span>
 <span class="fn">jq</span>
 <span class="str">'{name: .name, email: .email}'</span>
@@ -45511,6 +45622,7 @@ CLI tool for parsing and transforming JSON. Install:
 <span class="fn">jq</span>
 <span class="str">'[.users[] | {id, name}]'</span>
 <span class="com"># array of objects</span>
+
 <span class="com"># Aggregation</span>
 <span class="fn">jq</span> <span class="str">'length'</span>
 <span class="com"># count keys or elements</span>
@@ -45529,6 +45641,7 @@ CLI tool for parsing and transforming JSON. Install:
 <span class="fn">jq</span>
 <span class="str">'unique_by(.id)'</span>
 <span class="com"># deduplicate by field</span>
+
 <span class="com"># String operations</span>
 <span class="fn">jq</span>
 <span class="str">'.name | ascii_upcase'</span>
@@ -45539,6 +45652,7 @@ CLI tool for parsing and transforming JSON. Install:
 <span class="fn">jq</span>
 <span class="str">'"prefix_\(.name)"'</span>
 <span class="com"># string interpolation</span>
+
 <span class="com"># Useful flags</span>
 <span class="fn">jq</span> -r <span class="str">'.name'</span>
 <span class="com"># -r raw output (no quotes)</span>
@@ -45549,7 +45663,7 @@ CLI tool for parsing and transforming JSON. Install:
 <span class="fn">jq</span> --arg key val
 <span class="str">'.name == $key'</span>
 <span class="com"># pass shell var as jq var</span>
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -45557,12 +45671,12 @@ CLI tool for parsing and transforming JSON. Install:
 <!-- ═══════════════════════════════════════════════
 TOPIC: SQL
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="sql-query-reference" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="sql-query-reference" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗃️</span>
 <span class="topic-name">SQL <span class="acro-exp">(Structured Query Language)</span> — Query Reference</span>
 <span class="topic-badge">DATABASE LANGUAGE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -45585,8 +45699,7 @@ LIMIT</code>.
 </div>
 <div class="dw">
 <div class="dt">▸ DDL — SCHEMA DEFINITION</div>
-<div class="code-block">
-<span class="kw">CREATE TABLE</span> users ( id
+<pre class="code-block"><span class="kw">CREATE TABLE</span> users ( id
 <span class="type">SERIAL</span>
 <span class="kw">PRIMARY KEY</span>, email
 <span class="type">VARCHAR(255)</span>
@@ -45598,6 +45711,7 @@ LIMIT</code>.
 <span class="type">TIMESTAMPTZ</span>
 <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
 );
+
 <span class="kw">ALTER TABLE</span> users
 <span class="kw">ADD COLUMN</span> age
 <span class="type">INT</span>;
@@ -45608,38 +45722,40 @@ LIMIT</code>.
 <span class="kw">DROP TABLE IF EXISTS</span> temp_data;
 <span class="kw">TRUNCATE TABLE</span> logs;
 <span class="com">-- delete all rows, keep structure</span>
-</div>
+</pre>
 <div class="dt">▸ DML — DATA MANIPULATION</div>
-<div class="code-block">
-<span class="com">-- INSERT</span>
+<pre class="code-block"><span class="com">-- INSERT</span>
 <span class="kw">INSERT INTO</span> users (email, name, role)
 <span class="kw">VALUES</span> (<span class="str">'alice@example.com'</span>, <span class="str">'Alice'</span>,
 <span class="str">'admin'</span>);
+
 <span class="com">-- INSERT multiple rows</span>
 <span class="kw">INSERT INTO</span> tags (name)
 <span class="kw">VALUES</span> (<span class="str">'sql'</span>), (<span class="str">'data'</span>), (<span class="str">'query'</span>);
+
 <span class="com">-- UPDATE</span>
 <span class="kw">UPDATE</span> users
 <span class="kw">SET</span> role =
 <span class="str">'admin'</span>
 <span class="kw">WHERE</span> email =
 <span class="str">'alice@example.com'</span>;
+
 <span class="com">-- DELETE</span>
 <span class="kw">DELETE FROM</span> users
 <span class="kw">WHERE</span> created_at <
 <span class="fn">NOW</span>() -
 <span class="kw">INTERVAL</span>
 <span class="str">'90 days'</span>;
+
 <span class="com">-- UPSERT (PostgreSQL)</span>
 <span class="kw">INSERT INTO</span> users (email, name)
 <span class="kw">VALUES</span> (<span class="str">'bob@x.com'</span>, <span class="str">'Bob'</span>)
 <span class="kw">ON CONFLICT</span> (email)
 <span class="kw">DO UPDATE SET</span> name =
 <span class="fn">EXCLUDED</span>.name;
-</div>
+</pre>
 <div class="dt">▸ DQL — QUERYING</div>
-<div class="code-block">
-<span class="com">-- Basic SELECT</span>
+<pre class="code-block"><span class="com">-- Basic SELECT</span>
 <span class="kw">SELECT</span> id, name, email
 <span class="kw">FROM</span> users
 <span class="kw">WHERE</span> role =
@@ -45650,6 +45766,7 @@ LIMIT</code>.
 <span class="kw">ASC</span> <span class="kw">LIMIT</span>
 <span class="num">25</span> <span class="kw">OFFSET</span>
 <span class="num">0</span>;
+
 <span class="com">-- Pattern matching</span>
 <span class="kw">SELECT</span> *
 <span class="kw">FROM</span> users
@@ -45661,6 +45778,7 @@ LIMIT</code>.
 <span class="kw">WHERE</span> email ~*
 <span class="str">'@gmail'</span>;
 <span class="com">-- regex (PostgreSQL)</span>
+
 <span class="com">-- Aggregate functions</span>
 <span class="kw">SELECT</span>
 role,
@@ -45676,14 +45794,14 @@ role,
 <span class="fn">COUNT</span>(*) > <span class="num">5</span>
 <span class="kw">ORDER BY</span> total
 <span class="kw">DESC</span>;
-</div>
+</pre>
 <div class="dt">▸ JOINS</div>
-<div class="code-block">
-<span class="com">-- INNER JOIN — only matching rows</span>
+<pre class="code-block"><span class="com">-- INNER JOIN — only matching rows</span>
 <span class="kw">SELECT</span> u.name, o.total
 <span class="kw">FROM</span> users u
 <span class="kw">INNER JOIN</span> orders o
 <span class="kw">ON</span> o.user_id = u.id;
+
 <span class="com">-- LEFT JOIN — all users, nulls if no order</span>
 <span class="kw">SELECT</span> u.name,
 <span class="fn">COUNT</span>(o.id)
@@ -45692,6 +45810,7 @@ role,
 <span class="kw">LEFT JOIN</span> orders o
 <span class="kw">ON</span> o.user_id = u.id
 <span class="kw">GROUP BY</span> u.name;
+
 <span class="com">-- Subquery</span>
 <span class="kw">SELECT</span> *
 <span class="kw">FROM</span> users
@@ -45700,6 +45819,7 @@ role,
 user_id <span class="kw">FROM</span> orders
 <span class="kw">WHERE</span> total >
 <span class="num">100</span>);
+
 <span class="com">-- CTE (Common Table Expression)</span>
 <span class="kw">WITH</span> big_orders
 <span class="kw">AS</span> (
@@ -45716,10 +45836,9 @@ user_id <span class="kw">FROM</span> orders
 <span class="kw">FROM</span> users u
 <span class="kw">JOIN</span> big_orders b
 <span class="kw">ON</span> b.user_id = u.id;
-</div>
+</pre>
 <div class="dt">▸ WINDOW FUNCTIONS (PostgreSQL)</div>
-<div class="code-block">
-<span class="com">-- ROW_NUMBER, RANK, DENSE_RANK</span>
+<pre class="code-block"><span class="com">-- ROW_NUMBER, RANK, DENSE_RANK</span>
 <span class="kw">SELECT</span>
 name, score,
 <span class="fn">RANK</span>()
@@ -45738,7 +45857,7 @@ score <span class="kw">DESC</span>)
 <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span>
 team) <span class="kw">AS</span> team_total
 <span class="kw">FROM</span> leaderboard;
-</div>
+</pre>
 </div>
 </div>
 </div>
@@ -45748,12 +45867,12 @@ TOPIC: URL Encoding / Percent Encoding
 Sources: W3Schools, MDN, Google Maps, Sigma Computing
 Domain: Scripting & Web
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="url-encoding-percent-encoding-reference" data-reviewed="2026-08" data-read="12" data-level="core">
+<div class="topic" id="url-encoding-percent-encoding-reference" data-reviewed="2026-08" data-read="11" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔗</span>
 <span class="topic-name">URL <span class="acro-exp">(Uniform Resource Locator)</span> Encoding — Percent Encoding Reference</span>
 <span class="topic-badge">ENCODING REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">12 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">11 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -46026,16 +46145,17 @@ contexts use <code style="color: var(--cyan)">%20</code>.
 </table>
 <!-- ── STRUCTURE ── -->
 <div class="dt">▸ URL STRUCTURE — WHICH PARTS GET ENCODED</div>
-<div class="code-block">
-<span class="com"># Full URL anatomy</span>
+<pre class="code-block"><span class="com"># Full URL anatomy</span>
 https://user:pass@example.com:8080/path/to/page?key=val&amp;x=1#anchor
 │ │ │ │ │ │ │ │ scheme │ │ host port path query fragment │ │
 user password ← encode : and @ when used as data here
+
 <span class="com"># Path segment — encode everything except unreserved +
-sub-delimiters</span>
+  sub-delimiters</span>
 https://example.com/search/<span class="str">hello%20world</span>
 <span class="com"># space in path → %20</span>
 https://example.com/file/<span class="str">report%232024</span>.pdf <span class="com"># literal # → %23</span>
+
 <span class="com"># Query string — key=value pairs, separate with &amp;</span>
 https://example.com/search?q=<span class="str">C%2B%2B</span>&amp;lang=<span class="str">en</span>
 <span class="com"># C++ → C%2B%2B</span>
@@ -46043,54 +46163,60 @@ https://example.com/api?name=<span class="str">John+Doe</span>
 <span class="com"># space in form → +</span>
 https://example.com/api?name=<span class="str">John%20Doe</span>
 <span class="com"># space in URL → %20</span>
+
 <span class="com"># Fragment (hash) — not sent to server</span>
 https://example.com/page#<span class="str">section-2</span>
 <span class="com"># fragment rarely needs encoding</span>
-</div>
+</pre>
 <!-- ── JS / PYTHON SNIPPETS ── -->
 <div class="dt">▸ ENCODING IN CODE</div>
-<div class="code-block">
-<span class="com">## JavaScript</span>
+<pre class="code-block"><span class="com">## JavaScript</span>
 <span class="fn">encodeURIComponent</span>(<span class="str">"hello world &amp; more"</span>)
 <span class="com"># → "hello%20world%20%26%20more" (encodes everything except
-unreserved)</span>
+  unreserved)</span>
+
 <span class="fn">encodeURI</span>(<span class="str">"https://example.com/path with spaces"</span>)
 <span class="com"># → "https://example.com/path%20with%20spaces" (preserves
-URL structure chars)</span>
+  URL structure chars)</span>
+
 <span class="fn">decodeURIComponent</span>(<span class="str">"%48%65%6C%6C%6F"</span>)
 <span class="com"># → "Hello"</span>
+
 <span class="com">## Python 3</span>
 <span class="kw">from</span> urllib.parse
 <span class="kw">import</span> quote, quote_plus, unquote
+
 <span class="fn">quote</span>(<span class="str">"hello world/path"</span>)
 <span class="com"># → 'hello%20world/path' (/ safe by default)</span>
 <span class="fn">quote</span>(<span class="str">"hello world/path"</span>, safe=<span class="str">''</span>)
 <span class="com"># → 'hello%20world%2Fpath' (encode / too)</span>
 <span class="fn">quote_plus</span>(<span class="str">"hello world"</span>) <span class="com"># → 'hello+world' (form encoding)</span>
 <span class="fn">unquote</span>(<span class="str">'hello%20world'</span>) <span class="com"># → 'hello world'</span>
+
 <span class="com">## Bash / curl</span>
 <span class="fn">curl</span> --data-urlencode
 <span class="str">"param=hello world &amp; more"</span>
 https://example.com <span class="fn">python3</span> -c
 <span class="str">"import urllib.parse; print(urllib.parse.quote('hello
-world'))"</span>
-</div>
+  world'))"</span>
+</pre>
 <!-- ── GOOGLE MAPS NOTE ── -->
 <div class="dt">▸ GOOGLE MAPS / SPECIAL CONTEXTS</div>
-<div class="code-block">
-<span class="com"># Google Maps Embed API — address params must be
-encoded</span>
+<pre class="code-block"><span class="com"># Google Maps Embed API — address params must be
+  encoded</span>
 https://maps.googleapis.com/maps/api/geocode/json?address=<span
-class="str">1600+Amphitheatre+Parkway,+Mountain+View,+CA</span>
+  class="str">1600+Amphitheatre+Parkway,+Mountain+View,+CA</span>
+
 <span class="com"># Sigma Computing — special chars in URL parameters</span>
 <span class="com"># Pipe | → %7C (used as multi-value separator)</span>
 <span class="com"># Comma , → %2C (used in array parameters)</span>
 <span class="com"># Colon : → %3A (used in filter syntax)</span>
 https://app.sigmacomputing.com/embed?:filter=status%3Aactive%7Cpending
+
 <span class="com"># Double-encoding pitfall — only encode ONCE</span>
 <span class="com"># Wrong: %2520 (encoded the % of %25, giving %%20)</span>
 <span class="com"># Right: %20 (encode space once)</span>
-</div>
+</pre>
 <!-- ── INTERACTIVE DECODER ── -->
 <div class="dt">▸ INTERACTIVE URL ENCODER / DECODER</div>
 <div id="url-codec-tool" class="url-codec-wrap">
@@ -50186,21 +50312,23 @@ removes the entire bug class rather than filtering it.
 </div>
 <div class="dw">
 <div class="code-label">THE SAME COMMAND, TWO WAYS</div>
-<div class="code-block">
-<span class="kw">import</span> subprocess
+<pre class="code-block"><span class="kw">import</span> subprocess
+
 <span class="com"># DANGEROUS — a shell parses this string, and the filename is part of it</span>
 filename = <span class="str">"report.pdf; rm -rf ~"</span>       <span class="com"># it came from a form field</span>
 subprocess.run(<span class="str">f"pdfinfo {filename}"</span>, shell=<span class="kw">True</span>)
 <span class="com"># the shell sees two commands. The second one runs.</span>
+
 <span class="com"># SAFE — a list of arguments. No shell, no parsing, no metacharacters</span>
 subprocess.run([<span class="str">"pdfinfo"</span>, filename], check=<span class="kw">True</span>)
 <span class="com"># pdfinfo receives one argument, which is a very strange filename. Nothing else happens.</span>
+
 <span class="com"># Also safe, and better: capture output and fail loudly</span>
 r = subprocess.run([<span class="str">"pdfinfo"</span>, filename],
-capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>,
-timeout=<span class="num">10</span>, check=<span class="kw">True</span>)
+                   capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>,
+                   timeout=<span class="num">10</span>, check=<span class="kw">True</span>)
 <span class="kw">print</span>(r.stdout)
-</div>
+</pre>
 <div class="concept-desc verdict">
 Notice what the safe version does <em>not</em> need: no escaping, no allowlist of characters,
 no regex to strip semicolons. <strong>The metacharacters stop being special because nothing is
@@ -50260,18 +50388,20 @@ documentation is the thing they were supposed to replace.
 </div>
 <div class="dw">
 <div class="code-label">HINTS, AND WHAT A CHECKER DOES WITH THEM</div>
-<div class="code-block">
-<span class="com"># Hints alone change nothing at runtime — this happily returns a string</span>
+<pre class="code-block"><span class="com"># Hints alone change nothing at runtime — this happily returns a string</span>
 <span class="kw">def</span> <span class="fn">total</span>(items: list[<span class="type">int</span>]) -&gt; <span class="type">int</span>:
-<span class="kw">return</span> <span class="str">"oops"</span>          <span class="com"># Python: fine. mypy: error, line 2</span>
+    <span class="kw">return</span> <span class="str">"oops"</span>          <span class="com"># Python: fine. mypy: error, line 2</span>
+
 <span class="com"># The value appears when a checker runs. Optional is the common catch:</span>
 <span class="kw">def</span> <span class="fn">find_user</span>(uid: <span class="type">int</span>) -&gt; <span class="type">User</span> | <span class="kw">None</span>:
-...
+    ...
+
 user = find_user(<span class="num">7</span>)
 <span class="kw">print</span>(user.name)              <span class="com"># error: item "None" has no attribute "name"</span>
+
 <span class="kw">if</span> user <span class="kw">is not</span> <span class="kw">None</span>:      <span class="com"># narrowing — now it is a User</span>
-<span class="kw">print</span>(user.name)          <span class="com"># fine</span>
-</div>
+    <span class="kw">print</span>(user.name)          <span class="com"># fine</span>
+</pre>
 <div class="concept-desc verdict">
 The largest single win is the third example: <strong>a checker forces you to handle
 <code>None</code></strong>, which is the source of a very large share of runtime errors in
@@ -50332,12 +50462,12 @@ at the boundary; type everything behind it.
 </div>
 </div>
 </div>
-<div class="topic" id="pathlib-the-end-of-string-paths" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="pathlib-the-end-of-string-paths" data-reviewed="2026-08" data-read="2" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📁</span>
 <span class="topic-name">pathlib &amp; the End of String Paths</span>
 <span class="topic-badge">SCRIPT • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -50353,14 +50483,16 @@ functions in three different modules.
 </div>
 <div class="dw">
 <div class="code-label">THE HABIT CHANGE, IN FULL</div>
-<div class="code-block">
-<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<pre class="code-block"><span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
 <span class="com"># String paths: separator bugs, and every operation is a different function</span>
 <span class="kw">import</span> os
 p = base + <span class="str">"/"</span> + name + <span class="str">".txt"</span>            <span class="com"># breaks on Windows, breaks on a trailing slash</span>
 p = os.path.join(base, name + <span class="str">".txt"</span>)      <span class="com"># better, still stringly typed</span>
+
 <span class="com"># pathlib: one object, operators that read like the thing they do</span>
 p = Path(base) / <span class="str">f"{name}.txt"</span>
+
 p.suffix                 <span class="com"># '.txt'</span>
 p.stem                   <span class="com"># the name without the suffix</span>
 p.parent                 <span class="com"># the directory, as a Path</span>
@@ -50369,9 +50501,10 @@ p.exists(), p.is_file()
 p.read_text(encoding=<span class="str">"utf-8"</span>)
 p.write_text(data, encoding=<span class="str">"utf-8"</span>)
 p.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
+
 <span class="kw">for</span> f <span class="kw">in</span> Path(<span class="str">"logs"</span>).glob(<span class="str">"**/*.log"</span>):   <span class="com"># recursive, no os.walk</span>
-<span class="kw">print</span>(f.resolve())
-</div>
+    <span class="kw">print</span>(f.resolve())
+</pre>
 <div class="concept-desc verdict">
 Three habits worth adopting wholesale. <strong>Always pass <code>encoding="utf-8"</code></strong>
 to <code>read_text</code> and <code>write_text</code> &mdash; the default is
@@ -79389,8 +79522,8 @@ the decision worth agonising over, and it is the one people skip while debating 
 <span class="ctag ctag-general">Theory</span>
 </div>
 <span class="domain-sub">Complexity · Data structures · Algorithms · Graphs · Probabilistic structures</span>
-<span class="domain-meta" aria-label="66 topics, about 2h 35m to read"
->66 topics · ~2h 35m</span>
+<span class="domain-meta" aria-label="66 topics, about 2h 30m to read"
+>66 topics · ~2h 30m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -83980,20 +84113,22 @@ wrong.
 </div>
 <div class="dw">
 <div class="code-label">THE SAME FOUR BYTES, TWO NUMBERS</div>
-<div class="code-block">
-bytes on the wire:   0x00 0x00 0x01 0x00
-big-endian    (network order, most significant first)  =        256
-little-endian (x86, ARM by default, least significant) = 16,777,216
+<pre class="code-block">bytes on the wire:   0x00 0x00 0x01 0x00
+
+  big-endian    (network order, most significant first)  =        256
+  little-endian (x86, ARM by default, least significant) = 16,777,216
+
 <span class="com"># Python: be explicit, always</span>
 <span class="kw">import</span> struct
 struct.pack(<span class="str">"&gt;I"</span>, <span class="num">256</span>)      <span class="com"># b'\x00\x00\x01\x00'  big-endian</span>
 struct.pack(<span class="str">"&lt;I"</span>, <span class="num">256</span>)      <span class="com"># b'\x00\x01\x00\x00'  little-endian</span>
 struct.pack(<span class="str">"I"</span>, <span class="num">256</span>)       <span class="com"># native + PADDING. Almost never what you want on the wire.</span>
+
 <span class="com"># Struct padding: this is 12 bytes in C, not 6</span>
 <span class="com">#   struct { char a; int b; char c; }   -&gt; a, 3 pad, b(4), c, 3 pad</span>
 struct.calcsize(<span class="str">"cic"</span>)        <span class="com"># 12 — native alignment</span>
 struct.calcsize(<span class="str">"&lt;cic"</span>)       <span class="com"># 6  — '&lt;' also means "no padding"</span>
-</div>
+</pre>
 <div class="concept-desc verdict">
 Two rules remove almost all of it. <strong>Be explicit at every boundary</strong>: use
 <code>&gt;</code> or <code>&lt;</code> in a format string, never the native default, because
@@ -84080,21 +84215,22 @@ by orders of magnitude, on a single CPU <span class="acro-exp">(Central Processi
 </div>
 <div class="dw">
 <div class="code-label">THE SHAPE, AND THE INPUT THAT KILLS IT</div>
-<div class="code-block">
-<span class="com"># Nested quantifier: (a+)+ — the engine can split "aaaa" many ways</span>
+<pre class="code-block"><span class="com"># Nested quantifier: (a+)+ — the engine can split "aaaa" many ways</span>
 pattern = r<span class="str">"^(a+)+$"</span>
 <span class="str">"aaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"</span>   <span class="com"># 29 a's and one non-match</span>
 <span class="com"># backtracking paths grow as 2^n. 29 chars ≈ half a billion attempts.</span>
+
 <span class="com"># Same disease, common in the wild:</span>
 r<span class="str">"^(\w+\s?)*$"</span>          <span class="com"># "trim and validate a sentence"</span>
 r<span class="str">"^(\d+|\w+)*$"</span>          <span class="com"># alternation inside a quantifier — overlapping</span>
 r<span class="str">"(.*),(.*),(.*)"</span>        <span class="com"># greedy .* that must be re-split on failure</span>
+
 <span class="com"># Fixes, in order of preference</span>
 r<span class="str">"^a+$"</span>                   <span class="com"># 1. remove the nesting — usually possible</span>
 r<span class="str">"^[^,]*,[^,]*,[^,]*$"</span>   <span class="com"># 2. make each part unambiguous, no backtracking needed</span>
 <span class="com"># 3. use a linear-time engine: Go regexp, Rust regex, RE2</span>
 <span class="com"># 4. bound it: a timeout, and a maximum input length</span>
-</div>
+</pre>
 <div class="concept-desc verdict">
 It is the rare bug that is <strong>simultaneously a performance problem, a security
 vulnerability and invisible in code review</strong> &mdash; because the pattern looks correct,

@@ -4656,23 +4656,22 @@ valgrind --leak-check=full ./prog</pre>
       </div>
       <div class="dw">
         <div class="code-label">THE SAME FOUR BYTES, TWO NUMBERS</div>
-        <div class="code-block">
-        bytes on the wire:   0x00 0x00 0x01 0x00
-        
-          big-endian    (network order, most significant first)  =        256
-          little-endian (x86, ARM by default, least significant) = 16,777,216
-        
-        <span class="com"># Python: be explicit, always</span>
-        <span class="kw">import</span> struct
-        struct.pack(<span class="str">"&gt;I"</span>, <span class="num">256</span>)      <span class="com"># b'\x00\x00\x01\x00'  big-endian</span>
-        struct.pack(<span class="str">"&lt;I"</span>, <span class="num">256</span>)      <span class="com"># b'\x00\x01\x00\x00'  little-endian</span>
-        struct.pack(<span class="str">"I"</span>, <span class="num">256</span>)       <span class="com"># native + PADDING. Almost never what you want on the wire.</span>
-        
-        <span class="com"># Struct padding: this is 12 bytes in C, not 6</span>
-        <span class="com">#   struct { char a; int b; char c; }   -&gt; a, 3 pad, b(4), c, 3 pad</span>
-        struct.calcsize(<span class="str">"cic"</span>)        <span class="com"># 12 — native alignment</span>
-        struct.calcsize(<span class="str">"&lt;cic"</span>)       <span class="com"># 6  — '&lt;' also means "no padding"</span>
-        </div>
+        <pre class="code-block">bytes on the wire:   0x00 0x00 0x01 0x00
+
+  big-endian    (network order, most significant first)  =        256
+  little-endian (x86, ARM by default, least significant) = 16,777,216
+
+<span class="com"># Python: be explicit, always</span>
+<span class="kw">import</span> struct
+struct.pack(<span class="str">"&gt;I"</span>, <span class="num">256</span>)      <span class="com"># b'\x00\x00\x01\x00'  big-endian</span>
+struct.pack(<span class="str">"&lt;I"</span>, <span class="num">256</span>)      <span class="com"># b'\x00\x01\x00\x00'  little-endian</span>
+struct.pack(<span class="str">"I"</span>, <span class="num">256</span>)       <span class="com"># native + PADDING. Almost never what you want on the wire.</span>
+
+<span class="com"># Struct padding: this is 12 bytes in C, not 6</span>
+<span class="com">#   struct { char a; int b; char c; }   -&gt; a, 3 pad, b(4), c, 3 pad</span>
+struct.calcsize(<span class="str">"cic"</span>)        <span class="com"># 12 — native alignment</span>
+struct.calcsize(<span class="str">"&lt;cic"</span>)       <span class="com"># 6  — '&lt;' also means "no padding"</span>
+</pre>
         <div class="concept-desc verdict">
           Two rules remove almost all of it. <strong>Be explicit at every boundary</strong>: use
           <code>&gt;</code> or <code>&lt;</code> in a format string, never the native default, because
@@ -4759,23 +4758,22 @@ valgrind --leak-check=full ./prog</pre>
       </div>
       <div class="dw">
         <div class="code-label">THE SHAPE, AND THE INPUT THAT KILLS IT</div>
-        <div class="code-block">
-        <span class="com"># Nested quantifier: (a+)+ — the engine can split "aaaa" many ways</span>
-        pattern = r<span class="str">"^(a+)+$"</span>
-        <span class="str">"aaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"</span>   <span class="com"># 29 a's and one non-match</span>
-        <span class="com"># backtracking paths grow as 2^n. 29 chars ≈ half a billion attempts.</span>
-        
-        <span class="com"># Same disease, common in the wild:</span>
-        r<span class="str">"^(\w+\s?)*$"</span>          <span class="com"># "trim and validate a sentence"</span>
-        r<span class="str">"^(\d+|\w+)*$"</span>          <span class="com"># alternation inside a quantifier — overlapping</span>
-        r<span class="str">"(.*),(.*),(.*)"</span>        <span class="com"># greedy .* that must be re-split on failure</span>
-        
-        <span class="com"># Fixes, in order of preference</span>
-        r<span class="str">"^a+$"</span>                   <span class="com"># 1. remove the nesting — usually possible</span>
-        r<span class="str">"^[^,]*,[^,]*,[^,]*$"</span>   <span class="com"># 2. make each part unambiguous, no backtracking needed</span>
-        <span class="com"># 3. use a linear-time engine: Go regexp, Rust regex, RE2</span>
-        <span class="com"># 4. bound it: a timeout, and a maximum input length</span>
-        </div>
+        <pre class="code-block"><span class="com"># Nested quantifier: (a+)+ — the engine can split "aaaa" many ways</span>
+pattern = r<span class="str">"^(a+)+$"</span>
+<span class="str">"aaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"</span>   <span class="com"># 29 a's and one non-match</span>
+<span class="com"># backtracking paths grow as 2^n. 29 chars ≈ half a billion attempts.</span>
+
+<span class="com"># Same disease, common in the wild:</span>
+r<span class="str">"^(\w+\s?)*$"</span>          <span class="com"># "trim and validate a sentence"</span>
+r<span class="str">"^(\d+|\w+)*$"</span>          <span class="com"># alternation inside a quantifier — overlapping</span>
+r<span class="str">"(.*),(.*),(.*)"</span>        <span class="com"># greedy .* that must be re-split on failure</span>
+
+<span class="com"># Fixes, in order of preference</span>
+r<span class="str">"^a+$"</span>                   <span class="com"># 1. remove the nesting — usually possible</span>
+r<span class="str">"^[^,]*,[^,]*,[^,]*$"</span>   <span class="com"># 2. make each part unambiguous, no backtracking needed</span>
+<span class="com"># 3. use a linear-time engine: Go regexp, Rust regex, RE2</span>
+<span class="com"># 4. bound it: a timeout, and a maximum input length</span>
+</pre>
         <div class="concept-desc verdict">
           It is the rare bug that is <strong>simultaneously a performance problem, a security
           vulnerability and invisible in code review</strong> &mdash; because the pattern looks correct,

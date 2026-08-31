@@ -12357,14 +12357,23 @@ command references, `systemctl` blocks, the Python examples, the YAML card. None
 
 Verified by rendering, not assertion: the Python `dataclass` block went from **6 collapsed lines
 to 24 real ones**, `white-space` from `normal` to `pre`. Markup stayed balanced (the swap changes
-both tags together), determinism held, and every browser gate passed. Left for a separate,
-careful pass: **105 file-indented `<div>` code-blocks**, a mix of genuine code that needs a dedent
-and flowing-prose callouts (a TCP handshake description, wrapped mid-sentence) that would render
-*worse* as `<pre>` — the one place the tag swap is not mechanical.
+both tags together), determinism held, and every browser gate passed.
+
+**The second pass — the 105 file-indented ones — went further than the first note expected.** The
+worry was flowing-prose callouts that would render worse as `<pre>`; reading them, there were
+none. Even the most prose-like by line length were code with **column-aligned inline comments**
+(`rsync -a /src/data/ /dest/     # copies its CONTENTS`, a big-endian/little-endian table with
+aligned `=` columns) — alignment that is *only* meaningful preformatted and is destroyed by
+collapse. The TCP handshake that prompted the caution turned out to *want* `<pre>` too: its
+decorative `──────` underline is meaningless except in a monospace block, which is the author
+telling you the intended layout. So all 104 multi-line file-indented blocks were converted, each
+**dedented by its own common indent** first (they are nested under the div, so a verbatim swap
+would have shown the file-nesting as real indentation) — the byte-order table came out with its
+columns intact. **Every `<div class="code-block">` on the site is now a `<pre>`.**
 
 ```
-div.code-block 422 → 105 (flush-left, structured: converted) · pre.code-block 381 → 698
-python reference: collapsed → real code · check PASS · smoke 142/142 · resilience 7/7
+div.code-block 422 → 0 · pre.code-block 381 → 803 · the class now lives on one tag, the right one
+python reference & every command/config/diagram: collapsed → real code · check PASS · gates green
 ```
 
 ---
