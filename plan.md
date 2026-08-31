@@ -12017,6 +12017,16 @@ reachable from every card they reference. The term-overlap *default* stays unshi
 as the tool's docstring insists — only the deliberate edges were promoted, so the strip does
 not fill with the same four cards on every page.
 
+Two further passes after the named-broadcaster work: the **near-duplicate twins** the
+`near_duplicates` census flags (0.5–0.6 pairs — distinct-but-related, not merge candidates)
+were read as a link list and cross-linked both ways, and a **deep-orphan** pass connected the
+highest-confidence dead-ends the `orphan_report` still named — container internals ↔ container
+hardening, the two malware-analysis cards, privilege escalation ↔ its scanners, load balancers
+↔ sharding, AD 101 ↔ AD structure, MCP ↔ function calling. `related.json` reached **1,238
+links** (from 976 at the session's start), all bidirectional. The remaining deep orphans are
+scattered singles with no obvious high-confidence home; forcing links there would be the
+term-overlap noise the tool refuses, so the pass stops where confidence does.
+
 ## 3. Learning paths are one domain's story
 
 **`net` holds 25 of the 75 path steps.** `cs`, `eng`, `grc`, `web`, `ai`, `data`,
