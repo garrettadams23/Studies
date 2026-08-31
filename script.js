@@ -24,6 +24,21 @@ const safeLS = {
   get(k)    { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch { /* blocked or full */ } },
   remove(k) { try { localStorage.removeItem(k); } catch { /* blocked */ } },
+  // The key enumeration is its own hazard: `localStorage.length` and `.key(i)`
+  // throw when storage is blocked, so a `for (…length…)` loop throws at the bound
+  // before any per-item guard can run. This returns [] instead.
+  keys()    {
+    try {
+      const out = [];
+      for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k) out.push(k); }
+      return out;
+    } catch { return []; }
+  },
+};
+// sessionStorage throws in exactly the same cases; the notepad is its only user.
+const safeSS = {
+  get(k)    { try { return sessionStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch { /* blocked or full */ } },
 };
 
 const QUOTES = [
@@ -1869,10 +1884,10 @@ const NP_AUTHOR_KEY = "notepad-author";
 let _notepadMounted = false;
 
 function npSessionId() {
-  let id = sessionStorage.getItem(NP_SESSION_KEY);
+  let id = safeSS.get(NP_SESSION_KEY);
   if (!id) {
     id = Math.random().toString(36).slice(2, 10);
-    sessionStorage.setItem(NP_SESSION_KEY, id);
+    safeSS.set(NP_SESSION_KEY, id);
   }
   return id;
 }
@@ -1959,7 +1974,7 @@ function mountNotepad(root) {
   const toastEl  = root.querySelector(".np-toast");
   const sortBtns = [...root.querySelectorAll(".np-sort")];
 
-  nameEl.value = localStorage.getItem(NP_AUTHOR_KEY) || "";
+  nameEl.value = safeLS.get(NP_AUTHOR_KEY) || "";
 
   let toastTimer = null;
   function showToast(msg) {
@@ -2036,7 +2051,7 @@ function mountNotepad(root) {
     const body = inputEl.value.trim();
     const author = nameEl.value.trim() || "Anonymous";
     if (!body || body.length > NP_MAX_CHARS) return;
-    if (nameEl.value.trim()) localStorage.setItem(NP_AUTHOR_KEY, nameEl.value.trim());
+    if (nameEl.value.trim()) safeLS.set(NP_AUTHOR_KEY, nameEl.value.trim());
 
     notes = npLoad(); // re-read so we don't clobber a note from another tab
     notes.unshift({
@@ -2151,7 +2166,7 @@ function srsGrade(id, grade) {
   else                        { n += 1; i = Math.max(4, Math.round(i * e * 1.3)); e = e + 0.15; }
   const rec = { e: Math.round(e * 100) / 100, i, d: srsToday(i), n };
   try { localStorage.setItem(SRS_PREFIX + id, JSON.stringify(rec)); } catch { /* quota */ }
-  if (grade !== "again") localStorage.setItem(KNOWN_PREFIX + id, "1");
+  if (grade !== "again") safeLS.set(KNOWN_PREFIX + id, "1");
   streakTouch();
   srsUpdateBadge();
   return rec;
@@ -2198,7 +2213,7 @@ function stIndex() {
   return _stIndex;
 }
 
-function stIsBookmarked(id) { return localStorage.getItem(BOOKMARK_PREFIX + id) === "1"; }
+function stIsBookmarked(id) { return safeLS.get(BOOKMARK_PREFIX + id) === "1"; }
 
 /** Reveal + scroll to a topic by id (reuses the deep-link opener). */
 function stGoToTopic(id) {
@@ -2879,9 +2894,9 @@ function stExamFinish() {
   s.stage.querySelectorAll(".st-list-link").forEach(b =>
     b.addEventListener("click", () => { stClose(); stGoToTopic(b.dataset.id); }));
   s.stage.querySelector("#st-ex-star")?.addEventListener("click", e => {
-    r.missed.forEach(m => localStorage.setItem(BOOKMARK_PREFIX + m.id, "1"));
+    r.missed.forEach(m => safeLS.set(BOOKMARK_PREFIX + m.id, "1"));
     document.querySelectorAll(".topic").forEach(t => {
-      if (localStorage.getItem(BOOKMARK_PREFIX + t.id) === "1") t.classList.add("bookmarked");
+      if (safeLS.get(BOOKMARK_PREFIX + t.id) === "1") t.classList.add("bookmarked");
     });
     e.target.textContent = `★ ${r.missed.length} starred`;
     e.target.disabled = true;
@@ -3264,10 +3279,10 @@ function progressStats() {
       total: ids.length, reviewed: 0, bookmarked: 0, known: 0, noted: 0, due: 0,
     };
     ids.forEach(t => {
-      if (localStorage.getItem(REVIEWED_PREFIX + t) === "1") row.reviewed++;
-      if (localStorage.getItem(BOOKMARK_PREFIX + t) === "1") row.bookmarked++;
-      if (localStorage.getItem(KNOWN_PREFIX + t) === "1") row.known++;
-      if (localStorage.getItem(NOTE_PREFIX + t)) row.noted++;
+      if (safeLS.get(REVIEWED_PREFIX + t) === "1") row.reviewed++;
+      if (safeLS.get(BOOKMARK_PREFIX + t) === "1") row.bookmarked++;
+      if (safeLS.get(KNOWN_PREFIX + t) === "1") row.known++;
+      if (safeLS.get(NOTE_PREFIX + t)) row.noted++;
       if (srsGet(t) && srsIsDue(t)) row.due++;
     });
     rows.push(row);
@@ -3346,7 +3361,7 @@ function pathSteps(path) {
 /** Done means reviewed — the same ✓ the topic header sets, not a second state. */
 function pathProgress(path) {
   const steps = pathSteps(path);
-  const done = steps.filter(t => localStorage.getItem(REVIEWED_PREFIX + t.id) === "1").length;
+  const done = steps.filter(t => safeLS.get(REVIEWED_PREFIX + t.id) === "1").length;
   return { done, total: steps.length };
 }
 
@@ -3392,7 +3407,7 @@ function stRenderPath(host, path) {
   const { done, total } = pathProgress(path);
   // The first unreviewed step is where the reader is, and saying so is most of
   // what a path is for — an ordered list without a "you are here" is a list.
-  const nextStep = steps.find(t => localStorage.getItem(REVIEWED_PREFIX + t.id) !== "1");
+  const nextStep = steps.find(t => safeLS.get(REVIEWED_PREFIX + t.id) !== "1");
   host.innerHTML =
     '<button id="st-path-back" class="st-btn">← All paths</button>' +
     `<h3 class="st-path-title">${esc(path.icon || "🧭")} ${esc(path.name)}</h3>` +
@@ -3402,7 +3417,7 @@ function stRenderPath(host, path) {
     (nextStep ? '<button id="st-path-next" class="st-btn st-btn-primary">Continue</button>' : "") +
     '</div>' +
     '<ol class="st-path-steps">' + steps.map((t, i) => {
-      const isDone = localStorage.getItem(REVIEWED_PREFIX + t.id) === "1";
+      const isDone = safeLS.get(REVIEWED_PREFIX + t.id) === "1";
       const here = !isDone && t === nextStep;
       return `<li class="st-path-step${isDone ? " done" : ""}${here ? " here" : ""}">` +
         `<span class="st-step-n">${isDone ? "✓" : i + 1}</span>` +
@@ -3446,7 +3461,7 @@ function stRenderStudyList(host) {
   host.querySelectorAll(".st-list-link").forEach(b => b.addEventListener("click", () => { stClose(); stGoToTopic(b.dataset.id); }));
   host.querySelectorAll(".st-list-remove").forEach(b => b.addEventListener("click", () => {
     const id = b.dataset.id;
-    localStorage.removeItem(BOOKMARK_PREFIX + id);
+    safeLS.remove(BOOKMARK_PREFIX + id);
     document.getElementById(id)?.classList.remove("bookmarked");
     stRenderStudyList(host);
   }));
@@ -3487,10 +3502,9 @@ function bkParse(raw) { try { return JSON.parse(raw); } catch { return null; } }
 /** Every key we own, with JSON values expanded. */
 function bkCollect() {
   const data = {};
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (!k || !bkCategory(k)) continue;
-    const raw = localStorage.getItem(k);
+  for (const k of safeLS.keys()) {
+    if (!bkCategory(k)) continue;
+    const raw = safeLS.get(k);
     if (raw === null) continue;
     const parsed = bkIsJson(k) ? bkParse(raw) : null;
     data[k] = parsed === null ? raw : parsed;
@@ -3610,12 +3624,7 @@ function bkSanitise(data) {
 
 /** Keys we own that are in storage right now — the blast radius of "replace". */
 function bkOwnedKeys() {
-  const keys = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k && bkCategory(k)) keys.push(k);
-  }
-  return keys;
+  return safeLS.keys().filter(bkCategory);
 }
 
 /**
@@ -3627,7 +3636,7 @@ function bkDiff(kept, mode) {
   const d = { add: 0, overwrite: 0, keepLocal: 0, remove: 0 };
   if (mode === "replace") d.remove = bkOwnedKeys().filter(k => !(k in kept)).length;
   Object.keys(kept).forEach(k => {
-    const mine = localStorage.getItem(k);
+    const mine = safeLS.get(k);
     if (mine === null) { d.add++; return; }
     if (mode === "merge" && k.startsWith(SRS_PREFIX)) {
       const a = bkParse(mine), b = bkParse(kept[k]);
@@ -3645,10 +3654,10 @@ function bkDiff(kept, mode) {
  *   replace — drop everything we own first, then write the file verbatim.
  */
 function bkApply(kept, mode) {
-  if (mode === "replace") bkOwnedKeys().forEach(k => localStorage.removeItem(k));
+  if (mode === "replace") bkOwnedKeys().forEach(k => safeLS.remove(k));
   Object.keys(kept).forEach(k => {
     if (mode === "merge" && k.startsWith(SRS_PREFIX)) {
-      const mine = localStorage.getItem(k);
+      const mine = safeLS.get(k);
       if (mine) {
         const a = bkParse(mine), b = bkParse(kept[k]);
         if (a && b && typeof a.d === "string" && a.d > b.d) return;   // local is later
@@ -3663,8 +3672,8 @@ function bkRefreshUI() {
   // Only the open domain has topics to repaint; every other domain reads the
   // imported storage when it is next opened, and its badge is recomputed below.
   document.querySelectorAll(".topic[id]").forEach(t => {
-    t.classList.toggle("reviewed", localStorage.getItem(REVIEWED_PREFIX + t.id) === "1");
-    t.classList.toggle("bookmarked", localStorage.getItem(BOOKMARK_PREFIX + t.id) === "1");
+    t.classList.toggle("reviewed", safeLS.get(REVIEWED_PREFIX + t.id) === "1");
+    t.classList.toggle("bookmarked", safeLS.get(BOOKMARK_PREFIX + t.id) === "1");
   });
   domainSections().forEach(d => updateDomainProgress(d));
   srsUpdateBadge();

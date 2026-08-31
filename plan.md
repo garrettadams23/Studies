@@ -12304,6 +12304,33 @@ is the page-halt symptom in one line. Wired into the Makefile as `resilience` an
 resilience 5/5 · a new browser gate: the page survives a storage-denied browser, forever
 ```
 
+### Retiring the "out of scope" — the feature handlers, hardened for real
+
+The commit above drew an honest boundary: load and core reading were fixed, the optional feature
+handlers deferred. Rather than leave that boundary as prose, the resilience test's own method was
+turned on the features — open each dialog under storage denial and see which throw. Two did:
+**the progress dialog** (`progressStats` loops topic ids but reads `localStorage` unguarded inside)
+and **the notepad** (`npSessionId` reads `sessionStorage`, which throws in the same cases). Neither
+is load-critical, but both crash the moment a storage-blocked reader clicks the button.
+
+Both are now fixed, and the fix was generalised rather than sprinkled: `safeLS` gained a `keys()`
+that returns `[]` instead of letting `localStorage.length` throw at a loop bound (the srsDueCount
+trap, now also covering `bkCollect` and `bkOwnedKeys` in export/import), and a `safeSS` mirror
+covers the notepad's `sessionStorage`. Every remaining feature read — quiz results, learning-path
+progress, the study list, bookmark removal — was routed through the same helpers. What is left
+raw is genuinely safe: each remaining call sits inside a `try`, or behind the alias-migration's
+early-exit guard that returns before any unguarded access when storage is blocked.
+
+The resilience gate grew two assertions to pin the two that broke — it opens the progress dialog
+and the notepad under denial and requires both to mount without throwing. So the storage-blocked
+story is now whole and enforced end to end: load, reading, and every feature, none of them able to
+regress silently.
+
+```
+progress dialog + notepad: THREW → open cleanly · safeLS.keys() + safeSS added
+resilience 7/7 · every raw storage access is now guarded or provably unreachable when blocked
+```
+
 ---
 
 # Closing note for Phase 7–10

@@ -123,6 +123,26 @@ await probe("search runs without throwing", async () => {
   return true; // it ran without throwing; a throw would reject and be caught above
 });
 
+// The two features that read storage the moment they open — the progress
+// dialog (counts reviewed/known across the site) and the notepad (a session id
+// in sessionStorage) — must open, not throw. Each was a real crash before it
+// was guarded, so each is pinned here.
+await probe("progress dialog opens without throwing", () => {
+  if (typeof stOpenProgress !== "function") return false;
+  stOpenProgress();
+  const ok = !!document.querySelector(".st-modal, .modal-backdrop, [class*='st-']");
+  try { stClose(); } catch { /* fine */ }
+  return ok;
+});
+
+await probe("notepad opens without throwing", () => {
+  if (typeof toggleNotepad !== "function") return false;
+  toggleNotepad();               // open
+  const ok = !!document.querySelector(".np-root, .notepad, [class*='np-']");
+  try { toggleNotepad(); } catch { /* close; fine */ }
+  return ok;
+});
+
 await browser.close();
 
 const failed = results.filter(r => !r.ok);
