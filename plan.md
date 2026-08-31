@@ -12044,6 +12044,17 @@ duplicated. Paths went **6 → 8, 75 → 108 steps**, and `data` (18) and `produ
 have the entry point they lacked. `check_paths.py` green: 108 distinct topics, every step
 resolves.
 
+A second paths pass extended the same §3 logic to the other large zero-path domains:
+**`frontend-from-the-browser-up`** (19 steps: render pipeline and DOM → grid/flexbox layout →
+the JavaScript that trips people up → a component framework → data, auth, security,
+performance, accessibility, testing and deploy) and **`cs-for-working-engineers`** (18 steps:
+complexity → the data structures and algorithms worth knowing cold → scheduling, concurrency
+and memory → the distributed-systems and latency facts that decide real designs). Paths **8 →
+10, 108 → 145 steps**; `web` (19) and `cs` (18) join the covered domains. The remaining
+zero-path domains are either small enough that the chip is entry enough or are the islands
+§4 says want prose, not a forced sequence — so the paths programme, like the connectivity one,
+stops where a genuine reader-sequence does.
+
 ## 4. What this does not mean
 
 Connectivity is not quality. `philosophy`, `mind` and `productivity` are among the
