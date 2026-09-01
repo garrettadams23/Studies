@@ -796,6 +796,117 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
 
 
 <!-- ══════════════════════════════════════════════════════════════
+     SECTION: MECM ARCHITECTURE & SCALE
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── TOPIC: MECM ARCHITECTURE & SCALE ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-08">
+  <div class="topic-header">
+    <span class="topic-icon">🏛️</span>
+    <span class="topic-name">MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> at Scale — Site Design, Boundary Groups &amp; Collections That Don't Melt the Server</span>
+    <span class="topic-badge">MECM • Architecture</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">The CAS Is the Mistake. One Primary Site Goes Further Than You Think.</div>
+      <div class="concept-desc">
+        The instinct when the estate is large is to build a hierarchy — a
+        <strong class="c-cyan">Central Administration Site</strong> on top, primary sites beneath
+        it, a secondary site at every branch. It is almost always wrong. A single standalone
+        primary site supports on the order of <strong>150,000 clients</strong>; the CAS exists only
+        to roll several primaries into one console <em>above</em> that ceiling, and it buys you a
+        whole new failure domain — <strong class="c-amber">SQL <span class="acro-exp">(Structured Query Language)</span> replication between sites</strong> —
+        that you now have to keep healthy and debug when it drifts. The shops that stood up a CAS
+        &ldquo;to be safe&rdquo; mostly spend their time nursing replication they never needed.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Site type</th><th>What it is for</th><th>When it is actually justified</th></tr>
+          <tr><td>Central Administration Site</td><td>Roll-up console and configuration across multiple primary sites</td><td>Only above a single primary's ceiling (~150k), or a genuine multi-primary need — not for tidiness</td></tr>
+          <tr><td>Primary site</td><td>The workhorse: clients attach here, it owns a SQL database</td><td>Almost every organisation needs exactly one, and only one</td></tr>
+          <tr><td>Secondary site</td><td>Throttles and controls content sent upstream to a remote location</td><td>Only when a location can't reach a distribution point and needs local, bandwidth-managed content — otherwise a plain DP is the answer</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          The unit you are really choosing is <strong>how many SQL databases you must keep in
+          sync</strong>. Build one primary; add a secondary only to manage a starved WAN <span class="acro-exp">(Wide Area Network)</span> link, and
+          reach for a distribution point — not a site — everywhere else.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Fingerprint</div>
+      <div class="concept-title">When Content Comes From the Wrong Place, It Is Almost Always Boundary Groups</div>
+      <div class="concept-desc">
+        Boundaries — an IP <span class="acro-exp">(Internet Protocol)</span> subnet, an AD <span class="acro-exp">(Active Directory)</span> site, an IP range — map a client to a
+        <strong class="c-cyan">boundary group</strong>, and the boundary group names the site
+        systems (management point, distribution point, software update point) that client should
+        use. The classic failure is a client pulling content from the
+        <strong class="c-amber">wrong distribution point</strong>: an install that crawls over the
+        WAN when a healthy DP sits on the same subnet, or &ldquo;no content available&rdquo; when
+        the local DP plainly has it. That symptom has one usual cause — a boundary the client falls
+        outside of, a fallback that lands on a distant DP or the site server itself, or a fallback
+        timer so short the client reaches across the link before its preferred DP even answers.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Symptom</th><th>The boundary-group cause behind it</th></tr>
+          <tr><td>Client pulls content over the WAN though a local DP exists</td><td>The client's subnet isn't in a boundary group that references the local DP</td></tr>
+          <tr><td>&ldquo;No content available&rdquo; despite a healthy DP</td><td>Client is in no boundary group and no fallback source is configured</td></tr>
+          <tr><td>Site server itself hammered for content</td><td>Fallback lands on the default site boundary group, with the site server acting as a DP</td></tr>
+          <tr><td>Content arrives, but slowly and from far away</td><td>Fallback time is too short — the client gives up on the near DP and reaches out</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          A boundary group is a two-layer map — boundaries into the group, group onto site systems —
+          and both the <strong>relationships</strong> (which neighbouring group to fall back to) and
+          the <strong>fallback timers</strong> decide routing. Wrong here means wrong for everyone in
+          that boundary, which is why content problems are a boundary-group check first, a DP check
+          second.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">Collections Are Queries — and a Careless Query Is a Site-Wide Tax</div>
+      <div class="concept-desc">
+        A collection is the unit of targeting: deployments, maintenance windows and client settings
+        all point at collections, so membership <em>is</em> who gets what. Query-based collections
+        re-evaluate their membership — on a schedule, or continuously if
+        <strong class="c-cyan">incremental updates</strong> are on. The trap is turning incremental
+        updates on across dozens of collections, or writing a query that scans every resource on the
+        estate: the site server then re-evaluates without pause, evaluation load climbs, the console
+        lags and deployments are slow to land. <strong class="c-amber">Incremental updates are a
+        finite budget</strong> — Microsoft's own guidance caps how many collections should use them —
+        not a default to switch on everywhere.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Collection choice</th><th>What it costs the site server</th></tr>
+          <tr><td>Incremental updates on many collections</td><td>Near-constant re-evaluation; load climbs; runs past the documented cap</td></tr>
+          <tr><td>Scheduled full evaluation, off-hours</td><td>Cheap and predictable — the right default for most targeting</td></tr>
+          <tr><td>Query limited to <em>All Systems</em> that scans everything</td><td>Every evaluation touches the whole estate</td></tr>
+          <tr><td>Query limited to a tight parent collection</td><td>Evaluation only ever touches the parent's members</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          So the three architecture decisions compound into one rule: <strong>one primary site
+          unless you have truly outgrown it, boundary groups whose fallback and timers you have
+          actually reasoned about, and collections on scheduled evaluation with incremental reserved
+          for the few that need near-real-time membership.</strong> Get them right and the site
+          server stays responsive under load; get them wrong and every deployment inherits the tax —
+          which is what the log map in
+          <span class="xref">MECM Site Health &amp; Server Log Map</span> is really diagnosing. And
+          when the hierarchy's whole reason for being — imaging, deep app packaging, on-prem
+          content — has moved to the cloud, the honest exit is the workload-by-workload path
+          <span class="xref">Co-management &amp; Cloud Attach</span> lays out, not a big-bang cutover.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
      SECTION: MECM TROUBLESHOOTING
      ══════════════════════════════════════════════════════════════ -->
 
