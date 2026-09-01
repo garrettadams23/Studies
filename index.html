@@ -85065,8 +85065,8 @@ second.
 <span class="ctag ctag-general">SWE</span>
 </div>
 <span class="domain-sub">System Design · Architecture · Craft · Reliability · Career</span>
-<span class="domain-meta" aria-label="81 topics, about 3h 30m to read"
->81 topics · ~3h 30m</span>
+<span class="domain-meta" aria-label="81 topics, about 3h 35m to read"
+>81 topics · ~3h 35m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -85350,12 +85350,12 @@ one row nobody has an answer for.
 </div>
 </div>
 </div>
-<div class="topic" id="the-system-design-interview-a-framework" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="the-system-design-interview-a-framework" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧩</span>
 <span class="topic-name">The System Design Interview — A Framework</span>
 <span class="topic-badge">Career</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -85382,6 +85382,40 @@ drive requirements, estimate, sketch, then go deep where it matters.
 The senior signal is <strong class="c-green">talking trade-offs out loud</strong>
 and tying decisions back to the requirements — not memorizing one "correct"
 architecture.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">Most Candidates Fail the Same Way — Designing the Wrong System, Beautifully</div>
+<div class="concept-desc">
+The framework tells you the steps; the failures are where interviews are actually lost,
+and they are the same three every time. The biggest: <strong class="c-amber">diving
+into components before scoping the requirements</strong> — you architect a gorgeous
+system for a problem the interviewer didn't ask about, because you never nailed the
+read/write ratio, the scale, or the one feature that matters. Second: going quiet — the
+interview measures how you think, so a candidate who designs silently and presents a
+finished diagram has <strong>hidden the entire thing being assessed</strong>. Third:
+over-engineering — reaching for sharding, microservices and multi-region on a system a
+single database would serve, which reads as inexperience, not sophistication. The
+through-line: the interview simulates the real job's first hour — a vague ask you must
+scope before you build — so failing it is failing the actual skill, not a trick.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The failure</th><th>What it looks like</th><th>The fix</th></tr>
+<tr><td>Design before scoping</td><td>A beautiful system for the wrong requirements</td><td>Spend real time on step 1; restate the problem back</td></tr>
+<tr><td>Going silent</td><td>A finished diagram, no visible reasoning</td><td>Narrate every decision and its alternative</td></tr>
+<tr><td>Over-engineering</td><td>Sharding/microservices for a small stated scale</td><td>Let the estimate justify each addition</td></tr>
+<tr><td>No trade-offs named</td><td>&ldquo;This is the design,&rdquo; no cost stated</td><td>End every choice with what it gave up</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the framework is necessary but the discipline is what's scored: scope before you
+build, think out loud so the thinking is visible, and let the numbers — not habit —
+justify each piece of machinery you add. The candidate who says &ldquo;at this scale a
+single Postgres is fine, here's when I'd shard&rdquo; beats the one who reaches for
+Cassandra on slide one, because <strong>naming the trade-off is the seniority</strong>,
+and grabbing the biggest tool is its absence.
 </div>
 </div>
 </div>
@@ -93837,8 +93871,8 @@ makes concrete.
 <span class="ctag ctag-general">JS</span>
 </div>
 <span class="domain-sub">Browser · CSS · JS · Frameworks · Performance · A11y</span>
-<span class="domain-meta" aria-label="39 topics, about 1h 40m to read"
->39 topics · ~1h 40m</span>
+<span class="domain-meta" aria-label="39 topics, about 1h 45m to read"
+>39 topics · ~1h 45m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -94973,12 +95007,12 @@ which on a high-latency mobile connection is the difference a user can feel.
 </div>
 </div>
 </div>
-<div class="topic" id="graphql-on-the-backend-schema-resolvers-caching" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="graphql-on-the-backend-schema-resolvers-caching" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">◈</span>
 <span class="topic-name">GraphQL on the Backend — Schema, Resolvers &amp; Caching</span>
 <span class="topic-badge">Backends</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95005,6 +95039,41 @@ under-fetching, at the cost of new complexity.
 <strong class="c-amber">When to use:</strong> many clients with different data
 needs, or deeply nested data. For simple CRUD <span class="acro-exp">(Create, Read, Update, Delete)</span>, REST is often simpler. Caching is
 harder than REST (one endpoint, POST) — weigh the trade-off.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">GraphQL Doesn't Remove Complexity — It Moves It Server-Side and Hands the Client a Loaded Gun</div>
+<div class="concept-desc">
+The pitch is client-shaped responses; the reality is that the flexibility you give the
+client becomes a liability you own on the server. A client that specifies its own query
+can also specify a catastrophic one — a deeply nested
+<code>user { friends { friends { friends } } }</code> or a very wide selection that
+fans out into thousands of database hits — so GraphQL needs a
+<strong class="c-amber">defensive layer REST doesn't</strong>: query depth limits,
+complexity/cost analysis, and often persisted (allow-listed) queries in production.
+Caching regresses from free to your problem: REST's HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> GETs cache in the browser and
+at the CDN <span class="acro-exp">(Content Delivery Network)</span> for nothing, while GraphQL's single POST endpoint makes caching field-level
+or persisted-query work you build. And observability breaks on the URL <span class="acro-exp">(Uniform Resource Locator)</span> — every
+operation is <code>POST /graphql</code>, so the path-based metrics, logs and
+rate-limits you relied on must be rebuilt per operation.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What GraphQL gives the client</th><th>The responsibility it hands the server</th></tr>
+<tr><td>Ask for exactly the fields it wants</td><td>N+1 fan-out per field — batch with DataLoader</td></tr>
+<tr><td>Arbitrarily nested queries</td><td>Depth + complexity limits, or a query is a DoS <span class="acro-exp">(Denial of Service)</span></td></tr>
+<tr><td>One flexible endpoint</td><td>Caching becomes field-level/persisted, not free HTTP+CDN</td></tr>
+<tr><td>Any operation over <code>POST /graphql</code></td><td>Rebuild per-operation metrics, logs and rate-limits</td></tr>
+</table>
+<div class="concept-desc verdict">
+So reach for GraphQL when many clients genuinely need different shapes of
+deeply-related data — the problem it is uniquely good at — but go in knowing you are
+<strong>relocating complexity, not removing it</strong>. Budget for the defensive
+layer, the caching you now own, and the observability you must rebuild. For simple
+CRUD with one client, REST keeps all of that for free, which is why
+&ldquo;GraphQL by default&rdquo; is usually the wrong call.
 </div>
 </div>
 </div>

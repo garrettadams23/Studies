@@ -1149,6 +1149,41 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">GraphQL Doesn't Remove Complexity — It Moves It Server-Side and Hands the Client a Loaded Gun</div>
+                <div class="concept-desc">
+                  The pitch is client-shaped responses; the reality is that the flexibility you give the
+                  client becomes a liability you own on the server. A client that specifies its own query
+                  can also specify a catastrophic one — a deeply nested
+                  <code>user { friends { friends { friends } } }</code> or a very wide selection that
+                  fans out into thousands of database hits — so GraphQL needs a
+                  <strong class="c-amber">defensive layer REST doesn't</strong>: query depth limits,
+                  complexity/cost analysis, and often persisted (allow-listed) queries in production.
+                  Caching regresses from free to your problem: REST's HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> GETs cache in the browser and
+                  at the CDN <span class="acro-exp">(Content Delivery Network)</span> for nothing, while GraphQL's single POST endpoint makes caching field-level
+                  or persisted-query work you build. And observability breaks on the URL <span class="acro-exp">(Uniform Resource Locator)</span> — every
+                  operation is <code>POST /graphql</code>, so the path-based metrics, logs and
+                  rate-limits you relied on must be rebuilt per operation.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What GraphQL gives the client</th><th>The responsibility it hands the server</th></tr>
+                    <tr><td>Ask for exactly the fields it wants</td><td>N+1 fan-out per field — batch with DataLoader</td></tr>
+                    <tr><td>Arbitrarily nested queries</td><td>Depth + complexity limits, or a query is a DoS <span class="acro-exp">(Denial of Service)</span></td></tr>
+                    <tr><td>One flexible endpoint</td><td>Caching becomes field-level/persisted, not free HTTP+CDN</td></tr>
+                    <tr><td>Any operation over <code>POST /graphql</code></td><td>Rebuild per-operation metrics, logs and rate-limits</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So reach for GraphQL when many clients genuinely need different shapes of
+                    deeply-related data — the problem it is uniquely good at — but go in knowing you are
+                    <strong>relocating complexity, not removing it</strong>. Budget for the defensive
+                    layer, the caching you now own, and the observability you must rebuild. For simple
+                    CRUD with one client, REST keeps all of that for free, which is why
+                    &ldquo;GraphQL by default&rdquo; is usually the wrong call.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
