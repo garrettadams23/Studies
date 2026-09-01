@@ -15275,7 +15275,7 @@ not small ones.
 | `m365` | 42 | 1 |
 | `pentest` | 34 | **0** |
 
-Eighteen new paths later: **30 paths, 489 steps, 470 distinct topics — 31% of the site.**
+Twenty-four new paths later: **36 paths, 579 steps, 555 distinct topics — 36% of the site.**
 
 **None of this is new content.** A path is an ordered list of topic ids over cards that already
 exist, so the whole wave added zero topics and zero words. That is exactly why it was worth
@@ -15302,6 +15302,12 @@ become a detection engineer had sixty blueteam cards and no order to meet them i
 | Automation for Administrators | 15 | PowerShell → Graph → idempotent scheduling → secrets → JEA → config as code → blast radius |
 | Linux Administration, Properly | 22 | permissions → sudoers/PAM → boot → systemd → storage → firewalls → MAC → namespaces → rescue |
 | Reading the Threat Landscape | 18 | actors → frameworks → intel lifecycle → the criminal economy → ransomware → attribution |
+| Endpoint Engineering with Intune | 27 | provisioning → policy → apps → update rings → security → device trust → analytics |
+| The Mixed Fleet — Beyond Windows | 11 | macOS → Apple fleet → iOS/Android → BYOD → kiosk → sessions → browser → legacy |
+| Running MECM (ConfigMgr) | 7 | the product → site architecture → site/client health → deployment → OSD → co-management |
+| Hardware & the Bench | 20 | static → electrical basics → test gear → the components → POST → isolate-and-swap → rework |
+| Going Independent | 14 | which model → pricing → clients → SOW → scope → the report → cash flow → past your own hours |
+| Teaching & Enablement | 11 | how adults learn → curriculum → the room → demos → docs, diagrams, proposals |
 
 ### Two things the wave was careful about
 
@@ -15318,17 +15324,17 @@ site's own framing, kept rather than added.
 
 ### What is left, and why the number will not reach 100%
 
-`career` (7 steps), `endpoint` (4), `hw` (2) and `mind` (2) are the remaining thin spots, and
-`endpoint` already has a path — it is simply short. But the ceiling here is not 1,529. Reference
+`mind` (2 steps) is the only domain left with real content and almost no route, and it is a
+small, deliberately browsable one. But the ceiling here is not 1,529. Reference
 domains (`acronym`, `shortcut`) are lookup surfaces, not routes, and much of the site is
 deliberately *browsable* rather than sequential. A path earns its place when a real job or
 subject has an order that genuinely matters; inventing one for a set of cards that do not build
 on each other would be the same failure as padding a thin card.
 
 ```
-paths            12 → 30
-steps           175 → 489
-topics reached  175 → 470   (11% → 31% of the site)
+paths            12 → 36
+steps           175 → 579
+topics reached  175 → 555   (11% → 36% of the site)
 new topics            0     (curation over existing content)
 ```
 
