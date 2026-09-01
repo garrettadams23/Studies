@@ -2385,6 +2385,41 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Edge Moves Compute Close to the User — Your Data Is Still Far, and That's the Real Limit</div>
+                <div class="concept-desc">
+                  An edge function runs milliseconds from the user; the catch is that your database
+                  usually doesn't. Push dynamic rendering or personalisation to the edge and, the moment
+                  that code needs data, it makes a round-trip to an origin database in one region — so
+                  you have <strong class="c-amber">moved the compute across the planet and left the data
+                  behind</strong>, and the edge function sits waiting on the same cross-continent call it
+                  was supposed to avoid. <strong class="c-cyan">Data locality, not compute, is the real
+                  limit</strong> on edge rendering: it wins only when the data the function needs is also
+                  near the user — an edge KV store, a globally-replicated read replica, or a value cached
+                  at the edge. Second trap: hundreds of ephemeral edge locations can't pool connections
+                  to a regional database the way a handful of long-lived servers do, so a naive
+                  edge-to-Postgres setup exhausts connections — which is why edge-native stores and
+                  connection proxies exist.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you moved to the edge</th><th>Whether it actually helps</th></tr>
+                    <tr><td>Static assets (CDN)</td><td>Always — what the edge is best at</td></tr>
+                    <tr><td>Small stateless logic (auth check, redirect, A/B)</td><td>Yes — no data round-trip needed</td></tr>
+                    <tr><td>Personalised render needing your DB</td><td>Only if the data is at the edge too; else the origin round-trip erases the win</td></tr>
+                    <tr><td>Direct edge → regional Postgres</td><td>Trap — connection exhaustion from ephemeral locations</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So decide by <strong>where the data is, not where the compute is</strong>: put at the
+                    edge the things that need no data or whose data you can replicate/cache there, and
+                    keep data-heavy rendering near the data. The edge is a caching and light-compute
+                    layer that makes global sites feel local; treat it as a database tier and you
+                    rediscover that latency is dominated by the slowest hop — which, for an edge function
+                    calling a single-region DB, is the very hop you tried to remove.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
