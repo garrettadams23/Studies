@@ -15250,3 +15250,87 @@ table with no verdict                509 → 509   (every new table ends on a ve
 
 Site **1,529 topics** (depth, not count — no new topics this wave). Check PASS · smoke
 **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** · determinism reproducible.
+
+---
+
+## Session record — September, part 3: the paths programme, where the gap was navigation not content
+
+With content saturated and the depth tail worked down, the next honest question was not *what
+is missing* but *what is unreachable*. `check_paths` answered it: **12 paths, 175 steps, 175 of
+1,529 topics** — 11% of the site sat on a curated route, and the domains left off that map were
+not small ones.
+
+| Domain | Topics | Path steps before |
+|---|---|---|
+| `script` | 148 | 1 |
+| `sec` | 92 | 3 |
+| `eng` | 81 | **0** |
+| `ops` | 77 | 8 |
+| `cloud` | 74 | 5 |
+| `linux` | 62 | 9 |
+| `blueteam` | 60 | 3 |
+| `redteam` | 58 | **0** |
+| `infra` | 52 | 2 |
+| `threat` | 46 | 2 |
+| `m365` | 42 | 1 |
+| `pentest` | 34 | **0** |
+
+Eighteen new paths later: **30 paths, 489 steps, 470 distinct topics — 31% of the site.**
+
+**None of this is new content.** A path is an ordered list of topic ids over cards that already
+exist, so the whole wave added zero topics and zero words. That is exactly why it was worth
+doing: the writing was already there and simply had no route through it. A reader wanting to
+become a detection engineer had sixty blueteam cards and no order to meet them in.
+
+| Path | Steps | The arc it sequences |
+|---|---|---|
+| Ship It and Run It | 17 | culture → branch → CI → package → IaC → deploy → observe → on-call → postmortem → DORA |
+| Running Windows Server & AD | 22 | the box → the directory → replication → policy → identity hygiene → core services → DC recovery |
+| The Layer Under Everything | 19 | virtualisation → VM ops → storage → clustering → backup → restore testing → decommissioning |
+| From Engineer to Manager | 18 | the fork → the transition → the weekly loop → hiring → Conway → planning → managing up |
+| The Software Supply Chain | 10 | where a build comes from → SBOM/VEX → SLSA → signing → verify at deploy → the pipeline |
+| Administering Microsoft 365 | 23 | tenant → licensing → roles → Groups → Exchange → SharePoint → Teams → security → compliance |
+| Running Azure | 13 | fundamentals → hierarchy/RBAC → network → compute → Defender → CA → KQL → Arc |
+| Securing Cloud-Native | 17 | trust boundaries → cloud IAM → K8s threat model → isolation → serverless → detect → respond |
+| Identity Is the Perimeter | 18 | IAM → factors → passkeys → federation → tokens → the attacks → PAM → offboarding |
+| Application & API Security | 15 | threat model → web bug classes → headers → API top 10 → BOLA → SAST/DAST → supply chain |
+| Detection Engineering | 23 | requirement before rule → telemetry → schema → detection-as-code → test → measure → retire |
+| DFIR | 12 | chain of custody → telemetry → artifacts → timelines → disk → memory → at scale → hunting |
+| Penetration Testing, End to End | 17 | authorisation → phases → recon → scan → exploit → post-ex → rate → report → disclose |
+| Adversary Emulation & Purple | 13 | emulation ≠ pentest → threat profile → kill switch → lab → ATT&CK → measure → anti-theatre |
+| Python That Ships | 22 | venvs → errors/logging → typing → CLIs → secrets → pytest → tooling → packaging |
+| Automation for Administrators | 15 | PowerShell → Graph → idempotent scheduling → secrets → JEA → config as code → blast radius |
+| Linux Administration, Properly | 22 | permissions → sudoers/PAM → boot → systemd → storage → firewalls → MAC → namespaces → rescue |
+| Reading the Threat Landscape | 18 | actors → frameworks → intel lifecycle → the criminal economy → ransomware → attribution |
+
+### Two things the wave was careful about
+
+**Reuse across paths is not duplication.** 489 steps resolve to 470 distinct topics, so a
+handful of cards appear in two paths — `admin-roles-least-privilege` sits in both the endpoint
+and M365 routes, `measuring-detection-quality` in both detection engineering and purple teaming.
+`check_paths` only flags a step repeated *within* one path, which is the copy-paste it is
+actually looking for. A topic genuinely on two routes should be on both.
+
+**The offensive paths lead with authorisation**, because the domains already do: *Ethical
+Hacking 101* and *Scoping & Rules of Engagement* are steps one and two of the pentest path, and
+the emulation path's third step is the one about scope, safety and the kill switch. That is the
+site's own framing, kept rather than added.
+
+### What is left, and why the number will not reach 100%
+
+`career` (7 steps), `endpoint` (4), `hw` (2) and `mind` (2) are the remaining thin spots, and
+`endpoint` already has a path — it is simply short. But the ceiling here is not 1,529. Reference
+domains (`acronym`, `shortcut`) are lookup surfaces, not routes, and much of the site is
+deliberately *browsable* rather than sequential. A path earns its place when a real job or
+subject has an order that genuinely matters; inventing one for a set of cards that do not build
+on each other would be the same failure as padding a thin card.
+
+```
+paths            12 → 30
+steps           175 → 489
+topics reached  175 → 470   (11% → 31% of the site)
+new topics            0     (curation over existing content)
+```
+
+Check PASS (`check_paths`: every step resolves, no duplicates within a path) · smoke **142/142**
+· axe **6/6** · mobile **9/9** · visual **2/2** · determinism reproducible.
