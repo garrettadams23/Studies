@@ -15168,14 +15168,14 @@ With new-content genuinely saturated (every breadth probe returning covered-or-`
 honest next move was the one Phase 8 named and `tools/depth_report.py` measures: the **thin
 tail** — single-concept cards under 1,800 plain characters. The report put it at **147 of
 1,529 (10%)**, concentrated in the domains authored before the current three-card form settled.
-This wave took it to **104 (7%)** — forty-three cards, each gaining one genuine second concept
+This wave took it to **102 (7%)** — forty-five cards, each gaining one genuine second concept
 card, with the padding counter-metric holding flat throughout.
 
 The rule the wave held to: **a deepening is a second card that names something the first did
 not — a failure mode, an inversion, a decision — never the first card restated longer.** The
 proof it held is the counter-metric: mean chars per concept card moved **1,241 → 1,254** across
-forty-three additions (i.e. barely), while the thin count fell 43 and the 10th percentile rose
-**1,433 → ~1,479**. Padding would have moved the mean and left the percentile flat; this did the
+forty-five additions (i.e. barely), while the thin count fell 45 and the 10th percentile rose
+**1,433 → ~1,484**. Padding would have moved the mean and left the percentile flat; this did the
 opposite. One genuine content bug surfaced and was fixed along the way: the rendering-modes card
 annotated **CSR** as *Certificate Signing Request* when it means *Client-Side Rendering* — CSR was
 single-meaning in `acronyms.json`, so the fix added the meaning with a `byDomain` decision and the
@@ -15226,6 +15226,8 @@ idempotent annotator corrected the span on rebuild.
 | `web` | Progressive Web Apps | A service worker makes the browser a distributed-systems node |
 | `web` | Rendering at the Edge | Compute is near the user; the data is still far — that's the limit |
 | `eng` | Clean Code & Naming | Over-applied, the rules invert into their opposite |
+| `data` | CTEs & Recursion | The optimization fence — readable steps the planner won't cross |
+| `data` | MySQL / MariaDB | "Looser SQL" was an integrity landmine; MariaDB is no longer a twin |
 
 ### What the wave deliberately did not touch
 
@@ -15240,9 +15242,9 @@ concept-rich domains (`data`, `eng`, `web`, `devops`, `cloud`, `ops`) and left t
 (`redteam`, `blueteam`, `script`) near where they were.
 
 ```
-thin single-concept (<1,800 chars)   147 → 104  (10% → 7%)
-mean chars per concept card        1,241 → 1,254   (forty-three cards; counter-metric held)
-10th-percentile topic length       1,433 → ~1,479
+thin single-concept (<1,800 chars)   147 → 102  (10% → 7%)
+mean chars per concept card        1,241 → 1,254   (forty-five cards; counter-metric held)
+10th-percentile topic length       1,433 → ~1,484
 table with no verdict                509 → 509   (every new table ends on a verdict)
 ```
 
