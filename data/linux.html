@@ -4668,6 +4668,41 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Most systemd Pain Is Fighting It — the Type= Field and the cgroup Are What People Get Wrong</div>
+                <div class="concept-desc">
+                  systemd earns its complexity by absorbing jobs everyone used to reimplement —
+                  supervision, scheduling, resource limits, logging — and most trouble comes from working
+                  <em>against</em> that rather than with it. Two specifics cause the majority. The
+                  <strong class="c-cyan"><code>Type=</code> field</strong>: a daemon that double-forks
+                  under <code>Type=simple</code> looks like an instant crash to systemd, because the
+                  process it was watching exited — the fix is <code>Type=notify</code> (the service tells
+                  systemd when it is ready), or <code>Type=forking</code> with a PIDFile, or simply
+                  running in the foreground and letting systemd supervise it, which is what it wants. And
+                  the <strong class="c-cyan">cgroup</strong>: systemd puts every process a service spawns
+                  into one, which is how it reliably stops all of them — the orphaned-child leak SysV
+                  suffered is gone — so a service that daemonises itself out of its cgroup
+                  <strong class="c-amber">escapes the very supervision you wanted</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The instinct</th><th>The systemd-native answer</th></tr>
+                    <tr><td>Daemonise with a custom PID file</td><td>Run in the foreground; <code>Type=notify</code> or <code>simple</code> — systemd is the supervisor</td></tr>
+                    <tr><td>A cron job</td><td>A <code>.timer</code> — journal logging, missed-run handling, dependencies</td></tr>
+                    <tr><td><code>nohup</code> / <code>&amp;</code> to keep it alive</td><td>A <code>.service</code> with <code>Restart=</code> — supervision is the point</td></tr>
+                    <tr><td><code>ulimit</code> / <code>nice</code> wrappers</td><td>Unit resource controls (<code>MemoryMax</code>, <code>CPUQuota</code>) via cgroups</td></tr>
+                    <tr><td>Custom log file + logrotate</td><td>The journal (<code>journalctl -u</code>), with rate-limiting and rotation built in</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So the discipline is to let systemd do the job it exists for rather than layering the
+                    old tools on top: foreground processes it can supervise, timers instead of cron, unit
+                    resource controls instead of wrappers, the journal instead of hand-rolled logging.
+                    When something &ldquo;won't stay running,&rdquo; suspect the <code>Type=</code> before
+                    the service — nine times in ten systemd is doing exactly what the unit told it to.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -4742,6 +4777,38 @@ base=<span class="str">"${path##*/}"</span>           <span class="com"># strip 
                     <strong class="c-amber">Golden rules:</strong> quote your variables
                     (<code>"$var"</code>) to survive spaces, and run ShellCheck. Past ~100 lines with
                     real data structures, reach for Python instead.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">set -e Is Necessary, Not Sufficient — It Silently Doesn't Fire Where You Expect</div>
+                <div class="concept-desc">
+                  The safety header gives false confidence, because <code>set -e</code> has holes that
+                  are exactly the places people lean on it. It does <strong class="c-amber">not
+                  trigger for a command whose failure is being &ldquo;used&rdquo;</strong> — anything on
+                  the left of <code>&amp;&amp;</code>/<code>||</code>, or the condition of an
+                  <code>if</code>, or a function called in that position: <code>if my_func; then</code>
+                  masks every failure inside <code>my_func</code>, because its non-zero exit is being
+                  tested, not raised. It can be swallowed by a substitution assignment on older bash
+                  (<code>out=$(might_fail)</code> carries on). And <code>pipefail</code> is what makes a
+                  mid-pipe failure count at all — without it <code>false | true</code> succeeds. So the
+                  header is a good default and a poor guarantee.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Looks guarded by set -e, isn't</th><th>Why</th><th>Do this instead</th></tr>
+                    <tr><td><code>if bigfunc; then …</code></td><td>The function's internal failures are being tested, not raised</td><td>Check the specific command; don't bury logic in the condition</td></tr>
+                    <tr><td><code>out=$(cmd)</code> (older bash)</td><td>Assignment can swallow the command's exit status</td><td>Split: <code>local out; out=$(cmd)</code>, then check</td></tr>
+                    <tr><td><code>cmd1 | cmd2</code>, no pipefail</td><td>Only the last stage's status counts</td><td><code>set -o pipefail</code> — part of the header</td></tr>
+                    <tr><td><code>foo || true</code></td><td>You told it to ignore failure</td><td>Fine — just know <code>-e</code> is off for that line</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So keep <code>set -Eeuo pipefail</code> as the header — it catches the careless
+                    majority — but treat it as a <strong>seatbelt, not a guarantee</strong>: for the
+                    handful of commands whose failure must stop the script, check the exit code
+                    explicitly. The scripts that fail in production with <code>set -e</code> at the top
+                    are the ones that trusted it to cover a case it structurally cannot see.
                   </div>
                 </div>
               </div>
