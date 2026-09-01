@@ -1705,10 +1705,14 @@ Pairs directly with the `redteam` AD-attack cards — same objects, defender's v
 
 ~8 waves, ~40 cards. The domain closest to the maintainer's day job.
 
-**In progress — Y1–Y3 were already built (endpoint reached 29 cards since this track
-was speced), Y5 shipped this session.** endpoint is now 34. Remaining: Y4 provisioning
-depth, Y6 compliance/CA depth, Y7 MECM site design, Y8 analytics/fleet. `[x]` marks
-the card that fills each item below.
+**Largely built.** Y1–Y3 were already there, Y5 and Y6 shipped, and the enterprise-MS
+waves this September closed most of what remained: Y8's analytics pair (Endpoint Analytics
+& Proactive Remediations), Y7's architecture void (MECM at Scale — Site Design, Boundary
+Groups & Collections), and Y4's one genuine gap (Autopilot Device Preparation — the classic
+Autopilot card already covered hash harvesting, modes and hybrid-vs-Entra join). endpoint is
+now 52. What is left is genuinely narrower: Y4 driver management and provisioning packages,
+Y8 hardware lifecycle / fleet reporting / the runbook document. `[x]` marks the card that
+fills each item, `[~]` names where an item is already covered under a different title.
 
 **Wave Y1 — Intune Deep: Policy** ⟵ see the shipped-note above
 - [x] Configuration Profiles → *Configuration Profiles — Settings Catalog, Templates & Custom*
@@ -1732,11 +1736,11 @@ the card that fills each item below.
 - [x] Emergency Patching → *Emergency Patching — Advisory to Verified*
 
 **Wave Y4 — Provisioning & Imaging**
-- [ ] Autopilot Deep — profiles, hash harvesting, deployment modes, hybrid vs Entra join
-- [ ] Autopilot Device Preparation — the newer flow, and how it differs
+- [~] Autopilot Deep — profiles, hash harvesting, deployment modes, hybrid vs Entra join → covered by *Windows Autopilot — Zero-Touch Provisioning* (modes, hardware hash/group tags, deployment profile, Entra vs hybrid join, troubleshooting)
+- [x] Autopilot Device Preparation — the newer flow, and how it differs → *Autopilot Device Preparation — The Newer Flow That Deletes the Hardware Hash*
 - [ ] Driver Management — DISM, driver packs, and the Autopilot driver dilemma
 - [ ] Provisioning Packages & Bulk Enrolment — the escape hatch when Autopilot cannot
-- [ ] Reprovisioning & Device Reuse — wipe, fresh start, retire, and what each actually removes
+- [~] Reprovisioning & Device Reuse — wipe, fresh start, retire, and what each actually removes → Autopilot Reset / Fresh Start covered in the Autopilot card and *The Device That Comes Back Six Months Later, Still Enrolled*
 
 **Wave Y5 — Endpoint Security**
 - [x] BitLocker at Scale → *BitLocker at Scale — Silent Enablement, Key Escrow & Recovery* (written)
@@ -1753,15 +1757,15 @@ the card that fills each item below.
 - [x] The Identity/Endpoint Seam → *The Identity/Endpoint Seam — The Failure That Lands Both Teams on the Bridge*
 
 **Wave Y7 — MECM Beyond Troubleshooting**
-- [ ] MECM Site Design — CAS, primary, secondary, and when each is justified
-- [ ] Boundary Groups Done Right — fallback, relationships, and the classic misconfiguration
-- [ ] Collections & Queries — WQL that does not melt the site server
-- [ ] Co-management Workloads — moving each slider, safely, in order
-- [ ] Retiring MECM — the honest migration path to cloud-only, and what genuinely blocks it
+- [x] MECM Site Design — CAS, primary, secondary, and when each is justified → *MECM at Scale — Site Design, Boundary Groups & Collections That Don't Melt the Server* (the Inversion card)
+- [x] Boundary Groups Done Right — fallback, relationships, and the classic misconfiguration → same card (the Fingerprint card)
+- [x] Collections & Queries — WQL that does not melt the site server → same card (the Decision card)
+- [~] Co-management Workloads — moving each slider, safely, in order → covered by *Co-management & Cloud Attach* (workload sliders, pilot vs all, the recommended journey)
+- [~] Retiring MECM — the honest migration path to cloud-only, and what genuinely blocks it → the retire-to-cloud journey in *Co-management & Cloud Attach*, and the exit framing in the MECM at Scale Decision card
 
 **Wave Y8 — Endpoint Analytics & the Fleet**
-- [ ] Endpoint Analytics — startup score, app reliability, work-from-anywhere metrics
-- [ ] Proactive Remediations — detect-and-fix scripts as a first-class tool
+- [x] Endpoint Analytics — startup score, app reliability, work-from-anywhere metrics → *Endpoint Analytics & Proactive Remediations* (shipped this September)
+- [x] Proactive Remediations — detect-and-fix scripts as a first-class tool → same card
 - [ ] Hardware Lifecycle — refresh planning, warranty, disposal, data destruction
 - [ ] Fleet Reporting — the five numbers leadership actually asks for
 - [ ] Building an Endpoint Runbook — the document that lets someone else take the pager
@@ -15100,3 +15104,58 @@ related links  960 → 976, still 0 one-way
 **Phase 7: 49 of 96 shipped.** Tracks CE, CF, CG, CH, CI, CJ, CM and CN complete.
 
 Site **1,466 topics**. Check PASS · smoke **142/142** · search **30/30** · axe **6/6** · visual **2/2**.
+
+---
+
+## Session record — September: enterprise Microsoft management, and the one data-architecture gap
+
+A directed pass — "go deep in MECM, Intune, Azure, Exchange, and enterprise-level Microsoft
+management" — followed by the general plan. The interesting result is *where* the genuine gaps
+were, because the site was already saturated at the foundational and professional levels. They
+clustered almost entirely at one seam: **the hybrid boundary where cloud management meets the
+on-prem estate it is replacing.** Nine cards, each a real absence rather than a manufactured one.
+
+| Domain | Card | The claim it turns on |
+|---|---|---|
+| `cloud` | Azure Arc | The management plane, not the VM, is the product — Arc projects on-prem/multicloud servers into ARM |
+| `cloud` | Azure Automation & Update Manager | Agentless patching that already covers Arc-projected servers; runbooks with managed identity |
+| `cloud` | Entra ID Protection | Conditional Access that reacts to **risk**, not just rules — sign-in and user risk drive the gate |
+| `endpoint` | Endpoint Analytics & Proactive Remediations | Detect-and-fix scripts as a first-class tool; the startup/reliability score |
+| `endpoint` | Windows 365 & AVD | Fixed per-user Cloud PC vs pooled multi-session — the licensing model is the design decision |
+| `endpoint` | MECM at Scale | **The CAS is the mistake** — one primary goes to ~150k; boundary groups route content; collections are queries that tax the site server |
+| `endpoint` | Autopilot Device Preparation | The hardware hash was the bottleneck; the 2024 flow deletes the pre-registration entirely |
+| `m365` | Exchange Server On-Prem | You moved the mailboxes and still run a server — the "last Exchange" is a management shim for AD-sourced identity |
+| `m365` | Entra ID Governance | Access-by-ticket is a permanent grant nobody revokes; the access review's **default action** is where governance quietly fails |
+
+### The data-architecture gap, and the discipline that stopped it at one
+
+Resuming the general plan, a broad professional-level probe found the storage-architecture
+question covered (warehouse/lake/lakehouse) but the **ownership** question absent:
+
+| Domain | Card | The claim it turns on |
+|---|---|---|
+| `data` | Data Mesh | The bottleneck is the central team that owns the warehouse, not the warehouse — and it is an org restructure sold as an architecture. Most teams need a lakehouse plus data-product discipline, not a mesh |
+
+The card leads with the honest verdict — *most organisations have the scattered-data problem, not
+the central-bottleneck problem, and the mesh makes the first one worse before better.* That the
+next probe after it found nothing is the point: **a rising count is not progress**, and the deliberate
+content pass returns to its floor once the genuine gaps are filled.
+
+### What this pass confirms about where the site is
+
+The nine were not evenly distributed — eight sit on the cloud/on-prem management seam and one on a
+single data-architecture question. Everywhere else the probes returned covered-or-`[~]`. Track Y
+(Endpoint) is now largely closed: Y4's real gap (device preparation) and Y7's architecture void
+(MECM at Scale) shipped, Y8's analytics pair earlier, and the classic Autopilot card already owned
+the rest of Y4. What remains there is genuinely narrower — driver management, provisioning packages,
+the hardware-lifecycle and runbook documents — the kind of thing to write on demand, not to
+manufacture.
+
+```
+topics       1,520 → 1,529
+related links  ~1,290 → 1,322, still 0 one-way
+table with no verdict  509 → 509   (nine cards, every table ends on a verdict)
+inline style attribute 1,549 → 1,549
+```
+
+Site **1,529 topics**. Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** · determinism reproducible.
