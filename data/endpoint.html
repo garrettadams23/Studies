@@ -468,6 +468,99 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
 
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
+              <span class="topic-icon">🚀</span>
+              <span class="topic-name">Autopilot Device Preparation — The Newer Flow That Deletes the Hardware Hash</span>
+              <span class="topic-badge">Intune • Provisioning</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Hardware Hash Was the Bottleneck. Device Preparation Removes It Entirely.</div>
+                <div class="concept-desc">
+                  Classic Autopilot's whole model rests on pre-registering each device's ~4&nbsp;KB
+                  <strong class="c-cyan">hardware hash</strong> to the tenant <em>before</em> it can
+                  provision — and that registration is the fragile, slow part: it depends on the
+                  OEM or reseller doing it, or on you harvesting hashes, and an unregistered device
+                  simply falls through to a plain out-of-box experience.
+                  <strong class="c-cyan">Autopilot device preparation</strong> — the newer flow —
+                  removes the pre-registration altogether. The device is no longer identified by a
+                  hash uploaded in advance; instead <strong class="c-amber">the user signs in, the
+                  device is placed into a security group you nominate, and a device-preparation
+                  policy targeted at that group provisions it</strong>. The single most brittle
+                  dependency in classic Autopilot — get the hash in first — is gone.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Aspect</th><th>Classic Autopilot</th><th>Device Preparation</th></tr>
+                    <tr><td>Device identity</td><td>Pre-uploaded hardware hash</td><td>User sign-in + a nominated security group — no hash</td></tr>
+                    <tr><td>Registration step</td><td>OEM / reseller / manual harvest — fragile at scale</td><td>None required</td></tr>
+                    <tr><td>What provisions it</td><td>Deployment profile via a dynamic group on a group tag</td><td>A device-preparation policy assigned directly to a user group</td></tr>
+                    <tr><td>Unregistered device</td><td>Drops to a normal OOBE <span class="acro-exp">(Out-of-Box Experience)</span> with no branding</td><td>Not a failure mode — there is nothing to pre-register</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The unit that actually changed is <strong>device identity</strong>: hash-first
+                    becomes user-and-group-first, which deletes the dependency that generated most
+                    &ldquo;Autopilot didn't trigger&rdquo; tickets in the first place.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Simpler, But Not a Drop-In Replacement — It Is a Narrower Model</div>
+                <div class="concept-desc">
+                  Device preparation is not classic Autopilot with the hash removed; it is a
+                  different, deliberately narrower model. It is
+                  <strong class="c-amber">Entra join only</strong> — no hybrid Entra join — it
+                  provisions a defined set of apps and scripts from the policy rather than gating on
+                  the full Enrollment Status Page app catalogue, and it targets a security group
+                  directly. So the way to tell which tool a scenario needs is to ask what it
+                  requires: hybrid join, white-glove pre-provisioning or self-deploying kiosks still
+                  belong to classic Autopilot; cloud-native user-driven provisioning where the hash
+                  was the pain belongs to device preparation.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What the scenario needs</th><th>Which flow answers it</th></tr>
+                    <tr><td>Cloud-native, Entra-joined, user-driven setup</td><td>Device preparation</td></tr>
+                    <tr><td>Hybrid Entra join to on-prem AD <span class="acro-exp">(Active Directory)</span></td><td>Classic Autopilot — device preparation cannot</td></tr>
+                    <tr><td>Pre-provisioning / white glove</td><td>Classic Autopilot</td></tr>
+                    <tr><td>Self-deploying kiosks with no user</td><td>Classic Autopilot self-deploying</td></tr>
+                    <tr><td>Kill the hardware-hash registration dependency</td><td>Device preparation</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Same intent — zero-touch to the user — inside a different envelope: device
+                    preparation trades some of classic Autopilot's flexibility for the removal of its
+                    most fragile dependency.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">New Cloud-Native Fleets Start Here; Hybrid and Edge Cases Keep Classic</div>
+                <div class="concept-desc">
+                  The mistake in both directions is treating this as a like-for-like upgrade. It is
+                  not: for a greenfield or cloud-native estate handing Entra-joined Windows devices to
+                  users, device preparation is the lower-friction default going forward — no hash
+                  wrangling, fewer moving parts. But a working classic Autopilot pipeline with OEM
+                  registration is <em>not</em> broken, and where you still need hybrid join,
+                  white-glove or self-deploying kiosks, classic Autopilot remains the only tool.
+                </div>
+                <div class="concept-desc verdict">
+                  So the decision is scenario-led, not version-led: reach for device preparation on
+                  new cloud-native provisioning to be rid of the hardware hash, and keep
+                  <span class="xref">Windows Autopilot — Zero-Touch Provisioning</span> for hybrid
+                  and the pre-provisioning modes it still owns. Either way the desktop is still gated
+                  by the same finish-line logic that
+                  <span class="xref">Enrollment Status Page (ESP)</span> describes — do not migrate a
+                  pipeline that already works simply because a newer flow exists.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
               <span class="topic-icon">⏳</span>
               <span class="topic-name">Enrollment Status Page (ESP)</span>
               <span class="topic-badge">Provisioning</span>
