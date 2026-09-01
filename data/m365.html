@@ -3148,3 +3148,97 @@ Get-MgContext | Select-Object Account, Scopes</pre>
               </div>
             </div>
           </div>
+
+          <!-- ── TOPIC: ENTRA ID GOVERNANCE ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🎫</span>
+              <span class="topic-name">Entra ID Governance — Entitlement Management &amp; Access Reviews</span>
+              <span class="topic-badge">Entra • Governance</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Access by Ticket Is a Permanent Grant Nobody Remembers to Revoke</div>
+                <div class="concept-desc">
+                  The default way people get access — raise a ticket, an admin adds them to a group,
+                  role or app — has a silent flaw: <strong class="c-amber">the grant is
+                  permanent</strong>. Nobody circles back when the project ends or the person changes
+                  teams, so access accretes and the effective tenure of a permission is
+                  &ldquo;forever&rdquo;. <strong class="c-cyan">Entitlement management</strong> inverts
+                  it: access becomes an <strong>access package</strong> — a bundle of groups, roles,
+                  apps and sites — that a user requests self-service, an approver grants, and,
+                  critically, that is <strong class="c-cyan">time-boxed and expires or comes up for
+                  review on its own</strong>. The unit of access stops being a standing membership
+                  and becomes a reviewed, expiring assignment.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Aspect</th><th>Ticket-based access</th><th>Entitlement management</th></tr>
+                    <tr><td>Grant</td><td>Manual, and permanent by default</td><td>Self-service request → approval → time-boxed assignment</td></tr>
+                    <tr><td>What is granted</td><td>One group or role at a time</td><td>An access package — groups, roles, apps and sites together</td></tr>
+                    <tr><td>Who may request</td><td>Whoever knows to ask</td><td>Scoped by policy — internal users, specific groups, or external guests via a catalog</td></tr>
+                    <tr><td>End of life</td><td>Nobody revokes it</td><td>Automatic expiry, with recurring review built in</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Entitlement management makes the <strong>default state of a grant temporary and
+                    reviewed</strong> — the exact opposite of the ticket model's default of permanent
+                    and forgotten.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Access Review's Default Action Is Where Governance Quietly Fails</div>
+                <div class="concept-desc">
+                  An <strong class="c-cyan">access review</strong> recertifies who still needs a
+                  group, role or app: a reviewer — the resource owner, the user's manager, or the
+                  users themselves by self-attestation — confirms or removes access on a schedule.
+                  The failure has a precise fingerprint: a review whose
+                  <strong class="c-amber">default action for non-responders is &ldquo;approve&rdquo;</strong>.
+                  Reviewers ignore the mail, the timer expires, everyone keeps their access — and the
+                  review still produces a green tick for the auditor while changing nothing. The whole
+                  value lives in the default: set non-response to <em>remove</em>, and a review nobody
+                  answers actually cleans up.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Review choice</th><th>What it really decides</th></tr>
+                    <tr><td>Reviewer = the users themselves</td><td>Cheap, but self-attestation is the weakest signal</td></tr>
+                    <tr><td>Reviewer = resource owner or manager</td><td>Stronger — if they actually engage</td></tr>
+                    <tr><td>Default on no response = approve</td><td>The review is theatre; stale access survives</td></tr>
+                    <tr><td>Default on no response = remove</td><td>The review has teeth; silence revokes</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    A review is only as good as its default action. <strong>Remove on no
+                    response</strong> is the single setting that turns a compliance checkbox into an
+                    actual control.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Make Access Answerable First; Automate the Lifecycle Second</div>
+                <div class="concept-desc">
+                  Entitlement management and access reviews are the engine of Entra ID Governance, with
+                  lifecycle workflows automating the joiner/mover/leaver steps on top. The reach-for-
+                  governance mistake is buying the Governance licences and building elaborate access
+                  packages before you can even answer the basic audit question —
+                  <strong class="c-amber">who has access to what, and why</strong>. Start by making
+                  access answerable: catalogue the resources, put the high-risk ones behind access
+                  packages with expiry, and run reviews with a remove-default on the crown jewels.
+                </div>
+                <div class="concept-desc verdict">
+                  So the decision is sequencing, not tooling: standing access behind expiring access
+                  packages, reviews that revoke on silence, and lifecycle automation added only once
+                  the manual model is sound. It is the resource-access twin of just-in-time admin —
+                  <span class="xref">Admin Roles &amp; Least Privilege — The Roles Worth Knowing, and PIM for the Rest</span>
+                  time-boxes privileged <em>roles</em>, entitlement management time-boxes standing
+                  <em>access</em> — and it pairs with the risk-driven gate
+                  <span class="xref">Entra ID Protection — Conditional Access That Reacts to Risk, Not Just Rules</span>
+                  applies at sign-in. Together they move the estate off permanent grants entirely.
+                </div>
+              </div>
+            </div>
+          </div>
