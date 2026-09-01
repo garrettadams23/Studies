@@ -1253,6 +1253,40 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">There Is No XSS-Proof Place to Put a Token — Storage Narrows the Attack, It Doesn't Close It</div>
+                <div class="concept-desc">
+                  The cookie-vs-localStorage debate is real but oversold, because
+                  <strong class="c-amber">neither survives XSS <span class="acro-exp">(Cross-Site Scripting)</span> intact</strong>. An attacker who can run
+                  JavaScript in your page cannot read an <code>HttpOnly</code> cookie — but they don't
+                  need to: the cookie rides along on every request they trigger, so they
+                  <strong>act as the user</strong> without ever seeing the token. localStorage is worse
+                  (the token is stolen and reused anywhere), but the cookie is not safe, only safer. So
+                  storage choice changes the <em>shape</em> of the XSS win; it does not prevent it. The
+                  controls that actually bound the damage are elsewhere: <strong class="c-cyan">short
+                  access-token lifetimes with refresh rotation</strong> (shrink the window), binding a
+                  token to a device or session (a stolen one is useless elsewhere), and — the root fix —
+                  not having XSS at all (CSP, output encoding).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Belief</th><th>The gap</th><th>The control that matters</th></tr>
+                    <tr><td>&ldquo;HttpOnly cookie = XSS-safe&rdquo;</td><td>XSS still rides the cookie to act as the user</td><td>Short lifetimes; the real fix is no XSS</td></tr>
+                    <tr><td>&ldquo;localStorage is fine with a CSP <span class="acro-exp">(Content Security Policy)</span>&rdquo;</td><td>One CSP bypass and the token is exfiltrated</td><td>Prefer HttpOnly; keep long-lived secrets out of JS reach</td></tr>
+                    <tr><td>&ldquo;Long-lived token for convenience&rdquo;</td><td>A stolen token works for its whole life</td><td>Short access token + rotating refresh</td></tr>
+                    <tr><td>&ldquo;The token is the identity&rdquo;</td><td>A leaked token is portable</td><td>Bind to device/session; revoke server-side</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So prefer <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> cookies as
+                    the default — they remove token <em>theft</em>, a real win — but stop treating where
+                    you store the token as the whole security decision. What decides your exposure is
+                    <strong>what an attacker can do in the window before the token expires and can be
+                    revoked</strong>, and that is answered by lifetime, rotation and binding — and, above
+                    all, by not shipping the XSS in the first place.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

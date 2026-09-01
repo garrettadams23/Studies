@@ -86753,12 +86753,12 @@ is effectively a study companion for the tracks above.
 </div>
 </div>
 </div>
-<div class="topic" id="cloud-native-serverless-architecture-patterns" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="cloud-native-serverless-architecture-patterns" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">☁️</span>
 <span class="topic-name">Cloud-Native &amp; Serverless Architecture Patterns</span>
 <span class="topic-badge">Architecture</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -86784,6 +86784,42 @@ scaling to zero and back. Both change how you decompose a system.
 low/spiky load but can get expensive and awkward at steady high volume (and
 vendor lock-in rises). Match the model to the traffic shape — ties to the
 "Choosing Compute" cloud card.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Serverless Moves the Operational Cost, It Doesn't Remove It — and the New Costs Aren't Priced In</div>
+<div class="concept-desc">
+The &ldquo;no ops&rdquo; pitch is the trap. Serverless genuinely removes server
+management, but the operational burden reappears in forms nobody budgets for.
+<strong class="c-amber">Observability gets harder, not easier</strong>: a request fans
+out across dozens of ephemeral functions with no shared log, so distributed tracing
+stops being optional from day one. You lose in-memory state and connection pooling —
+every invocation is cold and stateless, so a database with connection limits gets
+hammered until you put a pooler in front of it. Local development becomes emulation of
+the platform. And <strong class="c-amber">cost couples to traffic in a way that
+punishes success</strong>: the endpoint that would have been free on a fixed-size
+server now bills per invocation, so a viral moment is also a surprise invoice. None of
+these show up in the &ldquo;just write a function&rdquo; demo; all of them show up in
+month two.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The &ldquo;serverless removes it&rdquo; claim</th><th>Where the cost reappears</th></tr>
+<tr><td>No servers to manage</td><td>Distributed tracing, cold-start tuning, quota/limit management</td></tr>
+<tr><td>Scales automatically</td><td>Your database's connection limit doesn't — you need a pooler/proxy</td></tr>
+<tr><td>Just write a function</td><td>State and connection reuse are gone; local dev is emulation</td></tr>
+<tr><td>Pay only for what you use</td><td>Cost scales with success; steady high volume is dearer than a VM <span class="acro-exp">(Virtual Machine)</span></td></tr>
+</table>
+<div class="concept-desc verdict">
+So match the model to the workload, not the marketing: serverless is right for spiky,
+unpredictable, event-driven and glue work, where scale-to-zero and per-event billing
+are wins. It is the wrong default for steady high-throughput (cheaper on reserved
+capacity), latency-sensitive paths (cold starts), and long-running or stateful jobs.
+The operational simplicity is real at the edges and <strong>partly an illusion in the
+middle</strong> — it comes back as debugging, connection management, and a bill you
+now have to watch.
 </div>
 </div>
 </div>
@@ -95043,12 +95079,12 @@ reconnection logic up front, because they are not extras, they are the actual wo
 </div>
 </div>
 </div>
-<div class="topic" id="frontend-auth-tokens-cookies-oauth" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="frontend-auth-tokens-cookies-oauth" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔑</span>
 <span class="topic-name">Frontend Auth — Tokens, Cookies &amp; OAuth <span class="acro-exp">(Open Authorization)</span></span>
 <span class="topic-badge">Backends</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95073,6 +95109,40 @@ the security domain's OAuth/session cards.
 <code>Secure</code>, <code>SameSite</code> cookies for session tokens. Never store
 long-lived secrets where JavaScript can read them. Auth is one place to use a
 battle-tested library, not roll your own.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">There Is No XSS-Proof Place to Put a Token — Storage Narrows the Attack, It Doesn't Close It</div>
+<div class="concept-desc">
+The cookie-vs-localStorage debate is real but oversold, because
+<strong class="c-amber">neither survives XSS <span class="acro-exp">(Cross-Site Scripting)</span> intact</strong>. An attacker who can run
+JavaScript in your page cannot read an <code>HttpOnly</code> cookie — but they don't
+need to: the cookie rides along on every request they trigger, so they
+<strong>act as the user</strong> without ever seeing the token. localStorage is worse
+(the token is stolen and reused anywhere), but the cookie is not safe, only safer. So
+storage choice changes the <em>shape</em> of the XSS win; it does not prevent it. The
+controls that actually bound the damage are elsewhere: <strong class="c-cyan">short
+access-token lifetimes with refresh rotation</strong> (shrink the window), binding a
+token to a device or session (a stolen one is useless elsewhere), and — the root fix —
+not having XSS at all (CSP, output encoding).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Belief</th><th>The gap</th><th>The control that matters</th></tr>
+<tr><td>&ldquo;HttpOnly cookie = XSS-safe&rdquo;</td><td>XSS still rides the cookie to act as the user</td><td>Short lifetimes; the real fix is no XSS</td></tr>
+<tr><td>&ldquo;localStorage is fine with a CSP <span class="acro-exp">(Content Security Policy)</span>&rdquo;</td><td>One CSP bypass and the token is exfiltrated</td><td>Prefer HttpOnly; keep long-lived secrets out of JS reach</td></tr>
+<tr><td>&ldquo;Long-lived token for convenience&rdquo;</td><td>A stolen token works for its whole life</td><td>Short access token + rotating refresh</td></tr>
+<tr><td>&ldquo;The token is the identity&rdquo;</td><td>A leaked token is portable</td><td>Bind to device/session; revoke server-side</td></tr>
+</table>
+<div class="concept-desc verdict">
+So prefer <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> cookies as
+the default — they remove token <em>theft</em>, a real win — but stop treating where
+you store the token as the whole security decision. What decides your exposure is
+<strong>what an attacker can do in the window before the token expires and can be
+revoked</strong>, and that is answered by lifetime, rotation and binding — and, above
+all, by not shipping the XSS in the first place.
 </div>
 </div>
 </div>

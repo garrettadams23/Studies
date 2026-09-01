@@ -1697,6 +1697,42 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Serverless Moves the Operational Cost, It Doesn't Remove It — and the New Costs Aren't Priced In</div>
+                <div class="concept-desc">
+                  The &ldquo;no ops&rdquo; pitch is the trap. Serverless genuinely removes server
+                  management, but the operational burden reappears in forms nobody budgets for.
+                  <strong class="c-amber">Observability gets harder, not easier</strong>: a request fans
+                  out across dozens of ephemeral functions with no shared log, so distributed tracing
+                  stops being optional from day one. You lose in-memory state and connection pooling —
+                  every invocation is cold and stateless, so a database with connection limits gets
+                  hammered until you put a pooler in front of it. Local development becomes emulation of
+                  the platform. And <strong class="c-amber">cost couples to traffic in a way that
+                  punishes success</strong>: the endpoint that would have been free on a fixed-size
+                  server now bills per invocation, so a viral moment is also a surprise invoice. None of
+                  these show up in the &ldquo;just write a function&rdquo; demo; all of them show up in
+                  month two.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The &ldquo;serverless removes it&rdquo; claim</th><th>Where the cost reappears</th></tr>
+                    <tr><td>No servers to manage</td><td>Distributed tracing, cold-start tuning, quota/limit management</td></tr>
+                    <tr><td>Scales automatically</td><td>Your database's connection limit doesn't — you need a pooler/proxy</td></tr>
+                    <tr><td>Just write a function</td><td>State and connection reuse are gone; local dev is emulation</td></tr>
+                    <tr><td>Pay only for what you use</td><td>Cost scales with success; steady high volume is dearer than a VM <span class="acro-exp">(Virtual Machine)</span></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So match the model to the workload, not the marketing: serverless is right for spiky,
+                    unpredictable, event-driven and glue work, where scale-to-zero and per-event billing
+                    are wins. It is the wrong default for steady high-throughput (cheaper on reserved
+                    capacity), latency-sensitive paths (cold starts), and long-running or stateful jobs.
+                    The operational simplicity is real at the edges and <strong>partly an illusion in the
+                    middle</strong> — it comes back as debugging, connection management, and a bill you
+                    now have to watch.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
