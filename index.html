@@ -32479,8 +32479,8 @@ ten seconds spends the first twenty minutes finding out.
 <span class="ctag ctag-ptplus">PT+</span>
 </div>
 <span class="domain-sub">5-Phase Methodology · OWASP Top 10 · Engagement Types</span>
-<span class="domain-meta" aria-label="34 topics, about 1h 05m to read"
->34 topics · ~1h 05m</span>
+<span class="domain-meta" aria-label="34 topics, about 1h 10m to read"
+>34 topics · ~1h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -33206,12 +33206,12 @@ $(id)                 <span class="com"># $() subshell (URL: %24%28id%29)</span>
 </div>
 </div>
 <!-- ── TOPIC: RECON METHODOLOGY ──────────────────────────── -->
-<div class="topic" id="recon-methodology-intelligence-before-attack" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="recon-methodology-intelligence-before-attack" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔭</span>
 <span class="topic-name">Recon Methodology — Intelligence Before Attack</span>
 <span class="topic-badge">PENTEST • Methodology</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -33232,6 +33232,40 @@ $(id)                 <span class="com"># $() subshell (URL: %24%28id%29)</span>
 <tr><td>Wayback Machine</td><td>Old versions of the site</td><td>Find removed pages with sensitive info</td></tr>
 </tbody>
 </table>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Recon Is Won by Turning Findings Into an Attack Surface — Not by Running More Tools</div>
+<div class="concept-desc">
+The tool list is the easy part; the methodology is what separates recon that finds the way
+in from a pile of WHOIS output. Two disciplines matter. First, recon is a
+<strong class="c-cyan">map, not a checklist</strong>: the output that counts is not
+&ldquo;here are the subdomains&rdquo; but &ldquo;here is what the organisation forgot it
+owns&rdquo; — the acquired company's stale domain, the dev/staging box on the same
+certificate, the storage bucket named after the project. The blue team watches its known
+assets; you win on the ones it doesn't. Second, <strong class="c-amber">passive-to-active is
+a one-way gradient</strong>: passive recon sends nothing to the target and leaves no trace,
+so it is exhausted first; the moment you scan you are touching the target, and scope — what
+the authorisation actually covers — stops being paperwork and becomes the line between a test
+and a crime.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Recon output</th><th>Amateur reads it as</th><th>Professional reads it as</th></tr>
+<tr><td>A list of subdomains</td><td>Targets to scan</td><td>Which are forgotten/shadow assets nobody monitors</td></tr>
+<tr><td>Certificate-transparency logs</td><td>Subdomain enumeration</td><td>The staging/dev host that shares a cert with prod</td></tr>
+<tr><td>Employee names + tech stack</td><td>Trivia</td><td>The phishing pretext, and the software to hunt CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> for</td></tr>
+<tr><td>An acquired company's old domain</td><td>Out of scope, ignore</td><td>The weakest link — legacy, unpatched, still trusted</td></tr>
+</table>
+<div class="concept-desc verdict">
+So run the tools, then do the work they don't: build the map, mark what is shadow or
+forgotten, and rank by <strong>what is least likely to be watched</strong>, not what is
+easiest to reach. And hold the passive/active line deliberately — stay passive until you
+have squeezed it dry, then cross into active only within the scope you can point to in
+writing, because that boundary is the whole difference between the engagement and an
+offence.
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -86429,12 +86463,12 @@ rule.
 </div>
 </div>
 </div>
-<div class="topic" id="consistency-in-practice-quorums-tunable-reads" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="consistency-in-practice-quorums-tunable-reads" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎛️</span>
 <span class="topic-name">Consistency in Practice — Quorums &amp; Tunable Reads</span>
 <span class="topic-badge">Reliability</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -86459,6 +86493,40 @@ you choose consistency vs latency <em>per query</em>.
 So a shopping-cart read can be fast-and-eventual (low R) while the final
 checkout uses a strong quorum — the same store, tuned per operation. This is how
 Dynamo-style systems make CAP practical (ties to the CAP Theorem topic).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">W + R &gt; N Is a Staleness Bound, Not Linearizability — Conflating Them Loses Data</div>
+<div class="concept-desc">
+The quorum inequality is routinely read as &ldquo;strong consistency,&rdquo; and it is
+not — the gap is where data gets lost. <strong class="c-cyan">W + R &gt; N guarantees a
+read overlaps a replica that saw the latest acknowledged write</strong>, which gives
+recency, but it says nothing about ordering concurrent writes: two clients writing
+different values can both reach quorum, and without a conflict strategy (vector-clock
+versioning, last-write-wins, or true consensus) you get <strong class="c-amber">lost
+updates or the resurrected delete</strong> — the item that reappears because a
+replica's tombstone expired before anti-entropy propagated it. Real linearizability —
+one global order every client agrees on — needs a leader and a consensus protocol
+(Raft, Paxos), and that costs exactly the latency and partition-availability quorum
+tuning existed to avoid.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>You want</th><th>Quorum (W+R&gt;N) gives</th><th>The real thing needs</th></tr>
+<tr><td>Recent reads</td><td>Yes — a read sees the latest acked write</td><td>(sufficient)</td></tr>
+<tr><td>Concurrent writes ordered</td><td>No — both can win; conflicts happen</td><td>Versioning + merge, or a single writer</td></tr>
+<tr><td>No resurrected deletes</td><td>Not guaranteed — tombstone/anti-entropy races</td><td>Tombstone GC tuned to the repair window</td></tr>
+<tr><td>One global order (linearizable)</td><td>No</td><td>A leader + consensus (Raft/Paxos)</td></tr>
+</table>
+<div class="concept-desc verdict">
+So tune quorums for staleness, but do not mistake W + R &gt; N for a total order:
+decide explicitly how concurrent writes reconcile — a merge function, last-write-wins
+with its known data-loss risk, or a single writer — and reach for a consensus-backed
+store only where you genuinely need linearizability, because that is the guarantee
+quorums structurally cannot give, and paying for it brings back the latency and
+partition fragility you tuned quorums to escape.
 </div>
 </div>
 </div>

@@ -1408,6 +1408,40 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">W + R &gt; N Is a Staleness Bound, Not Linearizability — Conflating Them Loses Data</div>
+                <div class="concept-desc">
+                  The quorum inequality is routinely read as &ldquo;strong consistency,&rdquo; and it is
+                  not — the gap is where data gets lost. <strong class="c-cyan">W + R &gt; N guarantees a
+                  read overlaps a replica that saw the latest acknowledged write</strong>, which gives
+                  recency, but it says nothing about ordering concurrent writes: two clients writing
+                  different values can both reach quorum, and without a conflict strategy (vector-clock
+                  versioning, last-write-wins, or true consensus) you get <strong class="c-amber">lost
+                  updates or the resurrected delete</strong> — the item that reappears because a
+                  replica's tombstone expired before anti-entropy propagated it. Real linearizability —
+                  one global order every client agrees on — needs a leader and a consensus protocol
+                  (Raft, Paxos), and that costs exactly the latency and partition-availability quorum
+                  tuning existed to avoid.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>You want</th><th>Quorum (W+R&gt;N) gives</th><th>The real thing needs</th></tr>
+                    <tr><td>Recent reads</td><td>Yes — a read sees the latest acked write</td><td>(sufficient)</td></tr>
+                    <tr><td>Concurrent writes ordered</td><td>No — both can win; conflicts happen</td><td>Versioning + merge, or a single writer</td></tr>
+                    <tr><td>No resurrected deletes</td><td>Not guaranteed — tombstone/anti-entropy races</td><td>Tombstone GC tuned to the repair window</td></tr>
+                    <tr><td>One global order (linearizable)</td><td>No</td><td>A leader + consensus (Raft/Paxos)</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So tune quorums for staleness, but do not mistake W + R &gt; N for a total order:
+                    decide explicitly how concurrent writes reconcile — a merge function, last-write-wins
+                    with its known data-loss risk, or a single writer — and reach for a consensus-backed
+                    store only where you genuinely need linearizability, because that is the guarantee
+                    quorums structurally cannot give, and paying for it brings back the latency and
+                    partition fragility you tuned quorums to escape.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
