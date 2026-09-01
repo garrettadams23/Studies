@@ -39915,8 +39915,8 @@ is considerably easier to practise on something you are allowed to break.
 <span class="ctag ctag-aiplus">AI+</span>
 </div>
 <span class="domain-sub">ML Pipeline · Model Types · Neural Nets · AI Ethics · Agentic AI</span>
-<span class="domain-meta" aria-label="50 topics, about 1h 45m to read"
->50 topics · ~1h 45m</span>
+<span class="domain-meta" aria-label="50 topics, about 1h 50m to read"
+>50 topics · ~1h 50m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -41494,12 +41494,12 @@ automated on a schedule or a drift alert.
 </div>
 </div>
 </div>
-<div class="topic" id="lora-quantization-tokenization-internals" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="lora-quantization-tokenization-internals" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗜️</span>
 <span class="topic-name">LoRA <span class="acro-exp">(Low-Rank Adaptation)</span>, Quantization &amp; Tokenization Internals</span>
 <span class="topic-badge">LLM Internals</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -41522,6 +41522,40 @@ the plumbing behind "run/tune a 70B model on one GPU <span class="acro-exp">(Gra
 poorly because they see tokens, not letters; and cost/limits are per-token, not
 per-word (~4 chars/token in English). <strong class="c-green">QLoRA</strong> =
 quantization + LoRA, letting you tune large models on a single consumer GPU.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">LoRA Adapts, It Doesn't Teach — and Quantization's &ldquo;Tiny&rdquo; Loss Isn't Uniform</div>
+<div class="concept-desc">
+The three are routinely reached for to solve problems they don't. LoRA is the big one:
+it is cheap, swappable task and style adaptation, but it
+<strong class="c-amber">cannot inject knowledge the base model lacks</strong> —
+teaching new facts wants retrieval (RAG) or a full fine-tune, and a team that
+LoRA-tunes to &ldquo;make the model know our docs&rdquo; gets a model that sounds right
+and still doesn't know. Quantization's &ldquo;tiny quality loss&rdquo; is an average
+that hides its shape: the degradation lands on the <strong class="c-amber">long
+tail</strong> — rare tokens, multi-step arithmetic, edge-case reasoning — so a 4-bit
+model can benchmark fine and fail the hard 5% that mattered. And tokenization is the
+quiet tax: non-English text costs two to four times the tokens, so multilingual work is
+both pricier and has effectively shorter usable context.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Technique</th><th>What it's for</th><th>Where it bites</th></tr>
+<tr><td>LoRA / PEFT</td><td>Cheap task/style adaptation; swappable adapters</td><td>Cannot add knowledge — use RAG <span class="acro-exp">(Retrieval-Augmented Generation)</span> or a full fine-tune for facts</td></tr>
+<tr><td>Quantization</td><td>Fit and speed on modest hardware</td><td>&ldquo;Tiny loss&rdquo; is non-uniform; 4-bit is a cliff for some tasks</td></tr>
+<tr><td>Tokenization</td><td>How text becomes model input</td><td>Non-English costs 2–4× tokens; why models miscount letters</td></tr>
+<tr><td>QLoRA</td><td>Tune large models on one GPU</td><td>Inherits LoRA's knowledge limit and quantization's tail loss</td></tr>
+</table>
+<div class="concept-desc verdict">
+So match the tool to the actual problem: <strong>LoRA to change how the model
+behaves, RAG to change what it knows, quantization to fit it on the hardware you
+have</strong> — while testing the quantized model on your hardest cases, not the
+average, because that is where the bits you dropped were doing the work. And budget
+tokenisation into cost and context from the start, especially for anything not in
+English.
 </div>
 </div>
 </div>
@@ -71931,8 +71965,8 @@ incident.
 <span class="ctag ctag-secplus">GCIH</span>
 </div>
 <span class="domain-sub">NSM · SIEM · EDR · Detection · DFIR · Threat Intel</span>
-<span class="domain-meta" aria-label="60 topics, about 1h 55m to read"
->60 topics · ~1h 55m</span>
+<span class="domain-meta" aria-label="60 topics, about 2h 00m to read"
+>60 topics · ~2h 00m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -73673,12 +73707,12 @@ baseline continuously rather than via a one-time checklist.
 </div>
 </div>
 </div>
-<div class="topic" id="patch-config-management-as-a-control" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="patch-config-management-as-a-control" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🩹</span>
 <span class="topic-name">Patch &amp; Config Management as a Control</span>
 <span class="topic-badge">Vuln Mgmt</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -73702,6 +73736,39 @@ scramble into a repeatable, measurable control.
 to remediate (MTTR) by severity, and <em>drift</em> (systems that fell out of
 compliance). Config management also prevents drift — the box stays hardened, not
 just gets hardened once.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Coverage % Is a Comfort Metric — the Risk Lives in the Exceptions You Can't Patch</div>
+<div class="concept-desc">
+A patch-coverage number climbs comfortably toward 95% while the security reality hides
+in the last 5%, because <strong class="c-amber">the systems that resist patching are
+systematically the highest-risk ones</strong>: the box that can't take downtime, the
+appliance on end-of-life firmware, the crown-jewel server nobody will touch. High
+coverage is a comfort metric; the <strong class="c-cyan">exception list is the actual
+posture</strong> — the standing &ldquo;can't patch,&rdquo; and why. The other half:
+patching is itself a risk — a bad patch is an outage — so fast-for-security fights
+slow-for-stability, the same tension DORA <span class="acro-exp">(DevOps Research and Assessment)</span> names for delivery. The mature programme
+resolves it not by patching everything at once nor by permanent carve-outs, but by
+ringing the rollout and managing the exceptions.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The comfort move</th><th>What it hides</th><th>The real control</th></tr>
+<tr><td>Report coverage %</td><td>The unpatched few are the highest-risk systems</td><td>Work the exception list — owner and expiry on each</td></tr>
+<tr><td>Permanent &ldquo;can't patch&rdquo; carve-out</td><td>Risk with no compensating control</td><td>Isolate, virtual-patch (WAF/IPS), monitor harder</td></tr>
+<tr><td>Patch everything ASAP</td><td>A bad patch is a self-inflicted outage</td><td>Ring it: canary → broad → all, watching each</td></tr>
+<tr><td>One MTTR <span class="acro-exp">(Mean Time To Repair)</span> number</td><td>Criticals lag behind trivia</td><td>MTTR by severity; exploited-in-the-wild first</td></tr>
+</table>
+<div class="concept-desc verdict">
+So measure the exceptions, not the coverage: every system that can't be patched needs
+a named owner, a compensating control, and an expiry date, or it is just risk you
+stopped looking at. And treat the speed-versus-stability tension as the actual job —
+ring the rollout so a bad patch hits a canary, not the fleet, and spend the urgency
+budget on what is being exploited in the wild, not on clearing the long tail of
+low-severity noise.
 </div>
 </div>
 </div>

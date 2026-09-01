@@ -1621,6 +1621,40 @@ prompts = [
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">LoRA Adapts, It Doesn't Teach — and Quantization's &ldquo;Tiny&rdquo; Loss Isn't Uniform</div>
+                <div class="concept-desc">
+                  The three are routinely reached for to solve problems they don't. LoRA is the big one:
+                  it is cheap, swappable task and style adaptation, but it
+                  <strong class="c-amber">cannot inject knowledge the base model lacks</strong> —
+                  teaching new facts wants retrieval (RAG) or a full fine-tune, and a team that
+                  LoRA-tunes to &ldquo;make the model know our docs&rdquo; gets a model that sounds right
+                  and still doesn't know. Quantization's &ldquo;tiny quality loss&rdquo; is an average
+                  that hides its shape: the degradation lands on the <strong class="c-amber">long
+                  tail</strong> — rare tokens, multi-step arithmetic, edge-case reasoning — so a 4-bit
+                  model can benchmark fine and fail the hard 5% that mattered. And tokenization is the
+                  quiet tax: non-English text costs two to four times the tokens, so multilingual work is
+                  both pricier and has effectively shorter usable context.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Technique</th><th>What it's for</th><th>Where it bites</th></tr>
+                    <tr><td>LoRA / PEFT</td><td>Cheap task/style adaptation; swappable adapters</td><td>Cannot add knowledge — use RAG <span class="acro-exp">(Retrieval-Augmented Generation)</span> or a full fine-tune for facts</td></tr>
+                    <tr><td>Quantization</td><td>Fit and speed on modest hardware</td><td>&ldquo;Tiny loss&rdquo; is non-uniform; 4-bit is a cliff for some tasks</td></tr>
+                    <tr><td>Tokenization</td><td>How text becomes model input</td><td>Non-English costs 2–4× tokens; why models miscount letters</td></tr>
+                    <tr><td>QLoRA</td><td>Tune large models on one GPU</td><td>Inherits LoRA's knowledge limit and quantization's tail loss</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So match the tool to the actual problem: <strong>LoRA to change how the model
+                    behaves, RAG to change what it knows, quantization to fit it on the hardware you
+                    have</strong> — while testing the quantized model on your hardest cases, not the
+                    average, because that is where the bits you dropped were doing the work. And budget
+                    tokenisation into cost and context from the start, especially for anything not in
+                    English.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
