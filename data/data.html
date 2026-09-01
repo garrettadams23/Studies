@@ -498,6 +498,40 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The CTE Optimization Fence: Readable Steps the Planner Won't Optimize Across</div>
+                <div class="concept-desc">
+                  CTEs read as clean, stacked steps — and on some engines that readability has a
+                  performance cost the syntax hides. Historically, and still in cases, a CTE is an
+                  <strong class="c-amber">optimization fence</strong>: it is materialised into a
+                  temporary result and the planner cannot push a predicate from the outer query into it.
+                  So a CTE that scans a million rows, filtered to ten by a <code>WHERE</code> outside it,
+                  <strong class="c-amber">computes the full million every time</strong> — the filter
+                  can't reach inside the fence. Older Postgres materialised every CTE; Postgres 12+
+                  inlines simple ones by default, but <code>MATERIALIZED</code> forces the fence back and
+                  other engines vary, so the behaviour is not something to assume. The recursive form has
+                  its own trap: with no termination or cycle guard, a recursive CTE over a graph with a
+                  loop runs forever.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The assumption</th><th>The reality</th><th>The check</th></tr>
+                    <tr><td>&ldquo;A CTE is just a named subquery&rdquo;</td><td>On some engines it's a materialised fence</td><td><code>EXPLAIN</code> — is the outer <code>WHERE</code> pushed in?</td></tr>
+                    <tr><td>The outer filter reaches the CTE cheaply</td><td>Behind a fence, the CTE computes fully first</td><td>Filter inside the CTE, or rely on inlining</td></tr>
+                    <tr><td>A recursive CTE terminates</td><td>A cycle in the data loops forever</td><td>Depth cap or cycle detection; mind <code>UNION</code> vs <code>UNION ALL</code></td></tr>
+                    <tr><td><code>MATERIALIZED</code> for clarity</td><td>It re-imposes the fence you may not want</td><td>Use it deliberately, not by habit</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So use CTEs freely for readability — on a modern engine that inlines them it is
+                    usually free — but for a hot query treat the fence as real until <code>EXPLAIN</code>
+                    proves otherwise: check that the outer filter reaches inside, push predicates into the
+                    CTE when it doesn't, and give every recursive CTE a termination guard. The clean query
+                    and the fast query are usually the same on today's planners; the times they diverge
+                    are exactly the times a hot path can't afford the difference.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1129,6 +1163,41 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <strong class="c-green">Choosing:</strong> Postgres for richer features &amp;
                     strictness; MySQL where the ecosystem/hosting assumes it (WordPress) or the team
                     knows it well. Both are excellent — the differences are smaller than the tribalism.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">&ldquo;Looser SQL&rdquo; Was a Data-Integrity Landmine — and MariaDB Is No Longer a Drop-In Twin</div>
+                <div class="concept-desc">
+                  Two things behind the polite table rows deserve saying plainly. First, MySQL's
+                  historical permissiveness was not a quirk — it was the database
+                  <strong class="c-amber">breaking the one promise you use a database for</strong>:
+                  without strict mode an out-of-range number was silently clamped, an over-long string
+                  truncated, an invalid <code>'0000-00-00'</code> date accepted, a value coerced into the
+                  wrong type rather than rejected — so the store you trusted to enforce integrity quietly
+                  corrupted it. Modern versions default to strict mode, but a migrated database or an old
+                  config can still run permissive, and the failure is invisible until you find the
+                  truncated data months later. Second, MySQL and MariaDB have
+                  <strong class="c-amber">genuinely diverged</strong>: a drop-in fork once, they now
+                  differ in JSON <span class="acro-exp">(JavaScript Object Notation)</span> handling, features and version numbering — the choice is real, and
+                  tooling that assumes one may not work on the other.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The trap</th><th>What historically happened</th><th>The fix</th></tr>
+                    <tr><td>No strict SQL mode</td><td>Silent truncation, clamping, <code>'0000-00-00'</code> dates</td><td>Verify <code>STRICT_TRANS_TABLES</code> is on — don't assume</td></tr>
+                    <tr><td>Plain <code>utf8</code> charset</td><td>3-byte only — emoji and some CJK silently break</td><td>Always <code>utf8mb4</code></td></tr>
+                    <tr><td>&ldquo;MariaDB is just MySQL&rdquo;</td><td>Diverged JSON, features, version numbers</td><td>Pick one; test tooling against it, not the other</td></tr>
+                    <tr><td>Repeatable Read default</td><td>A different anomaly profile than Postgres</td><td>Know what your isolation level guarantees</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So on MySQL the first thing to confirm is that strict mode is on, because a permissive
+                    server turns the database from the guarantor of your invariants into a silent source
+                    of corruption — the exact opposite of why you put rules in the database. And treat
+                    MySQL and MariaDB as the separate databases they have become: choose deliberately on
+                    hosting, features and licence, and don't assume a library, backup tool, or SQL feature
+                    that works on one works unchanged on the other.
                   </div>
                 </div>
               </div>
