@@ -90999,18 +90999,18 @@ it.
 <span class="ctag ctag-general">DATA</span>
 </div>
 <span class="domain-sub">SQL · DB Internals · NoSQL · Warehousing · DBA</span>
-<span class="domain-meta" aria-label="44 topics, about 1h 40m to read"
->44 topics · ~1h 40m</span>
+<span class="domain-meta" aria-label="44 topics, about 1h 45m to read"
+>44 topics · ~1h 45m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
 <script type="text/html" class="domain-src" data-domain="data">
-<div class="topic" id="how-a-database-actually-works" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="how-a-database-actually-works" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚙️</span>
 <span class="topic-name">How a Database Actually Works</span>
 <span class="topic-badge">Internals</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -91040,14 +91040,49 @@ underpins replication and point-in-time recovery.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">The Buffer Pool Is the Whole Performance Story — and the Working Set Must Fit in RAM <span class="acro-exp">(Random Access Memory)</span></div>
+<div class="concept-desc">
+Database performance collapses to one question: is the page you need already in the
+buffer pool? A read that hits the cache is memory-fast; one that misses is a random
+disk seek, orders of magnitude slower. Two consequences trip people up. First,
+<strong class="c-amber">benchmarks lie unless you control for cache warmth</strong>:
+the same query is slow on the first run (cold pages) and fast on the second, so an
+&ldquo;it's fast now&rdquo; taken after warming tells you nothing about the cold path a
+real user hits. Second and more important, performance
+<strong class="c-amber">falls off a cliff when the working set no longer fits</strong>:
+below that line most reads are memory, above it every read is disk, and throughput
+drops by orders of magnitude with no code change. And the WAL sets the write ceiling —
+a commit isn't durable until its log entry is <code>fsync</code>'d, so commit latency
+<em>is</em> disk-sync latency.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The reality</th><th>What it means for you</th></tr>
+<tr><td>Read hits the buffer pool</td><td>Memory-fast — the common, cheap case</td></tr>
+<tr><td>Read misses</td><td>Random disk seek — orders of magnitude slower</td></tr>
+<tr><td>Working set &gt; buffer pool</td><td>Performance cliff — every read hits disk</td></tr>
+<tr><td>Commit = WAL fsync</td><td>Commit latency is disk-sync latency; batch to amortise</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the most useful capacity question is whether your hot data fits in RAM, and the
+most useful performance instinct is to distrust any benchmark that didn't control for
+a cold cache. Size the buffer pool to the working set, watch the
+<strong>cache-hit ratio</strong> as the number that predicts trouble, and remember a
+commit's speed is your disk's <code>fsync</code> speed — everything else is
+downstream of those two facts.
 </div>
 </div>
-<div class="topic" id="the-relational-model-keys-integrity" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="the-relational-model-keys-integrity" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧮</span>
 <span class="topic-name">The Relational Model — Keys &amp; Integrity</span>
 <span class="topic-badge">Foundations</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -91074,6 +91109,40 @@ not zero or empty. It uses <em>three-valued logic</em> — <code>NULL = NULL</co
 is not true but <code>NULL</code>, and <code>WHERE x = NULL</code> matches nothing
 (use <code>IS NULL</code>). NULLs silently break naive comparisons, joins, and
 aggregates — the single most common SQL <span class="acro-exp">(Structured Query Language)</span> bug.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Put the Invariant in the Database — Every Writer Passes Through It, the App Layer Doesn't</div>
+<div class="concept-desc">
+The card says constraints let the database enforce correctness &ldquo;so your
+application doesn't have to,&rdquo; and that argument is worth making sharply: the
+constraint is the <strong class="c-cyan">only rule every writer obeys</strong>. Teams
+that enforce invariants only in the service layer still corrupt their data, because
+there is always another writer — a migration script, a second service, an ORM <span class="acro-exp">(Object-Relational Mapping)</span> path
+that skips validation, a one-off manual fix at 2am. Application validation is a rule
+<em>some</em> writers follow; a <code>NOT NULL</code>, a foreign key, a
+<code>UNIQUE</code>, a <code>CHECK</code> is a rule <strong class="c-amber">none can
+bypass</strong>. The common mistake is dropping constraints &ldquo;for
+performance&rdquo; or &ldquo;for flexibility&rdquo; — trading a small, known write cost
+for eventual silent corruption that is far more expensive to find than to prevent.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Enforced where</th><th>Who it actually constrains</th></tr>
+<tr><td>Application / service code</td><td>Only the writers that go through that code</td></tr>
+<tr><td>ORM validations</td><td>Skipped by raw SQL, migrations, and other services</td></tr>
+<tr><td>A database constraint</td><td>Every writer, no exceptions — including the 2am manual fix</td></tr>
+<tr><td>&ldquo;We'll just be careful&rdquo;</td><td>Nobody, eventually</td></tr>
+</table>
+<div class="concept-desc verdict">
+So model invariants as constraints by default — <code>NOT NULL</code>, foreign keys,
+<code>UNIQUE</code>, <code>CHECK</code> — and relax one only with a named reason you
+have written down, not a vague appeal to performance. The database is the one place a
+rule is guaranteed; every layer above it holds only until the next writer forgets.
+Cheap up front, and the last line of defence when the application has a bug — which
+it will.
 </div>
 </div>
 </div>
@@ -91707,12 +91776,12 @@ sized data is worth more than any amount of reading the query.</strong>
 </div>
 </div>
 </div>
-<div class="topic" id="query-optimization-sargability-n1" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="query-optimization-sargability-n1" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚀</span>
 <span class="topic-name">Query Optimization — Sargability &amp; N+1</span>
 <span class="topic-badge">Performance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -91740,6 +91809,40 @@ can use an index. Wrapping an indexed column in a function or leading a
 <strong class="c-amber">The N+1 problem</strong> is the #1 app-layer DB killer
 (ORMs love to cause it): loading a list, then firing one query per item. Fix by
 eager-loading with a join or a single <code>WHERE id IN (…)</code>.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">The Query That Was Fast and Went Slow: Stale Statistics and the Plan Flip</div>
+<div class="concept-desc">
+Sargability is how you <em>let</em> the planner use an index; the other half of query
+performance is that the planner's choices rest on <strong class="c-cyan">statistics
+that go stale</strong>. The optimiser picks a plan from estimated row counts, and when
+the data grows or its distribution skews, yesterday's estimates send it down a bad
+plan — the query that ran in milliseconds for months suddenly takes seconds, with no
+code change, because the planner switched from an index seek to a full scan on numbers
+that no longer describe the table. Keep statistics fresh
+(<code>ANALYZE</code>/auto-analyze), and when a plan is wrong,
+<strong class="c-amber">read what the planner actually did</strong> rather than guess:
+<code>EXPLAIN</code> (and <code>EXPLAIN ANALYZE</code>, which runs it) is the only
+source of truth — it shows the real plan, where the row estimates blow up, and whether
+the index you added is used at all.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Likely cause</th><th>The move</th></tr>
+<tr><td>A once-fast query slowly degrades</td><td>Stale stats; the plan flipped</td><td><code>ANALYZE</code>; check <code>EXPLAIN</code> for a scan where a seek belongs</td></tr>
+<tr><td>The index exists but isn't used</td><td>Non-sargable predicate, or stats say a scan is cheaper</td><td>Make the predicate sargable; refresh stats</td></tr>
+<tr><td>Fast in dev, slow in prod</td><td>Prod's data size/skew differs</td><td><code>EXPLAIN</code> on prod-like data, not a tiny dev table</td></tr>
+<tr><td>&ldquo;It should use the index&rdquo;</td><td>You are guessing</td><td>Read <code>EXPLAIN ANALYZE</code> — it is not an opinion</td></tr>
+</table>
+<div class="concept-desc verdict">
+So write sargable predicates, then treat <code>EXPLAIN ANALYZE</code> as the
+instrument you reach for <em>before</em> optimising anything — it replaces a guess
+about what the database is doing with the fact. And keep statistics current, because
+the most baffling regressions are not bad queries but good queries the planner
+stopped understanding once the data moved out from under its estimates.
 </div>
 </div>
 </div>
