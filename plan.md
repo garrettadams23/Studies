@@ -12435,6 +12435,31 @@ backup import: SRS + notepad + streak → "[object Object]"  →  restored byte-
 make all now runs seven browser/gate suites; the two written today guard a phone and a backup
 ```
 
+### Content — the enterprise-Microsoft depth pass (MECM / Intune / Azure / Exchange)
+
+A requested deep pass on enterprise Microsoft management. The audit found the estate already
+deep — endpoint carries MECM (distribution points, boundary groups, task sequences, SUP), Intune,
+Autopilot and co-management; m365 the full Exchange/Teams/Purview surface; infra AD/GPO/AD CS;
+cloud the Azure hierarchy, networking, Monitor and Sentinel. So the method was the usual one:
+probe the durable subjects, verify each apparent gap against the *content*, keep only the zeros.
+
+The genuine zeros clustered in hybrid and cloud-side management, not the on-prem estate:
+
+- **Azure Arc** (`cloud`) — the control-plane extension that projects an on-prem or other-cloud
+  server into Resource Manager so Policy, RBAC, Defender, Monitor and Update Manager reach it
+  without moving the workload. The card's spine is the honest boundary: Arc governs the machine,
+  it does not migrate, network or SLA it, and a *Disconnected* agent is an unmonitored machine, not
+  a compliant one. Its decision line is &ldquo;will this box still be off-Azure in two years&rdquo;.
+- **Azure Automation &amp; Update Manager** (`cloud`) — runbooks (managed identity, never a stored
+  password; Hybrid Runbook Worker for on-prem reach) and agentless server patching whose reach
+  through Arc covers cloud and data-centre servers on one schedule. Its decision table sorts the
+  patch tools by estate — Autopatch for Intune clients, Update Manager for servers, MECM SUP for the
+  ConfigMgr estate — and the automation tools by job — runbook vs Function vs Logic App.
+
+Both are `cloud` cards, linked bidirectionally to each other and to the Azure hierarchy, Defender
+and Monitor cards they extend. Check PASS · smoke 142/142 · axe 6/6 · mobile 9/9 · visual 2/2 ·
+1,286 links, 0 one-way. Site 1,519 → 1,521.
+
 ---
 
 # Closing note for Phase 7–10

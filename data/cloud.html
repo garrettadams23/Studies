@@ -4320,3 +4320,189 @@ dsregcmd /status
               </div>
             </div>
           </div>
+
+          <!-- ── TOPIC: AZURE ARC ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🌉</span>
+              <span class="topic-name">Azure Arc — Governing What Isn't in Azure From Inside Azure</span>
+              <span class="topic-badge">Azure • Hybrid</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Azure's Management Plane Stops at Azure's Edge. Arc Moves the Edge.</div>
+                <div class="concept-desc">
+                  Azure Policy, RBAC <span class="acro-exp">(Role-Based Access Control)</span>, tags, Defender for Cloud, Monitor, Update Manager — the whole governance
+                  apparatus — only sees resources that live in <strong class="c-cyan">Azure Resource Manager</strong>.
+                  A server in your own data centre, or one running in AWS <span class="acro-exp">(Amazon Web Services)</span>, is simply invisible to it. Azure Arc
+                  closes that gap by <strong class="c-amber">projecting the outside machine into Resource Manager as
+                  a first-class resource</strong>: install the Connected Machine Agent, register the box, and it
+                  appears in the portal beside your Azure VMs <span class="acro-exp">(Virtual Machine)</span> — same Policy assignments, same RBAC scopes, same
+                  Defender coverage — while the workload itself never moves. It is a control-plane extension, not a
+                  migration.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What Arc projects into Azure</th><th>The Azure surface it then answers to</th></tr>
+                    <tr><td>Arc-enabled <strong>servers</strong> (Windows/Linux, on-prem or another cloud)</td><td>Policy, RBAC, tags, Monitor, Defender for Cloud, Update Manager, extensions</td></tr>
+                    <tr><td>Arc-enabled <strong>Kubernetes</strong></td><td>GitOps <span class="acro-exp">(Git Operations)</span> configuration, Policy, Defender, Monitor — on any conformant cluster</td></tr>
+                    <tr><td>Arc-enabled <strong>data services</strong> (SQL Managed Instance, PostgreSQL)</td><td>Run Azure data services on your own hardware, updated from Azure</td></tr>
+                    <tr><td>Arc-enabled <strong>SQL <span class="acro-exp">(Structured Query Language)</span> Server</strong></td><td>Inventory, best-practice assessment, Defender, licence visibility</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The unlock is a <strong>single pane and a single policy model across a hybrid estate</strong> —
+                    one RBAC assignment, one Defender plan, one patch schedule — reaching the machines you are
+                    deliberately keeping where they are, without lifting them anywhere.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">It Governs the Machine. It Does Not Move It, Network It, or Do It for Free.</div>
+                <div class="concept-desc">
+                  Arc is precise about what it is <em>not</em>. The agent is <strong class="c-cyan">outbound-only</strong>
+                  — HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> to Azure endpoints — and carries a machine identity used like a managed identity; it does
+                  not give the server an Azure IP <span class="acro-exp">(Internet Protocol)</span>, Azure networking, or Azure's SLA <span class="acro-exp">(Service Level Agreement)</span>. The box still lives and fails
+                  where it always did. Several capabilities layered on top bill <strong>per resource</strong>
+                  (Defender plans, Monitor ingestion, Update Manager beyond its free assessment), so &ldquo;Arc is
+                  free to connect&rdquo; is true and misleading. And the failure mode is connectivity:
+                  <strong class="c-amber">a machine that loses its outbound path, or whose agent certificate lapses,
+                  goes Disconnected — and every Policy and Defender assessment silently stops evaluating it.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Arc gives you</th><th>Arc does not give you</th></tr>
+                    <tr><td>One control plane: Policy, RBAC, Defender, Monitor, Update</td><td>Migration — the workload stays on its own hardware</td></tr>
+                    <tr><td>A machine identity for keyless auth to Azure</td><td>Azure networking, an Azure IP, or Azure's SLA</td></tr>
+                    <tr><td>Inventory and drift across on-prem and other clouds</td><td>A free ride — many overlays bill per resource</td></tr>
+                    <tr><td>Extensions pushed as if it were an Azure VM</td><td>Anything at all, once the agent is Disconnected</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The dangerous half is the silent one. A Disconnected Arc machine is not a <em>compliant</em>
+                    machine, it is an <em>unmonitored</em> one — so &ldquo;no Policy failures&rdquo; has to be read
+                    against &ldquo;is it still connected&rdquo;, or the estate looks clean precisely because the
+                    broken box stopped reporting.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Arc Is for What You Cannot or Will Not Move. Otherwise, Just Migrate.</div>
+                <div class="concept-desc">
+                  The mistake is reaching for Arc as a default hybrid strategy. If a workload <em>can</em> move to an
+                  Azure VM, migrating is simpler and gives you native networking and an SLA — Arc is not a substitute
+                  for that. Arc earns its place for the machines that are staying put: regulated or latency-bound
+                  on-prem workloads, servers in AWS or GCP <span class="acro-exp">(Google Cloud Platform)</span> you are not consolidating, edge sites. Its value is
+                  proportional to how <em>much</em> of your estate is off-Azure and how much you want one governance
+                  model over all of it.
+                </div>
+                <div class="concept-desc verdict">
+                  So the test is not &ldquo;is it hybrid&rdquo; but <strong>will this machine still be off-Azure in
+                  two years?</strong> If yes, Arc buys you one policy set, one Defender pane and one patch cadence —
+                  through <span class="xref">Azure Automation &amp; Update Manager — Runbooks and Patching at Fleet Scale</span> —
+                  the same governance <span class="xref">Azure Hierarchy, RBAC Scopes &amp; Policy</span> defines for
+                  native resources, now reaching the machines that never left. If the machine is moving anyway, skip
+                  Arc and migrate.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: AZURE AUTOMATION & UPDATE MANAGER ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">⚙️</span>
+              <span class="topic-name">Azure Automation &amp; Update Manager — Runbooks and Patching at Fleet Scale</span>
+              <span class="topic-badge">Azure • Ops</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">One Patch Window, Set Centrally — and Every Server Obeys, Azure or Not</div>
+                <div class="concept-desc">
+                  Azure Update Manager is the native patch orchestrator for <strong>servers</strong>. It needs no
+                  WSUS <span class="acro-exp">(Windows Server Update Services)</span>, no Log Analytics workspace, and no patch agent of its own — <strong class="c-cyan">it drives
+                  the agent the machine already has</strong>, the Azure VM <span class="acro-exp">(Virtual Machine)</span> agent or the Arc Connected Machine Agent.
+                  You assess a fleet, then either patch once on demand or attach a <strong>maintenance
+                  configuration</strong> — a recurring window with reboot and classification rules — and every
+                  in-scope machine patches inside it. The reach is the point:
+                  <strong class="c-amber">&ldquo;in scope&rdquo; spans Azure VMs and Arc-enabled servers alike, so
+                  one schedule covers a box in Azure and a box in your data centre.</strong>
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you are patching</th><th>The tool that owns it</th></tr>
+                    <tr><td>Windows <strong>clients</strong> — laptops, desktops — via Intune</td><td>Windows Autopatch / Update for Business</td></tr>
+                    <tr><td>Windows &amp; Linux <strong>servers</strong>, in Azure and Arc-enabled anywhere</td><td>Azure Update Manager</td></tr>
+                    <tr><td>An on-prem estate already run by ConfigMgr</td><td>MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Software Update Point (WSUS beneath it)</td></tr>
+                    <tr><td>A standalone legacy environment</td><td>WSUS on its own</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Update Manager is the <strong>server</strong> answer, and its reach through Arc is what makes it
+                    matter — the same tool for cloud and on-prem servers, which is exactly what
+                    <span class="xref">Azure Arc — Governing What Isn't in Azure From Inside Azure</span> exists to
+                    enable. (Note the lineage: the older Log-Analytics-based Automation Update Management has been
+                    retired in favour of Update Manager, which needs neither the workspace nor the extra agent.)
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Runbooks Automate the Estate — With an Identity, Never a Stored Password</div>
+                <div class="concept-desc">
+                  Azure Automation is the runbook engine beside it: PowerShell or Python scripts that run on a
+                  schedule, a webhook or an event, in an Azure-hosted sandbox — or, through a <strong>Hybrid Runbook
+                  Worker</strong>, on a machine inside your own network so the automation can reach on-prem systems.
+                  The thing that makes or breaks a runbook estate is <em>how it authenticates</em>:
+                  <strong class="c-amber">a runbook should run as a managed identity scoped by RBAC <span class="acro-exp">(Role-Based Access Control)</span> to exactly what
+                  it touches</strong> — never with a credential pasted into the script or held in a variable. The
+                  classic incident is a runbook carrying a stored privileged credential behind a webhook anyone can
+                  call.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Building block</th><th>What it is for</th></tr>
+                    <tr><td>Runbook</td><td>PowerShell / Python / graphical; scheduled, webhook- or event-triggered</td></tr>
+                    <tr><td>Hybrid Runbook Worker</td><td>Runs a runbook on-prem, so it can reach local systems</td></tr>
+                    <tr><td>Managed identity</td><td>The runbook's credential — scoped by RBAC, with nothing stored</td></tr>
+                    <tr><td>Shared resources</td><td>Variables, modules and schedules the Automation account holds</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The tell of a healthy Automation account is that it holds <strong>no long-lived secrets</strong>:
+                    the identity is the credential and RBAC is the blast radius. A runbook that stores a password is
+                    one leaked webhook away from being the incident.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Match the Tool to the Job — Runbook vs Function vs Logic App, and Servers vs Clients</div>
+                <div class="concept-desc">
+                  Two families of confusion. For <strong>automation</strong>: a runbook is for operational scripts
+                  against infrastructure (stop these VMs overnight, remediate this tag); an Azure Function is for
+                  application code and event handlers at low latency; a Logic App is for connector-driven workflow
+                  across SaaS <span class="acro-exp">(Software as a Service)</span>. For <strong>patching</strong>: do not run servers through the Windows-client tools —
+                  Autopatch and Update for Business are for the Intune-managed client fleet, not for servers.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Reach for</th><th>When</th></tr>
+                    <tr><td>Runbook</td><td>Scheduled or triggered ops against infrastructure — Azure and, via a Hybrid Worker, on-prem</td></tr>
+                    <tr><td>Azure Function</td><td>Application code, per event, low latency</td></tr>
+                    <tr><td>Logic App</td><td>Multi-SaaS workflow, connector-heavy, little code</td></tr>
+                    <tr><td>Update Manager</td><td>OS <span class="acro-exp">(Operating System)</span> patching for servers, Azure and Arc, on one schedule</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Ask two questions — <em>what am I automating</em> (infrastructure ops, application logic, or SaaS
+                    workflow) and <em>what am I patching</em> (a server or a Windows client) — and the right tool
+                    falls out. The common outage is the crossed wire: the client patch tool pointed at a server, or a
+                    stored credential where a managed identity belonged. On the client side this pairs with
+                    <span class="xref">Windows Autopatch — What It Takes Over</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
