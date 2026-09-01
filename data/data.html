@@ -1717,6 +1717,39 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Structural Checks Pass While the Data Is Business-Wrong — the Costly Failures Are Semantic</div>
+                <div class="concept-desc">
+                  The dimensions above catch structural breakage — a missing load, a type change, a null
+                  spike — and they are necessary. But the failures that actually cost money are usually
+                  <strong class="c-amber">semantic, and they sail through every structural test</strong>.
+                  A currency field that silently switches units halves revenue while row counts, schemas
+                  and null rates all look perfect. A join that starts double-counting passes volume
+                  checks by being too <em>high</em>, not too low. An upstream team redefines
+                  &ldquo;active user&rdquo; and every downstream number shifts with no schema change at
+                  all. Structural tests ask <em>did the pipeline run correctly</em>; the expensive
+                  question is <strong class="c-cyan">is this number plausible to someone who knows the
+                  business</strong> — and that needs business-rule assertions a schema cannot express.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Check type</th><th>Catches</th><th>Misses</th></tr>
+                    <tr><td>Structural (freshness, volume, schema, nulls)</td><td>Pipeline mechanics broke</td><td>Data that is mechanically fine, semantically wrong</td></tr>
+                    <tr><td>Business-rule assertion</td><td>Numbers outside a plausible band; broken invariants</td><td>Novel failures nobody thought to assert</td></tr>
+                    <tr><td>Reconciliation to another system</td><td>Silent divergence between sources</td><td>Both systems wrong the same way</td></tr>
+                    <tr><td>A human who knows the domain</td><td>The &ldquo;that can't be right&rdquo; no rule encodes</td><td>Doesn't scale; slow</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So layer the checks by what a failure would cost, not by what is easy to write: keep
+                    the structural tests as the floor, but spend the real budget on a handful of
+                    business-rule assertions on the numbers leadership actually acts on — and push those
+                    upstream as data contracts so the producer breaks the build, not the dashboard. The
+                    pipeline running green is table stakes; the number being <em>right</em> is the job,
+                    and only a semantic check knows the difference.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2085,6 +2118,40 @@ p99                 =  4,000 ms  ← this is what a user experiences
                     <strong class="c-amber">Snapshot the price:</strong> an <code>OrderItem</code>
                     stores the price <em>at time of sale</em>, not a live FK to Product.price — a
                     classic modeling insight. Design OLTP <span class="acro-exp">(Online Transaction Processing)</span> for correctness; derive OLAP from it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Noun List Misses Two Things That Bite: Point-in-Time Facts and the Join Table</div>
+                <div class="concept-desc">
+                  The noun-first walkthrough is right, and it reliably misses two things that surface
+                  only later, in production. The first the card hints at with the price snapshot, but it
+                  is a general principle: <strong class="c-cyan">some facts are point-in-time and must be
+                  captured, not referenced</strong>. The price at sale, the address a package shipped to,
+                  the tax rate applied — model any as a live foreign key to a row that can change, and a
+                  later edit silently rewrites history. Ask of every value: <em>must this be true as-of
+                  when it happened, or is the current value fine?</em> — and copy the former into the
+                  record. The second miss is structural: &ldquo;find the nouns&rdquo; almost never
+                  surfaces the <strong class="c-amber">many-to-many relationships</strong>, because they
+                  are not nouns — a student enrols in many courses and a course has many students needs
+                  its own join table, and the tell that it was an entity all along is that the join
+                  carries attributes (the enrolment date, the grade).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The trap</th><th>The fingerprint</th><th>The fix</th></tr>
+                    <tr><td>Reference a value that should be frozen</td><td>Old orders &ldquo;change price&rdquo; when the product is edited</td><td>Snapshot point-in-time facts into the record</td></tr>
+                    <tr><td>Miss a many-to-many</td><td>You bolt a comma-separated list into one column</td><td>A join table — many-to-many is never one column</td></tr>
+                    <tr><td>Ignore a join table's own attributes</td><td>Nowhere to put &ldquo;enrolment date&rdquo; or &ldquo;grade&rdquo;</td><td>The join was an entity; give it its own columns</td></tr>
+                    <tr><td>Over-normalise the read path</td><td>A 3NF-perfect schema, slow reporting</td><td>Derive a denormalised OLAP model; keep OLTP clean</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So run the noun process, then run two passes it does not: mark every value that must
+                    survive a change to its source and snapshot it, and turn every &ldquo;many of these
+                    relate to many of those&rdquo; into a table you can later hang attributes on. The
+                    price snapshot is not a special case to memorise; it is the visible corner of the
+                    rule that OLTP models facts <em>as-of</em> the moment they were true.
                   </div>
                 </div>
               </div>
