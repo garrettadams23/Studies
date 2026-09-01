@@ -84664,8 +84664,8 @@ second.
 <span class="ctag ctag-general">SWE</span>
 </div>
 <span class="domain-sub">System Design · Architecture · Craft · Reliability · Career</span>
-<span class="domain-meta" aria-label="81 topics, about 3h 20m to read"
->81 topics · ~3h 20m</span>
+<span class="domain-meta" aria-label="81 topics, about 3h 25m to read"
+>81 topics · ~3h 25m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -85346,12 +85346,12 @@ harder than adding it.
 </div>
 </div>
 </div>
-<div class="topic" id="coupling-cohesion" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="coupling-cohesion" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔗</span>
 <span class="topic-name">Coupling &amp; Cohesion</span>
 <span class="topic-badge">Design</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -85376,6 +85376,38 @@ The <strong class="c-cyan">Law of Demeter</strong> ("only talk to your
 neighbors" — avoid <code>a.getB().getC().doThing()</code>) is a practical way to
 keep coupling low. When a change ripples across many files, that's high coupling
 telling you the boundaries are wrong.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">Low Coupling Is Not Free — Couple Along the Axis of Change, Not Against It</div>
+<div class="concept-desc">
+&ldquo;Low coupling, high cohesion&rdquo; is repeated so often it becomes a reflex,
+and the reflex over-corrects. A developer who has learned that coupling is bad reaches
+for indirection everywhere — an interface with a single implementation, an event bus
+for a direct call, a config flag for a constant — and produces something
+<strong class="c-amber">technically loose and genuinely harder to change</strong>,
+because one behaviour is now smeared across five files you must hold in your head at
+once. The point the two words miss: coupling is not uniformly bad — what matters is
+whether the coupled things <em>change together</em>. Coupling along the axis of change
+(the tax rules and the tax calculator, versioned as one) is fine; coupling across it
+(the invoice layout reaching into the calculator's internals) is the pain.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The move</th><th>When it helps, and when it is just ceremony</th></tr>
+<tr><td>Extract an interface</td><td>Helps with two real implementations or a genuine test seam; hurts as ritual around a single one</td></tr>
+<tr><td>Introduce an event / message</td><td>Helps when the publisher truly shouldn't know its subscribers; hurts when it hides a simple, traceable direct call</td></tr>
+<tr><td>Split a module</td><td>Helps when two responsibilities change on different clocks; hurts when it separates things that always change together — low cohesion by another name</td></tr>
+<tr><td>Add an abstraction layer</td><td>Helps once the axis of change is known; hurts when added before it, guessing wrong</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the honest rule under the two words is: <strong>decouple things that change on
+different clocks, and leave coupled the things that change together</strong> — an
+abstraction guessed before you know the axis is just coupling you cannot see. When a
+change ripples across many files, ask first whether those files should have been
+one: sometimes the fix for high coupling is more cohesion, not more indirection.
 </div>
 </div>
 </div>
@@ -85446,12 +85478,12 @@ contract first.
 </div>
 </div>
 </div>
-<div class="topic" id="idempotency-exactly-once-safe-retries" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="idempotency-exactly-once-safe-retries" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧮</span>
 <span class="topic-name">Idempotency &amp; Exactly-Once — Safe Retries</span>
 <span class="topic-badge">Reliability</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -85477,6 +85509,40 @@ True "exactly-once" delivery is famously near-impossible; the practical answer i
 <strong class="c-green">at-least-once delivery + idempotent consumers</strong> =
 effectively-once processing. Build every consumer and API <span class="acro-exp">(Application Programming Interface)</span> assuming it will see
 duplicates.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">The Idempotency Key Is the Easy Part — the Race and the Window Are Not</div>
+<div class="concept-desc">
+An idempotency key looks like the whole answer, and then production finds the two ways
+a naive one fails. First the <strong class="c-amber">race</strong>: check-then-act.
+Two retries of the same request arrive close together, both look up the key, both find
+nothing, both proceed — and you charged twice with a perfect idempotency key in place.
+The fix is not a lookup but an <strong>atomic guard</strong>: a unique constraint on
+the key or a conditional write, so the second one loses. Second the
+<strong class="c-amber">window</strong>: dedup records cannot live forever, so a
+duplicate that arrives after the record expires is processed as new — set the window
+shorter than your longest realistic retry horizon and you have reintroduced the bug.
+And &ldquo;effectively-once&rdquo; holds only if the effect and the dedup marker commit
+together; a crash between them either double-applies or forgets, which is exactly what
+the outbox pattern exists to prevent.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Failure</th><th>Why the naive version breaks</th><th>The fix</th></tr>
+<tr><td>Concurrent duplicates</td><td>Check-then-act — both see &ldquo;not processed&rdquo;</td><td>Atomic guard: unique constraint or conditional write, not a lookup</td></tr>
+<tr><td>Late duplicate</td><td>The dedup record already expired</td><td>Window ≥ the longest realistic retry horizon</td></tr>
+<tr><td>Crash mid-operation</td><td>Effect and marker in separate commits</td><td>One transaction, or the outbox pattern</td></tr>
+<tr><td>Leaky downstream</td><td>An &ldquo;idempotent&rdquo; op calls a non-idempotent service</td><td>Idempotency is end to end or it is nothing</td></tr>
+</table>
+<div class="concept-desc verdict">
+So idempotency is not a key you attach; it is an <strong>invariant you enforce
+atomically</strong>. The question to ask of any &ldquo;idempotent&rdquo; handler is
+the adversarial one: what happens when two copies run in the same millisecond, and
+what happens when the retry comes an hour late? If both answers are safe it is
+idempotent; if either rests on a lookup that could race, it is not yet.
 </div>
 </div>
 </div>
@@ -85577,12 +85643,12 @@ conversation; the disagreement is about something the comments are not reaching.
 </div>
 </div>
 </div>
-<div class="topic" id="technical-debt-recognize-pay-it-down" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="technical-debt-recognize-pay-it-down" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💳</span>
 <span class="topic-name">Technical Debt — Recognize &amp; Pay It Down</span>
 <span class="topic-badge">Craft</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -85607,6 +85673,39 @@ eventually consumes all your capacity.
 tribal knowledge), pay it down opportunistically (Boy Scout Rule) plus dedicated
 time, and prioritize debt in code you touch often. Debt in a stable, untouched
 corner rarely matters.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">&ldquo;Tech Debt&rdquo; Is Two Different Things, and the Word Is How Neither Gets Fixed</div>
+<div class="concept-desc">
+The metaphor is useful right up to the point it becomes an excuse, and two abuses are
+common. One: <strong class="c-amber">&ldquo;technical debt&rdquo; used to mean &ldquo;code
+I would have written differently&rdquo;</strong> — an aesthetic disagreement dressed as
+a liability, which spends credibility on changes that carry no interest. Two: debt as
+the justification for a doomed grand gesture — a &ldquo;tech-debt sprint&rdquo; that
+loses every prioritisation fight against features, or a
+<strong class="c-amber">big rewrite that quietly throws away what the ugly code was
+worth</strong>. Because debt only bites where it taxes a change you are actually
+making, the framing that survives a product roadmap is not a debt backlog competing for
+its own sprint; it is paying the debt down inside the feature that has to cross that
+code.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The move</th><th>Why it stalls or fails</th><th>What works instead</th></tr>
+<tr><td>A &ldquo;tech-debt sprint&rdquo;</td><td>Loses every prioritisation fight against features</td><td>Fund paydown inside the feature that must touch that code</td></tr>
+<tr><td>The big rewrite</td><td>Discards years of embedded bug fixes; ships nothing for months</td><td>Strangler fig — replace incrementally behind the running system</td></tr>
+<tr><td>A debt backlog nobody reads</td><td>Debt with no live cost never rises to the top</td><td>Track only debt in code you touch; leave the stable corners</td></tr>
+<tr><td>&ldquo;This is debt&rdquo; meaning &ldquo;I dislike it&rdquo;</td><td>Spends credibility on taste, not cost</td><td>Name the interest, or concede it is not debt</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the test for real debt is whether you can name its <strong>interest</strong>: the
+specific change it makes slower, riskier, or more bug-prone. Debt you cannot cost that
+way is either taste or a stable corner, and both are fine left alone. The debt worth
+paying announces itself — it is the file you keep having to reopen — and the cheapest
+time to pay it is the next time a feature sends you there anyway.
 </div>
 </div>
 </div>
@@ -85829,12 +85928,12 @@ provider, a warehouse, another company &mdash; and expensive whenever it is not.
 </div>
 </div>
 </div>
-<div class="topic" id="backpressure-flow-control" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="backpressure-flow-control" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌊</span>
 <span class="topic-name">Backpressure &amp; Flow Control</span>
 <span class="topic-badge">Reliability</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -85859,6 +85958,41 @@ than silently piling up.
 The counter-intuitive lesson: a system that <strong class="c-green">rejects</strong>
 excess load cleanly stays up; one that politely accepts everything falls over.
 Fail fast, shed early.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">Backpressure Doesn't Remove the Pileup — It Moves It to Whatever You Forgot to Bound</div>
+<div class="concept-desc">
+Adding a bounded queue to a service feels like solving the problem, and at that service
+it does. But backpressure does not absorb load, it <strong class="c-cyan">relocates
+it</strong>: the moment A starts rejecting or blocking, the pileup moves to A's caller —
+and if B has its own unbounded buffer, or blocks its own callers in turn, the pressure
+simply travels upstream until it reaches the one link nobody bounded. That link is
+usually the least visible: a connection queue on the load balancer, a broker's disk, the
+user-facing edge holding sockets open. So <strong class="c-amber">backpressure is a
+system property, not a local one</strong> — a single unbounded buffer anywhere is where
+all the pressure ends up. Two traps live inside it: blocking backpressure can deadlock
+(A waits on B while B waits on A through a shared pool), and retries turn overload into a
+storm (a timeout triggers a retry, the retry adds load — positive feedback a retry
+budget with jitter exists to break).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The trap</th><th>What actually happens</th></tr>
+<tr><td>Bound one service, not the chain</td><td>The pileup moves upstream to the first unbounded buffer — often the load balancer or the edge</td></tr>
+<tr><td>Bounded + block, in a cyclic dependency</td><td>Deadlock — each side waits on the other through a shared resource</td></tr>
+<tr><td>Retry on timeout, no budget</td><td>Retry storm — overload causes timeouts, timeouts cause more load</td></tr>
+<tr><td>Shed indiscriminately</td><td>You drop health checks or the wrong tier and take down more than you saved</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the discipline is end to end: trace a unit of work from the edge to the datastore
+and find the one hop with an unbounded queue — that hop is where every overload lands,
+whatever you did elsewhere. Prefer <strong>bounded-and-reject to bounded-and-block</strong>
+where dependencies can form a cycle, give every retry a budget and jitter, and shed by
+priority, not at random. Fail fast is right; <em>fail fast everywhere</em> is the whole
+rule.
 </div>
 </div>
 </div>
