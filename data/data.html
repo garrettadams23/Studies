@@ -1063,6 +1063,40 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">JSONB Is a One-Way Convenience — Every Field in It Gives Up What the Engine Guarantees</div>
+                <div class="concept-desc">
+                  The verdict warns against JSONB as an excuse to skip schema design; the sharper point
+                  is what a field concretely <em>loses</em> by living in a document. A key inside JSONB
+                  has <strong class="c-amber">no NOT NULL, no type, no foreign key, no default, no
+                  check</strong> — the database can enforce no invariant on it, which is exactly the
+                  guarantee the relational model exists to give. So the moment a field is filtered,
+                  joined, or aggregated regularly, it has earned a real column and should graduate to
+                  one. Performance sharpens the same line: GIN-indexed containment (<code>@&gt;</code>)
+                  is fast, but pulling out a scalar and comparing (<code>-&gt;&gt;'x' = …</code>) often
+                  can't use that index and scans, and updating a single key
+                  <strong class="c-amber">rewrites the whole document</strong> rather than patching it in
+                  place.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Signal</th><th>What it tells you</th></tr>
+                    <tr><td>You filter/join on a JSON key regularly</td><td>It's earned a real column — promote it</td></tr>
+                    <tr><td>The document has a fixed, known shape</td><td>It was always a table; JSONB is hiding a schema</td></tr>
+                    <tr><td>Genuinely variable / unknown fields per row</td><td>JSONB is the right tool — keep it</td></tr>
+                    <tr><td>Frequent updates to one key</td><td>Whole-document rewrite cost — reconsider the shape</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So decide per field, not per table: keep in JSONB only what is genuinely variable or
+                    write-once-read-rarely, and promote to a typed column anything you filter, join, or
+                    constrain — because a column gets you the index, the type, and the invariant, and a
+                    JSONB key gets you none of them. &ldquo;Postgres can do NoSQL&rdquo; is true; the
+                    trap is using it to <strong>avoid</strong> the schema decision rather than to handle
+                    data that genuinely has no schema.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2081,6 +2115,42 @@ db.orders.<span class="fn">aggregate</span>([
                     <strong class="c-red">And of course:</strong> parameterized queries to stop SQL <span class="acro-exp">(Structured Query Language)</span>
                     injection (the app's job), and network isolation so the DB is never internet-facing.
                     Column-level encryption/masking protects PII <span class="acro-exp">(Personally Identifiable Information)</span> even from DB admins.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">RLS Is the Multi-Tenant Backstop Everyone Reaches For — and Its Bypass Footguns Are Where Tenants Leak</div>
+                <div class="concept-desc">
+                  Row-Level Security is the right instinct for multi-tenant isolation — it pushes the
+                  &ldquo;which rows can this request see&rdquo; filter into the database, so no forgotten
+                  <code>WHERE</code> in the app leaks another tenant's data. But it has sharp edges that
+                  turn &ldquo;isolation on&rdquo; into &ldquo;isolation off&rdquo; silently. The
+                  <strong class="c-amber">table owner and superusers bypass RLS by default</strong>: an
+                  app that connects as the table's owner gets no filtering at all — the classic
+                  &ldquo;RLS is enabled but not working&rdquo; — and the fix is
+                  <code>FORCE ROW LEVEL SECURITY</code> plus a non-owner app role. The policy is only as
+                  trustworthy as the session state it keys on: RLS typically filters by a current-tenant
+                  value set with <code>set_config</code>, so <strong class="c-amber">any path that
+                  forgets to set it</strong> breaks isolation. And it is not free — RLS adds a predicate
+                  to every query, so a policy that can't use an index taxes every read.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The footgun</th><th>What happens</th><th>The fix</th></tr>
+                    <tr><td>App connects as the table owner</td><td>Owner bypasses RLS — all tenants visible</td><td>Non-owner role + <code>FORCE ROW LEVEL SECURITY</code></td></tr>
+                    <tr><td>Forgotten tenant <code>set_config</code></td><td>Policy filters on an unset variable — leak or empty</td><td>Set tenant context centrally, on every checkout</td></tr>
+                    <tr><td>Policy predicate isn't sargable</td><td>RLS on every query becomes a scan</td><td>Design the policy around an indexed tenant column</td></tr>
+                    <tr><td>Treating RLS as the only control</td><td>One bypass and isolation is gone</td><td>Keep app-side scoping too — RLS is defence-in-depth</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So use RLS as a genuine backstop — it catches the query that forgot to filter — but
+                    treat it as defence-in-depth, not the whole defence: a non-owner role with
+                    <code>FORCE</code>, the tenant context set centrally so no path can forget, an index
+                    on the filtered column, and app-side scoping kept in place. The failure mode is never
+                    &ldquo;RLS rejected a valid query&rdquo;; it is <strong>&ldquo;RLS silently let
+                    everything through&rdquo;</strong> — which you can't see until one tenant sees
+                    another's data.
                   </div>
                 </div>
               </div>

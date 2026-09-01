@@ -5261,6 +5261,41 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">DNSSEC Barely Shipped and DoH Spread Fast — the Reasons Tell You What DNS Security Costs</div>
+                <div class="concept-desc">
+                  Both are decades-mature in spec, yet DNSSEC is still patchily deployed while DoH went
+                  from nothing to browser-default in a few years — and the asymmetry is the lesson.
+                  DNSSEC stalled for concrete reasons: it is <strong class="c-amber">operationally
+                  brittle</strong> (a botched key rollover takes the whole domain offline, so the signing
+                  mistake is worse than the forgery it prevents), it leaks a zone's contents via NSEC
+                  walking, validation happens at the resolver not the client so end users rarely get the
+                  protection, and — decisively — it adds no privacy, the thing users actually wanted. DoH
+                  gave exactly that privacy, in the browser, which is why it spread. But the same move
+                  that protects the user <strong class="c-amber">blinds the defender</strong>: DoH hides
+                  DNS inside ordinary HTTPS, so the corporate DNS filtering and monitoring an enterprise
+                  leaned on goes dark.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Fact</th><th>Consequence</th></tr>
+                    <tr><td>DNSSEC signing is brittle</td><td>A key-rollover error is a self-inflicted outage worse than cache poisoning</td></tr>
+                    <tr><td>DNSSEC validates at the resolver</td><td>End users usually get no protection even where it's deployed</td></tr>
+                    <tr><td>DNSSEC adds no privacy</td><td>It never solved the problem users cared about — so uptake lagged</td></tr>
+                    <tr><td>DoH hides DNS in HTTPS (443)</td><td>Great for user privacy; blinds enterprise DNS filtering and monitoring</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So &ldquo;you want both&rdquo; is right in theory, but in practice DNSSEC's
+                    cost/benefit kept it niche and DoH's user-facing privacy made it ubiquitous — and
+                    DoH's success is precisely a blue-team problem, because the visibility it removes is
+                    one defenders relied on. The enterprise answer is not to fight it but to
+                    <strong>provide it</strong>: run your own trusted DoH/DoT resolver so queries are
+                    encrypted <em>to</em> you, not exfiltrated <em>past</em> you — privacy for the user
+                    and visibility for the defender, on the same resolver.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
