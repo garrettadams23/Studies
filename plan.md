@@ -15168,14 +15168,14 @@ With new-content genuinely saturated (every breadth probe returning covered-or-`
 honest next move was the one Phase 8 named and `tools/depth_report.py` measures: the **thin
 tail** — single-concept cards under 1,800 plain characters. The report put it at **147 of
 1,529 (10%)**, concentrated in the domains authored before the current three-card form settled.
-This wave took it to **128 (8%)** — nineteen cards, each gaining one genuine second concept
+This wave took it to **120 (8%)** — twenty-seven cards, each gaining one genuine second concept
 card, with the padding counter-metric holding flat throughout.
 
 The rule the wave held to: **a deepening is a second card that names something the first did
 not — a failure mode, an inversion, a decision — never the first card restated longer.** The
-proof it held is the counter-metric: mean chars per concept card moved **1,241 → 1,247** across
-nineteen additions (i.e. barely), while the thin count fell 19 and the 10th percentile rose
-**1,433 → ~1,450**. Padding would have moved the mean and left the percentile flat; this did the
+proof it held is the counter-metric: mean chars per concept card moved **1,241 → 1,249** across
+twenty-seven additions (i.e. barely), while the thin count fell 27 and the 10th percentile rose
+**1,433 → ~1,460**. Padding would have moved the mean and left the percentile flat; this did the
 opposite.
 
 | Domain | Card | The second angle added |
@@ -15199,6 +15199,14 @@ opposite.
 | `cloud` | Cloud IAM Pitfalls | Escalation is a graph, not a policy; guard IAM-write |
 | `ops` | Golden Signals | What to measure, not where — the gap is the last mile |
 | `ops` | On-Call Done Humanely | Alert fatigue is a death spiral; delete alerts |
+| `linux` | systemd Deep | Most systemd pain is fighting it — the Type= field and the cgroup |
+| `linux` | Advanced Bash | set -e is necessary, not sufficient — it silently doesn't fire |
+| `data` | Data Quality & Observability | Structural checks pass while the data is business-wrong |
+| `data` | Designing a Schema | The noun list misses point-in-time facts and the join table |
+| `ai` | LoRA/Quantization/Tokenization | LoRA adapts but can't teach; quant loss isn't uniform |
+| `blueteam` | Patch & Config Management | Coverage % is a comfort metric; the risk is the exceptions |
+| `pentest` | Recon Methodology | Won by turning findings into an attack surface, not more tools |
+| `eng` | Consistency in Practice | W+R>N is a staleness bound, not linearizability |
 
 ### What the wave deliberately did not touch
 
@@ -15213,9 +15221,9 @@ concept-rich domains (`data`, `eng`, `web`, `devops`, `cloud`, `ops`) and left t
 (`redteam`, `blueteam`, `script`) near where they were.
 
 ```
-thin single-concept (<1,800 chars)   147 → 128  (10% → 8%)
-mean chars per concept card        1,241 → 1,247   (nineteen cards; counter-metric held)
-10th-percentile topic length       1,433 → ~1,450
+thin single-concept (<1,800 chars)   147 → 120  (10% → 8%)
+mean chars per concept card        1,241 → 1,249   (twenty-seven cards; counter-metric held)
+10th-percentile topic length       1,433 → ~1,460
 table with no verdict                509 → 509   (every new table ends on a verdict)
 ```
 
