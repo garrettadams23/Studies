@@ -93235,8 +93235,8 @@ makes concrete.
 <span class="ctag ctag-general">JS</span>
 </div>
 <span class="domain-sub">Browser · CSS · JS · Frameworks · Performance · A11y</span>
-<span class="domain-meta" aria-label="39 topics, about 1h 35m to read"
->39 topics · ~1h 35m</span>
+<span class="domain-meta" aria-label="39 topics, about 1h 40m to read"
+>39 topics · ~1h 40m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -94235,12 +94235,12 @@ to the page: static where you can, dynamic where you must.
 </div>
 </div>
 </div>
-<div class="topic" id="state-management-when-you-actually-need-it" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="state-management-when-you-actually-need-it" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗄️</span>
 <span class="topic-name">State Management — When You Actually Need It</span>
 <span class="topic-badge">Frameworks</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -94266,6 +94266,40 @@ tools.
 really <em>server</em> state (loading, caching, revalidation) — a data-fetching
 library like React Query solves it far better than Redux. Add global stores only
 for genuinely global client state.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">Most State Bugs Aren't About the Library — They're State That Isn't State</div>
+<div class="concept-desc">
+The library debate hides the real source of state bugs: storing things that should not
+be stored at all. Three patterns cause most of it.
+<strong class="c-amber">Derived state</strong> — keeping <code>fullName</code> beside
+<code>firstName</code> and <code>lastName</code>, or <code>isValid</code> beside the
+field it validates — desyncs the moment one changes without the other, and no library
+prevents it. <strong class="c-amber">Copied server state</strong> — pulling API <span class="acro-exp">(Application Programming Interface)</span> data
+into a client store &ldquo;so components can read it&rdquo; — creates a second source
+of truth that goes stale the instant the server changes.
+<strong class="c-amber">Over-globalised state</strong> — putting in a shared store what
+one subtree owns — means a value changes and something three screens away breaks for
+reasons nobody can trace. The through-line: a state-<em>management</em> problem is
+usually a state-<em>modelling</em> problem — the same fact living in two places.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Anti-pattern</th><th>The bug it becomes</th><th>The fix</th></tr>
+<tr><td>Store derived data (totals, <code>isValid</code>)</td><td>Desync — the copy and its source disagree</td><td>Compute it on render; derive, don't store</td></tr>
+<tr><td>Copy server data into a client store</td><td>Two sources of truth; the copy goes stale</td><td>Let a data-fetching cache own it</td></tr>
+<tr><td>Globalise component-local state</td><td>Spooky action at a distance; untraceable changes</td><td>Colocate — keep state near its only user</td></tr>
+<tr><td>Keep filters/tabs in memory</td><td>Not shareable, lost on refresh</td><td>Put it in the URL — the URL is state</td></tr>
+</table>
+<div class="concept-desc verdict">
+So before choosing a store, find the actual source of truth and keep exactly one copy:
+derive what can be derived, let the server's cache own server data, colocate what one
+subtree owns, and push shareable state into the URL. Do that and most apps need almost
+no &ldquo;state management&rdquo; at all — which is why the honest first answer to
+&ldquo;which state library?&rdquo; is usually <strong>&ldquo;none yet&rdquo;</strong>.
 </div>
 </div>
 </div>
@@ -94374,12 +94408,12 @@ harder than REST (one endpoint, POST) — weigh the trade-off.
 </div>
 </div>
 </div>
-<div class="topic" id="realtime-websockets-sse-polling" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="realtime-websockets-sse-polling" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔴</span>
 <span class="topic-name">Realtime — WebSockets, SSE <span class="acro-exp">(Server-Sent Events)</span> &amp; Polling</span>
 <span class="topic-badge">Backends</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -94403,6 +94437,41 @@ that fits.
 <strong class="c-green">Don't over-engineer:</strong> if data changes every few
 minutes, polling is simplest. Reserve WebSockets for genuinely bidirectional,
 high-frequency needs. SSE is the underrated middle ground for one-way streams.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">The Cost of Realtime Is Operational, and It Arrives After Launch</div>
+<div class="concept-desc">
+Choosing the transport is the easy half; the half that bites is what a persistent
+connection does to the rest of the stack. A WebSocket is
+<strong class="c-cyan">stateful and pinned to one server</strong>, which quietly breaks
+assumptions built for request/response. Proxies and load balancers buffer or time out
+idle connections unless told not to. Horizontal scaling stops being free: a message
+published on server A must reach a client connected to server B, so you need a
+<strong class="c-amber">pub/sub backplane</strong> (Redis, NATS) to fan out — the demo
+that worked on one box falls over across three. Auth cannot ride the usual per-request
+header, so you authenticate once at the handshake and handle token expiry
+mid-connection. And you own reconnection and state resync. SSE sidesteps most of it —
+plain HTTP, automatic reconnection with <code>Last-Event-ID</code>, rides cookies — at
+the price of being one-way and, on HTTP/1.1, capped by the browser's per-domain
+connection limit.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Hidden cost</th><th>WebSockets</th><th>SSE</th></tr>
+<tr><td>Proxy / load-balancer behaviour</td><td>Needs explicit upgrade and idle-timeout config</td><td>Just HTTP — usually works untouched</td></tr>
+<tr><td>Scaling across servers</td><td>Needs a pub/sub backplane to fan out</td><td>Same fan-out need, but connections are cheap HTTP</td></tr>
+<tr><td>Auth</td><td>Once at the handshake; handle mid-connection expiry</td><td>Rides normal cookies / headers</td></tr>
+<tr><td>Reconnection</td><td>You write it</td><td>Built in (<code>Last-Event-ID</code>)</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the honest decision adds the operational line to the transport line: if you do not
+need client→server streaming, <strong>SSE gives you most of realtime with almost none
+of the operational tax</strong>. Reach for WebSockets when interaction is genuinely
+bidirectional and high-frequency — and when you do, budget for the backplane and the
+reconnection logic up front, because they are not extras, they are the actual work.
 </div>
 </div>
 </div>
@@ -95032,12 +95101,12 @@ so good and cost so much.
 </div>
 </div>
 </div>
-<div class="topic" id="frontend-security-xss-csrf-csp" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="frontend-security-xss-csrf-csp" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛡️</span>
 <span class="topic-name">Frontend Security — XSS <span class="acro-exp">(Cross-Site Scripting)</span>, CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> &amp; CSP <span class="acro-exp">(Content Security Policy)</span></span>
 <span class="topic-badge">Security</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95060,6 +95129,40 @@ every web dev must know — directly bridging to the security domain's web cards
 <strong class="c-amber">Frameworks help:</strong> React escapes by default (which
 is why <code>dangerouslySetInnerHTML</code> is named to scare you). Never build HTML <span class="acro-exp">(HyperText Markup Language)</span>
 from untrusted strings; sanitize any rich content with a vetted library (DOMPurify).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">XSS Is an Output-Encoding Bug, Not an Input One — Which Is Why Sanitising Input Fails</div>
+<div class="concept-desc">
+The instinct on XSS is to sanitise input at the door, and it keeps failing for a
+structural reason: <strong class="c-amber">the same string is safe in one place and
+dangerous in another</strong>. <code>&lt;b&gt;hi&lt;/b&gt;</code> is inert as HTML
+text, live as an HTML attribute, a catastrophe inside a <code>&lt;script&gt;</code>
+block, and different again inside a URL <span class="acro-exp">(Uniform Resource Locator)</span> or a CSS <span class="acro-exp">(Cascading Style Sheets)</span> value. There is no single
+&ldquo;clean&rdquo; version of a string, so cleaning it on the way in is guessing which
+context it will land in. <strong class="c-cyan">Encoding has to happen at output</strong>,
+escaped for the specific context it is rendered into — which is what a framework's
+default escaping does and what <code>innerHTML</code> / <code>dangerouslySetInnerHTML</code>
+bypass. The half people miss: the modern XSS is DOM-based — a client-side sink like
+<code>innerHTML</code>, <code>location</code> or <code>eval</code> fed attacker-controlled
+data — and it never reaches the server, so server-side sanitisation cannot see it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Belief</th><th>Why it fails</th><th>What actually works</th></tr>
+<tr><td>&ldquo;Sanitise input at the door&rdquo;</td><td>The safe form depends on the output context, unknown at input</td><td>Encode at output, per context (framework default)</td></tr>
+<tr><td>&ldquo;The server sanitises, so we're safe&rdquo;</td><td>DOM <span class="acro-exp">(Document Object Model)</span> XSS lives entirely client-side</td><td>Audit client sinks: <code>innerHTML</code>, <code>location</code>, <code>eval</code></td></tr>
+<tr><td>&ldquo;We have a CSP, so XSS is handled&rdquo;</td><td>CSP limits blast radius, it doesn't remove the bug</td><td>Encode first; treat CSP as defence-in-depth</td></tr>
+<tr><td>&ldquo;SameSite killed CSRF&rdquo;</td><td>Lax still allows top-level GETs; subdomains and non-cookie auth differ</td><td>Keep tokens on state-changing actions</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the durable rule is: never build markup from untrusted strings, let the framework
+encode at output, and where you must render rich content run it through a vetted
+sanitiser aimed at the right context. A nonce-based CSP is the seatbelt for the XSS
+you still missed — worth having, never the thing you rely on. <strong>Encode at the
+sink, not at the source.</strong>
 </div>
 </div>
 </div>
