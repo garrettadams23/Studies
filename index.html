@@ -28743,8 +28743,8 @@ The professional-judgement side of this is in
 <span class="ctag ctag-general">CKA</span>
 </div>
 <span class="domain-sub">CI/CD · IaC · Containers · Kubernetes · GitOps · Secrets · Supply Chain · Serverless · Architecture</span>
-<span class="domain-meta" aria-label="50 topics, about 1h 55m to read"
->50 topics · ~1h 55m</span>
+<span class="domain-meta" aria-label="50 topics, about 2h 05m to read"
+>50 topics · ~2h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -30234,12 +30234,12 @@ and you repeat incidents.
 </div>
 </div>
 </div>
-<div class="topic" id="dora-metrics-measuring-delivery-performance" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="dora-metrics-measuring-delivery-performance" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📊</span>
 <span class="topic-name">DORA <span class="acro-exp">(DevOps Research and Assessment)</span> Metrics — Measuring Delivery Performance</span>
 <span class="topic-badge">DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -30264,6 +30264,40 @@ correlate with high-performing organizations. Crucially, speed and stability
 First two = <strong>throughput</strong>; last two = <strong>stability</strong>.
 (A fifth, <em>reliability</em>, was later added.) Use them as a trend, not a
 stick — gaming "deploy frequency" by shipping trivial changes helps no one.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">The Four Are a Diagnostic Because You Cannot Game Them as a Set</div>
+<div class="concept-desc">
+The warning not to use DORA as a stick is right, but the reason is more interesting
+than &ldquo;people cheat&rdquo;. The four <strong class="c-cyan">resist gaming as a
+set because they trade against each other</strong>: inflate deploy frequency by
+shipping trivial commits and your change-failure rate or lead time gives you away;
+suppress change-failure rate by deploying rarely behind endless review and deploy
+frequency and lead time collapse. That is exactly why they are a diagnostic — the
+combination exposes the trade you actually made, where any single number would hide
+it. The real misuse is two-fold. <strong class="c-amber">Ranking teams by them turns a
+diagnostic into a stick</strong> and re-triggers the gaming the balance was meant to
+prevent. And <strong class="c-amber">DORA measures delivery, not value</strong>: a team
+can be elite on all four and shipping the wrong product.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The misuse</th><th>What it produces</th><th>The honest use</th></tr>
+<tr><td>One metric in isolation</td><td>The cheat the other three would have caught</td><td>Read all four together as a shape</td></tr>
+<tr><td>Rank or compare teams</td><td>A stick; gaming; sandbagged targets</td><td>A team's own trend over time</td></tr>
+<tr><td>Same targets for every team</td><td>Platform and product cadences differ</td><td>Contextualised to the team's work</td></tr>
+<tr><td>Treat DORA as success</td><td>Elite delivery of the wrong thing</td><td>Pair it with an outcome / value measure</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the four earn their place as a <strong>set, read as a trend, for a team against
+its own past</strong> — not as a leaderboard and not as the definition of done. They
+are honest about how well you deliver precisely because you cannot move one without
+disturbing the others. What they cannot tell you is whether you are delivering the
+<em>right</em> thing; that is a different measurement, and no delivery metric
+substitutes for it.
 </div>
 </div>
 </div>
@@ -30529,12 +30563,12 @@ lives and whether you want hosted vs self-managed.
 </div>
 </div>
 </div>
-<div class="topic" id="branching-strategies-trunk-vs-github-flow-vs-gitflow" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="branching-strategies-trunk-vs-github-flow-vs-gitflow" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌿</span>
 <span class="topic-name">Branching Strategies — Trunk vs GitHub Flow vs GitFlow</span>
 <span class="topic-badge">DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -30556,14 +30590,47 @@ release independently of deploy.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">The Branching Model Is Downstream of How You Release — Not a Preference</div>
+<div class="concept-desc">
+Teams argue branching strategy as if it were taste, but each model is the shadow of a
+release cadence, and running one whose cadence you don't have is pure overhead.
+<strong class="c-amber">GitFlow's develop/release/hotfix branches exist to manage
+versioned software shipped on a schedule</strong> — run it on a web app that deploys
+continuously and you have ceremony with no payoff, a release branch that is only
+latency. <strong class="c-cyan">Trunk-based is the opposite bet</strong> — main is
+always releasable — but it is not free: it requires feature flags to hide unfinished
+work and genuine CI discipline, and adopting the &ldquo;commit to main&rdquo; half
+without those is just a broken main. GitHub Flow sits between and fits most web teams
+precisely because it assumes deploy-on-merge without demanding the flag
+infrastructure.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Model</th><th>The cadence it assumes</th><th>The failure when you don't have it</th></tr>
+<tr><td>GitFlow</td><td>Versioned releases on a schedule, several versions supported</td><td>Ceremony and merge latency for a continuously-deployed app</td></tr>
+<tr><td>GitHub Flow</td><td>Deploy on merge to main</td><td>Fine for most; strains only at very high commit volume</td></tr>
+<tr><td>Trunk-based</td><td>Many merges a day, main always releasable</td><td>Broken main without feature flags and strong CI</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the choice is not which you prefer; it is which your deploy cadence forces, and the
+one-question test is <strong>how long a branch lives</strong>. A branch measured in
+weeks is merge debt whatever you call the model; a branch measured in hours integrates
+before it can rot. Match the model to how often you actually release, adopt the
+discipline it assumes, and stop porting GitFlow into shops that never cut a versioned
+release.
 </div>
 </div>
-<div class="topic" id="progressive-delivery-flags-canary-in-the-pipeline" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="progressive-delivery-flags-canary-in-the-pipeline" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚦</span>
 <span class="topic-name">Progressive Delivery — Flags + Canary in the Pipeline</span>
 <span class="topic-badge">DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -30588,6 +30655,39 @@ patterns you already know into the pipeline.
 Tools: LaunchDarkly/Unleash/Flagsmith (flags), Argo Rollouts/Flagger (automated
 canary on Kubernetes). This is how elite teams deploy dozens of times a day with
 a low change-failure rate — the two DORA <span class="acro-exp">(DevOps Research and Assessment)</span> goals reconciled.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">A Canary Is Only as Good as the Metric That Fails It — and Flags Are Debt with a Half-Life</div>
+<div class="concept-desc">
+Progressive delivery is sold as safety, and it is — but only where two easily-skipped
+things are done well. <strong class="c-amber">A canary that watches the wrong signal
+passes a bad release with full confidence</strong>: error rate alone misses a latency
+regression or a drop in a business metric (checkouts, sign-ups), and a window too short
+calls success before the slow failure appears. The canary is only as good as the metric
+and the bake time you fail it on. And feature flags, the other half, are
+<strong class="c-amber">technical debt with a half-life</strong>: every live flag
+doubles the code-path matrix you must reason about and test, a flag left on forever is
+configuration pretending to be a release, and the stale flag nobody owns is a classic
+incident — flipped by accident, or found &ldquo;off&rdquo; in production years later.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The move</th><th>The hidden cost</th><th>The discipline it needs</th></tr>
+<tr><td>Canary on error rate only</td><td>Misses latency and business-metric regressions</td><td>Fail on latency and a business KPI <span class="acro-exp">(Key Performance Indicator)</span>, not just 5xx</td></tr>
+<tr><td>Canary window too short</td><td>Passes before the slow failure shows</td><td>Bake time matched to the failure you fear</td></tr>
+<tr><td>Feature flag with no expiry</td><td>Flag debt; a doubled test matrix; stale-flag incidents</td><td>Every flag gets an owner and a removal date</td></tr>
+<tr><td>Flag used as long-term config</td><td>A &ldquo;release&rdquo; that never completes</td><td>Promote it to real config, or delete it</td></tr>
+</table>
+<div class="concept-desc verdict">
+So progressive delivery buys safety on credit: the canary's judgement is only the
+metric you chose for it, and the flags are a liability you service with expiry,
+ownership and cleanup. Done with both, it is how elite teams reconcile the two DORA
+goals — deploy often and rarely break. A canary watching the wrong number and a fleet
+of immortal flags gives you the <em>illusion</em> of safety and a second source of
+incidents.
 </div>
 </div>
 </div>
