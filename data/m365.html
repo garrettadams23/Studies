@@ -3060,3 +3060,91 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           </div>
 
 </div>
+
+          <!-- ── TOPIC: EXCHANGE SERVER ON-PREM ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">📮</span>
+              <span class="topic-name">Exchange Server On-Prem — DAG <span class="acro-exp">(Directed Acyclic Graph)</span>, Transport &amp; the Server You Can't Quite Remove</span>
+              <span class="topic-badge">Exchange • Hybrid</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">You Moved the Mailboxes to the Cloud. You Still Run an Exchange Server.</div>
+                <div class="concept-desc">
+                  Migrating to Exchange Online is meant to end on-prem Exchange — and for the estate that still syncs
+                  identity <em>from</em> on-prem Active Directory, it doesn't, for a reason that surprises people.
+                  When AD is the source of authority for identity, the <strong class="c-cyan">supported</strong> way
+                  to manage mail attributes — proxy addresses, mail-enabling, distribution groups — is the Exchange
+                  management tools, and those require at least one Exchange Server on-prem. Move every mailbox to the
+                  cloud and <strong class="c-amber">you still keep a &ldquo;last Exchange server&rdquo; for recipient
+                  management</strong>, because editing those attributes directly in AD is unsupported and breaks at
+                  the next schema change. The mailboxes left; the management dependency did not.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What still ties you to on-prem Exchange</th><th>Why</th></tr>
+                    <tr><td>Recipient management</td><td>Mail attributes are edited through Exchange tools when AD is authoritative — not by hand in AD</td></tr>
+                    <tr><td>Hybrid mail flow</td><td>Connectors and transport between on-prem and Exchange Online</td></tr>
+                    <tr><td>Public folders / legacy workloads</td><td>Anything not yet migrated still needs a host</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The last Exchange server is not a mailbox host — it is a <strong>management shim for AD-sourced
+                    identity</strong>. The management-tools-only option reduces its footprint, but the only true
+                    removal is moving identity authority to the cloud, so recipient management no longer needs
+                    on-prem tools at all.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The DAG Keeps Mailboxes Alive; the Transport Pipeline Decides Where Mail Goes and Dies</div>
+                <div class="concept-desc">
+                  Two on-prem mechanics every Exchange admin meets. High availability is the <strong>Database
+                  Availability Group</strong>: several servers each hold a copy of every mailbox database, with
+                  automatic failover — <strong class="c-cyan">the unit of resilience is the database copy, not the
+                  server</strong>, so a box can be failed over, patched and failed back while a copy elsewhere stays
+                  active. Mail flow is the <strong>transport pipeline</strong>: a message passes front-end transport,
+                  the categoriser and mailbox transport, evaluated against transport rules and connectors at each
+                  hop — and <strong class="c-amber">&ldquo;why did this message get dropped or rerouted&rdquo; is
+                  answered by knowing which hop and which rule acted.</strong> The message tracking logs are the
+                  record.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mechanic</th><th>What it does</th><th>The question it answers</th></tr>
+                    <tr><td>DAG</td><td>Database copies across servers, automatic failover</td><td>Which copy is active, and can I patch this node?</td></tr>
+                    <tr><td>Transport pipeline</td><td>Front-end → categoriser → mailbox, with rules and connectors</td><td>Which hop and which rule changed this message's fate?</td></tr>
+                    <tr><td>Message tracking logs</td><td>A per-hop record of every message</td><td>Where, precisely, did it go or die?</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The DAG makes a <em>server</em> disposable; the transport pipeline makes a <em>message's fate</em>
+                    traceable. It is the same discipline the cloud Message Trace applies, just on your own tin.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Keep Only What Hybrid Requires, Patch It Religiously, and Plan the Exit From On-Prem Identity</div>
+                <div class="concept-desc">
+                  The trap is treating the leftover Exchange as either fully retired — and managing AD attributes in
+                  unsupported ways that break on the next update — or fully operational, running a whole HA estate
+                  for what is now a management shim. And there is a security edge: <strong class="c-amber">an
+                  unpatched on-prem Exchange Server is one of the most reliably exploited boxes on the internet</strong>,
+                  a perennial target for internet-facing pre-authentication exploits, so a neglected &ldquo;last
+                  server&rdquo; is not dormant — it is exposed.
+                </div>
+                <div class="concept-desc verdict">
+                  So the honest plan is two-layered. Operationally: keep the last Exchange server minimal and patched
+                  on the day updates ship, because it is both load-bearing and a prime target. Strategically: the exit
+                  is not &ldquo;remove Exchange&rdquo; but &ldquo;stop AD being authoritative for identity&rdquo; —
+                  until then the shim stays. It is the on-prem half of the coexistence
+                  <span class="xref">Exchange Hybrid — The Coexistence Nobody Meant to Keep</span> describes, and its
+                  mail-flow tracing is the on-prem sibling of
+                  <span class="xref">Message Trace &amp; Header Analysis — Proving Where a Message Died</span>.
+                </div>
+              </div>
+            </div>
+          </div>

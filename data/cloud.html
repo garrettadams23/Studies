@@ -4506,3 +4506,88 @@ dsregcmd /status
               </div>
             </div>
           </div>
+
+          <!-- ── TOPIC: ENTRA ID PROTECTION ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🚨</span>
+              <span class="topic-name">Entra ID Protection — Conditional Access That Reacts to Risk, Not Just Rules</span>
+              <span class="topic-badge">Entra • Identity</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Static Conditional Access Asks Where and What. This Asks How Risky.</div>
+                <div class="concept-desc">
+                  A plain Conditional Access policy is a fixed rule: this user, from this location, on this device,
+                  gets this control. It cannot tell a normal sign-in from a compromised one —
+                  <strong class="c-cyan">both satisfy the same rule</strong>. Entra ID Protection adds a
+                  <strong class="c-amber">risk dimension</strong>: it scores each sign-in (impossible travel, an
+                  anonymous or malware-linked IP, token and property anomalies) and each user (leaked credentials, a
+                  pattern of risky behaviour) in real time, and lets Conditional Access branch on that score. So the
+                  same user gets a frictionless sign-in when risk is low and a step-up — or a block — when risk is
+                  high. The control becomes conditional on the <em>threat</em>, not only the context.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Risk type</th><th>The question it answers</th><th>Signals</th></tr>
+                    <tr><td>Sign-in risk</td><td>Does <em>this login</em> look compromised?</td><td>Impossible travel, anonymous / malware IP <span class="acro-exp">(Internet Protocol)</span>, unfamiliar properties, token anomalies</td></tr>
+                    <tr><td>User risk</td><td>Is <em>this account</em> likely compromised?</td><td>Leaked credentials found, aggregated risky sign-ins over time</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Sign-in risk is about <strong>this authentication</strong>; user risk is about
+                    <strong>the account</strong> — and they drive different responses: prove it is you now (MFA)
+                    versus fix the account (a secure password change).
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Detect, Then Automatically Demand the Right Remediation — Which the User Clears Themselves</div>
+                <div class="concept-desc">
+                  The power is the automated response, and its elegance is <strong>self-remediation</strong>. A
+                  risk-based policy says: if sign-in risk is medium or high, require MFA <span class="acro-exp">(Multi-Factor Authentication)</span> — and a successful MFA
+                  <em>clears</em> that sign-in risk; if user risk is high, require a secure password change — which
+                  <em>clears</em> the user risk. The loop closes without an admin: the legitimate user proves
+                  identity and resolves their own risk, or is blocked. <strong class="c-amber">The cost is that it is
+                  only as good as its signal</strong> — it needs the higher identity tier, tuning to avoid
+                  false-positive lockouts, and a way for someone to get in when a detection is simply wrong.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Signal</th><th>Automatic demand</th><th>What clears it</th></tr>
+                    <tr><td>Sign-in risk ≥ medium</td><td>Require MFA</td><td>A successful MFA on that sign-in</td></tr>
+                    <tr><td>User risk = high</td><td>Require a secure password change</td><td>The password reset itself</td></tr>
+                    <tr><td>Either, if you choose</td><td>Block</td><td>An admin investigates and dismisses</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Because most detections self-remediate, the alerts that <em>reach</em> an analyst are the ones
+                    that did not clear — which is exactly the population worth a human's time, instead of every
+                    login.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Layer Risk Onto the Baseline — Don't Skip Report-Only, and Never the Break-Glass</div>
+                <div class="concept-desc">
+                  Two mistakes bracket this. One is not using it — running only static Conditional Access and
+                  treating every sign-in as equally trustworthy, so a phished session with a valid MFA sails
+                  through. The other is over-trusting it — wiring high-risk auto-block with no exception path, so a
+                  false positive on an executive during a critical week becomes a self-inflicted outage. The right
+                  posture is risk-based policy as a <em>layer</em> on top of your baseline, tuned in
+                  <strong>report-only</strong> mode first.
+                </div>
+                <div class="concept-desc verdict">
+                  Turn it on in report-only, watch for a week what it <em>would</em> have blocked, then enforce — and
+                  never without the excluded break-glass account that
+                  <span class="xref">Break-Glass Accounts — The Ones That Must Work When Everything Else Does Not</span>
+                  insists on, because the day risk-based access misfires is the day you need the door it does not
+                  guard. It is the risk-aware upgrade to the static rules
+                  <span class="xref">Conditional Access &amp; Device Compliance</span> defines — the same engine,
+                  now reacting to the threat rather than only the context.
+                </div>
+              </div>
+            </div>
+          </div>

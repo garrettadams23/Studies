@@ -12460,6 +12460,28 @@ Both are `cloud` cards, linked bidirectionally to each other and to the Azure hi
 and Monitor cards they extend. Check PASS · smoke 142/142 · axe 6/6 · mobile 9/9 · visual 2/2 ·
 1,286 links, 0 one-way. Site 1,519 → 1,521.
 
+The second wave took the remaining verified zeros across Intune, identity and Exchange — four
+cards, each turning on a real operational truth rather than a feature list:
+
+- **Endpoint Analytics &amp; Proactive Remediations** (`endpoint`) — measure the fleet on what users
+  feel (startup, app reliability) and self-heal with a detection/remediation script pair, with the
+  discipline that a fix every device needs is an image or policy bug, not a remediation.
+- **Windows 365 &amp; Azure Virtual Desktop** (`endpoint`) — the two cloud-desktop models named and
+  priced: Cloud PC as a fixed-price per-user SKU you assign, AVD as pooled infrastructure you
+  operate — and the reminder that either is still a full endpoint to manage, not one fewer.
+- **Entra ID Protection** (`cloud`) — Conditional Access that branches on *risk*, with the elegance
+  of self-remediation (MFA clears sign-in risk, a password change clears user risk) and the
+  non-negotiable excluded break-glass account.
+- **Exchange Server On-Prem** (`m365`) — the &ldquo;last Exchange server&rdquo; you keep for
+  recipient management when AD is authoritative, the DAG and transport pipeline, and the security
+  edge that an unpatched on-prem Exchange is a perennial internet target.
+
+The audit's headline holds: the enterprise-Microsoft estate was already deep, and the genuine gaps
+were not in the on-prem tooling everyone documents but at the **hybrid and cloud-management seam** —
+Arc, Update Manager, cloud desktops, risk-based identity, and the on-prem shim a cloud migration
+cannot quite delete. Six cards, all verified against content first, none manufactured. Site
+1,519 → 1,525 · 1,304 links, 0 one-way · every gate green.
+
 ---
 
 # Closing note for Phase 7–10

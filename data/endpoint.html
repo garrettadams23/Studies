@@ -3220,4 +3220,179 @@ Remove-PSSession $s
             </div>
           </div>
 
+
+          <!-- ── TOPIC: ENDPOINT ANALYTICS & REMEDIATIONS ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🩺</span>
+              <span class="topic-name">Endpoint Analytics &amp; Proactive Remediations — Measuring and Self-Healing the Fleet</span>
+              <span class="topic-badge">Intune • Analytics</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">You Cannot Fix a Fleet You Only Hear About When It Breaks</div>
+                <div class="concept-desc">
+                  Most endpoint management is reactive: a ticket arrives, you fix one device. Endpoint Analytics
+                  inverts that — it continuously scores the fleet on the things users actually <em>feel</em>:
+                  <strong class="c-cyan">boot-and-sign-in time, application reliability, and whether policies are
+                  quietly failing</strong> — and surfaces the machines dragging the average down
+                  <strong class="c-amber">before anyone opens a ticket.</strong> It turns &ldquo;my computer is
+                  slow&rdquo; from an anecdote into a measured, ranked list, with the phase (Windows boot? sign-in?
+                  a specific Group Policy?) and often the culprit app named.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What it measures</th><th>The question it answers</th></tr>
+                    <tr><td>Startup score</td><td>How long from power to a usable desktop — split into boot and sign-in phases</td></tr>
+                    <tr><td>Application reliability</td><td>Which apps crash or hang, and on how many devices</td></tr>
+                    <tr><td>Work-from-anywhere / cloud readiness</td><td>Which devices are still tied to on-prem in ways that hurt remote users</td></tr>
+                    <tr><td>Resource performance</td><td>Where CPU <span class="acro-exp">(Central Processing Unit)</span> and disk pressure is making a device feel slow</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    It is a <strong>diagnostic surface, not a fix</strong>. The value is the ranked list — who to
+                    help first and which app is the actual offender — so effort lands on the devices and causes that
+                    move the fleet, not the loudest ticket.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Proactive Remediations: a Detect-and-Fix Script Pair That Runs Before the Ticket</div>
+                <div class="concept-desc">
+                  The action arm is <strong>Proactive Remediations</strong> — a <em>pair</em> of PowerShell scripts
+                  deployed to a device group on a schedule. A <strong class="c-cyan">detection</strong> script checks
+                  for a known-bad state and signals with its exit code; the <strong class="c-cyan">remediation</strong>
+                  script runs <em>only</em> when detection says something is wrong, and fixes it. It is cron-for-the-fleet
+                  with a condition: look for the stopped service, the stale certificate, the drifted setting — and
+                  self-heal it, reporting how many devices were found and how many were fixed. The hazard is scale:
+                  <strong class="c-amber">a remediation with a bug does not break one device, it breaks every device
+                  it targets</strong>, so it is a change like any other and belongs on a pilot ring first.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Piece</th><th>Its job</th></tr>
+                    <tr><td>Detection script</td><td>Exit <strong>0</strong> = healthy, leave alone; exit <strong>1</strong> = remediate</td></tr>
+                    <tr><td>Remediation script</td><td>Runs only on a non-zero detection; performs the fix</td></tr>
+                    <tr><td>Schedule &amp; context</td><td>Once, hourly or daily; runs as SYSTEM or as the user — pick deliberately</td></tr>
+                    <tr><td>Reporting</td><td>Found vs fixed counts across the group — the proof it worked</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    It needs the right entitlement (Windows Enterprise with an E3-or-above style licence) and the
+                    right run context, and above all a pilot ring — a bad remediation is a fleet-scale change event,
+                    not a small script.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Analytics Says Where It Hurts; Remediations Stop the Recurring Ache — Neither Is Root Cause</div>
+                <div class="concept-desc">
+                  The trap is treating remediations as a dumping ground for band-aids — a growing pile of scripts
+                  papering over problems that a policy or an image should solve properly. If every device from one
+                  build has the same failing service, that is an <em>image or baseline</em> bug, and scripting round
+                  it forever only hides it. Use analytics to find the systemic issue, fix it at the source, and
+                  reserve remediations for genuine per-device drift that has no upstream fix.
+                </div>
+                <div class="concept-desc verdict">
+                  So before you script a fix, ask whether the thing you are fixing should exist at all: if every
+                  device needs the same repair, it is a policy or image defect, not a remediation. Analytics ranks
+                  the pain, remediations handle the residue, and the cause is handled upstream — in the image from
+                  <span class="xref">Windows Autopilot — Zero-Touch Provisioning</span> and the configuration and
+                  compliance policies of <span class="xref">Microsoft Intune — Cloud MDM &amp; MAM</span>.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: WINDOWS 365 & AVD ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🖥️</span>
+              <span class="topic-name">Windows 365 &amp; Azure Virtual Desktop — Cloud PC vs the Session Farm</span>
+              <span class="topic-badge">Azure • Cloud Desktop</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Two Ways to Put the Desktop in Azure: Fixed-Price Simplicity vs Pooled-Density Control</div>
+                <div class="concept-desc">
+                  When the endpoint becomes a session in Azure there are two Microsoft answers, and they are not
+                  interchangeable. <strong class="c-cyan">Windows 365</strong> gives each user a dedicated
+                  <strong>Cloud PC</strong> — a persistent, single-user Windows machine, billed a <em>fixed monthly
+                  price per user</em>, provisioned and managed like any other Intune device.
+                  <strong class="c-amber">Azure Virtual Desktop (AVD)</strong> is the platform underneath: a
+                  <em>pooled, multi-session</em> host farm you size and run yourself, billed on Azure
+                  <em>consumption</em>, capable of packing many users onto each host. One is a product you assign;
+                  the other is infrastructure you operate.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th></th><th>Windows 365 (Cloud PC)</th><th>Azure Virtual Desktop</th></tr>
+                    <tr><td>Model</td><td>Dedicated per-user, persistent</td><td>Pooled multi-session (or personal) host pools</td></tr>
+                    <tr><td>Pricing</td><td>Fixed per user / month</td><td>Azure consumption — compute + storage, variable</td></tr>
+                    <tr><td>Management</td><td>An Intune device; same policies as any PC</td><td>You own images, host pools, scaling, FSLogix</td></tr>
+                    <tr><td>Effort</td><td>Minimal — assign a licence</td><td>Significant — design, size, autoscale, optimise</td></tr>
+                    <tr><td>Best when</td><td>Predictable per-user needs; least effort</td><td>Density, cost control, custom images, spiky scale</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Windows 365 is the desktop as a <strong>SKU <span class="acro-exp">(Stock Keeping Unit)</span></strong> — buy it per person; AVD is the desktop as
+                    <strong>infrastructure</strong> — build and tune it. The multi-session density of AVD is the
+                    lever Windows 365 does not pull, and the fixed price of Windows 365 is the operational simplicity
+                    AVD does not offer.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">It Is Still an Endpoint You Manage — the Estate Does Not Shrink, It Moves</div>
+                <div class="concept-desc">
+                  The seductive error is thinking a cloud desktop is one less thing to manage. It is not: a Cloud PC
+                  is a full Windows device that still needs Intune policy, compliance, patching, Defender,
+                  Conditional Access and identity, exactly like a physical one. <strong class="c-amber">What changes
+                  is where it runs and how it is provisioned; what stays is the entire management burden</strong> —
+                  and AVD <em>adds</em> to it (host pools, gold images, FSLogix profile containers, session-host
+                  autoscale), it does not subtract. Both live or die on identity and the network path: a Cloud PC
+                  behind a broken Conditional Access grant, or a slow route to on-prem resources, is a user with no
+                  working computer at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Still required, cloud desktop or not</th><th>And AVD additionally</th></tr>
+                    <tr><td>Intune policy, compliance, patching, Defender</td><td>Host-pool sizing and session-host autoscale</td></tr>
+                    <tr><td>Conditional Access and a working identity</td><td>Gold-image build and lifecycle</td></tr>
+                    <tr><td>A network path to the apps and data users need</td><td>FSLogix profile containers and their storage</td></tr>
+                    <tr><td>An image and an app-delivery method</td><td>Licensing the hosts and the per-user access right</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Budget the <strong>management</strong>, not just the licence. The endpoint did not disappear; it
+                    moved to Azure and kept every requirement it had — plus, for AVD, a platform to run.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Choose by Who Operates It, and How Predictable the Need Is</div>
+                <div class="concept-desc">
+                  The choice is organisational as much as technical. Want per-user desktops with the least effort and
+                  a predictable bill — knowledge workers, contractors, turning BYOD <span class="acro-exp">(Bring Your Own Device)</span> into managed — and Windows 365 is
+                  the answer: assign a licence, manage it like any Intune device. Need to squeeze cost through
+                  multi-session density, run specialist or GPU <span class="acro-exp">(Graphics Processing Unit)</span> images, or absorb spiky seasonal scale, and you have
+                  the platform skills to operate a host farm — and AVD is the answer. Plenty of estates run both:
+                  Windows 365 for the steady per-user population, AVD for the pooled call-centre or the GPU workload.
+                </div>
+                <div class="concept-desc verdict">
+                  Ask two things: do these users need a <em>dedicated</em> machine or will <em>pooled</em> sessions
+                  do, and do we want to <em>operate</em> a desktop platform or <em>consume</em> one? Pooled and
+                  willing-to-operate points to AVD's density and control; dedicated and wanting-simplicity points to
+                  Windows 365's fixed price. It is the same &ldquo;session, not a box&rdquo; idea
+                  <span class="xref">Virtual Desktops — When the Endpoint Is a Session</span> frames generically, now
+                  with the two Microsoft products named and priced.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body endpoint -->
