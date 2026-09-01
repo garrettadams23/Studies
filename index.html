@@ -75278,8 +75278,8 @@ were tracking different things.
 <span class="ctag ctag-general">GCP</span>
 </div>
 <span class="domain-sub">AWS · GCP · Azure · IAM · Networking · Compute · Storage · Security · Troubleshooting</span>
-<span class="domain-meta" aria-label="74 topics, about 2h 50m to read"
->74 topics · ~2h 50m</span>
+<span class="domain-meta" aria-label="74 topics, about 2h 55m to read"
+>74 topics · ~2h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -75754,12 +75754,12 @@ only at what a person can do directly.
 </div>
 </div>
 </div>
-<div class="topic" id="cloud-iam-pitfalls-privilege-escalation" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="cloud-iam-pitfalls-privilege-escalation" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚠️</span>
 <span class="topic-name">Cloud IAM <span class="acro-exp">(Identity and Access Management)</span> Pitfalls &amp; Privilege Escalation</span>
 <span class="topic-badge">Security</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -75785,6 +75785,41 @@ red team, find) them.
 <strong class="c-green">Defenses:</strong> least privilege, no wildcards, IMDSv2,
 short-lived creds, and continuous scanning with CSPM <span class="acro-exp">(Cloud Security Posture Management)</span> tools (Prowler, ScoutSuite,
 Steampipe) that flag these exact patterns.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">Escalation Is a Graph, Not a Policy — Which Is Why Reading Them One at a Time Misses It</div>
+<div class="concept-desc">
+The pitfalls above share a deeper shape: <strong class="c-cyan">cloud permissions
+compose</strong>. A set of individually-reasonable grants chains into a path to admin
+that no single policy reveals — <code>iam:PassRole</code> plus the ability to create a
+compute resource lets a low-privileged identity run code as a powerful role;
+<code>iam:CreatePolicyVersion</code> on your own policy lets you rewrite your own
+permissions; <code>AttachUserPolicy</code> lets you attach admin to yourself. A human
+reviewing one policy at a time <strong class="c-amber">cannot see these</strong>,
+because escalation is a reachability question over the whole permission graph, not a
+property of any one document. That is why the modern answer is not eyeball review but
+tools that compute &ldquo;who can reach admin from here&rdquo; (IAM Access Analyzer,
+policy simulators, PMapper, Cloudsplaining).
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Escalation primitive</th><th>What it really grants</th></tr>
+<tr><td><code>iam:PassRole</code> + create compute</td><td>Run code as any role you can pass — the workhorse of cloud privesc</td></tr>
+<tr><td><code>iam:CreatePolicyVersion</code> on your own policy</td><td>Rewrite your own permissions to anything</td></tr>
+<tr><td><code>iam:AttachUserPolicy</code> / <code>PutUserPolicy</code></td><td>Attach admin directly to yourself</td></tr>
+<tr><td><code>iam:UpdateAssumeRolePolicy</code></td><td>Make a powerful role assumable by you</td></tr>
+<tr><td><code>iam:CreateAccessKey</code> on another user</td><td>Mint credentials for a more-privileged identity</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the highest-leverage control is not scanning for wildcards; it is treating
+<strong>writes to IAM itself as a separate, tiny, heavily-guarded tier</strong> —
+because almost every escalation path runs through a permission that edits identity.
+Grant IAM-write to as few principals as possible, alert on every use, and run a graph
+analyser in CI so a new policy's reachable blast radius is reviewed before it ships,
+not after an attacker maps it for you.
 </div>
 </div>
 </div>
@@ -77266,12 +77301,12 @@ different product names.
 </div>
 </div>
 </div>
-<div class="topic" id="well-architected-the-architecture-framework" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="well-architected-the-architecture-framework" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏛️</span>
 <span class="topic-name">Well-Architected &amp; the Architecture Framework</span>
 <span class="topic-badge">AWS · GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77298,6 +77333,38 @@ the basis of the "Well-Architected Review."
 Run a review before a big launch: score each pillar, log the risks, remediate the
 high ones. It's the cloud-specific companion to the engineering-domain system
 design cards.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">The Pillars Trade Off — &ldquo;Well-Architected&rdquo; Is Chosen Trade-offs, Not a Perfect Score</div>
+<div class="concept-desc">
+The pillars read like a checklist to max out, and that is the misread. They
+<strong class="c-amber">pull against each other</strong>: reliability (multi-region,
+redundancy) costs money and fights cost optimisation; performance can add both cost and
+complexity; security adds operational friction. You cannot be maximal on all of them at
+once, and you are not meant to be. The framework's value is not the score — it is
+<strong class="c-cyan">forcing the trade-offs to be explicit and deliberate for this
+specific workload</strong>, because a dev/test sandbox and a payments platform should
+land in different places on purpose. A review that greens every pillar on a throwaway
+environment has not succeeded; it has over-engineered.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Tension</th><th>The trade being made</th></tr>
+<tr><td>Reliability vs Cost</td><td>Multi-region and redundancy buy uptime with money — right for payments, waste for a nightly batch job</td></tr>
+<tr><td>Performance vs Cost</td><td>Faster tiers and caching cost more — worth it only where latency is the product</td></tr>
+<tr><td>Security vs Operational Excellence</td><td>Tighter controls add friction — calibrate to the data's sensitivity, not to maximum</td></tr>
+<tr><td>Sustainability vs Performance</td><td>Right-sizing down saves carbon and cash, at some latency cost</td></tr>
+</table>
+<div class="concept-desc verdict">
+So the review is a conversation, not an audit: its output is a list of deliberate
+trade-offs and the risks you chose to accept, not a green scorecard. Run it to make
+the implicit explicit — where are we buying reliability we don't need, and where are
+we one zone away from an outage we can't afford — and calibrate every pillar to what
+the workload is actually worth. A uniformly high score usually means you graded a
+system that did not need grading.
 </div>
 </div>
 </div>
