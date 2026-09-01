@@ -872,6 +872,42 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Most React Bugs Are Fighting UI = f(state) — useEffect Is Not a Lifecycle Hook</div>
+                <div class="concept-desc">
+                  Nearly every React bug is an attempt to work around <code>UI = f(state)</code> instead
+                  of with it, and the culprit is usually <code>useEffect</code>. Effects are for
+                  <strong class="c-cyan">synchronising with external systems</strong> — a subscription, a
+                  non-React widget, the browser DOM — but they get used as a dumping ground for
+                  &ldquo;run some code when things change,&rdquo; which produces two classic failures.
+                  <strong class="c-amber">Derived state in an effect</strong>: storing a value that could
+                  be computed during render (a filtered list, a total) and wiring an effect to keep it in
+                  sync — extra renders and a copy that desyncs. And
+                  <strong class="c-amber">responding to an event in an effect</strong> instead of the
+                  handler that caused it: the effect fires on the state change, not the click, so the
+                  timing is wrong. The third trap is the stale closure — a callback captures the state
+                  from the render that created it, so a <code>setInterval</code> quietly reads an old
+                  value (the &ldquo;why is my counter stuck&rdquo; bug).
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The instinct</th><th>Why it's wrong</th><th>Where it belongs</th></tr>
+                    <tr><td><code>useEffect</code> to derive state</td><td>Extra render; a copy that desyncs</td><td>Compute it during render</td></tr>
+                    <tr><td><code>useEffect</code> to respond to a click</td><td>Fires on state change, not the event</td><td>The event handler</td></tr>
+                    <tr><td><code>useEffect</code> to reset state on a prop change</td><td>Fights the model; flashes stale UI</td><td>A <code>key</code> prop, or derive it</td></tr>
+                    <tr><td>Reading state in <code>setInterval</code></td><td>Stale closure — captures the old render's value</td><td>A ref, or the functional updater</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So before reaching for <code>useEffect</code>, ask whether the work synchronises with
+                    something <em>outside</em> React — if not, it almost certainly belongs in render (for
+                    derived values) or an event handler (for responses to actions). The rules of hooks
+                    keep the machinery working; this is the deeper discipline that keeps the app correct:
+                    <strong>describe the UI as a function of state and let React run it</strong>, rather
+                    than pushing changes around by hand with effects.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -955,7 +991,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Concept</div>
-                <div class="concept-title">SSR <span class="acro-exp">(Server-Side Rendering)</span>, SSG <span class="acro-exp">(Static Site Generation)</span>, ISR &amp; CSR <span class="acro-exp">(Certificate Signing Request)</span> — When Each</div>
+                <div class="concept-title">SSR <span class="acro-exp">(Server-Side Rendering)</span>, SSG <span class="acro-exp">(Static Site Generation)</span>, ISR &amp; CSR <span class="acro-exp">(Client-Side Rendering)</span> — When Each</div>
                 <div class="concept-desc">
                   Meta-frameworks (<strong class="c-cyan">Next.js</strong>, Nuxt, SvelteKit) add
                   routing, data fetching, and server rendering on top of the UI <span class="acro-exp">(User Interface)</span> library. The key
@@ -974,6 +1010,42 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     arrives immediately). <strong class="c-amber">React Server Components</strong> are
                     the current frontier — render components on the server, ship less JS <span class="acro-exp">(JavaScript)</span>. Match the mode
                     to the page: static where you can, dynamic where you must.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Rendering Mode Is a Per-Route Decision — and the New Axis Is the Server/Client Boundary</div>
+                <div class="concept-desc">
+                  The table sorts modes by page type; the sharpening is that it's a
+                  <strong class="c-cyan">per-route (often per-component) choice, not one setting for the
+                  app</strong>: a marketing page wants SSG, its pricing table might want ISR, the
+                  dashboard behind login wants CSR or SSR — in the same codebase. The current frontier
+                  moves the decision inward to the <strong class="c-cyan">server/client boundary</strong>.
+                  With server components, everything is server-rendered by default and ships no
+                  JavaScript; a <code>"use client"</code> directive marks where interactivity — and its
+                  JS — begins. So the skill is pushing that boundary <em>down</em>: keep data-fetching
+                  and static content on the server, isolate interactivity into small client leaves. The
+                  classic mistake is marking a large tree <code>"use client"</code> to make one button
+                  interactive, which <strong class="c-amber">drags the whole subtree's JS to the
+                  browser</strong> and undoes the benefit.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mode / choice</th><th>The cost it carries</th></tr>
+                    <tr><td>CSR</td><td>Blank first paint, poor SEO — fine behind a login, wrong for public pages</td></tr>
+                    <tr><td>SSR</td><td>Per-request server compute, cold starts, a hydration delay to interactive</td></tr>
+                    <tr><td>SSG</td><td>Fastest, but stale until the next build — wrong for personalised/fresh data</td></tr>
+                    <tr><td>ISR</td><td>Static speed with a staleness window you must be able to tolerate</td></tr>
+                    <tr><td><code>"use client"</code> high in the tree</td><td>Ships the whole subtree's JS — push the boundary to the leaves</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So don't pick one mode for the app; pick per route — static where you can, dynamic
+                    only where the page genuinely needs it — and treat the server/client boundary as the
+                    real performance lever: <strong>the less you mark &ldquo;use client,&rdquo; the less
+                    JavaScript the user downloads</strong>. SSR and personalisation are powerful, but each
+                    is a server you operate and a cost per request, so reach for them where freshness or
+                    SEO demands it, not by default.
                   </div>
                 </div>
               </div>
