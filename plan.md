@@ -15159,3 +15159,65 @@ inline style attribute 1,549 → 1,549
 ```
 
 Site **1,529 topics**. Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** · determinism reproducible.
+
+---
+
+## Session record — September, part 2: a deepening wave, because the gaps had moved from breadth to depth
+
+With new-content genuinely saturated (every breadth probe returning covered-or-`[~]`), the
+honest next move was the one Phase 8 named and `tools/depth_report.py` measures: the **thin
+tail** — single-concept cards under 1,800 plain characters. The report put it at **147 of
+1,529 (10%)**, concentrated in the domains authored before the current three-card form settled.
+This wave took it to **128 (8%)** — nineteen cards, each gaining one genuine second concept
+card, with the padding counter-metric holding flat throughout.
+
+The rule the wave held to: **a deepening is a second card that names something the first did
+not — a failure mode, an inversion, a decision — never the first card restated longer.** The
+proof it held is the counter-metric: mean chars per concept card moved **1,241 → 1,247** across
+nineteen additions (i.e. barely), while the thin count fell 19 and the 10th percentile rose
+**1,433 → ~1,450**. Padding would have moved the mean and left the percentile flat; this did the
+opposite.
+
+| Domain | Card | The second angle added |
+|---|---|---|
+| `data` | Warehouse vs Lake vs Lakehouse | The lakehouse is not the default; the table format is a lock-in |
+| `data` | Schema Migrations | The migration that looks instant is the one that locks the table |
+| `data` | The NoSQL Landscape | Choosing the store is a query decision, not a data-shape one |
+| `eng` | Coupling & Cohesion | Couple along the axis of change; low coupling is not free |
+| `eng` | Idempotency & Exactly-Once | The key is easy; the race and the dedup window are not |
+| `eng` | Technical Debt | The word is abused two ways, and that is how debt never gets paid |
+| `eng` | Backpressure | It relocates the pileup to whatever you forgot to bound |
+| `eng` | Scalability 101 | Scale up first; horizontal is about failure, not throughput |
+| `eng` | Load Balancing & Sharding | The shard key is a one-way door; the LB's job is health checks |
+| `web` | State Management | Most state bugs are state that isn't state |
+| `web` | Realtime | The cost is operational and arrives after launch |
+| `web` | Frontend Security | XSS is an output-encoding bug; encode at the sink |
+| `devops` | Branching Strategies | The model is downstream of your release cadence |
+| `devops` | Progressive Delivery | A canary is only as good as its metric; flags are debt |
+| `devops` | DORA Metrics | A diagnostic you can't game as a set; not a leaderboard |
+| `cloud` | Well-Architected | The pillars trade off — it's chosen trade-offs, not a score |
+| `cloud` | Cloud IAM Pitfalls | Escalation is a graph, not a policy; guard IAM-write |
+| `ops` | Golden Signals | What to measure, not where — the gap is the last mile |
+| `ops` | On-Call Done Humanely | Alert fatigue is a death spiral; delete alerts |
+
+### What the wave deliberately did not touch
+
+The thin count did not go to zero, and should not. The report's `--bottom` view and its
+`DELIBERATE` badge list mark the cards that are short *on purpose* — the beginner layer and the
+per-certification objective skims — and deepening those would make them worse. Beyond those, the
+remaining tail is largely **tool- and provider-reference cards** (`John the Ripper`, `tcpdump`,
+`gcloud CLI`, the language blurbs): a scannable one-table reference is the right shape for those,
+and a forced second card would be the exact padding the counter-metric exists to catch. The wave
+stopped at each domain the moment it reached that reference floor, which is why it deepened the
+concept-rich domains (`data`, `eng`, `web`, `devops`, `cloud`, `ops`) and left the tool domains
+(`redteam`, `blueteam`, `script`) near where they were.
+
+```
+thin single-concept (<1,800 chars)   147 → 128  (10% → 8%)
+mean chars per concept card        1,241 → 1,247   (nineteen cards; counter-metric held)
+10th-percentile topic length       1,433 → ~1,450
+table with no verdict                509 → 509   (every new table ends on a verdict)
+```
+
+Site **1,529 topics** (depth, not count — no new topics this wave). Check PASS · smoke
+**142/142** · axe **6/6** · mobile **9/9** · visual **2/2** · determinism reproducible.
