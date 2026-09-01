@@ -12482,6 +12482,17 @@ Arc, Update Manager, cloud desktops, risk-based identity, and the on-prem shim a
 cannot quite delete. Six cards, all verified against content first, none manufactured. Site
 1,519 → 1,525 · 1,304 links, 0 one-way · every gate green.
 
+A follow-on broad probe of the professional territory next door — SASE, SCIM, passkeys, SOAR,
+UEBA, vector databases, OpenTelemetry, GitOps, service mesh, SBOM, WAF, chaos engineering, SLOs —
+came back **covered on every one**, which is the saturation signal again. The lone verified zero
+was **data mesh** (`data`): the storage question was answered (warehouse / lake / lakehouse) but
+not the *ownership* one. The card is written around its honest critique — data mesh is an org
+restructure sold as an architecture, it pays off only where a central data team is a provable
+bottleneck and domains can carry ownership, and most teams need a lakehouse and data-product
+discipline, not a mesh. Site 1,525 → 1,526. With that, the deliberate content pass is again at
+its floor: seven genuine cards across this session, and the next probe finds none — the long tail
+is the scheduled Routine's.
+
 ---
 
 # Closing note for Phase 7–10

@@ -2593,4 +2593,92 @@ changes that step 2 already contains, on purpose.</pre>
             </div>
           </div>
 
+
+          <!-- ── TOPIC: DATA MESH ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-08">
+            <div class="topic-header">
+              <span class="topic-icon">🕸️</span>
+              <span class="topic-name">Data Mesh — Domain-Owned Data as a Product, and When It Is the Wrong Answer</span>
+              <span class="topic-badge">DATA • Architecture</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Bottleneck Is Not Your Warehouse. It Is the Central Team That Owns It.</div>
+                <div class="concept-desc">
+                  Warehouse, lake and lakehouse all answer <em>where</em> data lives. Data mesh answers a different
+                  question — <strong class="c-cyan">who owns it</strong> — and the problem it names is organisational,
+                  not technical. A single central data team becomes the bottleneck for every domain's data, deeply
+                  understanding none of them, and the backlog grows without bound. Data mesh inverts the ownership:
+                  <strong class="c-amber">each business domain owns its data as a product</strong> — discoverable,
+                  addressable, documented, with an SLA <span class="acro-exp">(Service Level Agreement)</span> — served through a self-serve platform under federated rather
+                  than central governance. It is a decentralisation of ownership, not a new storage engine.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Principle</th><th>What it actually asks of you</th></tr>
+                    <tr><td>Domain ownership</td><td>The team that knows the data owns it end to end — pipeline included</td></tr>
+                    <tr><td>Data as a product</td><td>An owner, an SLA, docs and quality — treated like a published API <span class="acro-exp">(Application Programming Interface)</span>, not a table</td></tr>
+                    <tr><td>Self-serve data platform</td><td>So domains can publish without a platform engineer per pipeline</td></tr>
+                    <tr><td>Federated computational governance</td><td>Global standards enforced <em>by the platform</em>, not by a central gatekeeper</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The unit of change is <strong>org structure plus product thinking</strong>, and the &ldquo;mesh&rdquo;
+                    is the network of domain-owned data products that results — not a tool you install.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">It Is an Org Restructure Sold as an Architecture — and That Is Where It Goes Wrong</div>
+                <div class="concept-desc">
+                  The failure mode is adopting the <em>word</em> without the <em>org change</em>. A team that stands
+                  up &ldquo;data products&rdquo; but keeps central ownership, or decentralises ownership without a
+                  self-serve platform, gets the worst of both worlds — <strong class="c-amber">the coordination cost
+                  of decentralisation and the bottleneck of centralisation at once</strong>, now with more moving
+                  parts. Data mesh only pays off at a scale where the central team is genuinely the bottleneck and
+                  the domains genuinely have the maturity and headcount to own data products, which describes a small
+                  number of large organisations. Below that scale, the coordination overhead exceeds the bottleneck
+                  it removes.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Mesh pays off only if…</th><th>and fails when…</th></tr>
+                    <tr><td>Many domains, each with real data expertise and headcount</td><td>One or two domains, or domains with no one to own a product</td></tr>
+                    <tr><td>The central team is a provable, measured bottleneck</td><td>The pain is actually scattered, low-quality data</td></tr>
+                    <tr><td>A platform team can deliver genuine self-serve</td><td>&ldquo;Self-serve&rdquo; is a wiki and good intentions</td></tr>
+                    <tr><td>Leadership will carry the org change</td><td>Only the data team wanted it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The honest test is which pain you have: if it is the central team's backlog, the mesh helps; if
+                    it is your data being scattered and untrustworthy, the mesh makes that <em>worse</em> before
+                    better — and most organisations have the second problem.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Most Teams Need a Lakehouse and Clear Ownership, Not a Mesh</div>
+                <div class="concept-desc">
+                  The reach-for-mesh mistake is treating it as the modern default. It is not — it is a specific
+                  answer to a specific scaling pain that most organisations do not have yet. For the majority, the
+                  right move is the storage architecture plus data-product <em>discipline</em> — documentation, SLAs,
+                  quality, a named owner — applied <em>within</em> a central or hub-and-spoke team. You get most of
+                  &ldquo;data as a product&rdquo; without the organisational upheaval.
+                </div>
+                <div class="concept-desc verdict">
+                  So the decision is about scale and pain, not fashion. Adopt the mesh's <strong>principles</strong> —
+                  treat data as a product, give it an owner and an SLA — always; adopt its full
+                  <strong>decentralisation</strong> only when a central team is provably the bottleneck and the
+                  domains can genuinely carry ownership. Reach for a lakehouse for where the data lives — the choice
+                  <span class="xref">Warehouse vs Lake vs Lakehouse</span> lays out — and reach for a mesh only when
+                  <em>who owns it</em> is the thing that is broken. Either way it rests on the delivery guarantees
+                  <span class="xref">Streaming &amp; Event Pipelines — Delivery Guarantees and the Lies About Time</span>
+                  makes concrete.
+                </div>
+              </div>
+            </div>
+          </div>
+
 <!-- /domain-body data -->
