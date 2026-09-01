@@ -633,6 +633,41 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Factors Aren't Equal — Statelessness Is Load-Bearing, and It's the One Teams Quietly Break</div>
+                <div class="concept-desc">
+                  The list reads as twelve rules of equal weight; they are not.
+                  <strong class="c-cyan">Stateless, share-nothing processes</strong> is the load-bearing
+                  factor, because it is what makes horizontal scaling, disposability and autoscaling
+                  actually work — every other benefit rests on any instance being able to handle any
+                  request and being safe to kill at any moment. And it is precisely the one teams violate
+                  without noticing, because <strong class="c-amber">state creeps back in quietly</strong>:
+                  an in-memory session, a local file cache, an upload written to the container's disk, a
+                  cron job scheduled inside the web process, a &ldquo;sticky sessions&rdquo; toggle on the
+                  load balancer. Each reintroduces state, and then the mystery is &ldquo;why does scaling
+                  to two instances break login / lose files / run the job twice.&rdquo; The fingerprint
+                  of a broken twelfth factor is a bug that only appears once there is more than one
+                  instance.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The quiet state leak</th><th>What breaks at 2+ instances</th></tr>
+                    <tr><td>In-memory session / cache</td><td>Login and cached data are per-instance — inconsistent</td></tr>
+                    <tr><td>File written to local disk</td><td>The upload is on one box; the next request hits another</td></tr>
+                    <tr><td>Cron / scheduler in the web process</td><td>The job runs N times, once per instance</td></tr>
+                    <tr><td>Sticky sessions to paper over it</td><td>Uneven load, and a lost instance loses its users' state</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So of the twelve, hold statelessness hardest: push every scrap of state to a backing
+                    service — sessions to Redis, files to object storage, schedules to a dedicated worker
+                    — and <strong>test with more than one instance</strong>, because a single instance
+                    hides every violation. The rest of the factors make deployment clean; this one is
+                    what makes scaling and recovery possible at all, which is why &ldquo;it works on one
+                    node&rdquo; tells you almost nothing.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

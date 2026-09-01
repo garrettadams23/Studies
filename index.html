@@ -85714,12 +85714,12 @@ you have bought permanence and only paid for it.
 </div>
 </div>
 </div>
-<div class="topic" id="the-twelve-factor-app" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="the-twelve-factor-app" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">1️⃣2️⃣</span>
 <span class="topic-name">The Twelve-Factor App</span>
 <span class="topic-badge">Architecture</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -85746,6 +85746,41 @@ memorize all twelve — internalize the handful that bite hardest.
 Follow these and your app runs the same on a laptop, in a container, or across
 100 nodes — the foundation for autoscaling, twelve-factor is why containers and
 PaaS <span class="acro-exp">(Platform as a Service)</span> "just work."
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">The Factors Aren't Equal — Statelessness Is Load-Bearing, and It's the One Teams Quietly Break</div>
+<div class="concept-desc">
+The list reads as twelve rules of equal weight; they are not.
+<strong class="c-cyan">Stateless, share-nothing processes</strong> is the load-bearing
+factor, because it is what makes horizontal scaling, disposability and autoscaling
+actually work — every other benefit rests on any instance being able to handle any
+request and being safe to kill at any moment. And it is precisely the one teams violate
+without noticing, because <strong class="c-amber">state creeps back in quietly</strong>:
+an in-memory session, a local file cache, an upload written to the container's disk, a
+cron job scheduled inside the web process, a &ldquo;sticky sessions&rdquo; toggle on the
+load balancer. Each reintroduces state, and then the mystery is &ldquo;why does scaling
+to two instances break login / lose files / run the job twice.&rdquo; The fingerprint
+of a broken twelfth factor is a bug that only appears once there is more than one
+instance.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The quiet state leak</th><th>What breaks at 2+ instances</th></tr>
+<tr><td>In-memory session / cache</td><td>Login and cached data are per-instance — inconsistent</td></tr>
+<tr><td>File written to local disk</td><td>The upload is on one box; the next request hits another</td></tr>
+<tr><td>Cron / scheduler in the web process</td><td>The job runs N times, once per instance</td></tr>
+<tr><td>Sticky sessions to paper over it</td><td>Uneven load, and a lost instance loses its users' state</td></tr>
+</table>
+<div class="concept-desc verdict">
+So of the twelve, hold statelessness hardest: push every scrap of state to a backing
+service — sessions to Redis, files to object storage, schedules to a dedicated worker
+— and <strong>test with more than one instance</strong>, because a single instance
+hides every violation. The rest of the factors make deployment clean; this one is
+what makes scaling and recovery possible at all, which is why &ldquo;it works on one
+node&rdquo; tells you almost nothing.
 </div>
 </div>
 </div>
@@ -94079,8 +94114,8 @@ makes concrete.
 <span class="ctag ctag-general">JS</span>
 </div>
 <span class="domain-sub">Browser · CSS · JS · Frameworks · Performance · A11y</span>
-<span class="domain-meta" aria-label="39 topics, about 1h 45m to read"
->39 topics · ~1h 45m</span>
+<span class="domain-meta" aria-label="39 topics, about 1h 50m to read"
+>39 topics · ~1h 50m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -96369,12 +96404,12 @@ troubleshooting a distributed fetcher you cannot instrument — so the parts you
 </div>
 </div>
 </div>
-<div class="topic" id="progressive-web-apps-offline-installable" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="progressive-web-apps-offline-installable" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📲</span>
 <span class="topic-name">Progressive Web Apps — Offline &amp; Installable</span>
 <span class="topic-badge">Shipping</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96400,6 +96435,43 @@ mattered.)
 intercept every request, so a bad cache strategy can serve stale content forever.
 Test your update flow. For content sites, "offline + installable" is a big UX <span class="acro-exp">(User Experience)</span> win
 for little cost.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Fingerprint</div>
+<div class="concept-title">A Service Worker Makes the Browser a Distributed-Systems Node — Versioning and Offline Writes Are the Hard Parts</div>
+<div class="concept-desc">
+&ldquo;Test your update flow&rdquo; undersells the shift: a service worker turns the
+browser into a node with its own cache and, with background sync, its own write buffer —
+and the two classic distributed-systems problems follow it home. Versioning first: the
+service worker is itself cached, and a newly deployed one installs but
+<strong class="c-amber">does not take control while old tabs stay open</strong> (the
+waiting state), so users keep running old code after you ship — and a cache-first
+strategy on your own HTML/JS can pin a user to a months-old version until the cache is
+explicitly busted. A bug fix is not fixed until clients actually pick it up. Offline
+writes second: let a user act offline and you now hold
+<strong class="c-amber">client-side pending mutations that sync later</strong>, which
+means ordering, conflicts, and &ldquo;the server changed too&rdquo; — eventual
+consistency you now own on the client.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>The capability</th><th>The distributed-systems problem it brings</th></tr>
+<tr><td>Service worker caches your HTML/JS</td><td>Users stuck on old code until the cache is busted</td></tr>
+<tr><td>A new service worker &ldquo;waiting&rdquo;</td><td>The deploy doesn't take effect while a tab stays open</td></tr>
+<tr><td>Cache-first for the app shell</td><td>Fast, but a fix ships to nobody until you version the cache</td></tr>
+<tr><td>Background sync / offline writes</td><td>Pending client mutations → ordering and conflict resolution</td></tr>
+</table>
+<div class="concept-desc verdict">
+So decide the caching policy per resource with the update path in mind: cache-first
+for truly static, fingerprinted assets; network-first or stale-while-revalidate for
+anything that changes; and a deliberate way to activate a waiting service worker so a
+critical fix reaches users now. And treat offline writes as the distributed-systems
+feature they are — with a conflict story — not a free toggle.
+<strong>&ldquo;Offline + installable&rdquo; is a real win for content sites precisely
+because they mostly read</strong>; the moment users write offline, you have signed up
+to reconcile.
 </div>
 </div>
 </div>

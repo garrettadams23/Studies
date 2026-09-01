@@ -2313,6 +2313,43 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">A Service Worker Makes the Browser a Distributed-Systems Node — Versioning and Offline Writes Are the Hard Parts</div>
+                <div class="concept-desc">
+                  &ldquo;Test your update flow&rdquo; undersells the shift: a service worker turns the
+                  browser into a node with its own cache and, with background sync, its own write buffer —
+                  and the two classic distributed-systems problems follow it home. Versioning first: the
+                  service worker is itself cached, and a newly deployed one installs but
+                  <strong class="c-amber">does not take control while old tabs stay open</strong> (the
+                  waiting state), so users keep running old code after you ship — and a cache-first
+                  strategy on your own HTML/JS can pin a user to a months-old version until the cache is
+                  explicitly busted. A bug fix is not fixed until clients actually pick it up. Offline
+                  writes second: let a user act offline and you now hold
+                  <strong class="c-amber">client-side pending mutations that sync later</strong>, which
+                  means ordering, conflicts, and &ldquo;the server changed too&rdquo; — eventual
+                  consistency you now own on the client.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>The capability</th><th>The distributed-systems problem it brings</th></tr>
+                    <tr><td>Service worker caches your HTML/JS</td><td>Users stuck on old code until the cache is busted</td></tr>
+                    <tr><td>A new service worker &ldquo;waiting&rdquo;</td><td>The deploy doesn't take effect while a tab stays open</td></tr>
+                    <tr><td>Cache-first for the app shell</td><td>Fast, but a fix ships to nobody until you version the cache</td></tr>
+                    <tr><td>Background sync / offline writes</td><td>Pending client mutations → ordering and conflict resolution</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So decide the caching policy per resource with the update path in mind: cache-first
+                    for truly static, fingerprinted assets; network-first or stale-while-revalidate for
+                    anything that changes; and a deliberate way to activate a waiting service worker so a
+                    critical fix reaches users now. And treat offline writes as the distributed-systems
+                    feature they are — with a conflict story — not a free toggle.
+                    <strong>&ldquo;Offline + installable&rdquo; is a real win for content sites precisely
+                    because they mostly read</strong>; the moment users write offline, you have signed up
+                    to reconcile.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
