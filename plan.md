@@ -15168,14 +15168,14 @@ With new-content genuinely saturated (every breadth probe returning covered-or-`
 honest next move was the one Phase 8 named and `tools/depth_report.py` measures: the **thin
 tail** — single-concept cards under 1,800 plain characters. The report put it at **147 of
 1,529 (10%)**, concentrated in the domains authored before the current three-card form settled.
-This wave took it to **120 (8%)** — twenty-seven cards, each gaining one genuine second concept
+This wave took it to **116 (8%)** — thirty-one cards, each gaining one genuine second concept
 card, with the padding counter-metric holding flat throughout.
 
 The rule the wave held to: **a deepening is a second card that names something the first did
 not — a failure mode, an inversion, a decision — never the first card restated longer.** The
-proof it held is the counter-metric: mean chars per concept card moved **1,241 → 1,249** across
-twenty-seven additions (i.e. barely), while the thin count fell 27 and the 10th percentile rose
-**1,433 → ~1,460**. Padding would have moved the mean and left the percentile flat; this did the
+proof it held is the counter-metric: mean chars per concept card moved **1,241 → 1,250** across
+thirty-one additions (i.e. barely), while the thin count fell 31 and the 10th percentile rose
+**1,433 → ~1,465**. Padding would have moved the mean and left the percentile flat; this did the
 opposite.
 
 | Domain | Card | The second angle added |
@@ -15207,6 +15207,10 @@ opposite.
 | `blueteam` | Patch & Config Management | Coverage % is a comfort metric; the risk is the exceptions |
 | `pentest` | Recon Methodology | Won by turning findings into an attack surface, not more tools |
 | `eng` | Consistency in Practice | W+R>N is a staleness bound, not linearizability |
+| `web` | Frontend Auth | No XSS-proof token store; lifetime/rotation is the boundary |
+| `eng` | Cloud-Native & Serverless | Moves the ops cost, doesn't remove it |
+| `web` | GraphQL on the Backend | Relocates complexity server-side; the query is an attack surface |
+| `eng` | The System Design Interview | The three failure modes the framework doesn't enumerate |
 
 ### What the wave deliberately did not touch
 
@@ -15221,9 +15225,9 @@ concept-rich domains (`data`, `eng`, `web`, `devops`, `cloud`, `ops`) and left t
 (`redteam`, `blueteam`, `script`) near where they were.
 
 ```
-thin single-concept (<1,800 chars)   147 → 120  (10% → 8%)
-mean chars per concept card        1,241 → 1,249   (twenty-seven cards; counter-metric held)
-10th-percentile topic length       1,433 → ~1,460
+thin single-concept (<1,800 chars)   147 → 116  (10% → 8%)
+mean chars per concept card        1,241 → 1,250   (thirty-one cards; counter-metric held)
+10th-percentile topic length       1,433 → ~1,465
 table with no verdict                509 → 509   (every new table ends on a verdict)
 ```
 
