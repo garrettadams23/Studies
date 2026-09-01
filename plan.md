@@ -15168,15 +15168,18 @@ With new-content genuinely saturated (every breadth probe returning covered-or-`
 honest next move was the one Phase 8 named and `tools/depth_report.py` measures: the **thin
 tail** — single-concept cards under 1,800 plain characters. The report put it at **147 of
 1,529 (10%)**, concentrated in the domains authored before the current three-card form settled.
-This wave took it to **116 (8%)** — thirty-one cards, each gaining one genuine second concept
+This wave took it to **104 (7%)** — forty-three cards, each gaining one genuine second concept
 card, with the padding counter-metric holding flat throughout.
 
 The rule the wave held to: **a deepening is a second card that names something the first did
 not — a failure mode, an inversion, a decision — never the first card restated longer.** The
-proof it held is the counter-metric: mean chars per concept card moved **1,241 → 1,250** across
-thirty-one additions (i.e. barely), while the thin count fell 31 and the 10th percentile rose
-**1,433 → ~1,465**. Padding would have moved the mean and left the percentile flat; this did the
-opposite.
+proof it held is the counter-metric: mean chars per concept card moved **1,241 → 1,254** across
+forty-three additions (i.e. barely), while the thin count fell 43 and the 10th percentile rose
+**1,433 → ~1,479**. Padding would have moved the mean and left the percentile flat; this did the
+opposite. One genuine content bug surfaced and was fixed along the way: the rendering-modes card
+annotated **CSR** as *Certificate Signing Request* when it means *Client-Side Rendering* — CSR was
+single-meaning in `acronyms.json`, so the fix added the meaning with a `byDomain` decision and the
+idempotent annotator corrected the span on rebuild.
 
 | Domain | Card | The second angle added |
 |---|---|---|
@@ -15211,6 +15214,18 @@ opposite.
 | `eng` | Cloud-Native & Serverless | Moves the ops cost, doesn't remove it |
 | `web` | GraphQL on the Backend | Relocates complexity server-side; the query is an attack surface |
 | `eng` | The System Design Interview | The three failure modes the framework doesn't enumerate |
+| `data` | How a Database Actually Works | The buffer pool is the whole story; the working set must fit in RAM |
+| `data` | The Relational Model | Put the invariant in the DB — every writer passes through it |
+| `data` | Query Optimization | The once-fast query that went slow: stale stats and the plan flip |
+| `web` | React — Mental Model | Most bugs fight UI = f(state); useEffect is not a lifecycle hook |
+| `web` | Meta-Frameworks | Rendering mode is per-route; the axis is the server/client boundary |
+| `net` | DNSSEC & Encrypted DNS | DNSSEC stalled, DoH spread — and DoH blinds the defender |
+| `data` | Database Security — RLS | The bypass footguns (owner bypass, forgotten context) leak tenants |
+| `data` | Postgres JSONB | A one-way convenience; promote any field you query on |
+| `eng` | The Twelve-Factor App | Statelessness is load-bearing; the bug appears at 2+ instances |
+| `web` | Progressive Web Apps | A service worker makes the browser a distributed-systems node |
+| `web` | Rendering at the Edge | Compute is near the user; the data is still far — that's the limit |
+| `eng` | Clean Code & Naming | Over-applied, the rules invert into their opposite |
 
 ### What the wave deliberately did not touch
 
@@ -15225,9 +15240,9 @@ concept-rich domains (`data`, `eng`, `web`, `devops`, `cloud`, `ops`) and left t
 (`redteam`, `blueteam`, `script`) near where they were.
 
 ```
-thin single-concept (<1,800 chars)   147 → 116  (10% → 8%)
-mean chars per concept card        1,241 → 1,250   (thirty-one cards; counter-metric held)
-10th-percentile topic length       1,433 → ~1,465
+thin single-concept (<1,800 chars)   147 → 104  (10% → 7%)
+mean chars per concept card        1,241 → 1,254   (forty-three cards; counter-metric held)
+10th-percentile topic length       1,433 → ~1,479
 table with no verdict                509 → 509   (every new table ends on a verdict)
 ```
 
