@@ -84897,18 +84897,18 @@ second.
 <span class="ctag ctag-general">SWE</span>
 </div>
 <span class="domain-sub">System Design · Architecture · Craft · Reliability · Career</span>
-<span class="domain-meta" aria-label="81 topics, about 3h 25m to read"
->81 topics · ~3h 25m</span>
+<span class="domain-meta" aria-label="81 topics, about 3h 30m to read"
+>81 topics · ~3h 30m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
 <script type="text/html" class="domain-src" data-domain="eng">
-<div class="topic" id="scalability-101-vertical-vs-horizontal" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="scalability-101-vertical-vs-horizontal" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📈</span>
 <span class="topic-name">Scalability 101 — Vertical vs Horizontal</span>
 <span class="topic-badge">System Design</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -84940,14 +84940,47 @@ no memory/disk — is what makes horizontal scaling clean.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Scale Up Until It Hurts — Horizontal Isn't Free, and It's Usually About Failure, Not Throughput</div>
+<div class="concept-desc">
+&ldquo;Scale horizontally&rdquo; is the reflexive answer, and it skips the cheaper
+option. A bigger machine is dramatically simpler because it avoids the entire
+<strong class="c-cyan">distributed-systems tax</strong> — no consensus, no partial
+failure, no data-locality puzzles — and modern hardware is enormous: hundreds of cores
+and terabytes of RAM <span class="acro-exp">(Random Access Memory)</span> on one box. Horizontal scaling buys an effectively unlimited
+ceiling and fault tolerance, but it <strong class="c-amber">charges every
+distributed-systems problem in return</strong>. So the honest order is scale up until
+it genuinely hurts — which takes longer than people expect — then scale out. And notice
+the real reason you usually go horizontal: not that one machine can't keep up, but that
+one machine is a single point of failure. Redundancy, not raw capacity, most often
+forces the move.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Reach for…</th><th>When</th></tr>
+<tr><td>A bigger box (scale up)</td><td>The default first move — simplest, no distributed tax, a lot of runway on modern hardware</td></tr>
+<tr><td>More boxes (scale out)</td><td>You need fault tolerance/redundancy, or have genuinely outgrown one machine</td></tr>
+<tr><td>Both</td><td>Scale the stateless app tier out; scale the hard-to-shard database up</td></tr>
+</table>
+<div class="concept-desc verdict">
+So statelessness is the enabling design, but the sequencing is the judgement: exhaust
+the simple single-machine option before taking on the operational cost of a fleet, and
+be honest about <em>why</em> you are going horizontal. If the answer is
+&ldquo;for redundancy,&rdquo; you need at least two — not necessarily many; if it is
+&ldquo;one box can't cope,&rdquo; make sure that is true before you pay the
+distributed-systems tax to fix it.
 </div>
 </div>
-<div class="topic" id="load-balancing-sharding" data-reviewed="2026-07" data-read="2" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="load-balancing-sharding" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚖️</span>
 <span class="topic-name">Load Balancing &amp; Sharding</span>
 <span class="topic-badge">System Design</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -84980,6 +85013,37 @@ at different layers.
 The enemy is the <strong class="c-red">hot shard</strong> — one key or range
 getting disproportionate traffic (a celebrity user). Choose a shard key with
 even distribution and no cross-shard joins on the hot path.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">The Shard Key Is a One-Way Door; the Load Balancer's Real Job Isn't the Algorithm</div>
+<div class="concept-desc">
+Two corrections to where attention usually goes. On load balancing, teams debate the
+algorithm when round-robin is fine for most workloads; the parts that actually cause
+outages are <strong class="c-cyan">health checks and connection draining</strong>. A
+balancer with a bad health check keeps routing to a dead node; one without draining
+kills in-flight requests on every deploy. Those, not the algorithm, are what page you.
+On sharding, the <strong class="c-amber">shard key is close to irreversible</strong>:
+pick it wrong and you are re-sharding a live system — the hardest migration there is —
+and once sharded you lose cross-shard transactions and joins, so the data model must
+avoid them on the hot path. Sharding is a one-way door; walk through it as late as you
+can.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Where attention goes</th><th>Where it should go</th></tr>
+<tr><td>The load-balancing algorithm</td><td>Health checks (route away from sick nodes) and draining (finish in-flight on deploy)</td></tr>
+<tr><td>Sticky sessions for convenience</td><td>Statelessness, so any node serves any request — sticky is a scaling ceiling</td></tr>
+<tr><td>Picking a shard strategy</td><td>Picking a shard key with even distribution and no cross-shard joins on the hot path</td></tr>
+<tr><td>Sharding early &ldquo;to be safe&rdquo;</td><td>Sharding as late as possible — a one-way door and a brutal live migration</td></tr>
+</table>
+<div class="concept-desc verdict">
+So spread requests with the simplest algorithm plus real health checks and draining,
+and treat the shard key as the expensive, near-permanent decision it is: defer
+sharding until a single scaled-up database genuinely cannot cope, and when you must,
+choose the key as if you can never change it — because in practice you almost can't.
 </div>
 </div>
 </div>
