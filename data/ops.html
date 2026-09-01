@@ -2328,6 +2328,39 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Frameworks Say What to Measure, Not Where — and the Gap Is the Last Mile</div>
+                <div class="concept-desc">
+                  Golden Signals, RED and USE tell you which signals matter; they are silent on the
+                  <strong class="c-cyan">measurement point</strong>, and that silence is where teams get
+                  burned. A service can report a wall of 200s and low latency while users are failing,
+                  because the metrics are taken behind the load balancer, the CDN <span class="acro-exp">(Content Delivery Network)</span> and the retry layer —
+                  and the real errors live in the <strong class="c-amber">last mile the server never
+                  sees</strong>: DNS <span class="acro-exp">(Domain Name System)</span>, TLS <span class="acro-exp">(Transport Layer Security)</span> handshakes, a bad CDN edge, the client's own network.
+                  &ldquo;Alert on symptoms&rdquo; is right, but the symptom that counts is the user's,
+                  which means measuring as close to the user as you can reach — real-user monitoring and
+                  synthetic probes from outside — not only at the service. The second trap: these signals
+                  are per-service, but one user request fans out across many services, so every service
+                  can look green while the end-to-end journey is broken.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Where you measure</th><th>What it can and cannot see</th></tr>
+                    <tr><td>Inside the service</td><td>Its own errors and latency — blind to the edge and the network</td></tr>
+                    <tr><td>At the load balancer / gateway</td><td>Aggregate rate and errors — hides per-user and last-mile failures</td></tr>
+                    <tr><td>Real-user monitoring (RUM)</td><td>The actual experience, including client and network</td></tr>
+                    <tr><td>Synthetic probes from outside</td><td>Catches last-mile and regional failure before users report it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So measure the golden signals at more than one altitude: keep the per-service view for
+                    debugging, but let the alert that <em>pages</em> sit as close to the user as you can
+                    get it — RUM and external synthetics — and define at least one signal on the whole
+                    journey, not just each hop. A dashboard of green services above an angry user is the
+                    classic sign you measured where it was easy, not where the pain is.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2432,6 +2465,39 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                     The feedback loop that matters: every real page should make the <em>next</em> one
                     less likely — via a fix, better alerting, or automation. That's the "Feedback" and
                     "Learning" of the Three Ways, applied to operations.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Alert Fatigue Is a Death Spiral, and the Fix Is Deleting Alerts, Not Trying Harder</div>
+                <div class="concept-desc">
+                  Every practice above fails ahead of one specific failure mode worth naming on its own.
+                  Alert fatigue is not tiredness; it is a <strong class="c-amber">death spiral</strong>.
+                  Noisy alerts train responders to mute, batch, or reflexively acknowledge without
+                  looking — so the one page that mattered lands in a channel nobody trusts and is missed.
+                  The usual response to the miss is to add <em>more</em> alerts &ldquo;to catch it next
+                  time,&rdquo; which worsens the noise, which deepens the reflex to ignore. The
+                  counterintuitive exit is to <strong class="c-cyan">delete alerts aggressively</strong>:
+                  a responder who trusts that every page is real will answer every page, and that trust
+                  is worth more than any single alert. The numbers that locate you are the actionability
+                  ratio — what fraction of pages led to a human action — and pages per shift.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>What it really means</th><th>The move</th></tr>
+                    <tr><td>Responders ack without investigating</td><td>The channel has cried wolf; trust is gone</td><td>Delete and tune until every page is real</td></tr>
+                    <tr><td>&ldquo;Add an alert so we catch it next time&rdquo;</td><td>Defensive noise that deepens the spiral</td><td>Alert on the symptom, not another cause</td></tr>
+                    <tr><td>Pages per shift in the dozens</td><td>The system pages on twitches, not incidents</td><td>Move causes to dashboards; page on user pain</td></tr>
+                    <tr><td>Low page-to-action ratio</td><td>Most pages are not actionable</td><td>Treat each non-actionable page as a bug to remove</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So past a point, on-call reliability is <strong>inversely</strong> related to alert
+                    count: the goal is the fewest, highest-signal pages you can get away with, because a
+                    muted responder is a bigger outage risk than any alert you deleted. Measure the
+                    actionability ratio, treat every non-actionable page as a defect, and run with fewer
+                    alerts than feels safe — the safety was an illusion the moment people stopped reading
+                    them.
                   </div>
                 </div>
               </div>
