@@ -1155,6 +1155,40 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">The Expensive Mistake Is Choosing the Store Before You Know the Queries</div>
+                <div class="concept-desc">
+                  The four families sort neatly by data shape, which makes the choice look like a
+                  modelling decision. It is not — it is a <strong class="c-cyan">query decision</strong>,
+                  and the costly error is picking the store for how the data <em>looks</em> and
+                  discovering, months in, the questions it cannot answer. Key-value is a hash map:
+                  blazing by key, useless for &ldquo;find all X where Y&rdquo;. Document stores tempt
+                  you to embed everything, then you need to join across documents and
+                  <strong class="c-amber">rebuild joins in application code</strong> — slowly, and
+                  without transactions. Wide-column scales without limit but forces the table to be
+                  modelled around one query, so a second access pattern means a second copy of the
+                  data. Each family is a bet on the questions you will ask, and the bet is hard to
+                  unwind.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Family</th><th>The query it punishes</th></tr>
+                    <tr><td>Key-value</td><td>Anything but &ldquo;get by exact key&rdquo; — no scans, no secondary lookups unless you build the index yourself</td></tr>
+                    <tr><td>Document</td><td>Cross-document joins — rebuilt in app code, without the database's help or its transactions</td></tr>
+                    <tr><td>Wide-column</td><td>A second access pattern — the table is shaped for one query; another means denormalising a second copy</td></tr>
+                    <tr><td>Graph</td><td>Aggregations and bulk scans — it is built to walk relationships, not to sum a column</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So the honest sequence is <strong>queries first, store second</strong>: write down
+                    the questions the system must answer and how often, then pick the family that serves
+                    the hot ones cheaply — accepting the rare ones will be awkward. Relational stays the
+                    default precisely because it defers that commitment: you can ask it something you
+                    did not plan for. Choosing on data shape alone is how you end up running a second
+                    datastore to answer the question the first one made expensive.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1547,6 +1581,41 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Lakehouse Is Not the Default — Most Structured Data Still Belongs in a Warehouse</div>
+                <div class="concept-desc">
+                  The lakehouse is pitched as the convergence everyone should adopt, and for a lake
+                  estate drowning in ungoverned Parquet it genuinely is the upgrade. But read the
+                  usual pitch — <em>warehouse features on cheap open storage</em> — and it hides two
+                  costs. First, the <strong class="c-amber">table format is a real commitment</strong>:
+                  Iceberg, Delta and Hudi are not interchangeable, and the engine and catalogue
+                  ecosystem around each differs, so &ldquo;open&rdquo; still means choosing a camp.
+                  Second, the flexibility is <strong class="c-amber">operational work you now own</strong>
+                  — compaction, the small-file problem, catalogue and metadata management — that a
+                  managed warehouse simply does for you. If your data arrives structured and your
+                  scale fits a managed warehouse's pricing, the warehouse is not the legacy option you
+                  are meant to grow out of; it is the lower-total-cost answer.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Reach for…</th><th>When</th></tr>
+                    <tr><td>A managed warehouse (Snowflake, BigQuery)</td><td>Data is mostly structured, SQL is the access pattern, and you would rather buy operations than run them</td></tr>
+                    <tr><td>A lakehouse (Iceberg / Delta on object storage)</td><td>You already have a lake, several engines must read one copy, or open-format / no-lock-in is a hard requirement</td></tr>
+                    <tr><td>A plain data lake</td><td>A cheap landing zone for raw or unstructured data feeding something else — not the serving layer analysts query</td></tr>
+                    <tr><td>The table-format choice within a lakehouse</td><td>Iceberg for the broadest engine support, Delta where the Spark/Databricks stack is already home — decide it as lock-in, not a detail</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So the honest order is <strong>warehouse first, lakehouse when a specific pressure
+                    forces the convergence</strong> — an existing lake, a multi-engine requirement, or
+                    open-format governance. &ldquo;Lakehouse because it is the modern default&rdquo; is
+                    the same reach-for-the-fashionable mistake that
+                    <span class="xref">Data Mesh — Domain-Owned Data as a Product, and When It Is the Wrong Answer</span>
+                    names one layer up: the architecture should answer a pressure you can name, not a
+                    diagram you saw.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1808,6 +1877,39 @@ db.orders.<span class="fn">aggregate</span>([
                     backward-compatible with the currently-deployed code, because during a rollout both
                     versions run at once. "Add a nullable column, deploy, backfill, then enforce" beats
                     a single locking change. Always have a rollback.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Migration That Looks Instant Is the One That Takes the Site Down</div>
+                <div class="concept-desc">
+                  Expand/contract is the known-safe shape; the step teams actually get wrong is judging
+                  which single statement is safe to run live — and
+                  <strong class="c-amber">the dangerous migration is the one that looks trivial</strong>.
+                  Adding a column with a non-null default on an older engine, or creating an index
+                  without the concurrent option, takes a full-table lock and stalls every query against
+                  that table for as long as the rewrite runs: seconds in staging on a small table,
+                  minutes of hard downtime in production on a large one. The incident's fingerprint is
+                  always the same — <strong>it passed review and passed staging, because staging's copy
+                  of the table was small.</strong> And the contract half is asymmetric: adding a
+                  nullable column is reversible, but dropping a column or table destroys data you cannot
+                  un-drop.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Step</th><th>The hazard staging's small table hides</th></tr>
+                    <tr><td>Add column with a non-null default</td><td>On older engines it rewrites the whole table under a lock — add nullable, backfill, then enforce</td></tr>
+                    <tr><td>Create an index</td><td>Without the <code>CONCURRENTLY</code>/online variant it blocks writes for the build — always use the online form on a live table</td></tr>
+                    <tr><td>Backfill a column</td><td>One <code>UPDATE</code> over millions of rows holds a single long transaction — batch it in chunks</td></tr>
+                    <tr><td>Drop a column or table</td><td>Not reversible — the data is gone; make it a separate, late, independently-revertible deploy</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    So the golden rule has a second half: backward-compatible with running code
+                    <em>and</em> separately reversible at every step — because the migration that fails is
+                    rarely the scary-looking one you tested carefully. It is the one-line
+                    <code>ALTER</code> that looked instant on a table a thousand times smaller than
+                    production.
                   </div>
                 </div>
               </div>
