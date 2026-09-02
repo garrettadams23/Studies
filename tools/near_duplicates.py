@@ -214,26 +214,34 @@ def titles():
         did = dom["id"]
         if did in SKIP_DOMAINS:
             continue
-        text = "".join(p.read_text(encoding="utf-8") for p in domain_files(did))
-        starts = [m.start() for m in TOPIC_RE.finditer(text)]
-        for n, start in enumerate(starts):
-            end = starts[n + 1] if n + 1 < len(starts) else len(text)
-            block = ACRO_RE.sub("", text[start:end])
-            m = NAME_RE.search(block)
-            if not m:
-                continue
-            title = re.sub(r"\s+", " ", TAG_RE.sub("", m.group(1))).strip()
-            bm = BADGE_RE.search(block)
-            badge = TAG_RE.sub("", bm.group(1)).strip() if bm else ""
-            yield {
-                "domain": did,
-                "title": title,
-                "level": level_of(badge),
-                # §3 row 2. A card that calls itself a reference is looked up,
-                # not read, and sits beside a concept card on purpose.
-                "reference": bool(_REFERENCE_RE.search(title + " " + badge)),
-                "cert": _is_cert(badge),
-            }
+        # Per file rather than per domain, because the file name is itself a
+        # §3 signal: `script.01-references.html` says what every topic in it is,
+        # and most of those titles do not.
+        for path in domain_files(did):
+            text = path.read_text(encoding="utf-8")
+            in_ref_file = "reference" in path.stem.lower()
+            starts = [m.start() for m in TOPIC_RE.finditer(text)]
+            for n, start in enumerate(starts):
+                end = starts[n + 1] if n + 1 < len(starts) else len(text)
+                block = ACRO_RE.sub("", text[start:end])
+                m = NAME_RE.search(block)
+                if not m:
+                    continue
+                title = re.sub(r"\s+", " ", TAG_RE.sub("", m.group(1))).strip()
+                bm = BADGE_RE.search(block)
+                badge = TAG_RE.sub("", bm.group(1)).strip() if bm else ""
+                yield {
+                    "domain": did,
+                    "title": title,
+                    "level": level_of(badge),
+                    # §3 row 2. A card that calls itself a reference is looked
+                    # up, not read, and sits beside a concept card on purpose —
+                    # and so is one the repo files under references, whatever
+                    # its title says.
+                    "reference": in_ref_file
+                                 or bool(_REFERENCE_RE.search(title + " " + badge)),
+                    "cert": _is_cert(badge),
+                }
 
 
 def overlap(a, b):

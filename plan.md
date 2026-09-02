@@ -16866,6 +16866,8 @@ the same badge, the same depth, and no stated difference"* — isolated from thi
 lines of scrolling, and it is the queue Phase 9 would have had if this had existed then.
 Working it is the next record.
 
+*(Working it took the queue to 8 — a fifth signal and one retitle. See the record below.)*
+
 Two details worth recording. §3's third row reads as a two-way split of the security
 domains, but it is not one — it names **two specific pairings**, and encoding it as
 `{pentest, redteam} vs {blueteam, threat}` produced the wrong answer for
@@ -16928,3 +16930,64 @@ much larger population — but they are also where the bug is least likely, beca
 sentence supplies the context a two-word heading does not.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · determinism reproducible.
+
+---
+
+## Session record — working the unexplained queue: ten pairs read, one retitle
+
+The census's `--unexplained` list is meant to be worked, so it was: all ten opened, §3's
+test applied to each — *write one sentence saying who each is for* — and the result is
+**one retitle, one new signal, and eight pairs kept with the reason written down.**
+
+| Pair | The two sentences | Verdict |
+|---|---|---|
+| `data` **ER Modeling — Designing the Schema** · **Designing a Schema From Requirements** | "someone who needs ER notation — entities, relationships, cardinality" · "someone holding a requirements doc who needs tables today" | **Retitle.** The content differs; the first card's *title* promised the second card's job |
+| `script` **OOP — Classes, Objects & the 4 Pillars** · **OOP — Classes & Objects** | a single dense reference block · a five-card taught progression | **Keep**, and the census can now see why — new signal below |
+| `net` **OSI Model — 7 Layers** · **TCP/IP Model — 4 Layers vs OSI Mapping** | two different reference models, the second explicitly mapping onto the first | Keep |
+| `cloud` **AWS Data Protection** · **GCP Data Protection** | the same subject per provider, which is how the whole `cloud` domain is organised | Keep |
+| `cloud` **GCP Service Accounts & Workload Identity** · **Service Account Tokens & Workload Identity** | "working in Google Cloud" · "securing pods in a cluster, any cloud" | Keep — genuinely shared vocabulary, both titles accurate |
+| `devops` **Message Queues & Event-Driven Architecture** · `eng` **Event-Driven Architecture** | "choosing and operating a broker" · "deciding whether to go event-driven, and the debugging bill" | Keep — the mechanism beside the decision |
+| `ai` **Machine Learning Pipeline** · **Machine Learning Fundamentals** | a one-card eight-stage workflow table · a six-card concept sequence | Keep — §3 row 2 in substance; the badge reads `8-STAGE WORKFLOW`, not *Reference* |
+| `grc` **Risk Management Lifecycle** · `ops` **Vulnerability Management Lifecycle** | two different lifecycles that share the word | Keep |
+| `cloud` **GCP Load Balancing & DNS** · `eng` **Load Balancing & Sharding** | a provider's services · a system-design concept | Keep |
+| `shortcut` **VS Code** · **VS Code — Debugging** | the editor's shortcuts · the debugger's | Keep |
+
+### The fifth signal: a file name is a §3 statement
+
+The `script` OOP pair sits at 0.67 with nothing to distinguish it — until you notice that
+one of them lives in **`data/script.01-references.html`**. The repo already asserts what
+those twenty-four topics are; most of their titles do not repeat it (*Big O Notation*,
+*Data Structures*, *HTML*), so the word-in-the-title test misses them. `titles()` now walks
+each part file separately and marks a topic `reference` when the file's own name says so.
+One pair explained, and the rule generalises to any domain later split the same way.
+
+### The bar for a retitle, stated because nine pairs did not meet it
+
+A rename is not free — the id is a permalink, five `localStorage` prefixes hang off it, and
+related edges and path steps have to move with it. So the bar is not *"these two titles look
+alike"*. It is **the title misdescribes the card**:
+
+* *DNS Deep Dive – How Name Resolution Really Works* was a troubleshooting walkthrough. **Renamed.**
+* *ER Modeling — Designing the Schema* teaches ER notation; "Designing the Schema" is what the
+  card next to it does. **Renamed** to *ER Modeling — Entities, Relationships & Cardinality*,
+  which is its own first concept card's heading.
+* *Message Queues & Event-Driven Architecture* covers message queues and event-driven
+  architecture. Overlapping title, accurate title. **Left alone.**
+
+Both renames went through `fix_topic_names.py --aliases-only`, which repointed the existing
+`beginner-` alias as well as adding the direct one — the alias map is read single-hop by
+`script.js`, so a chain would have broken silently. `related.json` edges and one
+`paths.json` step were moved by hand in the same commit.
+
+```
+39 pairs → 38          (one retitle removed a collision)
+27 explained → 30      (cert badges +2, references file +1)
+13 unexplained → 8     (and every one of the eight now has a recorded reason)
+```
+
+**Eight is a floor, not a failure.** Six of the eight are the token measure conflating
+genuinely different subjects — *Risk* and *Vulnerability* lifecycles share one word out of
+three — and no title change would help, because both titles are right. The census will keep
+reporting them. That is what a census does.
+
+Check PASS · smoke **142/142** · determinism reproducible.
