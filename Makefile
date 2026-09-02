@@ -49,12 +49,13 @@ check:
 	$(PY) tools/check_determinism.py
 	$(PY) tools/page_budget.py
 
-## census: the three reports that measure content rather than gate it
+## census: the four reports that measure content rather than gate it
 census:
 	@echo "── depth ──"       && $(PY) tools/depth_report.py
 	@echo "── the floor ──"   && $(PY) tools/depth_report.py --bottom 12
 	@echo "── duplicates ──"  && $(PY) tools/near_duplicates.py
 	@echo "── orphans ──"     && $(PY) tools/orphan_report.py
+	@echo "── questions ──"   && $(NODE) tools/query_probe.mjs --zero
 
 ## test: drive the built page in a real browser (needs playwright + chromium)
 test:

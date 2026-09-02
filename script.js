@@ -1687,6 +1687,25 @@ function foldSeparators(lowered) {
  * discarding real content words, and this one never sees a query that had an
  * answer as typed.
  */
+/**
+ * A term and its crudest singular/plural, for the widened stage only.
+ *
+ * "angry user on the phone" found nothing against a card titled *Difficult
+ * Conversations — Angry Users*: "user" is four characters, so the short-word
+ * rule demands a word boundary, and "users" does not have one before the "s".
+ *
+ * The same one-character heuristic `near_duplicates._fold()` already uses, for
+ * the same reason and with the same exception — "class" is not the plural of
+ * "clas", so a "ss" ending is left alone. Crude on purpose: a real stemmer needs
+ * a tokenised index, and this matcher works on raw text.
+ */
+function plurals(term) {
+  if (term.endsWith("s")) {
+    return term.endsWith("ss") || term.length <= 3 ? [term] : [term, term.slice(0, -1)];
+  }
+  return [term, term + "s"];
+}
+
 const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
   + "were be been do does did can could should would will shall may might must "
   + "i we you they it he she this that these those my our your their its "
@@ -1907,7 +1926,8 @@ function runSearch(raw) {
   // of the failure.
   const joined = i => words.slice(i, i + 2).map(w => foldSeparators(w.toLowerCase())).join("");
   const wideMatchers = words.map((w, i) => {
-    const alts = searchTerms(w).map(t => matcher(foldSeparators(t.toLowerCase())));
+    const alts = searchTerms(w).flatMap(t => plurals(foldSeparators(t.toLowerCase())))
+                               .map(matcher);
     if (i + 1 < words.length) alts.push(matcher(joined(i)));
     if (i > 0) alts.push(matcher(joined(i - 1)));
     return alts;

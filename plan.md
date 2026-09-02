@@ -17317,3 +17317,65 @@ the honest answer is that this site is a reference. Recorded rather than chased.
 
 Check PASS · smoke **145/145** · search **40/40** · axe **6/6** · mobile **9/9** ·
 resilience **7/7** · determinism reproducible.
+
+---
+
+## Session record — the probe became a tool, and the last unexplained zero was a plural
+
+Two batches of reader queries, run by hand, found five things nothing else on this site
+could find: two content gaps that became cards, four places where the site names something
+one way and readers name it the other, and two structural limits in the matcher. Then they
+would have evaporated, because they lived in a scratch file.
+
+**`tools/query_probe.mjs`** — 66 queries, grouped by who is asking (a service desk engineer,
+a SOC analyst, a learner meeting a subject, a Linux engineer, somebody looking for a job,
+somebody answerable to an auditor). A census, exits 0 whatever it finds, wired into
+`make census` beside depth, duplicates and orphans.
+
+### What the file carries that the query list does not
+
+The discipline, written where the next session will read it. **Three kinds of zero, and only
+one is a missing card:**
+
+| Kind | Example | The response |
+|---|---|---|
+| 1 — the site says it in the other word | `impostor syndrome` · `log4j` · `writing a cv` · `non technical manager` · `angry user on the phone` | **Fix the prose.** Name both words. Better writing anyway, and cheaper than any matcher |
+| 2 — the question is real and the card was not there | `phishing email reported` against eleven phishing topics, none of them "somebody just told me, what now" | **Write the card** — after `near_duplicates.py --title` |
+| 3 — the question is real and the answer is a phrase, not a card | `wifi keeps dropping` · `git detached head` · `terraform state locked` | **Leave it.** A symptom index is a different product from a reference |
+
+Kind three is the majority and it is the one that tempts, so a query investigated and kept
+records *which kind it is* in the list itself — and the report separates "9 found nothing,
+of which 9 are recorded as deliberate" from an unexplained zero that wants reading. The
+docstring says it plainly: **if a pass over this report edits more than two or three cards,
+it has stopped being an audit.**
+
+### The last unexplained zero
+
+`angry user on the phone` returned nothing against *Difficult Conversations — **Angry
+Users**, VIP Pressure & Saying No*. Two causes, one editorial and one mechanical, and the
+mechanical one is the more interesting.
+
+The card never said **phone** — it said "call". That is kind one, fixed in a sentence that
+now names where this happens: *on the phone, at the desk, or in a ticket written in
+capitals.*
+
+And `user` still did not match `users`. Four characters, so the short-word rule demands a
+word boundary, and there is none before the "s". The widened stage now tries each term's
+crudest singular and plural — **the same one-character heuristic `near_duplicates._fold()`
+has used since Phase 9**, with the same `ss` exception, because "class" is not the plural of
+"clas". Crude on purpose: a real stemmer needs a tokenised index and this matcher works on
+raw text.
+
+```
+66 queries · 57 answered · 9 found nothing, all 9 recorded as deliberate
+unexplained zeros: 1 → 0
+widest single result: 60 of 1,534
+search checks: 40/40, unchanged by the plural rule
+```
+
+**Nothing got wider.** The plural alternates only fire in the fallback, which only runs when
+the query as typed found nothing anywhere, and the 40 gated fixtures — including the six
+ceilings — came back identical.
+
+Check PASS · smoke **145/145** · search **40/40** · axe **6/6** · mobile **9/9** ·
+determinism reproducible.
