@@ -120,6 +120,13 @@ const FIXTURES = [
   // most common ticket a service desk takes. Writing it closed the query.
   ["why is my laptop slow", "ops/why-is-my-laptop-slow-the-commonest-ticket-worked-properly", 6],
   ["my computer is slow",   "ops/why-is-my-laptop-slow-the-commonest-ticket-worked-properly", 8],
+  // A question, not a phrase. It exercises both halves of the widened stage:
+  // the function words are dropped, and "fine tune" is rejoined to reach a card
+  // that writes it "fine-tune".
+  ["should we fine tune or use rag",
+   "ai/fine-tuning-vs-prompting-vs-rag-picking-the-right-tool", 8],
+  ["explaining to a non technical manager",
+   "ops/explaining-technical-things-to-non-technical-people-a-repeat", 20],
 ];
 
 // Queries a reader plausibly types that still find nothing. Not failures — the
@@ -156,6 +163,12 @@ const CEILINGS = [
   ["data-read",      0, "the T6 attribute itself leaking into the index"],
   ["level:nonsense", 0, "an unknown level must match nothing, not everything"],
   ["since:2099-01",  0, "a future month must match nothing, not everything"],
+  // The widened stage's own hygiene. Dropping function words is what lets a
+  // question be answered at all, and it is also what makes a vague question
+  // wide: "find" and "file" are two real words and a great many cards contain
+  // both. Wide is acceptable; the whole site is not.
+  ["how do i find a file",       120, "the widened stage losing its remaining nouns"],
+  ["why is my domain controller", 90, "the widened stage losing its remaining nouns"],
 ];
 
 const browser = await chromium.launch();

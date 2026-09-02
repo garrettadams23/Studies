@@ -17254,3 +17254,66 @@ zero-result probes  9 → 8
 
 Check PASS · smoke **145/145** · search **36/36** · axe **6/6** · mobile **9/9** ·
 visual **2/2** · determinism reproducible.
+
+---
+
+## Session record — a second probe batch, and the two things that made questions answerable
+
+Forty more queries, chosen to cover what the first batch under-sampled: Windows and M365
+administration, networking fundamentals as a learner phrases them, Linux, compliance, AI,
+learning technique, and the plain *why* questions. **Seven returned nothing**, and reading
+them separated two mechanisms from one editorial fix.
+
+### The mechanism: a conjunction cannot answer a question
+
+`should we fine tune or use rag` returned nothing, and the card that answers it —
+*Fine-Tuning vs Prompting vs RAG — Picking the Right Tool* — writes **"fine-tune" five
+times**. Two independent reasons, both of them structural:
+
+**A compound the site hyphenates, split by the reader.** Folding turns "fine-tune" into
+"finetune"; the query's halves are each exactly four characters, so the short-word rule
+demands a word boundary that is no longer there. The ordered stage could not help — the
+whole query is not in any card — and per-word matching could not either. The fix is one
+extra alternate per word: **each word joined to its neighbours**, so "fine" and "tune" are
+both satisfied by `finetune`. That is precisely the shape of the failure and nothing wider.
+
+**Function words as hard requirements.** The all-your-words stage is a conjunction: every
+word must be somewhere in the card. A person asking a question supplies *should · we · or ·
+use* along with the subject, and each becomes a filter. The RAG card does not happen to
+contain the word "we". So the widened stage — and **only** the widened stage — now drops a
+small list of function words, and only while at least two content words survive, so
+`how to nat` does not become an empty conjunction matching the site.
+
+```
+probe batch two, zero results:  7 → 2
+probe batch one, zero results:  8 → 8   (unchanged — see below)
+search checks                  36 → 40
+```
+
+**What it cost, stated rather than hidden.** Dropping function words is what lets a question
+be answered and also what makes a vague question wide: `how do i find a file` becomes
+*find* ∧ *file* and returns 73 cards, where before it returned 20 by accidentally filtering
+on the word "i". The narrowness was never quality. Two new ceilings hold that honest: 120
+and 90, so wide is allowed and the whole site is not.
+
+### The editorial fix, third of its kind
+
+`explaining to a non technical manager` reached the soft-skills card and not
+*Explaining Technical Things to Non-Technical People*, because that card never says who the
+listener is. It does now — *"a manager, a customer, a colleague from another department"* —
+which is better writing independent of search, and is the same finding as *imposter/impostor*,
+*CV/resume* and *Log4Shell/Log4j*: **a reference that names a thing one way is invisible to
+everyone who names it the other way.** Four instances in two probe batches is a pattern, and
+it is cheaper to fix in prose than in a matcher.
+
+### Where this stops
+
+Batch one's eight remaining zeros are all one shape — `wifi keeps dropping`,
+`vpn keeps disconnecting`, `git detached head`, `terraform state locked`, `docker image too
+big`. The site has the technology card for every one of them and phrases none of them as a
+*symptom*. No matcher reaches those, because the words genuinely are not there, and seeding
+them is keyword stuffing. **A symptom index is a different product from a reference**, and
+the honest answer is that this site is a reference. Recorded rather than chased.
+
+Check PASS · smoke **145/145** · search **40/40** · axe **6/6** · mobile **9/9** ·
+resilience **7/7** · determinism reproducible.

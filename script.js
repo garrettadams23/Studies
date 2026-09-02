@@ -1674,6 +1674,24 @@ function foldSeparators(lowered) {
   return lowered.replace(RE_INTRAWORD, "");
 }
 
+/**
+ * Function words the all-your-words fallback must not insist on.
+ *
+ * That stage is a conjunction: every word has to be somewhere in the card. A
+ * reader typing a question supplies half a dozen words that carry no subject,
+ * and each becomes a hard requirement. "should we fine tune or use rag" found
+ * nothing because a reference card does not happen to contain the word "we" —
+ * and the card it wanted says "fine-tune" five times.
+ *
+ * Deliberately tiny, and only used by the fallback. A long stop list starts
+ * discarding real content words, and this one never sees a query that had an
+ * answer as typed.
+ */
+const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
+  + "were be been do does did can could should would will shall may might must "
+  + "i we you they it he she this that these those my our your their its "
+  + "how what why when where which who does not no yes if then than so").split(" "));
+
 function matcher(lowered) {
   if (lowered.length > SHORT_TERM) return text => text.includes(lowered);
   const esc = lowered.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -1855,7 +1873,10 @@ function runSearch(raw) {
   // while the unordered AND drops one-character words, which as free-floating
   // requirements match almost every card and narrow nothing.
   const allWords = q.text.split(/\s+/).filter(Boolean);
-  const words = allWords.filter(w => w.length >= 2);
+  const content = allWords.filter(w => w.length >= 2 && !WIDE_STOP.has(w.toLowerCase()));
+  // Drop the function words only when enough subject survives. "how to nat"
+  // must not become an empty conjunction that matches the whole site.
+  const words = content.length >= 2 ? content : allWords.filter(w => w.length >= 2);
   // Stage one of the fallback: the query in order, against folded text, with
   // the gaps between its words allowed to be a space, a hyphen, or nothing.
   //
@@ -1874,8 +1895,23 @@ function runSearch(raw) {
                               .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[\\s-]*")
         + (guard ? "(?![a-z0-9])" : ""))
     : null;
-  const wideMatchers = words.map(
-    w => searchTerms(w).map(t => matcher(foldSeparators(t.toLowerCase()))));
+  // Each word, its acronym alternates, and — because readers split compounds the
+  // site hyphenates — the word joined to each of its neighbours.
+  //
+  // "should we fine tune or use rag" found nothing while the card that answers
+  // it says "fine-tune" five times: folding makes that "finetune", and both
+  // halves are exactly four characters, so the short-word rule demands a word
+  // boundary that is not there. Neither the ordered stage above (the whole
+  // query is not in the card) nor per-word matching could reach it. Joining
+  // adjacent pairs costs one extra alternate per word and is exactly the shape
+  // of the failure.
+  const joined = i => words.slice(i, i + 2).map(w => foldSeparators(w.toLowerCase())).join("");
+  const wideMatchers = words.map((w, i) => {
+    const alts = searchTerms(w).map(t => matcher(foldSeparators(t.toLowerCase())));
+    if (i + 1 < words.length) alts.push(matcher(joined(i)));
+    if (i > 0) alts.push(matcher(joined(i - 1)));
+    return alts;
+  });
 
   let matchCount = 0, domainCount = 0, firstHit = null, widened = "";
 
