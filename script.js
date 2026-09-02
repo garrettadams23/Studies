@@ -1655,6 +1655,25 @@ function searchTerms(term) {
  * punctuation in it still behaves.
  */
 const SHORT_TERM = 4;
+
+/**
+ * Drop the separators *inside* a word, keeping the ones between words.
+ *
+ * The site writes "Wi-Fi 6", "three-way handshake" and "POA&M"; readers type
+ * "wifi 6", "three way handshake" and "POAM". Three of the search harness's
+ * six known misses were that difference and nothing else.
+ *
+ * Only intra-word separators go, which is the whole safety argument. Strip
+ * spaces too and the text becomes one run of characters where "poam" matches
+ * inside "repo among" — a false-positive engine with no word boundaries left
+ * for matcher()'s short-term guard to stand on. Keeping spaces keeps every
+ * boundary that guard depends on.
+ */
+const RE_INTRAWORD = /(?<=[a-z0-9])[-.'&/](?=[a-z0-9])/g;
+function foldSeparators(lowered) {
+  return lowered.replace(RE_INTRAWORD, "");
+}
+
 function matcher(lowered) {
   if (lowered.length > SHORT_TERM) return text => text.includes(lowered);
   const esc = lowered.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -1819,38 +1838,122 @@ function runSearch(raw) {
   _searchTermList = [...q.phrases, ...textTerms];
   const loweredText = textTerms.map(t => t.toLowerCase()).map(matcher);
   const loweredPhrases = q.phrases.map(p => p.toLowerCase());
-  let matchCount = 0, domainCount = 0, firstHit = null;
 
-  domainSections().forEach(section => {
-    const hits = new Set();
-    // `domain:` narrows which domains are searched at all. Several are additive
-    // — `domain:net domain:hw` searches both.
-    if (q.domains.length && !q.domains.includes(section.dataset.domain)) {
-      section.classList.add("search-hidden");
-      return;
-    }
-    domainTopics(section.dataset.domain).forEach(t => {
-      // Phrases are required, all of them; the free text is satisfied by the
-      // query or any of its acronym equivalents. A query that is only
-      // operators and phrases matches on the phrases alone.
-      if (q.levels.length && !q.levels.includes(t.level)) return;
-      if (q.since && !(t.reviewed && t.reviewed > q.since)) return;
-      if (!loweredPhrases.every(p => t.text.includes(p))) return;
-      if (loweredText.length && !loweredText.some(m => m(t.text))) return;
-      hits.add(t.id);
+  // The widened pass, built now and used only if the query as typed finds
+  // nothing. Each word of the free text becomes its own matcher — with its own
+  // acronym alternates — and a topic has to satisfy every one of them, against
+  // text whose intra-word separators have been folded away.
+  //
+  // **Widening is a fallback, never the first answer.** Running it always would
+  // change every existing result: "incident response" would stop meaning that
+  // phrase and start meaning "incident" and "response" anywhere in the same
+  // card, which is a larger, worse set. Reaching for it only when the site has
+  // no answer at all leaves every query that works today exactly as it is, and
+  // costs nothing on the path readers are actually on.
+  // Two splits, because the two fallback stages want different things. The
+  // ordered phrase keeps every word — "wifi 6" is meaningless without the 6 —
+  // while the unordered AND drops one-character words, which as free-floating
+  // requirements match almost every card and narrow nothing.
+  const allWords = q.text.split(/\s+/).filter(Boolean);
+  const words = allWords.filter(w => w.length >= 2);
+  // Stage one of the fallback: the query in order, against folded text, with
+  // the gaps between its words allowed to be a space, a hyphen, or nothing.
+  //
+  // This is the stage that matters, and the first version of it was wrong in a
+  // way worth recording. It matched the query as a plain string against folded
+  // text, which found "wifi 6" and then handed "three way handshake" to stage
+  // two — where the word "way", being short, needs a word boundary that
+  // "threeway" does not have. So the one card that answers the question was
+  // the one card excluded, and two cards that merely contain the word "way"
+  // came back instead. A fallback that returns the wrong answer is worse than
+  // one that returns nothing.
+  const guard = allWords.length === 1 && q.text.length <= SHORT_TERM;
+  const gapPhrase = allWords.length
+    ? new RegExp((guard ? "(?<![a-z0-9])" : "")
+        + allWords.map(w => foldSeparators(w.toLowerCase())
+                              .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[\\s-]*")
+        + (guard ? "(?![a-z0-9])" : ""))
+    : null;
+  const wideMatchers = words.map(
+    w => searchTerms(w).map(t => matcher(foldSeparators(t.toLowerCase()))));
+
+  let matchCount = 0, domainCount = 0, firstHit = null, widened = "";
+
+  // false = the query as typed · "fold" = separators folded · "words" = all
+  // words, anywhere in the card. Strictly widening, and stopped at the first
+  // stage that finds anything.
+  const sweep = wide => {
+    matchCount = 0; domainCount = 0; firstHit = null;
+    _searchHits.clear();
+    domainSections().forEach(section => {
+      const hits = new Set();
+      // `domain:` narrows which domains are searched at all. Several are
+      // additive — `domain:net domain:hw` searches both.
+      if (q.domains.length && !q.domains.includes(section.dataset.domain)) {
+        section.classList.add("search-hidden");
+        return;
+      }
+      domainTopics(section.dataset.domain).forEach(t => {
+        // Phrases are required, all of them; the free text is satisfied by the
+        // query or any of its acronym equivalents. A query that is only
+        // operators and phrases matches on the phrases alone.
+        if (q.levels.length && !q.levels.includes(t.level)) return;
+        if (q.since && !(t.reviewed && t.reviewed > q.since)) return;
+        if (!loweredPhrases.every(p => t.text.includes(p))) return;
+        if (wide) {
+          // Folded once per topic, on the first query that needs it. Most
+          // readers never trigger the fallback, so most never pay for it.
+          if (t.folded === undefined) t.folded = foldSeparators(t.text);
+          if (wide === "fold") {
+            if (!gapPhrase.test(t.folded)) return;
+          } else if (!wideMatchers.every(alts => alts.some(m => m(t.folded)))) {
+            return;
+          }
+        } else if (loweredText.length && !loweredText.some(m => m(t.text))) {
+          return;
+        }
+        hits.add(t.id);
+      });
+      if (!hits.size) {
+        section.classList.add("search-hidden");
+        return;
+      }
+      _searchHits.set(section.dataset.domain, hits);
+      matchCount += hits.size;
+      domainCount++;
+      // A chip filter still wins over the search's choice of what to show: a
+      // domain the reader has filtered away must not be the one that renders.
+      if (!firstHit && !section.classList.contains("hidden")) firstHit = section;
+      setMatchBadge(section, hits.size);
     });
-    if (!hits.size) {
-      section.classList.add("search-hidden");
-      return;
-    }
-    _searchHits.set(section.dataset.domain, hits);
-    matchCount += hits.size;
-    domainCount++;
-    // A chip filter still wins over the search's choice of what to show: a
-    // domain the reader has filtered away must not be the one that renders.
-    if (!firstHit && !section.classList.contains("hidden")) firstHit = section;
-    setMatchBadge(section, hits.size);
+  };
+
+  const reset = () => domainSections().forEach(sec => {
+    sec.classList.remove("search-hidden");
+    sec.querySelector(".domain-matches")?.remove();
   });
+
+  sweep(false);
+  if (!matchCount && gapPhrase) {
+    reset();
+    sweep("fold");
+    if (matchCount) widened = "fold";
+  }
+  if (!matchCount && wideMatchers.length > 1) {
+    reset();
+    sweep("words");
+    if (matchCount) {
+      widened = "words";
+      // Highlight what actually matched, which is the words rather than the
+      // string the reader typed.
+      _searchTermList = [...q.phrases, ...words];
+    }
+  }
+  // Nothing anywhere, at any width. Re-run the strict pass so the page ends in
+  // the state a no-match search has always left it in — every domain hidden
+  // behind the "no matches" line — rather than in the reset() the fallback
+  // needed in order to run.
+  if (!matchCount) { reset(); sweep(false); }
 
   // Show the domain the reader is already in if it has anything; otherwise the
   // first that does. The others stay one click away with their counts visible.
@@ -1870,8 +1973,14 @@ function runSearch(raw) {
     if (q.levels.length) parts.push(`at ${q.levels.join(", ")} level`);
     if (q.since) parts.push(`updated after ${monthLabel(q.since)}`);
     const scope = parts.length ? ` · ${parts.join(" · ")}` : "";
+    // Say so when the fallback ran. A reader who typed a phrase and got cards
+    // that merely contain all of its words should be told that is what
+    // happened, or the results look like the search misunderstood them.
+    const wide = widened === "words"
+      ? " · no exact match, so these contain all your words"
+      : widened === "fold" ? " · matched ignoring hyphens" : "";
     countEl.textContent = matchCount
-      ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${via}`
+      ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${widened ? "" : via}${wide}`
       : `no matches${scope}`;
   }
 }

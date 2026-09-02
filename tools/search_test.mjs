@@ -25,11 +25,19 @@
  *
  * ## The known misses are the point of the file, not a failure of it
  *
- * KNOWN_MISSES are queries a reader plausibly types that currently return
- * nothing, recorded rather than hidden. They fail no build: they are the
+ * KNOWN_MISSES are queries a reader plausibly types that the search still does
+ * not answer, recorded rather than hidden. They fail no build: they are the
  * search-improvement backlog, and the harness prints them so the backlog cannot
  * quietly grow. A miss that starts working is reported too — it should be
  * promoted into FIXTURES.
+ *
+ * **A miss carries the topic it should reach, and "works" means reaching it.**
+ * Counting results alone was the first version and it lied on first contact:
+ * the widened-search change made "three way handshake" return three loosely
+ * related cards and the harness called it fixed, when the card that answers the
+ * question — the site writes "3-way", with a digit — was not among them. Four
+ * of the original six misses were genuinely fixed by that change and are now
+ * fixtures; this one was not, and the third field is why the harness can tell.
  *
  * Usage:
  *   node tools/search_test.mjs                 # build first; this only reads
@@ -100,18 +108,30 @@ const FIXTURES = [
   // T8's since: operator, which the what's-new banner drives through the
   // search box rather than a private code path.
   ["since:2026-07 domain:net", "net/network-topologies", 60],
+  // The four the widened fallback promoted. They exercise both of its stages:
+  // "wifi 6" and "POAM" are the ordered phrase with its separators folded,
+  // "tcp handshake" and "page loads halfway" are all-your-words-anywhere.
+  ["tcp handshake",        "net/tcp-vs-udp-transport-layer", 26],
+  ["wifi 6",               "net/wireless-networking-80211-standards-security", 8],
+  ["page loads halfway",   "net/mtu-fragmentation-the-half-loading-website", 6],
+  ["POAM",                 "grc/fedramp-nist-800-53-control-baselines-and-the-ato", 6],
 ];
 
-// Queries a reader plausibly types that find nothing today. Not failures — the
-// backlog. Search is whole-string substring matching, so a natural-language
-// query only lands if the site happens to contain that exact run of words.
+// Queries a reader plausibly types that still find nothing. Not failures — the
+// backlog. Search tries the query as typed, then the same words in order with
+// their separators folded, then all of the words anywhere in one card; a query
+// survives on this list only when none of the three reaches the right topic.
+//
+// A third field, the topic the query *should* reach, is what makes this list
+// honest. Counting results alone said "three way handshake" had started working
+// the moment the widened search returned three loosely-related cards — none of
+// them the TCP card, which the site writes as "3-way handshake". A miss that
+// returns the wrong answer is still a miss, and now the harness can say so.
 const KNOWN_MISSES = [
-  ["tcp handshake",         "two words that never appear adjacent"],
-  ["three way handshake",   "the site writes it 'three-way'"],
-  ["wifi 6",                "the site writes it 'Wi-Fi 6'; only the hyphenated form matches"],
-  ["why is my laptop slow", "a whole sentence; nothing matches it as a substring"],
-  ["page loads halfway",    "the MTU card says 'half-loading'"],
-  ["POAM",                  "the dictionary entry is 'POA&M' and the map keys on that"],
+  ["three way handshake", "the site writes it '3-way' — a digit, which no amount of "
+                          + "separator folding reaches. Wants number-word synonyms",
+   "net/tcp-vs-udp-transport-layer"],
+  ["why is my laptop slow", "a whole sentence; no card contains all of its words", null],
 ];
 
 // Queries with no single right answer that must simply stay narrow. These are
@@ -170,14 +190,18 @@ for (const [q, ceiling, why] of CEILINGS) {
 
 console.log("\nknown misses — the backlog, reported and not gated\n");
 let promoted = 0;
-for (const [q, why] of KNOWN_MISSES) {
+for (const [q, why, want] of KNOWN_MISSES) {
   const hits = await hitsFor(q);
-  if (hits.length) {
+  // "Works" means it reaches the card, not that it returned something. Where
+  // no expected card is recorded, any result is progress worth looking at.
+  const works = want ? hits.includes(want) : hits.length > 0;
+  if (works) {
     promoted++;
     console.log(`  now works : ${JSON.stringify(q)} — ${hits.length} result(s). ` +
                 `Move it into FIXTURES with its expected topic.`);
   } else {
-    console.log(`  miss      : ${JSON.stringify(q).padEnd(24)} ${why}`);
+    const noise = hits.length ? ` (${hits.length} result(s), none of them ${want})` : "";
+    console.log(`  miss      : ${JSON.stringify(q).padEnd(24)} ${why}${noise}`);
   }
 }
 

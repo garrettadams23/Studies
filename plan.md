@@ -16991,3 +16991,85 @@ three — and no title change would help, because both titles are right. The cen
 reporting them. That is what a census does.
 
 Check PASS · smoke **142/142** · determinism reproducible.
+
+---
+
+## Session record — the search backlog, four of six cleared, and the miss that lied
+
+Phase 10 T5 shipped a search harness with **six known misses** — queries a reader would
+plausibly type that returned nothing — recorded as a backlog rather than hidden. The
+backlog has sat at six since. Four of them turn out to be two mechanisms.
+
+### What the six actually were
+
+| Query | Why it missed |
+|---|---|
+| `wifi 6` | the site writes **Wi-Fi 6**; one hyphen |
+| `POAM` | the dictionary key is **POA&M**; one ampersand |
+| `tcp handshake` | both words are in the TCP card, never adjacent |
+| `page loads halfway` | the MTU card says **half-loading** |
+| `three way handshake` | the note said *"the site writes it three-way"* — **wrong, see below** |
+| `why is my laptop slow` | a whole sentence |
+
+Search matched the free text as **one substring**. So "wifi 6" is a different string from
+"wi-fi 6" and finds nothing, and "tcp handshake" finds nothing even though every word of
+it is in the card the reader wants.
+
+### The change: two fallback stages, and never the first answer
+
+`runSearch()` now sweeps up to three times, stopping at the first that finds anything:
+
+| Stage | What it matches | Fixes |
+|---|---|---|
+| — | the query exactly as typed | *(unchanged, and still what almost every query uses)* |
+| **fold** | the words **in order**, gaps allowed to be a space, a hyphen or nothing, against text whose intra-word separators are folded away | `wifi 6` · `POAM` |
+| **words** | **all** the words, anywhere in one card, each with its own acronym alternates | `tcp handshake` · `page loads halfway` |
+
+**Widening is a fallback and must never be the first answer.** Running the third stage
+always would change every result the site already gives: "incident response" would stop
+meaning that phrase and start meaning *incident* and *response* anywhere in one card,
+which is a larger and worse set. Reaching for it only when the site has no answer at all
+leaves the 30 existing fixtures byte-identical and costs nothing on the path readers are
+on. The count line says which stage answered — *"matched ignoring hyphens"*, *"no exact
+match, so these contain all your words"* — because results the reader did not literally
+ask for should say so.
+
+**Only intra-word separators fold, and that is the whole safety argument.** Strip spaces
+too and the index becomes one run of characters where `poam` matches inside "re**po am**ong";
+keeping spaces keeps every word boundary the short-term guard stands on.
+
+### The miss that lied, which is the part worth keeping
+
+The first version of the fold stage matched the query as a plain string against folded
+text. It cleared five of six, and the harness said `three way handshake` — *now works, 2
+results*. It was not working. The site writes **`3-way handshake`**, with a digit; the
+harness's own note had said "three-way" and nobody had checked. What those two results
+were: cards containing the ordinary English word *way*, because the short-word boundary
+rule excluded the one card that answers the question and admitted two that do not.
+
+**A fallback that returns the wrong answer is worse than one that returns nothing**, and
+counting results cannot tell the difference. So `KNOWN_MISSES` entries now carry the topic
+they should reach, and *works* means reaching it:
+
+```
+  miss : "three way handshake"  the site writes it '3-way' — a digit, which no amount of
+                                separator folding reaches. Wants number-word synonyms
+                                (3 result(s), none of them net/tcp-vs-udp-transport-layer)
+```
+
+That is the fifth time this file has recorded a check measuring something adjacent to its
+claim, and the first time the check caught itself the same session it was written.
+
+```
+known misses     6 → 2
+search fixtures 30 → 34   (the four promoted, with scan ceilings)
+smoke checks   142 → 145  (folded hit · all-words hit · the no-match page state)
+```
+
+The two that remain are honest. `three way handshake` needs number-word synonyms, which is
+a dictionary feature and not a matching one. `why is my laptop slow` needs a card whose
+text contains *laptop* and *slow* and *why*; that is a content gap, not a search gap, and
+naming it as one is more useful than a looser matcher would be.
+
+Check PASS · smoke **145/145** · search **34/34** · axe **6/6** · mobile **9/9** ·
+resilience **7/7** · determinism reproducible.

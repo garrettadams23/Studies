@@ -308,6 +308,14 @@ const ops = await page.evaluate(async () => {
   out.phrase    = await probe('"shuffle sharding"');
   out.nonsense  = await probe('"shuffle sharding" biscuits');
   out.shortText = await probe("domain:hw x");
+  // The widened fallback: nothing on the site says "wifi 6", plenty says
+  // "Wi-Fi 6". It must find them, and say that it had to fold the hyphen.
+  out.folded    = await probe("wifi 6");
+  // All the words, none of them adjacent.
+  out.allWords  = await probe("tcp handshake");
+  // And when even the widest pass finds nothing, the page must end hidden
+  // behind the "no matches" line rather than in the reset the fallback needed.
+  out.hopeless  = await probe("kumquat trombone");
   return out;
 });
 check("domain: narrows the search", ops.scoped.hits > 0 && ops.scoped.hits < ops.bare.hits
@@ -320,6 +328,12 @@ check("phrase and free text are combined, not merged", ops.nonsense.hits === 0,
   ops.nonsense.text);
 check("free text too short to use rejects the query rather than dropping it",
   ops.shortText.hits === 0, ops.shortText.text || "(cleared)");
+check("a query the site only hyphenates still finds it, and says it widened",
+  ops.folded.hits > 0 && /hyphen/.test(ops.folded.text), ops.folded.text);
+check("words that are never adjacent still find the card",
+  ops.allWords.hits > 0 && /all your words/.test(ops.allWords.text), ops.allWords.text);
+check("a query nothing answers leaves the page hidden, not reset",
+  ops.hopeless.hits === 0 && ops.hopeless.domains === 0, ops.hopeless.text);
 
 await page.fill("#search-input", "");
 await page.waitForTimeout(250);
