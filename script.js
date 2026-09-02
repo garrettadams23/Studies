@@ -1202,9 +1202,14 @@ function initAccessibilityAndTools() {
 
   domainSections().forEach(updateDomainProgress);
 
-  // Deep-link: open + scroll to a topic referenced in the URL hash
-  openHashTarget();
+  // Deep-link: open + scroll to a topic referenced in the URL hash.
+  //
+  // The listener is registered *first*, deliberately. It used to come second,
+  // so anything that threw inside the initial call took the listener with it
+  // and cost the reader every later navigation. Registration cannot throw;
+  // opening a topic can.
   window.addEventListener("hashchange", openHashTarget);
+  openHashTarget();
 }
 
 function handleTopicTool(btn) {
@@ -1391,8 +1396,27 @@ function splitCardHash(hash) {
   return m ? { id: m[1], card: Number(m[2]) } : { id: hash, card: 0 };
 }
 
+/**
+ * The hash, percent-decoded, or the raw hash when it will not decode.
+ *
+ * `decodeURIComponent` throws `URIError` on a malformed escape — `#%`, `#%zz`,
+ * a link truncated by a chat client mid-sequence — and this runs at load,
+ * *before* the hashchange listener is registered. So one stray `%` in a shared
+ * URL threw out of boot, the listener was never attached, and **every in-page
+ * navigation for the rest of the session silently did nothing**: clicking a
+ * see-also link, a path step or a search result changed the address bar and
+ * nothing else. Measured, not theorised — with `#%` the topic never rendered.
+ *
+ * Falling back to the raw text is right rather than merely safe: an
+ * undecodable hash matches no topic id, which is exactly what should happen.
+ */
+function decodeHash() {
+  const raw = location.hash.slice(1);
+  try { return decodeURIComponent(raw); } catch { return raw; }
+}
+
 function openHashTarget() {
-  const parsed = splitCardHash(decodeURIComponent(location.hash.slice(1)));
+  const parsed = splitCardHash(decodeHash());
   let id = parsed.id;
   if (!id) return;
   // A stale link resolves through the alias map, then rewrites itself so the

@@ -16,6 +16,20 @@
  * wired), search filters, and the theme toggles. It also fails on any uncaught
  * page error during load — the symptom the fix removed.
  *
+ * ## The second half: a hostile URL is the same failure
+ *
+ * Storage is not the only load-critical path that can throw. `openHashTarget()`
+ * runs at boot and `decodeURIComponent` throws `URIError` on a malformed
+ * percent-escape — `#%`, a link a chat client truncated mid-sequence. That threw
+ * out of init *before* the hashchange listener was registered, so every in-page
+ * navigation for the rest of the session silently did nothing.
+ *
+ * Identical shape to the storage bug, identical invisibility: nobody types `#%`
+ * on purpose, and the reader who receives a mangled link has no idea why the
+ * site stopped responding. So the same file covers it, with a spread of hostile
+ * hashes — malformed escapes, markup, path traversal, absurd card indices — each
+ * asserting no uncaught error and no injected handler.
+ *
  * Usage:
  *   npm install playwright && node tools/storage_denied_test.mjs
  */
@@ -142,6 +156,45 @@ await probe("notepad opens without throwing", () => {
   try { toggleNotepad(); } catch { /* close; fine */ }
   return ok;
 });
+
+// ── hostile hashes, with storage working ────────────────────────────────────
+// A fresh context: this half is about the URL, not about storage, and mixing the
+// two would make a failure ambiguous about which guard broke.
+const clean = await (await browser.newContext()).newPage();
+const hashErrors = [];
+clean.on("pageerror", e => hashErrors.push(String(e).split("\n")[0]));
+
+const HOSTILE = [
+  "#%", "#%zz", "#%E0%A4%A",                    // malformed percent-escapes
+  "#<img src=x onerror=alert(1)>",              // markup
+  '#"><script>alert(1)</script>',
+  "#..%2f..%2fetc%2fpasswd",                    // traversal
+  "#a/b/c/d", "#/3", "#//",                     // shapes splitCardHash does not expect
+  "#kerberos-authentication-flow/999999",       // absurd card index
+  "#" + "a".repeat(4000),                       // absurd length
+];
+for (const hash of HOSTILE) {
+  hashErrors.length = 0;
+  await clean.goto(PAGE + hash, { waitUntil: "load" });
+  await clean.waitForTimeout(120);
+  const injected = await clean.evaluate(() =>
+    document.querySelectorAll("img[onerror], [onclick], [onload]").length);
+  check(`a hostile hash is inert: ${hash.slice(0, 34)}`,
+        hashErrors.length === 0 && injected === 0,
+        hashErrors[0] || (injected ? `${injected} injected handler(s)` : ""));
+}
+
+// The one that actually cost something: after a malformed hash at load, does
+// in-page navigation still work? It did not, because the listener that makes it
+// work was registered on the line after the one that threw.
+await clean.goto(PAGE + "#%", { waitUntil: "load" });
+await clean.waitForTimeout(150);
+const navigated = await clean.evaluate(async () => {
+  location.hash = "kerberos-authentication-flow";
+  await new Promise(r => setTimeout(r, 400));
+  return !!document.getElementById("kerberos-authentication-flow");
+});
+check("navigation still works after a malformed hash at load", navigated);
 
 await browser.close();
 

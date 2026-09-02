@@ -17790,3 +17790,69 @@ alternative was an answer nobody could use.
 
 Check PASS · smoke **148/148** · search **44/44** · axe **6/6** · mobile **9/9** ·
 resilience **7/7** · determinism reproducible.
+
+---
+
+## Session record — one stray `%` in a URL killed every link on the page
+
+The adversarial pass that capped the widened search worked, so the same method went at the
+next load-critical path: **the URL hash**. Twenty-two hostile hashes — malformed escapes,
+markup, path traversal, absurd card indices, four thousand characters — scored on uncaught
+errors and injected handlers.
+
+Three of them threw:
+
+```
+#%          Uncaught URIError: URI malformed
+#%zz        Uncaught URIError: URI malformed
+#%E0%A4%A   Uncaught URIError: URI malformed
+```
+
+`decodeURIComponent` throws on a malformed percent-escape. `openHashTarget()` calls it and
+runs at boot, on the line **immediately before** the one that registers the hashchange
+listener:
+
+```js
+openHashTarget();
+window.addEventListener("hashchange", openHashTarget);
+```
+
+So a single stray `%` threw out of init, the listener was never attached, and **every
+in-page navigation for the rest of the session silently did nothing** — a see-also link, a
+path step, a search result, a quick-jump: the address bar changed and the page did not.
+Measured rather than reasoned: loading `#%` and then setting `location.hash` to a real topic
+left the topic unrendered; from a clean load it rendered.
+
+Where does a mangled hash come from? A link truncated by a chat client mid-escape, a URL
+copied out of a PDF, a shortener that half-decoded. Nobody types `#%` on purpose, and the
+reader who receives one has no way to know why the site stopped responding to clicks.
+
+### The fix is two lines, and the second one is the point
+
+`decodeHash()` falls back to the raw text when the decode throws — which is right rather
+than merely safe, because an undecodable hash matches no topic id, and that is exactly what
+should happen. And the listener registration moved **above** the initial call:
+
+> Registration cannot throw; opening a topic can.
+
+That ordering is the durable half. The decode is fixed, but any future throw inside
+`openHashTarget` would have cost the reader the same thing, and now cannot.
+
+### Where it is pinned
+
+`storage_denied_test.mjs` already existed for precisely this failure mode — *"an unhandled
+throw there halts the whole script … the page renders but is completely inert"* — with
+storage as the trigger. A hostile URL is the same shape and the same invisibility, so it is
+the same file, in a second half with its own clean context so a failure is never ambiguous
+about which guard broke.
+
+**The new checks fail without the fix**, which is the only evidence that a guard is real:
+reverting `script.js` and re-running gives 17/19 with the `#%` inertness check and the
+navigation check both red.
+
+```
+resilience checks   7 → 19
+```
+
+Check PASS · smoke **148/148** · search **44/44** · resilience **19/19** · axe **6/6** ·
+mobile **9/9** · backup **3/3** · determinism reproducible.
