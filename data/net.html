@@ -1320,6 +1320,37 @@ Native VLAN (untagged traffic on trunk)
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Lease Time Is the Knob Nobody Turns, and the First Answer Wins</div>
+                <div class="concept-desc">
+                  The four-step exchange is the same everywhere; the two things that cause real
+                  incidents are the lease duration and the fact that DHCP has no
+                  authentication. A client takes the <em>first</em> offer it receives, so any device
+                  on the segment answering faster than the real server becomes the network's
+                  gateway and DNS <span class="acro-exp">(Domain Name System)</span> — which is a
+                  misconfigured lab router as often as it is an attacker, and looks identical from
+                  the helpdesk: "the internet is broken for some people on the second floor."
+                  DHCP snooping on the access switches is the control, and it works by designating
+                  which ports are allowed to answer.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Setting</th><th>Too short</th><th>Too long</th></tr>
+                    <tr><td>Lease time</td><td>Constant renewal traffic; a server outage breaks the estate in minutes</td><td class="c-red">A guest or conference-room scope exhausts and nobody can connect — the classic "the Wi-Fi is full" that is really a pool of addresses held by devices that left</td></tr>
+                    <tr><td>Scope size</td><td>Exhaustion under normal churn</td><td>A flat, oversized broadcast domain</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Match the lease to how long devices actually stay.</strong>
+                    Days for a wired office, hours for wireless, minutes-to-an-hour for guest and
+                    event networks. And remember the relay: <code>ip helper-address</code> is what
+                    lets a broadcast reach a server on another subnet, so a new VLAN <span class="acro-exp">(Virtual Local Area Network)</span> that "cannot get an
+                    address" is usually a missing helper rather than a server fault — check that
+                    before anything else, because it is the single most common cause and the
+                    fastest to confirm.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -5224,6 +5255,47 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                     <strong class="c-green">Source of truth:</strong> keep intended config in Git
                     (often generated from a data model with Jinja2 templates), then push and verify.
                     Model-driven telemetry (gNMI streaming) is replacing SNMP <span class="acro-exp">(Simple Network Management Protocol)</span> polling for monitoring.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">The Config Is Not the State, and the Device You Lock Out Is the One You Are Standing In</div>
+                <div class="concept-desc">
+                  Two assumptions carry over from server automation and neither survives contact
+                  with a switch. The first is that pushing configuration converges the device.
+                  Network configuration is <strong>additive</strong> — sending a line adds it, and
+                  removing a line from your template removes nothing, because nothing negated it on
+                  the box. A playbook that has been "declarative" for a year is really a pile of
+                  additions, and the drift is invisible until someone diffs the running config
+                  against the intent. NAPALM's replace-config and the vendors' model-driven
+                  interfaces exist precisely to make the operation a replacement rather than an
+                  append.
+                </div>
+                <div class="concept-desc">
+                  The second is that a failed change can be rolled back. On a network device the
+                  change often severs the path you are managing it over — a firewall line, an ACL <span class="acro-exp">(Access Control List)</span>, a VLAN <span class="acro-exp">(Virtual Local Area Network)</span> reassignment, an
+                  interface shutdown — and then there is no session to roll back from. That is what
+                  commit-confirm is for: the device applies the change and reverts it automatically
+                  unless you confirm within a timer, so losing the session <em>is</em> the rollback.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Practice</th><th>What it prevents</th></tr>
+                    <tr><td>Commit-confirm / rollback timers, or a reload-in scheduled before the change</td><td class="c-red">Locking yourself out of the device you are changing</td></tr>
+                    <tr><td>Replace the config, do not merge it</td><td>Silent drift as removed template lines stay live on the box</td></tr>
+                    <tr><td>Save explicitly after verifying</td><td>A change that works until the next reboot loses it — or one that survives a reboot you wanted to undo</td></tr>
+                    <tr><td>Out-of-band console access</td><td class="c-cyan">The prerequisite for all of the above: without it, "we will fix it remotely" is a hope</td></tr>
+                    <tr><td>A diff against intent, on a schedule</td><td>Manual fixes made during an incident silently reverting at the next push</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Automation multiplies the blast radius before it
+                    multiplies the productivity.</strong> One bad line typed by hand is one device;
+                    the same line in a playbook is the estate, in seconds, including the path you
+                    would use to fix it. Ring the rollout — one lab device, one site, then the rest
+                    — exactly as you would a software deploy, and keep the console server working.
+                    The general framing is in
+                    <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
                   </div>
                 </div>
               </div>

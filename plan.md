@@ -15908,3 +15908,56 @@ median topic               3,291   3,304
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — observability and the network: the measurement that is right and useless
+
+Five cards across `ops` and `net`, on a pattern both domains share: a tool correctly
+described, producing a number, and nothing said about the ways that number is
+confidently wrong.
+
+| Card | The number that lies | Why |
+|---|---|---|
+| Prometheus & Grafana | `avg(p99)` | Percentiles do not aggregate — aggregate buckets, compute the quantile last |
+| SLIs, SLOs & Error Budgets | A perfect server-side SLI during a total outage | Nothing failed because nothing arrived — the measurement point excluded the failure |
+| Structured Logging | A query returning zero results after a field rename | A missing field returns nothing rather than an error, and nothing reads like good news |
+| Network Automation | A "declarative" playbook that has drifted for a year | Network config is additive: removing a line from your template removes nothing from the box |
+| DHCP | "The Wi-Fi is full" | A pool held by devices that left — the lease time, not the capacity |
+
+### Three that are worth the wave on their own
+
+**A total outage upstream of the measurement point produces a perfect SLI.** This is
+the one to internalise: server-side latency and error ratios cannot see requests that
+never arrived, so the SLO looks its best during the incident that matters most. Every
+SLO needs a synthetic check outside the network alongside it, because the alert you
+most need is the one your own metrics structurally cannot generate.
+
+**Cardinality is an outage, not a cost.** A label carrying a user id or a URL path
+multiplies the series count until Prometheus OOMs, and the fingerprint is a monitoring
+server restarting under memory pressure shortly after a deploy. High-cardinality
+dimensions belong in logs and traces, which are built for them.
+
+**Commit-confirm exists because the change severs the session you are managing the
+device over.** On a switch there is often no rollback path after a bad ACL, because
+the path was the thing you broke. The device reverting on a timer unless you confirm
+turns losing the session into the rollback — and out-of-band console access is the
+prerequisite that makes any of the rest a plan rather than a hope.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   55      50
+ops thin                       3       0
+net thin                       3       1
+mean chars/concept card    1,267   1,268
+median topic               3,304   3,316
+10th percentile            1,638   1,691
+```
+
+`ops` joins `cs`, `infra`, `grc`, `career`, `m365`, `pentest`, `hw`, `productivity`,
+`mind`, `philosophy` and `math` at zero thin topics.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.

@@ -2295,6 +2295,38 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Two PromQL Mistakes That Produce Confident, Wrong Dashboards</div>
+                <div class="concept-desc">
+                  <strong class="c-red">Averaging percentiles.</strong> The 99th percentile of a
+                  fleet is not the average of each instance's 99th percentile — percentiles do not
+                  aggregate, and <code>avg(p99)</code> is a number with no meaning that happens to
+                  look plausible. With Prometheus histograms the correct form aggregates the
+                  <em>buckets</em> first and computes the quantile last:
+                  <code>histogram_quantile(0.99, sum by (le) (rate(bucket[5m])))</code>. Get it
+                  backwards and a dashboard understates the tail exactly when the tail is what you
+                  are being paged about.
+                </div>
+                <div class="concept-desc">
+                  <strong class="c-red">Label cardinality.</strong> Every distinct combination of
+                  label values is a separate time series held in memory, so one label carrying a
+                  user id, a request id, a full URL <span class="acro-exp">(Uniform Resource Locator)</span> path or an email address does not
+                  make the metric more useful — it multiplies the series count until the server
+                  OOMs. The fingerprint is a Prometheus that restarts under memory pressure shortly
+                  after a deploy, and the cause is one line of instrumentation. High-cardinality
+                  dimensions belong in logs or traces, which are built for them.
+                </div>
+                <div class="concept-desc verdict">
+                  <strong class="c-cyan">And remember the model is pull, which decides what you can
+                  monitor.</strong> A target that is not scraped has no data, and a short-lived job
+                  finishes between scrapes and is simply absent — which is what Pushgateway exists
+                  for, and why it should be reserved for batch jobs rather than used as a general
+                  ingress. The corollary is the useful one: <code>up == 0</code> is a first-class
+                  signal, so a missing target is detectable in a way that a push-based system has to
+                  work at.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2396,6 +2428,38 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">An SLO Measured at the Load Balancer Is a Promise About the Load Balancer</div>
+                <div class="concept-desc">
+                  The definition is the hard part, and the commonest failure is measuring where the
+                  data is convenient rather than where the user is. A server-side latency SLI starts counting when the
+                  request arrives and stops when the response is written — so it excludes DNS <span class="acro-exp">(Domain Name System)</span>, connection setup, the mobile
+                  network, and every request that never arrived because the load balancer was
+                  unreachable. That last one is the serious one: <strong>a total outage upstream of
+                  the measurement point produces a perfect SLI</strong>, because there are no failed
+                  requests, because there are no requests.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Definition choice</th><th>What it quietly excludes</th></tr>
+                    <tr><td>Measured server-side</td><td class="c-red">Anything that failed before reaching the server, including the outage</td></tr>
+                    <tr><td>Averaged, not a ratio of good events</td><td>The tail — and an average of a bimodal distribution describes nobody</td></tr>
+                    <tr><td>Per-request weighting</td><td>The user who made forty failed requests counts forty times; the one who gave up counts once</td></tr>
+                    <tr><td>A 30-day rolling window</td><td>An incident stays in the budget for 30 days, so a freeze can outlast the fix by weeks</td></tr>
+                    <tr><td>One SLO for a whole service</td><td>The one endpoint that matters, averaged into the ninety that do not</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Pick the smallest set of user journeys the service
+                    exists for, and measure those as close to the user as you can afford</strong> —
+                    real-user monitoring or a black-box prober outside your network, not the
+                    application's own view of itself. And pair every SLO with a synthetic check that
+                    fails when nothing is arriving, because the alert you most need is the one your
+                    own metrics cannot generate. How to choose the journeys is in
+                    <span class="xref">Choosing SLIs &amp; Setting an SLO That Survives</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2430,6 +2494,44 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                     Structured logs feed both ops <em>and</em> security (SIEM) — the same pipeline that
                     helps you debug latency helps the blue team hunt. The three pillars —
                     <strong class="c-green">metrics, logs, traces</strong> — correlate via that shared ID.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Structured Means the Fields Are Now Contractual — Including the Ones You Should Not Have Logged</div>
+                <div class="concept-desc">
+                  Turning a sentence into fields makes the log queryable and makes its shape an
+                  interface. Two consequences follow immediately. A dashboard, an alert and a SIEM <span class="acro-exp">(Security Information and Event Management)</span> rule now
+                  depend on <code>event</code> being called <code>event</code> — renaming it in a
+                  refactor breaks queries silently, because a query for a field that no longer exists
+                  returns zero results rather than an error, and zero results reads like good news.
+                  Version the schema, or at least treat field names as a public API <span class="acro-exp">(Application Programming Interface)</span> with the same
+                  deprecation courtesy.
+                </div>
+                <div class="concept-desc">
+                  And a structured field is far easier to log by accident. Serialising a request
+                  object, a user record or an exception's local variables puts tokens, session ids,
+                  card numbers and personal data into a store that is replicated, backed up and
+                  retained for a year — and once there it is subject to every deletion obligation the
+                  rest of the estate has. Redaction belongs at the emitter, because a redaction rule
+                  in the collector fails open the day a new field appears.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Decision</th><th>The failure it prevents</th></tr>
+                    <tr><td>Deny-list at the emitter, plus a test that asserts on the payload</td><td class="c-red">Secrets and personal data in a store you cannot easily purge</td></tr>
+                    <tr><td>Sample high-volume success, keep all errors</td><td>A bill dominated by the logs nobody reads; sampling errors is how the one occurrence vanishes</td></tr>
+                    <tr><td>One timestamp format and one time zone (UTC, RFC 3339)</td><td>Correlating two services whose clocks disagree by an hour and a format</td></tr>
+                    <tr><td>Propagate the trace id at the boundary</td><td class="c-cyan">The correlation id that exists in every service and is regenerated at each hop, correlating nothing</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">The question that decides log volume is what you would
+                    query.</strong> A log written and never read costs storage, ingest, and the
+                    attention of whoever scrolls past it during an incident. Write the query first —
+                    "which endpoint returned 500 for tenant X in the last hour" — and log exactly the
+                    fields that answer it; anything else belongs in a metric, which is orders of
+                    magnitude cheaper per event.
                   </div>
                 </div>
               </div>

@@ -209,8 +209,8 @@ visitor is never told that 1,426 things are new. -->
 <span class="ctag ctag-netplus">Net+</span>
 </div>
 <span class="domain-sub">OSI · TCP/IP · Topologies · DHCP · Ports · DNS · Cabling · Wireless</span>
-<span class="domain-meta" aria-label="73 topics, about 2h 45m to read"
->73 topics · ~2h 45m</span>
+<span class="domain-meta" aria-label="73 topics, about 2h 50m to read"
+>73 topics · ~2h 50m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -1473,12 +1473,12 @@ Intermediary for client requests; caching, filtering
 </div>
 </div>
 <!-- TOPIC: Wireless Standards -->
-<div class="topic" id="dhcp-dora-process" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="dhcp-dora-process" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📡</span>
 <span class="topic-name">DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> — DORA <span class="acro-exp">(Discover, Offer, Request, Acknowledge)</span> Process</span>
 <span class="topic-badge">4-STEP SEQUENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -1532,6 +1532,37 @@ color: var(--muted);
 <strong style="color: var(--sky)">APIPA <span class="acro-exp">(Automatic Private IP Addressing)</span> fallback:</strong>
 169.254.x.x · Lease renewal at 50% &amp; 87.5% of lease time
 · DHCP snooping prevents rogue servers
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Lease Time Is the Knob Nobody Turns, and the First Answer Wins</div>
+<div class="concept-desc">
+The four-step exchange is the same everywhere; the two things that cause real
+incidents are the lease duration and the fact that DHCP has no
+authentication. A client takes the <em>first</em> offer it receives, so any device
+on the segment answering faster than the real server becomes the network's
+gateway and DNS <span class="acro-exp">(Domain Name System)</span> — which is a
+misconfigured lab router as often as it is an attacker, and looks identical from
+the helpdesk: "the internet is broken for some people on the second floor."
+DHCP snooping on the access switches is the control, and it works by designating
+which ports are allowed to answer.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Setting</th><th>Too short</th><th>Too long</th></tr>
+<tr><td>Lease time</td><td>Constant renewal traffic; a server outage breaks the estate in minutes</td><td class="c-red">A guest or conference-room scope exhausts and nobody can connect — the classic "the Wi-Fi is full" that is really a pool of addresses held by devices that left</td></tr>
+<tr><td>Scope size</td><td>Exhaustion under normal churn</td><td>A flat, oversized broadcast domain</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Match the lease to how long devices actually stay.</strong>
+Days for a wired office, hours for wireless, minutes-to-an-hour for guest and
+event networks. And remember the relay: <code>ip helper-address</code> is what
+lets a broadcast reach a server on another subnet, so a new VLAN <span class="acro-exp">(Virtual Local Area Network)</span> that "cannot get an
+address" is usually a missing helper rather than a server fault — check that
+before anything else, because it is the single most common cause and the
+fastest to confirm.
 </div>
 </div>
 </div>
@@ -5363,12 +5394,12 @@ passes the real client IP along in these headers.
 </div>
 </div>
 </div>
-<div class="topic" id="network-automation-ansible-netmiko-napalm" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="network-automation-ansible-netmiko-napalm" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤖</span>
 <span class="topic-name">Network Automation — Ansible, Netmiko &amp; NAPALM</span>
 <span class="topic-badge">Automation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -5392,6 +5423,47 @@ is the heart of <strong class="c-cyan">NetDevOps</strong>.
 <strong class="c-green">Source of truth:</strong> keep intended config in Git
 (often generated from a data model with Jinja2 templates), then push and verify.
 Model-driven telemetry (gNMI streaming) is replacing SNMP <span class="acro-exp">(Simple Network Management Protocol)</span> polling for monitoring.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">The Config Is Not the State, and the Device You Lock Out Is the One You Are Standing In</div>
+<div class="concept-desc">
+Two assumptions carry over from server automation and neither survives contact
+with a switch. The first is that pushing configuration converges the device.
+Network configuration is <strong>additive</strong> — sending a line adds it, and
+removing a line from your template removes nothing, because nothing negated it on
+the box. A playbook that has been "declarative" for a year is really a pile of
+additions, and the drift is invisible until someone diffs the running config
+against the intent. NAPALM's replace-config and the vendors' model-driven
+interfaces exist precisely to make the operation a replacement rather than an
+append.
+</div>
+<div class="concept-desc">
+The second is that a failed change can be rolled back. On a network device the
+change often severs the path you are managing it over — a firewall line, an ACL <span class="acro-exp">(Access Control List)</span>, a VLAN <span class="acro-exp">(Virtual Local Area Network)</span> reassignment, an
+interface shutdown — and then there is no session to roll back from. That is what
+commit-confirm is for: the device applies the change and reverts it automatically
+unless you confirm within a timer, so losing the session <em>is</em> the rollback.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Practice</th><th>What it prevents</th></tr>
+<tr><td>Commit-confirm / rollback timers, or a reload-in scheduled before the change</td><td class="c-red">Locking yourself out of the device you are changing</td></tr>
+<tr><td>Replace the config, do not merge it</td><td>Silent drift as removed template lines stay live on the box</td></tr>
+<tr><td>Save explicitly after verifying</td><td>A change that works until the next reboot loses it — or one that survives a reboot you wanted to undo</td></tr>
+<tr><td>Out-of-band console access</td><td class="c-cyan">The prerequisite for all of the above: without it, "we will fix it remotely" is a hope</td></tr>
+<tr><td>A diff against intent, on a schedule</td><td>Manual fixes made during an incident silently reverting at the next push</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Automation multiplies the blast radius before it
+multiplies the productivity.</strong> One bad line typed by hand is one device;
+the same line in a playbook is the estate, in seconds, including the path you
+would use to fix it. Ring the rollout — one lab device, one site, then the rest
+— exactly as you would a software deploy, and keep the console server working.
+The general framing is in
+<span class="xref" data-xref="automation-risk-discipline-blast-radius-approval-gates-the-k" role="link" tabindex="0">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
 </div>
 </div>
 </div>
@@ -22723,8 +22795,8 @@ and the design-side principle is
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Service Desk · SOC · Incident Response · Vulnerability Mgmt · BCP/DR · Forensics · ITIL · SRE · Observability</span>
-<span class="domain-meta" aria-label="77 topics, about 3h 20m to read"
->77 topics · ~3h 20m</span>
+<span class="domain-meta" aria-label="77 topics, about 3h 25m to read"
+>77 topics · ~3h 25m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -24966,12 +25038,12 @@ while your worst-affected users suffer. Report <strong class="c-cyan">percentile
 </div>
 </div>
 </div>
-<div class="topic" id="prometheus-grafana-metrics-dashboards" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="prometheus-grafana-metrics-dashboards" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔥</span>
 <span class="topic-name">Prometheus &amp; Grafana — Metrics &amp; Dashboards</span>
 <span class="topic-badge">Observability</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -25000,6 +25072,38 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
 Thanos/Mimir/Cortex add long-term storage and HA. Instrument with OpenTelemetry to
 stay portable.
 </div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Two PromQL Mistakes That Produce Confident, Wrong Dashboards</div>
+<div class="concept-desc">
+<strong class="c-red">Averaging percentiles.</strong> The 99th percentile of a
+fleet is not the average of each instance's 99th percentile — percentiles do not
+aggregate, and <code>avg(p99)</code> is a number with no meaning that happens to
+look plausible. With Prometheus histograms the correct form aggregates the
+<em>buckets</em> first and computes the quantile last:
+<code>histogram_quantile(0.99, sum by (le) (rate(bucket[5m])))</code>. Get it
+backwards and a dashboard understates the tail exactly when the tail is what you
+are being paged about.
+</div>
+<div class="concept-desc">
+<strong class="c-red">Label cardinality.</strong> Every distinct combination of
+label values is a separate time series held in memory, so one label carrying a
+user id, a request id, a full URL <span class="acro-exp">(Uniform Resource Locator)</span> path or an email address does not
+make the metric more useful — it multiplies the series count until the server
+OOMs. The fingerprint is a Prometheus that restarts under memory pressure shortly
+after a deploy, and the cause is one line of instrumentation. High-cardinality
+dimensions belong in logs or traces, which are built for them.
+</div>
+<div class="concept-desc verdict">
+<strong class="c-cyan">And remember the model is pull, which decides what you can
+monitor.</strong> A target that is not scraped has no data, and a short-lived job
+finishes between scrapes and is simply absent — which is what Pushgateway exists
+for, and why it should be reserved for batch jobs rather than used as a general
+ingress. The corollary is the useful one: <code>up == 0</code> is a first-class
+signal, so a missing target is detectable in a way that a push-based system has to
+work at.
 </div>
 </div>
 </div>
@@ -25070,12 +25174,12 @@ classic sign you measured where it was easy, not where the pain is.
 </div>
 </div>
 </div>
-<div class="topic" id="slis-slos-error-budgets" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="slis-slos-error-budgets" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎯</span>
 <span class="topic-name">SLIs <span class="acro-exp">(Service Level Indicator)</span>, SLOs <span class="acro-exp">(Service Level Objective)</span> &amp; Error Budgets</span>
 <span class="topic-badge">SRE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -25103,14 +25207,46 @@ threshold alerts. This is the SRE card, made operational.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">An SLO Measured at the Load Balancer Is a Promise About the Load Balancer</div>
+<div class="concept-desc">
+The definition is the hard part, and the commonest failure is measuring where the
+data is convenient rather than where the user is. A server-side latency SLI starts counting when the
+request arrives and stops when the response is written — so it excludes DNS <span class="acro-exp">(Domain Name System)</span>, connection setup, the mobile
+network, and every request that never arrived because the load balancer was
+unreachable. That last one is the serious one: <strong>a total outage upstream of
+the measurement point produces a perfect SLI</strong>, because there are no failed
+requests, because there are no requests.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Definition choice</th><th>What it quietly excludes</th></tr>
+<tr><td>Measured server-side</td><td class="c-red">Anything that failed before reaching the server, including the outage</td></tr>
+<tr><td>Averaged, not a ratio of good events</td><td>The tail — and an average of a bimodal distribution describes nobody</td></tr>
+<tr><td>Per-request weighting</td><td>The user who made forty failed requests counts forty times; the one who gave up counts once</td></tr>
+<tr><td>A 30-day rolling window</td><td>An incident stays in the budget for 30 days, so a freeze can outlast the fix by weeks</td></tr>
+<tr><td>One SLO for a whole service</td><td>The one endpoint that matters, averaged into the ninety that do not</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Pick the smallest set of user journeys the service
+exists for, and measure those as close to the user as you can afford</strong> —
+real-user monitoring or a black-box prober outside your network, not the
+application's own view of itself. And pair every SLO with a synthetic check that
+fails when nothing is arriving, because the alert you most need is the one your
+own metrics cannot generate. How to choose the journeys is in
+<span class="xref" data-xref="choosing-slis-setting-an-slo-that-survives" role="link" tabindex="0">Choosing SLIs &amp; Setting an SLO That Survives</span>.
 </div>
 </div>
-<div class="topic" id="structured-logging-log-pipelines" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="structured-logging-log-pipelines" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🪵</span>
 <span class="topic-name">Structured Logging &amp; Log Pipelines</span>
 <span class="topic-badge">Observability</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -25137,6 +25273,44 @@ logs together across services.
 Structured logs feed both ops <em>and</em> security (SIEM) — the same pipeline that
 helps you debug latency helps the blue team hunt. The three pillars —
 <strong class="c-green">metrics, logs, traces</strong> — correlate via that shared ID.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Structured Means the Fields Are Now Contractual — Including the Ones You Should Not Have Logged</div>
+<div class="concept-desc">
+Turning a sentence into fields makes the log queryable and makes its shape an
+interface. Two consequences follow immediately. A dashboard, an alert and a SIEM <span class="acro-exp">(Security Information and Event Management)</span> rule now
+depend on <code>event</code> being called <code>event</code> — renaming it in a
+refactor breaks queries silently, because a query for a field that no longer exists
+returns zero results rather than an error, and zero results reads like good news.
+Version the schema, or at least treat field names as a public API <span class="acro-exp">(Application Programming Interface)</span> with the same
+deprecation courtesy.
+</div>
+<div class="concept-desc">
+And a structured field is far easier to log by accident. Serialising a request
+object, a user record or an exception's local variables puts tokens, session ids,
+card numbers and personal data into a store that is replicated, backed up and
+retained for a year — and once there it is subject to every deletion obligation the
+rest of the estate has. Redaction belongs at the emitter, because a redaction rule
+in the collector fails open the day a new field appears.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Decision</th><th>The failure it prevents</th></tr>
+<tr><td>Deny-list at the emitter, plus a test that asserts on the payload</td><td class="c-red">Secrets and personal data in a store you cannot easily purge</td></tr>
+<tr><td>Sample high-volume success, keep all errors</td><td>A bill dominated by the logs nobody reads; sampling errors is how the one occurrence vanishes</td></tr>
+<tr><td>One timestamp format and one time zone (UTC, RFC 3339)</td><td>Correlating two services whose clocks disagree by an hour and a format</td></tr>
+<tr><td>Propagate the trace id at the boundary</td><td class="c-cyan">The correlation id that exists in every service and is regenerated at each hop, correlating nothing</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">The question that decides log volume is what you would
+query.</strong> A log written and never read costs storage, ingest, and the
+attention of whoever scrolls past it during an incident. Write the query first —
+"which endpoint returned 500 for tenant X in the last hour" — and log exactly the
+fields that answer it; anything else belongs in a metric, which is orders of
+magnitude cheaper per event.
 </div>
 </div>
 </div>
