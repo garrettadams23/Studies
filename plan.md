@@ -16312,3 +16312,45 @@ domains at zero reach:  philosophy fixed; only `shortcut` remains, and it is a
 
 Check PASS (`check_paths`: every step resolves, no duplicate within a path) · smoke
 **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** · determinism reproducible.
+
+---
+
+## Session record — five more paths, and the reach passes half the site's non-reference content
+
+| Path | Steps | Why it earned a route |
+|---|---|---|
+| Cryptography, End to End | 18 | The subject was scattered across `sec` and `cs` — the fundamentals, the maths that makes it hard, PKI and TLS, and a PQC migration that is already overdue, in the order someone actually needs them |
+| Distributed Systems, From First Principles | 12 | Time you cannot trust and failure you cannot detect come *before* CAP, not after it — and the session's own new cards (Merkle, CRDT, gossip, BFT, Amdahl) had no sequence until now |
+| The Maths Under the Job | 11 | Bayes and base rates, sampling, A/B stopping rules — the small amount of statistics that decides whether a detection or a dashboard means anything |
+| How Your Code Actually Runs | 11 | Compiler → interpreter → types → GC → UB → instruction sets → speculative execution: source to silicon, with the security bugs that live in the gaps |
+| Privacy & Data Protection, in Practice | 13 | `grc` had the law and the engineering as separate, unsequenced piles; this is the route from "GDPR exists" to deleting data that is in three backups and a cache |
+
+### What two paths' step order argues
+
+**Distributed systems starts before CAP.** The usual teaching order opens with the CAP
+theorem, which invites the reading that consistency and availability are a menu. The
+route here opens with *why timestamps cannot order events* and *why "is it down?" has
+no perfect answer* — because CAP is a consequence of those two facts, and a reader who
+meets it first memorises a triangle instead of understanding a constraint.
+
+**Cryptography puts the maths in the middle, not at the start.** Entropy, modular
+arithmetic, primes and discrete logs sit after the practical fundamentals and before
+PKI, so they arrive as an answer to "why is this hard" rather than as a prerequisite
+someone has to survive. The path ends on reading a vendor's claim critically, which is
+the skill the rest exists to support.
+
+```
+paths           46 → 51
+steps          730 → 795
+topics reached 691 → 752   (45% → 49% of the site)
+```
+
+Across the session's three paths waves: **36 → 51 paths, 579 → 795 steps, 555 → 752
+topics reachable (36% → 49%)**, and no new content — every step is a card that already
+existed and could not be found.
+
+`shortcut` is the only domain still at one step, and it is a keyboard-reference
+surface rather than a route. Every other domain now has at least eleven.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
