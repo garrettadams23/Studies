@@ -15003,12 +15003,12 @@ Encrypt, wipe, deface, DoS <span class="acro-exp">(Denial of Service)</span>, ma
 </div>
 </div>
 <!-- ── TOPIC: DIAMOND MODEL ─────────────────────────────────── -->
-<div class="topic" id="diamond-model-of-intrusion-analysis" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="diamond-model-of-intrusion-analysis" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💎</span>
 <span class="topic-name">Diamond Model of Intrusion Analysis</span>
 <span class="topic-badge">ANALYSIS MODEL</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -15074,6 +15074,38 @@ Person, org,<br />or asset targeted
 </div>
 </div>
 <div></div>
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">The Model Earns Its Place by Pivoting, Not by Filling In Four Boxes</div>
+<div class="concept-desc">
+Written as a template it produces a filled-in diagram and no new knowledge. Its
+actual value is that the four vertices are <em>connected</em>: a known
+capability leads to the infrastructure it calls, that infrastructure leads to
+other victims contacting it, and that set of victims characterises the adversary's
+targeting. Each of those moves is a query you can run against data you already
+hold, and each answer generates the next question. That is what analysts mean by
+pivoting, and it is the only reason to use this rather than a table of indicators.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>From</th><th>Pivot to</th><th>The question it answers</th></tr>
+<tr><td>A malware sample</td><td>Its C2 infrastructure</td><td>What else does this family talk to?</td></tr>
+<tr><td>A domain or IP</td><td>Every internal host that contacted it</td><td class="c-cyan">Scope — usually the first question an incident actually needs</td></tr>
+<tr><td>The set of victims</td><td>The adversary's targeting</td><td>Are we incidental or selected? The answer changes the response</td></tr>
+<tr><td>The adversary</td><td>Their known capabilities</td><td>What else should we be hunting for, before it fires?</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Use it alongside the kill chain rather than instead of
+it.</strong> The kill chain is a sequence and answers "how far did this get";
+the Diamond is a relation and answers "what else is connected to it" — so an
+investigation typically runs the kill chain to establish the stage and the
+Diamond to expand the scope. And be disciplined about the adversary vertex: it
+is the one most often filled in with a guess, and attribution is the least
+reliable and least actionable corner of the four. See
+<span class="xref" data-xref="attribution-how-it-is-actually-done-and-why-it-is-usually-wr" role="link" tabindex="0">Attribution — How It Is Actually Done, and Why It Is Usually Wrong</span>.
 </div>
 </div>
 </div>
@@ -54172,12 +54204,12 @@ main reason teams reached for a different runtime.
 </div>
 </div>
 </div>
-<div class="topic" id="c-net-microsofts-cross-platform-stack" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="c-net-microsofts-cross-platform-stack" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎯</span>
 <span class="topic-name">C# &amp; .NET — Microsoft's Cross-Platform Stack</span>
 <span class="topic-badge">Language</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -54206,14 +54238,47 @@ game-development language too.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">The Framework/Core Split Is Still the First Question Anyone Asks You</div>
+<div class="concept-desc">
+"Cross-platform" describes modern .NET and not the estate you are likely to
+inherit. The old .NET Framework — Windows-only, tied to the machine's installed
+version, servicing through Windows Update — still runs a great deal of enterprise
+software, and it is not merely an older version of the same thing: WCF hosting,
+ASP.NET Web Forms, and a pile of Windows-specific APIs have no
+equivalent on modern .NET. So "we're on .NET" is an ambiguous sentence and the
+first clarifying question is which one, because the answer decides whether the
+application can run in a Linux container at all.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Property</th><th>.NET Framework (4.8)</th><th>Modern .NET</th></tr>
+<tr><td>Platform</td><td>Windows only</td><td class="c-green">Windows, Linux, macOS; containers</td></tr>
+<tr><td>Versioning</td><td>Machine-wide, one at a time</td><td>Side-by-side, or self-contained with the app</td></tr>
+<tr><td>Support</td><td class="c-yellow">Serviced with Windows, not evolving</td><td>Annual releases; LTS <span class="acro-exp">(Long Term Support)</span> every other one</td></tr>
+<tr><td>Migration blockers</td><td>—</td><td>WCF hosting, Web Forms, Windows-only APIs, some third-party libraries</td></tr>
+<tr><td>Startup</td><td>Slow, and the runtime is already resident</td><td>Fast; ReadyToRun and AOT <span class="acro-exp">(Ahead-of-Time Compilation)</span> compilation for serverless</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Choose it today for the ecosystem, not for the
+platform.</strong> A first-party stack that covers web, desktop, cloud
+functions, Unity and now native AOT binaries is a genuinely broad bet, and the
+tooling is among the best there is. The honest caution is the same one Java's
+card makes about Spring: an ecosystem this complete makes it easy to accept
+Microsoft's answer to every question, which is fine until one of those answers
+is the thing you needed to choose differently.
 </div>
 </div>
-<div class="topic" id="ruby-optimized-for-developer-happiness" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="ruby-optimized-for-developer-happiness" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💎</span>
 <span class="topic-name">Ruby — Optimized for Developer Happiness</span>
 <span class="topic-badge">Language</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -54240,6 +54305,38 @@ sum = nums.<span class="fn">reduce</span>(<span class="num">0</span>, :+)   <spa
 <div class="concept-desc verdict">
 Great for startups and prototyping — you go from idea to CRUD app fast. Trade-off:
 dynamic typing and slower raw speed than compiled languages.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">The GVL Means You Scale With Processes, and Rails Is a Bet on Convention</div>
+<div class="concept-desc">
+CRuby has a global lock, so threads interleave rather than run Ruby code in
+parallel — which means a CPU-bound
+request does not get faster with more threads, and the deployment answer is
+processes: several workers per machine, each with its own memory footprint and its
+own database connections. That single fact explains most of what Ruby hosting
+looks like. Threads still help for I/O <span class="acro-exp">(Input/Output)</span>,
+because the lock is released during a wait, so a request that spends its time
+talking to a database or an API <span class="acro-exp">(Application Programming Interface)</span>
+scales fine — which is what most web requests are.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Consequence</th><th>What to do about it</th></tr>
+<tr><td>Memory is per worker</td><td>Copy-on-write helps if you fork after loading; watch for a slow leak becoming N leaks</td></tr>
+<tr><td>Database connections multiply</td><td class="c-cyan">Pool size × workers × machines is the number the database sees — the same arithmetic serverless gets wrong</td></tr>
+<tr><td>CPU-bound work blocks a worker</td><td>Move it to a background job; this is why every Rails app has Sidekiq or its equivalent</td></tr>
+<tr><td>Boot time is real</td><td>Deploys and autoscaling are slower than a compiled runtime — plan the rollout accordingly</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">And Rails' convention is the actual product.</strong>
+Accepting its choices — directory layout, naming, migrations, the ORM <span class="acro-exp">(Object-Relational Mapping)</span> — is what makes a small
+team fast, and fighting them is what makes a large one slow, because the
+framework's magic works exactly as long as you stay inside it. That is a
+genuine trade rather than a flaw: for a CRUD-shaped product with a small team,
+little else gets to a working, maintainable application faster.
 </div>
 </div>
 </div>
@@ -77365,8 +77462,8 @@ were tracking different things.
 <span class="ctag ctag-general">GCP</span>
 </div>
 <span class="domain-sub">AWS · GCP · Azure · IAM · Networking · Compute · Storage · Security · Troubleshooting</span>
-<span class="domain-meta" aria-label="74 topics, about 3h 15m to read"
->74 topics · ~3h 15m</span>
+<span class="domain-meta" aria-label="74 topics, about 3h 20m to read"
+>74 topics · ~3h 20m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -77416,12 +77513,12 @@ policy), not the provider's.
 </div>
 </div>
 </div>
-<div class="topic" id="aws-getting-started" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="aws-getting-started" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🟧</span>
 <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> — Getting Started</span>
 <span class="topic-badge">AWS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77448,6 +77545,38 @@ Three ways to drive AWS: the <strong>Console</strong> (web, learn here),
 the <strong>CLI <span class="acro-exp">(Command Line Interface)</span></strong> (scripting/repeatability), and
 <strong>SDKs/IaC</strong> (Terraform, CloudFormation) for production. Graduate
 from console → CLI → IaC <span class="acro-exp">(Infrastructure as Code)</span> as you go.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">One Account Is the Decision That Is Hardest to Undo</div>
+<div class="concept-desc">
+The day-one checklist is right and stops one step short of the choice that costs
+the most later: everything in a single account. It is the obvious starting point
+and it means production and experimentation share an IAM namespace, a service
+quota, a bill, and a blast radius — so a runaway load test consumes the quota a
+production autoscale needed, and a broad policy written for a sandbox applies to
+the live database. Splitting later is not a setting: most resources cannot move
+between accounts, so separation after the fact means migration.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Boundary</th><th>What it actually separates</th></tr>
+<tr><td>An AWS account</td><td class="c-cyan">The real one — quotas, billing, IAM, and the blast radius of a mistake</td></tr>
+<tr><td>An Organization with OUs</td><td>Policy applied above the account, so a guardrail cannot be removed from inside it</td></tr>
+<tr><td>A VPC <span class="acro-exp">(Virtual Private Cloud)</span></td><td>The network, and nothing else</td></tr>
+<tr><td>Tags</td><td>Reporting and some conditional policy — not isolation</td></tr>
+<tr><td>A region</td><td>Data residency and failure domain; also a place resources hide from a console you left set elsewhere</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Start with an Organization and at least three accounts —
+management, production, and everything else — even alone.</strong> It costs
+nothing, IAM Identity Center gives you one login across them, and it means the
+guardrails you add later attach above the accounts rather than inside them. The
+same reasoning drives the log-archive account in the security stack: a boundary
+an attacker with admin in one account cannot cross is worth more than any
+control inside it.
 </div>
 </div>
 </div>

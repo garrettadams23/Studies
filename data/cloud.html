@@ -77,6 +77,38 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">One Account Is the Decision That Is Hardest to Undo</div>
+                <div class="concept-desc">
+                  The day-one checklist is right and stops one step short of the choice that costs
+                  the most later: everything in a single account. It is the obvious starting point
+                  and it means production and experimentation share an IAM namespace, a service
+                  quota, a bill, and a blast radius — so a runaway load test consumes the quota a
+                  production autoscale needed, and a broad policy written for a sandbox applies to
+                  the live database. Splitting later is not a setting: most resources cannot move
+                  between accounts, so separation after the fact means migration.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Boundary</th><th>What it actually separates</th></tr>
+                    <tr><td>An AWS account</td><td class="c-cyan">The real one — quotas, billing, IAM, and the blast radius of a mistake</td></tr>
+                    <tr><td>An Organization with OUs</td><td>Policy applied above the account, so a guardrail cannot be removed from inside it</td></tr>
+                    <tr><td>A VPC <span class="acro-exp">(Virtual Private Cloud)</span></td><td>The network, and nothing else</td></tr>
+                    <tr><td>Tags</td><td>Reporting and some conditional policy — not isolation</td></tr>
+                    <tr><td>A region</td><td>Data residency and failure domain; also a place resources hide from a console you left set elsewhere</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Start with an Organization and at least three accounts —
+                    management, production, and everything else — even alone.</strong> It costs
+                    nothing, IAM Identity Center gives you one login across them, and it means the
+                    guardrails you add later attach above the accounts rather than inside them. The
+                    same reasoning drives the log-archive account in the security stack: a boundary
+                    an attacker with admin in one account cannot cross is worth more than any
+                    control inside it.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

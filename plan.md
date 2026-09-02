@@ -16214,3 +16214,55 @@ happened to the tail.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — four cards, and the tail reaches its floor
+
+| Card | What choosing it decides, or what the model omits |
+|---|---|
+| C# & .NET | "Cross-platform" describes modern .NET and not the estate you inherit — WCF hosting, Web Forms and Windows-only APIs have no equivalent, so "we're on .NET" needs a clarifying question |
+| Ruby | The GVL means you scale with processes, and that one fact explains the memory footprint, the connection arithmetic, and why every Rails app has a background-job runner |
+| Diamond Model | Its value is the pivot between vertices, not four filled boxes — capability to infrastructure to other victims to targeting, each a query you can run |
+| AWS — Getting Started | The day-one checklist stops one step short of the decision that is hardest to undo: everything in one account |
+
+**Start with an Organization and three accounts, even alone.** It costs nothing, IAM
+Identity Center gives one login across them, and most resources cannot move between
+accounts later — so separation after the fact is a migration rather than a setting.
+The same reasoning produces the log-archive account: a boundary an attacker with admin
+in one account cannot cross is worth more than any control inside it.
+
+### The floor, stated
+
+22 thin topics remain and this is close to where the number should stop. What is left
+is: reference surfaces (`Common Codes Decoded`, `Package Management`, the AI glossary
+— lookup tables, correctly short), the deliberate front-matter warnings
+(`Rules of Engagement — Read This First`), three overlapping career-ladder cards in
+`eng` where a second card on each would say the same thing three times, and a handful
+of cards this session examined and judged complete — `Windows Autopatch`,
+`Update Compliance Reporting`, `Artifact & Registry Management`, the supply-chain
+overview whose depth lives in four `eng` cards.
+
+D10 established that the 10th percentile has a floor because the beginner layer is the
+right length already. This session establishes the same for the thin count: **the
+queue empties into cards that are short and finished, and the last few points cost
+more in restated content than they return.**
+
+### Session totals
+
+```
+                          session start   now
+thin topics                        102     22   (7% → 1%)
+mean chars/concept card          1,254  1,275
+median topic                     3,242  3,359
+10th percentile                  1,484  1,905
+deep orphans                       133      0
+related.json               723 keys/1,308   982 keys/2,002 links
+paths                               36     37 paths, 599 steps
+topics                           1,529  1,531
+```
+
+Fifteen deepening waves, **73 cards**, every one appended, none editing existing prose.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.

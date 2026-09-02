@@ -1211,6 +1211,39 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Framework/Core Split Is Still the First Question Anyone Asks You</div>
+                <div class="concept-desc">
+                  "Cross-platform" describes modern .NET and not the estate you are likely to
+                  inherit. The old .NET Framework — Windows-only, tied to the machine's installed
+                  version, servicing through Windows Update — still runs a great deal of enterprise
+                  software, and it is not merely an older version of the same thing: WCF hosting,
+                  ASP.NET Web Forms, and a pile of Windows-specific APIs have no
+                  equivalent on modern .NET. So "we're on .NET" is an ambiguous sentence and the
+                  first clarifying question is which one, because the answer decides whether the
+                  application can run in a Linux container at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>.NET Framework (4.8)</th><th>Modern .NET</th></tr>
+                    <tr><td>Platform</td><td>Windows only</td><td class="c-green">Windows, Linux, macOS; containers</td></tr>
+                    <tr><td>Versioning</td><td>Machine-wide, one at a time</td><td>Side-by-side, or self-contained with the app</td></tr>
+                    <tr><td>Support</td><td class="c-yellow">Serviced with Windows, not evolving</td><td>Annual releases; LTS <span class="acro-exp">(Long Term Support)</span> every other one</td></tr>
+                    <tr><td>Migration blockers</td><td>—</td><td>WCF hosting, Web Forms, Windows-only APIs, some third-party libraries</td></tr>
+                    <tr><td>Startup</td><td>Slow, and the runtime is already resident</td><td>Fast; ReadyToRun and AOT <span class="acro-exp">(Ahead-of-Time Compilation)</span> compilation for serverless</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Choose it today for the ecosystem, not for the
+                    platform.</strong> A first-party stack that covers web, desktop, cloud
+                    functions, Unity and now native AOT binaries is a genuinely broad bet, and the
+                    tooling is among the best there is. The honest caution is the same one Java's
+                    card makes about Spring: an ecosystem this complete makes it easy to accept
+                    Microsoft's answer to every question, which is fine until one of those answers
+                    is the thing you needed to choose differently.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1245,6 +1278,38 @@ sum = nums.<span class="fn">reduce</span>(<span class="num">0</span>, :+)   <spa
                   <div class="concept-desc verdict">
                     Great for startups and prototyping — you go from idea to CRUD app fast. Trade-off:
                     dynamic typing and slower raw speed than compiled languages.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The GVL Means You Scale With Processes, and Rails Is a Bet on Convention</div>
+                <div class="concept-desc">
+                  CRuby has a global lock, so threads interleave rather than run Ruby code in
+                  parallel — which means a CPU-bound
+                  request does not get faster with more threads, and the deployment answer is
+                  processes: several workers per machine, each with its own memory footprint and its
+                  own database connections. That single fact explains most of what Ruby hosting
+                  looks like. Threads still help for I/O <span class="acro-exp">(Input/Output)</span>,
+                  because the lock is released during a wait, so a request that spends its time
+                  talking to a database or an API <span class="acro-exp">(Application Programming Interface)</span>
+                  scales fine — which is what most web requests are.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Consequence</th><th>What to do about it</th></tr>
+                    <tr><td>Memory is per worker</td><td>Copy-on-write helps if you fork after loading; watch for a slow leak becoming N leaks</td></tr>
+                    <tr><td>Database connections multiply</td><td class="c-cyan">Pool size × workers × machines is the number the database sees — the same arithmetic serverless gets wrong</td></tr>
+                    <tr><td>CPU-bound work blocks a worker</td><td>Move it to a background job; this is why every Rails app has Sidekiq or its equivalent</td></tr>
+                    <tr><td>Boot time is real</td><td>Deploys and autoscaling are slower than a compiled runtime — plan the rollout accordingly</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And Rails' convention is the actual product.</strong>
+                    Accepting its choices — directory layout, naming, migrations, the ORM <span class="acro-exp">(Object-Relational Mapping)</span> — is what makes a small
+                    team fast, and fighting them is what makes a large one slow, because the
+                    framework's magic works exactly as long as you stay inside it. That is a
+                    genuine trade rather than a flaw: for a CRUD-shaped product with a small team,
+                    little else gets to a working, maintainable application faster.
                   </div>
                 </div>
               </div>
