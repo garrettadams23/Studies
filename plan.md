@@ -17558,3 +17558,60 @@ eight. A pass that raised the mean without moving that one would be padding; thi
 
 Check PASS · smoke **147/147** · search **40/40** · axe **6/6** · mobile **9/9** ·
 visual **2/2** · determinism reproducible.
+
+---
+
+## Session record — the backlog reaches zero, and the bug the last fix exposed
+
+`three way handshake` was the last of the six known misses, and its note was specific:
+*"the site writes it '3-way' — a digit, which no amount of separator folding reaches. Wants
+number-word synonyms."* Ten pairs, `zero` through `ten`, offered as an alternate in both
+widened stages. That closed it — and immediately exposed something the harness could not see.
+
+### The 584-card query
+
+`the 5 whys` returned **584 cards**, a third of the site. It had been doing so before the
+number change; nothing measured it because it was not a fixture, a ceiling or a probe query.
+The cause was a rule added in this same session and defended in its own record:
+
+> Drop the function words only when enough subject survives. "how to nat" must not become an
+> empty conjunction that matches the whole site.
+
+`the 5 whys` leaves one content word, so the guard fired and put the function words back —
+turning the query into *the* ∧ *whys*, which almost every card satisfies. **The premise was
+wrong.** A one-word conjunction is not empty, it is short; *whys* on its own returns the
+postmortem card and nothing else. Reinstating the function words is strictly worse than
+running with what survived.
+
+The second half was the plural rule from the same session: `plurals("whys")` also offers
+*why*, and *why* is a function word. An alternate is now dropped when it lands in the stop
+list, while the word the reader actually typed is always kept.
+
+```
+"the 5 whys"          584 → 1   (the postmortem card, which writes "five whys")
+"three way handshake"   0 → 6   (TCP vs UDP first)
+```
+
+**The fix broke four probe queries before it was right**, which is the part worth recording.
+Skipping the words stage entirely on a one-word query — the first attempt — killed
+`what is idempotency`, `what is an embedding`, `what is a symlink` and `what is a dpia`, all
+of which are exactly one content word plus scaffolding. The census caught all four in one
+run. That is the second time this session the query probe has caught a search change that
+the 40-fixture gate passed, and it is the argument for keeping a census beside a gate.
+
+### The backlog is empty
+
+```
+known misses  6 → 0
+search checks 40 → 42
+probe         66 queries · 57 answered · 9 deliberate zeros · 0 unexplained
+```
+
+Of the original six: four fell to the widened stages, one (`why is my laptop slow`) was a
+content gap that became a card, and the last needed ten number pairs. **An empty list does not
+mean the search is finished** — it means the backlog is where the next reader question that
+misses gets written down. The file says so, because a list that reads as a completed task
+stops being kept.
+
+Check PASS · smoke **147/147** · search **42/42** · axe **6/6** · mobile **9/9** ·
+resilience **7/7** · determinism reproducible.

@@ -1699,6 +1699,28 @@ function foldSeparators(lowered) {
  * "clas", so a "ss" ending is left alone. Crude on purpose: a real stemmer needs
  * a tokenised index, and this matcher works on raw text.
  */
+/**
+ * A number written both ways, because the site and the reader disagree.
+ *
+ * The last of the search harness's six known misses: `three way handshake` found
+ * nothing, and the card that answers it writes **3-way handshake** with a digit.
+ * No amount of separator folding or plural matching reaches across that, and the
+ * disagreement is not the site's fault — "3-way handshake" and "three-way
+ * handshake" are both ordinary English.
+ *
+ * Small and closed on purpose. Ten pairs cover every number a topic title
+ * actually uses on this site (7 layers, 4 layers, 3-way, 4-way, the 5 whys, the
+ * 3 lines of defence); anything larger wants a number parser, which is a
+ * different feature and one nobody has asked for.
+ */
+const NUM_WORDS = { zero: "0", one: "1", two: "2", three: "3", four: "4", five: "5",
+                    six: "6", seven: "7", eight: "8", nine: "9", ten: "10" };
+const NUM_DIGITS = Object.fromEntries(Object.entries(NUM_WORDS).map(([w, d]) => [d, w]));
+function numberForms(term) {
+  const other = NUM_WORDS[term] || NUM_DIGITS[term];
+  return other ? [term, other] : [term];
+}
+
 function plurals(term) {
   if (term.endsWith("s")) {
     return term.endsWith("ss") || term.length <= 3 ? [term] : [term, term.slice(0, -1)];
@@ -1892,10 +1914,13 @@ function runSearch(raw) {
   // while the unordered AND drops one-character words, which as free-floating
   // requirements match almost every card and narrow nothing.
   const allWords = q.text.split(/\s+/).filter(Boolean);
-  const content = allWords.filter(w => w.length >= 2 && !WIDE_STOP.has(w.toLowerCase()));
-  // Drop the function words only when enough subject survives. "how to nat"
-  // must not become an empty conjunction that matches the whole site.
-  const words = content.length >= 2 ? content : allWords.filter(w => w.length >= 2);
+  // The content words, and only ever the content words. An earlier version put
+  // the function words back when fewer than two survived, on the theory that an
+  // empty conjunction would match everything — but the conjunction is never
+  // empty, it is just short, and reinstating them is far worse: "the 5 whys"
+  // keeps only *whys*, falls back to *the* ∧ *whys*, and returns 584 cards
+  // because almost every card on the site contains both.
+  const words = allWords.filter(w => w.length >= 2 && !WIDE_STOP.has(w.toLowerCase()));
   // Stage one of the fallback: the query in order, against folded text, with
   // the gaps between its words allowed to be a space, a hyphen, or nothing.
   //
@@ -1908,10 +1933,13 @@ function runSearch(raw) {
   // came back instead. A fallback that returns the wrong answer is worse than
   // one that returns nothing.
   const guard = allWords.length === 1 && q.text.length <= SHORT_TERM;
+  const escape = t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const gapPhrase = allWords.length
     ? new RegExp((guard ? "(?<![a-z0-9])" : "")
-        + allWords.map(w => foldSeparators(w.toLowerCase())
-                              .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[\\s-]*")
+        + allWords.map(w => {
+            const forms = numberForms(foldSeparators(w.toLowerCase())).map(escape);
+            return forms.length > 1 ? `(?:${forms.join("|")})` : forms[0];
+          }).join("[\\s-]*")
         + (guard ? "(?![a-z0-9])" : ""))
     : null;
   // Each word, its acronym alternates, and — because readers split compounds the
@@ -1926,7 +1954,12 @@ function runSearch(raw) {
   // of the failure.
   const joined = i => words.slice(i, i + 2).map(w => foldSeparators(w.toLowerCase())).join("");
   const wideMatchers = words.map((w, i) => {
-    const alts = searchTerms(w).flatMap(t => plurals(foldSeparators(t.toLowerCase())))
+    // An alternate that is itself a function word is dropped: `plurals("whys")`
+    // offers "why", which as a conjunction term matches most of the site and
+    // narrows nothing. The word the reader typed is always kept.
+    const alts = searchTerms(w).flatMap(t => numberForms(foldSeparators(t.toLowerCase())))
+                               .flatMap(plurals)
+                               .filter((t, i) => i === 0 || !WIDE_STOP.has(t))
                                .map(matcher);
     if (i + 1 < words.length) alts.push(matcher(joined(i)));
     if (i > 0) alts.push(matcher(joined(i - 1)));
@@ -1995,7 +2028,9 @@ function runSearch(raw) {
     sweep("fold");
     if (matchCount) widened = "fold";
   }
-  if (!matchCount && wideMatchers.length > 1) {
+  // One content word is a legitimate conjunction — "what is idempotency" is a
+  // question about idempotency — so this stage runs whenever any survived.
+  if (!matchCount && wideMatchers.length) {
     reset();
     sweep("words");
     if (matchCount) {

@@ -127,6 +127,10 @@ const FIXTURES = [
    "ai/fine-tuning-vs-prompting-vs-rag-picking-the-right-tool", 8],
   ["explaining to a non technical manager",
    "ops/explaining-technical-things-to-non-technical-people-a-repeat", 20],
+  // The last of the original six. The site writes "3-way handshake" with a
+  // digit; ten number-word pairs bridge that, and nothing larger is wanted.
+  ["three way handshake",  "net/tcp-vs-udp-transport-layer", 12],
+  ["the 5 whys",           "ops/writing-a-postmortem-people-actually-learn-from", 6],
 ];
 
 // Queries a reader plausibly types that still find nothing. Not failures — the
@@ -139,11 +143,12 @@ const FIXTURES = [
 // the moment the widened search returned three loosely-related cards — none of
 // them the TCP card, which the site writes as "3-way handshake". A miss that
 // returns the wrong answer is still a miss, and now the harness can say so.
-const KNOWN_MISSES = [
-  ["three way handshake", "the site writes it '3-way' — a digit, which no amount of "
-                          + "separator folding reaches. Wants number-word synonyms",
-   "net/tcp-vs-udp-transport-layer"],
-];
+// Empty, for the first time since the harness was written. Six queries came in
+// with it; four fell to the widened stages, one was a content gap that became a
+// card, and the last needed ten number-word pairs. The list is the backlog, so
+// an empty one means the next reader question that misses gets added here — not
+// that the search is finished.
+const KNOWN_MISSES = [];
 
 // Queries with no single right answer that must simply stay narrow. These are
 // the index-hygiene guard: chrome rendered into a topic — a badge, a reading
