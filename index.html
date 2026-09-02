@@ -95112,8 +95112,8 @@ makes concrete.
 <span class="ctag ctag-general">JS</span>
 </div>
 <span class="domain-sub">Browser · CSS · JS · Frameworks · Performance · A11y</span>
-<span class="domain-meta" aria-label="39 topics, about 1h 50m to read"
->39 topics · ~1h 50m</span>
+<span class="domain-meta" aria-label="39 topics, about 2h 00m to read"
+>39 topics · ~2h 00m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -95372,12 +95372,12 @@ thread.
 </div>
 </div>
 </div>
-<div class="topic" id="devtools-mastery" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="devtools-mastery" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛠️</span>
 <span class="topic-name">DevTools Mastery</span>
 <span class="topic-badge">Tooling</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95402,6 +95402,34 @@ fastest way to level up — most developers use 20% of them.
 <strong class="c-green">Pro moves:</strong> throttle to "Slow 3G" + 4× CPU <span class="acro-exp">(Central Processing Unit)</span> to feel
 what users feel; use the Performance panel's flame chart to find the function eating
 your frame budget.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Four Ways Your Own DevTools Lie About What Users Get</div>
+<div class="concept-desc">
+The panels are honest about the page in front of you, and the page in front of you
+is not the page a user loads. The gap is systematic rather than random, and every
+part of it makes your build look better than it is.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What flatters you</th><th>Why</th><th>What to do instead</th></tr>
+<tr><td>A warm cache</td><td>Your second visit skips everything the first one paid for</td><td>Tick "Disable cache", and test in a fresh profile or private window</td></tr>
+<tr><td>The dev build</td><td>Unminified, unbundled, with the framework's dev-mode checks in the flame chart</td><td>Profile the production build; React's profiling build if you need names</td></tr>
+<tr><td>Your machine</td><td>A developer laptop is several times faster than the median phone</td><td>4–6× CPU throttle plus Slow 4G, together — either alone is optimistic</td></tr>
+<tr><td>Lighthouse's number</td><td class="c-yellow">A single lab run with simulated throttling — it varies by ten points between runs on the same page</td><td>Treat lab scores as a diff between two builds, never as your users' experience</td></tr>
+<tr><td>Extensions</td><td>They inject scripts and inflate long tasks that are not yours</td><td>Profile in a clean profile, or incognito with extensions off</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Lab tools tell you what changed; field data tells you
+what is true.</strong> Core Web Vitals as reported by real users (the browser's
+own <code>web-vitals</code> reporting, or CrUX) is the number that reflects real
+devices, real networks and the long tail of slow sessions that a lab run cannot
+contain. Use DevTools to find and fix, and field data to decide whether it
+mattered — see
+<span class="xref" data-xref="web-performance-core-web-vitals" role="link" tabindex="0">Web Performance — Core Web Vitals</span>.
 </div>
 </div>
 </div>
@@ -96043,12 +96071,12 @@ than pushing changes around by hand with effects.
 </div>
 </div>
 </div>
-<div class="topic" id="react-patterns-pitfalls" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="react-patterns-pitfalls" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🪝</span>
 <span class="topic-name">React Patterns &amp; Pitfalls</span>
 <span class="topic-badge">Frameworks</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96073,6 +96101,38 @@ and stale state. Knowing them saves days.
 derive values during render, handle events in handlers, and reserve
 <code>useEffect</code> for genuine external synchronization. Don't reach for
 memoization until you've measured a problem.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">The Dependency Array Is a Cache Key, and the Linter Is Not Being Fussy</div>
+<div class="concept-desc">
+Almost every effect bug reduces to one misreading: the dependency array is treated
+as "when should this re-run", when React uses it as "has anything this closure
+captured changed". Those coincide until a value is left out, and then the effect
+keeps a closure over a render that no longer exists — reading a state value from
+three renders ago, calling a callback that updates a component that has moved on.
+The symptom is not a crash; it is a counter that stops at two, or a websocket
+handler that writes into stale state, and it is invisible in development because
+the component rarely re-renders enough for the divergence to show.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>What is actually happening</th><th>The move</th></tr>
+<tr><td>Value stuck at its initial state inside a timer or subscription</td><td>The closure captured render 0 and the deps array said that was fine</td><td>Functional updates — <code>setN(n =&gt; n + 1)</code> — or a ref for the mutable handle</td></tr>
+<tr><td>Effect runs on every render</td><td>An object, array or inline function in the deps is a new identity each time</td><td>Move it inside the effect, or memoise the value, not the effect</td></tr>
+<tr><td>Two requests, or a doubled subscription, in dev only</td><td class="c-yellow">StrictMode mounts, unmounts and remounts on purpose to find missing cleanup</td><td>Write the cleanup function — this is the bug being surfaced, not a bug in React</td></tr>
+<tr><td>Response from an old request overwrites a newer one</td><td>Two in-flight fetches resolving out of order</td><td><code>AbortController</code>, or an ignore flag set in the cleanup</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">If satisfying the dependency array feels impossible, the
+effect is usually the wrong tool.</strong> That is the honest reading of "You
+Might Not Need an Effect": the linter is not being pedantic, it is reporting
+that this code wants to be a derived value, an event handler, or a query
+library's business — see
+<span class="xref" data-xref="data-fetching-patterns-react-query-caching" role="link" tabindex="0">Data Fetching Patterns — React Query &amp; Caching</span>.
+Silencing the rule keeps the bug and removes the warning.
 </div>
 </div>
 </div>
@@ -96530,12 +96590,12 @@ all, by not shipping the XSS in the first place.
 </div>
 </div>
 </div>
-<div class="topic" id="data-fetching-patterns-react-query-caching" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="data-fetching-patterns-react-query-caching" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔄</span>
 <span class="topic-name">Data Fetching Patterns — React Query &amp; Caching</span>
 <span class="topic-badge">Backends</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96561,6 +96621,37 @@ it per component.
 <code>useEffect</code> + <code>useState</code> fetching leads to race conditions,
 duplicate requests, and stale UI. A query library turns all that into a hook —
 genuinely one of the biggest quality-of-life wins in modern frontend.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">The Library Solves Caching; the Two Things It Cannot Guess Are the Key and the Waterfall</div>
+<div class="concept-desc">
+A query library removes race conditions and duplicate requests and leaves you two
+decisions that determine whether the app is fast or subtly wrong. The first is the
+<strong>query key</strong>: it is the cache identity, so a key that omits a
+variable the request depends on — the page number, the filter, the tenant — serves
+one user's data under another's question, and the bug looks like a caching glitch
+rather than an authorisation one. The second is <strong>where the query lives</strong>:
+a child component that fetches based on its parent's data cannot start until the
+parent resolves, so each nesting level adds a full round trip.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Decision</th><th>Getting it wrong</th><th>Getting it right</th></tr>
+<tr><td>Query key</td><td class="c-red">Missing a variable — stale or wrong data served from cache</td><td>Every input the fetcher reads belongs in the key</td></tr>
+<tr><td>Query placement</td><td>Nested components each waiting on the one above</td><td>Hoist or prefetch so independent requests start together</td></tr>
+<tr><td><code>staleTime</code> left at 0</td><td>Refetch on every mount and window focus — a busy network for no gain</td><td>Set it to how long the data is actually good for</td></tr>
+<tr><td>Cache not cleared on logout</td><td>The next user in a shared browser sees the previous one's cached responses</td><td>Clear the client on sign-out, deliberately</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Cache staleness is a product decision, and the library
+makes you write it down.</strong> A price ticker and an org chart do not want
+the same <code>staleTime</code>, and the default of zero is not neutral — it is
+"assume everything is always stale", which is why an app that felt fine locally
+generates a surprising amount of traffic in production. The last row is the one
+that becomes a security ticket rather than a performance one.
 </div>
 </div>
 </div>
@@ -97545,12 +97636,12 @@ calling a single-region DB, is the very hop you tried to remove.
 </div>
 </div>
 </div>
-<div class="topic" id="frontend-build-deploy-ci-preview-deploys" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="frontend-build-deploy-ci-preview-deploys" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚀</span>
 <span class="topic-name">Frontend Build &amp; Deploy — CI &amp; Preview Deploys</span>
 <span class="topic-badge">Shipping</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -97576,6 +97667,38 @@ it — this static site uses exactly this flow (build script + CI + Netlify/Page
 frontend env vars — anything shipped to the browser can be read. Keep secrets on the
 server/edge.
 </div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">A Preview URL Is a Public URL, and the Build Step Is Where Secrets Get Baked In</div>
+<div class="concept-desc">
+"Never put secrets in frontend env vars" is the right rule and it is not where
+teams actually get caught. Two mechanics do the catching. First, bundlers inline
+prefixed variables at <em>build</em> time — <code>VITE_</code>,
+<code>NEXT_PUBLIC_</code>, <code>REACT_APP_</code> — so a key added to the wrong
+variable is not read at runtime and protected, it is a literal string in a
+JavaScript file on a CDN <span class="acro-exp">(Content Delivery Network)</span>,
+cached, and still there after you delete the variable, until you rebuild and
+purge. Second, rotating the leaked key does not remove it from the bundle; only a
+new build does.
+</div>
+<div class="concept-desc">
+Preview deploys have the parallel problem in the other direction. Each pull
+request gets a live, generally unauthenticated URL, and if it is wired to real
+services then anyone with the link — including a crawler that found it in a PR
+comment — is talking to production data. Preview environments want their own
+credentials, their own data, and either password protection or an allowlist,
+which is a five-minute setting and an expensive omission.
+</div>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Treat every deployed artifact as published, and check the
+bundle rather than the config.</strong> Grepping the built output for the shape of
+your keys is a ten-second CI step that catches the whole class, and a secret
+scanner on the repo catches the half that never reached a build. Rotate first,
+rebuild second, and remember the cached copy is the one that leaks. The full
+supply-chain framing is in
+<span class="xref" data-xref="securing-the-pipeline-secrets-runners-fork-pull-requests-int" role="link" tabindex="0">Securing the Pipeline — Secrets, Runners, Fork Pull Requests &amp; Internal Registries</span>.
 </div>
 </div>
 </div>

@@ -15684,3 +15684,63 @@ the 10th percentile up 45.**
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the web tail: what is true on your machine and false for users
+
+Four thin `web` cards, one question: **what does this look like in development that it
+does not look like in production?** Frontend is the domain where that gap is
+systematic rather than occasional, and — this is the part worth stating — the gap
+always runs in the flattering direction.
+
+| Card | True locally | False for users |
+|---|---|---|
+| React Patterns | The deps array is "when to re-run" | It is a cache key over the closure; omit one and the effect reads a dead render |
+| Data Fetching | The library handles caching | The query key is cache identity, and query placement decides the waterfall |
+| DevTools | The profile you recorded | Warm cache, dev build, a fast laptop, and a Lighthouse score that moves ten points between runs |
+| Build & Deploy | Secrets are in env vars, not the bundle | Prefixed vars are inlined at build time and cached on a CDN after you delete them |
+
+### The two rows that turn into security tickets rather than performance ones
+
+**A query key missing a variable serves one user's data under another's question.**
+It reads as a caching glitch and is an authorisation bug, and the sibling of it is a
+query cache that is never cleared on sign-out — the next person on a shared browser
+gets cached responses belonging to the last.
+
+**A preview deploy is a public URL.** Every pull request gets a live, generally
+unauthenticated environment, and if it is wired to real services then anyone with the
+link — including whatever crawled the PR comment — is talking to production data.
+Preview environments want their own credentials, their own data, and password
+protection: a five-minute setting and an expensive omission.
+
+### One thing the site was implying and should not
+
+"Never put secrets in frontend env vars" is correct and is not where teams get caught.
+The mechanism is that bundlers inline `VITE_`/`NEXT_PUBLIC_`/`REACT_APP_` variables at
+build time, so a misplaced key is a literal string in a JavaScript file on a CDN —
+which survives deleting the variable, survives rotating the key, and is only removed
+by a rebuild and a purge. The card now says to grep the built output in CI, because
+checking the config cannot find this and checking the bundle always can.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   77      73
+web thin                       8       4   (21% → 10%)
+mean chars/concept card    1,261   1,262   ← +1 over four cards
+median topic               3,268   3,276
+10th percentile            1,529   1,552
+```
+
+Five waves this session: **29 cards, thin 102 → 73, counter-metric +6 characters, and
+the 10th percentile up 68.** Every wave used a different spec, because the question a
+domain has not answered is different in each — *what you must already have* for
+offensive tools, *what it cannot see* for defensive ones, *the default that is wrong*
+for cloud, *the failure mode of the idea* for devops, and *what is true on your
+machine and false for users* for the frontend. A single spec applied across all of
+them would have produced five versions of the same card.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
