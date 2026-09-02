@@ -16439,3 +16439,48 @@ topics reachable — 36% to 60% of the site, no new content.**
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — eight paths for cloud and security, and the site passes two-thirds reachable
+
+| Path | Steps | Why it is a route and not a list |
+|---|---|---|
+| AWS, End to End | 18 | Account structure *before* identity, identity before network, network before compute — the order that avoids the rework the day-one checklist causes |
+| Google Cloud, End to End | 15 | The resource hierarchy first, because on GCP it decides inheritance for everything after it |
+| The Cloud Bill and the Contract | 10 | Tagging → commitments → quotas → residency → multi-cloud → exit planning: the commercial half, which has its own sequence |
+| Security for Everyone | 13 | The genuinely non-technical route, from "what is the threat" to "why the advice is what it is" |
+| The Modern Security Edge | 9 | Segmentation → zero trust → ZTNA → SASE → CASB → DLP → shadow IT: what replaced the perimeter, in the order the acronyms arrived |
+| Knowing Your Own Attack Surface | 10 | Assets → domains and certificates → OSINT → leaked credentials → impersonation → prioritisation → turning findings into a backlog |
+| Security Where There Is Hardware | 12 | OT and the Purdue model → ICS protocols → firmware → root of trust → badges → physical → sanitisation |
+| The Insider, and the Investigation | 6 | The threat with legitimate access, and how to investigate without becoming the problem |
+
+### Two of these exist because the site's own structure hid them
+
+**The commercial half of cloud was scattered.** Tagging, commitment discounts, quotas,
+data residency, multi-cloud and exit planning are six cards that answer one person's
+question — what does this cost and what happens when we want to leave — and each sat
+next to a technical card about a different subject. Sequencing them turns six
+orphaned observations into an argument.
+
+**"Security for Everyone" is the route with no prerequisites, and it did not exist.**
+The site has excellent beginner security material — *Security Basics in Plain English*,
+*Everyday Security Hygiene*, the phishing pair, the zero-trust explainer — written
+specifically for someone with no background, and reachable only by someone who already
+knew which domain to open. That is the same failure the beginner programming
+curriculum had, and it is the failure that matters most, because these readers are the
+least able to construct a route for themselves.
+
+```
+paths            60 → 68
+steps           975 → 1,068
+topics reached  923 → 1,009   (60% → 66% of the site)
+sec draw          49 → 89   of 92
+cloud draw        36 → 77   of 74 topics counted across sub-files
+```
+
+Session totals for the paths programme: **36 → 68 paths, 579 → 1,068 steps, 555 →
+1,009 topics reachable — 36% to 66% of the site, and not one new card.**
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
