@@ -17379,3 +17379,56 @@ ceilings — came back identical.
 
 Check PASS · smoke **145/145** · search **40/40** · axe **6/6** · mobile **9/9** ·
 determinism reproducible.
+
+---
+
+## Session record — six flashcards with nothing on the back
+
+The site is a study site and its central study feature is a flashcard deck. Phase 10 T5
+audited search on the grounds that it was "the last untested user-facing behaviour". It was
+not. **Nothing had ever looked at what the decks actually contain.**
+
+A flashcard's front is the topic name; its back is the first concept card's title and
+description, pulled from the same index the search uses. Measuring that across all 1,475
+studyable topics:
+
+```
+desc length   p10 172 · median 330 · p90 519 · max 1,078      ← healthy
+no description at all                            30 topics
+no description and no concept title either        6 topics   ← the back is blank
+```
+
+**Six flashcards show a question and reveal nothing.** `shortcut`'s *Windows*, *macOS*,
+*Terminal / Bash* and *VS Code*, the *AI Glossary*, and *Common Codes Decoded*.
+
+### The rule was right and the unit was wrong
+
+The deck builder already excludes one thing by name:
+
+> The acronym dictionary's "topics" are A–Z index sections, not concepts. As a flashcard the
+> front reads "A — 75 acronyms".
+
+Every one of the six is the same species — a lookup table with a heading, rows, and **no
+prose anywhere in the topic**. There is no question a table of keystrokes answers, and
+turning one over reveals nothing. The judgement was correct; it was attached to a *domain*
+when it belongs to a *shape*.
+
+`stIsStudyable()` now asks whether there is anything to put on the back. Which also means
+the next lookup card somebody writes is excluded without anybody remembering to add it —
+and `shortcut` keeps its forty-odd real cards, because the test is per topic rather than per
+domain.
+
+**The 24 with a title but no description stay in**, and that is deliberate. Their back reads
+*"Virus · Worm · Trojan · Rootkit · Ransomware · Spyware"* — terse, but a real answer. A
+reference card simply makes a weaker flashcard than a concept card does, which is a fact
+about reference cards and not a defect to fix.
+
+`__bookmarks` and `__due` are untouched: starring and grading are explicit acts and those two
+decks have always honoured them, including for material the domain list would not offer.
+
+Smoke check **146**, which is the guard: *every studyable topic has something on the back of
+its card*. It reads the index through the page's own function, so a future change to either
+end of the pipeline fails here rather than silently in somebody's revision session.
+
+Check PASS · smoke **146/146** · search **40/40** · axe **6/6** · mobile **9/9** ·
+backup **3/3** · determinism reproducible.

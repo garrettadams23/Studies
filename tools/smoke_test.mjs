@@ -363,6 +363,18 @@ if (deck) {
   const empty = deck.labels.filter(l => /\(0\)$/.test(l));
   check("no empty decks", empty.length === 0, empty.join(", "));
 }
+
+// Every card in every deck must have something on its back. Six topics used to
+// fail this — four `shortcut` keystroke tables, the AI glossary and the military
+// code list — all of them lookup surfaces with no prose anywhere in the topic,
+// which is the same species as the acronym dictionary the deck builder already
+// excludes by name. The rule is about shape now, so this is what guards it.
+const backs = await page.evaluate(() =>
+  stIndex().filter(stIsStudyable)
+           .filter(t => !((t.title || "").trim() || (t.desc || "").trim()))
+           .map(t => `${t.domainId}/${t.id}`));
+check("every studyable topic has something on the back of its card",
+  backs.length === 0, backs.slice(0, 5).join(", "));
 await page.keyboard.press("Escape");
 await page.waitForTimeout(200);
 

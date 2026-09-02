@@ -2455,7 +2455,31 @@ function esc(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<":
 // "Acronyms — B" and "Acronyms — C". It has its own quiz (🔤 Acronym quiz),
 // which asks the question this material can actually answer.
 const ST_NOT_STUDYABLE = new Set(["acronym"]);
-function stIsStudyable(t) { return !ST_NOT_STUDYABLE.has(t.domainId); }
+
+/**
+ * Studyable = there is something to put on the back of the card.
+ *
+ * The domain exclusion above was the right judgement and the wrong unit. Six
+ * topics outside `acronym` build a flashcard whose back is **completely empty** —
+ * `shortcut`'s *Windows*, *macOS*, *Terminal / Bash* and *VS Code*, the AI
+ * glossary, and the military code list. Every one of them is the same species as
+ * the acronym dictionary: a lookup table, with a heading and rows and no prose
+ * anywhere in the topic. There is no question a table of keystrokes answers, and
+ * turning one over reveals nothing.
+ *
+ * So the rule is about shape rather than domain, which also means the next
+ * lookup card somebody writes is excluded without anybody remembering to add it.
+ * A topic with a concept title but no description stays in: the title is terse,
+ * but it is a real answer, and a reference card simply makes a weaker flashcard
+ * than a concept card does.
+ *
+ * `__bookmarks` and `__due` deliberately do not apply this — starring and
+ * grading are explicit acts and those decks honour them, exactly as they honour
+ * a domain the list would not otherwise offer.
+ */
+function stIsStudyable(t) {
+  return !ST_NOT_STUDYABLE.has(t.domainId) && Boolean(t.title || t.desc);
+}
 
 function stScopeOptions() {
   const doms = [];
