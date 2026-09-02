@@ -22,8 +22,14 @@ all deliberate. So it is a census, and the mode that matters is `--title`:
 
 run *before* writing, because by review time the cost is already sunk.
 
+Every pair also carries what it **differs on**, in §3's terms — see
+`differences()` for why that was missing and what it changes. Of 40 pairs, 27
+differ on something §3 calls deliberate and 13 differ on nothing; those 13 are
+§3's last row, "the real population", and `--unexplained` lists them alone.
+
 Usage:
   python3 tools/near_duplicates.py                 # every pair at or above the floor
+  python3 tools/near_duplicates.py --unexplained   # only the pairs §3 does not explain
   python3 tools/near_duplicates.py --title "…"     # does this card already exist?
   python3 tools/near_duplicates.py --floor 0.4     # widen it
 """
@@ -57,6 +63,7 @@ TAG_RE = re.compile(r"<[^>]+>")
 ACRO_RE = re.compile(r'<span class="acro-exp">.*?</span\s*>', re.S)
 NAME_RE = re.compile(r'class="topic-name"[^>]*>(.*?)</span>\s*(?:<span class="topic-badge|</div>)', re.S)
 TOPIC_RE = re.compile(r'<div class="topic"')
+BADGE_RE = re.compile(r'<span class="topic-badge">(.*?)</span>', re.S)
 
 
 def _fold(word):
@@ -123,8 +130,67 @@ def tokens(title, expand=False):
     return out
 
 
+# plan.md Phase 9 §3 enumerates the duplication that is deliberate. Nothing has
+# ever *shown* that enumeration next to the pairs, so the pairs §3 has already
+# settled sit permanently at the top of this census and every session that runs
+# it re-derives which ones are which.
+#
+# Worse, the stop list eats the words that record the decision. `fundamentals`
+# and `reference` are both in STOP — correctly, for a subject measure — so
+# *Kubernetes – Container Orchestration Fundamentals* and *Kubernetes —
+# Container Orchestration Reference* tokenise identically and score **1.00**,
+# the top of the list, on the strength of the two words that say they are a
+# deliberate pair. The score is not wrong; it is answering "same subject?", and
+# the answer is yes. What was missing is the second question.
+#
+# So each pair now carries what it *differs* on, stated as fact rather than as a
+# verdict — the reader still opens both, which is §3's actual test. The pairs
+# that differ on nothing are the population §3's last row calls "the real one",
+# and `--unexplained` shows only those.
+
+# Same rule as build.py's stamp_level(), and for the same reason: the badge is
+# the only difficulty signal the markup carries. Kept in step by hand — if one
+# moves, move the other.
+_BEGINNER_RE = re.compile(r"\bbeginner\b", re.I)
+_ADVANCED_RE = re.compile(r"\b(advanced|expert|deep)\b", re.I)
+_REFERENCE_RE = re.compile(r"\breference\b", re.I)
+
+# §3 row 3, encoded as §3 states it: two *domain pairings*, not a two-way split
+# of the security domains. `pentest`↔`redteam` is methodology beside adversary
+# tradecraft; `threat`↔`blueteam` is what the attacker does beside how you catch
+# it. §3 says these pairings are "usually" the perspective case — usually, so it
+# reports the pairing and leaves the judgement to whoever opens both.
+PERSPECTIVE_PAIRS = {frozenset({"pentest", "redteam"}),
+                     frozenset({"threat", "blueteam"})}
+
+
+def level_of(badge):
+    """beginner | advanced | core, from a topic's badge text."""
+    if _BEGINNER_RE.search(badge):
+        return "beginner"
+    if _ADVANCED_RE.search(badge):
+        return "advanced"
+    return "core"
+
+
+def differences(a, b):
+    """What a pair differs on, in §3's terms. Empty means §3 offers nothing.
+
+    Deliberately factual. "level beginner/core" is something the markup says;
+    "this pair is fine" is a judgement only reading both cards can make.
+    """
+    out = []
+    if a["level"] != b["level"]:
+        out.append(f'level {a["level"]}/{b["level"]}')
+    if a["reference"] != b["reference"]:
+        out.append("reference/concept")
+    if frozenset({a["domain"], b["domain"]}) in PERSPECTIVE_PAIRS:
+        out.append("attacker/defender view")
+    return out
+
+
 def titles():
-    """(domain, title) for every hand-written topic on the site."""
+    """A record per hand-written topic: domain, title, and the §3 signals."""
     for dom in json.loads((DATA / "domains.json").read_text(encoding="utf-8")):
         did = dom["id"]
         if did in SKIP_DOMAINS:
@@ -133,9 +199,21 @@ def titles():
         starts = [m.start() for m in TOPIC_RE.finditer(text)]
         for n, start in enumerate(starts):
             end = starts[n + 1] if n + 1 < len(starts) else len(text)
-            m = NAME_RE.search(ACRO_RE.sub("", text[start:end]))
-            if m:
-                yield did, re.sub(r"\s+", " ", TAG_RE.sub("", m.group(1))).strip()
+            block = ACRO_RE.sub("", text[start:end])
+            m = NAME_RE.search(block)
+            if not m:
+                continue
+            title = re.sub(r"\s+", " ", TAG_RE.sub("", m.group(1))).strip()
+            bm = BADGE_RE.search(block)
+            badge = TAG_RE.sub("", bm.group(1)).strip() if bm else ""
+            yield {
+                "domain": did,
+                "title": title,
+                "level": level_of(badge),
+                # §3 row 2. A card that calls itself a reference is looked up,
+                # not read, and sits beside a concept card on purpose.
+                "reference": bool(_REFERENCE_RE.search(title + " " + badge)),
+            }
 
 
 def overlap(a, b):
@@ -158,13 +236,14 @@ def covered(want, have):
 def main():
     args = sys.argv[1:]
     floor = float(args[args.index("--floor") + 1]) if "--floor" in args else FLOOR
-    rows = [(d, t, tokens(t)) for d, t in titles()]
+    only_unexplained = "--unexplained" in args
+    rows = [(r, tokens(r["title"])) for r in titles()]
 
     if "--title" in args:
         # Both sides expanded — see tokens().
         want = tokens(args[args.index("--title") + 1], expand=True)
-        rows = [(d, t, tokens(t, expand=True)) for d, t, _ in rows]
-        hits = sorted(((covered(want, k), d, t) for d, t, k in rows), reverse=True)
+        hits = sorted(((covered(want, tokens(r["title"], expand=True)), r["domain"], r["title"])
+                       for r, _ in rows), reverse=True)
         near = [h for h in hits if h[0] >= floor]
         for score, d, t in (near or hits[:5]):
             print(f"  {score:.2f}  [{d}] {t[:66]}")
@@ -177,14 +256,25 @@ def main():
         return 0
 
     pairs = []
-    for (d1, t1, k1), (d2, t2, k2) in itertools.combinations(rows, 2):
-        score = overlap(k1, k2)
+    for (a, ka), (b, kb) in itertools.combinations(rows, 2):
+        score = overlap(ka, kb)
         if score >= floor:
-            pairs.append((score, d1, t1, d2, t2))
-    pairs.sort(reverse=True)
-    for score, d1, t1, d2, t2 in pairs:
-        print(f"  {score:.2f}  [{d1}] {t1[:60]}\n        [{d2}] {t2[:60]}")
+            pairs.append((score, a, b, differences(a, b)))
+    pairs.sort(key=lambda p: (-p[0], p[1]["title"]))
+
+    shown = 0
+    for score, a, b, diff in pairs:
+        if only_unexplained and diff:
+            continue
+        shown += 1
+        print(f'  {score:.2f}  [{a["domain"]}] {a["title"][:60]}\n'
+              f'        [{b["domain"]}] {b["title"][:60]}\n'
+              f'        → {"; ".join(diff) if diff else "§3 offers nothing — read both"}')
+
+    unexplained = sum(1 for _, _, _, d in pairs if not d)
     print(f"\n{len(pairs)} pair(s) at or above {floor:.2f}, across {len(rows):,} titles.")
+    print(f"{len(pairs) - unexplained} differ on something §3 calls deliberate; "
+          f"**{unexplained} differ on nothing** — `--unexplained` lists those alone.")
     print("A census, not a gate — see this file's docstring.")
     return 0
 

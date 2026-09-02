@@ -11709,6 +11709,13 @@ appears once for a beginner and once in depth **on purpose**.
 **The test:** open both, and write one sentence saying who each is for. If the sentence is
 the same, one of them should not exist.
 
+**And the census now says which row each pair lands on.** `near_duplicates.py` prints, under
+every pair, what it differs on in this table's terms — `level beginner/core`,
+`reference/concept`, `attacker/defender view` — or *"§3 offers nothing — read both"*. Stated
+as fact, not as a verdict, because only reading both settles it. **27 of the 40 pairs differ
+on something above; 13 differ on nothing**, and `--unexplained` lists those alone. That
+number is the row-4 population, and it is the one worth working.
+
 ## 4. What consolidation costs, and the rule that follows
 
 Deleting a topic is not free, and this file has established exactly how not free.
@@ -16783,5 +16790,79 @@ by two while a claim disappears entirely is the shape to want; it rising by thre
 job title and one real hit, which is the signal to expect: the check over-matches in
 proportion to how much `m365` and `cloud` prose exists, so its output grows even when the
 site stays disciplined. That is a reason to keep re-reading it, not a reason to tighten it.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · determinism reproducible.
+
+---
+
+## Session record — the census that ranked its own settled pairs first
+
+`near_duplicates.py` opens by saying it cannot be a gate, and Phase 9 §3 lists the
+duplication that is deliberate. Those two facts have never met: the census printed forty
+pairs as a flat list, so every session that ran it re-derived from scratch which ones §3
+had already settled.
+
+**The top of that list made the problem concrete.** The highest-scoring pair on the site,
+at a perfect **1.00**, is:
+
+```
+Kubernetes – Container Orchestration Fundamentals    (Beginner, 5 cards, prose)
+Kubernetes — Container Orchestration Reference       (DEVOPS · CLOUD, 1 card, tables)
+```
+
+They score 1.00 because `fundamentals` and `reference` are both in the stop list. That is
+**correct** for the question the census asks — *same subject?* — and the answer is yes.
+But the two stopped words are the words that record §3's decision, so the measure discards
+precisely the evidence that the pair is deliberate, and the pair the site is most certain
+about ranks above every pair nobody has looked at.
+
+### What changed
+
+Each pair now carries a third line saying what it **differs on**, in §3's own terms:
+
+```
+  0.60  [script] Git — Version Control Reference
+        [script] Version Control with Git — Save Points
+        → level core/beginner; reference/concept
+
+  0.60  [net] DNS Deep-Dive – How Domain Names Actually Work
+        [net] DNS Deep Dive – How Name Resolution Really Works
+        → §3 offers nothing — read both
+```
+
+Three signals, one per row of §3's table, all read off markup that already exists:
+
+| §3 row | Signal | Source |
+|---|---|---|
+| Beginner beside deep | `level beginner/core` | The badge, by the same rule `build.py`'s `stamp_level()` uses |
+| Reference beside concept | `reference/concept` | The word *reference* in the title or badge |
+| Attacker beside defender | `attacker/defender view` | `pentest`↔`redteam` and `threat`↔`blueteam`, the two pairings §3 names |
+
+Stated as **fact, not verdict** — `level beginner/core` is something the markup says;
+*"this pair is fine"* is a judgement only reading both cards can make, and §3's test is
+still to open both and write one sentence saying who each is for.
+
+### The measurement, and the number that matters
+
+```
+40 pairs at or above 0.50
+27 differ on something §3 calls deliberate
+13 differ on nothing          ← `--unexplained` lists these alone
+```
+
+**13 is the number this change exists to produce.** It is §3's last row — *"two cards with
+the same badge, the same depth, and no stated difference"* — isolated from thirty-nine
+lines of scrolling, and it is the queue Phase 9 would have had if this had existed then.
+
+Two details worth recording. §3's third row reads as a two-way split of the security
+domains, but it is not one — it names **two specific pairings**, and encoding it as
+`{pentest, redteam} vs {blueteam, threat}` produced the wrong answer for
+*Email Authentication* (`threat`) beside *Email Security* (`blueteam`), which is the
+perspective case and was landing in the unexplained bucket. Encoded as the pairings §3
+actually lists, the unexplained count fell from 15 to 13.
+
+And the `--title` pre-flight is untouched. It answers a different question — *does this
+card already exist?* — with containment rather than Jaccard and with acronyms expanded, and
+adding a difference line there would be noise: a card being written has no badge yet.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · determinism reproducible.
