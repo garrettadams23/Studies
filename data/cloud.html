@@ -1174,6 +1174,39 @@ gcloud compute instances list --project my-prod-project</pre>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Scale-to-Zero Has a Bill in Latency, and Cloud Run's Concurrency Is Not Lambda's</div>
+                <div class="concept-desc">
+                  The two things that catch people are opposites of each other. Scaling to zero
+                  means the next request after an idle period pays a cold start — container pull,
+                  process boot, framework init — which is fine for a webhook and unacceptable for
+                  an interactive endpoint, and the fix is a minimum instance count that costs money
+                  precisely because it defeats scale-to-zero. Meanwhile Cloud Run sends
+                  <strong>many concurrent requests to one container</strong> by default, unlike
+                  Lambda's one-at-a-time model, so code that was safe under Lambda's isolation —
+                  module-level mutable state, a global written per request — becomes a race the
+                  moment it moves.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Setting</th><th>What it decides</th><th>Getting it wrong</th></tr>
+                    <tr><td>Concurrency (default 80)</td><td>Requests per container</td><td class="c-red">Shared mutable state becomes a data race; or CPU-bound work queues behind itself in one container</td></tr>
+                    <tr><td>Minimum instances</td><td>Whether cold starts exist</td><td>Zero for a user-facing API, which is a p99 nobody can explain</td></tr>
+                    <tr><td>CPU <span class="acro-exp">(Central Processing Unit)</span> allocation</td><td>Whether CPU is available outside a request</td><td>Background work after the response returns simply stops when CPU is throttled between requests</td></tr>
+                    <tr><td>Request timeout</td><td>The hard ceiling on a request</td><td>Long jobs run as HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> requests until the day one exceeds it</td></tr>
+                    <tr><td>Connections to a database</td><td>Pool size × instance count</td><td class="c-cyan">Autoscaling multiplies pools until the database refuses connections — the classic serverless-plus-Postgres outage</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Size the pool for the fleet, not the container.</strong>
+                    A modest pool per instance times a hundred instances is a connection storm, and
+                    the database is the shared resource that autoscaling forgets about — which is
+                    what a connection proxy or pooler exists to absorb. Everything else here is a
+                    setting; that one is an architecture decision that scale-to-zero makes easy to
+                    miss until traffic arrives.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1717,6 +1750,38 @@ gcloud compute instances list --project my-prod-project</pre>
                     <strong class="c-green">VPC-SC</strong> is the standout: it draws a boundary so
                     that even a stolen credential can't pull data out to the internet — mitigating
                     the exact SSRF/exfil chains from the IAM Pitfalls card.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Rotating a Key Does Not Re-Encrypt Anything, and VPC-SC Is a Project to Roll Out</div>
+                <div class="concept-desc">
+                  KMS rotation creates a new
+                  <em>version</em> and points new encryptions at it. Everything already encrypted
+                  stays encrypted under the old version, which therefore has to remain enabled — so
+                  "we rotate annually" does not mean last year's data is protected by this year's
+                  key, and destroying an old version destroys access to everything still using it.
+                  Rotation limits how much new data one key version protects; it is not a response
+                  to a suspected compromise. That response is re-encryption, which means rewriting
+                  the objects, and it is a job you should know how to run before you need it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Belief</th><th>Reality</th></tr>
+                    <tr><td>"Rotation re-protects our data"</td><td class="c-red">Only new writes; old versions must stay enabled or the data is unreadable</td></tr>
+                    <tr><td>"CMEK means we hold the key"</td><td>Google still performs the cryptography; CMEK gives you the ability to <em>revoke</em> — which is real, and is the actual benefit</td></tr>
+                    <tr><td>"Secret Manager rotates secrets"</td><td>It schedules a rotation event and versions the value; something you write still has to change the credential at the other end</td></tr>
+                    <tr><td>"Deleting a key is instant"</td><td class="c-cyan">Destruction is scheduled with a delay by design — which is a safety feature, and a compliance answer people forget they have</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">VPC Service Controls is the genuinely distinctive
+                    control here and it is a programme, not a checkbox.</strong> A perimeter that
+                    stops a stolen credential exfiltrating data also stops your CI job, your analyst's
+                    notebook and the partner integration nobody documented — so it goes in as a dry
+                    run first, and the ingress and egress rules you end up writing are an inventory
+                    of every legitimate data path you have. That inventory is worth the exercise on
+                    its own, which is the honest reason to start it.
                   </div>
                 </div>
               </div>

@@ -40495,8 +40495,8 @@ is considerably easier to practise on something you are allowed to break.
 <span class="ctag ctag-aiplus">AI+</span>
 </div>
 <span class="domain-sub">ML Pipeline · Model Types · Neural Nets · AI Ethics · Agentic AI</span>
-<span class="domain-meta" aria-label="50 topics, about 1h 50m to read"
->50 topics · ~1h 50m</span>
+<span class="domain-meta" aria-label="50 topics, about 1h 55m to read"
+>50 topics · ~1h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -42141,12 +42141,12 @@ English.
 </div>
 </div>
 </div>
-<div class="topic" id="running-local-llms-ollama-llamacpp-lm-studio" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="running-local-llms-ollama-llamacpp-lm-studio" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">Running Local LLMs <span class="acro-exp">(Large Language Model)</span> — Ollama, llama.cpp &amp; LM Studio</span>
 <span class="topic-badge">Local AI</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -42176,14 +42176,48 @@ privacy-sensitive or high-volume tasks, local wins on cost and control.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">The Constraint Is Memory Bandwidth, and the Context Window Is the Part That Blows the Budget</div>
+<div class="concept-desc">
+Sizing a local model is not "will the weights fit" — it is two numbers. Weights at
+4-bit quantisation are roughly half the parameter count in gigabytes, so an 8B
+model is about 4.5 GB. The <strong>KV cache</strong> is the other one, it grows
+linearly with context length and with batch size, and it is the reason a model
+that loads happily then runs out of VRAM <span class="acro-exp">(Video Random Access Memory)</span> at 32k tokens.
+Generation speed, meanwhile, is bounded by memory <em>bandwidth</em> rather than
+compute — every token reads the whole active weight set — which is why a laptop
+with unified memory can run a model a discrete GPU <span class="acro-exp">(Graphics Processing Unit)</span> with less VRAM cannot,
+and still feel slow.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Decision</th><th>What it buys</th><th>What it costs</th></tr>
+<tr><td>4-bit quantisation (Q4)</td><td>Roughly quarter the memory; the usual sweet spot</td><td>A measurable quality drop that is small for chat and larger for code and arithmetic</td></tr>
+<tr><td>Very low bit (Q2/Q3)</td><td class="c-red">It fits</td><td>Degradation that shows up as confident nonsense rather than as refusal</td></tr>
+<tr><td>Long context</td><td>More document in the prompt</td><td>KV cache growth — the memory nobody budgeted for</td></tr>
+<tr><td>Partial GPU offload</td><td>A bigger model on a smaller card</td><td>Layers on the CPU <span class="acro-exp">(Central Processing Unit)</span> throttle the whole pipeline to the slowest bus</td></tr>
+<tr><td>vLLM instead of Ollama</td><td class="c-cyan">Continuous batching — many concurrent users on one GPU</td><td>Real serving configuration; the single-user tools do not batch</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Choose local for the reason that survives the
+comparison: the data never leaves.</strong> Capability trails the frontier and
+the gap moves every few months, so an argument built on benchmark parity ages
+badly — while "this text may not go to a third party" does not, and neither does
+offline operation or a fixed hardware cost instead of a per-token bill. Size the
+hardware for the context you actually need, because that is the number that
+decides what you can run.
 </div>
 </div>
-<div class="topic" id="llm-evaluation-guardrails-diffusion-models" data-reviewed="2026-08" data-read="1" data-level="core">
+</div>
+</div>
+</div>
+<div class="topic" id="llm-evaluation-guardrails-diffusion-models" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧪</span>
 <span class="topic-name">LLM <span class="acro-exp">(Large Language Model)</span> Evaluation, Guardrails &amp; Diffusion Models</span>
 <span class="topic-badge">LLM Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -42208,6 +42242,46 @@ the technique behind modern image generation.
 risk (untrusted text overriding your instructions) — treat model output as
 untrusted and never give an agent unchecked tools. Evaluation is what turns
 "seems fine" into a number you can defend.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">An Eval Set Is a Test Suite That Rots, and the Judge Has Opinions</div>
+<div class="concept-desc">
+"Track regressions like tests" is the right instinct and the analogy breaks in
+two places worth naming. A golden set drifts out of relevance as real usage moves,
+so a suite that scores 94% may be measuring last quarter's product; it needs
+refreshing from production traffic, which means sampling and labelling on a
+cadence rather than writing it once. And it leaks: the moment a public benchmark
+is in the training data, the score stops measuring capability and starts measuring
+memorisation — which is why an internal set built from your own cases is worth
+more than any leaderboard.
+</div>
+<div class="concept-desc">
+LLM-as-judge is the practical way to score at volume and carries known biases: it
+prefers longer answers, prefers its own family's phrasing, and is sensitive to the
+order options are presented in. None of that makes it useless — it makes it an
+instrument that needs calibrating. Score a sample by hand, measure agreement with
+the judge, randomise position, and report the agreement number alongside the
+result so the reader knows what the score is worth.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Practice</th><th>Why</th></tr>
+<tr><td>Refresh the set from production traffic</td><td class="c-cyan">Otherwise you are regression-testing a product that has moved</td></tr>
+<tr><td>Keep a held-out slice nobody iterates against</td><td>Prompt tuning against the whole set is overfitting with extra steps</td></tr>
+<tr><td>Calibrate the judge against human labels</td><td>An uncalibrated judge produces a precise number of unknown meaning</td></tr>
+<tr><td>Pin the model version in the record</td><td>The provider updates the model; your baseline moved and nothing in your repo changed</td></tr>
+<tr><td>Score guardrails separately</td><td>Refusal quality and task quality trade against each other and must be visible as two numbers</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">And treat the guardrail as a filter, never as a
+boundary.</strong> Input and output filtering reduces the rate of a bad outcome;
+it does not make the model incapable of one, and an agent with tools needs the
+permission model to be the thing that stops it rather than the prompt. That
+separation is the whole argument in
+<span class="xref" data-xref="prompt-injection-the-sql-injection-of-the-ai-world" role="link" tabindex="0">Prompt Injection – The "SQL Injection" of the AI World</span>.
 </div>
 </div>
 </div>
@@ -77227,8 +77301,8 @@ were tracking different things.
 <span class="ctag ctag-general">GCP</span>
 </div>
 <span class="domain-sub">AWS · GCP · Azure · IAM · Networking · Compute · Storage · Security · Troubleshooting</span>
-<span class="domain-meta" aria-label="74 topics, about 3h 10m to read"
->74 topics · ~3h 10m</span>
+<span class="domain-meta" aria-label="74 topics, about 3h 15m to read"
+>74 topics · ~3h 15m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -78387,12 +78461,12 @@ that, once the baseline is honest.
 </div>
 </div>
 </div>
-<div class="topic" id="gcp-serverless-containers-cloud-run-functions-gke" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="gcp-serverless-containers-cloud-run-functions-gke" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏃</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Serverless &amp; Containers — Cloud Run, Functions, GKE <span class="acro-exp">(Google Kubernetes Engine)</span></span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -78417,6 +78491,39 @@ simplest way to deploy a web service on any cloud.
 <strong class="c-green">Rule of thumb:</strong> a stateless web service or API <span class="acro-exp">(Application Programming Interface)</span> →
 Cloud Run. Event glue → Cloud Functions. You genuinely need Kubernetes (complex
 microservices, existing K8s manifests) → GKE.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Scale-to-Zero Has a Bill in Latency, and Cloud Run's Concurrency Is Not Lambda's</div>
+<div class="concept-desc">
+The two things that catch people are opposites of each other. Scaling to zero
+means the next request after an idle period pays a cold start — container pull,
+process boot, framework init — which is fine for a webhook and unacceptable for
+an interactive endpoint, and the fix is a minimum instance count that costs money
+precisely because it defeats scale-to-zero. Meanwhile Cloud Run sends
+<strong>many concurrent requests to one container</strong> by default, unlike
+Lambda's one-at-a-time model, so code that was safe under Lambda's isolation —
+module-level mutable state, a global written per request — becomes a race the
+moment it moves.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Setting</th><th>What it decides</th><th>Getting it wrong</th></tr>
+<tr><td>Concurrency (default 80)</td><td>Requests per container</td><td class="c-red">Shared mutable state becomes a data race; or CPU-bound work queues behind itself in one container</td></tr>
+<tr><td>Minimum instances</td><td>Whether cold starts exist</td><td>Zero for a user-facing API, which is a p99 nobody can explain</td></tr>
+<tr><td>CPU <span class="acro-exp">(Central Processing Unit)</span> allocation</td><td>Whether CPU is available outside a request</td><td>Background work after the response returns simply stops when CPU is throttled between requests</td></tr>
+<tr><td>Request timeout</td><td>The hard ceiling on a request</td><td>Long jobs run as HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> requests until the day one exceeds it</td></tr>
+<tr><td>Connections to a database</td><td>Pool size × instance count</td><td class="c-cyan">Autoscaling multiplies pools until the database refuses connections — the classic serverless-plus-Postgres outage</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Size the pool for the fleet, not the container.</strong>
+A modest pool per instance times a hundred instances is a connection storm, and
+the database is the shared resource that autoscaling forgets about — which is
+what a connection proxy or pooler exists to absorb. Everything else here is a
+setting; that one is an architecture decision that scale-to-zero makes easy to
+miss until traffic arrives.
 </div>
 </div>
 </div>
@@ -78943,12 +79050,12 @@ the events is not the same as a project where nothing happened.
 </div>
 </div>
 </div>
-<div class="topic" id="gcp-data-protection-cloud-kms-secret-manager-vpc-sc" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="gcp-data-protection-cloud-kms-secret-manager-vpc-sc" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔐</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Data Protection — Cloud KMS <span class="acro-exp">(Key Management Service)</span>, Secret Manager &amp; VPC-SC</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -78967,6 +79074,38 @@ the events is not the same as a project where nothing happened.
 <strong class="c-green">VPC-SC</strong> is the standout: it draws a boundary so
 that even a stolen credential can't pull data out to the internet — mitigating
 the exact SSRF/exfil chains from the IAM Pitfalls card.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Rotating a Key Does Not Re-Encrypt Anything, and VPC-SC Is a Project to Roll Out</div>
+<div class="concept-desc">
+KMS rotation creates a new
+<em>version</em> and points new encryptions at it. Everything already encrypted
+stays encrypted under the old version, which therefore has to remain enabled — so
+"we rotate annually" does not mean last year's data is protected by this year's
+key, and destroying an old version destroys access to everything still using it.
+Rotation limits how much new data one key version protects; it is not a response
+to a suspected compromise. That response is re-encryption, which means rewriting
+the objects, and it is a job you should know how to run before you need it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Belief</th><th>Reality</th></tr>
+<tr><td>"Rotation re-protects our data"</td><td class="c-red">Only new writes; old versions must stay enabled or the data is unreadable</td></tr>
+<tr><td>"CMEK means we hold the key"</td><td>Google still performs the cryptography; CMEK gives you the ability to <em>revoke</em> — which is real, and is the actual benefit</td></tr>
+<tr><td>"Secret Manager rotates secrets"</td><td>It schedules a rotation event and versions the value; something you write still has to change the credential at the other end</td></tr>
+<tr><td>"Deleting a key is instant"</td><td class="c-cyan">Destruction is scheduled with a delay by design — which is a safety feature, and a compliance answer people forget they have</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">VPC Service Controls is the genuinely distinctive
+control here and it is a programme, not a checkbox.</strong> A perimeter that
+stops a stolen credential exfiltrating data also stops your CI job, your analyst's
+notebook and the partner integration nobody documented — so it goes in as a dry
+run first, and the ingress and egress rules you end up writing are an inventory
+of every legitimate data path you have. That inventory is worth the exercise on
+its own, which is the honest reason to start it.
 </div>
 </div>
 </div>

@@ -1692,6 +1692,40 @@ ollama run llama3.2
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Constraint Is Memory Bandwidth, and the Context Window Is the Part That Blows the Budget</div>
+                <div class="concept-desc">
+                  Sizing a local model is not "will the weights fit" — it is two numbers. Weights at
+                  4-bit quantisation are roughly half the parameter count in gigabytes, so an 8B
+                  model is about 4.5 GB. The <strong>KV cache</strong> is the other one, it grows
+                  linearly with context length and with batch size, and it is the reason a model
+                  that loads happily then runs out of VRAM <span class="acro-exp">(Video Random Access Memory)</span> at 32k tokens.
+                  Generation speed, meanwhile, is bounded by memory <em>bandwidth</em> rather than
+                  compute — every token reads the whole active weight set — which is why a laptop
+                  with unified memory can run a model a discrete GPU <span class="acro-exp">(Graphics Processing Unit)</span> with less VRAM cannot,
+                  and still feel slow.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Decision</th><th>What it buys</th><th>What it costs</th></tr>
+                    <tr><td>4-bit quantisation (Q4)</td><td>Roughly quarter the memory; the usual sweet spot</td><td>A measurable quality drop that is small for chat and larger for code and arithmetic</td></tr>
+                    <tr><td>Very low bit (Q2/Q3)</td><td class="c-red">It fits</td><td>Degradation that shows up as confident nonsense rather than as refusal</td></tr>
+                    <tr><td>Long context</td><td>More document in the prompt</td><td>KV cache growth — the memory nobody budgeted for</td></tr>
+                    <tr><td>Partial GPU offload</td><td>A bigger model on a smaller card</td><td>Layers on the CPU <span class="acro-exp">(Central Processing Unit)</span> throttle the whole pipeline to the slowest bus</td></tr>
+                    <tr><td>vLLM instead of Ollama</td><td class="c-cyan">Continuous batching — many concurrent users on one GPU</td><td>Real serving configuration; the single-user tools do not batch</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Choose local for the reason that survives the
+                    comparison: the data never leaves.</strong> Capability trails the frontier and
+                    the gap moves every few months, so an argument built on benchmark parity ages
+                    badly — while "this text may not go to a third party" does not, and neither does
+                    offline operation or a fixed hardware cost instead of a per-token bill. Size the
+                    hardware for the context you actually need, because that is the number that
+                    decides what you can run.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1724,6 +1758,46 @@ ollama run llama3.2
                     risk (untrusted text overriding your instructions) — treat model output as
                     untrusted and never give an agent unchecked tools. Evaluation is what turns
                     "seems fine" into a number you can defend.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">An Eval Set Is a Test Suite That Rots, and the Judge Has Opinions</div>
+                <div class="concept-desc">
+                  "Track regressions like tests" is the right instinct and the analogy breaks in
+                  two places worth naming. A golden set drifts out of relevance as real usage moves,
+                  so a suite that scores 94% may be measuring last quarter's product; it needs
+                  refreshing from production traffic, which means sampling and labelling on a
+                  cadence rather than writing it once. And it leaks: the moment a public benchmark
+                  is in the training data, the score stops measuring capability and starts measuring
+                  memorisation — which is why an internal set built from your own cases is worth
+                  more than any leaderboard.
+                </div>
+                <div class="concept-desc">
+                  LLM-as-judge is the practical way to score at volume and carries known biases: it
+                  prefers longer answers, prefers its own family's phrasing, and is sensitive to the
+                  order options are presented in. None of that makes it useless — it makes it an
+                  instrument that needs calibrating. Score a sample by hand, measure agreement with
+                  the judge, randomise position, and report the agreement number alongside the
+                  result so the reader knows what the score is worth.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Practice</th><th>Why</th></tr>
+                    <tr><td>Refresh the set from production traffic</td><td class="c-cyan">Otherwise you are regression-testing a product that has moved</td></tr>
+                    <tr><td>Keep a held-out slice nobody iterates against</td><td>Prompt tuning against the whole set is overfitting with extra steps</td></tr>
+                    <tr><td>Calibrate the judge against human labels</td><td>An uncalibrated judge produces a precise number of unknown meaning</td></tr>
+                    <tr><td>Pin the model version in the record</td><td>The provider updates the model; your baseline moved and nothing in your repo changed</td></tr>
+                    <tr><td>Score guardrails separately</td><td>Refusal quality and task quality trade against each other and must be visible as two numbers</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And treat the guardrail as a filter, never as a
+                    boundary.</strong> Input and output filtering reduces the rate of a bad outcome;
+                    it does not make the model incapable of one, and an agent with tools needs the
+                    permission model to be the thing that stops it rather than the prompt. That
+                    separation is the whole argument in
+                    <span class="xref">Prompt Injection – The "SQL Injection" of the AI World</span>.
                   </div>
                 </div>
               </div>

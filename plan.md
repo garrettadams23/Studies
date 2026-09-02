@@ -16126,3 +16126,46 @@ median topic               3,327   3,333
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — GCP and the local-model stack: four cards where the number in the docs is not the number you get
+
+| Card | The gap |
+|---|---|
+| GCP Data Protection | Rotating a KMS key does not re-encrypt anything — old versions must stay enabled, so "we rotate annually" is not a statement about last year's data |
+| GCP Serverless | Scale-to-zero bills you in latency, and Cloud Run's default concurrency of 80 makes Lambda-safe module state a data race |
+| Running Local LLMs | The constraint is memory bandwidth and the KV cache, not the weight file — a model that loads happily runs out of VRAM at 32k tokens |
+| LLM Evaluation | An eval set rots, leaks into training data, and its judge prefers longer answers |
+
+### The three that change a decision
+
+**CMEK's benefit is revocation, not custody.** Google still performs the
+cryptography; what a customer-managed key gives you is the ability to make data
+unreadable on demand. Saying that plainly is more useful than the "you hold the key"
+framing, because it names the control you actually gained and the compliance claim you
+can actually make.
+
+**Serverless plus a relational database is a connection-count problem.** A modest pool
+per instance multiplied by a hundred autoscaled instances is a connection storm, and
+the database is the shared resource that scale-to-zero makes easy to forget. Size the
+pool for the fleet or put a pooler in front; everything else on that card is a setting,
+and this one is an architecture decision.
+
+**Choose local models for the reason that survives.** Capability trails the frontier
+and the gap moves every few months, so an argument built on benchmark parity ages
+badly — "this text may not go to a third party" does not, and neither does offline
+operation or a fixed hardware cost instead of a per-token bill.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   35      31
+mean chars/concept card    1,272   1,273
+median topic               3,333   3,342
+10th percentile            1,845   1,860
+```
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
