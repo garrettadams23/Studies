@@ -17073,3 +17073,61 @@ naming it as one is more useful than a looser matcher would be.
 
 Check PASS · smoke **145/145** · search **34/34** · axe **6/6** · mobile **9/9** ·
 resilience **7/7** · determinism reproducible.
+
+---
+
+## Session record — the last known miss was a content gap, so it got a card
+
+Two known misses survived the widened-search change. One of them,
+`why is my laptop slow`, was recorded as *"a whole sentence; nothing matches it as a
+substring"* — and that reading was wrong. Widening the matcher did not fix it because
+there was nothing to find: **no card on the site contained the words "laptop" and "slow"
+together**, because the site had no card on the single most common ticket a service desk
+takes.
+
+That is not a search problem. It is the search harness doing the job Phase 10 T5 said it
+would: *"a query a reader would actually type"* is a probe for content as much as for
+matching, and this one had been reading as a matcher backlog item for two phases.
+
+### The card
+
+**`ops` · *"Why Is My Laptop Slow?" — The Commonest Ticket, Worked Properly*** · 4 concept
+cards, 6,694 characters, in the service-desk cluster between *CompTIA's troubleshooting
+methodology* and *Working a Queue* — the generic method, then the worked example.
+
+| Card | What it argues |
+|---|---|
+| **"Slow" Is Four Different Tickets Wearing One Word** | The inversion: slow is a *feeling*, not a symptom. Four unrelated problems — slow to start, slow to respond, slow at one thing, slow on the network — with mutually exclusive fixes, separated by one question before you touch anything. **Verdict:** the network row is the engineer-hour sink, because a file-server problem arrives one plausible laptop at a time |
+| **The Four Resources, From the User's Chair and From the Counter** | CPU · memory · disk · network, each with what the user says, what the counter shows, and the usual endpoint cause. **Verdict:** memory pressure misreads in both directions — a modern OS fills unused memory with cache, so "95% used" is correct behaviour; what matters is whether the machine is *paging*, which shows as disk activity |
+| **Four Answers That Close the Ticket Without Fixing Anything** | Fingerprints for the reboot that "fixed" a leak with a period, RAM added to a thermally throttled machine, "your disk is full" treated as storage when on an SSD it is a *performance* fault, and the reimage that removes the evidence. **Verdict:** all four close cleanly and on time; only **reopen rate** catches them |
+| **Fix, Upgrade or Replace — and Writing It Down So It Is Decided Once** | The decision is not technical: it is whether the machine's remaining life is worth the part. **Verdict:** write the number even when the answer is "fix it" — "45 minutes plus a £60 drive against a £900 replacement" turns the next identical case into a five-minute decision by somebody more junior |
+
+Six related edges, all symmetric, and one step added to the **Running a Service Desk** path.
+
+### Two things the writing had to get right
+
+**The reader's own words, verbatim.** The card opens on *"My computer is slow."* because
+that is the sentence, and because a card about a sentence that does not contain it is not
+findable by anyone who types it. Both phrasings are now fixtures: `why is my laptop slow`
+returns **1** result and `my computer is slow` returns **2**.
+
+**`c-cyan` on a first cell, again.** The linter caught four rows where the resource column
+carried the class — `.ref-table td:first-child` outranks it, so it never renders. Same
+rule, same mistake, second time this file records it; the column is already styled and the
+class is simply dropped.
+
+```
+known misses     2 → 1        (the one left needs number-word synonyms, a dictionary feature)
+search fixtures 34 → 36
+topics       1,531 → 1,532
+mean chars per concept card  1,275 → 1,276
+```
+
+**The counter-metric ticked up by one and that is the honest number.** A 6,694-character
+topic across four cards averages 1,674 per card against a site mean of 1,275, so adding it
+raises the mean — as writing anything dense will. The metric guards against *padding
+existing cards*, which `git show --numstat` settles: **131 insertions and 0 deletions** in
+`data/ops.html`. Nothing that already existed got a word added to it.
+
+Check PASS · smoke **145/145** · search **36/36** · axe **6/6** · mobile **9/9** ·
+visual **2/2** · determinism reproducible.

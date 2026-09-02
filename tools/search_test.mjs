@@ -115,6 +115,11 @@ const FIXTURES = [
   ["wifi 6",               "net/wireless-networking-80211-standards-security", 8],
   ["page loads halfway",   "net/mtu-fragmentation-the-half-loading-website", 6],
   ["POAM",                 "grc/fedramp-nist-800-53-control-baselines-and-the-ato", 6],
+  // The sixth miss was never a search problem. No card contained the words
+  // "laptop" and "slow" together, because the site had nothing on the single
+  // most common ticket a service desk takes. Writing it closed the query.
+  ["why is my laptop slow", "ops/why-is-my-laptop-slow-the-commonest-ticket-worked-properly", 6],
+  ["my computer is slow",   "ops/why-is-my-laptop-slow-the-commonest-ticket-worked-properly", 8],
 ];
 
 // Queries a reader plausibly types that still find nothing. Not failures — the
@@ -131,7 +136,6 @@ const KNOWN_MISSES = [
   ["three way handshake", "the site writes it '3-way' — a digit, which no amount of "
                           + "separator folding reaches. Wants number-word synonyms",
    "net/tcp-vs-udp-transport-layer"],
-  ["why is my laptop slow", "a whole sentence; no card contains all of its words", null],
 ];
 
 // Queries with no single right answer that must simply stay narrow. These are

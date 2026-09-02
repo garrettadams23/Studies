@@ -3136,6 +3136,137 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
   </div>
 </div>
 
+<!-- ── TOPIC: "MY LAPTOP IS SLOW" ────────────────────────────── -->
+<div class="topic" data-reviewed="2026-09">
+  <div class="topic-header">
+    <span class="topic-icon">🐌</span>
+    <span class="topic-name">"Why Is My Laptop Slow?" — The Commonest Ticket, Worked Properly</span>
+    <span class="topic-badge">Service Management</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">"Slow" Is Four Different Tickets Wearing One Word</div>
+      <div class="concept-desc">
+        <em>"My computer is slow."</em> It is the commonest sentence a service desk reads, and it
+        is not a symptom — it is a <em>feeling</em>. The desk that treats it as a symptom
+        starts guessing: a reimage here, a RAM <span class="acro-exp">(Random Access Memory)</span> upgrade there, a reboot that appears to work. The
+        computer in front of you has one of four unrelated problems, the fixes are mutually
+        exclusive, and <strong>one question separates them before you touch anything</strong> —
+        <em>what were you doing when it felt slow?</em> Ask it of a desktop, a laptop or a
+        virtual desktop; the four are the same everywhere and only the fixes differ.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>They describe</th><th>Which ticket it really is</th><th>What that rules out</th></tr></thead>
+          <tbody>
+            <tr><td>"It takes forever to get going in the morning"</td><td class="c-cyan">Slow to <strong>start</strong> — boot, logon, startup apps, policy processing</td><td>Nothing about the machine's speed once it is up</td></tr>
+            <tr><td>"It just freezes for a second while I type"</td><td class="c-cyan">Slow to <strong>respond</strong> — a resource is saturated during work</td><td>Boot time; the machine may start perfectly</td></tr>
+            <tr><td>"It's fine except when I open <em>that</em>"</td><td class="c-cyan">Slow at <strong>one thing</strong> — one application, one file, one add-in</td><td>The whole machine. This is an app ticket wearing a hardware costume</td></tr>
+            <tr><td>"Everything on the shared drive crawls"</td><td class="c-cyan">Slow on the <strong>network</strong> — or the server at the other end</td><td>The endpoint entirely. It is very likely not this user's problem at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">The fourth row is the one that wastes the most engineer-hours.</strong>
+          A file-server or VPN <span class="acro-exp">(Virtual Private Network)</span> problem arrives at the desk one laptop at a time, each ticket
+          plausible on its own, and it gets diagnosed as four slow machines before somebody notices
+          that all four are slow at the same hour. <span class="xref">Triage &amp; Categorisation — Routing Correctly the First Time</span>
+          is what catches it; the question above is what makes triage possible.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Four Resources, From the User's Chair and From the Counter</div>
+      <div class="concept-desc">
+        Every "slow to respond" ticket is one of four resources running out. They feel almost
+        identical to the person using the machine and look completely different in Task Manager,
+        Activity Monitor or <code>top</code> — which is why the tool comes out before the promise
+        does.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Resource</th><th>What the user says</th><th>What the counter shows</th><th>Usual cause on an endpoint</th></tr></thead>
+          <tbody>
+            <tr><td>CPU <span class="acro-exp">(Central Processing Unit)</span></td><td>"The fan never stops"</td><td>Sustained high utilisation, one process owning most of it</td><td>A runaway browser tab, an indexing or antivirus scan that never finished, or the machine throttling because it is hot</td></tr>
+            <tr><td>Memory</td><td>"Fine until I open the fourth thing"</td><td>Committed memory at the ceiling and steady paging to disk</td><td>Genuinely too little RAM for the workload. The tell is <em>disk</em> activity, not the memory percentage</td></tr>
+            <tr><td>Disk</td><td>"Everything pauses together"</td><td>Active time pinned near 100%, long queue</td><td>A failing drive, a nearly full SSD <span class="acro-exp">(Solid State Drive)</span>, or real-time scanning on a folder that changes constantly</td></tr>
+            <tr><td>Network</td><td>"Only the things on the server"</td><td>Local work is instant; anything remote stalls</td><td>Not this machine. Wi-Fi, VPN, or the server</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Memory pressure is the one people misread, and it misreads in both directions.</strong>
+          A modern operating system deliberately fills unused memory with cache, so "95% used" on a
+          machine that feels fine is correct behaviour and not a finding. What matters is whether
+          the machine is <em>paging</em> — trading disk for memory it does not have — which shows up
+          as disk activity while the user swears they are not saving anything. Read the pair, never
+          the percentage. The server-side version of this framework is
+          <span class="xref">Performance &amp; Capacity — Finding and Fixing Bottlenecks</span>.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Four Answers That Close the Ticket Without Fixing Anything</div>
+      <div class="concept-desc">
+        Each of these ends the conversation, satisfies the user for a week, and comes back. They
+        are worth knowing by fingerprint because none of them looks like a mistake at the time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The answer</th><th>Why it looked right</th><th>The fingerprint that it was not</th></tr></thead>
+          <tbody>
+            <tr><td>"A reboot sorted it"</td><td>It genuinely was fast afterwards</td><td class="c-red">The same user, the same machine, roughly the same interval later. A leak has a period; a fix does not</td></tr>
+            <tr><td>More RAM in a hot machine</td><td>The machine was slow and RAM is the usual answer</td><td class="c-red">Fan constantly loud, slowness worst after an hour, fine again from cold. That is thermal throttling and the new memory changed nothing — see <span class="xref">Laptops — Batteries, Thermals &amp; What Is Actually Replaceable</span></td></tr>
+            <tr><td>"Your disk is 99% full, delete some files"</td><td>It is a true statement about storage</td><td class="c-red">Reads are fine and <em>saves</em> take seconds. On an SSD a nearly full drive is a performance fault, not a capacity one: with no free blocks to work in, writes collapse. Freeing 10–15% is the fix, and it is a fix, not housekeeping advice</td></tr>
+            <tr><td>Reimaging the machine</td><td>It always works</td><td class="c-red">It works because it removes everything, including the evidence. If you cannot say afterwards what was wrong, the next machine with the same cause gets the same three hours</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">A desk cannot see any of this from its own ticket counts.</strong>
+          All four close cleanly and on time. The measurement that catches them is
+          <em>reopen rate</em> — the same user, the same machine, the same complaint inside a
+          month — which is why it is on the short list in
+          <span class="xref">Service Desk Metrics — The Ones That Improve Service vs the Ones That Game It</span>
+          and why "resolved" and "fixed" are worth counting separately.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The decision</div>
+      <div class="concept-title">Fix, Upgrade or Replace — and Writing It Down So It Is Decided Once</div>
+      <div class="concept-desc">
+        Diagnosis ends in a decision that is mostly not technical: whether the remaining life of
+        this machine is worth the part. The engineer is the only person who can price it, and the
+        ticket is where that pricing has to be written or the question arrives again next quarter.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What you found</th><th>Action</th><th>What the ticket must say</th></tr></thead>
+          <tbody>
+            <tr><td>A process, a scan, or an add-in eating the machine</td><td>Fix it and leave the hardware alone</td><td>Which process, and what made it start — so the next twenty tickets are one problem, not twenty</td></tr>
+            <tr><td>Spinning disk, or an SSD past its endurance</td><td>Replace the drive</td><td>The health figures you read, and that data was backed up first</td></tr>
+            <tr><td>Enough RAM for the machine's job three years ago</td><td>Upgrade if the slots and the platform allow it</td><td>The workload that needs it — "eight browser tabs and Teams" is a requirement, not a complaint</td></tr>
+            <tr><td>Soldered memory, thermal limits, or out of warranty and marginal</td><td>Replace the machine</td><td>The number: part cost plus your time against a replacement, and the date the warranty ended</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Write the number even when the answer is "fix it".</strong> A ticket that records
+          "45 minutes plus a £60 drive against a £900 replacement" turns the next identical case
+          into a five-minute decision by somebody more junior, and it is the evidence a refresh
+          budget is actually built from. That is the same argument as
+          <span class="xref">Writing a Ticket Someone Else Can Solve</span> pointed at the
+          finance conversation rather than at the next engineer.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: WORKING A QUEUE ────────────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
