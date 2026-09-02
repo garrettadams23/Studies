@@ -2690,6 +2690,37 @@ function stStartQuiz(scope, stage) {
   _stQuizState = { pool, questions, i: 0, score: 0, answered: false };
   stRenderQuestion(stage);
 }
+/**
+ * Three wrong answers, from the same subject area as the right one.
+ *
+ * The acronym quiz has said since it was written that distractors are grouped
+ * "so a distractor is never a giveaway from elsewhere". The topic quiz never got
+ * the same treatment: it drew three names at random from the whole pool, so a
+ * question about Kubernetes sat beside tmux, GDPR and Ohm's law and answered
+ * itself.
+ *
+ * That matters more here than it looks, because **34% of quiz prompts contain a
+ * distinctive word from their own topic's name** — "DNS Record Types & Zone
+ * Transfer" as the prompt for *DNS Record Types*. Measured across 1,469 topics,
+ * and mostly unavoidable: a concept card's heading is *about* its topic, and the
+ * description does not rescue it (it gives the answer away too in 403 of the 501
+ * cases, and reads far worse as a prompt).
+ *
+ * So the fix is on this side. When every option is a `net` topic, sharing the
+ * word "DNS" with the prompt stops being a giveaway and starts being the
+ * question — which of these four DNS-adjacent cards is this heading from. That
+ * is the discrimination the quiz was always supposed to test.
+ *
+ * Every domain has at least four studyable topics, so the fallback only fires
+ * for the bookmark and due decks, where the pool is whatever the reader starred.
+ */
+function stDistractors(pool, q) {
+  const near = shuffle(pool.filter(t => t.id !== q.id && t.domainId === q.domainId));
+  if (near.length >= 3) return near.slice(0, 3);
+  const far = shuffle(pool.filter(t => t.id !== q.id && t.domainId !== q.domainId));
+  return near.concat(far).slice(0, 3);
+}
+
 function stRenderQuestion(stage) {
   const s = _stQuizState; if (!s) return;
   if (s.i >= s.questions.length) {
@@ -2702,8 +2733,7 @@ function stRenderQuestion(stage) {
   }
   const q = s.questions[s.i];
   const prompt = q.title || q.desc.slice(0, 160);
-  const distractors = shuffle(s.pool.filter(t => t.id !== q.id)).slice(0, 3);
-  const options = shuffle([q, ...distractors]);
+  const options = shuffle([q, ...stDistractors(s.pool, q)]);
   stage.innerHTML =
     `<div class="st-progress">Question ${s.i + 1} / ${s.questions.length} · Score ${s.score}</div>` +
     `<div class="st-q-prompt"><span class="st-q-label">Which topic does this describe?</span>${esc(prompt)}</div>` +

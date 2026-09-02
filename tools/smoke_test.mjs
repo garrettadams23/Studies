@@ -884,6 +884,24 @@ check("quiz distractors come from the scope that was chosen",
   !!distract && distract.options === 4 && distract.foreign === 0,
   distract ? `${distract.options} options, ${distract.foreign} from outside ${distract.domain}` : "no domain");
 
+// The check above cannot fail on the "All domains" scope, which is the default
+// and the one that was broken: inside one domain every option is same-domain by
+// construction. This exercises the whole pool, where three names used to be
+// drawn at random and a Kubernetes question came with tmux, GDPR and Ohm's law.
+const spread = await page.evaluate(() => {
+  const pool = stTopicsForScope("__all");
+  let mixed = 0, dupes = 0;
+  for (const q of pool) {
+    const d = stDistractors(pool, q);
+    if (d.length !== 3 || d.some(x => x.domainId !== q.domainId)) mixed++;
+    if (d.some(x => x.id === q.id)) dupes++;
+  }
+  return { n: pool.length, mixed, dupes };
+});
+check("across all domains, a question's wrong answers are from its own subject",
+  spread.mixed === 0 && spread.dupes === 0,
+  `${spread.n} questions · ${spread.mixed} mixed · ${spread.dupes} with the answer as a distractor`);
+
 const backup = await page.evaluate(() => {
   localStorage.clear();
   const ids = stIndex().slice(0, 3).map(t => t.id);

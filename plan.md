@@ -17432,3 +17432,70 @@ end of the pipeline fails here rather than silently in somebody's revision sessi
 
 Check PASS · smoke **146/146** · search **40/40** · axe **6/6** · mobile **9/9** ·
 backup **3/3** · determinism reproducible.
+
+---
+
+## Session record — the quiz answered itself, and the measurement that says how often
+
+The flashcard audit found six blank backs. The quiz is the other half of the same feature
+and had never been looked at either. It has a worse problem, and unusually the problem is
+**not** the one worth fixing.
+
+### The measurement
+
+A question is: *"Which topic does this describe?"* — the prompt is the topic's first concept
+title, the options are its name plus three others.
+
+```
+1,469 quiz-eligible topics
+  501 (34%) have a prompt containing a distinctive word from their own topic name
+```
+
+*"DNS Record Types & Zone Transfer"* as the prompt for **DNS Record Types**. *"CIDR Table ·
+Private Ranges · Subnet Math"* for **Subnetting & CIDR**. *"NMAP — Scan Flags, Responses &
+Common Options"* for **NMAP Scan Types Reference**.
+
+### Why the obvious fix is the wrong one
+
+The index carries a description as well as a title, so the obvious move is to prompt from
+whichever does not give the answer away. Measured:
+
+| | |
+|---|---|
+| the description would not give it away | **84** |
+| both give it away | **403** |
+| there is no description to fall back to | 14 |
+
+**The description rescues 84 of 501**, and a truncated paragraph reads far worse as a quiz
+prompt than a crafted heading. Rewriting 501 concept titles is worse still: a concept
+card's heading is *supposed* to be about its topic, and Phase 8 §7 already forbids retitling
+in a deepening pass for a reason. The overlap is not a defect in the content.
+
+### The actual defect was on the other side of the question
+
+The acronym quiz has said since it was written that its distractors are grouped
+*"so a distractor is never a giveaway from elsewhere"*. **The topic quiz never got the same
+treatment.** It drew three names at random from the whole pool, so a Kubernetes question
+arrived beside tmux, GDPR and Ohm's law and answered itself regardless of the prompt.
+
+`stDistractors()` now draws from the question's own domain, falling back to the wider pool
+only when the pool is too small — which happens for the bookmark and due decks and never for
+a domain, since every domain has at least four studyable topics.
+
+**When all four options are `net` topics, sharing the word "DNS" with the prompt stops being
+a giveaway and starts being the question**: which of these four DNS-adjacent cards is this
+heading from. That is the discrimination the quiz was always meant to test, and it is why the
+34% needed measuring but not fixing.
+
+```
+all-three-distractors-same-domain:  ~4% → 100%   (1,469 of 1,469)
+distractor equal to the answer:      0
+```
+
+**The existing smoke check could not have caught this**, and that is worth recording:
+*"quiz distractors come from the scope that was chosen"* runs a domain-scoped quiz, where
+every option is same-domain by construction. It passed throughout. The new check exercises
+`__all` — the default scope, and the only one that was broken.
+
+Check PASS · smoke **147/147** · search **40/40** · axe **6/6** · mobile **9/9** ·
+resilience **7/7** · determinism reproducible.
