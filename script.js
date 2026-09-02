@@ -2022,29 +2022,43 @@ function runSearch(raw) {
     sec.querySelector(".domain-matches")?.remove();
   });
 
+  // A widened answer covering a large share of the site is not an answer.
+  // "how does it work" keeps one content word — *work* — and half of a
+  // 1,534-topic reference contains it; the reader gets 766 cards and learns
+  // nothing they did not know before typing. So the widened stages are allowed
+  // a ceiling, and above it the query is reported as too broad rather than
+  // answered badly.
+  //
+  // The number is set from measurement, not taste. The widest genuinely useful
+  // result across the 66-query probe is 60, the largest gated ceiling is 120
+  // (`how do i find a file`), and the narrowest degenerate case is 254
+  // (`is it good`). A share rather than a constant, so it tracks the site.
+  const wideCap = Math.max(150, Math.round(1534 * 0.12));
+  const tooBroad = () => matchCount > wideCap;
+
   sweep(false);
   if (!matchCount && gapPhrase) {
     reset();
     sweep("fold");
-    if (matchCount) widened = "fold";
+    if (matchCount) widened = tooBroad() ? "broad" : "fold";
   }
   // One content word is a legitimate conjunction — "what is idempotency" is a
   // question about idempotency — so this stage runs whenever any survived.
-  if (!matchCount && wideMatchers.length) {
+  if ((!matchCount || widened === "broad") && wideMatchers.length) {
     reset();
     sweep("words");
     if (matchCount) {
-      widened = "words";
+      widened = tooBroad() ? "broad" : "words";
       // Highlight what actually matched, which is the words rather than the
       // string the reader typed.
-      _searchTermList = [...q.phrases, ...words];
+      if (widened === "words") _searchTermList = [...q.phrases, ...words];
     }
   }
-  // Nothing anywhere, at any width. Re-run the strict pass so the page ends in
-  // the state a no-match search has always left it in — every domain hidden
-  // behind the "no matches" line — rather than in the reset() the fallback
-  // needed in order to run.
-  if (!matchCount) { reset(); sweep(false); }
+  // Nothing anywhere, at any width — or everything, which is the same amount of
+  // information. Re-run the strict pass so the page ends in the state a
+  // no-match search has always left it in: every domain hidden behind the
+  // count line, rather than in the reset() the fallback needed in order to run.
+  if (!matchCount || widened === "broad") { reset(); sweep(false); }
 
   // Show the domain the reader is already in if it has anything; otherwise the
   // first that does. The others stay one click away with their counts visible.
@@ -2070,6 +2084,10 @@ function runSearch(raw) {
     const wide = widened === "words"
       ? " · no exact match, so these contain all your words"
       : widened === "fold" ? " · matched ignoring hyphens" : "";
+    if (widened === "broad") {
+      countEl.textContent = `no exact match${scope} · too broad to widen — try a more specific word`;
+      return;
+    }
     countEl.textContent = matchCount
       ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${widened ? "" : via}${wide}`
       : `no matches${scope}`;

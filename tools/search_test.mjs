@@ -174,6 +174,12 @@ const CEILINGS = [
   // both. Wide is acceptable; the whole site is not.
   ["how do i find a file",       120, "the widened stage losing its remaining nouns"],
   ["why is my domain controller", 90, "the widened stage losing its remaining nouns"],
+  // The other end of the same rule. These keep one very common content word —
+  // work, time, good — and widening them covers a third to a half of the site.
+  // A widened answer that large carries no information, so the cap turns them
+  // into "too broad to widen" and they must report nothing at all.
+  ["how does it work", 0, "the widened stage answering a question it cannot answer"],
+  ["time time time",   0, "the widened stage answering a question it cannot answer"],
 ];
 
 const browser = await chromium.launch();

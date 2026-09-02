@@ -316,6 +316,9 @@ const ops = await page.evaluate(async () => {
   // And when even the widest pass finds nothing, the page must end hidden
   // behind the "no matches" line rather than in the reset the fallback needed.
   out.hopeless  = await probe("kumquat trombone");
+  // And a query whose only content word is in half the site. Widening it
+  // returns 766 cards, which is not an answer — it must say so instead.
+  out.broad     = await probe("how does it work");
   return out;
 });
 check("domain: narrows the search", ops.scoped.hits > 0 && ops.scoped.hits < ops.bare.hits
@@ -334,6 +337,9 @@ check("words that are never adjacent still find the card",
   ops.allWords.hits > 0 && /all your words/.test(ops.allWords.text), ops.allWords.text);
 check("a query nothing answers leaves the page hidden, not reset",
   ops.hopeless.hits === 0 && ops.hopeless.domains === 0, ops.hopeless.text);
+check("a query too broad to widen says so rather than returning half the site",
+  ops.broad.hits === 0 && ops.broad.domains === 0 && /too broad/.test(ops.broad.text),
+  ops.broad.text);
 
 await page.fill("#search-input", "");
 await page.waitForTimeout(250);

@@ -17729,3 +17729,64 @@ data diff                  +90 / −39   (39 deletions are the annotator re-flow
 ```
 
 Check PASS · smoke **147/147** · search **42/42** · axe **6/6** · mobile **9/9**.
+
+---
+
+## Session record — the widened search answering questions it cannot answer
+
+Every check on the search passed: 42 fixtures, 6 ceilings, 66 probe queries, 147 smoke
+checks. So the last thing to do was attack it — twenty-odd deliberately degenerate queries
+that no fixture would ever contain, scored only on how many cards came back.
+
+```
+"how does it work"    766 of 1,534   ← half the site
+"time time time"      677
+"file file"           449
+"new new"             332
+"is it good"          254
+```
+
+Every one is the same shape. The function-word filter leaves a single very common content
+word — *work*, *time*, *file*, *new*, *good* — and the all-your-words stage does exactly what
+it is told: returns every card containing it. **The reader gets 766 results and learns
+nothing they did not know before typing.**
+
+Nothing was going to catch this. The fixtures assert that named queries reach named cards;
+the ceilings cover six queries somebody thought to write down; the probe asks questions a
+reader would plausibly type, and nobody plausibly types "time time time". It took an
+adversarial pass whose only metric was *size*.
+
+### A widened answer that large is not an answer
+
+The harness has said since it was written that with no ranking, **result-set size is the
+quality metric**. Taken seriously, that means there is a size above which widening should
+not happen at all — and the honest response is to say the query is too broad rather than to
+answer it badly.
+
+```
+widest genuinely useful probe result       60
+largest gated ceiling                     120   (how do i find a file)
+narrowest degenerate case                 254   (is it good)
+cap chosen                                184   (12% of the corpus, floor 150)
+```
+
+The gap between 120 and 254 is wide enough that the number is not a matter of taste. Above
+the cap the widened stages are discarded, the page ends in the same state as any other
+no-match search, and the count line says **"no exact match · too broad to widen — try a more
+specific word"** — which tells the reader what to do next, unlike either 766 rows or a bare
+"no matches".
+
+```
+worst adversarial result   766 → 75
+search checks              42 → 44   (two of the degenerate queries, ceiling 0)
+smoke checks              147 → 148
+probe                     unchanged: 57 of 66 answered, 9 deliberate zeros
+fixtures                  unchanged: 44/44
+```
+
+**The cap changed nothing that worked.** Every fixture, every ceiling and every probe answer
+came back identical, which is the property that made it shippable: it only fires where the
+alternative was an answer nobody could use.
+
+Check PASS · smoke **148/148** · search **44/44** · axe **6/6** · mobile **9/9** ·
+resilience **7/7** · determinism reproducible.
