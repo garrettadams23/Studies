@@ -16574,3 +16574,53 @@ Session totals for the paths programme: **36 → 80 paths, 579 → 1,267 steps, 
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the mop-up: eight paths for the piles nobody had a name for
+
+| Path | Steps | The pile it sequenced |
+|---|---|---|
+| Malware, and the Attack Itself | 18 | The attack side without the tooling — types, kill chain, threat modelling, analysis, anti-analysis, hunting, and the market around it |
+| Building a Career That Compounds | 13 | The slow-payoff half: lab, reputation, relationships, certifications chosen deliberately, and money |
+| The Maths Behind Machine Learning | 7 | Vectors, matrices, gradients, loss — the mechanism under an embedding and a training run |
+| The Estate Nobody Documented | 12 | Legacy directories, ageing CAs, tape nobody has restored, mainframes, and decommissioning properly |
+| Delivery Pipelines in Practice | 11 | The concrete half of CI/CD: platforms, workflow files, artifacts, config management, release notes |
+| Radio, Wireless & Physical Tooling | 15 | The offensive hardware and RF side, plus the cloud attack surface beside it |
+| Reading Military Structure | 14 | Staff codes, prefixes, functional numbers, echelons — an org chart that looks like a licence plate |
+| Hardware Beyond the PC | 9 | Boards, buses, firmware, real-time constraints, and the AV and accessibility kit that are also hardware |
+
+Two are worth naming. **The Estate Nobody Documented** is a route for a situation
+rather than a subject — you have just inherited an environment older than your tenure
+— and it draws from `infra` cards that individually read as maintenance chores and
+collectively read as a plan. And **Reading Military Structure** turns a reference
+cluster into a route because the cards genuinely build: you cannot read `J63` until
+you know what the prefix, the number and the sub-designator each mean.
+
+```
+paths          80 → 88
+steps       1,267 → 1,366
+topics reached 1,195 → 1,293   (78% → 84% of the site)
+```
+
+### Where the paths programme stops
+
+238 topics remain off every route, and the composition is the answer: **`acronym` (59)
+and `shortcut` (35) are lookup surfaces**, `script`'s remaining 66 are the language and
+syntax *reference* cards beside the tutorials that are already routed, `math` (16) is a
+self-contained curriculum with its own unit structure, and `quotes` (6) is not
+instructional at all. Strip those and roughly 60 genuinely instructional topics are
+unrouted — mostly deliberate duplicates the near-duplicate census already documents as
+legitimate (a beginner card beside a deep one; the same subject from the attacker's
+and the defender's side), where one of the pair is already on a path.
+
+That is the ceiling, and it was predicted in this file's first paths record: *a path
+earns its place when a real job or subject has an order that genuinely matters.*
+Reference material does not, and inventing an order for it would be the navigation
+equivalent of padding a thin card.
+
+**Paths programme, this session: 36 → 88 paths, 579 → 1,366 steps, 555 → 1,293 topics
+reachable — 36% to 84% of the site, with no new content written.**
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
