@@ -17131,3 +17131,79 @@ existing cards*, which `git show --numstat` settles: **131 insertions and 0 dele
 
 Check PASS · smoke **145/145** · search **36/36** · axe **6/6** · mobile **9/9** ·
 visual **2/2** · determinism reproducible.
+
+---
+
+## Session record — the search box as a content probe: 39 questions, five findings
+
+The previous record ended on a lesson worth generalising: a query a reader would type is a
+probe for **content**, not only for matching. So it was run deliberately — 39 questions a
+helpdesk engineer, a SOC analyst, a developer or a job-hunter would actually type into this
+site, scored by what came back.
+
+Twelve returned nothing. Five of those were worth acting on, and they split into three
+kinds — which is the useful part, because only one kind is a missing card.
+
+### Kind one: the site says it, in the other spelling
+
+| Query | Result | Why |
+|---|---|---|
+| `impostor syndrome` | **0** | The site has two cards on it and spells it **imposter** throughout. Both spellings are standard; half the readers type the other one |
+| `writing a cv` | **0** | `career` says *resume*, six times, and never *CV* — on a site that otherwise writes British English |
+| `log4j` | **0** | The site names **Log4Shell** three times and never the library, which is the word people search for |
+
+Three one-line edits, each of which is also just better writing: name both spellings, name
+both words, name the library beside the branded vulnerability. **`impostor syndrome` and
+`log4j` now land on the right card.** A reference that only answers to one of two standard
+spellings is failing quietly, and nothing but a probe like this would have said so.
+
+### Kind two: the question is real and the card was not there
+
+`phishing email reported` and `someone clicked the link` both returned nothing, and the
+site has **eleven** topics touching phishing — anatomy, smishing, awareness training,
+attacker infrastructure, tenant controls, BEC. Every angle except the one a person is
+standing in when they search that phrase: *somebody just told me, what do I do now.*
+
+**`blueteam` · *A User Reported a Phishing Email — The First Ten Minutes*** · 4 concept
+cards, 6,500 characters.
+
+| Card | What it argues |
+|---|---|
+| **The Report Is Evidence, and the First Instinct Destroys It** | The inversion: *"well spotted, delete it"* is the response that costs every answer you are about to need. What to preserve, and how each artefact gets lost — a plain forward rewrites the headers; "let me just check the link" does it from your machine on the corporate network. **Verdict:** ask *did you enter anything* first, and in a way that makes the honest answer easy, because a desk that reacts badly once will not be told the second time |
+| **Ten Minutes, In Order** | Seven steps with what each answers and what skipping it costs. Order over speed: blocking the sender first feels productive and tells you nothing; searching the tenant first tells you how big it is while the evidence is still there. **Verdict:** step 6 is three actions, not one — reset, *then* revoke sessions and tokens, *then* look for the inbox rule and the new MFA method |
+| **Four Ways the Ticket Closes While the Access Continues** | Fingerprints: mail still leaving after the reset; the second report next day from a slower user; a new address on the same domain within the hour; the inbox rule with a blank name moving mail to *RSS Feeds*. **Verdict:** three of the four leave a clean queue and a live intruder |
+| **When This Stops Being a Ticket** | Five signals with what each means and who to wake. **Verdict:** write the threshold down while nothing is happening — a blunt rule beats a better one invented under pressure, because it removes the judgement from the moment judgement is worst |
+
+Seven symmetric related edges; one step on the **SOC Analyst Starter** path, after triage.
+
+### Kind three: the question is real and the answer is a phrase, not a card
+
+`wifi keeps dropping`, `vpn keeps disconnecting`, `laptop won't turn on`, `printer offline`,
+`git detached head`, `docker image too big`, `terraform state locked` — the site has the
+technology cards for every one of these and none of them phrases a *symptom*. **These were
+left alone deliberately.** Writing seven symptom cards, or seeding symptom phrases into
+existing ones, is keyword stuffing with a rationalisation attached; the honest reading is
+that a symptom index is a different product from a reference, and the site is a reference.
+
+The probe is also a warning about its own results. `printer offline` returns exactly one
+card — *bettercap, the MITM framework* — because the all-your-words fallback found both
+words in it. That is the fallback behaving as designed and as labelled, and it is why the
+count line says *"no exact match, so these contain all your words"* rather than presenting
+it as an answer.
+
+```
+topics        1,532 → 1,533
+zero-result probes  12 → 9
+mean chars per concept card  1,276 → 1,277
+```
+
+**The counter-metric rose by one again, and the diff says why:** 132 insertions and 0
+deletions in `blueteam.html`, plus three single-line replacements elsewhere. A dense card
+raises a mean; nothing that already existed was padded.
+
+And `c-red` on a first cell, caught by the linter for the second time in two cards. The
+rule is now worth stating as a habit rather than a lookup: **colour classes go on the
+second cell onwards; `.ref-table td:first-child` owns the first.**
+
+Check PASS · smoke **145/145** · search **36/36** · axe **6/6** · mobile **9/9** ·
+determinism reproducible.

@@ -3678,6 +3678,138 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
   </div>
 </div>
 
+<!-- ── TOPIC: A USER REPORTED A PHISHING EMAIL ───────────────── -->
+<div class="topic" data-reviewed="2026-09">
+  <div class="topic-header">
+    <span class="topic-icon">🎣</span>
+    <span class="topic-name">A User Reported a Phishing Email — The First Ten Minutes</span>
+    <span class="topic-badge">Blue Team • Response</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Core Concept</div>
+      <div class="concept-title">The Report Is Evidence, and the First Instinct Destroys It</div>
+      <div class="concept-desc">
+        Somebody has done the thing awareness training asks for: they noticed, and they told you.
+        The natural response — <em>"well spotted, delete it"</em> — is the one that costs you every
+        answer you are about to need. That message is the only artefact that says who else received
+        it, what the payload actually was, and whether anyone acted on it. Delete the reporter's
+        copy and the next nine reports get investigated from nothing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Preserve</th><th>Why</th><th>How it gets lost</th></tr></thead>
+          <tbody>
+            <tr><td>The original, with headers</td><td>Sending infrastructure, authentication results, and the path it took</td><td>A plain forward rewrites the headers. Use the client's report button, or forward <em>as an attachment</em></td></tr>
+            <tr><td>The URLs <span class="acro-exp">(Uniform Resource Locator)</span> and attachment hashes</td><td>What you search the estate for, and what you block</td><td>Clicking through to "check" — from your own machine, on the corporate network</td></tr>
+            <tr><td>What the user actually did</td><td>Decides everything after this point</td><td>Never asked, because it feels like an accusation. Ask it anyway, and ask it first</td></tr>
+            <tr><td>The time they received and reported it</td><td>The gap is the exposure window for everyone else who got it</td><td>Assumed from the ticket timestamp, which is when they got round to telling you</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">Ask "did you enter anything?" before you ask anything else</strong>,
+          and ask it in a way that makes the honest answer easy — the person who clicked and is
+          embarrassed is the person whose account matters most, and a desk that reacts badly to that
+          answer once will not be told the second time. That is the same argument as
+          <span class="xref">Security Awareness — Turning People Into a Defense Layer</span>,
+          arriving on a Tuesday afternoon instead of in a slide deck.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Ten Minutes, In Order, and What Each Step Answers</div>
+      <div class="concept-desc">
+        The order matters more than the speed. Blocking the sender first feels productive and tells
+        you nothing; searching the tenant first tells you how big this is while the evidence is
+        still there to search.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>#</th><th>Do</th><th>It answers</th><th>Skipping it costs</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Ask what the user did — clicked, entered credentials, opened the attachment, replied</td><td>Whether this is a nuisance or an incident</td><td>Everything after this branches on it</td></tr>
+            <tr><td>2</td><td>Get the original with headers intact</td><td>Sender infrastructure and authentication results</td><td>You investigate a screenshot</td></tr>
+            <tr><td>3</td><td>Search the whole tenant for the sender, subject and URL</td><td>Who else received it, and who clicked</td><td>You contain one mailbox out of forty</td></tr>
+            <tr><td>4</td><td>Purge from every mailbox that received it, not just the reporter's</td><td>—</td><td>The same message reported again tomorrow by someone slower</td></tr>
+            <tr><td>5</td><td>Block the URL and the sending <em>infrastructure</em>, not only the address</td><td>—</td><td>The next one arrives from a different address on the same domain within the hour</td></tr>
+            <tr><td>6</td><td class="c-red">If credentials were entered: reset, <strong>then revoke sessions and refresh tokens</strong>, then check for new inbox rules and newly registered MFA <span class="acro-exp">(Multi-Factor Authentication)</span> methods</td><td>Whether the reset actually ended the access</td><td>A live session and a forwarding rule that survive the password change</td></tr>
+            <tr><td>7</td><td>Tell the reporter what happened</td><td>Whether they report the next one</td><td>Silence, which trains people out of reporting faster than any policy trains them into it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Step 6 is where the real work is and it is three actions, not one.</strong> A
+          password reset on its own leaves any token the attacker already holds valid until it
+          expires, which is the whole point of
+          <span class="xref">MFA Bypass in Practice — Adversary-in-the-Middle, Push Fatigue &amp; Stolen Sessions</span>.
+          The mailbox rule and the extra MFA method are the persistence, and they outlive
+          everything else you do.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Four Ways the Ticket Closes While the Access Continues</div>
+      <div class="concept-desc">
+        Each of these produces a resolved ticket, a reassured user, and an attacker who is still
+        in. They are worth knowing by fingerprint, because the queue will not show you any of them.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What was done</th><th>Why it looked complete</th><th>The fingerprint that it was not</th></tr></thead>
+          <tbody>
+            <tr><td>Password reset, nothing else</td><td>The credential the attacker phished no longer works</td><td class="c-red">Mail keeps leaving the mailbox after the reset. The stolen <em>session</em> outlives the password, and only an explicit revocation ends it</td></tr>
+            <tr><td>Purged the reporter's copy</td><td>The reported message is gone</td><td class="c-red">A second report, next day, same subject, different user — and by then several people have opened it</td></tr>
+            <tr><td>Blocked the sending address</td><td>That address cannot send again</td><td class="c-red">Near-identical mail from a new address on the same domain, or the same template from a different compromised tenant, inside the hour</td></tr>
+            <tr><td>"They didn't click, so we're fine"</td><td>No credential was entered <em>this time</em></td><td class="c-red">An inbox rule with a blank or single-character name moving mail to <em>RSS Feeds</em> or <em>Conversation History</em>, left behind by an earlier one nobody reported</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">Three of these four leave a clean queue and a live intruder.</strong>
+          The last row is the one worth building a detection for rather than a habit: a rule that
+          hides mail is a step every business-email-compromise chain takes and almost no legitimate
+          user takes — see
+          <span class="xref">Business Email Compromise — The Attack With No Malware</span> and
+          <span class="xref">Identity Threat Detection &amp; Response (ITDR)</span>.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The decision</div>
+      <div class="concept-title">When This Stops Being a Ticket, and Who Decides That</div>
+      <div class="concept-desc">
+        Most reported phish are a purge and a block. A few are the first ten minutes of an incident,
+        and the difference has to be written down before the day you need it — because at minute
+        nine, nobody wants to be the person who wakes somebody up over an email.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Signal</th><th>What it means</th><th>Next</th></tr></thead>
+          <tbody>
+            <tr><td>Credentials entered by anyone with privileged access</td><td>Assume the account, not just the password</td><td class="c-red">Declare. Do not batch this with the routine purge</td></tr>
+            <tr><td>Any mailbox rule or MFA method you did not expect</td><td>Persistence is already established</td><td class="c-red">Declare. The phish is now the least interesting part</td></tr>
+            <tr><td>The same campaign hitting finance or payroll specifically</td><td>Targeted, not sprayed — someone did research</td><td>Escalate and warn the named people directly, by a channel that is not email</td></tr>
+            <tr><td>An attachment that ran</td><td>Endpoint, not identity</td><td>Isolate the device before you finish the email work</td></tr>
+            <tr><td>One user, no click, sprayed template</td><td>The ordinary case</td><td>Purge, block, close, and count it — the count is what justifies the tooling</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Write the threshold down while nothing is happening.</strong> A rule as blunt as
+          <em>"privileged account, or any unexpected rule or MFA method, means we declare"</em> is
+          worth more than a better rule invented under pressure, because it removes the judgement
+          from the moment when judgement is worst. The handover itself is
+          <span class="xref">Escalation — Functional vs Hierarchical, and Handing Over Without Losing Context</span>;
+          what happens next is <span class="xref">Incident Response Lifecycle — PICERL</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: THE DE INTERVIEW ───────────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
