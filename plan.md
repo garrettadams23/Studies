@@ -17207,3 +17207,50 @@ second cell onwards; `.ref-table td:first-child` owns the first.**
 
 Check PASS · smoke **145/145** · search **36/36** · axe **6/6** · mobile **9/9** ·
 determinism reproducible.
+
+---
+
+## Session record — the CV card, and a 45-topic domain with a hole in the middle
+
+`writing a cv` came back from the probe with **zero**, and the first reading was that the
+site says *resume*. That was true and it was not the whole story. Fixing the word left the
+query still returning nothing, which is the useful kind of failure: the `career` domain has
+**forty-five topics** — networking, mentorship, interviews, negotiation, home labs,
+certifications, building in public, consulting, pricing, expert witness work — and not one
+of them is about the document every one of those journeys passes through.
+
+`Interview Preparation — Getting the Job` starts at the interview. `Breaking Into IT — From
+Zero to Hired` ends at "polish resume + LinkedIn", one bullet inside a five-step roadmap.
+The `--title` pre-flight scored **0.14** against the whole site.
+
+**`career` · *Your CV — The Six-Second Scan, the ATS, and What Actually Gets Read*** ·
+4 concept cards, 6,454 characters, placed immediately before the interview card.
+
+| Card | What it argues |
+|---|---|
+| **Two Readers, and Only One of Them Is a Person** | The inversion: a CV is not a biography, it is a filtering document read twice — by software matching the advert, then by a human giving it seconds. **Verdict:** the two readers are *not* in tension, which is what people get wrong; the imagined conflict is what produces a CV stuffed with terms nobody would say out loud, which then fails the human for the sake of the parser |
+| **The Top Third, Because That Is What Gets Read** | Headline, summary, most recent role, skills, certifications — what good looks like and the usual failure for each. **Verdict:** *scale* is the detail people leave out and the one that places them. "Managed backups" describes a hobbyist and a bank; "40 servers and 12 TB, with monthly restore tests" tells a reader in one line what size of problem you have met |
+| **Formatting That Deletes You Before a Person Sees It** | Two columns, contact details in the header, skills as a star graphic, a PDF that is an image, "3 years" instead of dates — each with its fingerprint. **Verdict:** open your own PDF, select all, paste into a text file. That is roughly what the first reader sees, it takes ten seconds, and almost nobody does it |
+| **Duties or Outcomes — and How Much to Tailor** | Four duty lines rewritten as outcomes, with what changed in each. **Verdict:** tailor the headline, the summary and the top three bullets — twenty minutes — and keep the rest. People who tailor everything apply to four jobs a week instead of twenty and conclude, wrongly, that the problem was the document |
+
+Seven symmetric related edges; one step on **Breaking Into IT**, before the interview card.
+
+### Why this one is not "one more card"
+
+The padding discipline says a rising count is not progress, and the honest test is whether a
+card fills a hole or thickens a wall. Two things say hole rather than wall here. The domain
+covers everything **around** the artefact and never the artefact — which is the shape a gap
+makes when every session writes what is adjacent to what it just wrote. And a reader typing
+the plainest possible query for it got nothing, from a domain with forty-five topics in it.
+
+**The mean chars per concept card did not move: 1,277 → 1,277.** 130 insertions, 0
+deletions. Two dense cards in a row now sit right on the site's own average, which is the
+number behaving exactly as it should — it is a padding detector, not a length budget.
+
+```
+topics       1,533 → 1,534
+zero-result probes  9 → 8
+```
+
+Check PASS · smoke **145/145** · search **36/36** · axe **6/6** · mobile **9/9** ·
+visual **2/2** · determinism reproducible.
