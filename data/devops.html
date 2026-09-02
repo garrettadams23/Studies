@@ -1948,6 +1948,39 @@ jobs:
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">"The Syntax Is a Lookup" Is True, Which Is Why Migration Costs Are Never in the YAML <span class="acro-exp">(YAML Ain't Markup Language)</span></div>
+                <div class="concept-desc">
+                  Translating a pipeline definition between two of these is a day's work. What
+                  actually holds a team on a platform is everything the pipeline file references:
+                  the runner fleet and its pre-installed tooling, the secrets store and how jobs
+                  authenticate to the cloud, the artifact repository, the approval gates, and — on
+                  Jenkins especially — a plugin surface that has accumulated for a decade and which
+                  nobody has a complete inventory of. A migration estimate built from the YAML is
+                  wrong by an order of magnitude, and the discovery happens after the decision.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What moves easily</th><th>What does not</th></tr>
+                    <tr><td>Stage and job definitions</td><td>Self-hosted runner images and the tools baked into them</td></tr>
+                    <tr><td>Build and test commands</td><td class="c-red">Cloud authentication — OIDC <span class="acro-exp">(OpenID Connect)</span> trust policies are per-provider and per-repository</td></tr>
+                    <tr><td>Artifact upload steps</td><td>Every plugin with no equivalent, and the Groovy shared library that grew around them</td></tr>
+                    <tr><td>Caching directives</td><td>Cache semantics and limits, which change your build times materially</td></tr>
+                    <tr><td>Branch triggers</td><td>Approval and environment-protection models, which are governance, not config</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">So choose on the two things that are expensive to
+                    change: where the code lives, and who runs the runners.</strong> Hosted runners
+                    are somebody else's patching and a per-minute bill; self-hosted are your patching
+                    and your isolation problem, and a runner that persists between jobs is a shared
+                    machine that untrusted code has executed on. Ephemeral runners cost more and
+                    remove a whole class of cross-job contamination — the security half of that
+                    argument is in
+                    <span class="xref">Securing the Pipeline — Secrets, Runners, Fork Pull Requests &amp; Internal Registries</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2373,6 +2406,40 @@ jobs:
                     <strong class="c-amber">Idempotency</strong> is the whole point: run it 100 times,
                     the box ends in the same state. Config management handles <em>mutable</em> servers;
                     it complements Terraform (which <em>provisions</em> the infra) — ties to the IaC <span class="acro-exp">(Infrastructure as Code)</span> card.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Declarative Modules, Procedural Playbooks — and a Job That Has Been Shrinking</div>
+                <div class="concept-desc">
+                  Ansible's <em>modules</em> are declarative: <code>state: present</code> converges
+                  whatever the machine currently is. A <em>playbook</em> is not — tasks run top to
+                  bottom, once, in the order you wrote them, and nothing re-evaluates an earlier task
+                  after a later one changes the world. That is why ordering bugs are the characteristic
+                  failure: a service started before its config file is templated, a handler that never
+                  fires because the task it notified reported no change, a role that works from a clean
+                  base and not on a machine somebody touched. Puppet's model differs precisely here —
+                  it builds a dependency graph and converges — which is the real distinction behind
+                  "agentless push" versus "agent pull", and it matters more than the transport does.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+                    <tr><td>Works on a fresh host, fails on an existing one</td><td>The playbook assumes a starting state it never asserts</td><td>Assert preconditions; test against a machine that has drifted, not only a clean image</td></tr>
+                    <tr><td>A handler never runs</td><td class="c-cyan">Handlers fire on <em>changed</em>, and a second run changes nothing</td><td><code>--force-handlers</code>, or make the restart an explicit task where it matters</td></tr>
+                    <tr><td><code>shell:</code> and <code>command:</code> everywhere</td><td>These are not idempotent unless you write the guard</td><td><code>creates:</code>, <code>removes:</code>, or a proper module</td></tr>
+                    <tr><td>Drift returns between runs</td><td>Push runs on your schedule; the machine changes on everyone else's</td><td>Run it on a timer, or move to a pull agent, or stop patching mutable machines</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And be honest about where this tool is still the right
+                    one.</strong> For anything you can rebuild, an immutable image plus a redeploy
+                    removes drift by construction and is the better answer — which is why config
+                    management's territory has narrowed to the machines you cannot re-create on
+                    demand: appliances, licensed on-prem systems, hardware with state, and the long
+                    tail of servers older than the platform. That is a real and durable job; it is
+                    just no longer the whole of infrastructure. See
+                    <span class="xref">Golden Images as Code — Packer, and Versioning What You Deploy</span>.
                   </div>
                 </div>
               </div>

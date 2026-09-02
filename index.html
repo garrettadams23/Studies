@@ -29018,8 +29018,8 @@ The professional-judgement side of this is in
 <span class="ctag ctag-general">CKA</span>
 </div>
 <span class="domain-sub">CI/CD · IaC · Containers · Kubernetes · GitOps · Secrets · Supply Chain · Serverless · Architecture</span>
-<span class="domain-meta" aria-label="50 topics, about 2h 10m to read"
->50 topics · ~2h 10m</span>
+<span class="domain-meta" aria-label="50 topics, about 2h 15m to read"
+>50 topics · ~2h 15m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -30903,12 +30903,12 @@ actions.
 </div>
 </div>
 </div>
-<div class="topic" id="jenkins-gitlab-ci-circleci-the-landscape" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="jenkins-gitlab-ci-circleci-the-landscape" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔧</span>
 <span class="topic-name">Jenkins · GitLab CI · CircleCI — The Landscape</span>
 <span class="topic-badge">DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -30928,6 +30928,39 @@ actions.
 They all share the model — YAML/DSL pipeline, runners/agents, stages, artifacts,
 secrets. Learn the concepts once; the syntax is a lookup. Pick by where your code
 lives and whether you want hosted vs self-managed.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">"The Syntax Is a Lookup" Is True, Which Is Why Migration Costs Are Never in the YAML <span class="acro-exp">(YAML Ain't Markup Language)</span></div>
+<div class="concept-desc">
+Translating a pipeline definition between two of these is a day's work. What
+actually holds a team on a platform is everything the pipeline file references:
+the runner fleet and its pre-installed tooling, the secrets store and how jobs
+authenticate to the cloud, the artifact repository, the approval gates, and — on
+Jenkins especially — a plugin surface that has accumulated for a decade and which
+nobody has a complete inventory of. A migration estimate built from the YAML is
+wrong by an order of magnitude, and the discovery happens after the decision.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What moves easily</th><th>What does not</th></tr>
+<tr><td>Stage and job definitions</td><td>Self-hosted runner images and the tools baked into them</td></tr>
+<tr><td>Build and test commands</td><td class="c-red">Cloud authentication — OIDC <span class="acro-exp">(OpenID Connect)</span> trust policies are per-provider and per-repository</td></tr>
+<tr><td>Artifact upload steps</td><td>Every plugin with no equivalent, and the Groovy shared library that grew around them</td></tr>
+<tr><td>Caching directives</td><td>Cache semantics and limits, which change your build times materially</td></tr>
+<tr><td>Branch triggers</td><td>Approval and environment-protection models, which are governance, not config</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">So choose on the two things that are expensive to
+change: where the code lives, and who runs the runners.</strong> Hosted runners
+are somebody else's patching and a per-minute bill; self-hosted are your patching
+and your isolation problem, and a runner that persists between jobs is a shared
+machine that untrusted code has executed on. Ephemeral runners cost more and
+remove a whole class of cross-job contamination — the security half of that
+argument is in
+<span class="xref" data-xref="securing-the-pipeline-secrets-runners-fork-pull-requests-int" role="link" tabindex="0">Securing the Pipeline — Secrets, Runners, Fork Pull Requests &amp; Internal Registries</span>.
 </div>
 </div>
 </div>
@@ -31322,12 +31355,12 @@ open for years. <strong>Do it before there is anything to break.</strong>
 </div>
 </div>
 </div>
-<div class="topic" id="configuration-management-ansible-the-alternatives" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="configuration-management-ansible-the-alternatives" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚙️</span>
 <span class="topic-name">Configuration Management — Ansible &amp; the Alternatives</span>
 <span class="topic-badge">Config Mgmt</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -31359,6 +31392,40 @@ and its YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> playbook
 <strong class="c-amber">Idempotency</strong> is the whole point: run it 100 times,
 the box ends in the same state. Config management handles <em>mutable</em> servers;
 it complements Terraform (which <em>provisions</em> the infra) — ties to the IaC <span class="acro-exp">(Infrastructure as Code)</span> card.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Declarative Modules, Procedural Playbooks — and a Job That Has Been Shrinking</div>
+<div class="concept-desc">
+Ansible's <em>modules</em> are declarative: <code>state: present</code> converges
+whatever the machine currently is. A <em>playbook</em> is not — tasks run top to
+bottom, once, in the order you wrote them, and nothing re-evaluates an earlier task
+after a later one changes the world. That is why ordering bugs are the characteristic
+failure: a service started before its config file is templated, a handler that never
+fires because the task it notified reported no change, a role that works from a clean
+base and not on a machine somebody touched. Puppet's model differs precisely here —
+it builds a dependency graph and converges — which is the real distinction behind
+"agentless push" versus "agent pull", and it matters more than the transport does.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+<tr><td>Works on a fresh host, fails on an existing one</td><td>The playbook assumes a starting state it never asserts</td><td>Assert preconditions; test against a machine that has drifted, not only a clean image</td></tr>
+<tr><td>A handler never runs</td><td class="c-cyan">Handlers fire on <em>changed</em>, and a second run changes nothing</td><td><code>--force-handlers</code>, or make the restart an explicit task where it matters</td></tr>
+<tr><td><code>shell:</code> and <code>command:</code> everywhere</td><td>These are not idempotent unless you write the guard</td><td><code>creates:</code>, <code>removes:</code>, or a proper module</td></tr>
+<tr><td>Drift returns between runs</td><td>Push runs on your schedule; the machine changes on everyone else's</td><td>Run it on a timer, or move to a pull agent, or stop patching mutable machines</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">And be honest about where this tool is still the right
+one.</strong> For anything you can rebuild, an immutable image plus a redeploy
+removes drift by construction and is the better answer — which is why config
+management's territory has narrowed to the machines you cannot re-create on
+demand: appliances, licensed on-prem systems, hardware with state, and the long
+tail of servers older than the platform. That is a real and durable job; it is
+just no longer the whole of infrastructure. See
+<span class="xref" data-xref="golden-images-as-code-packer-and-versioning-what-you-deploy" role="link" tabindex="0">Golden Images as Code — Packer, and Versioning What You Deploy</span>.
 </div>
 </div>
 </div>
@@ -99130,8 +99197,8 @@ redesign.
 <span class="ctag ctag-general">MEM</span>
 </div>
 <span class="domain-sub">MECM · Entra · Intune · Autopilot · ESP · Co-management · Windows Admin · Troubleshooting</span>
-<span class="domain-meta" aria-label="52 topics, about 2h 00m to read"
->52 topics · ~2h 00m</span>
+<span class="domain-meta" aria-label="52 topics, about 2h 05m to read"
+>52 topics · ~2h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -101075,12 +101142,12 @@ which describes the identical trap in the other console.
 WAVE Y3 — WINDOWS SERVICING & UPDATES
 ══════════════════════════════════════════════════════════════ -->
 <!-- ── TOPIC: WINDOWS UPDATE FOR BUSINESS ────────────────────── -->
-<div class="topic" id="windows-update-for-business-rings-deferrals-deadlines" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="windows-update-for-business-rings-deferrals-deadlines" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔄</span>
 <span class="topic-name">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span>
 <span class="topic-badge">Intune • Servicing</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -101118,15 +101185,49 @@ machines that were switched on.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Where the Policy Actually Came From — Dual Scan, and the Co-Management Slider</div>
+<div class="concept-desc">
+The ring is only in charge if the device agrees about who its update authority is,
+and on a co-managed estate that is genuinely ambiguous. A machine still pointed at
+WSUS <span class="acro-exp">(Windows Server Update Services)</span> by Group Policy,
+while Intune sets deferrals, ends up in <strong>dual scan</strong>: it scans
+Windows Update for some content and WSUS for the rest, and the result is a device
+that reports compliant in one console and behind in the other, with neither wrong.
+The symptom is a ring that appears not to apply — updates arriving early, late, or
+not at all, on a subset of machines nobody can characterise.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Check</th><th>Where</th><th>What you are looking for</th></tr></thead>
+<tbody>
+<tr><td>Which authority the device uses</td><td><code>HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate</code></td><td><code>WUServer</code> present alongside Intune deferrals — that is dual scan</td></tr>
+<tr><td>Co-management workload</td><td>Intune ▸ Devices ▸ co-management settings</td><td class="c-cyan">The Windows Update policies slider — Pilot Intune, Intune, or ConfigMgr; anything not fully moved leaves MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> in charge for that device</td></tr>
+<tr><td>Whether MDM <span class="acro-exp">(Mobile Device Management)</span> or GPO <span class="acro-exp">(Group Policy Object)</span> won</td><td>MDM wins by default; <code>ControlPolicyConflict</code> flips it</td><td>A setting that reverts after every policy refresh</td></tr>
+<tr><td>The device's actual scan source</td><td><code>%windir%\WindowsUpdate.log</code> (or <code>Get-WindowsUpdateLog</code>)</td><td>The service it contacted, per scan — this is the ground truth</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Pick one authority per device and prove it, before tuning
+any ring.</strong> Every hour spent adjusting deferrals on a dual-scan fleet is
+wasted, because the deferral is not what is deciding the outcome. The
+co-management slider is the honest place to make that decision — it is per
+workload and it can be piloted on a collection, which is how estates actually
+move rather than in one weekend. The full seam between the two consoles is in
+<span class="xref" data-xref="co-management-cloud-attach" role="link" tabindex="0">Co-management &amp; Cloud Attach</span>.
+</div>
+</div>
+</div>
 </div>
 </div>
 <!-- ── TOPIC: THREE UPDATE PIPELINES ─────────────────────────── -->
-<div class="topic" id="feature-vs-quality-vs-driver-updates" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="feature-vs-quality-vs-driver-updates" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧩</span>
 <span class="topic-name">Feature vs Quality vs Driver Updates</span>
 <span class="topic-badge">Intune • Servicing</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -101155,6 +101256,40 @@ updates" and a driver shipped anyway.
 Since they were combined into one package, the servicing stack update cannot be
 uninstalled — only the cumulative part can. "We will just roll it back" is a
 plan that works for the LCU and not for the SSU underneath it.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Safeguard Holds — Microsoft's Block That Looks Exactly Like Your Ring Working</div>
+<div class="concept-desc">
+There is a fourth actor in the servicing decision besides your deferral, your
+deadline and the user: Microsoft applies <strong>safeguard holds</strong> to
+devices whose hardware, driver or application telemetry matches a known-bad
+combination for a specific feature update. The device simply is not offered the
+update. Nothing fails, nothing is logged where an administrator looks, and the
+fleet report shows a subset of machines sitting on the old version — which reads
+as a ring that has not progressed, and produces a week of investigating rings that
+are behaving perfectly.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Fact</th><th>Consequence</th></tr></thead>
+<tbody>
+<tr><td>Holds are per device and per target version</td><td>Two identical-looking laptops can differ because of one driver revision</td></tr>
+<tr><td>They are published with a safeguard id</td><td class="c-cyan">Windows Update for Business reports name the id and the reason — that report is the only convenient place to see it</td></tr>
+<tr><td>They can be opted out of</td><td>The <code>DisableWUfBSafeguards</code> policy overrides them — for validation, not as a fleet default</td></tr>
+<tr><td>They lift when the underlying issue is fixed</td><td class="c-red">Which means an override taken during a rollout can quietly persist long after it was needed</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Check for a hold before assuming a servicing fault, and
+treat a hold as information rather than an obstacle.</strong> It is telling you
+that a driver or application in your estate has a known incompatibility with the
+version you are deploying — which is a compatibility work item with a name
+attached, and considerably cheaper to act on than the same problem discovered by
+rolling forward into it. Overriding is legitimate for a validation ring and
+should carry an expiry date the same way any exception does.
 </div>
 </div>
 </div>

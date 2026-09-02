@@ -2017,6 +2017,40 @@ Restart-Service IntuneManagementExtension</pre>
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Where the Policy Actually Came From — Dual Scan, and the Co-Management Slider</div>
+      <div class="concept-desc">
+        The ring is only in charge if the device agrees about who its update authority is,
+        and on a co-managed estate that is genuinely ambiguous. A machine still pointed at
+        WSUS <span class="acro-exp">(Windows Server Update Services)</span> by Group Policy,
+        while Intune sets deferrals, ends up in <strong>dual scan</strong>: it scans
+        Windows Update for some content and WSUS for the rest, and the result is a device
+        that reports compliant in one console and behind in the other, with neither wrong.
+        The symptom is a ring that appears not to apply — updates arriving early, late, or
+        not at all, on a subset of machines nobody can characterise.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Where</th><th>What you are looking for</th></tr></thead>
+          <tbody>
+            <tr><td>Which authority the device uses</td><td><code>HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate</code></td><td><code>WUServer</code> present alongside Intune deferrals — that is dual scan</td></tr>
+            <tr><td>Co-management workload</td><td>Intune ▸ Devices ▸ co-management settings</td><td class="c-cyan">The Windows Update policies slider — Pilot Intune, Intune, or ConfigMgr; anything not fully moved leaves MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> in charge for that device</td></tr>
+            <tr><td>Whether MDM <span class="acro-exp">(Mobile Device Management)</span> or GPO <span class="acro-exp">(Group Policy Object)</span> won</td><td>MDM wins by default; <code>ControlPolicyConflict</code> flips it</td><td>A setting that reverts after every policy refresh</td></tr>
+            <tr><td>The device's actual scan source</td><td><code>%windir%\WindowsUpdate.log</code> (or <code>Get-WindowsUpdateLog</code>)</td><td>The service it contacted, per scan — this is the ground truth</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-cyan">Pick one authority per device and prove it, before tuning
+          any ring.</strong> Every hour spent adjusting deferrals on a dual-scan fleet is
+          wasted, because the deferral is not what is deciding the outcome. The
+          co-management slider is the honest place to make that decision — it is per
+          workload and it can be piloted on a collection, which is how estates actually
+          move rather than in one weekend. The full seam between the two consoles is in
+          <span class="xref">Co-management &amp; Cloud Attach</span>.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2054,6 +2088,40 @@ Restart-Service IntuneManagementExtension</pre>
           Since they were combined into one package, the servicing stack update cannot be
           uninstalled — only the cumulative part can. "We will just roll it back" is a
           plan that works for the LCU and not for the SSU underneath it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Safeguard Holds — Microsoft's Block That Looks Exactly Like Your Ring Working</div>
+      <div class="concept-desc">
+        There is a fourth actor in the servicing decision besides your deferral, your
+        deadline and the user: Microsoft applies <strong>safeguard holds</strong> to
+        devices whose hardware, driver or application telemetry matches a known-bad
+        combination for a specific feature update. The device simply is not offered the
+        update. Nothing fails, nothing is logged where an administrator looks, and the
+        fleet report shows a subset of machines sitting on the old version — which reads
+        as a ring that has not progressed, and produces a week of investigating rings that
+        are behaving perfectly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Fact</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Holds are per device and per target version</td><td>Two identical-looking laptops can differ because of one driver revision</td></tr>
+            <tr><td>They are published with a safeguard id</td><td class="c-cyan">Windows Update for Business reports name the id and the reason — that report is the only convenient place to see it</td></tr>
+            <tr><td>They can be opted out of</td><td>The <code>DisableWUfBSafeguards</code> policy overrides them — for validation, not as a fleet default</td></tr>
+            <tr><td>They lift when the underlying issue is fixed</td><td class="c-red">Which means an override taken during a rollout can quietly persist long after it was needed</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-cyan">Check for a hold before assuming a servicing fault, and
+          treat a hold as information rather than an obstacle.</strong> It is telling you
+          that a driver or application in your estate has a known incompatibility with the
+          version you are deploying — which is a compatibility work item with a name
+          attached, and considerably cheaper to act on than the same problem discovered by
+          rolling forward into it. Overriding is legitimate for a validation ring and
+          should carry an expiry date the same way any exception does.
         </div>
       </div>
     </div>
