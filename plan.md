@@ -15744,3 +15744,61 @@ them would have produced five versions of the same card.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the script tail: what choosing this decides for you
+
+`script`'s thin cards are tours — a language or a tool, its syntax, its ecosystem,
+a verdict. Accurate, and they answer *what is this* without answering the question
+someone reading them is actually about to face: **what does picking this decide on my
+behalf, and what does that make expensive?** Every technology here has already made a
+set of trade-offs; adopting it is inheriting them, and the inherited ones are what
+show up eighteen months later.
+
+| Card | What it makes cheap | What it makes expensive |
+|---|---|---|
+| Rust | A whole class of memory and concurrency bugs, gone at compile time | Prototypes whose shape is still moving; shared-mutable graphs; build times |
+| Java | Long-lived services — mature GC, real production profiling | Cold starts, footprint, and autoscaling that adds cold instances during a spike |
+| PHP | Shared-nothing request handling: leaks cannot accumulate, one crash costs one request | Anything that must live between requests — pools, caches, sockets |
+| C | The ABI everything links against; freestanding targets | Everything else — and "we are careful" is not a strategy, tooling is |
+| Kafka | Replayable, decoupled event flow | The partition key, which decides ordering, parallelism and skew at once |
+| Spark | Data that genuinely exceeds one machine | Every shuffle — and the premise, now that DuckDB and Polars exist |
+
+### Three things that were worth writing down
+
+**Undefined behaviour is a licence, not a crash.** The C card described UB as going
+off the rails. The modern reality is that an optimiser assumes UB never happens and
+reasons *backwards*: a null check placed after a dereference gets deleted, because the
+dereference proves the pointer was non-null. The defensive check disappears and the
+bug it guarded becomes exploitable — at `-O2`, on one compiler, often after an
+upgrade. That reframes the practices from hygiene to necessity.
+
+**Java's JIT warm-up decides the deployment shape before a line is written.** A
+runtime that gets faster the longer it runs is the best case in the industry for a
+long-lived service and a poor fit for a 200ms function. Virtual threads are the
+biggest change to that story in twenty years, because they remove the main reason
+teams reached for a different runtime.
+
+**Kafka's partition key is the architecture.** Ordering exists only within a
+partition, so keying by customer gives you the ordering you meant and a hot partition
+if one customer is enormous; the partition count caps the consumer group forever,
+because partitions add easily and never come off. Most "Kafka incidents" are a hot
+partition, a rebalance storm, or an at-least-once delivery into a non-idempotent sink.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   73      67
+script thin                   14       8   (9% → 5%)
+mean chars/concept card    1,262   1,264   ← +2 over six cards
+median topic               3,276   3,281
+10th percentile            1,552   1,569
+```
+
+Six waves this session: **35 cards, thin 102 → 67 (a third of the tail gone),
+counter-metric +8 characters, 10th percentile up 85.**
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.

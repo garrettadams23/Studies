@@ -1072,6 +1072,38 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">What "Fighting the Borrow Checker" Actually Means, and When It Is the Wrong Fight</div>
+                <div class="concept-desc">
+                  The learning curve is not syntax. It is that Rust requires you to decide the
+                  <strong>ownership shape of your data</strong> up front, and most programs written
+                  in garbage-collected languages never had one — objects point at each other freely
+                  because the collector sorts it out later. A doubly linked list, a parent pointer
+                  in a tree, an observer that holds its subject: all trivial in Java or Python, all
+                  a design exercise in Rust. That is the compiler surfacing a decision the other
+                  languages let you avoid, and it is genuinely valuable in a long-lived system and
+                  genuinely expensive in a prototype whose shape is still moving.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you are told</th><th>What is actually happening</th></tr>
+                    <tr><td>"Clone it to make the error go away"</td><td>Often correct and cheap; sometimes it is hiding a data model that wants <code>Rc</code>/<code>Arc</code> or an arena with indices instead of references</td></tr>
+                    <tr><td>"No data races"</td><td class="c-cyan">True and precise: <code>Send</code>/<code>Sync</code> are checked at compile time. Deadlocks, leaks and logic races are still entirely possible</td></tr>
+                    <tr><td>"Zero-cost abstractions"</td><td>At run time, yes. The cost moved to compile time — large workspaces take minutes, which changes how you work</td></tr>
+                    <tr><td>"Safe means safe"</td><td><code>unsafe</code> blocks, and any C library you bind to, are outside the guarantee — the audit surface is those blocks, and it is small enough to actually audit</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Choose it where the cost of a memory or concurrency bug
+                    is high and the design is stable</strong> — a parser handling hostile input, a
+                    proxy on the data path, a component embedded in something you cannot easily
+                    patch. Choose against it where you are still learning what the program is, or
+                    where the team's next five hires will not know it. "Rewrite it in Rust" is a
+                    real answer to a real class of CVE <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> and a poor answer to "this service is slow",
+                    which is usually the database.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1109,6 +1141,37 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                   <div class="concept-desc verdict">
                     <strong class="c-amber">Kotlin</strong> is the modern, less-verbose JVM language
                     (and Android's default) — worth reaching for on new JVM projects.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The JVM Decides Your Deployment Shape Before You Write a Line</div>
+                <div class="concept-desc">
+                  Choosing Java is choosing a runtime that gets faster the longer it runs. The JIT <span class="acro-exp">(Just-In-Time)</span> compiler needs thousands of
+                  executions before it optimises a hot path, so a process is slowest exactly when it
+                  starts — and that single property decides where Java is excellent and where it is
+                  a poor fit. A long-running service that warms up once and serves for weeks is the
+                  best case in the industry: mature GC, world-class observability, and a profiler
+                  that works in production. A function invoked for 200ms and discarded pays the
+                  startup and never reaches the optimisation.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>What it makes cheap</th><th>What it makes expensive</th></tr>
+                    <tr><td>JIT warm-up</td><td>Long-lived services, high sustained throughput</td><td class="c-red">Serverless cold starts, short CLI <span class="acro-exp">(Command Line Interface)</span> runs, autoscaling that adds instances during a spike</td></tr>
+                    <tr><td>Managed heap</td><td>No use-after-free; tunable, well-understood collectors</td><td>Memory footprint measured in hundreds of MB before your code runs; pause tuning is a specialism</td></tr>
+                    <tr><td>Bytecode portability</td><td>One artifact, many platforms; Kotlin/Scala/Clojure share it</td><td>A JVM to install, patch and size — the container is not small</td></tr>
+                    <tr><td>Deep framework ecosystem</td><td>Spring solves nearly everything, with an answer for every enterprise integration</td><td>Startup time and reflection magic; a stack trace can be sixty frames of framework</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">The modern escape hatches are real, and they cost
+                    something too.</strong> GraalVM native images compile ahead of time and start in
+                    milliseconds, at the price of reflection configuration and a build that no
+                    longer resembles the one you debug. Virtual threads (Loom) make blocking code
+                    scale like async code without the colouring problem, which is the biggest
+                    change to the language's concurrency story in twenty years — and it removes the
+                    main reason teams reached for a different runtime.
                   </div>
                 </div>
               </div>
@@ -1223,6 +1286,36 @@ $sum = <span class="fn">array_sum</span>($nums);
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Shared-Nothing Per Request Is the Whole Design — the Strength and the Ceiling</div>
+                <div class="concept-desc">
+                  "Each request runs a script fresh" is listed as a concept and it is really the
+                  architecture. Every request starts with an empty process state, runs, and throws
+                  everything away. That makes a class of bug structurally impossible — a memory leak
+                  cannot accumulate across requests, one request's global state cannot poison the
+                  next, and a crashed worker takes exactly one request with it — which is why PHP scaled horizontally on
+                  cheap hosting for twenty years with operations teams who never thought about it.
+                </div>
+                <div class="concept-desc">
+                  The same property is the ceiling. Anything that wants to live between requests —
+                  a warm connection pool, an in-process cache, a websocket, a background worker —
+                  has to live somewhere else, which is why a PHP stack reaches for Redis, a queue
+                  and a separate daemon at a point where a long-lived runtime would just keep an
+                  object. Per-request bootstrap is also real work: a framework rebuilding its
+                  container on every request is why opcache and preloading matter more here than
+                  tuning usually does elsewhere, and why the long-running server model (Swoole,
+                  FrankenPHP, RoadRunner) exists — it trades the safety back for the speed.
+                </div>
+                <div class="concept-desc verdict">
+                  <strong class="c-cyan">Judge the choice on where state has to live, not on the
+                  language's reputation.</strong> A request-response application with a database
+                  behind it is exactly what this model is for, and modern PHP is a fast, typed,
+                  well-tooled way to build one. An application whose core is a long-lived connection
+                  or an in-memory working set is fighting the runtime, and every workaround for that
+                  is another moving part to operate.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1260,6 +1353,41 @@ $sum = <span class="fn">array_sum</span>($nums);
                   <div class="concept-desc verdict">
                     C's manual memory is exactly what Rust set out to make safe. Its lack of guardrails
                     is why memory-safety bugs dominate CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> — the security case for newer languages.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Undefined Behaviour Is Not "Crashes Sometimes" — It Is a Licence the Compiler Uses</div>
+                <div class="concept-desc">
+                  The table lists undefined behaviour as going "off the rails when you break the
+                  rules", and the modern reality is sharper and much stranger. An optimising
+                  compiler is entitled to assume UB never happens, and it reasons <em>backwards</em>
+                  from that assumption. A null check placed after a pointer has already been
+                  dereferenced can be deleted entirely, because the dereference proves the pointer
+                  was non-null — so a defensive check disappears and the bug it guarded becomes
+                  exploitable. Signed overflow lets a loop bound be treated as impossible and the
+                  loop unrolled into something unbounded. The code you wrote is not the code that
+                  ran, and the difference appears only at <code>-O2</code>, only on one compiler,
+                  and often only after an upgrade.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Practice</th><th>Why it earns its place</th></tr>
+                    <tr><td>Build with sanitizers</td><td><code>-fsanitize=address,undefined</code> in CI catches use-after-free and UB at the moment it happens, with a stack trace</td></tr>
+                    <tr><td><code>-Wall -Wextra -Werror</code></td><td>The warnings are the language's real type system; ignoring them is how the bugs get in</td></tr>
+                    <tr><td>Fuzz the parsers</td><td>Anything reading untrusted bytes; libFuzzer/AFL find in hours what review does not find at all</td></tr>
+                    <tr><td>Bound every copy</td><td><code>strcpy</code>, <code>sprintf</code> and friends have safe replacements — and the unsafe ones still compile without complaint</td></tr>
+                    <tr><td>Valgrind or ASan on the test suite</td><td class="c-cyan">A leak or overflow that does not crash today is a CVE when input changes</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Choose C where you genuinely need it — a kernel, a
+                    freestanding target, an ABI <span class="acro-exp">(Application Binary Interface)</span> everything else links against — and then pay for the
+                    tooling, because the tooling is the safety.</strong> "We are careful" is the
+                    position that produced two decades of memory-safety CVEs in code written by
+                    people who were, in fact, careful. Where the constraint is only performance,
+                    that argument no longer selects C on its own; see
+                    <span class="xref">Rust — Safe Systems Programming</span>.
                   </div>
                 </div>
               </div>
@@ -1369,6 +1497,38 @@ $sum = <span class="fn">array_sum</span>($nums);
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Partition Key Is the Architecture — Ordering, Parallelism and Skew All Come From It</div>
+                <div class="concept-desc">
+                  Kafka gives ordering <em>within a partition</em> and nothing across partitions, so
+                  the key you choose decides three things at once and they trade against each other.
+                  Key by <code>customer_id</code> and every event for one customer is ordered, which
+                  is usually what "ordered" was meant to mean — but one enormous customer now pins
+                  one partition and one consumer, and that consumer lags while the rest idle. Key by
+                  nothing and throughput is even and ordering is gone. The partition count is the
+                  ceiling on consumers in a group: adding an eleventh consumer to a ten-partition
+                  topic gives you an idle process, and partitions are easy to add and impossible to
+                  remove.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Operational reality</th><th>What it means in practice</th></tr>
+                    <tr><td>Rebalancing</td><td>A consumer joining, leaving or timing out stops the whole group briefly — a slow handler that misses <code>max.poll.interval.ms</code> triggers a rebalance, which makes it slower, which triggers another</td></tr>
+                    <tr><td>Offset commit timing</td><td>Commit before processing gives at-most-once; after gives at-least-once. There is no "exactly once" unless the sink is idempotent or transactional</td></tr>
+                    <tr><td>Retention vs compaction</td><td class="c-cyan">Time-based retention deletes history; log compaction keeps the last value per key. "The log is the source of truth" is only true under compaction</td></tr>
+                    <tr><td>Consumer lag</td><td>The one metric that matters, and it is per partition — an aggregate lag of zero can hide one partition hours behind</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Pick the key from the ordering guarantee you actually
+                    need, then check its cardinality and distribution before anything else.</strong>
+                    Most Kafka incidents are not Kafka failing; they are a hot partition, a
+                    rebalance storm, or a consumer whose "exactly once" was at-least-once into a
+                    non-idempotent sink — see
+                    <span class="xref">Idempotency &amp; Exactly-Once — Safe Retries</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1405,6 +1565,37 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                     <strong class="c-amber">When:</strong> data outgrows pandas/one box. For smaller
                     data, single-node tools (DuckDB, Polars) are simpler and often faster — don't
                     reach for a cluster you don't need.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Everything Expensive in Spark Is a Shuffle, and Skew Decides How Expensive</div>
+                <div class="concept-desc">
+                  The DataFrame API hides the one distinction that governs cost. Narrow operations —
+                  <code>filter</code>, <code>select</code>, <code>withColumn</code> — run on each
+                  partition where it already sits, and are effectively free to add. Wide operations
+                  — <code>groupBy</code>, <code>join</code>, <code>distinct</code>,
+                  <code>orderBy</code> — must redistribute rows across the cluster by key, writing
+                  them to disk and reading them over the network. That is a <strong>shuffle</strong>,
+                  it is the unit of cost, and reading the query plan for the number of shuffles tells
+                  you more about a job's runtime than the size of the input does.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Symptom</th><th>Cause</th><th>Move</th></tr>
+                    <tr><td>199 tasks finish in seconds, one runs for an hour</td><td class="c-red">Skew — one key holds most of the rows, and one task got all of it</td><td>Salt the key, or enable adaptive query execution's skew join handling</td></tr>
+                    <tr><td>Executors dying with out-of-memory during a join</td><td>A shuffle partition too large to fit</td><td>More shuffle partitions, or broadcast the small side</td></tr>
+                    <tr><td>A small lookup table joined the expensive way</td><td>Spark chose a sort-merge join</td><td>Broadcast it explicitly — this is the single highest-value tuning move</td></tr>
+                    <tr><td>The job re-reads the source three times</td><td>Lazy evaluation recomputes the DAG per action</td><td><code>cache()</code> the reused DataFrame — and only that one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And check the premise before tuning any of it.</strong>
+                    A cluster is worth its operational cost above roughly the point where the data
+                    stops fitting on one large machine, and that point has moved a long way: DuckDB
+                    and Polars handle tens of gigabytes on a laptop faster than a small Spark
+                    cluster will, because they never pay for a shuffle across a network. The right
+                    first question is not how to tune the job but whether it needs a cluster at all.
                   </div>
                 </div>
               </div>
