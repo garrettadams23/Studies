@@ -16714,3 +16714,74 @@ back for the next thing that needs it.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 resilience PASS · determinism reproducible.
+
+---
+
+## Session record — Phase 11 waves V2 and V4, and the row that contradicted the site
+
+Phase 11's §7 audit read V1, V3 and V5 and left **V2 (service limits) and V4 (default
+retention) unread**. This closes them, and re-reads the other three because §7 said V5
+grows with every `m365` or `cloud` wave and roughly 120 cards have shipped since.
+
+The phase's own prediction held on four of the five waves and broke on one, and the one
+it broke on is the only interesting part.
+
+| Wave | Class | Mechanical search returned | Actionable |
+|---|---|---|---|
+| **V2** — service limits | 31 undated number-and-unit claims in `cloud`, `m365`, `data`, `endpoint`, `infra` | **1.** Graph's 20-per-batch limit is already dated; MongoDB's 16 MB document cap is architectural; the rest are worked arithmetic (*"a 500 GB volume 5% full costs 500 GB"*), ring schedules, and lease examples | The Windows **feature-update rollback window** |
+| **V4** — default retention | 20 duration claims near a retention noun | **0 edits, and a cross-check that passed.** `m365` says 93 days for the recycle bin in two different cards and 30 days for group soft delete in a third — all consistent, and the soft-delete figure has a fact anchor. `blueteam`'s *"keep 30 days because 90 was expensive"* is the argument, not a default | None |
+| **V1** — tier gating | 3 hits | Same finding as §7: `m365`'s `E3`/`E5` are the licensing card's *subject*; `endpoint`'s is already hedged (*"the right licenses … usually"*) | None |
+| **V3** — prices | 23 money claims | The GRC risk-quantification tables are worked examples, `career`'s budget tiers are pedagogical anchors, GDPR's €20m is statutory text | One **statutory limit with a stale year** |
+| **V5** — console paths | 4 candidates, up from §7's 2 | Two are §7's known false positives. `m365`'s *"every Exchange admin meets"* is a **job title**, not a console — the check cannot tell. `cloud`'s is real | One console name |
+
+### The four edits
+
+**1. `sec` — a GPO example that argued against the site.** The Active Directory reference
+card's *GPO Use Case* table listed a password policy as `Min length 12, complexity
+required, 90-day expiry`. Four hundred lines away, *Credential Exposure Monitoring* says
+the durable fix is **"a password policy that does not push people toward reuse"** — and a
+scheduled maximum age is the single setting most reliably responsible for `Autumn2025!`
+becoming `Winter2026!`. Two cards, written by different sessions, taking opposite
+positions with nothing between them.
+
+This is what §6 meant by *"§9's contradiction pass applies here"*, and it is the first
+time that pass has found a real disagreement rather than a bug in the tool. The row now
+names what the GPO controls, and a verdict under the table says which of those settings
+is the trap, why it was dropped from the NIST guidance and Microsoft's own baseline, and
+what replaces it — with an xref to the card it was contradicting.
+
+**2. `endpoint` — the rollback window, dated.** `Rollback · 10 days by default` is
+exactly the case §5 reserves the volatile span for: a number you design around, and one
+that has moved before (it was 30 days until Windows 10 1607). Dated, and given the trap
+that actually catches people — disk cleanup ends the window early, so the ten days are a
+maximum rather than a guarantee.
+
+**3. `career` — a statutory limit with a year on it.** `Max 401k — $23k/year limit
+(2024)` was honest about its own age and two years past it. §5's rewrite applies cleanly:
+the cap is indexed to inflation, so *"set annually and rises with inflation, so look up
+this year's figure"* is a sentence that will never be wrong. **One dated claim removed.**
+
+**4. `cloud` — one console name.** *"Restrict access to the Entra admin portal"* mirrors
+a real Entra setting, so the reader will go looking for it by name; dated, and corrected
+to the product's actual name.
+
+### What this says about the phase
+
+§3 argued that the right response to a check that cannot be narrowed is not to ship it,
+and §7 argued that the right output of a Phase 11 pass is a table rather than a pile of
+edits. Both survive: **78 mechanical hits, four edits, and one of the four is a content
+bug that no freshness tool could ever have found** — the claim was not stale, it was
+wrong, and it was only visible by reading it against another card.
+
+The counter-discipline holds too. §6 says a rising volatile-span count is not
+automatically progress, and this pass does raise it: **46 → 48**. Two numbers now carry a
+date because the number is the point, and a third — the one that carried a year in its own
+prose — was rewritten out instead of dated, which is the trade §5 asks for. The count rising
+by two while a claim disappears entirely is the shape to want; it rising by three would not be.
+
+**The phase stays open.** V5's candidate count went 2 → 4 while the two new ones were a
+job title and one real hit, which is the signal to expect: the check over-matches in
+proportion to how much `m365` and `cloud` prose exists, so its output grows even when the
+site stays disciplined. That is a reason to keep re-reading it, not a reason to tighten it.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · determinism reproducible.

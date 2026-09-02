@@ -931,13 +931,27 @@
         </div>
         <table class="ref-table" style="margin-bottom:14px">
           <tr><th>GPO Use Case</th><th>Example Setting</th></tr>
-          <tr><td style="color:var(--cyan)">Password Policy</td><td>Min length 12, complexity required, 90-day expiry</td></tr>
+          <tr><td style="color:var(--cyan)">Password Policy</td><td>Minimum length, complexity, history depth, maximum age &mdash; and maximum age is the one to think about</td></tr>
           <tr><td style="color:var(--cyan)">Account Lockout</td><td>Lock after 5 bad passwords for 30 minutes</td></tr>
           <tr><td style="color:var(--cyan)">Software Deployment</td><td>Push MSI <span class="acro-exp">(Microsoft Installer)</span> packages to all machines in an OU</td></tr>
           <tr><td style="color:var(--cyan)">Script Execution</td><td>Run logon/logoff scripts; restrict PowerShell</td></tr>
           <tr><td style="color:var(--cyan)">Security Settings</td><td>Disable guest, rename Administrator, firewall rules</td></tr>
           <tr><td style="color:var(--cyan)">AppLocker / WDAC <span class="acro-exp">(Windows Defender Application Control)</span></td><td>Whitelist which executables are allowed to run</td></tr>
         </table>
+
+        <div class="concept-desc verdict">
+          One row there is a trap and it is the oldest setting in the list. A
+          <strong>maximum password age</strong> has been dropped from the NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> identity
+          guidance and from Microsoft&rsquo;s own Windows security baseline, because the behaviour it
+          reliably produces is <code>Autumn2025!</code> becoming <code>Winter2026!</code>
+          &mdash; a rotation anyone holding one of them can guess. Set a long minimum length,
+          a deep history, and a check against known-breached passwords; then leave the age
+          alone unless a regulator names it. If you inherit a domain with 90-day expiry
+          switched on, removing it is a change people will argue about, so bring the
+          guidance with you.
+          <span class="xref">Credential Exposure Monitoring — Breach Data, and Using It Responsibly</span>
+          makes the same argument from the breach side.
+        </div>
 
         <div class="dt">▸ AD ENUMERATION (POST-EXPLOITATION)</div>
         <pre class="code-block">

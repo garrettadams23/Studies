@@ -8093,12 +8093,12 @@ granted without re-entering password.
 <!-- ═══════════════════════════════════════════════════
 TOPIC: Active Directory
 ═══════════════════════════════════════════════════ -->
-<div class="topic" id="active-directory-structure-objects-attacks" data-reviewed="2026-07" data-read="8" data-level="core">
+<div class="topic" id="active-directory-structure-objects-attacks" data-reviewed="2026-07" data-read="9" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏢</span>
 <span class="topic-name">Active Directory — Structure, Objects &amp; Attacks</span>
 <span class="topic-badge">SEC+ · CySA+ · PenTest+</span>
-<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">9 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -8190,13 +8190,26 @@ Applied order: <strong style="color:var(--cyan)">Local → Site → Domain → O
 </div>
 <table class="ref-table" style="margin-bottom:14px">
 <tr><th>GPO Use Case</th><th>Example Setting</th></tr>
-<tr><td style="color:var(--cyan)">Password Policy</td><td>Min length 12, complexity required, 90-day expiry</td></tr>
+<tr><td style="color:var(--cyan)">Password Policy</td><td>Minimum length, complexity, history depth, maximum age &mdash; and maximum age is the one to think about</td></tr>
 <tr><td style="color:var(--cyan)">Account Lockout</td><td>Lock after 5 bad passwords for 30 minutes</td></tr>
 <tr><td style="color:var(--cyan)">Software Deployment</td><td>Push MSI <span class="acro-exp">(Microsoft Installer)</span> packages to all machines in an OU</td></tr>
 <tr><td style="color:var(--cyan)">Script Execution</td><td>Run logon/logoff scripts; restrict PowerShell</td></tr>
 <tr><td style="color:var(--cyan)">Security Settings</td><td>Disable guest, rename Administrator, firewall rules</td></tr>
 <tr><td style="color:var(--cyan)">AppLocker / WDAC <span class="acro-exp">(Windows Defender Application Control)</span></td><td>Whitelist which executables are allowed to run</td></tr>
 </table>
+<div class="concept-desc verdict">
+One row there is a trap and it is the oldest setting in the list. A
+<strong>maximum password age</strong> has been dropped from the NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> identity
+guidance and from Microsoft&rsquo;s own Windows security baseline, because the behaviour it
+reliably produces is <code>Autumn2025!</code> becoming <code>Winter2026!</code>
+&mdash; a rotation anyone holding one of them can guess. Set a long minimum length,
+a deep history, and a check against known-breached passwords; then leave the age
+alone unless a regulator names it. If you inherit a domain with 90-day expiry
+switched on, removing it is a change people will argue about, so bring the
+guidance with you.
+<span class="xref" data-xref="credential-exposure-monitoring-breach-data-and-using-it-resp" role="link" tabindex="0">Credential Exposure Monitoring — Breach Data, and Using It Responsibly</span>
+makes the same argument from the breach side.
+</div>
 <div class="dt">▸ AD ENUMERATION (POST-EXPLOITATION)</div>
 <pre class="code-block">
 <span class="com"># PowerShell AD module (requires RSAT or domain-joined machine)</span>
@@ -64840,7 +64853,7 @@ rather than folding to one home, which is why this took a decision. -->
 2. <strong>401k up to employer match</strong> — it's 50-100% instant return on investment. Never leave free money on the table.<br>
 3. <strong>High-interest debt</strong> — pay off credit cards (&gt;7% interest) before investing further.<br>
 4. <strong>IRA (Roth if eligible)</strong> — tax-advantaged; grows tax-free.<br>
-5. <strong>Max 401k</strong> — $23k/year limit (2024); reduces taxable income.<br>
+5. <strong>Max 401k</strong> — the elective-deferral cap is set annually and rises with inflation, so look up this year's figure; reduces taxable income.<br>
 6. <strong>Taxable brokerage</strong> — invest the rest.</div>
 </div>
 <div class="concept-card">
@@ -79971,7 +79984,7 @@ which is the enumeration step of most identity attacks, done with a normal login
 <tr><th>Default</th><th>What it enables</th><th>Where it changes</th></tr>
 <tr><td>Users can register applications</td><td>Shadow app registrations, and consent phishing that succeeds quietly</td><td>Entra → User settings; plus an admin-consent workflow</td></tr>
 <tr><td>Anyone can invite guests</td><td>External accounts in the directory with no owner and no review</td><td>External collaboration settings → restrict to admins or a named role</td></tr>
-<tr><td>Full directory read for all members</td><td>Org-chart-quality reconnaissance from any compromised account</td><td>Restrict access to the Entra admin portal; accept that Graph still reads</td></tr>
+<tr><td>Full directory read for all members</td><td>Org-chart-quality reconnaissance from any compromised account</td><td>Restrict access to the <span class="volatile" data-checked="2026-09">Entra admin center</span>; accept that Graph still reads</td></tr>
 <tr><td>Security defaults on, Conditional Access unused</td><td class="c-yellow">Good baseline MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, but all-or-nothing — no break-glass exclusion, no risk conditions</td><td>Turn security defaults off <em>only</em> when CA policies are ready to replace them</td></tr>
 </table>
 <div class="concept-desc verdict">
@@ -101861,7 +101874,7 @@ move rather than in one weekend. The full seam between the two consoles is in
 <tr><td>What it is</td><td>A new Windows version</td><td>Monthly cumulative fixes</td><td>Hardware and firmware from vendors</td></tr>
 <tr><td>Cadence</td><td>Annual</td><td>Second Tuesday, plus out-of-band</td><td>Continuous, vendor-driven</td></tr>
 <tr><td>Risk</td><td>High — app compatibility</td><td>Moderate — regressions happen</td><td class="c-red">Underrated — a bad driver is a brick</td></tr>
-<tr><td>Rollback</td><td>10 days by default</td><td>Uninstall the LCU <span class="acro-exp">(Latest Cumulative Update)</span>, not the SSU <span class="acro-exp">(Servicing Stack Update)</span></td><td>Roll back in Device Manager, or block the update</td></tr>
+<tr><td>Rollback</td><td><span class="volatile" data-checked="2026-09">10 days by default</span> &mdash; and disk cleanup ends it early</td><td>Uninstall the LCU <span class="acro-exp">(Latest Cumulative Update)</span>, not the SSU <span class="acro-exp">(Servicing Stack Update)</span></td><td>Roll back in Device Manager, or block the update</td></tr>
 <tr><td>Controlled by</td><td>Target version, deferral</td><td>Deferral, deadline, pause</td><td>Separate driver policy — or Autopatch</td></tr>
 </tbody>
 </table>
