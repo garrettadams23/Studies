@@ -16524,3 +16524,53 @@ web draw          19 → 39   of 39 — every web topic is now on a route
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — eight more paths, and 78% of the site is now on a route
+
+| Path | Steps |
+|---|---|
+| The Microsoft 365 Workloads | 19 |
+| The Frameworks, and the Audit | 21 |
+| How Models Actually Work | 17 |
+| AI at Work | 9 |
+| First Steps in Offensive Security | 15 |
+| The Blue Team Toolkit | 22 |
+| Kubernetes, End to End | 12 |
+| Getting Your Time Back | 10 |
+
+### The split that keeps happening, and why it is the right one
+
+Three of these eight exist because a domain contained two audiences, not one subject.
+`ai` had *how the thing works* and *how to deploy it for other people* tangled
+together; `pentest` had a practitioner catalogue and a beginner's first engagement;
+`m365` had the identity-and-policy tenant work already routed and nineteen cards of
+workload administration — Exchange, Teams voice, the migrations, Power Platform — with
+no route at all. In each case one long path would have lost both readers.
+
+That is now the programme's settled rule, stated three ways across this session:
+**split where the reader's job changes.** Newcomer versus administrator (Linux),
+theory versus operations (databases), mechanism versus deployment (AI), practitioner
+versus beginner (offensive security), career versus procedure (military).
+
+### The compliance path is the one that most needed ordering
+
+Twenty-one cards on frameworks, regulations and audits, previously reachable only by
+already knowing which acronym applied to you. The route starts at *Risk & Rules in
+Plain English* and *Frameworks Without the Jargon* — because the reader who needs this
+most is the one who has just been handed an obligation and does not yet know whether
+it is ISO, PCI, HIPAA or FedRAMP shaped — and ends at audit preparation and the
+business-continuity plan the auditor will ask for.
+
+```
+paths          72 → 80
+steps       1,142 → 1,267
+topics reached 1,082 → 1,195   (71% → 78% of the site)
+```
+
+Session totals for the paths programme: **36 → 80 paths, 579 → 1,267 steps, 555 →
+1,195 topics reachable — 36% to 78% of the site, entirely by curation.**
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
