@@ -605,6 +605,39 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Failure mode</div>
+                <div class="concept-title">The Debate Is About Markup; the Failure Is Always Governance</div>
+                <div class="concept-desc">
+                  Tailwind versus CSS-in-JS is the argument teams have, and neither choice causes
+                  the outcome that actually happens: a token layer nobody owns. It goes the same way
+                  every time. A palette is defined, a designer needs a shade that is not in it, an
+                  arbitrary value gets used "just here", and eleven months later there are nine
+                  greys, four spacing scales and a component library whose primary button no longer
+                  matches the design file. The utility framework did not cause that — it made it
+                  visible in the markup, which is the one genuine advantage in the argument, because
+                  the same drift in a stylesheet is invisible until someone audits it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Control</th><th>What it prevents</th></tr>
+                    <tr><td>Tokens as the only source, generated for both design tool and code</td><td class="c-cyan">Two sources of truth diverging — the root cause of nearly all of this</td></tr>
+                    <tr><td>Lint the escape hatches</td><td>Arbitrary values and raw hex codes accumulating unnoticed; make adding one a deliberate, reviewed act</td></tr>
+                    <tr><td>Semantic names over literal ones</td><td><code>color-surface-raised</code> survives a rebrand; <code>gray-200</code> becomes a lie</td></tr>
+                    <tr><td>A named owner and a deprecation path</td><td>The system freezing because nobody may change it, or forking because anybody may</td></tr>
+                    <tr><td>Visual regression tests on the components</td><td>A token change quietly altering forty screens</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Judge a design system by how easy it is to do the right
+                    thing, and how visible it is when someone does not.</strong> A system that
+                    requires a meeting to add a colour gets bypassed; one with no friction at all
+                    stops being a system. And accessibility belongs in the tokens rather than in
+                    review — contrast pairs defined as tokens are checkable automatically, which is
+                    the difference between a policy and a property. See
+                    <span class="xref">Web Accessibility (a11y) — Building for Everyone</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1035,6 +1068,38 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     (Solid, Vue, Svelte 5, Angular signals) updates exactly what changed without
                     re-running whole components — the industry direction. Learn React for jobs; learn
                     signals to understand where things are going.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Signals Change What You Have to Think About, and the Choice Is Still Ecosystem</div>
+                <div class="concept-desc">
+                  The mechanical difference has a consequence for the developer, not just for the
+                  renderer. React re-runs a component function on every state change, so the mental
+                  model is "what does this render", and the costs are the ones the pitfalls card
+                  lists — memoisation, dependency arrays, stale closures over a render that no
+                  longer exists. Fine-grained reactivity subscribes at the value: changing a signal
+                  updates the exact nodes that read it, the component body runs once, and an entire
+                  category of bug disappears along with the tools invented to manage it. Svelte goes
+                  further and moves the work to compile time, shipping no framework runtime for the
+                  reactivity at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Model</th><th>What you stop worrying about</th><th>What you take on</th></tr>
+                    <tr><td>Virtual DOM re-render</td><td>—</td><td>Memoisation, deps arrays, referential identity</td></tr>
+                    <tr><td>Signals (Solid, Vue, Svelte 5, Angular)</td><td class="c-cyan">Most re-render tuning — the runtime knows exactly what changed</td><td>Reactivity that is invisible in the source: reading a value subscribes to it, and losing that read by destructuring breaks it</td></tr>
+                    <tr><td>Compiled (Svelte)</td><td>Framework runtime size for reactivity</td><td>A build step that is not optional, and debugging output that differs from your source</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And then choose on the things that outlast the
+                    model.</strong> Hiring, the component library your designers already use, the
+                    meta-framework's rendering and routing story, and how much of your team's
+                    existing knowledge transfers. Rendering performance is rarely what makes an
+                    application slow — that is usually the network and the data layer, which the
+                    framework does not touch. The convergence is real, so the framework you learn
+                    deeply teaches you most of the next one.
                   </div>
                 </div>
               </div>

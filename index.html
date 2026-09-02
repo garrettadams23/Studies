@@ -209,8 +209,8 @@ visitor is never told that 1,426 things are new. -->
 <span class="ctag ctag-netplus">Net+</span>
 </div>
 <span class="domain-sub">OSI · TCP/IP · Topologies · DHCP · Ports · DNS · Cabling · Wireless</span>
-<span class="domain-meta" aria-label="73 topics, about 2h 50m to read"
->73 topics · ~2h 50m</span>
+<span class="domain-meta" aria-label="73 topics, about 2h 55m to read"
+>73 topics · ~2h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -5538,12 +5538,12 @@ and visibility for the defender, on the same resolver.
 </div>
 </div>
 </div>
-<div class="topic" id="wan-switching-deep-sd-wan-mpls-vlans-poe" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="wan-switching-deep-sd-wan-mpls-vlans-poe" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌐</span>
 <span class="topic-name">WAN <span class="acro-exp">(Wide Area Network)</span> &amp; Switching Deep — SD-WAN <span class="acro-exp">(Software Defined Wide Area Network)</span>, MPLS <span class="acro-exp">(Multiprotocol Label Switching)</span>, VLANs <span class="acro-exp">(Virtual Local Area Network)</span> &amp; PoE <span class="acro-exp">(Power over Ethernet)</span></span>
 <span class="topic-badge">Infrastructure</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -5567,6 +5567,37 @@ networking and on the Network+/CCNA exams.
 <strong class="c-green">The trend:</strong> SD-WAN + SASE <span class="acro-exp">(Secure Access Service Edge)</span> (security + networking as
 a cloud service) is where enterprise WAN is heading — central policy, encrypted
 overlays, and security inspection built into the fabric.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">SD-WAN Chooses Between Paths; It Does Not Create One That Is Not There</div>
+<div class="concept-desc">
+The pitch is transport independence — bond a business broadband line to an MPLS circuit and steer
+application traffic across whichever performs. What that buys is <em>selection</em>
+and failover, and it is genuinely valuable. What it cannot buy is a property the
+underlay does not have: if both circuits traverse the same congested last mile, or
+the same physical duct, the overlay has two paths and one fate. The commonest
+disappointment is a site with two connections from resellers who buy from the same
+wholesale provider, discovered during the outage that takes both.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Expectation</th><th>Reality</th></tr>
+<tr><td>"Two links means resilient"</td><td class="c-red">Only if they are diverse in the physical and provider sense — ask for the wholesale carrier, not the retail brand</td></tr>
+<tr><td>"It fixes latency"</td><td>It picks the better path; physics sets the floor, and a satellite or long-haul path has a floor you cannot steer around</td></tr>
+<tr><td>"It replaces the firewall"</td><td>Local internet breakout at every branch multiplies the security perimeter — which is the argument that produced SASE</td></tr>
+<tr><td>"Application-aware steering just works"</td><td class="c-cyan">It classifies by signature and destination; encrypted traffic to a CDN <span class="acro-exp">(Content Delivery Network)</span> looks like everything else to a CDN</td></tr>
+<tr><td>"We can drop MPLS"</td><td>Often yes — but MPLS bought a contractual latency and loss guarantee, and internet transport does not have one</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Buy it for policy and cost, not for physics.</strong>
+Centralised, application-aware policy across a hundred branches is a real
+operational win over per-site router configuration, and swapping a proportion of
+expensive private circuits for commodity broadband is a real saving. Both
+survive scrutiny; "the network will be faster and never go down" does not, and
+it is what the procurement deck usually says.
 </div>
 </div>
 </div>
@@ -7671,12 +7702,12 @@ Checksums only — collisions known, NOT for security
 </div>
 </div>
 <!-- ── TOPIC: CLOUD MODELS ─────────────────────────────────── -->
-<div class="topic" id="cloud-service-deployment-models" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="cloud-service-deployment-models" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">☁️</span>
 <span class="topic-name">Cloud Service &amp; Deployment Models</span>
 <span class="topic-badge">SHARED RESPONSIBILITY</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -7761,6 +7792,39 @@ color: var(--muted);
 (serverless) · XaaS · NaaS · DBaaS · DaaS · IaC <span class="acro-exp">(Infrastructure as Code)</span> · SDN <span class="acro-exp">(Software Defined Networking)</span> ·
 VPC <span class="acro-exp">(Virtual Private Cloud)</span>
 </div>
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">The Line Moves Per Service, Not Per Model — and Your Data Is Always Yours</div>
+<div class="concept-desc">
+The three-column diagram is a teaching device and a poor operating guide, because
+a single provider's own products sit at different points on it. On AWS <span class="acro-exp">(Amazon Web Services)</span>, EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> is IaaS and you patch the guest
+OS <span class="acro-exp">(Operating System)</span>; RDS <span class="acro-exp">(Relational Database Service)</span> patches the engine but
+leaves you the schema, the parameter group and the encryption choice; Lambda
+leaves you only the code and its permissions. Three services, one account, three
+different answers to "who patches this" — which is why the useful artefact is a
+per-service responsibility list rather than a model label.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Always yours, at every layer</th><th>Why it is never inherited</th></tr>
+<tr><td>Identity and access configuration</td><td class="c-red">The provider secures the IAM <span class="acro-exp">(Identity and Access Management)</span> service; the policies you write are yours, and are the leading cause of cloud breaches</td></tr>
+<tr><td>Data classification and encryption choices</td><td>They provide keys and toggles; deciding what is sensitive is not a service</td></tr>
+<tr><td>Network exposure of your resources</td><td>A public bucket or open security group is a configuration, not a platform fault</td></tr>
+<tr><td>Backup and its restore test</td><td class="c-cyan">Provider durability is not your recovery objective, and SaaS retention is not a backup</td></tr>
+<tr><td>Who has access, and offboarding</td><td>Every model, without exception</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Read the contract for the specific service, and write
+down where the line falls for each one you use.</strong> That document is what an
+auditor is really asking for, and it is what stops the two failure modes this
+model produces: assuming the provider handles something they do not, and
+duplicating a control they already run. The SaaS end deserves particular care —
+"Microsoft backs up my tenant" is the most expensive version of the first
+mistake; see
+<span class="xref" data-xref="backup-for-m365-why-native-retention-is-not-a-backup" role="link" tabindex="0">Backup for M365 — Why Native Retention Is Not a Backup</span>.
 </div>
 </div>
 </div>
@@ -79401,12 +79465,12 @@ Landing zones are described as a starting point and adopted by organisations tha
 </div>
 </div>
 </div>
-<div class="topic" id="gcp-native-iac-deployment-manager-config-controller" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="gcp-native-iac-deployment-manager-config-controller" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📦</span>
 <span class="topic-name">GCP-Native IaC <span class="acro-exp">(Infrastructure as Code)</span> — Deployment Manager &amp; Config Controller</span>
 <span class="topic-badge">GCP · IaC</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -79431,6 +79495,38 @@ reconciles them continuously.
 <strong class="c-amber">Takeaway:</strong> for greenfield GCP IaC, reach for
 Terraform or Config Controller, not Deployment Manager. The KRM model unifies app
 and infra config under one reconciliation loop (ties to GitOps in ops).
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Continuous Reconciliation Means the Console Change You Made at 2am Is Gone by 2:05</div>
+<div class="concept-desc">
+Terraform converges when you run it; the KRM reconciles constantly.
+That difference is the entire operational character of Config Connector, and it
+cuts both ways. Drift genuinely cannot persist, which is the feature. It also
+means an emergency manual fix — opening a firewall rule during an incident,
+bumping a quota, changing an IAM <span class="acro-exp">(Identity and Access Management)</span> binding — is
+reverted by the controller within its reconcile interval, usually before anyone
+has finished writing the incident note. The break-glass procedure has to include
+suspending reconciliation or landing the change in Git, and that has to be written
+down before it is needed at three in the morning.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Behaviour</th><th>Consequence</th><th>The control</th></tr>
+<tr><td>Constant reconciliation</td><td>Console changes revert silently</td><td>Pause the controller, or make Git the only path — and document which</td></tr>
+<tr><td>Deleting the resource object</td><td class="c-red">Default deletion policy deletes the real cloud resource — including the database</td><td><code>cnrm.cloud.google.com/deletion-policy: abandon</code> on anything stateful</td></tr>
+<tr><td>Adopting existing resources</td><td>An object created for a resource that already exists may fight it or take it over</td><td>Import deliberately; test on something disposable first</td></tr>
+<tr><td>Errors surface as Kubernetes events</td><td>A quota or permission failure is an event on a CRD, not a red line in a plan output</td><td>Alert on non-ready resources — nobody watches <code>kubectl describe</code> by habit</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Choose reconciliation where drift is the enemy and
+apply-on-demand where surprise is.</strong> A platform team running a fleet of
+similar projects gets a great deal from continuous enforcement; a small team
+managing a handful of resources gets a controller that reverts their fixes. That
+is the same trade GitOps <span class="acro-exp">(Git Operations)</span> makes everywhere, which is why Google's own default
+recommendation for most teams is still Terraform.
 </div>
 </div>
 </div>
@@ -97027,12 +97123,12 @@ resolves to nothing is a very quiet way to lose a colour.
 </div>
 </div>
 </div>
-<div class="topic" id="design-systems-tokens-tailwind" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="design-systems-tokens-tailwind" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎨</span>
 <span class="topic-name">Design Systems, Tokens &amp; Tailwind</span>
 <span class="topic-badge">CSS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -97058,6 +97154,39 @@ components, so a large app stays coherent.
 markup" for never leaving your HTML <span class="acro-exp">(HyperText Markup Language)</span> and never fighting the cascade — hugely popular
 for that reason. Whatever the method, the win is <em>constraints</em>: a limited
 palette of choices keeps a big UI <span class="acro-exp">(User Interface)</span> consistent.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">The Debate Is About Markup; the Failure Is Always Governance</div>
+<div class="concept-desc">
+Tailwind versus CSS-in-JS is the argument teams have, and neither choice causes
+the outcome that actually happens: a token layer nobody owns. It goes the same way
+every time. A palette is defined, a designer needs a shade that is not in it, an
+arbitrary value gets used "just here", and eleven months later there are nine
+greys, four spacing scales and a component library whose primary button no longer
+matches the design file. The utility framework did not cause that — it made it
+visible in the markup, which is the one genuine advantage in the argument, because
+the same drift in a stylesheet is invisible until someone audits it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Control</th><th>What it prevents</th></tr>
+<tr><td>Tokens as the only source, generated for both design tool and code</td><td class="c-cyan">Two sources of truth diverging — the root cause of nearly all of this</td></tr>
+<tr><td>Lint the escape hatches</td><td>Arbitrary values and raw hex codes accumulating unnoticed; make adding one a deliberate, reviewed act</td></tr>
+<tr><td>Semantic names over literal ones</td><td><code>color-surface-raised</code> survives a rebrand; <code>gray-200</code> becomes a lie</td></tr>
+<tr><td>A named owner and a deprecation path</td><td>The system freezing because nobody may change it, or forking because anybody may</td></tr>
+<tr><td>Visual regression tests on the components</td><td>A token change quietly altering forty screens</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Judge a design system by how easy it is to do the right
+thing, and how visible it is when someone does not.</strong> A system that
+requires a meeting to add a colour gets bypassed; one with no friction at all
+stops being a system. And accessibility belongs in the tokens rather than in
+review — contrast pairs defined as tokens are checkable automatically, which is
+the difference between a policy and a property. See
+<span class="xref" data-xref="web-accessibility-a11y-building-for-everyone" role="link" tabindex="0">Web Accessibility (a11y) — Building for Everyone</span>.
 </div>
 </div>
 </div>
@@ -97465,12 +97594,12 @@ Silencing the rule keeps the bug and removes the warning.
 </div>
 </div>
 </div>
-<div class="topic" id="vue-svelte-other-reactivity-models" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="vue-svelte-other-reactivity-models" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🟢</span>
 <span class="topic-name">Vue &amp; Svelte — Other Reactivity Models</span>
 <span class="topic-badge">Frameworks</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -97495,6 +97624,38 @@ different (often simpler) models worth understanding.
 (Solid, Vue, Svelte 5, Angular signals) updates exactly what changed without
 re-running whole components — the industry direction. Learn React for jobs; learn
 signals to understand where things are going.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Signals Change What You Have to Think About, and the Choice Is Still Ecosystem</div>
+<div class="concept-desc">
+The mechanical difference has a consequence for the developer, not just for the
+renderer. React re-runs a component function on every state change, so the mental
+model is "what does this render", and the costs are the ones the pitfalls card
+lists — memoisation, dependency arrays, stale closures over a render that no
+longer exists. Fine-grained reactivity subscribes at the value: changing a signal
+updates the exact nodes that read it, the component body runs once, and an entire
+category of bug disappears along with the tools invented to manage it. Svelte goes
+further and moves the work to compile time, shipping no framework runtime for the
+reactivity at all.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Model</th><th>What you stop worrying about</th><th>What you take on</th></tr>
+<tr><td>Virtual DOM re-render</td><td>—</td><td>Memoisation, deps arrays, referential identity</td></tr>
+<tr><td>Signals (Solid, Vue, Svelte 5, Angular)</td><td class="c-cyan">Most re-render tuning — the runtime knows exactly what changed</td><td>Reactivity that is invisible in the source: reading a value subscribes to it, and losing that read by destructuring breaks it</td></tr>
+<tr><td>Compiled (Svelte)</td><td>Framework runtime size for reactivity</td><td>A build step that is not optional, and debugging output that differs from your source</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">And then choose on the things that outlast the
+model.</strong> Hiring, the component library your designers already use, the
+meta-framework's rendering and routing story, and how much of your team's
+existing knowledge transfers. Rendering performance is rarely what makes an
+application slow — that is usually the network and the data layer, which the
+framework does not touch. The convergence is real, so the framework you learn
+deeply teaches you most of the next one.
 </div>
 </div>
 </div>

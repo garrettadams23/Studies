@@ -533,6 +533,39 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">The Line Moves Per Service, Not Per Model — and Your Data Is Always Yours</div>
+                <div class="concept-desc">
+                  The three-column diagram is a teaching device and a poor operating guide, because
+                  a single provider's own products sit at different points on it. On AWS <span class="acro-exp">(Amazon Web Services)</span>, EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> is IaaS and you patch the guest
+                  OS <span class="acro-exp">(Operating System)</span>; RDS <span class="acro-exp">(Relational Database Service)</span> patches the engine but
+                  leaves you the schema, the parameter group and the encryption choice; Lambda
+                  leaves you only the code and its permissions. Three services, one account, three
+                  different answers to "who patches this" — which is why the useful artefact is a
+                  per-service responsibility list rather than a model label.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Always yours, at every layer</th><th>Why it is never inherited</th></tr>
+                    <tr><td>Identity and access configuration</td><td class="c-red">The provider secures the IAM <span class="acro-exp">(Identity and Access Management)</span> service; the policies you write are yours, and are the leading cause of cloud breaches</td></tr>
+                    <tr><td>Data classification and encryption choices</td><td>They provide keys and toggles; deciding what is sensitive is not a service</td></tr>
+                    <tr><td>Network exposure of your resources</td><td>A public bucket or open security group is a configuration, not a platform fault</td></tr>
+                    <tr><td>Backup and its restore test</td><td class="c-cyan">Provider durability is not your recovery objective, and SaaS retention is not a backup</td></tr>
+                    <tr><td>Who has access, and offboarding</td><td>Every model, without exception</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Read the contract for the specific service, and write
+                    down where the line falls for each one you use.</strong> That document is what an
+                    auditor is really asking for, and it is what stops the two failure modes this
+                    model produces: assuming the provider handles something they do not, and
+                    duplicating a control they already run. The SaaS end deserves particular care —
+                    "Microsoft backs up my tenant" is the most expensive version of the first
+                    mistake; see
+                    <span class="xref">Backup for M365 — Why Native Retention Is Not a Backup</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -16169,3 +16169,48 @@ median topic               3,333   3,342
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — five cards on the claim the diagram makes and the product does not
+
+| Card | The claim | What is actually true |
+|---|---|---|
+| Cloud Service & Deployment Models | The three-column responsibility stack | The line moves per *service*, not per model: EC2, RDS and Lambda give three different answers inside one account |
+| Vue & Svelte | "Not everything is React" | Signals remove a category of bug *and the tooling invented to manage it* — then choose on ecosystem, because rendering is rarely what makes an app slow |
+| Design Systems & Tailwind | The utility-versus-CSS-in-JS debate | Neither choice causes the failure, which is a token layer nobody owns — nine greys and four spacing scales, eleven months in |
+| GCP-Native IaC | Continuous reconciliation removes drift | It also reverts the emergency console fix within the reconcile interval, usually before the incident note is finished |
+| SD-WAN | Transport independence and resilience | It selects between paths; two circuits from resellers buying the same wholesale carrier are two paths and one fate |
+
+### The two that are corrections rather than additions
+
+**"Always yours, at every layer"** is the part of shared responsibility worth
+memorising, and no diagram shows it: identity configuration, data classification,
+network exposure, backup with a tested restore, and who has access. Every one of those
+stays with the customer in IaaS, PaaS and SaaS alike — and "Microsoft backs up my
+tenant" is the most expensive misreading of the model there is.
+
+**A break-glass procedure has to survive the reconciler.** Under Config Connector,
+opening a firewall rule by hand during an incident is undone by the controller
+minutes later. The procedure therefore has to say which path a two-in-the-morning fix
+takes — pause the controller, or land it in Git — and that has to be written before it
+is needed, not discovered while it is.
+
+### The measurement
+
+```
+                          session start   now
+thin topics                        102     26
+mean chars/concept card          1,254  1,275
+median topic                     3,242  3,355
+10th percentile                  1,484  1,887
+```
+
+Fourteen deepening waves this session, **69 cards**, every one appended and none
+editing existing prose. The counter-metric rose 21 characters — arithmetic from
+above-average cards, as the methodology note earlier in this file sets out — while the
+10th percentile rose **403**, which is the number that describes what actually
+happened to the tail.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.

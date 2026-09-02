@@ -5402,6 +5402,37 @@ openssl s_client -connect example.com:443 -servername example.com &lt;/dev/null 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">SD-WAN Chooses Between Paths; It Does Not Create One That Is Not There</div>
+                <div class="concept-desc">
+                  The pitch is transport independence — bond a business broadband line to an MPLS circuit and steer
+                  application traffic across whichever performs. What that buys is <em>selection</em>
+                  and failover, and it is genuinely valuable. What it cannot buy is a property the
+                  underlay does not have: if both circuits traverse the same congested last mile, or
+                  the same physical duct, the overlay has two paths and one fate. The commonest
+                  disappointment is a site with two connections from resellers who buy from the same
+                  wholesale provider, discovered during the outage that takes both.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Expectation</th><th>Reality</th></tr>
+                    <tr><td>"Two links means resilient"</td><td class="c-red">Only if they are diverse in the physical and provider sense — ask for the wholesale carrier, not the retail brand</td></tr>
+                    <tr><td>"It fixes latency"</td><td>It picks the better path; physics sets the floor, and a satellite or long-haul path has a floor you cannot steer around</td></tr>
+                    <tr><td>"It replaces the firewall"</td><td>Local internet breakout at every branch multiplies the security perimeter — which is the argument that produced SASE</td></tr>
+                    <tr><td>"Application-aware steering just works"</td><td class="c-cyan">It classifies by signature and destination; encrypted traffic to a CDN <span class="acro-exp">(Content Delivery Network)</span> looks like everything else to a CDN</td></tr>
+                    <tr><td>"We can drop MPLS"</td><td>Often yes — but MPLS bought a contractual latency and loss guarantee, and internet transport does not have one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Buy it for policy and cost, not for physics.</strong>
+                    Centralised, application-aware policy across a hundred branches is a real
+                    operational win over per-site router configuration, and swapping a proportion of
+                    expensive private circuits for commodity broadband is a real saving. Both
+                    survive scrutiny; "the network will be faster and never go down" does not, and
+                    it is what the procurement deck usually says.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -2110,6 +2110,38 @@ gcloud compute instances list --project my-prod-project</pre>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Continuous Reconciliation Means the Console Change You Made at 2am Is Gone by 2:05</div>
+                <div class="concept-desc">
+                  Terraform converges when you run it; the KRM reconciles constantly.
+                  That difference is the entire operational character of Config Connector, and it
+                  cuts both ways. Drift genuinely cannot persist, which is the feature. It also
+                  means an emergency manual fix — opening a firewall rule during an incident,
+                  bumping a quota, changing an IAM <span class="acro-exp">(Identity and Access Management)</span> binding — is
+                  reverted by the controller within its reconcile interval, usually before anyone
+                  has finished writing the incident note. The break-glass procedure has to include
+                  suspending reconciliation or landing the change in Git, and that has to be written
+                  down before it is needed at three in the morning.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Behaviour</th><th>Consequence</th><th>The control</th></tr>
+                    <tr><td>Constant reconciliation</td><td>Console changes revert silently</td><td>Pause the controller, or make Git the only path — and document which</td></tr>
+                    <tr><td>Deleting the resource object</td><td class="c-red">Default deletion policy deletes the real cloud resource — including the database</td><td><code>cnrm.cloud.google.com/deletion-policy: abandon</code> on anything stateful</td></tr>
+                    <tr><td>Adopting existing resources</td><td>An object created for a resource that already exists may fight it or take it over</td><td>Import deliberately; test on something disposable first</td></tr>
+                    <tr><td>Errors surface as Kubernetes events</td><td>A quota or permission failure is an event on a CRD, not a red line in a plan output</td><td>Alert on non-ready resources — nobody watches <code>kubectl describe</code> by habit</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Choose reconciliation where drift is the enemy and
+                    apply-on-demand where surprise is.</strong> A platform team running a fleet of
+                    similar projects gets a great deal from continuous enforcement; a small team
+                    managing a handful of resources gets a controller that reverts their fixes. That
+                    is the same trade GitOps <span class="acro-exp">(Git Operations)</span> makes everywhere, which is why Google's own default
+                    recommendation for most teams is still Terraform.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
