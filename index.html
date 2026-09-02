@@ -72385,8 +72385,8 @@ incident.
 <span class="ctag ctag-secplus">GCIH</span>
 </div>
 <span class="domain-sub">NSM · SIEM · EDR · Detection · DFIR · Threat Intel</span>
-<span class="domain-meta" aria-label="60 topics, about 2h 00m to read"
->60 topics · ~2h 00m</span>
+<span class="domain-meta" aria-label="60 topics, about 2h 10m to read"
+>60 topics · ~2h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -72456,12 +72456,12 @@ the <em>reader</em> of that archive rather than a tool you can only point at the
 </div>
 </div>
 </div>
-<div class="topic" id="tcpdump-capture-from-the-command-line" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="tcpdump-capture-from-the-command-line" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📡</span>
 <span class="topic-name">tcpdump — Capture from the Command Line</span>
 <span class="topic-badge">NSM</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -72485,6 +72485,34 @@ analysis. Every defender needs this in muscle memory.
 <strong class="c-amber">Tip:</strong> always add <code>-n</code> (skip DNS
 lookups — faster and quieter) and cap size with <code>-c</code> /
 <code>-C</code> so a capture doesn't fill the disk.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Blind spot</div>
+<div class="concept-title">The Capture That Looks Complete and Is Missing the Evidence</div>
+<div class="concept-desc">
+A capture file is trusted the way a photograph is, and it should not be. Four
+things routinely make one incomplete without saying so, and every one of them
+produces a file that opens cleanly in Wireshark and simply does not contain what
+you were looking for.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What went wrong</th><th>How it looks</th><th>How to know</th></tr>
+<tr><td>The kernel dropped packets under load</td><td>Gaps, missing halves of conversations, retransmits that make no sense</td><td class="c-cyan">tcpdump prints <code>N packets dropped by kernel</code> on exit — read it, every time</td></tr>
+<tr><td>Truncated by snaplen</td><td>Headers present, payload cut mid-record</td><td>Force <code>-s 0</code>; check <code>frame.cap_len</code> against <code>frame.len</code></td></tr>
+<tr><td>Wrong capture point</td><td>Only one direction, or NAT-rewritten addresses</td><td>A SPAN port that mirrors one direction, or capturing after the firewall translated</td></tr>
+<tr><td>Offload hid the real packets</td><td>Impossibly large frames, checksums flagged bad</td><td>GRO/TSO reassembles before the capture point — <code>ethtool -K</code> to disable while capturing</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-red">And the biggest one is not a bug at all: TLS <span class="acro-exp">(Transport Layer Security)</span>.</strong>
+On a modern network the capture proves who talked to whom, how much, for how
+long and with what fingerprint — not what they said. That is usually enough,
+because volume and timing answer most questions, but it has to be said out loud
+before someone spends a day grepping ciphertext for a password. Write the
+capture's limits into the ticket next to the file, or the next analyst will
+read absence as evidence.
 </div>
 </div>
 </div>
@@ -72623,12 +72651,12 @@ things. That number is also the honest answer to &ldquo;is the IDS working?&rdqu
 </div>
 </div>
 </div>
-<div class="topic" id="arkime-ntopng-full-capture-traffic-analytics" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="arkime-ntopng-full-capture-traffic-analytics" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗄️</span>
 <span class="topic-name">Arkime &amp; ntopng — Full-Capture &amp; Traffic Analytics</span>
 <span class="topic-badge">NSM</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -72654,6 +72682,37 @@ Together with Zeek (metadata) and Suricata (signatures), full capture completes
 the classic <strong>NSM <span class="acro-exp">(Network Security Monitoring)</span> triad</strong>: alerts tell you <em>something</em>
 happened, metadata gives context, and full packets prove exactly what.
 </div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Blind spot</div>
+<div class="concept-title">Full Capture Means Full Until the Disk Wraps</div>
+<div class="concept-desc">
+"Show me everything that host did last Tuesday" works exactly as long as last
+Tuesday is still on disk. Full packet capture is a ring buffer sized by budget:
+a gigabit link running at a modest average fills roughly ten terabytes a day, so
+most deployments hold days to weeks, not months. Meanwhile the industry's
+dwell-time numbers are measured in weeks to months. The overlap between what you
+retained and when the intrusion began is the whole value of the deployment, and
+it is a number you can calculate <em>before</em> the incident rather than
+discover during one.
+</div>
+<div class="concept-desc">
+That is also the argument for the triad rather than for more disk. Zeek metadata
+costs a fraction of a percent of full packets for the same connection record, so
+the sensible design keeps <strong>weeks of packets and years of metadata</strong>
+— you lose the payload for old events and keep the ability to answer who talked
+to whom, which is the question most investigations actually ask. Arkime's own
+session index behaves the same way: it can outlive the PCAP it points at, and a
+session row whose packets have aged out still tells you the flow existed.
+</div>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Know your retention in days, and put it where the
+responders can see it.</strong> A team that believes it has full capture and has
+four days of it will plan an investigation it cannot finish. And decide the
+<em>exclusions</em> deliberately too — backup traffic and video streams eat the
+buffer that an interactive session needed, so dropping them by BPF <span class="acro-exp">(Berkeley Packet Filter)</span> at the sensor
+buys retention where it matters.
 </div>
 </div>
 </div>
@@ -72826,12 +72885,12 @@ free package, where Splunk/commercial XDR <span class="acro-exp">(Extended Detec
 </div>
 </div>
 </div>
-<div class="topic" id="graylog-loki-log-aggregation-alternatives" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="graylog-loki-log-aggregation-alternatives" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📥</span>
 <span class="topic-name">Graylog &amp; Loki — Log Aggregation Alternatives</span>
 <span class="topic-badge">SIEM</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -72855,6 +72914,35 @@ to store — and it pairs with Grafana so logs sit next to your metrics.
 The theme across all of these: <strong class="c-green">centralize logs off the
 hosts</strong>. An attacker's first move is deleting local logs — if they're
 already shipped to a central store, the evidence survives.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Blind spot</div>
+<div class="concept-title">Loki Indexes Labels; Anything Else Is a Scan You Are Paying For in Time</div>
+<div class="concept-desc">
+Loki is cheap because it indexes only labels and stores the log line itself as a
+compressed blob. That trade is excellent for "show me this service's logs for
+this hour" and hostile to the question a hunt actually asks: "has this indicator
+appeared anywhere in the last month." The second query has no index to use, so it
+decompresses and greps its way through the range — and the failure mode is not an
+error, it is a query that takes minutes, then hits a limit, and returns partial
+results that look like an answer.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Choice</th><th>What it buys</th><th>What it costs</th></tr>
+<tr><td>Label it</td><td>Fast, indexed filtering</td><td class="c-red">High-cardinality labels — user, IP <span class="acro-exp">(Internet Protocol)</span>, request id — explode the stream count and degrade the whole cluster</td></tr>
+<tr><td>Leave it in the line</td><td>Cheap storage, no cardinality risk</td><td>Every search over it is a brute scan of the time range</td></tr>
+<tr><td>Graylog / Elasticsearch instead</td><td>Full-text search over content</td><td>Index size and cost roughly the thing you were avoiding</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Pick by the question, not by the price.</strong> Security
+telemetry is searched by unpredictable content — an indicator nobody knew about
+last week — so it belongs where content is indexed. Application and platform
+logs are searched by known dimensions and belong where storage is cheap.
+Splitting them is not duplication; it is the same reasoning as tiering a SIEM <span class="acro-exp">(Security Information and Event Management)</span> by
+table, and getting it wrong is discovered during the one hunt that mattered.
 </div>
 </div>
 </div>
@@ -73028,12 +73116,12 @@ log source, one layer down.
 </div>
 </div>
 </div>
-<div class="topic" id="velociraptor-endpoint-dfir-hunting-at-scale" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="velociraptor-endpoint-dfir-hunting-at-scale" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🦖</span>
 <span class="topic-name">Velociraptor — Endpoint DFIR <span class="acro-exp">(Digital Forensics and Incident Response)</span> &amp; Hunting at Scale</span>
 <span class="topic-badge">DFIR</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -73059,6 +73147,34 @@ days.
 It's become a go-to for IR <span class="acro-exp">(Incident Response)</span> teams who need broad, fast visibility without a
 six-figure commercial EDR <span class="acro-exp">(Endpoint Detection and Response)</span> — especially during active incidents.
 </div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Blind spot</div>
+<div class="concept-title">A Hunt Answers for Enrolled, Powered-On Clients — and Says Nothing About the Rest</div>
+<div class="concept-desc">
+"Check every machine for this IOC" returns in minutes, and the number it returns
+is the number of machines <em>that answered</em>. Laptops that are asleep, hosts
+behind a network the server cannot reach, machines that were never enrolled, and
+the one an attacker uninstalled the agent from all look identical in the result
+set: absent. During an incident that distinction is the entire question, because
+the host you most want to hear from is the one most likely to be missing.
+</div>
+<div class="concept-desc">
+So a hunt is only interpretable next to a denominator. Compare the responding
+client count against your asset inventory before reading the findings, and treat
+the gap as a work item rather than as noise — it is simultaneously your coverage
+metric and, quite often, a list that contains the answer. Velociraptor makes this
+cheap: client metadata is itself queryable in VQL, so
+"last seen more than seven days ago" is a hunt of its own.
+</div>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Report hunts as a fraction, never as a verdict.</strong>
+"Clean across 4,180 of 4,900 known endpoints, 720 unreachable" is an honest
+result that tells the incident commander what to do next; "no findings" from the
+same run is a sentence that ends an investigation early. The same discipline
+applies to coverage claims generally —
+<span class="xref" data-xref="attck-coverage-mapping-honest-heat-maps-and-the-lie-of-100-c" role="link" tabindex="0">ATT&amp;CK Coverage Mapping — Honest Heat Maps and the Lie of "100% Coverage"</span>.
 </div>
 </div>
 </div>
@@ -73502,12 +73618,12 @@ VMs until the reflex is automatic.
 </div>
 </div>
 </div>
-<div class="topic" id="autopsy-the-sleuth-kit-disk-forensics" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="autopsy-the-sleuth-kit-disk-forensics" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💽</span>
 <span class="topic-name">Autopsy &amp; The Sleuth Kit — Disk Forensics</span>
 <span class="topic-badge">DFIR</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -73531,6 +73647,36 @@ artifacts, and hashing everything — without altering the original evidence.
 <div class="concept-desc verdict">
 Always work on a <strong class="c-green">write-blocked copy</strong> and verify
 the image hash matches the original — evidence integrity is everything.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Blind spot</div>
+<div class="concept-title">On an SSD <span class="acro-exp">(Solid State Drive)</span>, "Recovered Nothing" Is Not the Same as "Nothing Was There"</div>
+<div class="concept-desc">
+Deleted-file recovery is a spinning-disk assumption that survived into an era
+where it mostly does not hold. When a file is deleted on a TRIM-enabled SSD, the operating system tells the
+drive those blocks are free, and the controller's garbage collection erases them
+on its own schedule — often within minutes, entirely outside the investigator's
+control, and irreversibly. Carving unallocated space then returns zeros. That is
+not a failure of the tool and it is not evidence that the file never existed; it
+is the storage layer having already destroyed it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Assumption from the disk era</th><th>What actually holds now</th></tr>
+<tr><td>Deleted data survives in unallocated space</td><td class="c-red">TRIM plus wear-levelling may have erased it before the machine was seized</td></tr>
+<tr><td>The image is the whole drive</td><td>Over-provisioned and remapped blocks are not addressable at all</td></tr>
+<tr><td>MAC times tell the story</td><td>Timestomping is a two-line operation; <code>$STANDARD_INFORMATION</code> lies where <code>$FILE_NAME</code> often does not</td></tr>
+<tr><td>Full-disk encryption is a later problem</td><td>Powering the machine off can cost you the only copy of the key — capture memory first</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Which is why disk is now the second question, not the
+first.</strong> Memory, then volatile system state, then the journal and
+registry artefacts that record what <em>ran</em>, then carving — because a
+machine's own logs and MFT <span class="acro-exp">(Master File Table)</span> records routinely outlive the file contents on
+modern storage. Say in the report what the media made impossible, so a null
+result is read as a null result rather than as an exoneration.
 </div>
 </div>
 </div>
@@ -74093,12 +74239,12 @@ generator.
 </div>
 </div>
 </div>
-<div class="topic" id="openscap-disa-stigs-compliance-driven-hardening" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="openscap-disa-stigs-compliance-driven-hardening" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛡️</span>
 <span class="topic-name">OpenSCAP &amp; DISA <span class="acro-exp">(Defense Information Systems Agency)</span> STIGs <span class="acro-exp">(Security Technical Implementation Guide)</span> — Compliance-Driven Hardening</span>
 <span class="topic-badge">Compliance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -74123,6 +74269,39 @@ oscap xccdf eval \
 STIG, CIS <span class="acro-exp">(Center for Internet Security)</span>, PCI-DSS, HIPAA <span class="acro-exp">(Health Insurance Portability and Accountability Act)</span>. This is how regulated environments prove and enforce a
 baseline continuously rather than via a one-time checklist.
 </div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Blind spot</div>
+<div class="concept-title">A Benchmark Scores Configuration, Not Exploitability — and Counts Two Non-Answers as Wins</div>
+<div class="concept-desc">
+The report ends in a percentage, and the percentage is where the reasoning stops.
+Two things inflate it silently. Rules that cannot be evaluated on this system
+return <code>notapplicable</code> or <code>notchecked</code> — a kernel rule on a
+container, a rule whose OVAL definition needs a package that is absent — and the
+default rendering rolls those into the pass column. A profile can therefore climb
+by adding scope it does not actually assess. Read <code>fail</code> against
+<code>pass</code> and list the non-answers separately; the ratio you want is over
+rules that were genuinely tested.
+</div>
+<div class="concept-desc">
+The deeper limit is what the model measures. XCCDF asserts a configuration state:
+a permission, a sysctl, a line in a config file. It says nothing about the
+application running on top, the credential in a repository, or the network path
+that makes a hardened host reachable from the internet. A STIG-clean box with a
+vulnerable web app is a common and entirely consistent outcome — which is why
+compliance scanning and vulnerability scanning are two tools and not one.
+</div>
+<div class="concept-desc verdict">
+<strong class="c-red">Auto-remediation is where this becomes an outage.</strong>
+<code>--remediate</code> applies fixes in rule order with no knowledge of your
+application, and the classic result is a hardened SSH <span class="acro-exp">(Secure Shell)</span> configuration that locks
+out the management account, or a mount option that stops a database starting.
+Generate the remediation as a script, read it, and put it through the same change
+process as any other configuration change — the value of machine-readable policy
+is that the diff is reviewable, not that it can be applied unread. Severity is
+still not priority; see
+<span class="xref" data-xref="vulnerability-prioritisation-severity-is-not-priority" role="link" tabindex="0">Vulnerability Prioritisation — Severity Is Not Priority</span>.
 </div>
 </div>
 </div>

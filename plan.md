@@ -15559,3 +15559,69 @@ Across this session's two deepening waves: **14 cards, thin 102 → 88, counter-
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the blueteam tail: what the tool cannot see
+
+`redteam`'s spec was *what you must already have*. The defensive equivalent is not the
+same question — a defender owns the host, so preconditions are cheap — but there is a
+symmetric one that matters more, and none of the eleven thin `blueteam` cards asked
+it: **what does this tool not collect, and what does a false negative look like?**
+
+Six cards, one spec: name the boundary, give the null result its fingerprint, and end
+on how to report a finding of nothing honestly.
+
+| Card | What it cannot see | The fingerprint of the false negative |
+|---|---|---|
+| tcpdump | Whatever the kernel dropped, snaplen truncated, or TLS encrypted | `N packets dropped by kernel` on exit — printed, and never read |
+| Arkime & ntopng | Anything older than the ring buffer, which is days while dwell time is weeks | A confident "show me last Tuesday" that returns an empty result set |
+| Graylog & Loki | Loki: any content you did not make a label | A slow query that hits a limit and returns partial results as if complete |
+| Velociraptor | Every client that did not answer the hunt | "No findings" from 4,180 of 4,900 endpoints |
+| Autopsy & TSK | On a TRIM SSD, deleted data the controller already erased | Carving unallocated space returns zeros |
+| OpenSCAP & STIGs | Anything above the configuration layer — and its own non-answers | A percentage inflated by `notapplicable` and `notchecked` rolled into "pass" |
+
+### Three of these invert advice the site was giving
+
+**"Recover deleted files" is a spinning-disk assumption.** TRIM plus garbage
+collection destroys freed blocks on the drive's own schedule, often within minutes and
+before seizure. So carving returning nothing is not evidence that nothing was there —
+and disk becomes the *second* question, after memory and after the artefacts that
+record what ran, because a machine's own logs routinely outlive the file contents.
+
+**Full capture is a retention number, not a capability.** The useful design is weeks
+of packets and years of metadata, because Zeek connection records cost a fraction of a
+percent of the packets they describe and answer most of the questions anyone asks.
+A team that believes it has full capture and has four days of it will plan an
+investigation it cannot finish.
+
+**A hunt is a fraction, never a verdict.** Asleep laptops, unreachable networks,
+never-enrolled hosts and a machine the attacker removed the agent from are
+indistinguishable in the result set — all absent — and the host you most want to hear
+from is the one most likely to be missing. Report the denominator.
+
+### And one that is an outage waiting to happen
+
+`oscap --remediate` applies fixes in rule order with no knowledge of the application.
+The classic outcomes are a hardened SSH configuration that locks out the management
+account and a mount option that stops a database starting. Generate the remediation as
+a script, read it, and put it through change control — the value of machine-readable
+policy is that the diff is reviewable, not that it can be applied unread.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   88      82
+blueteam thin                 11       5   (18% → 8%)
+mean chars/concept card    1,259   1,260   ← +1 over six cards
+median topic               3,259   3,263
+10th percentile            1,505   1,516
+```
+
+Three deepening waves this session: **20 cards, thin 102 → 82, counter-metric +4
+characters.** The 10th percentile has moved 32 characters and the median 21 — the tail
+is rising because cards left the tail, not because anything got wordier.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
