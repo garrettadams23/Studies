@@ -16676,3 +16676,41 @@ increment against the ceiling.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the related payload, index-encoded: 187 KB back
+
+The previous record ended by naming the lever and declining to pull it. Pulling it
+turned out to be a twenty-line change, so here it is.
+
+`data/related.json` is a map of slug → [slug, …]. Slugs average 48 characters, and in
+that form every slug is written once as a key and once more for every edge pointing at
+it — so 4,008 links cost **274,136 characters** of inlined payload. The page now
+receives `{"ids": [slug, …], "adj": [[i, …], …]}`: each slug appears exactly once, and
+an edge costs three or four characters instead of fifty.
+
+```
+inlined payload   274,136 → 87,146 chars   (−68%)
+raw headroom            7% → 9%
+gzip headroom           6% → 8%
+```
+
+Three things worth recording about the shape of the change:
+
+**The source file did not change.** `data/related.json` stays in the readable
+slug-keyed form, because it is edited by hand and read by `orphan_report`,
+`suggest_related` and `check_paths`. This is a transport encoding applied at build
+time, which is the right layer: nothing that reads the repository has to learn it.
+
+**The decoder accepts both forms.** A service worker can hold an older page against a
+newer script, so `relatedTopics()` recognises the flat map as well as the encoded one
+and returns plain slugs either way. Every caller is unchanged.
+
+**Gzip moved much less than raw.** 274 KB → 87 KB of source text is only 34 KB of
+compressed transfer, because repeated slugs are exactly what a compressor eats. The
+real win is the other two costs: 187 KB less to parse on every load, and headroom
+back for the next thing that needs it.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+resilience PASS · determinism reproducible.

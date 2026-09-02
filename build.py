@@ -461,9 +461,31 @@ def build_related():
     """
     path = DATA / "related.json"
     if not path.exists():
-        return "{}"
+        return '{"ids":[],"adj":[]}'
     related = json.loads(path.read_text(encoding="utf-8"))
-    payload = json.dumps(related, separators=(",", ":"), ensure_ascii=False)
+
+    # Slugs are long (48 characters on average) and every one appears once as a
+    # key and once per edge pointing at it, so the naive {slug: [slug, ...]}
+    # form spent 274 KB of the page budget to carry 4,008 links. Emitting the
+    # slug once in `ids` and referring to it by index in `adj` costs a few
+    # characters per edge instead of fifty, and the decode in relatedTopics()
+    # is four lines. The source file stays in the readable form — this is a
+    # transport encoding, not a schema change, and every tool still reads
+    # data/related.json directly.
+    ids = sorted(related)
+    index = {s: i for i, s in enumerate(ids)}
+    # An edge to a topic that has no entry of its own cannot be expressed as an
+    # index, so those slugs join `ids` with an empty adjacency list. The file is
+    # symmetric today and this costs nothing; it is here so an asymmetric edge
+    # degrades to a working link rather than a dropped one.
+    for targets in related.values():
+        for t in targets:
+            if t not in index:
+                index[t] = len(ids)
+                ids.append(t)
+    adj = [[index[t] for t in related.get(s, [])] for s in ids]
+    payload = json.dumps({"ids": ids, "adj": adj},
+                         separators=(",", ":"), ensure_ascii=False)
     total = sum(len(v) for v in related.values())
     print(f"  + related topics ({len(payload):,} chars, {total} links on {len(related)} topics)")
     return payload.replace("</", "<\\/")

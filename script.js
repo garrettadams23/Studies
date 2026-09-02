@@ -378,14 +378,29 @@ function toggleTopicNote(topic) {
   renderTopicNote(topic, { open: true });
 }
 
-/** topic id -> ids worth reading next (inlined by build.py from data/related.json). */
+/** topic id -> ids worth reading next (inlined by build.py from data/related.json).
+ *
+ * The payload is index-encoded — {ids: [slug, …], adj: [[i, …], …]} — because
+ * slugs average 48 characters and each one would otherwise be repeated on
+ * every edge pointing at it. Decoding once here keeps every caller working
+ * with plain slugs. An older page cached by the service worker may still hold
+ * the flat {slug: [slug, …]} form, so both are accepted. */
 let _related = null;
 function relatedTopics() {
   if (_related) return _related;
   const el = document.getElementById("related-topics");
   try {
     const o = el ? JSON.parse(el.textContent) : {};
-    _related = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+    if (o && Array.isArray(o.ids) && Array.isArray(o.adj)) {
+      const out = {};
+      o.ids.forEach((slug, i) => {
+        const links = (o.adj[i] || []).map(j => o.ids[j]).filter(Boolean);
+        if (links.length) out[slug] = links;
+      });
+      _related = out;
+    } else {
+      _related = (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+    }
   } catch { _related = {}; }
   return _related;
 }
