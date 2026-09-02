@@ -1,3 +1,121 @@
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🪢</span>
+              <span class="topic-name">The Object Pipeline — Why PowerShell Is Not Bash With Different Verbs</span>
+              <span class="topic-badge">Automation • PowerShell</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Unix Pipes Text and Re-Parses It; PowerShell Never Serialises in the First Place</div>
+                <div class="concept-desc">
+                  <code>awk</code>, <code>cut</code> and <code>sed</code> exist because a Unix pipe
+                  throws the structure away: every program prints a formatted string and every
+                  downstream tool has to reconstruct the fields by counting columns. PowerShell
+                  inverts that. <code>Get-Process</code> does not emit text that looks like a table —
+                  it emits <code>System.Diagnostics.Process</code> instances, and the table you see is
+                  the formatter rendering them at the very end, for you, after the pipeline is over.
+                  Everything in between filters and sorts on typed properties.
+                </div>
+                <div class="concept-desc">
+                  Which means the habit that transfers from Bash is the bug. Grepping PowerShell
+                  output is not just unidiomatic, it is fragile in a way that passes review: a
+                  <code>findstr Running</code> over service output matches any service whose
+                  <em>display name</em> happens to contain the word, and column-position parsing
+                  breaks the day a machine name gets longer and the formatter widens the column.
+                  Neither failure shows up in the lab.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># The transplanted Bash habit — matches DisplayName too, and column widths move</span>
+Get-Service | findstr Running
+
+<span class="com"># The same intent, against the property that actually means it</span>
+Get-Service | Where-Object Status -eq 'Running'
+
+<span class="com"># Objects survive the whole way: filter, sort, take, and only then render</span>
+Get-Process |
+  Where-Object { $_.WorkingSet64 -gt 500MB } |
+  Sort-Object WorkingSet64 -Descending |
+  Select-Object Name, Id, @{n='WS_MB';e={[int]($_.WorkingSet64/1MB)}} -First 10</pre>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Verbs That Do the Work, and What Each One Returns</div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Cmdlet</th><th>What it does</th><th>What comes out</th></tr>
+                    <tr><td><code>Where-Object</code></td><td>Keeps objects matching a condition</td><td>The same type, fewer of them</td></tr>
+                    <tr><td><code>Select-Object</code></td><td>Picks or computes properties; <code>-First</code>/<code>-Last</code>/<code>-Unique</code></td><td class="c-yellow">A new <code>PSCustomObject</code> — the original type is gone</td></tr>
+                    <tr><td><code>Select-Object -ExpandProperty</code></td><td>Unwraps one property to its bare value</td><td>Whatever that property's type is — often what you actually wanted</td></tr>
+                    <tr><td><code>Sort-Object</code></td><td>Orders by property</td><td>Same objects — but it must buffer them all first</td></tr>
+                    <tr><td><code>Group-Object</code></td><td>Buckets by a property value</td><td><code>GroupInfo</code> objects with <code>Name</code>, <code>Count</code>, <code>Group</code></td></tr>
+                    <tr><td><code>Measure-Object</code></td><td>Count, sum, average, min/max over a property</td><td>One <code>GenericMeasureInfo</code>, not a number — use <code>.Sum</code></td></tr>
+                    <tr><td><code>ForEach-Object</code></td><td>Runs a block per object, streaming</td><td>Whatever the block emits</td></tr>
+                    <tr><td><code>Export-Csv</code> / <code>ConvertTo-Json</code></td><td>Serialises at the end of the line</td><td>A file or a string — this is where structure is meant to be lost</td></tr>
+                    <tr><td><code>Format-Table</code> / <code>Format-List</code></td><td>Renders for a human</td><td class="c-red">Format records, not your data — nothing may follow it but the screen</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Read the third column, not the second. Half of the confusing PowerShell bugs are
+                    someone treating <strong class="c-cyan">the output type as unchanged</strong> when
+                    a cmdlet quietly replaced it — <code>Select-Object</code> handing back a property
+                    bag, <code>Measure-Object</code> handing back a report rather than a total.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Pitfall</div>
+                <div class="concept-title">Four Places the Object Model Leaks, and How Each One Looks When It Bites</div>
+                <div class="concept-desc">
+                  <strong class="c-red">Format-* in the middle of a pipeline.</strong> The formatters
+                  emit internal layout records, so anything downstream operates on those instead of
+                  your data. The fingerprint is unmistakable once you have seen it: a CSV <span class="acro-exp">(Comma-Separated Values)</span> whose
+                  columns are <code>ClassId2e4f51ef21dd47e99d3c952918aff9cd</code> and whose rows read
+                  <code>Microsoft.PowerShell.Commands.Internal.Format.FormatStartData</code>. Nothing
+                  errored; the export simply captured the renderer. <code>Format-*</code> is the last
+                  thing on a line, always — if you want a file, go straight from objects to
+                  <code>Export-Csv</code>.
+                </div>
+                <div class="concept-desc">
+                  <strong class="c-red">Objects that crossed a remoting boundary.</strong>
+                  <code>Invoke-Command</code> and PSSessions serialise on the wire and rehydrate as
+                  <code>Deserialized.System.*</code> property bags. Properties survive; <em>methods do
+                  not</em>. The fingerprint is a script that works locally and fails only against
+                  remote hosts, with "method invocation failed because …
+                  does not contain a method named 'Stop'". The fix is to do the acting inside the
+                  script block and return only the facts you need out of it.
+                </div>
+                <div class="concept-desc">
+                  <strong class="c-red">Comparison operators against a collection.</strong>
+                  <code>-eq</code> on an array does not answer true or false, it <em>filters</em> and
+                  returns the matches. So <code>if ($list -eq 'x')</code> is true whenever any element
+                  matches, and a single <code>$null</code> element makes an emptiness check lie. Use
+                  <code>-contains</code>, or <code>.Count</code>, and put the literal on the left when
+                  comparing against something that might be <code>$null</code>.
+                </div>
+                <div class="concept-desc">
+                  <strong class="c-red">Collecting when you meant to stream.</strong> Wrapping a
+                  pipeline in <code>$(…)</code> or assigning it to a variable materialises every
+                  object in memory; so does <code>Sort-Object</code>, which cannot emit anything until
+                  it has seen everything. That is fine for a thousand mailboxes and fatal for a
+                  hundred thousand log rows. <code>ForEach-Object</code> and
+                  <code>Where-Object</code> stream one object at a time — keep the pipeline
+                  unbroken and let it.
+                </div>
+                <div class="concept-desc verdict">
+                  The decision is one question at every stage: <strong class="c-cyan">does the next
+                  thing in this line need data, or is the next thing a person?</strong> Data means the
+                  objects stay objects and serialisation waits until the end. A person means you are
+                  finished — render, and stop. Automation that ignores that boundary is the source of
+                  the export nobody can read and the script that only fails in production; the wider
+                  discipline around that is in
+                  <span class="xref">Automation Risk &amp; Discipline — Blast Radius, Approval Gates &amp; the Kill Switch</span>.
+                </div>
+              </div>
+            </div>
+          </div>
+
 
 
           <div class="topic" data-reviewed="2026-08">

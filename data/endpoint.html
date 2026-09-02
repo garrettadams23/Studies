@@ -2060,6 +2060,111 @@ Restart-Service IntuneManagementExtension</pre>
   </div>
 </div>
 
+<!-- ── TOPIC: DRIVER MANAGEMENT ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-09">
+  <div class="topic-header">
+    <span class="topic-icon">🔩</span>
+    <span class="topic-name">Driver Management — Driver Packs, DISM <span class="acro-exp">(Deployment Image Servicing and Management)</span> &amp; the Autopilot Dilemma</span>
+    <span class="topic-badge">Endpoint • Provisioning</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">Imaging Solved Drivers by Owning Them; Modern Provisioning Solved It by Giving Them Away</div>
+      <div class="concept-desc">
+        In a task-sequence world the driver problem is a supply problem you control. You download the
+        vendor's driver pack for a model, import it, and apply it by WMI <span class="acro-exp">(Windows Management Instrumentation)</span> query so a Latitude gets Latitude
+        drivers. The build is deterministic because you decided, per model, exactly which versions
+        ship. The cost is a catalogue: every new model is a new pack, every pack needs testing, and
+        the boot image needs its own storage and network drivers or WinPE <span class="acro-exp">(Windows Preinstallation Environment)</span> never gets far enough to
+        ask.
+      </div>
+      <div class="concept-desc">
+        Autopilot inverts that. There is no image and no task sequence, so there is nowhere to inject
+        anything — the device arrives with the OEM's factory drivers and takes everything after that
+        from Windows Update. That is genuinely less work, and it is also a control you have handed to
+        someone else: you no longer choose the version, and "we tested that build" stops meaning what
+        it meant. The honest framing is not <em>which is better</em> but <em>which failure you would
+        rather own</em>: a stale pack you forgot to refresh, or a vendor publishing a regression to
+        your fleet on their schedule.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># What is actually installed — the store, not Device Manager's rendering</span>
+Get-WindowsDriver -Online | Where-Object { $_.ProviderName -ne 'Microsoft' } |
+  Select-Object OriginalFileName, ProviderName, Date, Version
+
+<span class="com"># Offline servicing: add drivers to a mounted image (or a boot image)</span>
+DISM /Image:C:\mount /Add-Driver /Driver:D:\DriverPack\Latitude5450 /Recurse
+
+<span class="com"># Remove a known-bad OEM driver by its published name (oemNN.inf)</span>
+pnputil /delete-driver oem42.inf /uninstall /force</pre>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Four Ways Drivers Reach a Windows Device, and What Each One Costs</div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Route</th><th>Where it fits</th><th>What you control</th><th>What it costs</th></tr></thead>
+          <tbody>
+            <tr><td>Vendor driver pack in a task sequence</td><td>MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> OSD <span class="acro-exp">(Operating System Deployment)</span>, per model</td><td>Exact versions, per model, tested before release</td><td>A catalogue to maintain, and one pack per model per OS <span class="acro-exp">(Operating System)</span> version</td></tr>
+            <tr><td>Boot-image drivers</td><td>WinPE only — NIC <span class="acro-exp">(Network Interface Card)</span> and storage</td><td>Whether PE can see the disk and the network at all</td><td class="c-red">Forgotten until a new model boots to a screen with no task sequence on it</td></tr>
+            <tr><td>Windows Update (automatic)</td><td>Autopilot, and anything not imaged</td><td>Almost nothing — Microsoft and the OEM decide</td><td>Version drift across identical hardware, and no pre-release testing</td></tr>
+            <tr><td>Intune driver update policies / Autopatch</td><td>Cloud-managed fleets that want a say</td><td>Approve or defer specific driver updates, in rings</td><td>Only covers what is published to Windows Update — vendor-only drivers still are not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-cyan">The fourth row is the one people miss.</strong> Moving to Autopilot
+          does not mean drivers became unmanaged — driver update policies put approval and ring
+          deferral back in your hands for anything published to Windows Update. What they cannot do
+          is conjure a driver the vendor only ships in their own pack, which is why a fleet with
+          docks, specialist NICs or lab instrumentation usually still needs one deliberate,
+          documented exception rather than a general retreat to imaging.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Pitfall</div>
+      <div class="concept-title">Three Driver Failures and the Log Line That Names Each One</div>
+      <div class="concept-desc">
+        <strong class="c-red">PE boots, then nothing.</strong> The task sequence never appears, or it
+        appears and cannot reach content. Almost always a boot image missing the model's storage or
+        network driver, and it is architecture-specific — an x64 pack does nothing for the ARM <span class="acro-exp">(Advanced RISC Machines)</span> device
+        someone just bought. The fingerprint is in <code>smsts.log</code>: content download failing
+        immediately with no IP <span class="acro-exp">(Internet Protocol)</span>, or a disk that never enumerates. Fix the boot image, then
+        remember it needs redistributing to every distribution point before it means anything.
+      </div>
+      <div class="concept-desc">
+        <strong class="c-red">The driver applied, and Windows chose a different one anyway.</strong>
+        Windows ranks drivers, and a signed generic driver with a newer date can outrank the vendor
+        pack you injected. The fingerprint is <code>Get-WindowsDriver</code> showing your driver
+        present in the store while <code>pnputil /enum-devices</code> shows something else bound to
+        the device. Injection stages a driver, it does not force it — pinning a specific one means
+        blocking the alternative, not adding yours harder.
+      </div>
+      <div class="concept-desc">
+        <strong class="c-red">A driver shipped to the fleet on a Tuesday and took the docks with it.</strong>
+        The rollback path for drivers is not the update rollback path: you block the specific update
+        and roll back per device in Device Manager, which is a per-machine action at fleet scale. This
+        is the argument for putting drivers in rings even when you have delegated the versions —
+        a pilot ring that includes one of each model catches the regression while it is still a
+        support ticket rather than a bridge call. The wider mechanics of rings and deadlines are in
+        <span class="xref">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span>.
+      </div>
+      <div class="concept-desc verdict">
+        Decide it once, per estate, and write it down: <strong class="c-cyan">either you own driver
+        versions and accept the catalogue, or you delegate them and accept the drift</strong> — with
+        rings and a named exception list for the hardware that genuinely cannot be delegated. The
+        expensive position is the accidental third one, where nobody refreshed the packs and nobody
+        configured the policies, so the fleet is running whatever the last engineer's image happened
+        to contain. That is the same drift the servicing split describes in
+        <span class="xref">Feature vs Quality vs Driver Updates</span>.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: WINDOWS AUTOPATCH ──────────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">

@@ -1738,7 +1738,7 @@ fills each item, `[~]` names where an item is already covered under a different 
 **Wave Y4 — Provisioning & Imaging**
 - [~] Autopilot Deep — profiles, hash harvesting, deployment modes, hybrid vs Entra join → covered by *Windows Autopilot — Zero-Touch Provisioning* (modes, hardware hash/group tags, deployment profile, Entra vs hybrid join, troubleshooting)
 - [x] Autopilot Device Preparation — the newer flow, and how it differs → *Autopilot Device Preparation — The Newer Flow That Deletes the Hardware Hash*
-- [ ] Driver Management — DISM, driver packs, and the Autopilot driver dilemma
+- [x] Driver Management — DISM, driver packs, and the Autopilot driver dilemma
 - [ ] Provisioning Packages & Bulk Enrolment — the escape hatch when Autopilot cannot
 - [~] Reprovisioning & Device Reuse — wipe, fresh start, retire, and what each actually removes → Autopilot Reset / Fresh Start covered in the Autopilot card and *The Device That Comes Back Six Months Later, Still Enrolled*
 
@@ -1945,7 +1945,7 @@ switch). `script` 138→140, `ops` gains the risk card.
   matches anywhere on the site. 5 cards into `script`; see the session record.
 
 **Wave AC1 — PowerShell for Real Work** ⟵ see the shipped-note above
-- [ ] The Object Pipeline — the thing that makes PowerShell different from Bash
+- [x] The Object Pipeline — the thing that makes PowerShell different from Bash
 - [ ] Remoting — WinRM, sessions, `Invoke-Command` fan-out, JEA
 - [ ] Error Handling That Survives Production — try/catch, `-ErrorAction`, transcripts
 - [ ] Writing a Reusable Function — parameters, validation, `-WhatIf`, comment-based help
@@ -15340,3 +15340,97 @@ new topics            0     (curation over existing content)
 
 Check PASS (`check_paths`: every step resolves, no duplicates within a path) · smoke **142/142**
 · axe **6/6** · mobile **9/9** · visual **2/2** · determinism reproducible.
+
+---
+
+## Session record — September, part 4: the orphan programme finished, and two cards the census could not have found
+
+`tools/orphan_report.py` was written to answer a question the depth report cannot:
+not *which cards are thin* but *which good cards can nobody reach*. Its docstring
+records 159 topics with three or more concept cards and over 3,000 plain characters
+that had no related link and no cross-reference pointing at them. This session took
+that number to **zero**.
+
+### Why the tool's own suggester was not used
+
+`tools/suggest_related.py` will happily rank candidates by term overlap, and its
+docstring warns what that produces: strips filled with the same four cards, because
+overlap measures vocabulary rather than adjacency. Two cards that both say "policy"
+forty times are not related; a card about proposals and a card about scope control
+are, and share almost no vocabulary. So none of the 334 pairs added here came from
+the ranker.
+
+They came from three sources, in order of confidence:
+
+| Source | Pairs | What made it trustworthy |
+|---|---|---|
+| Learning-path adjacency | 47 | Two cards already sequenced next to each other in a curated path are, by construction, a reader's next step |
+| Domain curation, ops/net/linux/infra/grc/sec | 112 | Read both cards, keep the pair only if the second answers a question the first raises |
+| Domain curation, the remaining 65 deep orphans | 175 | Same rule, applied to every deep orphan until none was left |
+
+Every target was resolved against the built slug set before writing, so no batch
+could introduce a dangling id — the drop count was zero on all three.
+
+### What the orphans turned out to be
+
+Not junk. The seven platform-engineering cards were a complete, well-argued sequence
+that linked to nothing, including to each other. The six beginner calculus cards had
+no route back to the three unit cards that contain them. The consulting sequence —
+discovery, proposal, pricing, finding clients, cash flow — was five islands. The
+military OPSEC card and both OSINT cards were writing about the same idea from two
+directions with no acknowledgement of each other. That is a navigation defect, not a
+content one, and it was invisible to every gate the repo runs.
+
+```
+deep orphans   133 → 0
+all orphans    799 → 551   (a census, not a gate)
+related.json   723 keys / 1,308 links → 982 keys / 2,002 links, 0 one-way
+new content    none — curation over cards that already existed
+```
+
+### Two cards, from reading the plan against the site rather than the site against itself
+
+The unchecked boxes in this file are not a reliable backlog: most of the
+Virtualization, Backup & DR, Apple and mobile-management items were checked off in
+practice long ago, under consolidated titles in `infra` and `endpoint`. Probing each
+one against the built page found the content already there. Two survived that probe.
+
+**The Object Pipeline — Why PowerShell Is Not Bash With Different Verbs** (`script`).
+`Select-Object` appears in code blocks across six domain files, and the site had no
+card explaining the thing that makes those blocks work. The card is built around the
+inversion — Unix throws structure away at the pipe and re-parses it downstream;
+PowerShell never serialises until a human is the audience — and then names the four
+places the model leaks, each with the error text it produces: format records in a
+CSV export, `Deserialized.System.*` losing its methods across a remoting boundary,
+`-eq` filtering an array instead of answering true or false, and a pipeline
+materialised in memory by the parentheses someone added for readability.
+
+**Driver Management — Driver Packs, DISM & the Autopilot Dilemma** (`endpoint`).
+The servicing card covers driver *updates* as one of three pipelines. Nothing covered
+getting drivers onto a machine in the first place, which is where the real
+architectural choice sits: a task sequence owns versions and pays for a catalogue,
+Autopilot delegates versions and pays in drift, and Intune driver update policies buy
+back a rings-and-approval say over anything published to Windows Update. The verdict
+is that the expensive position is the accidental third one — packs nobody refreshed
+and policies nobody configured.
+
+Both are in three learning paths (Automation for Administrators; Endpoint Engineering
+with Intune; Running MECM) and both are linked in `related.json`, so neither shipped
+as a new orphan.
+
+### One acronym decision the checker demanded, and one entry it was missing
+
+`DISM` was not in `data/acronyms.json` at all despite appearing in `infra` — added as
+*Deployment Image Servicing and Management*. And the driver card's mention of an ARM
+device made `ARM` render in `endpoint` for the first time, where it means the CPU
+architecture rather than Azure Resource Manager; the lint refused the build until
+that `byDomain` decision was written down. That is the fourth time this check has
+caught a real ambiguity rather than a formatting slip.
+
+```
+topics         1,529 → 1,531
+paths          37 paths, 599 steps, 572 distinct topics
+```
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
