@@ -15625,3 +15625,62 @@ is rising because cards left the tail, not because anything got wordier.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the devops tail: the failure mode of the idea, not more about the idea
+
+`devops`'s thin cards split cleanly in two, and the two halves needed different
+questions. The culture cards — *What DevOps Actually Is*, *The Three Ways*, *Value
+Stream Mapping* — are correct and unfalsifiable as written; what they lack is what
+adopting them badly looks like from inside. The Kubernetes reference cards list
+objects accurately and omit the fields that decide what happens under pressure.
+
+| Card | The failure mode | Its fingerprint |
+|---|---|---|
+| What DevOps Actually Is | A "DevOps team" — the old wall rebuilt one department left | Deploys need a ticket; that team is on call for services it did not write |
+| The Three Ways | Buying the First Way and skipping the Second | Deployment frequency and change-failure rate rising together |
+| Value Stream Mapping | Improving a step that was never the constraint | Build time halved, lead time unchanged |
+| Kubernetes Objects | No `requests`/`limits`, so the pod is `BestEffort` | Evicted first, and nobody chose it |
+| CNI & CSI | A NetworkPolicy the CNI does not enforce; a ReadWriteOnce volume | `kubectl get netpol` shows the control; `Multi-Attach error` stalls the rollout |
+
+### The two that are worth more than their cards
+
+**The organisational response to missing feedback attacks flow instead.** When change
+failure rate climbs, the instinct is an approval gate — which slows the First Way to
+compensate for an absent Second, and detects nothing, because a human reading a diff
+is not a test. That is why the DORA numbers are quoted in fours: the pairs are what
+distinguish "faster" from "faster at shipping defects."
+
+**A NetworkPolicy on a Flannel cluster is accepted, listed, and inert.** The API
+server takes it, `kubectl get netpol` shows it, the repo contains it, and the
+compliance evidence cites it — and no packet is affected, because enforcement belongs
+to the CNI and Flannel does not implement it. The card's instruction is to prove
+enforcement once by curling between two pods the policy should separate, rather than
+by reading YAML.
+
+### One correction to the site's own emphasis
+
+The Kubernetes objects card ended on "everything is declarative YAML reconciled to
+desired state," which is true and is not what breaks. Memory and CPU limits look like
+a pair in the manifest and behave in opposite ways: memory is incompressible, so over
+the limit means OOM-killed, while CPU is compressible, so over the limit means
+throttled — latency with no error and no restart. The usual sound default is a memory
+request equal to its limit and no CPU limit at all.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   82      77
+devops thin                    9       4   (18% → 8%)
+mean chars/concept card    1,260   1,261   ← +1 over five cards
+median topic               3,263   3,268
+10th percentile            1,516   1,529
+```
+
+Four waves this session: **25 cards, thin 102 → 77, counter-metric +5 characters, and
+the 10th percentile up 45.**
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
