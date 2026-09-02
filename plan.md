@@ -16484,3 +16484,43 @@ Session totals for the paths programme: **36 → 68 paths, 579 → 1,068 steps, 
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — four more routes: Linux twice, the database, and the frontend that ships
+
+| Path | Steps | Shape |
+|---|---|---|
+| Linux, From Newcomer to Confident | 20 | The first six months in order: shell → editors → permissions → users → packages → processes → boot → systemd → networking → SSH → cron → scripting → tmux → containers → WSL |
+| Running Linux Servers | 14 | LVM → ZFS → RAID → NFS/Samba → web server → mail → Postgres → HA → hardening → measured boot → image building → container internals → rootless → eBPF |
+| Choosing and Running a Database | 20 | Which engine (Postgres, MySQL, SQLite, Mongo, Redis, Cassandra, graph, time-series, columnar) → LSM internals → locking → pooling → partitioning → replication → backups → monitoring → security → lineage |
+| The Frontend That Ships | 20 | Past the framework: rendering modes → data fetching → GraphQL → realtime → forms → design system → typography → theming → i18n → accessibility remediation → jank → DevTools → edge → PWA → SEO |
+
+### Splitting Linux in two was the decision that made both work
+
+One "Linux" path would have run to thirty-four steps and served nobody: a newcomer
+meeting LVM on step nine gives up, and an administrator scrolling past `chmod` to
+reach eBPF stops reading. The line is *the machine is mine* versus *the machine serves
+people* — everything before it is orientation, everything after it is a service with
+users and a failure mode. The same reasoning already produced two military paths and
+two programming paths this session, and it is the general rule the paths programme has
+arrived at: **split where the reader's job changes, not where the topic count gets
+uncomfortable.**
+
+The database path is the other kind of correction. `data` already had *Data From First
+Principles* — an excellent theory route through the relational model, joins, indexes
+and query plans — and nothing at all about operating one. Pooling, replication,
+backups, monitoring and the choice between nine engines were twenty unreachable cards
+serving a completely different reader.
+
+```
+paths            68 → 72
+steps         1,068 → 1,142
+topics reached 1,009 → 1,082   (66% → 71% of the site)
+linux draw        31 → 63   of 62 counted across files
+data draw         26 → 46   of 44
+web draw          19 → 39   of 39 — every web topic is now on a route
+```
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
