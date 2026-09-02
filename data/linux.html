@@ -218,6 +218,47 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Directory Bits Mean Different Things, and They Decide Who Can Delete Your File</div>
+                <div class="concept-desc">
+                  The octal table is the same for files and directories and the meanings are not.
+                  On a directory, <code>r</code> is permission to <em>list</em> the names inside,
+                  <code>x</code> is permission to <em>traverse</em> into it and reach a known path,
+                  and <code>w</code> is permission to <em>add and remove entries</em>. Those come
+                  apart in ways that surprise people: <code>--x</code> on a directory lets someone
+                  open <code>/srv/app/config.yml</code> if they already know the name while
+                  <code>ls</code> returns permission denied, which is a legitimate way to expose one
+                  path without exposing the listing.
+                </div>
+                <div class="concept-desc">
+                  The consequential one is deletion. Removing a file is a modification of its
+                  <em>directory</em>, not of the file, so <strong>write permission on the directory
+                  is enough to delete a read-only file you do not own</strong>. That is what the
+                  sticky bit exists for: on <code>/tmp</code>, mode <code>1777</code> means anyone
+                  may create files and only the owner may remove their own. A shared directory made
+                  <code>777</code> without it is a place where any user can delete anyone's work.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Bit</th><th>On a file</th><th>On a directory</th></tr>
+                    <tr><td><code>r</code></td><td>Read contents</td><td>List names (needs <code>x</code> too, for anything about them)</td></tr>
+                    <tr><td><code>w</code></td><td>Modify contents</td><td class="c-red">Create and delete entries — including files you do not own</td></tr>
+                    <tr><td><code>x</code></td><td>Execute</td><td>Traverse to a known path inside</td></tr>
+                    <tr><td>SUID</td><td>Run as the file's owner</td><td>No effect</td></tr>
+                    <tr><td>SGID</td><td>Run as the file's group</td><td class="c-cyan">New entries inherit the directory's group — the trick that makes shared project directories work</td></tr>
+                    <tr><td>Sticky</td><td>No effect on modern systems</td><td>Only the owner may delete their own entries</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Reach for SGID plus sticky on shared directories, and for
+                    ACLs <span class="acro-exp">(Access Control List)</span> when the three classes genuinely are not enough.</strong>
+                    <code>setfacl</code> grants a named user access without inventing a group for
+                    every pair of people, and <code>getfacl</code> is where a permission that "makes
+                    no sense" from <code>ls -l</code> usually turns out to live — the trailing
+                    <code>+</code> in the mode string is the only hint <code>ls</code> gives you.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -4627,6 +4668,40 @@ podman generate systemd <span class="var">--name</span> web   <span class="com">
                   <div class="concept-desc verdict">
                     Default on RHEL/Fedora. The security win — no privileged daemon — is why it's
                     favored in hardened and multi-tenant environments.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Rootless Is a UID Mapping, and Everything Confusing About It Follows From That</div>
+                <div class="concept-desc">
+                  "Container root maps to your UID"
+                  is the whole security argument and also the source of every rootless surprise. The
+                  kernel gives your user a range of subordinate ids from
+                  <code>/etc/subuid</code> and <code>/etc/subgid</code>, and the container's users
+                  are mapped into it — so a file the container writes as its uid 1000 lands on the
+                  host owned by something like 165535, and a host file you own is invisible to the
+                  container's non-root users. The symptom is a bind mount that produces permission
+                  denied on both sides at once, and the fix is not <code>chmod 777</code>, it is
+                  <code>:U</code> or <code>--userns=keep-id</code>, which tell Podman to reconcile
+                  the mapping rather than the permissions.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Rootless limit</th><th>Why</th><th>The move</th></tr>
+                    <tr><td>Cannot bind ports below 1024</td><td>Unprivileged processes cannot, container or not</td><td>Publish 8080 and let a reverse proxy own 80/443, or lower <code>net.ipv4.ip_unprivileged_port_start</code> deliberately</td></tr>
+                    <tr><td>Bind-mount permission denied</td><td>The UID mapping, not the mode bits</td><td><code>-v ./data:/data:U</code>, or <code>--userns=keep-id</code></td></tr>
+                    <tr><td>Slower network by default</td><td>Rootless networking goes through a userspace stack</td><td>pasta (the modern default) over slirp4netns; host networking where it is acceptable</td></tr>
+                    <tr><td>Containers die at logout</td><td class="c-red">The systemd user session ends and takes its processes with it</td><td><code>loginctl enable-linger</code> — the single most common "it stopped overnight" cause</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And prefer Quadlet over <code>podman generate systemd</code></strong>,
+                    which is deprecated: a small <code>.container</code> unit file in
+                    <code>~/.config/containers/systemd/</code> is generated into a real service at
+                    boot, so the container is described declaratively rather than by a generated
+                    unit nobody regenerates after changing the command. That plus lingering is what
+                    makes rootless Podman a genuine service host rather than a development
+                    convenience — see <span class="xref">systemd Deep — Units, Timers &amp; Journald</span>.
                   </div>
                 </div>
               </div>

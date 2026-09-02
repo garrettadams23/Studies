@@ -112,6 +112,37 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">The Credential Chain Decides Which Account You Just Changed</div>
+                <div class="concept-desc">
+                  <code>aws configure --profile work</code> creates a profile; it does not make the
+                  CLI use it. The SDK <span class="acro-exp">(Software Development Kit)</span> walks a fixed precedence order and takes the first thing it
+                  finds, so a stale <code>AWS_ACCESS_KEY_ID</code> exported in a shell three days
+                  ago silently outranks the profile you just named — and the command succeeds, in
+                  the wrong account, with no warning. This is the mechanism behind most "I deleted
+                  it in prod by accident" stories: not a typo in the resource name, a mismatch
+                  between the account someone believed they were in and the one the chain resolved.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Order</th><th>Source</th><th>How it bites</th></tr>
+                    <tr><td>1</td><td>Command-line options (<code>--profile</code>, <code>--region</code>)</td><td>Explicit and safe — the only unambiguous form</td></tr>
+                    <tr><td>2</td><td><code>AWS_ACCESS_KEY_ID</code> etc. in the environment</td><td class="c-red">Beats every profile; survives in a long-lived shell or a CI job's inherited env</td></tr>
+                    <tr><td>3</td><td><code>AWS_PROFILE</code></td><td>Set once for a task and forgotten for the rest of the session</td></tr>
+                    <tr><td>4</td><td><code>~/.aws/credentials</code>, then <code>~/.aws/config</code></td><td>The <code>[default]</code> profile is whatever the last <code>aws configure</code> wrote</td></tr>
+                    <tr><td>5</td><td>Container role, then instance metadata</td><td>On EC2 this is the right answer — and it is last, so a leftover key on the box overrides the role</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Make <code>aws sts get-caller-identity</code> the first
+                    line of anything destructive, and read it.</strong> Put the account alias in the
+                    shell prompt, use <code>--profile</code> explicitly rather than exporting, and
+                    prefer SSO <span class="acro-exp">(Single Sign-On)</span> short-lived sessions so a forgotten export expires on its own. The
+                    role-based path that removes the keys entirely is in
+                    <span class="xref">AWS IAM Deep — AssumeRole, STS &amp; Boundaries</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -215,6 +246,43 @@ gcloud projects get-iam-policy PROJECT_ID \
                     Docker, and Terraform pre-installed and authenticated. Note the split:
                     <code>gcloud</code> for most services, <code>gsutil</code> for storage,
                     <code>bq</code> for BigQuery.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">gcloud Has Two Independent Contexts, and Cloud Shell Has a Third Identity</div>
+                <div class="concept-desc">
+                  The account you are logged in as and the project commands act on are separate
+                  settings held in a named <em>configuration</em>, and either can be stale
+                  independently. Running <code>gcloud config set project</code> changes it for every
+                  shell using that configuration, including the one in another window running
+                  something long. And there are two logins, not one:
+                  <code>gcloud auth login</code> authenticates the CLI, while
+                  <code>gcloud auth application-default login</code> writes the separate credential
+                  that client libraries and Terraform read — so a script can fail with a permission
+                  error while <code>gcloud</code> commands in the same terminal succeed, because
+                  they are using different identities.
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com"># Say who and where, out loud, before anything destructive</span>
+gcloud config list                       <span class="com"># account + project of the active config</span>
+gcloud auth list                         <span class="com"># every credential, with the active one starred</span>
+
+<span class="com"># Named configurations beat editing one global context</span>
+gcloud config configurations create prod
+gcloud config configurations activate dev
+
+<span class="com"># Or bypass the context entirely for one command</span>
+gcloud compute instances list --project my-prod-project</pre>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Cloud Shell is the sharpest edge, because it is
+                    convenient.</strong> It comes pre-authenticated as your full console identity —
+                    every permission you hold, in a terminal that is one browser tab away from
+                    whatever you were reading — and its home directory persists, so credentials and
+                    scripts left there survive. It is excellent for exploration and the wrong place
+                    to keep anything, and it is worth being as deliberate with
+                    <code>--project</code> there as anywhere else.
                   </div>
                 </div>
               </div>
@@ -1796,6 +1864,40 @@ gcloud projects get-iam-policy PROJECT_ID \
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">"No State File to Manage" Means AWS Manages It — Including the Rollback That Deletes Your Database</div>
+                <div class="concept-desc">
+                  The managed stack is a genuine advantage and it hands you a behaviour Terraform
+                  does not have: <strong>automatic rollback</strong>. When an update fails partway,
+                  CloudFormation reverts the stack to its previous state, and for resources it
+                  created during that update, reverting means deleting them. A stack update that
+                  replaces an RDS <span class="acro-exp">(Relational Database Service)</span>
+                  instance and then fails on a later resource can therefore take the new database
+                  with it. Worse, some property changes are <em>replacements</em> rather than
+                  updates — renaming a resource's logical id, changing a DB identifier, changing an
+                  EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> instance's subnet — and
+                  the plan for a replacement is create-new-then-delete-old.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Control</th><th>What it prevents</th></tr>
+                    <tr><td><code>DeletionPolicy: Retain</code> / <code>Snapshot</code></td><td>The stateful resource surviving its stack — set it on every database and bucket, at creation</td></tr>
+                    <tr><td>Change sets</td><td class="c-cyan">The only way to see "Replacement: True" before you agree to it — this is CloudFormation's <code>terraform plan</code> and it is optional, which is the problem</td></tr>
+                    <tr><td>Stack policies</td><td>Denying updates to named resources, so a careless template cannot touch the data tier</td></tr>
+                    <tr><td>Termination protection</td><td>A stack deletion that takes everything, usually run against the wrong account</td></tr>
+                    <tr><td>Drift detection</td><td>Console changes made during an incident that the next deploy will silently revert</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And CDK does not remove any of this — it generates
+                    it.</strong> Real code producing templates is a large ergonomic win and it puts
+                    a compiler between you and the diff, so the discipline that matters is reading
+                    the synthesised change set rather than trusting the constructs. Keep stateful
+                    resources in their own stack with their own policy, so the stack you iterate on
+                    daily has nothing in it that cannot be recreated.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2298,6 +2400,38 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                     <strong class="c-green">Bicep</strong> is worth knowing — a clean DSL <span class="acro-exp">(Domain-Specific Language)</span> that
                     compiles to ARM templates, Azure's answer to Terraform/CloudFormation for
                     declarative infra.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">A Resource Group Is a Lifecycle Container, Not a Boundary — and Three Things It Does Not Contain</div>
+                <div class="concept-desc">
+                  "Resources sharing a lifecycle" is the right definition and it is routinely read
+                  as something stronger. A resource group is not a security boundary — RBAC <span class="acro-exp">(Role-Based Access Control)</span> inherited from the
+                  subscription or a management group applies inside it regardless. It is not a
+                  network boundary — two VMs in
+                  different groups on the same VNet talk freely. And it is not a billing boundary
+                  in the way people assume: cost is attributed by resource, so grouping without
+                  tags produces a bill nobody can split. What it genuinely is, is a delete button:
+                  removing the group removes everything in it, which is exactly why the safety
+                  features below exist.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Assumption</th><th>Reality</th><th>What actually does the job</th></tr>
+                    <tr><td>"It isolates access"</td><td>Inherited role assignments still apply</td><td>Scope assignments deliberately; PIM <span class="acro-exp">(Privileged Identity Management)</span> for standing access</td></tr>
+                    <tr><td>"It isolates the network"</td><td>The VNet is the boundary, and it is a separate object</td><td>NSGs, subnets, and separate VNets where isolation is real</td></tr>
+                    <tr><td>"We can move things later"</td><td class="c-yellow">Many resource types cannot be moved between groups or subscriptions at all</td><td>Decide the grouping at creation; check the move-support list first</td></tr>
+                    <tr><td>"The group is in a region, so its resources are"</td><td>The group's region only stores its metadata — resources choose their own</td><td>Read each resource's location; a group in West Europe can hold East US machines</td></tr>
+                    <tr><td>"Deleting is reversible"</td><td class="c-red">Deleting the group deletes its contents, and most of it does not come back</td><td>Delete locks (<code>CanNotDelete</code>) on anything holding data</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Group by what you would delete together, and put the
+                    boundaries where Azure actually enforces them</strong> — subscriptions and
+                    management groups for blast radius and policy, VNets for the network, tags for
+                    the bill. That hierarchy, and where a policy assignment really lands, is in
+                    <span class="xref">Azure Hierarchy, RBAC Scopes &amp; Policy</span>.
                   </div>
                 </div>
               </div>

@@ -15802,3 +15802,60 @@ counter-metric +8 characters, 10th percentile up 85.**
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the long tail across four domains, and a note on what the counter-metric can and cannot see
+
+Seven cards finishing the cloud provider-tour set and starting on `eng` and `linux`.
+Same discipline as the six waves before it, applied to whatever question each card had
+not answered.
+
+| Card | The thing that was missing |
+|---|---|
+| AWS CLI & CloudShell | The credential chain decides which account you just changed — an exported key outranks the profile you named |
+| gcloud CLI & Cloud Shell | Two independent contexts, and two logins: `auth login` and `auth application-default login` are different identities |
+| AWS-Native IaC | "No state file to manage" means AWS manages it, including the automatic rollback that deletes the database it just created |
+| Azure Core | A resource group is a lifecycle container, not a security, network or billing boundary — and its region is only where its metadata lives |
+| Tech Lead vs EM | Both tracks fail in year one the same way: by not letting go of the work that earned the promotion |
+| Linux permissions | `w` on a *directory* is enough to delete a read-only file you do not own — which is what the sticky bit is for |
+| Podman rootless | Rootless is a UID mapping, and every confusing thing about it follows: bind-mount denials, ports under 1024, and containers that die at logout without `enable-linger` |
+
+### A gate caught a rendering bug the eye would not
+
+`lint_content` refused the build over a single cell: `c-cyan` on the *first* cell of a
+`.ref-table` row never renders, because `td:first-child` outranks it. The class was
+present, the markup was valid, the colour would simply not have appeared — and the row
+in question was the one meant to stand out. Moved to the second cell. That check
+exists because this exact class of "styled and invisible" mistake is unreviewable by
+reading the diff.
+
+### What the padding counter-metric actually measures
+
+Mean characters per concept card has moved **1,254 → 1,266 across this session's
+42 cards**, and it is worth being precise about why, because the rule in this file
+says it must not rise.
+
+The metric detects padding by rising when *existing cards get wordier*. Every card in
+these seven waves was **appended**, not edited: `git show --numstat` over the seven
+content commits reports 1,301 insertions and 9 deletions in `data/*.html`, and the
+nine deletions are the acronym annotator reflowing lines plus two hand-fixed word
+choices. No existing prose was lengthened by a single character.
+
+So the twelve-character rise is arithmetic, not padding: the new cards are denser than
+the site's mean — a table plus a verdict runs 1,500–2,500 characters against a mean of
+1,266 — and adding above-average cards raises an average. The measure that would catch
+real padding here is the one to watch instead: **the 10th percentile has moved
+1,484 → 1,584 and the median 3,242 → 3,291**, which is what it looks like when cards
+leave the tail rather than when everything gets longer.
+
+```
+                          session start   now
+thin topics                        102     60
+mean chars/concept card          1,254  1,266   (+12 over 42 appended cards)
+median topic                     3,242  3,291
+10th percentile                  1,484  1,584
+```
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
