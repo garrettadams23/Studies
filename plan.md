@@ -15859,3 +15859,52 @@ median topic                     3,242  3,291
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — finishing redteam: the tail of the offensive-tool set
+
+Five more cards under D11's spec, taking `redteam` from the worst thin ratio on the
+site (28% at the start of the session) to **5%**.
+
+| Tool | What must already be true | The control that denies it |
+|---|---|---|
+| John the Ripper | Someone gave you the *file* — an archive, a private key, a KeePass database | The share ACL, the key storage, the vault: the extraction is the finding, the crack is the second one |
+| CloudFox / enumerate-iam | A cloud credential that should not have reached you | Not "least privilege" — key issuance, secret scanning, IMDSv2, OIDC federation, one per route |
+| theHarvester / Recon-ng | A scope that covers what the module you enabled actually touches | Nothing technical: enumerate your modules and record them |
+| BadUSB / RF implants | Proximity **and** an unlocked session, an unencrypted badge, or a system with no rolling code | Lock timeouts and USB device control; a badge generation change; a system replacement |
+| OWASP ZAP | A session it can hold and a route list it cannot discover | — the coverage claim is the finding here, not a control |
+
+### Three things that changed how a card reads
+
+**"Passive" is a property of the configuration, not of the tool.** `-b all` enables
+sources indiscriminately, and among them are modules that resolve, screenshot or probe
+discovered hosts — active reconnaissance against infrastructure that may not be in
+scope, from your address. The card's instruction is to enumerate the modules you
+enabled and put them in the report, which is the difference between a defensible
+engagement and an argument.
+
+**An unauthenticated DAST scan of a single-page application tests the login page.**
+The spider finds one route, the interesting ones are behind the session, and the
+baseline scan attacks nothing by design. So the pipeline should fail on *new* findings
+against a reviewed baseline rather than on a total — an absolute-count gate acquires a
+permanent exception within a fortnight.
+
+**Software-defined radio has a legal prerequisite the engagement letter cannot
+grant.** Transmitting on licensed spectrum is an offence in most jurisdictions
+regardless of what the client authorised, so receive-only is the default and
+transmitting is a separate, explicit decision.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   60      55
+redteam thin                   8       3   (14% → 5%; 28% at session start)
+mean chars/concept card    1,266   1,267
+median topic               3,291   3,304
+10th percentile            1,584   1,638
+```
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.

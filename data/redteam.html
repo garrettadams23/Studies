@@ -160,6 +160,39 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">"Passive" Is a Property of the Configuration, Not of the Tool</div>
+                <div class="concept-desc">
+                  The distinction that matters legally and operationally is whether packets reach
+                  the target, and both frameworks will cross that line the moment a module does. A
+                  <code>-b all</code> run enables sources indiscriminately, and among them are
+                  modules that resolve every discovered host, take screenshots, or probe found
+                  subdomains — which is active reconnaissance against infrastructure that may not be
+                  in scope, from your address, with your name on it. The tools do not warn, because
+                  they cannot know what your scope says.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Source</th><th>Reaches the target?</th><th>Scope question it raises</th></tr>
+                    <tr><td>Search engines, PGP <span class="acro-exp">(Pretty Good Privacy)</span> keyservers</td><td>No</td><td>None — this is reading what is already published</td></tr>
+                    <tr><td>Certificate transparency logs</td><td>No</td><td class="c-cyan">The richest passive source there is, and it names internal hostnames people forgot were certificated</td></tr>
+                    <tr><td>DNS <span class="acro-exp">(Domain Name System)</span> resolution of discovered hosts</td><td>Only the resolver</td><td>Usually fine; check whether the resolver is the client's</td></tr>
+                    <tr><td>Screenshotting or probing found hosts</td><td class="c-red">Yes</td><td>Are those hosts in scope, and is a cloud provider's testing policy engaged?</td></tr>
+                    <tr><td>Third-party API <span class="acro-exp">(Application Programming Interface)</span> modules with your key</td><td>No, but attributable</td><td>The query is logged against your account, forever</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Enumerate the modules you enabled and record them in the
+                    report.</strong> That single habit answers the client's inevitable question of
+                    what you touched and when, and it is the difference between a defensible
+                    engagement and an argument. Certificate transparency deserves the emphasis on
+                    both sides of the fence: it is public, permanent, and the fastest route to an
+                    estate's shadow inventory — which makes reading your own CT log the cheapest
+                    defensive exercise on this page. See
+                    <span class="xref">OSINT for Defenders — See Yourself as Attackers Do</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -439,6 +472,40 @@
                     <strong class="c-amber">Blue-team crossover:</strong> because ZAP is a
                     <em>defensive</em> tool too, wire it into your own pipeline to catch OWASP Top 10
                     regressions before release.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">A Scanner Reaches What It Can Crawl and Log Into — Which Is Less Than You Think</div>
+                <div class="concept-desc">
+                  Wiring DAST
+                  into the pipeline is the right move and it comes with a coverage claim that
+                  usually is not true. A baseline scan sees what the spider found, and a modern
+                  single-page application renders its routes in JavaScript, hides the interesting
+                  ones behind a login, and guards its writes with a rotating token. So the honest
+                  starting position is that an unauthenticated scan of an SPA <span class="acro-exp">(Single Page Application)</span> tests the login page. Three
+                  things have to be supplied before the number means anything: a session the scanner
+                  can hold, a route list it cannot discover, and the CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> handling to make writes
+                  succeed.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Gap</th><th>Effect on the report</th><th>What to supply</th></tr>
+                    <tr><td>No authentication context</td><td>Everything behind the login is untested and unlisted</td><td>An authentication script or a replayable session, plus a logged-out detection rule</td></tr>
+                    <tr><td>Client-side routing</td><td>The spider finds one page</td><td>The AJAX <span class="acro-exp">(Asynchronous JavaScript and XML)</span> spider, or an OpenAPI spec, or a recorded HAR of a real session</td></tr>
+                    <tr><td>Baseline vs full scan</td><td class="c-yellow">Baseline is passive — it reports headers and obvious issues and attacks nothing</td><td>Know which one you ran; a green baseline is not a tested application</td></tr>
+                    <tr><td>Active scan in CI</td><td class="c-red">It submits forms and mutates data — against a shared staging database</td><td>An environment you can reset, and never production</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Fail the build on a diff, not on a total.</strong> DAST
+                    findings carry false positives, and a pipeline that blocks on absolute counts
+                    gets a permanent exception within a fortnight; one that blocks on
+                    <em>new</em> findings against a reviewed baseline keeps working. The classes it
+                    structurally cannot find — authorisation logic, IDOR <span class="acro-exp">(Insecure Direct Object Reference)</span>, business-rule
+                    abuse — are the ones a human tests, which is the division of labour to write
+                    into the plan rather than discover at the report stage. See
+                    <span class="xref">Broken Object-Level Authorization — The Bug in Almost Every API</span>.
                   </div>
                 </div>
               </div>
@@ -1514,6 +1581,36 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">Something Had to Give You the File — Which Is the Finding, Not the Crack</div>
+                <div class="concept-desc">
+                  The <code>*2john</code> extractors are the reason to keep this tool, and each one
+                  quietly names a precondition. <code>zip2john</code> needs the archive.
+                  <code>ssh2john</code> needs the private key file. <code>keepass2john</code> needs
+                  the database. In every case the interesting sentence in the report is how you came
+                  to have it — a world-readable share, a backup on a workstation, a key committed to
+                  a repository — because that is the control the client can fix. The password
+                  strength is the second finding, and often the smaller one.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you extracted</th><th>What it implies about the estate</th><th>The control</th></tr>
+                    <tr><td>An encrypted archive from a file share</td><td>Sensitive data at rest with permissions that let you read it</td><td>Share ACLs <span class="acro-exp">(Access Control List)</span> and a data classification that reaches file servers</td></tr>
+                    <tr><td>An SSH <span class="acro-exp">(Secure Shell)</span> private key</td><td>A key protected only by a passphrase, and reachable</td><td>Hardware-backed keys or a bastion with certificates; passphrases are the last line, not the first</td></tr>
+                    <tr><td>A KeePass or password-manager database</td><td class="c-red">One crack yields every credential in it</td><td>Managed vaults with MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, not a file that can be copied</td></tr>
+                    <tr><td>A document or PDF <span class="acro-exp">(Portable Document Format)</span></td><td>"Password-protected" being used as a substitute for encryption at rest</td><td>Proper encryption with managed keys</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And the format autodetect is a convenience that can cost
+                    you the run.</strong> When John guesses wrong — the shapes of several formats
+                    collide — it reports no cracks against passwords that were perfectly weak, which
+                    reads like a strong policy. Pin the format explicitly with
+                    <code>--format=</code> once you know it, and treat "nothing cracked" as
+                    unverified until you have confirmed which algorithm you actually attacked.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1925,6 +2022,40 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">Seconds of Physical Access, an Unlocked Session — and a Letter in Your Pocket</div>
+                <div class="concept-desc">
+                  Every device here needs proximity, and each needs a second condition that is
+                  cheaper to deny than the physical layer. A keystroke injector needs an
+                  <em>unlocked</em> session, because it types as the logged-in user — a locked screen
+                  reduces it to a device sitting in a port. A 125 kHz proximity card is cloneable
+                  because the format carries no cryptography at all, which is a property of the
+                  badge generation rather than of the reader. And software-defined radio work needs
+                  a transmit authorisation as well as a technical one: transmitting on licensed
+                  spectrum is an offence in most jurisdictions regardless of what the engagement
+                  letter says, so receive-only is the default and transmitting is a separate,
+                  explicit decision.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Attack</th><th>Second condition</th><th>What removes it</th></tr>
+                    <tr><td>Keystroke injection</td><td>An unlocked, logged-in session</td><td>Short lock timeouts, and USB device control that allowlists by class and id</td></tr>
+                    <tr><td>Badge cloning</td><td class="c-red">125 kHz prox, which has no authentication to break</td><td>Migrate to a modern encrypted credential; the reader is usually the smaller cost</td></tr>
+                    <tr><td>Implanted cable</td><td>Someone plugging in a cable they did not source</td><td>Issued peripherals, and treating a found cable like a found USB stick</td></tr>
+                    <tr><td>RF capture and replay</td><td>A system with no rolling code or timestamp</td><td>Replace the system — this is a design flaw, not a configuration</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">The authorisation for this class of work is different in
+                    kind, and it travels with you.</strong> A physical engagement needs a signed
+                    letter naming the sites, the dates, the permitted techniques and a contact who
+                    will answer a phone at 2am — carried on the person, because the audience for it
+                    is a security guard or a police officer, not a reviewer. Scope, safety and the
+                    letter are covered in
+                    <span class="xref">Physical Assessments &amp; Covert Entry — Scope, Safety and the Letter in Your Pocket</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2272,6 +2403,37 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     describe/list and access-denied events in CloudTrail — a spike of
                     <code>AccessDenied</code> from one principal is a strong enumeration signal.
                     Least privilege shrinks what any leaked key can enumerate in the first place.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">A Credential That Should Not Have Reached You, and a Trail That Records the Asking</div>
+                <div class="concept-desc">
+                  Both tools start from valid cloud credentials, which means the engagement's real
+                  finding happened before either was run: a long-lived access key in a repository, a
+                  key on a laptop, an over-scoped CI token, a metadata endpoint reachable through an
+                  SSRF <span class="acro-exp">(Server-Side Request Forgery)</span>. Each of those has
+                  its own control and none of them is "least privilege" — they are key issuance,
+                  secret scanning, token lifetime and IMDSv2 respectively. Least privilege is the
+                  second control: it decides how far the credential goes once it exists.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>How the credential arrived</th><th>The control that denies it</th></tr>
+                    <tr><td>Long-lived access key in a repo or dotfile</td><td>Do not issue them — SSO <span class="acro-exp">(Single Sign-On)</span> and short-lived role sessions; secret scanning on push</td></tr>
+                    <tr><td>Instance metadata via SSRF</td><td class="c-cyan">IMDSv2 required, hop limit 1 — a single account-wide setting</td></tr>
+                    <tr><td>An over-scoped CI token</td><td>OIDC <span class="acro-exp">(OpenID Connect)</span> federation with a role scoped to the repository and branch</td></tr>
+                    <tr><td>A key that outlived the person</td><td>Access Analyzer unused-access findings; expiry as policy rather than as intention</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">The other prerequisite is a decision about noise.</strong>
+                    <code>enumerate-iam</code> works by attempting calls and reading the denials, so
+                    it generates hundreds of <code>AccessDenied</code> events from one principal in
+                    minutes — which is an excellent detection for the defender and a deliberate
+                    choice for the operator. On a stealth engagement that alone can end the exercise;
+                    on a purple-team run it is exactly the signal you came to test. Say which one it
+                    is in the rules of engagement, before the run, not in the report afterwards.
                   </div>
                 </div>
               </div>
