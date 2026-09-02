@@ -17675,3 +17675,57 @@ entry points also names things that merely sound like them.
 
 Check PASS · smoke **147/147** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — four acronyms off the drift queue, and the guard that caught the fifth
+
+`acronym_drift.py` counts capitalised tokens the dictionary has never heard of, and its own
+docstring is careful that most of them should never be added: product names, shouted
+headings, register names. **1,476 unknown tokens across 3,836 occurrences** — read as a
+queue, not a gate.
+
+Reading the top of it, four are genuine acronyms the dictionary lacked, and each earns its
+place through the same three consumers: the inline expansion, the **acronym-aware search**
+(searching *"global interpreter lock"* should reach the cards that only say GIL, and vice
+versa), and the acronym quiz's question bank.
+
+| Added | Expansion | Uses | Why it is not a product name |
+|---|---|---|---|
+| `DB` | Database | 63, in 13 domains | Written out in prose everywhere and abbreviated in every diagram, connection string and table name |
+| `HA` | High Availability | 15, in 7 domains | The word people search for when the cards say HA |
+| `GIL` | Global Interpreter Lock | 13, `script` | The reason Python threads do not speed up CPU work, and unfindable by its own name |
+| `PCI` | Payment Card Industry | 16 | `PCI DSS` and `PCIe` were already entries; the bare form was not |
+
+Everything above them in the queue is exactly what the docstring predicted — PowerShell,
+JavaScript, GitHub, SharePoint, ConfigMgr, GB, GHz. **Not acronyms, and adding them would
+put a bracketed expansion after the name of a product.**
+
+### The linter caught PCI, which is the whole reason that rule exists
+
+`PCI` went in with two meanings and an `annotate` default, and `lint_content` refused the
+build with three errors:
+
+```
+PCI renders in 'grc' with no byDomain decision …  Meanings: Payment Card Industry | Peripheral Component Interconnect
+PCI renders in 'hw'  with no byDomain decision …
+PCI renders in 'linux' with no byDomain decision …
+```
+
+Reading the actual occurrences settled it in seconds: every `hw` and `linux` hit is **`PCIe`**,
+the bus, and every `grc` hit is the card standard. So `byDomain` says *Payment Card Industry*
+in `grc` and `null` in the other two — the documented mechanism for "genuinely ambiguous in
+context", and the third time this session that null override has been the right answer.
+
+The interesting detail is that `hw` and `linux` contain **no bare PCI at all**. The check is
+matching the prefix inside `PCIe`, so it over-reports — and over-reporting is exactly what
+you want from a rule that asks a human to make a decision. It cost one grep and produced a
+`byDomain` entry that will be correct the day somebody writes about the bus.
+
+```
+dictionary entries in use  1,041 → 1,045
+unknown tokens             1,476 → 1,470
+data diff                  +90 / −39   (39 deletions are the annotator re-flowing lines it touched)
+```
+
+Check PASS · smoke **147/147** · search **42/42** · axe **6/6** · mobile **9/9**.

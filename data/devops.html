@@ -24,7 +24,7 @@
           <tr><td>Source</td><td>Code pushed to repo triggers pipeline</td><td>GitHub, GitLab, Bitbucket</td></tr>
           <tr><td>Lint &amp; Static Analysis</td><td>Code style, type checks, SAST <span class="acro-exp">(Static Application Security Testing)</span></td><td>flake8, mypy, SonarQube, Semgrep</td></tr>
           <tr><td>Unit Tests</td><td>Test individual functions</td><td>pytest, JUnit, Jest</td></tr>
-          <tr><td>Integration Tests</td><td>Test components together</td><td>pytest with test DBs, Postman</td></tr>
+          <tr><td>Integration Tests</td><td>Test components together</td><td>pytest with test DBs <span class="acro-exp">(Database)</span>, Postman</td></tr>
           <tr><td>Build / Package</td><td>Compile, build Docker image, package</td><td>Docker, maven, npm build</td></tr>
           <tr><td>Security Scan</td><td>Dependency vulnerabilities, image scan</td><td>Trivy, Snyk, pip-audit</td></tr>
           <tr><td>Deploy to Staging</td><td>Deploy to production-like env</td><td>Kubernetes, Terraform, Ansible</td></tr>
@@ -902,7 +902,7 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Pattern</th><th>How It Works</th></tr>
-                    <tr><td>Cache-aside (lazy)</td><td>App checks cache; on a miss, reads the DB and populates the cache. Most common.</td></tr>
+                    <tr><td>Cache-aside (lazy)</td><td>App checks cache; on a miss, reads the DB <span class="acro-exp">(Database)</span> and populates the cache. Most common.</td></tr>
                     <tr><td>Read-through</td><td>The cache itself loads from the DB on a miss — app only talks to the cache.</td></tr>
                     <tr><td>Write-through</td><td>Writes go to cache <em>and</em> DB together — always fresh, slightly slower writes.</td></tr>
                     <tr><td>Write-back</td><td>Write to cache now, flush to DB later — fast, but risks loss on crash.</td></tr>
@@ -1159,7 +1159,7 @@ jobs:
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Requirement</th><th>Why</th></tr>
-                    <tr><td>Backward-compatible changes</td><td>Old and new versions run at once — the DB schema and APIs <span class="acro-exp">(Application Programming Interface)</span> must serve both. Use expand-then-contract migrations.</td></tr>
+                    <tr><td>Backward-compatible changes</td><td>Old and new versions run at once — the DB <span class="acro-exp">(Database)</span> schema and APIs <span class="acro-exp">(Application Programming Interface)</span> must serve both. Use expand-then-contract migrations.</td></tr>
                     <tr><td>Health checks</td><td>The orchestrator must know a new instance is actually ready before sending it traffic.</td></tr>
                     <tr><td>Good metrics/alerts</td><td>Canary is blind without error-rate and latency dashboards to compare versions.</td></tr>
                     <tr><td>Automated rollback</td><td>A deploy that can't auto-revert on failing metrics isn't really safe.</td></tr>

@@ -92,7 +92,7 @@
                     <tr><th>Term</th><th>Meaning</th></tr>
                     <tr><td>Primary key</td><td>Uniquely identifies a row; not null</td></tr>
                     <tr><td>Foreign key</td><td>References a PK elsewhere — enforces referential integrity</td></tr>
-                    <tr><td>Unique / Check</td><td>Column-level rules the DB guarantees</td></tr>
+                    <tr><td>Unique / Check</td><td>Column-level rules the DB <span class="acro-exp">(Database)</span> guarantees</td></tr>
                     <tr><td>Candidate / composite key</td><td>Other unique columns; keys spanning multiple columns</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -825,7 +825,7 @@
                     <tr><td><code>SELECT *</code></td><td>Fetch only needed columns → enables covering indexes</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-amber">The N+1 problem</strong> is the #1 app-layer DB killer
+                    <strong class="c-amber">The N+1 problem</strong> is the #1 app-layer DB <span class="acro-exp">(Database)</span> killer
                     (ORMs love to cause it): loading a list, then firing one query per item. Fix by
                     eager-loading with a join or a single <code>WHERE id IN (…)</code>.
                   </div>
@@ -892,7 +892,7 @@
                     <tr><td>Row versions</td><td>Old versions kept until no txn needs them</td></tr>
                     <tr><td>VACUUM (Postgres)</td><td>Cleans up dead tuples — neglect it and the table bloats</td></tr>
                     <tr><td>Row vs table locks</td><td><code>FOR UPDATE</code> locks specific rows for a write</td></tr>
-                    <tr><td>Deadlock</td><td>Two txns wait on each other — DB kills one; retry it</td></tr>
+                    <tr><td>Deadlock</td><td>Two txns wait on each other — DB <span class="acro-exp">(Database)</span> kills one; retry it</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-amber">Avoiding deadlocks:</strong> acquire locks in a consistent
@@ -1622,7 +1622,7 @@ db.orders.<span class="fn">aggregate</span>([
                   </table>
                   <div class="concept-desc verdict">
                     The relationship is stored directly, so a traversal is a pointer-hop, not a join —
-                    performance stays flat as hops increase. Use a graph DB when connections
+                    performance stays flat as hops increase. Use a graph DB <span class="acro-exp">(Database)</span> when connections
                     <em>are</em> the primary query; otherwise a relational DB is simpler.
                   </div>
                 </div>
@@ -1748,7 +1748,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><th>Tool</th><th>Role</th></tr>
                     <tr><td>Parquet</td><td>Columnar file format — the lingua franca of data lakes</td></tr>
                     <tr><td>DuckDB</td><td>"SQLite for analytics" — query Parquet/CSV locally, blazing fast</td></tr>
-                    <tr><td>ClickHouse</td><td>Real-time columnar DB for huge event volumes</td></tr>
+                    <tr><td>ClickHouse</td><td>Real-time columnar DB <span class="acro-exp">(Database)</span> for huge event volumes</td></tr>
                     <tr><td>Apache Arrow</td><td>In-memory columnar standard that ties them together</td></tr>
                   </table>
                   <pre class="code-block"><span class="com">-- DuckDB: query a Parquet file directly, no loading</span>
@@ -2084,7 +2084,7 @@ db.orders.<span class="fn">aggregate</span>([
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-amber">Replication lag</strong> means "read your own write" can
-                    fail — route critical reads to the primary. HA needs a leader-election mechanism;
+                    fail — route critical reads to the primary. HA <span class="acro-exp">(High Availability)</span> needs a leader-election mechanism;
                     rolling your own failover is how you get split-brain.
                   </div>
                 </div>
@@ -2215,7 +2215,7 @@ db.orders.<span class="fn">aggregate</span>([
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-red">And of course:</strong> parameterized queries to stop SQL <span class="acro-exp">(Structured Query Language)</span>
-                    injection (the app's job), and network isolation so the DB is never internet-facing.
+                    injection (the app's job), and network isolation so the DB <span class="acro-exp">(Database)</span> is never internet-facing.
                     Column-level encryption/masking protects PII <span class="acro-exp">(Personally Identifiable Information)</span> even from DB admins.
                   </div>
                 </div>
@@ -2287,7 +2287,7 @@ db.orders.<span class="fn">aggregate</span>([
                   </table>
                   <div class="concept-desc verdict">
                     <code>pg_stat_statements</code> (Postgres) and the Performance Schema (MySQL)
-                    surface your worst queries — the single most useful place to look when the DB is slow.
+                    surface your worst queries — the single most useful place to look when the DB <span class="acro-exp">(Database)</span> is slow.
                   </div>
                 </div>
               </div>

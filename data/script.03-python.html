@@ -1550,7 +1550,7 @@ x = <span class="num">42</span>
           <tr><td><code>AttributeError</code></td><td>Object has no attribute</td><td><code>None.strip()</code></td></tr>
           <tr><td><code>FileNotFoundError</code></td><td>File/dir doesn't exist</td><td><code>open("ghost.txt")</code></td></tr>
           <tr><td><code>PermissionError</code></td><td>OS <span class="acro-exp">(Operating System)</span> blocks access</td><td>Reading root-owned file</td></tr>
-          <tr><td><code>TimeoutError</code></td><td>Operation took too long</td><td>Network requests, DB queries</td></tr>
+          <tr><td><code>TimeoutError</code></td><td>Operation took too long</td><td>Network requests, DB <span class="acro-exp">(Database)</span> queries</td></tr>
           <tr><td><code>ConnectionError</code></td><td>Network problem</td><td>Server down, no internet</td></tr>
           <tr><td><code>ZeroDivisionError</code></td><td>Divide by zero</td><td><code>x / 0</code></td></tr>
           <tr><td><code>ImportError</code></td><td>Module not found</td><td>Package not installed</td></tr>
@@ -3328,7 +3328,7 @@ p.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">T
                   <table class="ref-table">
                     <tr><th>Model</th><th>Right for</th><th>Because</th></tr>
                     <tr><td><code>async</code> / <code>asyncio</code></td><td>Many concurrent I/O <span class="acro-exp">(Input/Output)</span> waits &mdash; thousands of sockets</td><td>One thread, no context-switch cost, and waiting is explicit at <code>await</code></td></tr>
-                    <tr><td>Threads</td><td>I/O-bound work in libraries that are not async</td><td>The GIL is released during I/O, so threads genuinely overlap</td></tr>
+                    <tr><td>Threads</td><td>I/O-bound work in libraries that are not async</td><td>The GIL <span class="acro-exp">(Global Interpreter Lock)</span> is released during I/O, so threads genuinely overlap</td></tr>
                     <tr><td>Processes</td><td>CPU-bound work &mdash; parsing, compression, numerical loops</td><td>Separate interpreters, separate GILs, real parallelism</td></tr>
                     <tr><td>None of them</td><td>Work that is fast enough already</td><td>Concurrency is a cost paid in debuggability. Measure first</td></tr>
                     <tr><td>Threads for CPU <span class="acro-exp">(Central Processing Unit)</span> work</td><td><strong>Nothing.</strong> The classic mistake</td><td>The GIL means one runs at a time, plus switching overhead</td></tr>
