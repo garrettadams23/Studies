@@ -16266,3 +16266,49 @@ Fifteen deepening waves, **73 cards**, every one appended, none editing existing
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — nine new paths, and the domains that had content but no route
+
+With the depth queue at its floor, the remaining measurable gap was navigation.
+`check_paths` reported the shape plainly: `ops` drew 15 steps from 77 topics,
+`philosophy` drew none from 17, `military` one from 33, `devops` 14 from 50, `ai` 15
+from 50. Those are not thin domains — they are well-written ones nobody had sequenced.
+
+| Path | Steps | The route |
+|---|---|---|
+| Observability, Properly | 17 | three signals → instrument → logs → metrics → traces → OTel collector → sampling → cardinality → SLIs → error-budget policy → alert fatigue → runbooks |
+| Running a Service Desk | 21 | ITIL shape → incident vs problem vs change → priority → the ticket → the queue → escalation → difficult conversations → closing → KCS → shift-left → metrics → SLAs → CMDB → staffing |
+| Designing for Failure | 17 | design for failure → FMEA → blast radius → load shedding → capacity → chaos → gamedays → incident command → near-misses → resilience engineering → backup → DR → restore testing |
+| Thinking Clearly | 12 | arguments & fallacies → evidence → biases → mental models → decision-making → ethics → the schools → premortems |
+| Building an Internal Platform | 15 | why it exists → the IDP → platform as a product → golden paths → self-service → ephemeral envs → portals → DevEx → build caches → GitOps → policy as code → platform SLOs → measuring it |
+| The Modern Data Stack | 13 | ETL → OLTP vs OLAP → lakehouse → CDC → streaming → dimensional modelling → dbt → orchestration → quality → migrations → mesh → governance |
+| AI Safety, Security & Governance | 15 | ethics → bias → hallucination → prompt injection → AI security → adversarial AI → evals → agent safety → AI observability → data governance → shadow AI → acceptable use → NIST AI RMF |
+| From the Military to IT | 13 | the transition timeline → translating experience → GI Bill → networking → the leadership and planning frameworks that transfer → OPSEC → breaking in |
+| Handling Classified Material | 8 | markings → clearance paperwork → cover sheets → labels → container forms → spills → OPSEC → media sanitisation |
+
+### What the shape of the gap said
+
+Two of these are the clearest evidence that a census beats intuition. **`ops` had 67
+topics no path touched** — an entire service-desk curriculum, an observability
+curriculum, and a resilience curriculum, all written, none sequenced, because the
+existing ops-adjacent path (*Ship It and Run It*) is about delivery and stops at the
+edge of each. And **`philosophy` had zero reach**: seventeen cards on reasoning,
+evidence and ethics that only existed for someone who already knew to browse there.
+
+The two military paths split along the line the domain itself draws — the transition
+route is career advice, the classified-material route is procedure — and putting them
+in one path would have served neither reader.
+
+```
+paths           37 → 46
+steps          599 → 730
+topics reached 572 → 691   (37% → 45% of the site)
+new topics           0     (curation, as every paths wave has been)
+domains at zero reach:  philosophy fixed; only `shortcut` remains, and it is a
+                        reference surface rather than a route
+```
+
+Check PASS (`check_paths`: every step resolves, no duplicate within a path) · smoke
+**142/142** · axe **6/6** · mobile **9/9** · visual **2/2** · determinism reproducible.
