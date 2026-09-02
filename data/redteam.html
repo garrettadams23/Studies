@@ -379,6 +379,35 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">A Credential at Every Privilege Level You Intend to Test</div>
+                <div class="concept-desc">
+                  Burp's real power is that it deletes the browser from the trust boundary: every
+                  control the front end enforces becomes optional. That only pays if you can reach
+                  the functionality in the first place. An application behind a login you cannot
+                  hold gets tested at the anonymous level and nothing else, and the scanner's
+                  coverage is bounded by the crawl — it cannot find a bug in a request the browser
+                  never made. The prerequisite is therefore a <strong>credential matrix</strong>:
+                  at least two accounts per role, so you can test horizontally (user A reaching
+                  user B's object) as well as vertically.
+                </div>
+                <div class="concept-desc">
+                  Sessions are the practical failure. Short-lived tokens, CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> nonces that rotate per
+                  request, and anti-automation on the login all break Repeater and Intruder runs
+                  halfway through, and the symptom is a wall of 401s or 302s that reads like a
+                  fixed application. Session-handling rules and macros exist for exactly this;
+                  configuring them is usually the first hour of a real test.
+                </div>
+                <div class="concept-desc verdict">
+                  Unlike most tools here, <strong class="c-cyan">the control that denies this one is
+                  contractual, not technical</strong> — scope, and the accounts the client agrees
+                  to issue. Which means finding density is set before testing starts: an engagement
+                  scoped with one account will report authorisation findings it cannot prove, and
+                  the honest move is to say so during scoping rather than in the report. See
+                  <span class="xref">Scoping &amp; Rules of Engagement</span>.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -789,6 +818,34 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     entire chain is "know the version → look up the exploit." Remove version banners
                     and keep software current.
                   </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">An Exact Version — and a Target That Really Is What the Banner Says</div>
+                <div class="concept-desc">
+                  The chain only works from a precise version string, which is why banner
+                  suppression is the control usually named. It is also the weaker half. The control
+                  that actually denies this is <strong>backporting</strong>: a distribution package
+                  like <code>2.4.52-1ubuntu4.14</code> carries security fixes while still reporting
+                  upstream <code>2.4.52</code>, so an exploit search keyed on the banner returns
+                  results that will not fire. Version-hiding raises the cost of finding the target;
+                  backported patches remove the vulnerability while leaving the bait in place.
+                </div>
+                <div class="concept-desc">
+                  That produces the failure mode worth naming: <strong class="c-red">the
+                  version-matched finding that is not real.</strong> It is the fastest way to lose
+                  a client, because the first thing their engineer does is check the changelog, and
+                  from then on every other finding in the report is read as suspect. Public PoC code is the second trap — a good
+                  fraction is broken, some is deliberately booby-trapped, and running it unread on
+                  a production host is how a test becomes an outage.
+                </div>
+                <div class="concept-desc verdict">
+                  <strong class="c-cyan">Verify the vulnerability, not the version.</strong> Read
+                  the exploit, understand the condition it needs, and prove that condition on the
+                  target — or report it as an unverified version observation and rate it as one.
+                  How to rate what you did prove is in
+                  <span class="xref">Rating a Finding — CVSS, EPSS &amp; the Number the Client Will Argue About</span>.
                 </div>
               </div>
             </div>
@@ -1239,6 +1296,38 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">Code Execution, and an Egress Path the Beacon Can Actually Use</div>
+                <div class="concept-desc">
+                  Cobalt Strike is not how an intrusion starts. Beacon has to be run by something
+                  that already runs — a phish payload, an exploited service, a stolen credential
+                  used for remote execution — and then it has to get out. Both halves can be denied
+                  separately, which is why they are worth separating. Application control
+                  (WDAC or AppLocker in enforce mode) denies the loader without knowing
+                  anything about Beacon; an authenticated egress proxy with category allowlisting
+                  denies the channel without inspecting a single packet, because a stock profile
+                  makes a direct outbound connection that simply has nowhere to go.
+                </div>
+                <div class="concept-desc">
+                  The licence is a real prerequisite too, and it shapes what defenders actually
+                  meet. Legitimate copies are sold to vetted buyers; the copies in criminal
+                  intrusions are cracked builds of older versions, which is precisely why the
+                  default artifacts — the <code>msagent_</code> named pipes, the stock malleable
+                  profiles, the default team-server certificate and its JA3S fingerprint — remain
+                  worth hunting for years after they were documented. A well-written custom profile
+                  removes all of them.
+                </div>
+                <div class="concept-desc verdict">
+                  So the decision is which half you are betting on. <strong class="c-cyan">Deny the
+                  egress and the tool is inert regardless of how good the profile is</strong>;
+                  detect the channel instead and you are in a signature race against an operator
+                  who can reshape traffic on purpose. Egress control is cheaper and does not
+                  degrade — which is the same argument the
+                  <span class="xref">Data Exfiltration Channels — DNS, ICMP &amp; HTTPS</span> card
+                  makes about the outbound path generally.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1461,6 +1550,36 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">Valid Usernames, a Service That Answers, and No Second Factor</div>
+                <div class="concept-desc">
+                  The password list is not the prerequisite people think it is. <strong>Valid
+                  usernames are</strong> — spraying a list of guesses is noise, and the enumeration
+                  that produces real ones (an Outlook Web Access timing difference, a verbose login error, a
+                  scraped org chart) is a separate finding that should be reported whether or not
+                  the spray succeeds. Each half has its own control: lockout and backoff deny
+                  brute-forcing one account, conditional access on location or device denies the
+                  source, and username enumeration is denied by making the failure response
+                  identical whether or not the account exists.
+                </div>
+                <div class="concept-desc">
+                  MFA is the one that
+                  changes the meaning of the result. With a second factor enforced, a correct
+                  password proves the password is weak and nothing about access — which is still
+                  worth reporting, but as a credential-hygiene finding rather than a compromise.
+                  Without it, one hit is the engagement. The tools cannot tell you which situation
+                  you are in; the tenant configuration can, and asking first saves the spray.
+                </div>
+                <div class="concept-desc verdict">
+                  <strong class="c-cyan">Decide the lockout budget before the first attempt.</strong>
+                  Three passwords per account per policy window, spread across users and paced under
+                  the observation period, is a test. The same list run at tool defaults is an
+                  availability incident you caused, and it is the single most common way an
+                  authorised test turns into a bridge call. See
+                  <span class="xref">MFA Bypass in Practice — Adversary-in-the-Middle, Push Fatigue &amp; Stolen Sessions</span>.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1497,6 +1616,36 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     rule set) beats a giant generic list. This is also the defender's lesson: your
                     org's name + a year + <code>!</code> is exactly what these lists+rules generate.
                   </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">The Algorithm Decides Whether This Is an Afternoon or Never</div>
+                <div class="concept-desc">
+                  You need the hash, and stealing it was the hard part — but the number that
+                  actually governs the outcome is the <strong>work factor</strong>, not the
+                  wordlist. Raw MD5 <span class="acro-exp">(Message Digest 5)</span> or NTLM <span class="acro-exp">(NT LAN Manager)</span> falls to
+                  a consumer GPU <span class="acro-exp">(Graphics Processing Unit)</span> at tens of
+                  billions of guesses a second; bcrypt at cost 12, or Argon2id with real memory
+                  parameters, drops that to thousands. Same list, same rules, same hardware — a
+                  difference of seven orders of magnitude, chosen years earlier by whoever picked
+                  the storage format. That is the control, and it is a one-line one.
+                </div>
+                <div class="concept-desc">
+                  Each of the other prerequisites has its own denial too. A per-user salt denies
+                  precomputation, so rainbow tables and cross-account reuse both stop working.
+                  <strong>Length</strong> denies rules: mangling turns a base word into thousands of
+                  variants, and a passphrase is not a mangled base word, which is why the modern
+                  advice inverted from complexity to length. And a breach-corpus check at password
+                  set time denies the whole rockyou class before it is ever hashed.
+                </div>
+                <div class="concept-desc verdict">
+                  <strong class="c-red">Confirm the algorithm from where the hash came from, not
+                  from its shape.</strong> <code>hashid</code> guesses from length and character
+                  set, and shapes collide — raw MD5 and NTLM are both 32 hex characters, so the
+                  wrong <code>-m</code> yields zero cracks against perfectly weak passwords and
+                  reads exactly like a strong policy. A failed crack is only evidence when you know
+                  you attacked the right algorithm.
                 </div>
               </div>
             </div>
@@ -1828,7 +1977,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Why the usual controls miss</th><th>What works instead</th></tr>
-                    <tr><td>The binary is signed by the vendor</td><td>Application control by <em>policy</em> &mdash; WDAC or AppLocker rules that allow a binary only where it belongs</td></tr>
+                    <tr><td>The binary is signed by the vendor</td><td>Application control by <em>policy</em> &mdash; WDAC <span class="acro-exp">(Windows Defender Application Control)</span> or AppLocker rules that allow a binary only where it belongs</td></tr>
                     <tr><td>It is legitimately used elsewhere</td><td>Behavioural detection: the parent process and the arguments, not the image name</td></tr>
                     <tr><td>Nothing is written to disk</td><td>Command-line auditing (4688) and script block logging (4104). Without those there is no evidence</td></tr>
                     <tr><td>On Linux, it is a <code>sudo</code> rule</td><td>GTFOBins is a list of what your <code>sudoers</code> file actually grants. Read it against your own file</td></tr>
@@ -1878,6 +2027,35 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">Execution as Anybody, Plus the Right to Run Something Unsigned</div>
+                <div class="concept-desc">
+                  The precondition is deliberately small — any shell, as any user — which is what
+                  makes these scanners the first thing run after a foothold. The second half is
+                  where it can be denied: PEAS is an unsigned binary or script that has to be
+                  written to disk and executed. Application control in enforce mode
+                  (WDAC or
+                  AppLocker with a script rule) refuses it outright, and PowerShell constrained
+                  language mode removes PowerUp's ability to do anything useful even when it runs.
+                  On Linux the equivalents are a <code>noexec</code> mount on the writable paths
+                  and SELinux <span class="acro-exp">(Security-Enhanced Linux)</span> or AppArmor confinement of the service account.
+                </div>
+                <div class="concept-desc">
+                  Detection is the weaker answer here and worth being honest about. A PEAS run
+                  touches thousands of files and registry keys in seconds, so it is loud — but
+                  loud only helps if someone is reading, and the same enumeration can be done
+                  slowly, or by hand, by an operator who cares. The findings do not change either
+                  way; only the noise does.
+                </div>
+                <div class="concept-desc verdict">
+                  Which is why <strong class="c-cyan">the output is a fix list, not an alert
+                  list</strong>. Every line PEAS prints is a decision somebody already made — an
+                  unquoted service path, a NOPASSWD sudo rule, a credential in a script, a SUID binary nobody needed. Run it against
+                  your own gold image before an attacker runs it against a build of that image, and
+                  the escalation paths are gone rather than monitored.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1912,6 +2090,36 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     what limits a pivot's reach. Watch for unexpected long-lived tunnels and
                     east-west traffic a host shouldn't originate.
                   </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">A Foothold That Can Reach Out, and Routes From It to Somewhere Worth Going</div>
+                <div class="concept-desc">
+                  Two independent conditions, and two independent controls. The tunnel needs
+                  <strong>outbound reach</strong> from the compromised host to operator
+                  infrastructure — denied by egress filtering through an authenticated proxy, which
+                  is why Chisel and ligolo-ng both ship HTTP transports and why a proxy that
+                  requires credentials the process does not have is a hard stop rather than a
+                  speed bump. The pivot then needs <strong>routes and open ports</strong> from that
+                  host into the target segment — denied by internal segmentation, which limits the
+                  blast radius even when the tunnel works perfectly.
+                </div>
+                <div class="concept-desc">
+                  The fingerprint follows from the prerequisite rather than from the tool. A
+                  workstation does not normally hold a long-lived connection to one external
+                  address for hours, and it does not normally originate east-west traffic to a
+                  server subnet it has never spoken to. Both are cheap to baseline and neither
+                  depends on recognising Chisel specifically — which matters, because the tools
+                  rotate faster than detections for them can be written.
+                </div>
+                <div class="concept-desc verdict">
+                  <strong class="c-cyan">The value of a pivot is decided by where the foothold
+                  sits, not by which tunneller you picked.</strong> A jump box with routes
+                  everywhere makes any tunnelling tool sufficient; a segmented workstation VLAN <span class="acro-exp">(Virtual Local Area Network)</span> makes the best one
+                  worthless. That is the finding to write — not "the operator pivoted", but which
+                  segmentation boundary was missing between the two hosts. See
+                  <span class="xref">Network Security Architecture — Segmentation, DMZ &amp; Egress Filtering</span>.
                 </div>
               </div>
             </div>
@@ -2100,6 +2308,31 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <strong class="c-amber">Blue-team note:</strong> this is exactly what the
                     Kubernetes Security card defends — least-privilege RBAC, Pod Security Standards
                     (no privileged/hostPath), network policies, and audit logging.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Prerequisite</div>
+                <div class="concept-title">Execution in a Pod, and a Token That Was Mounted Without Anyone Deciding To</div>
+                <div class="concept-desc">
+                  Every escape on the list above needs its own precondition, and each one is a
+                  default somebody left alone rather than a vulnerability somebody shipped. That is
+                  the useful framing, because it means each has a one-line denial.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Escape</th><th>What must already be true</th><th>The setting that denies it</th></tr>
+                    <tr><td>Call the API as the pod</td><td>A service-account token mounted into the container</td><td><code>automountServiceAccountToken: false</code> on the account and the pod</td></tr>
+                    <tr><td>Read secrets or create pods cluster-wide</td><td>A Role or ClusterRole broader than the workload needs</td><td>Namespaced Roles, and no wildcard verbs on <code>secrets</code></td></tr>
+                    <tr><td>Escape to the node</td><td>A privileged, hostPath or hostPID pod being admitted</td><td>Pod Security Standards at <em>restricted</em>, enforced by admission</td></tr>
+                    <tr><td>Reach the kubelet directly</td><td>Network reach from a workload to port 10250</td><td>A default-deny NetworkPolicy, plus kubelet anonymous auth off</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Report which default nobody changed, not that the
+                    cluster is insecure.</strong> The first row is the one to check first: a token
+                    mounted into a pod that never calls the API is pure downside, it is on by
+                    default, and turning it off breaks nothing. The defensive side of all four is
+                    in <span class="xref">The Kubernetes Threat Model — The Four Cs and What an Attacker Sees</span>.
                   </div>
                 </div>
               </div>

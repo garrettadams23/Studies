@@ -15434,3 +15434,67 @@ paths          37 paths, 599 steps, 572 distinct topics
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the redteam tail, and reusing D11's spec instead of writing a new one
+
+D2 gave `redteam`'s tool cards *what using this costs you*; D11 gave eight of them
+*what you must already have*, under a spec worth restating: **the prerequisite must
+be specific enough to be denied.** Sixteen thin cards were left — 28% of the domain,
+the worst ratio on the site — and none of them had had either treatment.
+
+The temptation with a tool card is to write more about the tool. That is padding, and
+the counter-metric exists to catch it. D11's spec avoids it because it adds a
+different *kind* of statement: not what the tool does, but the condition that has to
+be true before it does anything, and the single setting that removes that condition.
+Eight more cards, same spec, no new spec needed.
+
+| Tool | What must already be true | The control that denies it |
+|---|---|---|
+| Cobalt Strike | Code execution **and** an egress path Beacon can use | Authenticated egress proxy kills the channel; WDAC kills the loader |
+| Burp Suite | A credential at every privilege level you intend to test | Contractual, not technical — the scope and the accounts issued |
+| Searchsploit | An exact version, on a target that really is that version | Backporting: the fix ships while the banner still reads vulnerable |
+| Hydra / Medusa | **Valid usernames**, and no second factor | MFA changes what a hit means; lockout denies the brute force |
+| Wordlists & hashes | The hash — and its algorithm decides everything | A real KDF work factor; salt denies precomputation; length denies rules |
+| PEAS / PowerUp | Execution as anybody, plus the right to run something unsigned | Application control and constrained language mode |
+| Pivoting | Outbound reach **and** routes into the target segment | Egress filtering denies one half, segmentation the other |
+| Kubernetes attacks | A mounted service-account token, or an admitted privileged pod | `automountServiceAccountToken: false`; Pod Security Standards |
+
+### Three findings that came out of applying the spec rather than knowing them first
+
+**Version-hiding is the weaker control, and the site had been saying otherwise.** The
+existing Searchsploit verdict named banner suppression. Backported distribution
+patches are what actually deny the technique — `2.4.52-1ubuntu4.14` carries the fix
+while reporting upstream `2.4.52` — and the consequence is the failure mode the card
+now leads with: the version-matched finding that is not real, which is the fastest
+way to lose a client's trust in every other finding in the report.
+
+**Hydra's prerequisite is the username list, not the password list.** Spraying
+guessed usernames is noise; the enumeration that produces real ones is a separate
+finding that should be reported whether or not the spray succeeds. And with MFA
+enforced, a correct password proves password hygiene rather than access — a different
+finding at a different severity, which the operator can only know by asking about the
+tenant before running anything.
+
+**Hash identification fails silently.** `hashid` guesses from shape, raw MD5 and NTLM
+are both 32 hex characters, and the wrong `-m` returns zero cracks against genuinely
+weak passwords — which reads exactly like a strong password policy. A failed crack is
+evidence only if you know you attacked the right algorithm.
+
+### The measurement
+
+```
+                          before   after
+thin topics                  102      94
+redteam thin                  16       8   (28% → 14%)
+mean chars/concept card    1,256   1,257   ← the counter-metric, +1 over eight cards
+median topic               3,242   3,248
+10th percentile            1,484   1,493
+```
+
+Site **1,531 topics**. One acronym entry the wave needed: `WDAC` was used in `sec`
+and absent from `data/acronyms.json`, so it annotated nowhere.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
