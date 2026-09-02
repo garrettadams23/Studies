@@ -17615,3 +17615,63 @@ stops being kept.
 
 Check PASS · smoke **147/147** · search **42/42** · axe **6/6** · mobile **9/9** ·
 resilience **7/7** · determinism reproducible.
+
+---
+
+## Session record — the front door skipped the beginner layer
+
+Phase 10 T7 stamped `data-level` and reported the shape of the site: **121 beginner, 8
+advanced, 1,297 core**. Phase 9 §3 calls the beginner layer part of the teaching model and
+warns against collapsing it. Nothing has ever asked whether a reader can *find* it.
+
+Every domain has a landing card whose middle row is **Start here** — three named topics,
+rendered above the topic list, and the first thing anybody sees on opening a domain. Reading
+all 86 of those entries against the badge that decides `data-level`:
+
+```
+86 start-here entries across 30 domains
+beginner 0 · core 86 · advanced 0
+```
+
+**Not one beginner-badged card is offered as a starting point anywhere on the site.**
+
+### The wrong conclusion, and the right one
+
+The obvious response — promote a beginner card in each of the fifteen domains that has one —
+is wrong, and the list says why. `threat`'s beginner cards are *Threat Hunting* and
+*Indicators of Compromise*; `pentest`'s include *Privilege Escalation*; `linux`'s include
+*High Availability*. **The badge means "written for a newcomer to this subject", not "read
+this first"**, and a domain's opening move is not automatically its gentlest card.
+
+The narrow question is different and has a clean answer: does a domain have a card that
+*announces itself as the entry point* — "Start Here", "for Absolute Beginners", "in Plain
+English", "Getting Started" — which its landing card does not offer? Seven do:
+
+| Domain | Was offered first | Now offered first |
+|---|---|---|
+| `net` | OSI Model — 7 Layers | **Networking for Absolute Beginners** |
+| `sec` | CIA Triad | **Security Basics in Plain English** |
+| `grc` | Risk Management Lifecycle | **Risk & Rules in Plain English** |
+| `ops` | Incident Response — What to Do When It Goes Wrong | **Security Operations for Beginners** |
+| `pentest` | Penetration Testing Phases | **Getting Started in Ethical Hacking — The Right Way** |
+| `ai` | Machine Learning Pipeline | **AI & ML for Beginners** |
+| `script` | Regular Expressions (Regex) | **Programming from Zero — Start Here** |
+
+The `script` row is the one that makes the case on its own: a domain containing a card
+literally called *Start Here* opened with a regex reference.
+
+Each is **prepended, not substituted** — the existing three were chosen as the foundational
+cards and remain, now behind the door rather than in place of it. Seven domains carry four
+entries and the rest carry three, which the renderer has always allowed (`quotes` carries
+two).
+
+**Three of the nine candidates were rejected**, and that is the same discipline the duplicate
+census needed. `cloud` already opens on *Cloud Fundamentals — Regions, AZs & Shared
+Responsibility*; the flagged "AWS — Getting Started" cards are per-provider entry points, not
+the domain's. `cs`'s *Lattices, Gently* is a gentle treatment of a hard subject, not a way in.
+And the "101" pattern that found *Ethical Hacking 101* also found *Container Security 101*
+and *Password Attacks 101*, which are 101s of intermediate subjects. A pattern that names
+entry points also names things that merely sound like them.
+
+Check PASS · smoke **147/147** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
