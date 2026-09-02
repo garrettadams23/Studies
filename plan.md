@@ -16354,3 +16354,47 @@ surface rather than a route. Every other domain now has at least eleven.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the four biggest unreached curricula, found by looking at the domain draw
+
+The per-domain step counts in `check_paths` are a map of what has been written and
+never sequenced, and four numbers on it were embarrassing: `script` drew 41 steps from
+149 topics, `eng` 30 from 81. Reading the un-pathed lists showed why — four complete,
+ordered curricula that existed as piles.
+
+| Path | Steps | What it was |
+|---|---|---|
+| Programming From Zero | 36 | The entire beginner track, in teaching order: bits → setup → variables → control flow → functions → files → errors → async → testing → git → a capstone that reads a whole program |
+| The Concepts Behind the Code | 12 | The vocabulary a self-taught developer is missing — OOP, data structures, Big O, amortised analysis, patterns, and where regex actually fits |
+| Designing Software That Lasts | 24 | Coupling and SOLID → hexagonal and DDD → monolith vs microservices → events, CQRS, sagas → resilience patterns → scale → twelve-factor → ADRs → the interview framework |
+| The Money Side of IT | 19 | CapEx vs OpEx → budget → TCO → cost of downtime → the business case → build vs buy → requirements → PoC → negotiation → contracts → licensing audits → exit clauses → FinOps → prioritisation |
+
+### The beginner curriculum was the worst case, and the most obvious in hindsight
+
+Thirty-six cards written to be read in order, reachable only by scrolling a domain —
+and the reader who most needs a route is precisely the one who cannot construct one.
+Every other unreached pile on the site belongs to someone who could at least recognise
+the subject well enough to browse it. This one did not, and it sat there through
+twelve prior paths waves because nobody had looked at the draw numbers next to the
+topic counts.
+
+**The money path is the other kind of gap.** Nineteen cards on budgets, vendors,
+contracts and licensing audits — the half of a senior technical job that is never
+taught and is always assessed — sequenced from "what kind of purchase is this" to
+"what does it cost to leave". It reads as a curriculum because it was written as one.
+
+```
+paths           51 → 55
+steps          795 → 886
+topics reached 752 → 843   (49% → 55% of the site)
+script draw      41 → 83   of 149
+eng draw         30 → 71   of 81
+```
+
+Session totals for the paths programme: **36 → 55 paths, 579 → 886 steps, 555 → 843
+topics reachable — 36% to 55% of the site, with no new content written.**
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
