@@ -15498,3 +15498,64 @@ and absent from `data/acronyms.json`, so it annotated nowhere.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the cloud tail: the default that is wrong, and the day you find out
+
+`cloud` had 14 thin topics, all of them provider-tour cards — *AWS Getting Started*,
+*GCP Security*, *Azure Security* — that list services and what each one does. Writing
+more about the services would have been padding. The dimension they all lacked is the
+one that costs money and incidents: **what the provider turns on for you, what it
+leaves off, and which of those defaults is wrong for anyone past the free tier.**
+
+Six cards, one spec: name the default, say what it silently costs, and end on the
+setting that changes it — at the level where it survives the next project.
+
+| Card | The default | What it costs before anyone notices |
+|---|---|---|
+| AWS IAM | `iam:PassRole` on `"Resource": "*"` reads as harmless | With any launch permission it is AdministratorAccess with extra steps |
+| AWS Security Stack | CloudTrail records management events only | No record of object reads — the exfiltration question has no answer, ever |
+| Google Cloud | Every VM gets the default compute service account | That account holds `Editor` on the project; one SSRF rewrites the project |
+| GCP Security | Data Access logs off for every service but BigQuery | You know who changed the bucket, not who read it |
+| Azure Getting Started | Any user may register apps and invite guests | Shadow app registrations, consent phishing, an unowned guest directory |
+| Azure Security | Defender's paid plans are per-resource-type toggles | Three of six enabled, one dashboard, a confident green over blind resources |
+
+### The two rows that are worth more than the cards they sit in
+
+**`iam:PassRole` is the one a policy review does not catch.** Every AWS review greps
+for `"Action": "*"`; the escalation that actually happens is two narrow permissions
+that are individually defensible. That is an argument for Access Analyzer over manual
+reading, because the tool reasons about what a combination reaches rather than what
+each statement says.
+
+**Azure's security-defaults window.** Tenants get hurt in the gap: defaults are
+switched off *in order to* build Conditional Access, the CA policies sit in
+report-only while somebody tests them, and the tenant spends weeks with neither. The
+card says to build and verify first and switch in one change, with a break-glass
+account excluded and its credentials reachable without the tenant.
+
+### The check caught a fifth genuine ambiguity
+
+`CA` renders in `cloud` for the first time, and in that domain all three occurrences
+mean **Conditional Access**, not Certificate Authority — which is the expansion the
+annotator had already stamped into the new card before the lint refused the build.
+That is the fifth time this check has caught a wrong meaning rather than a formatting
+slip, and the second in this session.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   94      88
+cloud thin                    14       8   (19% → 11%)
+mean chars/concept card    1,257   1,259   ← +2 over six cards
+median topic               3,248   3,259
+10th percentile            1,493   1,505
+```
+
+Across this session's two deepening waves: **14 cards, thin 102 → 88, counter-metric
++3 characters.**
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.

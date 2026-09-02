@@ -75898,8 +75898,8 @@ were tracking different things.
 <span class="ctag ctag-general">GCP</span>
 </div>
 <span class="domain-sub">AWS · GCP · Azure · IAM · Networking · Compute · Storage · Security · Troubleshooting</span>
-<span class="domain-meta" aria-label="74 topics, about 2h 55m to read"
->74 topics · ~2h 55m</span>
+<span class="domain-meta" aria-label="74 topics, about 3h 05m to read"
+>74 topics · ~3h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -76021,12 +76021,12 @@ EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> instance the CLI picks
 </div>
 </div>
 </div>
-<div class="topic" id="google-cloud-getting-started" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="google-cloud-getting-started" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🟦</span>
 <span class="topic-name">Google Cloud — Getting Started</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -76054,6 +76054,39 @@ account, enable the APIs <span class="acro-exp">(Application Programming Interfa
 alert, and use IAM <span class="acro-exp">(Identity and Access Management)</span> instead of the owner account for daily work. The
 <strong>Always Free</strong> tier (e2-micro, 5 GB storage) is generous for
 learning.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">The Default Compute Service Account Has Editor on Your Whole Project</div>
+<div class="concept-desc">
+The hierarchy inherits policies downward, which is the feature — and the default
+that exploits it hardest sits at the bottom. Unless you say otherwise, every
+Compute Engine instance is created with the <strong>default compute service
+account</strong> attached, that account holds the basic <code>Editor</code> role
+on the project, and older instances are given the <code>cloud-platform</code>
+scope. Editor can create, modify and delete almost everything in the project. So
+one compromised web server — an SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> that reaches the metadata endpoint is
+enough — yields a token that can rewrite the project it lives in.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># What a workload can mint for itself, with no credentials on disk</span>
+curl -H <span class="str">"Metadata-Flavor: Google"</span> \
+  http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token
+
+<span class="com"># Which is why the first audit question is: what does that account hold?</span>
+gcloud projects get-iam-policy PROJECT_ID \
+  --flatten=<span class="str">"bindings[].members"</span> \
+  --filter=<span class="str">"bindings.members:compute@developer.gserviceaccount.com"</span></pre>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Give every workload its own service account with the
+roles it needs, and strip the default one.</strong> That is three commands at
+project creation and an argument you cannot win afterwards, because by then
+something in production depends on the broad token and nobody knows which
+thing. Organisation policy constraints
+(<code>automaticIamGrantsForDefaultServiceAccounts</code>) make it the default
+for every future project, which is the version that survives the next team.
 </div>
 </div>
 </div>
@@ -76134,12 +76167,12 @@ cloud.
 </div>
 </div>
 </div>
-<div class="topic" id="aws-iam-users-roles-policies" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="aws-iam-users-roles-policies" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔑</span>
 <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> IAM <span class="acro-exp">(Identity and Access Management)</span> — Users, Roles &amp; Policies</span>
 <span class="topic-badge">AWS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -76173,6 +76206,40 @@ access must be explicitly granted by a policy.
 <strong class="c-green">Golden rule:</strong> grant <strong>least privilege</strong>
 — start with nothing, add the specific actions needed. Never attach
 <code>*:*</code> ("AdministratorAccess") to app roles.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Least Privilege Is Not the Hard Part — <code>iam:PassRole</code> Is</div>
+<div class="concept-desc">
+"Never attach AdministratorAccess" is advice everyone follows and it does not
+close the interesting path. The escalation that actually happens is a principal
+with two permissions that look innocuous side by side:
+<code>iam:PassRole</code> and the ability to launch something —
+<code>ec2:RunInstances</code>, <code>lambda:CreateFunction</code>,
+<code>glue:CreateJob</code>. Passing a role means handing an existing role's
+credentials to a service you control, so a developer allowed to start an EC2 <span class="acro-exp">(Elastic Compute Cloud)</span>
+instance and pass any role can start one carrying the admin role and read its
+credentials from the metadata service. Neither permission reads as dangerous in a
+policy review; together they are AdministratorAccess with extra steps.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>What looks fine</th><th>What it actually grants</th><th>The fix</th></tr>
+<tr><td><code>iam:PassRole</code> on <code>"Resource": "*"</code></td><td>Any role in the account, to any service the principal can launch</td><td>Scope <code>PassRole</code> to specific role ARNs <span class="acro-exp">(Amazon Resource Name)</span>, always</td></tr>
+<tr><td><code>iam:CreatePolicyVersion</code></td><td>Rewrite a policy already attached to you — self-granted admin</td><td>Never delegate policy editing without a permission boundary</td></tr>
+<tr><td>An AWS managed policy that "looks read-only"</td><td class="c-red">Several grant write actions; <code>ReadOnlyAccess</code> also reads every secret value it can</td><td>Read the policy, or use customer-managed copies</td></tr>
+<tr><td>A long-lived access key on a user</td><td>A credential with no expiry, in someone's dotfiles and eventually a repo</td><td>Roles and short-lived STS <span class="acro-exp">(Security Token Service)</span> credentials; keys only where nothing else works</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Audit for the pair, not for the star.</strong> A policy
+review that greps for <code>"Action": "*"</code> finds the obvious cases and
+misses every one above. Access Analyzer and the "unused access" findings are
+worth more than a manual read, because they reason about what the combination
+can reach rather than what each statement says. The mechanics of assuming and
+bounding roles are in
+<span class="xref" data-xref="aws-iam-deep-assumerole-sts-boundaries" role="link" tabindex="0">AWS IAM Deep — AssumeRole, STS &amp; Boundaries</span>.
 </div>
 </div>
 </div>
@@ -77284,12 +77351,12 @@ one.
 </div>
 </div>
 </div>
-<div class="topic" id="aws-security-stack-cloudtrail-guardduty-security-hub" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="aws-security-stack-cloudtrail-guardduty-security-hub" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛡️</span>
 <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Security Stack — CloudTrail, GuardDuty &amp; Security Hub</span>
 <span class="topic-badge">AWS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77315,6 +77382,43 @@ layer together: log everything, detect threats, check config, and aggregate it a
 <strong class="c-green">Pattern:</strong> CloudTrail + Config feed GuardDuty +
 Security Hub, which stream findings to your SIEM/SOAR. This is the AWS-native
 version of the Blue Team stack.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">CloudTrail Is On, and It Is Not Recording the Thing You Will Be Asked About</div>
+<div class="concept-desc">
+"Turn CloudTrail on day one" is where most accounts stop, and the default trail
+records <strong>management events only</strong> — who created a bucket, who
+changed a policy. It does not record <strong>data events</strong>: the individual
+<code>GetObject</code> calls that read the objects in that bucket, or the Lambda
+invocations that read them for you. So the first question after a suspected S3 exposure —
+<em>what did they actually take?</em> — has no answer in the logs, and it cannot
+be answered retroactively because the events were never emitted.
+</div>
+<div class="concept-desc">
+Data events are opt-in and metered per event, which is why they are off, and that
+is a real cost decision rather than an oversight to shame anyone for. The decision
+is which buckets and which functions are worth it — usually the ones holding
+regulated or customer data, which is a much shorter list than "all of them". Make
+it deliberately and write down what was excluded, because that list is the honest
+scope of what an incident response can ever reconstruct.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Default</th><th>What it costs you</th><th>The deliberate setting</th></tr>
+<tr><td>Management events only</td><td>No record of object reads or Lambda invocations</td><td>Data events on the buckets and functions that matter</td></tr>
+<tr><td>A single-region trail</td><td>Activity in an unused region is invisible — which is where mining happens</td><td>An organisation trail, all regions, including future ones</td></tr>
+<tr><td>Trail logs in the same account</td><td>An attacker with admin deletes the evidence of being admin</td><td>A separate log-archive account, write-only, with object lock</td></tr>
+<tr><td>GuardDuty enabled in one region</td><td class="c-red">Per-region service — an unenabled region has no detection at all</td><td>Enable everywhere via the organisation delegated admin</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">The test is not "is CloudTrail on" but "could we answer
+the exfiltration question."</strong> Run it as a tabletop before you need it:
+pick a bucket, ask who read object X last Tuesday, and see how far the console
+gets. Whatever that exercise cannot answer is a configuration decision, not a
+tooling gap.
 </div>
 </div>
 </div>
@@ -77383,12 +77487,12 @@ the policy that keeps the key reachable.
 </div>
 </div>
 </div>
-<div class="topic" id="gcp-security-cloud-audit-logs-security-command-center" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="gcp-security-cloud-audit-logs-security-command-center" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛡️</span>
 <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Security — Cloud Audit Logs &amp; Security Command Center</span>
 <span class="topic-badge">GCP</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -77407,6 +77511,36 @@ the policy that keeps the key reachable.
 <strong class="c-green">SCC</strong> is the single pane for GCP security posture —
 it surfaces misconfigurations, vulnerabilities, and active threats across your
 projects, mapped to standards.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Admin Activity Logs Are Free and Always On; Data Access Logs Are Neither</div>
+<div class="concept-desc">
+Cloud Audit Logs is not one thing, and the split is the whole point. <strong>Admin
+Activity</strong> logs — anything that creates, changes or deletes configuration —
+are enabled permanently, cannot be turned off, and cost nothing. <strong>Data
+Access</strong> logs — reads of the data itself, and the API calls that return it
+— are <em>disabled by default for every service except BigQuery</em>, and enabling
+them costs ingestion. The consequence mirrors CloudTrail's: you will know who
+changed the bucket's permissions and not who read what was in it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Log type</th><th>State by default</th><th>Answers</th></tr>
+<tr><td>Admin Activity</td><td>Always on, free, cannot be disabled</td><td>Who changed the configuration</td></tr>
+<tr><td>Data Access — <code>ADMIN_READ</code></td><td class="c-yellow">Off</td><td>Who listed or read metadata</td></tr>
+<tr><td>Data Access — <code>DATA_READ</code> / <code>DATA_WRITE</code></td><td class="c-red">Off (except BigQuery)</td><td>Who read or wrote the contents</td></tr>
+<tr><td>System Event</td><td>Always on, free</td><td>What Google itself did to your resources</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Enable Data Access logging at the organisation level for
+the services that hold real data, and accept the bill for those.</strong>
+Setting it per project guarantees the one project created next quarter will not
+have it. Security Command Center sits on top of these logs, so its coverage
+inherits the same hole: a posture dashboard that is green because it cannot see
+the events is not the same as a project where nothing happened.
 </div>
 </div>
 </div>
@@ -77990,12 +78124,12 @@ system that did not need grading.
 </div>
 </div>
 </div>
-<div class="topic" id="azure-getting-started-entra-id" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="azure-getting-started-entra-id" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔷</span>
 <span class="topic-name">Azure — Getting Started &amp; Entra ID</span>
 <span class="topic-badge">Azure</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -78022,6 +78156,36 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
 <strong class="c-amber">Note the terms:</strong> Azure "subscription" ≈ AWS
 account, and RBAC <span class="acro-exp">(Role-Based Access Control)</span> is assigned on scopes (management group → subscription →
 resource group → resource) that inherit downward.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Three Entra Defaults Every Tenant Ships With, and Two of Them Are Wrong for You</div>
+<div class="concept-desc">
+A new tenant is not a blank slate; it is an opinionated one, and the opinions were
+written for the smallest customer Microsoft has. Any user can <strong>register
+applications</strong>, which means any user can create a service principal and
+request consent to their own app. Any user can <strong>invite guests</strong>,
+which means the directory grows accounts nobody in IT approved. And any user can
+<strong>read the whole directory</strong> — every account, group and membership —
+which is the enumeration step of most identity attacks, done with a normal login.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Default</th><th>What it enables</th><th>Where it changes</th></tr>
+<tr><td>Users can register applications</td><td>Shadow app registrations, and consent phishing that succeeds quietly</td><td>Entra → User settings; plus an admin-consent workflow</td></tr>
+<tr><td>Anyone can invite guests</td><td>External accounts in the directory with no owner and no review</td><td>External collaboration settings → restrict to admins or a named role</td></tr>
+<tr><td>Full directory read for all members</td><td>Org-chart-quality reconnaissance from any compromised account</td><td>Restrict access to the Entra admin portal; accept that Graph still reads</td></tr>
+<tr><td>Security defaults on, Conditional Access unused</td><td class="c-yellow">Good baseline MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, but all-or-nothing — no break-glass exclusion, no risk conditions</td><td>Turn security defaults off <em>only</em> when CA policies are ready to replace them</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-red">The last row is where tenants actually get hurt.</strong>
+Security defaults are switched off in order to build Conditional Access, the CA
+policies are left in report-only while somebody tests them, and the tenant spends
+weeks with neither. Build the policies first, verify them in report-only
+alongside security defaults, and switch over in one change with a break-glass
+account excluded and its credentials somewhere you can reach without the tenant.
 </div>
 </div>
 </div>
@@ -78063,12 +78227,12 @@ declarative infra.
 </div>
 </div>
 </div>
-<div class="topic" id="azure-security-defender-key-vault-sentinel" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="azure-security-defender-key-vault-sentinel" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛡️</span>
 <span class="topic-name">Azure Security — Defender, Key Vault &amp; Sentinel</span>
 <span class="topic-badge">Azure</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -78092,6 +78256,43 @@ Azure's security services close the loop with the Blue-team domain:
 <strong class="c-amber">KQL</strong> (Kusto Query Language) powers Sentinel
 hunting and Log Analytics — a genuinely useful skill that carries across Defender,
 Sentinel, and Azure Monitor. This closes the AWS <span class="acro-exp">(Amazon Web Services)</span> ↔ GCP <span class="acro-exp">(Google Cloud Platform)</span> ↔ Azure security triangle.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">Defender Plans Are Per-Resource-Type, and Sentinel's Real Control Is the Bill</div>
+<div class="concept-desc">
+Defender for Cloud appears in every tenant and shows a secure score immediately,
+which reads like coverage. What is free is the CSPM layer — recommendations and
+the score. The <strong>workload protection plans</strong> that actually detect
+attacks are separate paid toggles, one per resource type: servers, storage,
+databases, containers, key vaults, APIs <span class="acro-exp">(Application Programming Interface)</span>. Enabling three of six and
+reading the same dashboard produces a confident green for the resources nobody is
+watching.
+</div>
+<div class="concept-desc">
+Sentinel inverts the usual relationship between cost and coverage. Ingestion is
+billed per gigabyte, so the retention and table decisions <em>are</em> the
+detection strategy: a table in the cheap Basic tier cannot be used in scheduled
+analytics rules the same way, and an archived table has to be restored before it
+can be searched. Teams discover this during an investigation, when the month they
+need is in archive and the restore takes hours they do not have.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Assumption</th><th>Reality</th><th>Decide instead</th></tr>
+<tr><td>"Defender is on"</td><td>CSPM only — workload plans are individually priced</td><td>Enable per plan deliberately; record which are off and why</td></tr>
+<tr><td>"We keep 90 days"</td><td>Analytics vs Basic vs Archive behave differently for rules and search</td><td>Tier by table: identity and control-plane logs in analytics, verbose telemetry cheaper</td></tr>
+<tr><td>"Key Vault protects the secret"</td><td class="c-red">Without purge protection, a deleted vault and its keys can be purged permanently</td><td>Soft-delete and purge protection on, at creation, by policy</td></tr>
+<tr><td>"Secure score is our posture"</td><td>It scores what it can see, weighted by Microsoft's model, not your risk</td><td>Read the recommendations; the score is a trend line, not a target</td></tr>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-cyan">Write the coverage decision down where the on-call
+engineer will find it.</strong> Every row above is a defensible choice and an
+indefensible surprise, and the difference is entirely whether someone recorded
+it. Which recommendations are worth acting on, in the tenant sense, is in
+<span class="xref" data-xref="secure-score-the-tenant-baseline-which-recommendations-are-w" role="link" tabindex="0">Secure Score &amp; the Tenant Baseline — Which Recommendations Are Worth Doing</span>.
 </div>
 </div>
 </div>
