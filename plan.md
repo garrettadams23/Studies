@@ -16398,3 +16398,44 @@ topics reachable — 36% to 55% of the site, with no new content written.**
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — five more paths: the network, the toolkit, and the one attack that gets its own route
+
+| Path | Steps | The route |
+|---|---|---|
+| Running an Enterprise Network | 21 | design → switch ports → spanning tree → routing → BGP → NAT → firewall policy → firewall troubleshooting → NAC → QoS → MTU → voice → automation → documentation → cabling → the field toolkit → cutover night |
+| Wireless, Properly | 7 | 802.11 basics → RF and site surveys → standards and hardening → controller vs cloud-managed → troubleshooting roaming → 5G and private cellular |
+| The Protocols You Actually Meet | 13 | DHCP → DNS → DNSSEC → NTP → HTTP → HTTP/3 → the TLS handshake → load balancers → reverse proxies → VPNs → cloud networking → edge |
+| The Offensive Toolkit, By Phase | 38 | rules of engagement first, then recon → scan → web → exploit → privesc → credentials → cracking → C2 → pivot → lateral → persistence → exfil → evasion → operator OPSEC |
+| Ransomware, End to End | 10 | the threat → how it spreads → the criminal economy → infostealers → double extortion → negotiation → money movement → immutable backup → restore testing → IR lifecycle |
+
+### Why the toolkit path is 38 steps and starts where it does
+
+`redteam` is a catalogue by construction — 58 tool cards — and D11's whole argument
+was that a catalogue is not an attack path. This route is the fix at the navigation
+layer rather than the content layer: the same cards, in the order an engagement uses
+them, so the chain is visible without rewriting anything. **Step one is
+*Rules of Engagement — Read This First*, and that is not decoration.** It is the same
+reasoning the pentest and emulation paths already use: in this domain, authorisation
+is the first step of the method, not a disclaimer attached to it.
+
+Ransomware gets its own route for a different reason — it is the one threat where the
+technical, criminal-economic, negotiation and backup-design material all bear on a
+single decision someone will make under pressure, and those four bodies of work sit in
+four different domains.
+
+```
+paths           55 → 60
+steps          886 → 975
+topics reached 843 → 923   (55% → 60% of the site)
+net draw         25 → 66   of 73
+redteam draw     11 → 49   of 58
+```
+
+Session totals for the paths programme: **36 → 60 paths, 579 → 975 steps, 555 → 923
+topics reachable — 36% to 60% of the site, no new content.**
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
