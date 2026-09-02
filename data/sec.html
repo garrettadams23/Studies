@@ -191,6 +191,17 @@
                       <td>Firewall ACLs <span class="acro-exp">(Access Control List)</span>, router ACLs</td>
                     </tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>These are not a maturity ladder</strong>, which is how the table reads and
+                    how exams often teach it. Almost every real estate runs <strong>RBAC</strong> with
+                    <strong>ABAC</strong> conditions bolted on — Conditional Access is exactly that
+                    shape: a role decides <em>what</em>, and attributes like device state, location and
+                    risk decide <em>whether, right now</em>. MAC has not been superseded either; it is
+                    alive in SELinux and in anything handling classified material.
+                    The failure mode to watch for is <strong class="c-red">role explosion</strong>:
+                    when exceptions are met by creating one more role, a directory ends up with
+                    roughly one role per person, which is DAC with extra administration.
+                  </div>
                 </div>
               </div>
             </div>
@@ -435,6 +446,15 @@
                       <td style="color: var(--green)">✔ Modern</td>
                     </tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Nothing in the table is used alone, which is what the table cannot show.</strong> A
+                    real session is a key exchange to agree a secret, a symmetric cipher to move the data, a
+                    hash for integrity and a signature for identity — four rows working together, and the
+                    weakest of the four sets the strength of the whole. Two practical reads: <em>hashing is not
+                    encryption</em>, because nothing reverses it and nothing is meant to, and asymmetric
+                    cryptography is not "stronger" than symmetric, it is slower and solves a different problem —
+                    which is precisely why every protocol here uses it only to agree the symmetric key.
+                  </div>
                 </div>
               </div>
             </div>

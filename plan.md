@@ -17499,3 +17499,62 @@ every option is same-domain by construction. It passed throughout. The new check
 
 Check PASS · smoke **147/147** · search **40/40** · axe **6/6** · mobile **9/9** ·
 resilience **7/7** · determinism reproducible.
+
+---
+
+## Session record — sixteen tables that ended on nothing, and the metric that had to rise
+
+The flashcard audit turned up a second finding it did not set out to look for. Thirty topics
+have **no `.concept-desc` anywhere at all** — a concept title, then a table or a diagram, then
+the end of the topic. Six of those had nothing on the flashcard back and were excluded by
+shape. The other twenty-four are a different problem: `style.css` has asserted since the
+`.verdict` class was introduced that **every table gets a verdict**, and these are the cards
+where the assertion was never true from the beginning rather than lost along the way.
+
+They are also, mostly, the site's oldest cards — the bare-table style that predates the
+rubric.
+
+### Sixteen verdicts, and eight left alone
+
+| Domain | Card | What the verdict says |
+|---|---|---|
+| `sec` | Access Control Models | Not a maturity ladder. Every real estate runs RBAC with ABAC conditions bolted on, and the failure mode is role explosion — one role per person, which is DAC with extra administration |
+| `grc` | Defense-in-Depth | The rings imply an order an attacker does not follow: a phished credential lands on identity and application directly. It earns its place as a **coverage** check, not a sequence |
+| `ops` | Vulnerability Management Lifecycle | *Verify* is the step that gets dropped, and dropping it makes the loop a report generator. A finding is closed by a rescan, never by a reply |
+| `ai` | Machine Learning Pipeline | Drawn as a line, worked as a loop — the most-travelled arrow goes back from evaluation to data collection, and monitoring is the systematically under-resourced stage |
+| `ai` | ML Learning Paradigms | The paradigm is chosen by the data you have. "What do we already have labels for" settles it faster than comparing methods |
+| `ai` | AI Ethics & Responsible AI | Pillars are the easy half; the hard half is who decides when two conflict — explainability against accuracy, privacy against the attribute fairness needs |
+| `pentest` | OWASP Top 10 | A ranked list of categories, not a checklist and not a standard. The order describes what was *found* by contributing firms |
+| `net` | Network Topologies | Physical and logical answer different questions. Operationally the only row that matters is where the single point of failure is; "hybrid" is what every real network is |
+| `net` | Common Protocols | The column to memorise is not the port, it is whether the protocol is plaintext — which is why the paired ports exist |
+| `net` | Routing Protocols & WAN | The split that matters is interior against exterior: BGP chooses on **policy**, not distance, which is why it looks primitive and is not |
+| `net` | Cabling & Connectors | Category and distance are one constraint, not two — and fibre is chosen for distance, noise and isolation far more often than for bandwidth |
+| `linux` | Linux Boot Process | Where it stops tells you whose problem it is, which is the only reason to learn the chain |
+| `threat` | DoS / DDoS & Attack Types | Volume is the least interesting axis. What one request costs each side is the distinction, and it is why request-per-second limits protect against one kind and not the other |
+| `threat` | Malware Types Reference | Categories of behaviour, and one sample is several of them. During an incident the question is which behaviours it showed, not which label fits |
+| `sec` | Cryptography Algorithm Reference | Nothing in the table is used alone. Hashing is not encryption, and asymmetric is not "stronger" — it is slower and solves a different problem |
+| `philosophy` | Schools of Thought | A school is a set of questions somebody took seriously, not answers to adopt |
+
+**Eight were left alone and that is the finding under the finding.** The A+ hardware
+reference, the regex meta-character table, the Python string API, three `shortcut` keystroke
+tables, the military cross-matrix and the legal-framework list are lookup surfaces. A lookup
+does not have a verdict, because there is nothing to conclude — you came for a value and you
+leave with it. Writing sixteen and stopping is the whole judgement.
+
+### The counter-metric rose and that is the honest report
+
+```
+tables with no verdict     507 → 499
+topics with no prose        30 →   8   (of which 6 were also excluded from decks)
+mean chars per concept card  1,278 → 1,280
+```
+
+**This is the one pass in this file where a rising mean is the point rather than a
+side-effect.** The metric exists to catch cards getting longer while saying no more; here
+sixteen cards each gained a paragraph that states a conclusion the table could not, and the
+diff is **+148 lines, 0 deletions** — nothing existing was reworded or padded. The number to
+read alongside it is the no-verdict count, which is a measure of *missing* prose and fell by
+eight. A pass that raised the mean without moving that one would be padding; this did both.
+
+Check PASS · smoke **147/147** · search **40/40** · axe **6/6** · mobile **9/9** ·
+visual **2/2** · determinism reproducible.

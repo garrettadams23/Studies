@@ -834,6 +834,17 @@ window reduced
                       </div>
                     </div>
                   </div>
+                  <div class="concept-desc verdict">
+                    <strong>Physical and logical are different answers to different questions, and the diagrams
+                    hide that.</strong> Switched Ethernet is physically a star — every device home-runs to a
+                    switch — while classic shared Ethernet was logically a bus, and that distinction is why a
+                    question about cabling and a question about collision domains have different answers on the
+                    same network. Operationally the only row that matters is <em>where the single point of
+                    failure is</em>: a star puts it at the switch, a ring at any break, and full mesh removes it
+                    at a cost of n(n−1)/2 links, which is why nobody builds one past a handful of nodes.
+                    "Hybrid" is not a hedge — it is what every real network is, because each layer picks its own
+                    shape.
+                  </div>
                 </div>
               </div>
             </div>
@@ -1900,6 +1911,15 @@ example.com
                       </td>
                     </tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Category and distance are one constraint, not two.</strong> A cable rating is only
+                    meaningful with a length attached — Cat6 carries 10 Gb to 55 m and 1 Gb to 100 m, and the
+                    same reel is either good enough or not depending on where it goes, which is why "we used
+                    Cat6" answers nothing on its own. The other thing to take from the table is why fibre gets
+                    chosen at all, and it is rarely bandwidth: distance beyond copper's 100 m, immunity to
+                    electrical noise on a factory floor, and no conductive path between two buildings that
+                    might not share an earth.
+                  </div>
                 </div>
               </div>
             </div>
@@ -2263,6 +2283,15 @@ Native VLAN (untagged traffic on trunk)
                       <td>Port / content</td>
                     </tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The split that matters is not distance-vector against link-state — it is interior
+                    against exterior.</strong> Inside one organisation a protocol may choose the fastest path,
+                    because everyone shares an interest in it working; between organisations, BGP chooses on <em>policy</em>, because
+                    a shorter path through a competitor's network is not a better path. That is why BGP looks
+                    primitive next to OSPF and is not:
+                    it is optimising something else, and it trusts what it is told, which is the root of most
+                    famous internet outages.
+                  </div>
                 </div>
               </div>
             </div>
@@ -3336,6 +3365,15 @@ curl -6 https://ipv6.google.com</pre>
           <tr><td>Header size</td><td>20+ bytes</td><td>8 bytes</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>The column worth memorising is not the port — it is whether the protocol is
+        plaintext.</strong> Ports are a lookup and move with configuration; the plaintext-versus-
+        encrypted split decides what a packet capture on that segment hands an attacker, and it is
+        why the paired ports exist at all (21 and 990, 23 and 22, 80 and 443, 143 and 993). The
+        other durable idea in the table is the transport choice: the protocols that picked UDP did so because a late packet is worse
+        than a lost one — DNS, DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span>, NTP, voice — and the ones that picked TCP could not tolerate a
+        gap in the stream.
+      </div>
     </div>
   </div>
 </div>

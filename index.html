@@ -617,12 +617,12 @@ window reduced
 </div>
 </div>
 <!-- ── TOPIC: NETWORK TOPOLOGIES ───────────────────────────── -->
-<div class="topic" id="network-topologies" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="network-topologies" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗺️</span>
 <span class="topic-name">Network Topologies</span>
 <span class="topic-badge">VISUAL MODELS</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -1048,6 +1048,17 @@ stroke-width="1.5"
 Mixed types (star-bus). Most enterprise nets.
 </div>
 </div>
+</div>
+<div class="concept-desc verdict">
+<strong>Physical and logical are different answers to different questions, and the diagrams
+hide that.</strong> Switched Ethernet is physically a star — every device home-runs to a
+switch — while classic shared Ethernet was logically a bus, and that distinction is why a
+question about cabling and a question about collision domains have different answers on the
+same network. Operationally the only row that matters is <em>where the single point of
+failure is</em>: a star puts it at the switch, a ring at any break, and full mesh removes it
+at a cost of n(n−1)/2 links, which is why nobody builds one past a handful of nodes.
+"Hybrid" is not a hedge — it is what every real network is, because each layer picks its own
+shape.
 </div>
 </div>
 </div>
@@ -1895,12 +1906,12 @@ example.com
 NEW TOPIC: Cabling, Connectors & Standards
 Source: CompTIA A+ + Net+ Cheat Sheet PDFs
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="cabling-connectors-ethernet-standards" data-reviewed="2026-07" data-read="7" data-level="core">
+<div class="topic" id="cabling-connectors-ethernet-standards" data-reviewed="2026-07" data-read="8" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔌</span>
 <span class="topic-name">Cabling, Connectors &amp; Ethernet Standards</span>
 <span class="topic-badge">REFERENCE TABLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -2115,6 +2126,15 @@ Quad SFP — 40G/100G, 4 channels bundled
 </td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Category and distance are one constraint, not two.</strong> A cable rating is only
+meaningful with a length attached — Cat6 carries 10 Gb to 55 m and 1 Gb to 100 m, and the
+same reel is either good enough or not depending on where it goes, which is why "we used
+Cat6" answers nothing on its own. The other thing to take from the table is why fibre gets
+chosen at all, and it is rarely bandwidth: distance beyond copper's 100 m, immunity to
+electrical noise on a factory floor, and no conductive path between two buildings that
+might not share an earth.
+</div>
 </div>
 </div>
 </div>
@@ -2478,6 +2498,15 @@ Intermediary for client requests; caching, filtering
 <td>Port / content</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The split that matters is not distance-vector against link-state — it is interior
+against exterior.</strong> Inside one organisation a protocol may choose the fastest path,
+because everyone shares an interest in it working; between organisations, BGP chooses on <em>policy</em>, because
+a shorter path through a competitor's network is not a better path. That is why BGP looks
+primitive next to OSPF and is not:
+it is optimising something else, and it trusts what it is told, which is the root of most
+famous internet outages.
+</div>
 </div>
 </div>
 </div>
@@ -3498,12 +3527,12 @@ curl -6 https://ipv6.google.com</pre>
 </div>
 </div>
 <!-- ── TOPIC: NETWORK PROTOCOLS DEEP DIVE ─────────────────── -->
-<div class="topic" id="common-protocols-whats-actually-happening-on-the-wire" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="common-protocols-whats-actually-happening-on-the-wire" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔌</span>
 <span class="topic-name">Common Protocols — What's Actually Happening on the Wire</span>
 <span class="topic-badge">NET • Reference</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -3542,6 +3571,15 @@ curl -6 https://ipv6.google.com</pre>
 <tr><td>Header size</td><td>20+ bytes</td><td>8 bytes</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The column worth memorising is not the port — it is whether the protocol is
+plaintext.</strong> Ports are a lookup and move with configuration; the plaintext-versus-
+encrypted split decides what a packet capture on that segment hands an attacker, and it is
+why the paired ports exist at all (21 and 990, 23 and 22, 80 and 443, 143 and 993). The
+other durable idea in the table is the transport choice: the protocols that picked UDP did so because a late packet is worse
+than a lost one — DNS, DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span>, NTP, voice — and the ones that picked TCP could not tolerate a
+gap in the stream.
+</div>
 </div>
 </div>
 </div>
@@ -7388,12 +7426,12 @@ audit trails, SIEM <span class="acro-exp">(Security Information and Event Manage
 </div>
 </div>
 <!-- ── TOPIC: ACCESS CONTROL MODELS ───────────────────────── -->
-<div class="topic" id="access-control-models" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="access-control-models" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗂️</span>
 <span class="topic-name">Access Control Models</span>
 <span class="topic-badge">COMPARISON TABLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -7453,6 +7491,17 @@ Conditions evaluated at access time (time-of-day, IP)
 <td>Firewall ACLs <span class="acro-exp">(Access Control List)</span>, router ACLs</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>These are not a maturity ladder</strong>, which is how the table reads and
+how exams often teach it. Almost every real estate runs <strong>RBAC</strong> with
+<strong>ABAC</strong> conditions bolted on — Conditional Access is exactly that
+shape: a role decides <em>what</em>, and attributes like device state, location and
+risk decide <em>whether, right now</em>. MAC has not been superseded either; it is
+alive in SELinux and in anything handling classified material.
+The failure mode to watch for is <strong class="c-red">role explosion</strong>:
+when exceptions are met by creating one more role, a directory ends up with
+roughly one role per person, which is DAC with extra administration.
+</div>
 </div>
 </div>
 </div>
@@ -7608,12 +7657,12 @@ color: var(--red);
 </div>
 </div>
 <!-- ── TOPIC: CRYPTOGRAPHY ─────────────────────────────────── -->
-<div class="topic" id="cryptography-algorithm-reference" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="cryptography-algorithm-reference" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔑</span>
 <span class="topic-name">Cryptography Algorithm Reference</span>
 <span class="topic-badge">REFERENCE TABLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -7697,6 +7746,15 @@ Checksums only — collisions known, NOT for security
 <td style="color: var(--green)">✔ Modern</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Nothing in the table is used alone, which is what the table cannot show.</strong> A
+real session is a key exchange to agree a secret, a symmetric cipher to move the data, a
+hash for integrity and a signature for identity — four rows working together, and the
+weakest of the four sets the strength of the whole. Two practical reads: <em>hashing is not
+encryption</em>, because nothing reverses it and nothing is meant to, and asymmetric
+cryptography is not "stronger" than symmetric, it is slower and solves a different problem —
+which is precisely why every protocol here uses it only to agree the symmetric key.
+</div>
 </div>
 </div>
 </div>
@@ -14783,8 +14841,8 @@ rather than to recruit more champions.
 <span class="ctag ctag-ptplus">PT+</span>
 </div>
 <span class="domain-sub">Kill Chain · MITRE ATT&amp;CK · Diamond Model · Threat Intel · Social Engineering · Malware</span>
-<span class="domain-meta" aria-label="46 topics, about 2h 05m to read"
->46 topics · ~2h 05m</span>
+<span class="domain-meta" aria-label="46 topics, about 2h 10m to read"
+>46 topics · ~2h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -15408,12 +15466,12 @@ Offer a service/benefit in exchange for information
 NEW TOPIC: Malware Types Reference
 Source: CompTIA A+ Cheat Sheet PDF
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="malware-types-reference" data-reviewed="2026-07" data-read="5" data-level="core">
+<div class="topic" id="malware-types-reference" data-reviewed="2026-07" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🦠</span>
 <span class="topic-name">Malware Types Reference</span>
 <span class="topic-badge">TAXONOMY TABLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -15560,6 +15618,14 @@ increase file size
 </td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>These are categories of behaviour, and one sample is usually several of them.</strong>
+Ransomware arrives as a trojan, spreads like a worm and installs a rootkit to survive the
+reboot — so the useful question during an incident is not "which one is it" but <em>which
+behaviours has it shown here</em>: did it spread on its own, did it persist, did it
+exfiltrate before it encrypted. Those three answers decide the response, and the label on
+the vendor's alert decides nothing.
+</div>
 </div>
 </div>
 </div>
@@ -15568,12 +15634,12 @@ increase file size
 NEW TOPIC: DoS & Network Attack Types
 Source: CEH Cheat Sheet PDF
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="dos-ddos-network-attack-types" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="dos-ddos-network-attack-types" data-reviewed="2026-07" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💣</span>
 <span class="topic-name">DoS <span class="acro-exp">(Denial of Service)</span> / DDoS <span class="acro-exp">(Distributed Denial of Service)</span> &amp; Network Attack Types</span>
 <span class="topic-badge">ATTACK REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -15726,6 +15792,16 @@ slides to shellcode; detected by IDS <span class="acro-exp">(Intrusion Detection
 <td>intext:"password" filetype:txt</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Volume is the least interesting axis and the one the names emphasise.</strong> A
+volumetric flood is loud, obvious and largely somebody else's problem — the upstream
+provider's — while an application-layer request that costs the server a database join and
+the attacker nothing takes a service down from one laptop and looks like traffic. That is
+the distinction to carry out of this table: <em>what does one request cost each side</em>.
+It is also why a rate limit measured in requests per second protects against the first kind
+and not the second, and why the defence for the second is finding the expensive endpoint
+before somebody else does.
+</div>
 </div>
 </div>
 </div>
@@ -18852,12 +18928,12 @@ Restoration &amp; Validation
 </div>
 </div>
 <!-- ── TOPIC: DEFENSE-IN-DEPTH ──────────────────────────── -->
-<div class="topic" id="defense-in-depth-layered-security" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="defense-in-depth-layered-security" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏗️</span>
 <span class="topic-name">Defense-in-Depth — Layered Security</span>
 <span class="topic-badge">ARCHITECTURE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -19028,6 +19104,15 @@ Encryption at rest &amp; transit · DLP <span class="acro-exp">(Data Loss Preven
 classification · IRM/DRM
 </div>
 </div>
+</div>
+<div class="concept-desc verdict">
+<strong>The rings imply an order an attacker does not follow.</strong> Drawn concentric,
+the model suggests the perimeter is met first and data last; a phished credential lands on
+the <em>identity</em> and <em>application</em> layers directly and never touches the
+firewall, and a contractor's laptop starts inside the internal network. So the model earns
+its place as a <strong>coverage</strong> check rather than a sequence: for each ring, name
+the control, name who owns it, and name how you would know it had failed. The rings with no
+answer to the third question are the ones that are decorative.
 </div>
 </div>
 </div>
@@ -23187,12 +23272,12 @@ Lessons Learned<br />Post-incident review
 </div>
 </div>
 <!-- ── TOPIC: VULNERABILITY MANAGEMENT ──────────────────── -->
-<div class="topic" id="vulnerability-management-lifecycle" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="vulnerability-management-lifecycle" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔎</span>
 <span class="topic-name">Vulnerability Management Lifecycle</span>
 <span class="topic-badge">6-STEP LIFECYCLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -23279,6 +23364,15 @@ background: rgba(56, 189, 248, 0.04);
 MTTR <span class="acro-exp">(Mean Time To Repair)</span>, risk reduction over time, SLA compliance,
 vulnerability age, executive dashboards
 </div>
+</div>
+<div class="concept-desc verdict">
+<strong class="c-red">Verify is the step that gets dropped, and dropping it makes the whole
+loop a report generator.</strong> Remediation is handed to another team, the ticket closes on
+their word, and next month's scan finds the same finding — at which point the programme's
+own numbers are the only evidence of anything, and they are wrong. The cheap discipline is
+that a finding is closed by a <em>rescan</em> and never by a reply. Prioritise likewise:
+severity alone sorts by how bad it would be, and adds nothing about whether anyone is
+exploiting it this week.
 </div>
 </div>
 </div>
@@ -33375,6 +33469,16 @@ Server fetches attacker-controlled URL <span class="acro-exp">(Uniform Resource 
 internal/cloud metadata
 </div>
 </div>
+<div class="concept-desc verdict">
+<strong>It is a ranked list of categories, not a checklist and not a standard.</strong> The
+order comes from data contributed by testing firms, so it describes what was <em>found</em>
+rather than what matters most in your application — and the 2021 revision reordered it
+heavily, with Broken Access Control moving to the top and three categories merging. Two
+practical consequences: "we tested against the Top 10" is a claim about coverage of ten
+buckets rather than of an application, and a finding that fits none of the ten is not
+thereby unimportant. Use it to make sure a test plan has no obvious hole, then test the
+thing you actually built.
+</div>
 </div>
 </div>
 </div>
@@ -35376,12 +35480,12 @@ no sense" from <code>ls -l</code> usually turns out to live — the trailing
 </div>
 </div>
 <!-- ── TOPIC: LINUX BOOT PROCESS ──────────────────────────── -->
-<div class="topic" id="linux-boot-process-biosuefi-systemd" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="linux-boot-process-biosuefi-systemd" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚀</span>
 <span class="topic-name">Linux Boot Process (BIOS/UEFI → systemd)</span>
 <span class="topic-badge">BOOT CHAIN</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -35491,6 +35595,16 @@ starts · PAM <span class="acro-exp">(Pluggable Authentication Modules)</span> h
 </div>
 </div>
 </div>
+</div>
+<div class="concept-desc verdict">
+<strong>Where it stops tells you whose problem it is, and that is the only reason to learn
+the chain.</strong> Nothing on screen at all is firmware or hardware; a firmware screen but
+no boot menu is the bootloader or the disk it lives on; a menu that starts and then panics
+is the kernel or the initramfs, and "cannot find root" almost always means the initramfs is
+missing a storage driver after a kernel or disk change; a login prompt that arrives with
+services dead is systemd, and <code>systemd-analyze blame</code> is the next command.
+Working out which of five stages you are in takes seconds and saves the hour people spend
+reinstalling.
 </div>
 </div>
 </div>
@@ -40821,16 +40935,24 @@ A/B testing, feedback loops
 </div>
 </div>
 </div>
+<div class="concept-desc verdict">
+<strong>It is drawn as a line and worked as a loop.</strong> The arrow that actually gets
+travelled most is the one back from evaluation to data collection — a model that
+underperforms is far more often short of representative data than short of architecture, and
+a week of feature work usually beats a week of hyperparameters. The stage teams
+systematically under-resource is <em>monitoring</em>: a deployed model degrades silently as
+the world drifts away from its training set, and nothing in the pipeline announces it.
 </div>
 </div>
 </div>
 </div>
-<div class="topic" id="ml-learning-paradigms" data-reviewed="2026-08" data-read="2" data-level="core">
+</div>
+<div class="topic" id="ml-learning-paradigms" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧠</span>
 <span class="topic-name">ML <span class="acro-exp">(Machine Learning)</span> Learning Paradigms</span>
 <span class="topic-badge">TAXONOMY</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -40914,6 +41036,15 @@ Text, images, audio, code, video
 </div>
 </div>
 </div>
+<div class="concept-desc verdict">
+<strong>The paradigm is chosen by the data you have, not by the problem you want to
+solve.</strong> Supervised learning needs labels, and labelling is usually the expensive
+part of the project rather than the training; unsupervised is what you reach for when there
+are none and you can live with an answer nobody can grade; reinforcement needs an
+environment you can simulate cheaply, which is why it is spectacular in games and rare in
+business. Asking "what do we already have labels for" settles the choice faster than any
+comparison of the methods does.
+</div>
 </div>
 </div>
 </div>
@@ -40983,12 +41114,12 @@ and manage dependencies.
 </div>
 </div>
 </div>
-<div class="topic" id="ai-ethics-responsible-ai-nist-ai-rmf" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="ai-ethics-responsible-ai-nist-ai-rmf" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚖️</span>
 <span class="topic-name">AI <span class="acro-exp">(Artificial Intelligence)</span> Ethics &amp; Responsible AI (NIST AI RMF)</span>
 <span class="topic-badge">ETHICS FRAMEWORK</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -41047,6 +41178,15 @@ Energy cost of training, efficient architectures, carbon
 footprint tracking
 </div>
 </div>
+</div>
+<div class="concept-desc verdict">
+<strong>Pillars are the easy half; the hard half is who is accountable when two of them
+conflict.</strong> Explainability and accuracy trade against each other, privacy and
+fairness both want the demographic attribute you are not allowed to keep, and a framework
+that lists all four without naming a decision-maker produces a document rather than a
+control. The version of this that survives contact with a real project attaches each pillar
+to a named owner, a point in the lifecycle where it is checked, and a written record of what
+was traded away — which is the same discipline a risk register applies to everything else.
 </div>
 </div>
 </div>
@@ -59021,6 +59161,14 @@ philosophically significant.
 </td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>A school is a set of questions somebody took seriously, not a set of answers to
+adopt.</strong> Read as a menu the table invites picking one and arguing from it, which is
+how the words become labels; read as a map it shows which problem each tradition thought was
+the urgent one — what exists, what can be known, what a good life is — and why answering one
+well constrains the answers to the others. The thinkers listed disagreed with their own
+schools more often than the row suggests, which is worth remembering before quoting one.
+</div>
 </div>
 </div>
 </div>
