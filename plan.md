@@ -16624,3 +16624,55 @@ reachable — 36% to 84% of the site, with no new content written.**
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — path adjacency as related links, and the contrast bug it exposed
+
+With 88 paths in place, `data/related.json` had an obvious source it had never used:
+**two topics adjacent in a curated path are related by construction.** That is the same
+reasoning the 47-pair batch earlier in this session used; the paths programme simply
+made 1,273 more such pairs exist.
+
+Applied with a **degree cap of 5** — an edge is only added when *both* endpoints are
+still under the cap — so the See-also strip stays a signpost rather than becoming a
+second table of contents. 85 candidate pairs were skipped for that reason, which is
+the cap doing its job.
+
+```
+related.json    982 keys / 2,002 links → 1,367 keys / 4,008 links (0 one-way)
+topics with no related key   549 → 164
+orphans (no link, no xref)   542 → 162
+degree distribution          max 12, and 90% of topics now sit at 2–5
+```
+
+### The gate caught a contrast bug that predates the change
+
+`make a11y` failed on `.sa-link` in light theme, and the cause turned out to be
+general rather than new. Every one of the **thirty light-theme domain accents** was
+tuned against `--bg` — the page background — where they land between 4.61 and 4.74.
+The See-also strip renders inside `.topic-body`, whose background is `--bg3`, which is
+darker; on that surface the same thirty accents measure **4.33 to 4.45**, all just
+under the 4.5 threshold.
+
+So every see-also strip and every cross-reference drawn on a topic body has been
+failing contrast in light mode, by a fraction, for as long as those colours have
+existed. It surfaced now only because the strip finally appeared on the first topic
+the accessibility scan happens to open.
+
+All thirty are re-tuned against `--bg3` — the darkest surface an accent is drawn on —
+and the CSS comment now says so, because the next person to add an accent will
+otherwise check it against the page background exactly as the last one did.
+
+### The budget cost, stated plainly
+
+The related payload is inlined in the page, and doubling the link count costs
+**115,528 characters** of it. `page_budget` now reports **7% raw and 6% gzip
+headroom**, down from 12% at the start of the session. That is a real trade and worth
+naming: the remaining headroom is roughly one more change of this size. Anything
+larger needs the payload restructured — the obvious lever is that slugs are long and
+repeat, so an index-based encoding would recover most of it — rather than another
+increment against the ceiling.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.
