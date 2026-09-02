@@ -16070,3 +16070,59 @@ median topic               3,323   3,327
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — the data-engineering tail, and a gate that caught a dangling reference
+
+Six cards across `script`, `data` and `linux`, on the tools where the tutorial ends
+before the operational reality starts.
+
+| Card | The reality the tour omits |
+|---|---|
+| Semantic Versioning | SemVer is a promise a human makes, and a lockfile only pins what your ecosystem locks — a transitive range inside another package can still move |
+| Airflow & Dagster | The scheduler's "now" is the interval's start, not the clock — a task reading `datetime.now()` is right on schedule and wrong on every backfill |
+| dbt | "Transform in the warehouse" puts your transformations on the bill; incremental materialisation and freshness are cost controls left at their defaults |
+| Dimensional Modeling | Declare the grain first — a fact table mixing grains double-counts silently and consistently, in one dashboard and not another |
+| OLTP vs OLAP | The *write* pattern is the migration surprise: a single-row update rewrites a compressed block, and `SELECT *` is a column store's worst case |
+| ZFS & Btrfs | Copy-on-write means deleting files frees nothing while a snapshot holds the blocks — and free space below ~20% is a performance cliff, not a warning |
+
+### The three worth reading twice
+
+**A pipeline run must be a pure function of its interval.** Airflow's date semantics
+confuse everyone once, and the confusion is load-bearing: a task that asks the system
+clock what day it is produces right-looking results on a normal schedule and queries
+the present for every historical date the moment you backfill. A pipeline whose
+history cannot be rebuilt is one bad deploy away from permanent damage.
+
+**A fact table that mixes grains double-counts, and both queries look correct.** The
+fingerprint is a number that is right in one dashboard and 40% higher in another,
+because the error is in the table rather than in either query. Writing the grain
+sentence above the model and testing the row count against it is the cheapest control
+in analytics engineering.
+
+**Deleting 200 GB and watching free space not move is snapshot retention, not a bug.**
+And the corollary is the one that matters: a snapshot lives in the pool it protects,
+so it rescues you from a bad upgrade and not from a failed pool, a fire, or ransomware
+with root.
+
+### A gate caught a dangling cross-reference
+
+`lint_content` refused the build over `SBOM in Practice — VEX, Querying It…` when the
+card is actually titled `SBOM in Practice & VEX — Querying It…`. Two words
+transposed, in a reference that would have rendered as ordinary emphasis and gone
+nowhere. That check exists because prose references rot invisibly; this is the second
+time this session it has caught one before publication rather than after.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   41      35
+mean chars/concept card    1,271   1,272
+median topic               3,327   3,333
+10th percentile            1,809   1,845
+```
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.

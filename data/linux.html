@@ -4814,6 +4814,38 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Copy-on-Write Means the Pool Fills From Behind, and Free Space Is a Performance Setting</div>
+                <div class="concept-desc">
+                  Never overwriting in place is what makes snapshots nearly free, and it is also why
+                  <strong>deleting files can fail to reclaim anything</strong>: every block a
+                  snapshot references stays allocated until that snapshot is destroyed. An
+                  administrator who deletes 200 GB and watches free space not move is not looking at
+                  a bug; they are looking at snapshot retention nobody set a policy for. The same
+                  mechanism means a pool fragments as it fills, and both ZFS and Btrfs degrade sharply
+                  past roughly 80% — free space is not just capacity here, it is the room the
+                  allocator needs to write contiguously.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Surprise</th><th>Why</th><th>What to do</th></tr>
+                    <tr><td>Deleting files frees nothing</td><td>Snapshots hold the blocks</td><td>A retention policy, and <code>zfs list -t snapshot -o name,used</code> to see who holds what</td></tr>
+                    <tr><td>Performance falls off a cliff near full</td><td class="c-red">Copy-on-write needs free space to allocate contiguously</td><td>Alarm at 70%, act at 80% — treat it as a capacity limit, not a warning</td></tr>
+                    <tr><td>ZFS "uses all the memory"</td><td>The ARC cache is designed to; it releases under pressure, but not always fast enough beside a large database or VM <span class="acro-exp">(Virtual Machine)</span> host</td><td>Cap <code>zfs_arc_max</code> deliberately on a shared machine</td></tr>
+                    <tr><td>Adding a disk does not expand the vdev</td><td>A RAID-Z vdev's width was historically fixed at creation</td><td>Plan the layout up front; expansion is a newer feature and not everywhere yet</td></tr>
+                    <tr><td>Btrfs RAID 5/6</td><td class="c-red">Still carries the write-hole caveat and is not recommended for data you care about</td><td>Btrfs RAID 1/10, or ZFS RAID-Z for parity</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">And a snapshot is not a backup, for the specific reason
+                    that it lives in the pool it protects.</strong> It rescues you from a bad
+                    upgrade or a deleted directory and not from a failed pool, a fire, or ransomware
+                    with root — which is what <code>zfs send</code> to another machine is for, and
+                    why that replica should be somewhere the source cannot delete it. See
+                    <span class="xref">Snapshots Are Not Backups — What They Cost and How They Bite</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

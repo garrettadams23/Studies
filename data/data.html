@@ -1691,6 +1691,39 @@ db.orders.<span class="fn">aggregate</span>([
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">The Update Is the Problem, Not the Query — Why a Column Store Hates Your Write Pattern</div>
+                <div class="concept-desc">
+                  The read story is well known; the write story is what surprises people migrating.
+                  Columnar engines store values of one column together, compressed, in large
+                  immutable blocks — so updating a single row means rewriting or shadowing an entire
+                  block, and doing that a thousand times a second is pathological. Most cloud
+                  warehouses respond by making single-row <code>UPDATE</code> and <code>DELETE</code>
+                  legal but expensive, and by charging for the scan they need to find the row. A
+                  team that migrates an application table into the warehouse "because analytics live
+                  there" discovers this as a bill rather than as an error.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>Row store</th><th>Column store</th></tr>
+                    <tr><td>Point lookup by primary key</td><td>An index seek, sub-millisecond</td><td class="c-red">Often a scan of the partitions that could contain it</td></tr>
+                    <tr><td>Single-row update</td><td>The design case</td><td>Rewrites or shadows a block; fine occasionally, ruinous continuously</td></tr>
+                    <tr><td>Aggregate over one column, a billion rows</td><td>Reads every row to get one field</td><td class="c-cyan">Reads one compressed column — the entire point</td></tr>
+                    <tr><td><code>SELECT *</code></td><td>Free — the row is already contiguous</td><td>The worst case: reassembles every column you did not need</td></tr>
+                    <tr><td>Many small inserts</td><td>Fine</td><td>Small files pile up; needs batching or a compaction step</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">So the split is a write-pattern decision as much as a
+                    read one, and the join between them is change data capture.</strong> Keep the
+                    application on a row store, stream changes into the warehouse, and let each do
+                    the job its storage layout was built for — the mechanics of that stream are in
+                    <span class="xref">Change Data Capture — Reading the Database's Own Diary</span>.
+                    And in a column store, stop writing <code>SELECT *</code>: it is the one habit
+                    that converts the fastest engine you have into the slowest.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -1461,6 +1461,37 @@ $sum = <span class="fn">array_sum</span>($nums);
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">SemVer Is a Promise a Human Makes, and the Lockfile Only Protects the Top Level</div>
+                <div class="concept-desc">
+                  Ranges work because maintainers classify their own changes correctly, and the two
+                  ways that fails are both common. A maintainer ships a behaviour change as a minor
+                  release because it did not break the type signature — the build is green and one
+                  code path now returns something else. Or the opposite: a genuine bug fix is
+                  released as a major, so a project pinned to <code>^1</code> quietly stops
+                  receiving security patches while looking perfectly maintained. Neither shows up in
+                  a diff of your own repository.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Assumption</th><th>Reality</th></tr>
+                    <tr><td>"The lockfile makes it reproducible"</td><td class="c-cyan">For your direct dependencies. A transitive dependency resolved by a range inside <em>another</em> package can still move unless the ecosystem locks the full tree — npm and Cargo do, some do not</td></tr>
+                    <tr><td>"CI would catch a breaking change"</td><td>Only where your tests exercise that path; the update happens on a machine you do not watch, at a time nobody chose</td></tr>
+                    <tr><td>"Pinning exactly is safest"</td><td class="c-red">It is also how a project accumulates years of unpatched CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> — pinning without a scheduled bump is deferral, not safety</td></tr>
+                    <tr><td>"<code>0.x</code> means unstable"</td><td>By the spec, yes — and half the ecosystem's most-depended-upon libraries live there permanently</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Pin the tree, update on a schedule, and let the schedule
+                    be automated.</strong> A weekly bot PR with the changelog attached turns
+                    dependency updates into a small, boring, reviewable event; the alternative is an
+                    emergency upgrade across four major versions during an incident, which is the
+                    same work done badly under pressure. What the pinned tree contains, and how to
+                    answer "are we affected", is in
+                    <span class="xref">SBOM in Practice &amp; VEX — Querying It, and Saying "Not Affected" Credibly</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1633,6 +1664,37 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">The Scheduler's Idea of "Now" Is Not Yours, and Backfills Are Where That Bites</div>
+                <div class="concept-desc">
+                  An Airflow run is named for the <em>start</em> of the interval it covers, and it
+                  fires at the <em>end</em> of that interval. A daily DAG labelled Monday runs on
+                  Tuesday morning, because Monday's data is only complete once Monday is over. That
+                  is correct and it is the single most confusing thing about the tool: a task that
+                  reads "today" from the system clock instead of from the run's own interval
+                  produces right-looking results on a normal schedule and completely wrong ones the
+                  moment you backfill, because every historical run then queries the present.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Trap</th><th>What happens</th><th>The habit</th></tr>
+                    <tr><td><code>datetime.now()</code> inside a task</td><td class="c-red">Backfills silently query today for every historical date</td><td>Always use the run's data interval — the whole point of the parameter</td></tr>
+                    <tr><td>Non-idempotent writes</td><td>A retry or a re-run doubles the rows</td><td>Overwrite the partition for that interval, never append blindly</td></tr>
+                    <tr><td>Work in the DAG file itself</td><td>The file is parsed every few seconds by the scheduler — a query at import time hammers a database forever</td><td>Nothing but structure at module level</td></tr>
+                    <tr><td>A backfill of a year, all at once</td><td>Hundreds of concurrent runs saturate the warehouse and the pool</td><td>Cap concurrency deliberately before you trigger it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">This is the strongest argument for the asset-oriented
+                    model.</strong> Declaring the datasets and letting the tool derive the graph
+                    makes "which partition am I producing" the primary question rather than an
+                    implicit one — which is exactly the thing task-oriented DAGs let you get wrong.
+                    Either way the rule is the same: a pipeline run must be a pure function of its
+                    interval, or history cannot be rebuilt, and a pipeline whose history cannot be
+                    rebuilt is one bad deploy away from permanent damage.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1665,6 +1727,40 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                     <strong class="c-green">Why it stuck:</strong> analytics code gets Git, code
                     review, CI, and tests — treating pipelines like software. ELT works because cloud
                     warehouses are cheap and powerful enough to transform in place.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">"Transform in the Warehouse" Means Your Transformations Are on the Bill</div>
+                <div class="concept-desc">
+                  ELT works because
+                  warehouse compute is elastic, and the corollary is that every model rebuild is a
+                  metered query. A project that starts as thirty models and rebuilds fully each hour
+                  becomes four hundred models rebuilding fully each hour without anyone deciding to,
+                  and the finance conversation arrives before the engineering one. The controls are
+                  in the tool and unused by default: incremental materialisations so a model
+                  processes only new rows, table versus view chosen per model rather than
+                  by habit, and a schedule that reflects how often the data actually changes rather
+                  than how often someone might look.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Choice</th><th>Cheap</th><th>Expensive</th></tr>
+                    <tr><td>Materialisation</td><td><code>incremental</code> with a good filter; <code>view</code> for thin passthroughs</td><td class="c-red">Everything as <code>table</code>, rebuilt in full, hourly</td></tr>
+                    <tr><td>Test coverage</td><td>Not-null and unique on keys, at the boundaries</td><td>A generic test on every column of every model, each a full scan</td></tr>
+                    <tr><td>Freshness</td><td>Matched to the source's actual update cadence</td><td>Hourly everything, because it was the default in the example</td></tr>
+                    <tr><td>The DAG's shape</td><td>Staging → intermediate → marts, each layer thin</td><td>A model that <code>ref()</code>s eleven others and is itself referenced twice</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">The tests are the part that earns dbt its place, and
+                    they are the part teams skip.</strong> Version control and documentation are
+                    nice; an assertion that fails the build when a join starts fanning out is what
+                    stops a silently wrong dashboard reaching an executive, which is the actual
+                    failure mode of analytics work. Write the test with the model, and treat a
+                    failing test as a broken build rather than as a notification — the wider
+                    argument is in
+                    <span class="xref">Data Quality &amp; Observability</span>.
                   </div>
                 </div>
               </div>
@@ -1701,6 +1797,36 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                     customer's tier <em>when</em> they bought?" — Type 2 keeps versioned rows so
                     history stays accurate. Star schemas are the default; snowflake only when storage
                     or governance demands it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Declare the Grain First, Because Every Wrong Number Downstream Starts Here</div>
+                <div class="concept-desc">
+                  The grain is the sentence that says what exactly one row of the fact table means —
+                  "one row per order line per shipment", not "sales". Writing it down is the whole
+                  design, and skipping it produces the characteristic analytics failure: a fact
+                  table that mixes grains, so a sum over it double-counts. The fingerprint is a
+                  number that is right in one dashboard and 40% higher in another, and both queries
+                  look correct, because the mistake is in the table rather than in either query.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Trap</th><th>What goes wrong</th></tr>
+                    <tr><td>Mixed grain in one fact table</td><td class="c-red">Order-level and line-level rows together: any sum double-counts, silently and consistently</td></tr>
+                    <tr><td>Fan-out on a join</td><td>Joining a one-per-day fact to a Type 2 dimension with three versions of that day triples the measure</td></tr>
+                    <tr><td>Additive vs semi-additive measures</td><td>A balance can be summed across customers and not across time; averaging it hides the error</td></tr>
+                    <tr><td>Natural key as the dimension key</td><td>Type 2 history needs a surrogate key — reusing the business key means the old row cannot exist</td></tr>
+                    <tr><td>Late-arriving dimensions</td><td>A fact whose dimension row does not exist yet lands on an "unknown" member that nobody watches</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Type 2 is a decision about the question, not about the
+                    data.</strong> "How much did this customer's current tier buy?" and "what tier
+                    were they on when they bought?" are different questions and only the second
+                    needs versioned rows — so the cost of history is only worth paying where
+                    somebody will ask the second one. Decide per dimension, write the grain
+                    statement above the model, and test that the row count matches it.
                   </div>
                 </div>
               </div>
