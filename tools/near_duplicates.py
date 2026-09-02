@@ -23,8 +23,8 @@ all deliberate. So it is a census, and the mode that matters is `--title`:
 run *before* writing, because by review time the cost is already sunk.
 
 Every pair also carries what it **differs on**, in §3's terms — see
-`differences()` for why that was missing and what it changes. Of 40 pairs, 27
-differ on something §3 calls deliberate and 13 differ on nothing; those 13 are
+`differences()` for why that was missing and what it changes. Of 39 pairs, 29
+differ on something §3 calls deliberate and 10 differ on nothing; those 10 are
 §3's last row, "the real population", and `--unexplained` lists them alone.
 
 Usage:
@@ -163,6 +163,16 @@ _REFERENCE_RE = re.compile(r"\breference\b", re.I)
 PERSPECTIVE_PAIRS = {frozenset({"pentest", "redteam"}),
                      frozenset({"threat", "blueteam"})}
 
+# A fourth class, which §3's table did not have and measurement supplied: the
+# site keeps 37 **certification-objective** cards, badged with the exam rather
+# than the subject. `depth_report.py` already knows about them — its DELIBERATE
+# list exempts them from deepening, because a Linux+ objective summary that grew
+# would stop being a skim. The same fact makes one of them beside a practitioner
+# card deliberate rather than duplicated, and it explained two pairs that had
+# nothing else to say for them. This is the CompTIA subset of that list; the rest
+# of it (beginner, reference) is already covered by the two signals above.
+CERT_BADGES = ("linux+", "pentest+", "sec+", "net+", "a+", "security+")
+
 
 def level_of(badge):
     """beginner | advanced | core, from a topic's badge text."""
@@ -171,6 +181,13 @@ def level_of(badge):
     if _ADVANCED_RE.search(badge):
         return "advanced"
     return "core"
+
+
+def _is_cert(badge):
+    """True for a certification-objective badge. Matched the way depth_report's
+    `_deliberate()` matches, so `Linux+ • IAM` and `DEVOPS · LINUX+` both count."""
+    b = badge.lower()
+    return any(b.startswith(c) or f" {c}" in b for c in CERT_BADGES)
 
 
 def differences(a, b):
@@ -186,6 +203,8 @@ def differences(a, b):
         out.append("reference/concept")
     if frozenset({a["domain"], b["domain"]}) in PERSPECTIVE_PAIRS:
         out.append("attacker/defender view")
+    if a["cert"] != b["cert"]:
+        out.append("cert objective/practitioner")
     return out
 
 
@@ -213,6 +232,7 @@ def titles():
                 # §3 row 2. A card that calls itself a reference is looked up,
                 # not read, and sits beside a concept card on purpose.
                 "reference": bool(_REFERENCE_RE.search(title + " " + badge)),
+                "cert": _is_cert(badge),
             }
 
 

@@ -11704,6 +11704,7 @@ appears once for a beginner and once in depth **on purpose**.
 | A *Beginner*-badged card and a deep card on the same subject | **Keep both.** This is the site's teaching model, and collapsing it makes the beginner layer disappear |
 | A *Reference* card (a table) and a *Concept* card | **Keep both.** Different jobs; the reference card is looked up, the concept card is read |
 | The same subject from two *perspectives* — an attacker's and a defender's | **Keep both.** `pentest`↔`redteam` and `threat`↔`blueteam` pairs are usually this |
+| A *certification-objective* card and a practitioner card | **Keep both.** Added by measurement, not by design — 37 cards are badged with an exam rather than a subject, and `depth_report.py` already exempts them from deepening because an objective summary that grew would stop being a skim |
 | Two cards with the same badge, the same depth, and no stated difference | **Consolidate.** This is the real population |
 
 **The test:** open both, and write one sentence saying who each is for. If the sentence is
@@ -11711,10 +11712,11 @@ the same, one of them should not exist.
 
 **And the census now says which row each pair lands on.** `near_duplicates.py` prints, under
 every pair, what it differs on in this table's terms — `level beginner/core`,
-`reference/concept`, `attacker/defender view` — or *"§3 offers nothing — read both"*. Stated
-as fact, not as a verdict, because only reading both settles it. **27 of the 40 pairs differ
-on something above; 13 differ on nothing**, and `--unexplained` lists those alone. That
-number is the row-4 population, and it is the one worth working.
+`reference/concept`, `attacker/defender view`, `cert objective/practitioner` — or
+*"§3 offers nothing — read both"*. Stated as fact, not as a verdict, because only reading
+both settles it. **29 of the 39 pairs differ on something above; 10 differ on nothing**, and
+`--unexplained` lists those alone. That number is the row-4 population, and it is the one
+worth working.
 
 ## 4. What consolidation costs, and the rule that follows
 
@@ -16830,13 +16832,22 @@ Each pair now carries a third line saying what it **differs on**, in §3's own t
         → §3 offers nothing — read both
 ```
 
-Three signals, one per row of §3's table, all read off markup that already exists:
+Four signals, all read off markup that already exists:
 
 | §3 row | Signal | Source |
 |---|---|---|
 | Beginner beside deep | `level beginner/core` | The badge, by the same rule `build.py`'s `stamp_level()` uses |
 | Reference beside concept | `reference/concept` | The word *reference* in the title or badge |
 | Attacker beside defender | `attacker/defender view` | `pentest`↔`redteam` and `threat`↔`blueteam`, the two pairings §3 names |
+| **New** — cert objective beside practitioner | `cert objective/practitioner` | The CompTIA badges from `depth_report.py`'s own `DELIBERATE` list |
+
+**The fourth row is not in §3, and now is.** *Users, Groups & Privilege* (`Linux+ • IAM`,
+545 characters) beside *User & Group Management — Who Can Do What in Linux* (`LINUX • Admin`,
+1,642) looked like §3's consolidate row and is not: the site keeps 37 certification-objective
+cards, and `depth_report.py` has exempted them from deepening since wave D10 on the grounds
+that an objective summary which grew would stop being a skim. The same fact makes one beside
+a practitioner card deliberate. Two tools now agree on which cards those are, sourced from
+the same list. §3's table gained the row.
 
 Stated as **fact, not verdict** — `level beginner/core` is something the markup says;
 *"this pair is fine"* is a judgement only reading both cards can make, and §3's test is
@@ -16845,14 +16856,15 @@ still to open both and write one sentence saying who each is for.
 ### The measurement, and the number that matters
 
 ```
-40 pairs at or above 0.50
-27 differ on something §3 calls deliberate
-13 differ on nothing          ← `--unexplained` lists these alone
+39 pairs at or above 0.50
+29 differ on something §3 calls deliberate
+10 differ on nothing          ← `--unexplained` lists these alone
 ```
 
-**13 is the number this change exists to produce.** It is §3's last row — *"two cards with
-the same badge, the same depth, and no stated difference"* — isolated from thirty-nine
+**10 is the number this change exists to produce.** It is §3's last row — *"two cards with
+the same badge, the same depth, and no stated difference"* — isolated from thirty-eight
 lines of scrolling, and it is the queue Phase 9 would have had if this had existed then.
+Working it is the next record.
 
 Two details worth recording. §3's third row reads as a two-way split of the security
 domains, but it is not one — it names **two specific pairings**, and encoding it as
@@ -16864,5 +16876,55 @@ actually lists, the unexplained count fell from 15 to 13.
 And the `--title` pre-flight is untouched. It answers a different question — *does this
 card already exist?* — with containment rather than Jaccard and with acronyms expanded, and
 adding a difference line there would be noise: a card being written has no badge yet.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · determinism reproducible.
+
+---
+
+## Session record — three acronyms that meant the wrong thing, found by reading the headings
+
+Working the census's unexplained pairs meant opening cards, and opening cards found a
+different bug entirely. `Linux Permissions — Who Can Do What, In Depth` has a concept
+label reading:
+
+> **SPECIAL PERMISSION BITS** *(Background Intelligent Transfer Service)*
+
+`BITS` is in the dictionary once, as the Windows background download service MECM uses
+for content. The annotator does not know that "permission bits" is two English words.
+
+That prompted an audit of the population where this failure lives: **every acronym
+expansion inside a short heading** — `.concept-label`, `.dt`, `<th>` and
+`.concept-title`. 275 annotations, read by hand. **Three were wrong, and all three are
+the same failure**: an English word that is also an acronym, in a heading, where prose
+would have made the meaning obvious.
+
+| Where | Rendered as | Should be | Fix |
+|---|---|---|---|
+| `linux` — special permission bits | *BITS (Background Intelligent Transfer Service)* | the permission bits | `byDomain: {"linux": null}` |
+| `linux` — the `sed` card | *SED (Self-Encrypting Drive)*, directly above the title **Stream Editor — Find and Replace on Steroids** | the stream editor | `byDomain: {"linux": null}` |
+| `blueteam` — Windows event IDs | *EVENT IDS (Intrusion Detection System)* | event ID numbers | source written `IDs`; `.dt` uppercases in CSS, so the reader sees no change |
+
+**Three fixes, two mechanisms, and the choice between them is the point.** `BITS` and
+`SED` are wrong in `linux` *everywhere* — neither has a Linux meaning worth annotating —
+so the dictionary's existing null override retires them from that domain, which is what
+the mechanism is documented for. `IDS` is the opposite: it is right in `blueteam` almost
+every time and wrong in exactly one heading, so the fix has to be local. Writing `IDs`
+instead of `IDS` is enough, because `build_pattern()` is case-sensitive and `.dt` carries
+`text-transform: uppercase` — the source stops matching, the page looks identical. **No
+new machinery was needed for either**, which is why none was added.
+
+### Why no check comes out of this
+
+The tempting next step is a rule: *flag an acronym whose dictionary category is unrelated
+to the domain it was annotated in*. Phase 11 §3 is about exactly that temptation, and the
+answer here is the same. `SED`'s category is `Security` and it fired in `linux`; so does
+`SSH`, `ACL`, `SUID` and half the domain's vocabulary, every one of them correct. The
+property that separates them is whether the word is also ordinary English **in that
+sentence**, and nothing in the markup carries it.
+
+So this is a **read**, not a check, and the population is now bounded and recorded: 275
+heading annotations, audited, three fixed. Prose annotations were not audited and are the
+much larger population — but they are also where the bug is least likely, because a
+sentence supplies the context a two-word heading does not.
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · determinism reproducible.
