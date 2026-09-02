@@ -15961,3 +15961,59 @@ median topic               3,304   3,316
 
 Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — finishing blueteam: five more blind spots, and the one that changes an IR runbook
+
+`blueteam` goes to **zero thin topics**. Same spec as the first blueteam wave: what
+does this tool or standard not see, and what does a false negative look like?
+
+| Card | What it cannot see |
+|---|---|
+| KAPE & plaso | Anything outside the targets file — absence is indistinguishable from emptiness |
+| STIX & TAXII | Whether an indicator is still true; the format solved transport, not confidence or expiry |
+| ITDR | A replayed session token — no sign-in event, because no sign-in happened |
+| Email auth | A lookalike domain with its own valid records, and a compromised genuine sender |
+| Wazuh | The host without an agent; and the signal under its own default alert volume |
+
+### The one that changes a runbook
+
+**Resetting the password does not end the session.** An adversary-in-the-middle proxy
+captures the cookie *after* a fully MFA'd login, so the account looks quiet in the
+identity provider while mail is being read. Containment order therefore inverts from
+the password-compromise habit: revoke sessions first, then reset, then audit
+registered authentication methods, OAuth grants and inbox rules for the persistence
+left behind. A reset alone leaves a valid token in the attacker's hands until it
+expires.
+
+### Two smaller corrections
+
+**Indicator lifetime is the field people skip.** An IP that hosted a C2 panel in March
+is a CDN edge node today; a hash dies at the next rebuild. Ingest a feed to hunt over
+stored telemetry, count what it would have produced for a few weeks, and let that
+number decide whether it earns a blocking rule — a feed nobody evaluated is a
+subscription, not intelligence.
+
+**DMARC at `p=reject` protects your customers more than it protects you.** It stops
+others forging your domain and is blind by construction to the two attacks that
+actually take money: a lookalike domain with its own valid records, and a real
+supplier's compromised mailbox replying in an existing thread.
+
+### The measurement
+
+```
+                          before   after
+thin topics                   50      45
+blueteam thin                  5       0
+mean chars/concept card    1,268   1,270
+median topic               3,316   3,323
+10th percentile            1,691   1,774
+```
+
+The 10th percentile has now moved **1,484 → 1,774 across the session** — a 20% rise in
+the length of the site's shortest decile, achieved entirely by appending cards rather
+than lengthening any.
+
+Check PASS · smoke **142/142** · axe **6/6** · mobile **9/9** · visual **2/2** ·
+determinism reproducible.

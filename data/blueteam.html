@@ -485,6 +485,37 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">Free to Install, and the Cost Arrives as Tuning and Storage</div>
+                <div class="concept-desc">
+                  The licence is free; the operation is not, and the two places it bites are
+                  predictable. The default ruleset is deliberately broad so that a fresh install
+                  demonstrates value, which means the first week produces a volume of low-severity
+                  alerts that trains everyone who sees the dashboard to stop reading it. Tuning that
+                  down — raising levels, excluding known-good file-integrity paths, suppressing the
+                  noisy decoders for your estate — is the work that turns the deployment into a
+                  detection capability, and skipping it is how a SIEM becomes
+                  a compliance screenshot.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What surprises people</th><th>Why</th></tr>
+                    <tr><td>Indexer storage growth</td><td>Elastic-based storage of every alert; retention and index lifecycle management are a decision, not a default</td></tr>
+                    <tr><td>File-integrity monitoring noise</td><td class="c-red">Watching a path that changes on every update produces thousands of alerts about your own patching</td></tr>
+                    <tr><td>Agent coverage gaps</td><td>The same denominator problem as any agent estate — the host without one is silent, not clean</td></tr>
+                    <tr><td>Active response</td><td>Auto-blocking an IP <span class="acro-exp">(Internet Protocol)</span> is a self-inflicted outage waiting for a false positive on the wrong source — start it in log-only</td></tr>
+                    <tr><td>Vulnerability detection</td><td>Matches installed packages against feeds, so it inherits their false positives and knows nothing about compensating controls</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Judge it by what you would act on.</strong> A short list
+                    of high-confidence rules mapped to the techniques that matter in your estate
+                    beats the full default ruleset by a wide margin, and it is the same measurement
+                    any detection programme uses — see
+                    <span class="xref">Measuring Detection Quality — Precision, Recall &amp; the Alert-to-Incident Ratio</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1310,6 +1341,38 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">The Timeline Contains What the Targets File Asked For, and Its Times Are Not All the Same Kind</div>
+                <div class="concept-desc">
+                  Triage collection is a scoping decision disguised as a technical one. A KAPE
+                  target list defines what is collected, so an artefact outside the list is not
+                  merely unexamined — it does not exist in the evidence, and its absence is
+                  indistinguishable from its emptiness. The gap is widest exactly where
+                  investigations are hardest: application-specific logs, a third-party agent's
+                  telemetry, a browser profile in a non-default path. Record which target list you
+                  used in the case notes, because the next question is always whether something was
+                  looked for.
+                </div>
+                <div class="concept-desc">
+                  The super-timeline then flattens sources whose timestamps mean different things.
+                  A file's <code>$STANDARD_INFORMATION</code> modified time is trivially altered by
+                  a process; <code>$FILE_NAME</code> usually is not, which is why a row where they
+                  disagree is worth more than either alone. Windows event logs are UTC <span class="acro-exp">(Coordinated Universal Time)</span>, filesystem
+                  times may be rendered local, and browser history has its own epoch. Pin
+                  <code>-z UTC</code> at ingest and say so in the report — a timeline where two
+                  sources are an hour apart because of daylight saving produces a confident,
+                  entirely wrong sequence of events.
+                </div>
+                <div class="concept-desc verdict">
+                  <strong class="c-cyan">The value is the pivot, not the file.</strong> A raw plaso
+                  timeline of a workstation runs to millions of rows, which is unreadable and is not
+                  meant to be read — you go to a known time and expand outward, or you filter to a
+                  handful of artefact types and follow one thread. Treat a super-timeline as an
+                  index you query around a hypothesis, and generate it early so the hypothesis has
+                  somewhere to land.
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1518,6 +1581,37 @@ index=auth <span class="str">"Failed password"</span>
                   <div class="concept-desc verdict">
                     Think of it like the Sigma/YARA idea applied to intel: a portable format so a
                     detection or indicator written once can be consumed anywhere.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">The Format Was Never the Hard Part — Confidence and Expiry Are</div>
+                <div class="concept-desc">
+                  Interoperability solved the transport and left the two fields that decide whether
+                  a feed is useful: how sure the producer is, and how long the indicator stays true.
+                  An IP <span class="acro-exp">(Internet Protocol)</span> address that hosted a C2 <span class="acro-exp">(Command and Control)</span> panel last March is a
+                  CDN <span class="acro-exp">(Content Delivery Network)</span> edge node today, and
+                  a hash of a file that has been recompiled matches nothing. Feeding either into
+                  blocking rules produces exactly what you would expect — false positives that erode
+                  trust in the whole programme, and an analyst who has learned to close the alert
+                  without reading it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Indicator type</th><th>Useful lifetime</th><th>How to use it</th></tr>
+                    <tr><td>IP address</td><td class="c-red">Days — infrastructure is rented and rotates</td><td>Retrospective hunting over stored logs, rarely a block</td></tr>
+                    <tr><td>Domain</td><td>Weeks to months</td><td>Blocking is defensible; watch for shared hosting</td></tr>
+                    <tr><td>File hash</td><td>Precise but brittle — one rebuild and it is gone</td><td>Confirming a known sample, not finding new ones</td></tr>
+                    <tr><td>TTP <span class="acro-exp">(Tactics, Techniques, and Procedures)</span> / behaviour</td><td class="c-cyan">Years — the reason ATT&amp;CK-mapped intel outlives indicator feeds</td><td>Detection engineering, which is where the durable value is</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Ingest to hunt first, and only promote to blocking what
+                    you have measured.</strong> Run a new feed against stored telemetry for a few
+                    weeks, count the true and false positives it would have produced, and let that
+                    number decide whether it earns a rule — the same discipline any detection goes
+                    through. A feed nobody has evaluated is a subscription, not intelligence; see
+                    <span class="xref">Threat Intelligence — Turning Data Into Decisions</span>.
                   </div>
                 </div>
               </div>
@@ -2058,6 +2152,39 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">All Three Pass, and the Message Is Still a Fraud</div>
+                <div class="concept-desc">
+                  These records authenticate a <em>domain</em>, and almost no user reads a domain.
+                  A message from <code>accounts-payable@examp1e-corp.com</code> — a domain the
+                  attacker owns, with its own perfectly valid SPF, DKIM and DMARC —
+                  passes every check, because the attacker is not spoofing you. Neither does any of
+                  it help when a genuine supplier's mailbox is compromised and the invoice arrives
+                  from the real address, correctly signed, in an existing thread. That is business
+                  email compromise, it is the highest-loss email attack there is, and email
+                  authentication is structurally blind to it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Trap</th><th>Detail</th></tr>
+                    <tr><td>The SPF ten-lookup limit</td><td class="c-red">Chained <code>include:</code> statements exceed it and the record fails <em>permerror</em> — which many receivers treat as no SPF at all. Flatten it, and re-check after adding any SaaS <span class="acro-exp">(Software as a Service)</span> sender</td></tr>
+                    <tr><td>Alignment, not just a pass</td><td>DMARC cares that the passing domain matches the visible From. Relaxed alignment lets a subdomain pass for the parent; <code>adkim=s; aspf=s</code> is stricter and breaks more forwarders</td></tr>
+                    <tr><td>Forwarding and mailing lists</td><td>Break SPF by changing the sending IP <span class="acro-exp">(Internet Protocol)</span>, and break DKIM if the list edits the body — which is what ARC exists to repair</td></tr>
+                    <tr><td>Stuck at <code>p=none</code></td><td class="c-yellow">Monitoring forever is the commonest outcome; the reports exist to find your senders, not to be admired</td></tr>
+                    <tr><td>Lookalike domains</td><td>Not addressed by any of the three — this is registrar monitoring plus an external-sender banner</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-cyan">Get to <code>p=reject</code>, then treat that as the
+                    floor rather than the finish.</strong> It stops others forging your domain,
+                    which protects your customers more than it protects you. What protects you is
+                    the layer above: display-name and lookalike detection, banners on external mail,
+                    and a payment-change process that requires a callback to a number you already
+                    held — see
+                    <span class="xref">Business Email Compromise — The Attack With No Malware</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2090,6 +2217,39 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     Conditional Access (device + risk based), and continuous access evaluation that can
                     kill a session mid-flight. This is the defensive answer to the credential-attack and
                     AD <span class="acro-exp">(Active Directory)</span> cards on the red-team side.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Blind spot</div>
+                <div class="concept-title">A Stolen Token Produces No Sign-In Event, Which Is Why the Signals Above Are the Easy Half</div>
+                <div class="concept-desc">
+                  Impossible travel and push fatigue are visible because they are
+                  <em>authentications</em>. The technique that defeats phishing-resistant thinking
+                  is the one that skips authentication entirely: an adversary-in-the-middle proxy
+                  captures the session cookie after a successful, fully MFA'd login, and replaying
+                  it produces no sign-in log at all — because no sign-in happened. The account looks
+                  quiet in the identity provider while the attacker reads mail. This is the gap
+                  ITDR
+                  actually has to cover, and it is not covered by watching logins.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Where the evidence lives</th><th>What to look for</th></tr>
+                    <tr><td>Token and refresh events, not sign-ins</td><td>A refresh from an IP <span class="acro-exp">(Internet Protocol)</span> or device that never authenticated</td></tr>
+                    <tr><td>Mailbox and workload audit logs</td><td class="c-cyan">The post-access tells: a new inbox rule, a mass download, an OAuth <span class="acro-exp">(Open Authorization)</span> grant to an unknown app</td></tr>
+                    <tr><td>Registered authentication methods</td><td>A second factor added quietly — the persistence step that survives a password reset</td></tr>
+                    <tr><td>App registrations and consents</td><td>A service principal with mail permissions, which needs no user session at all</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-red">And the containment order is different from a password
+                    compromise.</strong> Resetting the password does not invalidate an existing
+                    session — the token remains valid until it expires — so the sequence is revoke
+                    sessions, then reset, then audit registered methods, app consents and inbox
+                    rules for the persistence the attacker left behind. Continuous access evaluation
+                    is what shortens the window; token binding is what closes it. The offensive side
+                    is in
+                    <span class="xref">MFA Bypass in Practice — Adversary-in-the-Middle, Push Fatigue &amp; Stolen Sessions</span>.
                   </div>
                 </div>
               </div>
