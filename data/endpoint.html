@@ -61,6 +61,18 @@
                     <tr><td>Reporting Services Point</td><td>SSRS reports</td></tr>
                     <tr><td>Fallback Status Point (FSP)</td><td>Collects client install/health state</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Most organisations need one primary site, and
+                    the ones that built a hierarchy usually regret
+                    it.</strong> A central administration site adds
+                    replication, upgrade complexity and a class of fault
+                    that only exists because the hierarchy does — and it
+                    earns its place only at genuinely large scale. Of the
+                    roles below, the cloud management gateway is the one
+                    that changes how the estate works: it manages internet-
+                    based clients without a VPN <span class="acro-exp">(Virtual Private Network)</span>, which is what makes
+                    ConfigMgr survive remote working.
+                  </div>
                 </div>
               </div>
 
@@ -165,6 +177,16 @@
                     <tr><td><code>smsts.log</code></td><td>Task sequence (OSD) — the OSD bible</td></tr>
                     <tr><td><code>LocationServices.log</code></td><td>Boundary/DP resolution</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Two of these answer most questions, and knowing
+                    which pair to open is the skill.</strong> Application
+                    problems are almost always the detection method rather
+                    than the installer, so read the discovery log before the
+                    enforcement one; deployment problems are the task-
+                    sequence log and nothing else. Learn to pull that file
+                    off a machine that failed during imaging — it is the
+                    difference between diagnosing and re-running blindly.
+                  </div>
                 </div>
               </div>
             </div>
@@ -225,6 +247,16 @@ dsregcmd /status
                     <tr><td>Windows Hello for Business</td><td>Passwordless (PIN/biometric) bound to the device via asymmetric keys</td></tr>
                     <tr><td>Device object</td><td>The Entra record CA &amp; Intune reason about (compliant? managed? join type?)</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Run the status command first, and read the join
+                    state before anything else.</strong> Single sign-on
+                    failures, Conditional Access surprises and enrolment
+                    loops nearly all reduce to a device that is not in the
+                    state you assumed — and one command settles it in
+                    seconds. If the refresh token is absent, everything
+                    downstream will misbehave in ways that look like
+                    separate faults.
+                  </div>
                 </div>
               </div>
 
@@ -283,6 +315,16 @@ dsregcmd /status
                     <tr><td>App Protection Policy (APP/MAM)</td><td>Protect data <em>inside</em> apps without enrolling the device</td></tr>
                     <tr><td>Endpoint security</td><td>AV, ASR <span class="acro-exp">(Attack Surface Reduction)</span>, disk encryption, firewall, EDR <span class="acro-exp">(Endpoint Detection and Response)</span> onboarding</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The app-protection row is the one people forget
+                    exists, and it solves the case they struggle
+                    with.</strong> Protecting company data inside apps on a
+                    device you do not manage is what makes personal phones
+                    tractable — no enrolment, no wipe of somebody's holiday
+                    photos, and the data still cannot leave the managed
+                    apps. Reach for it before arguing about enrolling
+                    personal devices.
+                  </div>
                 </div>
               </div>
 
@@ -394,6 +436,17 @@ IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</
                     <tr><td>Existing devices</td><td>Re-provision an in-place PC via a ConfigMgr task sequence into Autopilot</td></tr>
                     <tr><td>Autopilot Reset</td><td>Wipe user data/apps but keep Entra join &amp; enrollment — hand-off/refresh</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Pre-provisioning is the mode that makes the
+                    promise deliverable on a real network.</strong> User-
+                    driven is the demonstration everybody sees and it puts
+                    the entire application install in front of somebody
+                    waiting at a kitchen table on domestic broadband — which
+                    is where the good impression is lost. Do the device
+                    phase in advance where you can, and keep the reset row
+                    in mind: it is the cheapest way to hand a machine to the
+                    next person.
+                  </div>
                 </div>
               </div>
 
@@ -461,6 +514,15 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><td>Stuck at ESP</td><td>Blocking app failing / detection wrong / timeout too low (see ESP card)</td></tr>
                     <tr><td>Tools</td><td><code>Shift+F10</code> for a console; <code>Autopilot diagnostics</code> page; Event Viewer → <em>DeviceManagement-Enterprise-Diagnostics-Provider</em></td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The console shortcut in the last row is the
+                    single most useful thing on this card.</strong> Every
+                    symptom above is diagnosed from the device, during the
+                    failure, and without a shell you are guessing from a
+                    screen that says something went wrong. Learn the key
+                    combination and where the diagnostics land; it turns a
+                    re-image into a five-minute answer.
+                  </div>
                 </div>
               </div>
             </div>
@@ -608,6 +670,18 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
                     <tr><td>Allow log collection on failure</td><td>User can export diagnostics</td></tr>
                     <tr><td>Custom messages</td><td>Branded text at each phase</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Keep the blocking list short, and raise the
+                    timeout before you first deploy rather than
+                    after.</strong> Every application on the blocking list
+                    is a chance for a user's first ten minutes with a new
+                    laptop to end in an error screen — block on the two or
+                    three things that genuinely make the machine unusable
+                    without them, and let the rest arrive afterwards. Log
+                    collection on failure costs nothing and is the
+                    difference between a diagnosable and an undiagnosable
+                    report from a remote user.
+                  </div>
                 </div>
               </div>
 
@@ -825,6 +899,16 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
                     <tr><td>HKCU</td><td><strong>HKEY_CURRENT_USER</strong> — the registry hive for the signed-in user's settings (vs <code>HKLM</code> = machine-wide). Per-user policy, ADMX <span class="acro-exp">(Administrative Template)</span> user settings, and app config live here</td></tr>
                     <tr><td>dsregcmd</td><td>Built-in Windows tool for <strong>device registration</strong> state. <code>dsregcmd /status</code> shows AzureAdJoined, DomainJoined, the PRT <span class="acro-exp">(Primary Refresh Token)</span>, and MDM enrollment URLs <span class="acro-exp">(Uniform Resource Locator)</span> — the first check for join/SSO/enrollment issues</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The registry-hive row is the one that quietly
+                    breaks deployments.</strong> Anything installed by the
+                    management client runs as the system account, so a
+                    script writing to the current user's hive writes into
+                    the system's, and the setting never appears for the
+                    person who needed it. When a per-user configuration
+                    "does not apply", check which context it ran in before
+                    checking anything else.
+                  </div>
                 </div>
               </div>
 
@@ -1031,6 +1115,14 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
             <tr><td>Is it reporting back?</td><td>Compare the console's last-active time</td><td><code>StateMessage.log</code>, <code>InventoryAgent.log</code></td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Run these four in order and most "the software never arrived"
+          tickets close at step two or three.</strong> The instinct is to re-deploy,
+          which repeats the failure; proving the client is alive, located, receiving
+          and reporting isolates the problem to one link in seconds. The last check is
+          the one that catches the machine that has been off for three weeks — which
+          is not a deployment fault at all.
+        </div>
 <pre class="code-block"><span class="com"># Trigger client actions from PowerShell — same as the Actions tab, scriptable</span>
 <span class="kw">function</span> <span class="fn">Invoke-CMAction</span> (<span class="var">$Id</span>) {
   Invoke-CimMethod -Namespace root\ccm -ClassName SMS_Client `
@@ -1142,6 +1234,14 @@ ccmsetup.exe /mp:mp01.contoso.com /forceinstall SMSSITECODE=P01 <span class="str
             <tr><td>0x80070005</td><td>Access denied</td><td>Network access account, share permissions, or running as the wrong context</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first row is the one that wastes the most time, because
+          everything worked.</strong> A successful install reported as a failure is a
+          detection method that does not match what the installer actually wrote — so
+          verify the detection by hand on a machine where the application is present
+          before touching the package. The command-line row is its cousin: run it as
+          the system account, not as yourself, or you will reproduce nothing.
+        </div>
       </div>
     </div>
 
@@ -1206,6 +1306,14 @@ ccmsetup.exe /mp:mp01.contoso.com /forceinstall SMSSITECODE=P01 <span class="str
             <tr><td>After the sequence ends</td><td><code>C:\Windows\CCM\Logs\smsts.log</code></td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The card's own instruction is the verdict: the reported error is
+          usually the consequence, not the cause.</strong> Jump to the end, scroll up
+          to the first red line, and read forwards from there — the failure that ended
+          the sequence is often three steps downstream of the one that mattered. And
+          know the phase table well enough to grab the file before the machine
+          reboots, because that is when the copy you needed disappears.
+        </div>
 <pre class="code-block"><span class="com"># In WinPE: F8 needs to be enabled on the boot image (Enable command support)</span>
 <span class="com"># Keep the window open on failure so the log survives the reboot:</span>
 <span class="com">#   set the task sequence variable  SMSTSPostAction = cmd.exe /c pause</span>
@@ -1639,6 +1747,14 @@ Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache
             </tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first rule is the one that explains most mysteries, and it is
+          invisible from the policy's own page.</strong> A user in both an included
+          and an excluded group gets nothing, and the exclusion is usually in a group
+          somebody set up for an unrelated reason months earlier. When a policy "is
+          assigned and not applying", enumerate the person's group memberships before
+          reading a single setting.
+        </div>
       </div>
     </div>
 
@@ -1931,6 +2047,15 @@ PsExec64.exe -s -i cmd.exe</pre>
             <tr><td>Intune ▸ Apps ▸ the app ▸ Device install status</td><td>The fleet view, and the error code to search for</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Read the device logs before the console, because the console is a
+          summary of what they already said.</strong> The management extension's own
+          log answers whether the application arrived and what detection decided,
+          which is the question the fleet view can only paraphrase — and the script
+          log is the only place the actual output of your PowerShell exists. Pull them
+          first; the error code in the portal is where you go next, not where you
+          start.
+        </div>
 <pre class="code-block"><span class="com"># The logs live here — open with CMTrace, they are CMTrace-formatted</span>
 C:\ProgramData\Microsoft\IntuneManagementExtension\Logs\
 
@@ -2532,6 +2657,15 @@ Remove-PSSession $s
             <tr><td>Encryption method</td><td>XTS-AES 128 or 256; used space only vs full disk on first encryption</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Test the escrow before you encrypt anything, on a real device you
+          are willing to lock out.</strong> A policy that encrypts the fleet and
+          silently fails to store keys looks identical to one that works, right up
+          until somebody is standing at a recovery screen — and by then the number of
+          affected machines is the whole estate. Prove you can retrieve a key by
+          identifier, from the console, by somebody on the service desk, before the
+          rollout.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2578,6 +2712,14 @@ Remove-PSSession $s
             <tr><td>Repeated recovery on one model</td><td>A driver or firmware bug — a real fleet issue, not a user one</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the only one that is your problem; the rest are the
+          chip working correctly.</strong> One-off recoveries after a firmware update
+          or a boot-order change are expected, and the fix is process — suspend before
+          the update, tell the service desk what to say. Repeated recovery on one
+          hardware model is a fleet defect and needs a driver or firmware
+          investigation, not another key lookup.
+        </div>
       </div>
     </div>
   </div>
@@ -2616,6 +2758,14 @@ Remove-PSSession $s
             <tr><td>4 Risk flows</td><td>Device risk level becomes a Conditional Access signal</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Step 4 is what makes the previous three worth doing.</strong>
+          Onboarding devices gets you visibility; feeding the risk level into an
+          access decision is what turns detection into prevention, and it is the step
+          most deployments leave for later and never return to. Wire it early with a
+          permissive threshold, then tighten — the value is in the pipeline existing,
+          not in where the line is set on day one.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2684,6 +2834,14 @@ Remove-PSSession $s
             <tr><td>Genuine developer / IT need</td><td>A time-boxed, audited elevation, or a separate admin account — never their daily login</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Build the first row before you remove anything, because it is what
+          makes the removal survivable.</strong> Self-service installation of approved
+          software removes most of the reason people wanted administrator rights, and
+          doing the removal without it guarantees a fortnight of escalations and a
+          quiet rollback. The second row is the honest exception: some applications
+          demand elevation and per-application elevation is cheaper than giving up.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2860,6 +3018,13 @@ Remove-PSSession $s
             <tr><td>Device risk level</td><td>The Defender for Endpoint risk score, as a threshold</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>A compliance policy without a Conditional Access rule is a report,
+          and most estates have exactly that.</strong> The flag is set, the dashboard
+          is red, and nothing is prevented — which is worse than no policy, because it
+          looks like a control in an audit. Decide which resources require compliance,
+          write that rule, and only then argue about the settings in this table.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2921,6 +3086,14 @@ Remove-PSSession $s
             <tr><td>4 Conditional Access</td><td>CA grants the resource to a compliant device</td><td>The CA grant, assignment, or an exclusion is wrong</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Diagnose in order, from link 1, however confident you are that the
+          problem is the access rule.</strong> Users complain at link 4 because that
+          is where the message appears, and the cause is usually upstream — a device
+          that never joined, an enrolment that was removed, a policy that has not been
+          evaluated since last month. Checking the join state first costs seconds and
+          skips most of the argument.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2979,6 +3152,14 @@ Remove-PSSession $s
             <tr><td>In grace period</td><td>Failing but still inside its window</td><td>Nudge before the window closes</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Report the third row as its own number, or your compliance
+          percentage is fiction.</strong> A fleet that is 96% compliant of the devices
+          that reported, with a tenth of the estate silent, is not 96% anything — and
+          the silent devices are the ones nobody is chasing precisely because they
+          generate no failure. Make "not evaluated" a tracked count with an owner,
+          alongside the pass rate.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3033,6 +3214,14 @@ Remove-PSSession $s
             <tr><td>Endpoint: enrolment/agent break</td><td>A spike in "not evaluated" that reads as an access outage</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Agree a joint change window and a shared alert on "not evaluated"
+          before you need either.</strong> The failure mode in this table is not
+          technical — it is that each team sees the other team's change as an outage
+          of unknown origin, and spends the first hour investigating their own half.
+          One channel, one calendar, and a rule that neither side changes targeting on
+          a Friday removes most of it.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3095,6 +3284,14 @@ Remove-PSSession $s
             <tr><td>Local admin</td><td>Admin group; <code>sudo</code>; but SIP <span class="acro-exp">(Session Initiation Protocol)</span> limits even root</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The absent row is the important one: there is no Group Policy, and
+          expecting one is what makes the first month painful.</strong> Profiles are
+          delivered and enforced by management, not applied top-down from a directory
+          — so "how do I set this by policy" often has the answer "you write a
+          payload, or you do not set it". Translate the vocabulary from this table,
+          then unlearn the model behind it.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3157,6 +3354,15 @@ Remove-PSSession $s
             <tr><td>Managed Apple IDs</td><td>Org-owned identities, federated to your Entra/Google directory</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Buy devices through a channel that puts them in Automated Device
+          Enrolment, or none of the rest is available.</strong> A Mac bought retail
+          can be enrolled and cannot be supervised in the same way, and the enrolment
+          can be removed by the person holding it — which is the difference between a
+          managed fleet and a request. This is a procurement decision that determines
+          your entire technical posture, and it is made by somebody who does not know
+          that.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3177,6 +3383,15 @@ Remove-PSSession $s
             <tr><td>Deep Mac config + Microsoft compliance</td><td>Both, integrated</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Answer the fleet-composition question first, and be honest about
+          day-one support.</strong> A handful of Macs alongside a Windows estate is an
+          argument for one console; a Mac-heavy fleet where users upgrade the day a
+          new macOS ships is an argument for the specialist, because the gap between
+          release and support is where the tickets come from. The third row is common
+          and real — many organisations run both and integrate them, and that is a
+          cost, not a compromise.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3223,6 +3438,13 @@ Remove-PSSession $s
             <tr><td>Shared / kiosk / frontline</td><td>Supervised + Shared iPad</td><td>Dedicated device</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Settle ownership in writing before choosing a technical mode,
+          because the mode cannot be changed later without a wipe.</strong> Every row
+          here is a different enrolment path, and moving a personal phone into a
+          managed one means resetting somebody's device — which is a conversation
+          nobody wins. Ask procurement and HR who owns what, then map to the table.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3246,6 +3468,14 @@ Remove-PSSession $s
             <tr><td>Data protection without enrolment</td><td>App Protection Policies (MAM)</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The certificate row is the one that fails silently and takes a day
+          to find.</strong> Wireless and VPN profiles depend on a certificate arriving
+          first, and when the certificate profile fails the symptom is "wi-fi does not
+          work on new devices" with nothing in the network logs. Check certificate
+          deployment before anything else when a freshly enrolled device cannot get on
+          the network.
+        </div>
       </div>
     </div>
     <div class="concept-card">

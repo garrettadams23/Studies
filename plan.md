@@ -18836,3 +18836,35 @@ sec 66→0     ai 39→0         devops 38→0 linux 35→0  threat 31→0  pent
 verdicts written by hand              451
 runway                                ~93 topics   (stop line: 40)
 ```
+
+### `m365` and `endpoint`, all 57 — thirteen domains, 508 verdicts
+
+Microsoft-estate tables describe consoles, objects and settings, and the missing
+sentence is almost always **which layer owns the problem** — because the same
+symptom appears identically from four different causes.
+
+> **When something is not working, identify the layer before opening a console.**
+> A licence problem, a directory problem and a workload problem look identical
+> from the user's side.
+
+> **Global Reader is the answer to most requests for Global Administrator.**
+
+> **A compliance policy without a Conditional Access rule is a report, and most
+> estates have exactly that.** The flag is set, the dashboard is red, and nothing
+> is prevented — which is worse than no policy, because it looks like a control
+> in an audit.
+
+> **Report "not evaluated" as its own number, or your compliance percentage is
+> fiction.**
+
+> **Test the escrow before you encrypt anything, on a real device you are willing
+> to lock out.**
+
+```
+tables_without_verdict   748 → … → 295 → 238
+career 36→0  military 36→12  ops 53→0    grc 46→0     net 54→0
+sec 66→0     ai 39→0         devops 38→0 linux 35→0   threat 31→0
+pentest 31→0 m365 30→0       endpoint 27→0
+verdicts written by hand              508
+runway                                ~88 topics   (stop line: 40)
+```

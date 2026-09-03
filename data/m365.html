@@ -28,6 +28,14 @@
             <tr><td>Compliance</td><td>Retention, labels, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-08">Purview portal</span></td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>When something is not working, identify the layer before opening a
+          console.</strong> A licence problem, a directory problem and a workload
+          problem look identical from the user's side — "I cannot get into Teams" —
+          and each is fixed in a different place by a different team. The layer column
+          is the triage question, and asking it first saves the hour normally spent
+          clicking between admin centres.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -50,6 +58,13 @@
             <tr><td>Intune</td><td>Devices, compliance, app deployment</td><td><span class="volatile" data-checked="2026-08">intune.microsoft.com</span></td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Memorise the ownership column and let the addresses change, because
+          they will.</strong> Microsoft renames and relocates portals regularly; what
+          stays stable is that Conditional Access lives with the directory and mail
+          flow lives with Exchange. When a setting is not where you expect, ask which
+          object owns it rather than searching for the page you remember.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -134,6 +149,14 @@
             <tr><td>Never disable plans ad hoc</td><td>A per-user tweak is invisible to the next admin debugging the feature</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the one that costs a licence audit.</strong> Turning
+          off one service plan for one user is invisible to everybody afterwards and
+          reproduces nowhere, so six months later nobody can say why that person's
+          Teams behaves differently. Put the exception in a group with a name that
+          explains it — the group is the documentation, and it survives the person who
+          created it.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -194,6 +217,14 @@
             <tr><td>Global Reader</td><td>Read almost everything, change nothing</td><td>The default for "I just need to look"</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Global Reader is the answer to most requests for Global
+          Administrator.</strong> The great majority of people asking need to look at
+          something, and handing them read-everything costs nothing and removes an
+          account whose compromise ends the tenant. Reserve the top row for a handful
+          of break-glass accounts with strong controls, and make everything else
+          eligible-on-request rather than standing.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -254,6 +285,13 @@
             <tr><td>Failure mode</td><td>Assuming an outage is local and rebuilding a working server</td><td>A "sudden" behaviour change that was announced 60 days ago</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Assign the Message Center to a named person per workload, or it is
+          read by nobody.</strong> Service Health has an obvious owner because
+          incidents create urgency; announcements arrive weeks early with no pressure
+          attached, which is exactly why the worst days come from them. Ten minutes a
+          week against a named workload is the whole discipline.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -336,6 +374,14 @@
             <tr><td>Application relay</td><td>Printers, scanners, line-of-business apps</td><td>The single most abused path in most tenants</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The application relay is the row to audit first, and it is usually
+          the oldest thing in the tenant.</strong> It was created for a printer in
+          2018, scoped to an address range that has since been reassigned, and nobody
+          owns it — which makes it the standing open relay in most estates. Every
+          connector should have a written reason and a review date; the ones that
+          cannot produce either should be turned off and the complaints listened to.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -483,6 +529,15 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Safe Links</td><td>Defender</td><td>URLs <span class="acro-exp">(Uniform Resource Locator)</span> weaponised <em>after</em> delivery</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Time-of-click evaluation is the capability you are actually buying
+          in the upper tier.</strong> A link that is benign when the mail arrives and
+          weaponised an hour later defeats every filter that inspects at delivery, and
+          that is the common shape of a modern phishing campaign — which is why the
+          last row is the one to weigh when the licence conversation happens. The
+          anti-phishing row is worth tuning either way: impersonation protection for
+          your own executives is cheap and specific.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -621,6 +676,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Folder</td><td>Convenience inside a library</td><td>Shallow grouping only — metadata scales, nesting does not</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>A site is the boundary; everything else is arrangement.</strong>
+          Permissions, storage and lifecycle all attach to the site, so the question
+          "should this be a new site or a library" is really "does this need its own
+          access and retention" — and answering it that way avoids the deep folder
+          tree the card warns about. Hubs let you regroup later without moving
+          content, which is the property that makes flat survivable.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -677,6 +740,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Broken inheritance</td><td>Anyone who granted access to one folder</td><td>Nowhere obvious; found only by walking the tree</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The third row is the one that makes a permission review impossible,
+          and it is created by helpfulness.</strong> One person granting access to one
+          folder breaks inheritance, and nothing on the site's permissions page
+          reveals it — you find it by walking the tree or not at all. Restrict who may
+          share and where inheritance may be broken; the design of the first row is
+          worth nothing while the second and third are unconstrained.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -808,6 +879,15 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Everything odd</td><td>Reset the client</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Work down the list rather than starting at the bottom, and know that
+          the reset is safe.</strong> Most escalations arrive after somebody has
+          already tried reinstalling; the top three rows are cheaper and fix the
+          majority, and the reset re-downloads placeholders rather than deleting
+          anything — which is the fact that makes it reachable for a service desk
+          instead of a specialist. The sign-in row is the one that is not a sync
+          problem at all.
+        </div>
         <pre class="code-block"><span class="com"># Reset the sync client — re-syncs metadata, does not delete files</span>
 %localappdata%\Microsoft\OneDrive\onedrive.exe /reset
 
@@ -974,6 +1054,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Good for</td><td>A baseline nobody has to think about</td><td>Records, contracts, anything with its own clock</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Start with one policy over everything, then add labels for the
+          exceptions.</strong> A baseline retention policy nobody has to think about
+          covers the bulk of the obligation immediately; labels are for content with
+          its own clock — contracts, records, anything a regulator names — and they
+          are the part that needs a person to decide. Doing it the other way round
+          produces a labelling taxonomy nobody applies and no baseline at all.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1058,6 +1146,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Fails by</td><td>Being ignored or mis-applied</td><td>False positives, then exemptions, then irrelevance</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The persistence row is the reason to bother with labels at
+          all.</strong> Data Loss Prevention stops an action inside your tenant and is
+          blind the moment the file is elsewhere; an encrypting label keeps working on
+          a laptop that left with somebody. And the last row is the warning: a DLP
+          policy that generates false positives gets exemptions, and a policy that is
+          mostly exemptions is a report, not a control.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1188,6 +1284,15 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Rebuild a whole site's structure and permissions</td><td>None</td><td>Content is not the same as configuration</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last two rows are the honest argument for third-party backup,
+          and the first three are not.</strong> Recycle bins and version history
+          genuinely cover ordinary deletion and much of a ransomware event; what
+          nothing native covers is an administrator with your console, and a site's
+          configuration and permissions as opposed to its files. Decide on those two
+          cases explicitly rather than buying backup for scenarios the platform
+          already handles.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1316,6 +1421,15 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Direct Routing</td><td>You, via a certified SBC <span class="acro-exp">(Session Border Controller)</span></td><td>Existing telephony contracts, analogue devices, or a country Microsoft does not serve</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Choose the route by what you already own, not by which is
+          newest.</strong> Existing carrier contracts and analogue devices push you to
+          the last row and its session border controllers, which is real
+          infrastructure with real operational cost; a simple estate in a supported
+          country is genuinely simplest on the first. The middle rows exist because
+          most organisations want their own carrier's rates without running the trunk,
+          and that is usually the right answer for a mid-sized estate.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1394,6 +1508,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Is it us or the service?</td><td>Service Health first</td><td>None — and it is free</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Do the free row first, every time.</strong> Checking service health
+          costs nothing and prevents the most expensive mistake in this table — a day
+          spent investigating your own network during somebody else's incident. After
+          that, the question decides the tool: one call is per-user analytics, a
+          pattern is the dashboard, and the dashboard is worth almost nothing until
+          somebody has uploaded the building and subnet map.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1412,6 +1534,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Round-trip time</td><td>"We keep talking over each other"</td><td>Traffic taking a long path — a distant proxy or a backhauled tunnel</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Translate the complaint into the metric before touching anything,
+          because the three have different culprits.</strong> "They cut out" points at
+          loss and usually at wireless; "robotic" points at jitter and usually at a
+          saturated uplink; "we talk over each other" points at path length and often
+          at a proxy nobody meant to route media through. Asking which of the three
+          words the user would use is the fastest question in the whole investigation.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1473,6 +1603,13 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Live events</td><td>Who may broadcast, and to whom</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>When a setting cannot be found, identify the policy type before
+          searching the console.</strong> Most "Teams will not let us do X" tickets
+          are somebody looking in the wrong policy type, and the mapping is stable
+          even as the interface moves. Say the behaviour aloud as a question — is this
+          about a meeting, a message, a call or an app — and the type answers itself.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1518,6 +1655,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Record why each custom policy exists</td><td>Otherwise nobody dares delete any of them, ever</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first row is the one that decides how safe every later change
+          is.</strong> A restrictive global default means a user missed by a group
+          gets the safe setting rather than the permissive one, so a mistake in group
+          membership is a support ticket instead of an exposure. And the last row is
+          what keeps the estate from ossifying: a custom policy with no recorded
+          reason is one nobody will ever dare remove.
+        </div>
       </div>
     </div>
   </div>
@@ -1552,6 +1697,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Litigation hold</td><td>Preserve <em>everything</em> for this mailbox</td><td>Nothing at all — deliberately invisible</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Archiving does not preserve anything, and that misunderstanding
+          survives in most estates.</strong> Moving old mail out of a primary mailbox
+          is a storage decision the user can see and, in some configurations, undo;
+          only retention and holds preserve. The last row is the one to handle
+          carefully — a litigation hold is deliberately invisible, which means it will
+          still be there in three years unless somebody tracks it.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1639,6 +1792,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>Communication compliance</td><td>Is regulated communication monitored where required?</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Start from the audit row, whatever else you do.</strong> It is the
+          cheapest to switch on, the only one that answers questions retrospectively,
+          and the one every other solution's investigation eventually depends on — and
+          its retention window means the decision has to be made before you need it.
+          Pick the other solutions from actual obligations rather than from the
+          portal's menu, which is what makes this look like seven projects.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1659,6 +1820,14 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
             <tr><td>"How do you know DLP <span class="acro-exp">(Data Loss Prevention)</span> is working?"</td><td>DLP reports — matches, overrides and false positives over time</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The card's opening line is the verdict: audits fail on evidence, not
+          on posture.</strong> Every row here is a control most tenants have and
+          cannot demonstrate at short notice — so rehearse the five questions once a
+          year, and time yourself. The audit-log row is the one with a hard limit:
+          evidence outside the retention window does not exist, whatever the control
+          was doing.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1747,6 +1916,14 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Rotate and expire the certificate deliberately</td><td>A credential with a two-year life nobody diarised</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The third row is the one that gets skipped and is the difference
+          between a scoped job and a tenant-wide credential.</strong> Application
+          permissions for mail are all-mailboxes by default, and scoping them to the
+          handful the job touches takes one extra configuration step that almost
+          nobody performs. Do it at creation; retrofitting it means finding out which
+          mailboxes the script has been quietly reading.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1809,6 +1986,14 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Are people working weekends?</td><td>Nothing here — this is a management question wearing a data costume</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the most valuable line in the table.</strong> Some
+          questions have no metric here and should not be answered with one —
+          reporting weekend activity as an insight turns a usage report into
+          surveillance, and the moment staff believe that is what it is for, every
+          other adoption effort gets harder. Say plainly which questions this data
+          cannot answer, before somebody asks it to.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1870,6 +2055,14 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Third-party tooling is normal</td><td>Native tooling covers a fraction; budget for a migration product</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first row sets the shape of the whole programme, and everything
+          else is consequence.</strong> One domain in one tenant means the mail
+          cutover is a single coordinated event with no staged middle — so the plan is
+          built backwards from that hour. Budget for the last row honestly at the
+          start: native tooling covers a fraction, and discovering that halfway
+          through is how migrations slip a quarter.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1918,6 +2111,13 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Keep the source tenant readable for a defined period</td><td>The "where did my file go" month that follows every migration</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Publishing what will not come across is the row that buys the most
+          goodwill for the least work.</strong> Every migration loses something — chat
+          history, some permissions, a folder structure — and the complaint is never
+          really about the loss, it is about the surprise. Say it before the wave, in
+          the users' words, and the post-migration month changes character entirely.
+        </div>
       </div>
     </div>
   </div>
@@ -2148,6 +2348,13 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Nobody's owner</td><td>A site owner</td><td>No owner, no migration — find one or archive it</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is a gate, not advice: no owner, no migration.</strong>
+          Content nobody will claim is content nobody will maintain, and carrying it
+          across turns a migration into a permanent archaeology problem. Archive it
+          where it can be retrieved and move on — the alternative is rebuilding a
+          permission tangle for a folder nobody has opened since 2019.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2243,6 +2450,15 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Shadow integration</td><td>Two systems kept in sync by an app nobody in IT has seen</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The connection row is the one that surprises security teams, and it
+          is the default behaviour.</strong> A flow runs as the person who built it,
+          with their access, indefinitely — so an ordinary user's automation is a
+          standing integration carrying their permissions, and it keeps running after
+          they change roles. Set data-loss-prevention policies for connectors on day
+          one and put critical flows in service accounts; both are far cheaper than
+          discovering the estate later.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2431,6 +2647,14 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Which users have consented individually?</td><td>Delegated consent grants on the principal</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Ask "is this about what the app wants, or what this tenant gave it?"
+          and the table answers itself.</strong> Requests live on the registration,
+          grants live on the principal, and half the wasted time in application
+          troubleshooting is looking for a consent record in the object that only
+          records the ask. For third-party applications you will only ever have the
+          principal — there is no registration in your tenant to inspect.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2525,6 +2749,14 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Catching regressions after a change</td><td>Knowing whether a control is tuned or drowning in noise</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The right-hand column is the reason not to put this number in an
+          objective.</strong> Once a score becomes a target it is optimised — points
+          collected where they are cheap, controls marked configured and never
+          operated — and the third row on the right is exactly the gap that produces.
+          Use it to find settings nobody knew about and to catch regressions; judge
+          posture with something that measures whether controls work.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2748,6 +2980,14 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Delete, on a defined delay</td><td>After the retention requirement, not before someone asks for the data</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first two rows are one action, and doing only the first is the
+          commonest mistake.</strong> Blocking sign-in leaves existing sessions and
+          refresh tokens alive, so somebody with a laptop open keeps working for hours
+          — revoking is what actually ends access. The last row is the one that turns
+          up years later: an application registration owned by a departed person is a
+          credential nobody can rotate.
+        </div>
       </div>
     </div>
     <div class="concept-card">
