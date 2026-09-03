@@ -506,6 +506,17 @@
                     <tr><td>Use cases</td><td>Application-specific orchestration</td></tr>
                     <tr><td>Adapters</td><td>DB <span class="acro-exp">(Database)</span>, web, external APIs <span class="acro-exp">(Application Programming Interface)</span> — the replaceable edge</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The dependency direction is the whole idea, and
+                    it is the only rule worth enforcing.</strong> Inner
+                    layers may not know about outer ones — the domain must
+                    not import the web framework or the database client —
+                    and every other benefit follows from that one
+                    constraint. If you adopt nothing else, put the check in
+                    the build: a lint rule that fails when the domain
+                    package imports an adapter is worth more than any amount
+                    of architecture documentation.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -2446,6 +2457,15 @@
                       </tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The line to hold is the last one: this role
+                    writes glue, not products.</strong> Endpoint work drifts
+                    toward building internal tooling that then has no owner,
+                    no tests and no successor — and the drift is rewarded,
+                    because the tool is useful. Keep the scripts small and
+                    disposable, and when something grows into a product, say
+                    so out loud and get it treated as one.
+                  </div>
                 </div>
               </div>
 
@@ -2578,6 +2598,14 @@
             <tr><td>Runs out</td><td>When the budget is spent</td><td>Never — but it compounds, forever</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the one engineers underestimate: operating spend
+          never ends, and it compounds.</strong> A subscription approved once because
+          it was small is a permanent line that grows with headcount and consumption,
+          and it is re-examined every year by somebody who was not there when it was
+          chosen. Capital spend hurts once and stops; that difference is why the two
+          budgets behave so unlike each other.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2626,6 +2654,14 @@
             <tr><td>The initiative may be cancelled</td><td>OpEx keeps the exit cheap; that optionality is worth paying for</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Ask which budget has room before deciding what to propose.</strong>
+          The same requirement can usually be met in either form, and the version that
+          matches the budget with room gets approved in weeks rather than quarters —
+          which is not gaming anything, it is asking in the form the organisation can
+          currently say yes to. The last row is the honest one: for anything that
+          might be cancelled, keeping the exit cheap is worth paying for.
+        </div>
       </div>
     </div>
   </div>
@@ -2736,6 +2772,14 @@
             <tr><td>Exit: migration out, parallel running, data extraction</td><td>Never</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Price the staff time; it is usually the largest line and it never
+          appears on a quote.</strong> An option that saves twenty thousand in
+          licensing and costs half a person to operate is more expensive from the
+          first year, and that comparison is one you can actually make before signing.
+          The exit row is the one nobody costs at all — and it is what makes a cheap
+          decision expensive five years later.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3159,6 +3203,15 @@
             <tr><td>Their quarter or year end</td><td>A genuine, recurring window regardless of the above</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Do the negotiating while the alternative is still real, because
+          after that you are asking for a favour.</strong> The curve in this table is
+          the entire lesson: leverage is a function of whether you could still walk
+          away, and once the product is embedded the switching cost is yours, not
+          theirs. Keep a second option genuinely alive until the terms are signed —
+          not as a bluff, which they will read, but because you have not actually
+          decided.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3182,6 +3235,14 @@
             <tr><td>Exit assistance defined up front</td><td>The single most valuable clause, and the least resisted early</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>A cap on annual uplift beats a bigger discount almost every time,
+          and it is easier to get.</strong> A percentage off the first year is a one-
+          off; an uncapped uplift compounds through every renewal for as long as you
+          use the product, which is where the money actually goes. The exit clause is
+          the card's own nomination and it is right: it costs the vendor nothing today
+          and is worth everything on the day you leave.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3203,6 +3264,14 @@
             <tr><td>Negotiate alone if procurement exists</td><td>It is their profession, and they are on your side</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first row is the one engineers give away without noticing, out
+          of helpfulness.</strong> "We have about forty thousand for this" is answered
+          by a quote for thirty-nine, whatever the product would otherwise have cost —
+          and the information cannot be taken back. If procurement exists, bring them
+          in early: it is their profession, they are on your side, and the second row
+          is the mistake they will stop you making.
+        </div>
       </div>
     </div>
   </div>
@@ -3440,6 +3509,14 @@
             <tr><td>Orphaned ownership</td><td>The buyer left; the card expired; nobody can log in to cancel</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The identity row is the one that outlives everything else on this
+          list.</strong> Duplicate spend is embarrassing and recoverable; accounts
+          outside single sign-on survive offboarding, hold company data, and cannot be
+          revoked centrally because nobody knows they exist. Start the register with
+          an expense-report sweep for recurring card payments — it is unglamorous,
+          takes an afternoon, and finds the estate.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3498,6 +3575,14 @@
             <tr><td>Default risk</td><td>What happens if it fails outright</td><td>"Unsupported after March; a failure is a multi-day outage"</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Name the interest, in hours per month, and the conversation changes
+          character.</strong> "We should clean this up" is a preference; "this costs
+          two engineer-days a month and blocks the thing you asked for in March" is an
+          investment case a manager can weigh against other work. The rate row is what
+          turns a nice-to-have into a now: debt whose cost is rising has a deadline
+          even when nobody has set one.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3724,6 +3809,14 @@
             <tr><td>Never bury it on slide nine</td><td>They will find it, and then wonder what else is on slide nine</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Escalate before you are certain — the incomplete early report beats
+          the complete late one every time.</strong> Waiting until you know everything
+          means somebody else tells them first, and the cost is not the incident but
+          your credibility on every future report. The third row is the one people
+          leave out: an escalation that asks for nothing is a status update wearing an
+          alarm.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3784,6 +3877,14 @@
             <tr><td>Failure looks like</td><td>A bug</td><td>Someone resigning three months from now</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The feedback-loop row is why the first year feels like
+          failing.</strong> You have moved from minutes to months, and from
+          unambiguous to never quite knowing — so the sense of having done nothing all
+          day is a property of the job rather than evidence about you. Decide in
+          advance how you will measure a good week, because the old measure is gone
+          and nothing replaces it automatically.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3856,6 +3957,14 @@
             <tr><td>60–90</td><td>Change</td><td>Now, with a reason people recognise as their own</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The one thing to protect is the listening, and it is what everyone
+          compresses.</strong> Arriving with changes buys a fortnight of appearing
+          decisive and spends the credibility you will need for the change that
+          matters — usually on a decision that was tried in a year you were not there
+          for. The stabilise row is what makes the wait affordable: fixing the one
+          thing everyone named earns the room to keep listening.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3964,6 +4073,14 @@
             <tr><td>The outcome was wrong</td><td>The <em>goal</em> was never explained, only the task</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first row is the finding: it came back different and fine, and
+          the instinct to correct it is the thing to resist.</strong> Every other row
+          is a missing sentence at handover — the level, the boundaries, the check-in,
+          the goal — and all four take under a minute to say. Delegation failures are
+          handover failures, and the handover is the cheapest part of the whole
+          exercise to fix.
+        </div>
       </div>
     </div>
   </div>
@@ -3999,6 +4116,14 @@
             <tr><td>Things they will not say in a group</td><td>Anything that should have been said immediately</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>If it becomes a status meeting, the channel is gone and nothing
+          replaces it.</strong> Everything in the left-hand column only surfaces in a
+          private conversation somebody trusts, and the moment it is spent on project
+          updates people stop bringing them — usually silently, and you find out at
+          the resignation. Ask what is in their way, then be quiet for longer than is
+          comfortable.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4083,6 +4208,13 @@
             <tr><td>Saving it for the review</td><td>Same day, or as close as practical; feedback decays fast</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Same day, plainly, and own it — the last row is the one that does
+          the most damage when ignored.</strong> Feedback saved for a review is
+          feedback about an event the person can no longer picture, delivered when it
+          can only feel like a verdict. And second-hand criticism is worse than none:
+          if you will not put your name to it, do not carry it.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4172,6 +4304,14 @@
             <tr><td>Decide, and act without drift</td><td>Extending it repeatedly is the cruelty, not the decision</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is where the kindness actually lives.</strong>
+          Extending a plan because the conversation is hard keeps somebody in a job
+          they are failing at, on a salary they will lose anyway, while the team
+          carries it and nobody says so — that is the cruelty, not the ending. Decide
+          on the date you agreed, and be able to show the person that nothing in the
+          outcome was a surprise.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4231,6 +4371,14 @@
             <tr><td>No salary range</td><td>The range — its absence costs you applications from the people with options</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Publish the range; its absence is the single most expensive omission
+          on this list.</strong> Candidates who will not apply without one are
+          disproportionately the careful, in-demand ones, and the conversation you
+          avoid at the advert happens at the offer instead with less goodwill. The
+          technology list is the other cheap fix: naming four things you actually use
+          attracts people who read carefully, which is who you want.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4346,6 +4494,13 @@
             <tr><td>Ask at day 30 what surprised them</td><td>The most honest audit of your team you will get all year</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The window closes in about a month, so ask on a date rather than
+          when you get round to it.</strong> Everything in this table depends on
+          catching somebody while they can still see what is confusing — after that
+          the sight is gone permanently and cannot be recovered by asking harder. Put
+          the day-30 conversation in the calendar during week one.
+        </div>
       </div>
     </div>
   </div>
@@ -4457,6 +4612,14 @@
             <tr><td>Disagree privately, commit publicly</td><td>Buys you the right to disagree next time</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first row is load-bearing; without it the other four do not
+          work.</strong> A manager who has been surprised once discounts everything
+          after, so bringing options and learning their pressures only pays on a
+          foundation of never having to hear it from somebody else. The last row is
+          what makes disagreement sustainable — argue hard in private, then back the
+          decision, and you keep the right to argue next time.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4532,6 +4695,13 @@
             <tr><td>Thinking time</td><td>Almost always zero, and that is the actual problem</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the finding, and it is almost always zero.</strong>
+          Every other category defends itself because somebody else is waiting;
+          thinking time has no advocate and disappears first, which is why leaders end
+          up reacting to a quarter they never planned. Book it as a recurring meeting
+          with a name, because an unnamed gap in a calendar is an invitation.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4594,6 +4764,13 @@
             <tr><td>Cannot represent the work upward accurately</td><td>Your own management work does not get done</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Both columns are diagnosed by the team's behaviour rather than by
+          your own sense of it.</strong> If they have stopped explaining, you have
+          drifted; if they have stopped deciding, you are too close — and neither
+          symptom is visible from the inside. Ask a senior engineer directly which way
+          you are wrong; they know, and mostly will not volunteer it.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4679,6 +4856,14 @@
             <tr><td>Answer their real question</td><td>Usually "what will my first six months be like?" — have an answer</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Ring them yourself, the same day, before any paperwork.</strong>
+          Everything in this table is free and fast, and the candidate is comparing
+          your process against another company's as a preview of what working there is
+          like — a week of silence after a verbal yes is the most common way a good
+          offer is lost. Exploding deadlines are the opposite mistake and select for
+          exactly the candidate you did not want.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4749,6 +4934,13 @@
             <tr><td>Sizing a plan against observed throughput</td><td>Reporting it upward as productivity</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The moment it goes on a slide for anyone outside the team, it is
+          finished as a measurement.</strong> Points are a local unit with no meaning
+          across teams, so comparison and targets both produce inflation rather than
+          throughput — and the number rises reassuringly while nothing changes. Keep
+          it inside the team as a forecasting aid, and report outcomes upward instead.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4833,6 +5025,15 @@
             <tr><td>Have a plan for the two most likely to slip</td><td>The whole project stopping while you invent one</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The second row is the one that separates a list from a
+          plan.</strong> A dependency you wrote down and they never agreed to is not a
+          dependency, it is an assumption with a due date — and it will fail silently,
+          because nobody on the other side knows they are on your critical path.
+          Confirm each one in writing with the named person, and the fourth row makes
+          the rest survivable: check in before the date, when there is still time to
+          react.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4854,6 +5055,14 @@
             <tr><td>"Slight delay"</td><td>"Two weeks late; here is the cause and the two options"</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Percentages are unfalsifiable, which is exactly why they are
+          comfortable to report.</strong> "Sixty percent" cannot be checked and
+          precedes every late project; "four of seven components, and the two hardest
+          are not started" can be argued with, which is the property you actually want
+          in a status report. It also costs less to say than it looks, because you
+          already know the answer.
+        </div>
       </div>
     </div>
   </div>
@@ -4911,6 +5120,15 @@
             <tr><td>Install and post-install scripts</td><td>Arbitrary execution at install time, on every machine</td><td>Disable where the ecosystem allows; review where it does not</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The runner and the continuous-integration plugins are the rows most
+          teams have never looked at, and they hold every secret in the
+          build.</strong> A third-party action pinned to a moving tag is arbitrary
+          code with access to your credentials, refreshed silently whenever its author
+          chooses — pin to a commit hash and use ephemeral runners, and two of the
+          worst rows close. Do the enumeration for one real service before anything
+          else; it is the part that finds inputs nobody counted.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -5018,6 +5236,14 @@
             <tr><td>Whether you would use ten percent of it</td><td>The best dependency decision is frequently forty lines of your own code</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the best decision available and it is the one nobody
+          makes.</strong> A package you would use a tenth of is a package whose whole
+          surface, and everything under it, you have adopted — and writing the twenty
+          lines yourself is frequently cheaper over five years than carrying the tree.
+          Where you do adopt, the maintainer-count and install-script rows are the two
+          that predict trouble.
+        </div>
       </div>
     </div>
   </div>
@@ -5333,6 +5559,14 @@ cosign verify $IMAGE \
             <tr><td>Coverage of what runs</td><td>Tie SBOMs to deployed digests, so the query returns services, not builds</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Generate at build time, or the inventory answers a different
+          question from the one you will ask.</strong> A scan of a finished artefact
+          reconstructs what it thinks is inside; a bill of materials produced by the
+          build knows. And the last row is what makes it operational rather than
+          contractual: tied to deployed digests, "are we affected" is a query, and
+          everything else is a document somebody attaches to a tender.
+        </div>
       </div>
     </div>
     <div class="concept-card">

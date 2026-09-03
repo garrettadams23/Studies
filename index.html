@@ -77951,8 +77951,8 @@ incident.
 <span class="ctag ctag-secplus">GCIH</span>
 </div>
 <span class="domain-sub">NSM · SIEM · EDR · Detection · DFIR · Threat Intel</span>
-<span class="domain-meta" aria-label="61 topics, about 2h 25m to read"
->61 topics · ~2h 25m</span>
+<span class="domain-meta" aria-label="61 topics, about 2h 30m to read"
+>61 topics · ~2h 30m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -78776,12 +78776,12 @@ applies to coverage claims generally —
 </div>
 </div>
 </div>
-<div class="topic" id="windows-event-logs-the-ids-that-matter" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="windows-event-logs-the-ids-that-matter" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🪟</span>
 <span class="topic-name">Windows Event Logs — The IDs That Matter</span>
 <span class="topic-badge">EDR</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -78805,6 +78805,17 @@ constantly in SOC <span class="acro-exp">(Security Operations Center)</span> int
 <tr><td>7045</td><td>Service installed — classic psexec / persistence</td></tr>
 <tr><td>1102</td><td>Audit log cleared — attackers covering tracks</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Turn on command-line auditing for 4688 today;
+without it the most useful row on this list records
+almost nothing.</strong> "A process started" is weak
+evidence, and "this process started with these
+arguments" is the single richest field in Windows
+telemetry — it is off by default and costs one policy
+setting. The last row is the other one to alert on
+unconditionally: an audit log cleared is not an event
+with a benign explanation.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -79346,12 +79357,12 @@ somewhere to land.
 </div>
 </div>
 </div>
-<div class="topic" id="windows-forensic-artifacts" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="windows-forensic-artifacts" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗂️</span>
 <span class="topic-name">Windows Forensic Artifacts</span>
 <span class="topic-badge">DFIR</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -79373,6 +79384,17 @@ the attacker deleted it.
 <tr><td>SRUM</td><td>App resource/network usage over time</td></tr>
 <tr><td>Jump Lists / LNK / Shellbags</td><td>Files &amp; folders a user opened</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>These matter precisely because the attacker
+deleted the binary, and they are also the ones that age
+out.</strong> Prefetch and the application caches will
+prove execution when nothing else can, and each has a
+limited size and lifetime — so the value of a forensic
+image collected today is far higher than one collected
+next month. Know which of these your imaging process
+actually captures; several are missed by a file-level
+copy.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -79406,12 +79428,12 @@ accidentally.
 </div>
 </div>
 </div>
-<div class="topic" id="chain-of-custody-evidence-handling" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="chain-of-custody-evidence-handling" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚖️</span>
 <span class="topic-name">Chain of Custody &amp; Evidence Handling</span>
 <span class="topic-badge">DFIR</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -79432,6 +79454,15 @@ important as the tools.
 <tr><td>Chain of custody log</td><td>Who had it, when, why — an unbroken documented trail</td></tr>
 <tr><td>Documentation</td><td>Record every action; reproducibility = credibility</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Assume every investigation might become legal,
+because you find out afterwards.</strong> The cost of
+following this table on an incident that never goes
+anywhere is a few hours; the cost of not following it on
+the one that does is the case. Hash on acquisition and
+start the custody log before analysis — those two are
+the ones that cannot be reconstructed later.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -80584,12 +80615,12 @@ boundary.
 </div>
 <!-- /domain-body blueteam -->
 <!-- ── TOPIC: WHAT DETECTION ENGINEERING IS ──────────────────── -->
-<div class="topic" id="what-detection-engineering-is-and-why-it-split-off-from-soc-" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="what-detection-engineering-is-and-why-it-split-off-from-soc-" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏗️</span>
 <span class="topic-name">What Detection Engineering Is — And Why It Split Off From SOC <span class="acro-exp">(Security Operations Center)</span> Analysis</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -80616,6 +80647,14 @@ and neither survives being done in the other's rhythm.
 <tr><td>Fails as</td><td>A missed incident</td><td>A rule everyone learned to ignore</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The failure row is the one to design against: a rule everyone
+learned to ignore is worse than no rule.</strong> It consumes triage time,
+it makes the coverage map lie, and it trains analysts to close alerts
+without reading them — which is the habit that loses the real one. Treat
+detections as software with owners, tests and a retirement path, and that
+outcome becomes visible instead of ambient.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -80646,12 +80685,12 @@ distinguishable.
 </div>
 </div>
 <!-- ── TOPIC: THE DETECTION LIFECYCLE ────────────────────────── -->
-<div class="topic" id="the-detection-lifecycle-idea-to-retirement-and-the-gates-bet" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="the-detection-lifecycle-idea-to-retirement-and-the-gates-bet" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔄</span>
 <span class="topic-name">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -80675,6 +80714,14 @@ condition for leaving it, so "is this rule ready?" stops being a matter of taste
 <tr><td>7</td><td>Retire</td><td>The behaviour is impossible, better covered, or the rule is measurably useless</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Stage 4 is the one that turns a query into a detection.</strong> A
+rule that has never fired on an emulated instance of the behaviour is a
+hypothesis, and shipping it means you will discover it never worked during
+the incident it was written for. Emulate the technique, watch it fire, keep
+the artefact — that single step is what makes the rest of the pipeline
+meaningful.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -80696,6 +80743,14 @@ detection programme that has never deleted a rule is not careful; it is unmainta
 <tr><td>"We have 900 rules and 40 fire"</td><td>7 — nothing has ever been retired</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Write the response before the rule ships, and the first symptom
+disappears.</strong> "What is this alert telling me to do?" is answerable at
+authoring time and unanswerable at three in the morning by somebody who did
+not write it — which is why the requirement stage is the cheapest quality
+control available. And put a review date on every rule, because retirement
+never happens on its own.
+</div>
 </div>
 </div>
 </div>
@@ -80799,6 +80854,13 @@ obvious in every incident.
 <tr><td>Fields present</td><td>The specific fields rules depend on, which vendors quietly change</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Draw the coverage map from the telemetry inventory, not from the
+rule set.</strong> A rule reading a log source deployed on 40% of hosts
+covers 40% of the estate, and a map built from rules will show it green —
+which is the single most misleading artefact a security programme produces.
+The estate-coverage column is the one to publish alongside every claim.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -80832,12 +80894,12 @@ are reinstalled.
 </div>
 </div>
 <!-- ── TOPIC: NORMALISATION SCHEMAS ──────────────────────────── -->
-<div class="topic" id="normalisation-schemas-ocsf-ecs-asim-and-why-the-schema-decid" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="normalisation-schemas-ocsf-ecs-asim-and-why-the-schema-decid" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧬</span>
 <span class="topic-name">Normalisation Schemas — OCSF, ECS <span class="acro-exp">(Elastic Container Service)</span> &amp; ASIM, and Why the Schema Decides the Query</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -80861,6 +80923,14 @@ rule you ever write will be phrased in, and changing it later means rewriting al
 <tr><td>"Whatever the vendor sent"</td><td>Nobody</td><td>The default, and the reason rule portability is usually zero</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Pick a schema deliberately, because the default in the last row is
+the reason nothing is portable.</strong> Normalising at ingest costs work
+once; leaving each source in whatever shape the vendor sent costs a rewrite
+every time you change a product, and it makes shared rule content unusable.
+Which schema matters far less than having one — the choice is between any of
+the first three and permanent lock-in.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -80915,12 +80985,12 @@ the decision that has to be made before Sigma can help you.
 </div>
 </div>
 <!-- ── TOPIC: DETECTION-AS-CODE ──────────────────────────────── -->
-<div class="topic" id="detection-as-code-git-review-ci-versioned-rules" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="detection-as-code-git-review-ci-versioned-rules" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧾</span>
 <span class="topic-name">Detection-as-Code — Git, Review, CI &amp; Versioned Rules</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -80946,6 +81016,14 @@ an unanswerable question.
 <tr><td>Test before deploy</td><td>Not possible</td><td>CI runs the rule's tests</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The rebuild row is the one that decides this on its own.</strong>
+Losing a platform — a migration, a tenant mistake, a vendor change — is
+weeks of reconstruction from memory when the rules live only in a console,
+and a redeploy when they live in a repository. Everything else on the list
+is quality of life; that one is whether the detection estate is recoverable
+at all.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -80967,6 +81045,13 @@ is what stops the runbook from rotting away from the logic it documents.
 <tr><td>Metadata</td><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> mapping, severity, owner, log sources depended on</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The runbook belongs in the same commit as the logic, or it will
+describe a rule that no longer exists.</strong> Documentation kept anywhere
+else drifts, and the drift is invisible until an analyst follows steps for a
+version that was tuned six months ago. Version them together and a rule
+change that needs a runbook change cannot be merged without one.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -80989,6 +81074,14 @@ does not exist.
 <tr><td>Promote to production</td><td>—</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Build the first stage and stop; it catches most of what review
+would, in an afternoon.</strong> Linting and schema validation prevent the
+two breakages that actually reach production — an invalid rule and one
+referencing a field that does not exist — and they need no test corpus, no
+staging tenant and no cultural change. Add the rest as the rule set earns
+them.
+</div>
 </div>
 </div>
 </div>
@@ -81148,6 +81241,13 @@ question is about capability.
 <tr><td>Technique covered</td><td>Was covered, until a field rename in March</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Publish the map with its caveats attached, or do not publish
+it.</strong> A heat map handed to an executive is read as capability, and
+all four failure modes in the right-hand column are invisible on it — which
+makes a well-intentioned artefact into a false assurance. If you must show
+one, colour it by tested-and-deployed rather than by rule-exists.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -81256,12 +81356,12 @@ that learns and one that rediscovers.
 </div>
 </div>
 <!-- ── TOPIC: DOCUMENTATION FOR RESPONDERS ───────────────────── -->
-<div class="topic" id="documentation-for-responders-the-runbook-that-ships-with-the" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="documentation-for-responders-the-runbook-that-ships-with-the" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📗</span>
 <span class="topic-name">Documentation for Responders — The Runbook That Ships With the Rule</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -81288,6 +81388,14 @@ been handed over without the half that makes it usable.
 <tr><td>False-positive feedback</td><td>Where to report noise so the rule improves</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Write the known-benign row, because it is the one that saves the
+most analyst time and the one authors skip.</strong> The engineer knows what
+legitimately does this in your environment; the analyst at three in the
+morning does not, and rediscovering it costs twenty minutes per alert
+forever. Everything here is written once and read hundreds of times, which
+is the best ratio in security operations.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -81318,12 +81426,12 @@ with it, and not a separate document that drifts.
 </div>
 </div>
 <!-- ── TOPIC: LOG VOLUME & COST ──────────────────────────────── -->
-<div class="topic" id="log-volume-cost-the-detections-a-budget-quietly-kills" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="log-volume-cost-the-detections-a-budget-quietly-kills" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💰</span>
 <span class="topic-name">Log Volume &amp; Cost — The Detections a Budget Quietly Kills</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -81347,6 +81455,14 @@ holes whose cause is a finance conversation from eighteen months ago that nobody
 <tr><td>Drop cloud audit logs</td><td>Identity-based attacks lose their only evidence trail</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Put a detection engineer in the room whenever ingest is cut, and
+cost the loss in detections rather than gigabytes.</strong> Every row is a
+spending decision that silently removes a capability, and the person making
+it is usually optimising a bill with no visibility of what depends on the
+source. "Dropping this saves £40k and ends endpoint behavioural detection"
+is a decision somebody can make; "reduce ingest by 20%" is not.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -81378,12 +81494,12 @@ change is not.
 </div>
 </div>
 <!-- ── TOPIC: WRITING A GOOD RULE ────────────────────────────── -->
-<div class="topic" id="writing-a-good-rule-specificity-false-positive-analysis-the-" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="writing-a-good-rule-specificity-false-positive-analysis-the-" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">✍️</span>
 <span class="topic-name">Writing a Good Rule — Specificity, False-Positive Analysis &amp; the Tuning Fields</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -81456,6 +81572,13 @@ through. Four rules keep it maintainable.
 <tr><td>Review exclusions on a schedule</td><td>The temporary ones outlive the thing they were for</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The third row is a security control, not hygiene.</strong> Excluding
+on a filename, a path or a command line hands the adversary a published
+bypass — they need only name their tool the same thing, and your own
+allowlist carries them past the rule. Exclude on identity and host where you
+can, on nothing the attacker chooses ever, and put a date on it either way.
+</div>
 </div>
 </div>
 </div>
@@ -81489,6 +81612,13 @@ are legitimate, and a programme with only one kind is predictably weak in a know
 <tr><td>Best for</td><td>Known-bad, commodity tooling, intel-driven blocking</td><td>Hands-on-keyboard activity, novel tooling</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>You need both, and the evasion-cost row is why the behavioural half
+cannot be skipped.</strong> Signatures are cheap, precise and free to evade
+— a recompile defeats them — while behavioural rules force the adversary to
+change how they work, which is expensive. A programme that is all signatures
+looks excellent against last year's samples and catches nothing hands-on.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -81594,12 +81724,12 @@ is written to catch.
 </div>
 </div>
 <!-- ── TOPIC: CORRELATION & SEQUENCING ───────────────────────── -->
-<div class="topic" id="correlation-sequencing-when-one-event-genuinely-is-not-enoug" data-reviewed="2026-09" data-read="2" data-level="core">
+<div class="topic" id="correlation-sequencing-when-one-event-genuinely-is-not-enoug" data-reviewed="2026-09" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔗</span>
 <span class="topic-name">Correlation &amp; Sequencing — When One Event Genuinely Is Not Enough</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -81624,6 +81754,15 @@ unremarkable and only the combination means anything.
 <tr><td>Rarity join</td><td>Common event, uncommon pairing</td><td>An ordinary binary run by a user who never runs it</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Reach for a stateful rule only when no single event could carry the
+meaning.</strong> The absence and fan-out patterns are the two that
+genuinely cannot be expressed any other way, and they are worth the cost;
+thresholds are frequently a slower way of saying something one enriched
+event already said. And when you do build one, write down where the window
+came from — nobody can derive it later, and everybody will want to change
+it.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -81782,12 +81921,12 @@ what happens next is <span class="xref" data-xref="incident-response-lifecycle-p
 </div>
 </div>
 <!-- ── TOPIC: THE DE INTERVIEW ───────────────────────────────── -->
-<div class="topic" id="the-detection-engineering-interview-what-the-role-is-actuall" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="the-detection-engineering-interview-what-the-role-is-actuall" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎤</span>
 <span class="topic-name">The Detection Engineering Interview — What the Role Is Actually Assessed On</span>
 <span class="topic-badge">Detection Engineering • Career</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -81812,6 +81951,14 @@ about it out loud rather than reach for a single right answer that does not exis
 <tr><td>"Walk me through a rule you wrote."</td><td>Can you state its false positives honestly?</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The first question is the whole interview in miniature: ask what
+telemetry exists before proposing a rule.</strong> A candidate who designs a
+perfect detection for a log source the organisation does not collect has
+demonstrated the exact failure the job is about. Prepare by having one
+honest story about a rule you wrote, its false positives, and what you did
+about them.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -81841,12 +81988,12 @@ way a CV line cannot. General interview preparation is in
 </div>
 </div>
 </div>
-<div class="topic" id="soc-metrics-that-do-not-lie" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="soc-metrics-that-do-not-lie" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📊</span>
 <span class="topic-name">SOC <span class="acro-exp">(Security Operations Center)</span> Metrics That Do Not Lie</span>
 <span class="topic-badge">Detection Engineering</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -81870,6 +82017,16 @@ comfortable direction.
 <tr><td>False-positive rate falls</td><td>Fewer rules fire at all, which is not the same as being more accurate</td></tr>
 <tr><td>Coverage rises</td><td>The matrix was coloured from rule inventory rather than from test results</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Every row here improves without anybody lying,
+which is what makes these metrics dangerous rather than
+merely imperfect.</strong> The person reporting decides
+what counts as detected, resolved or noise, and the
+incentive is to define the boundary favourably one small
+step at a time. If a number improved sharply without a
+corresponding change in practice, look for the
+definition that moved.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -81890,6 +82047,16 @@ informative.
 <tr><td><strong>Dwell time on confirmed incidents</strong></td><td>Measured backwards from evidence, not forwards from the ticket. Cannot be improved by narrowing the definition</td></tr>
 <tr><td><strong>Analyst-hours per incident</strong></td><td>Reveals automation and tooling gaps that every quality metric hides</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Report telemetry coverage first; it is the one
+that cannot be argued with and the one that constrains
+everything else.</strong> A percentage of assets sending
+the log source is a fact about deployment, improvable
+only by deploying — and it explains most of what the
+gameable metrics were hiding. The card's own rule is the
+durable one: trust a metric roughly in proportion to how
+uncomfortable it is to publish.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -91949,8 +92116,8 @@ second.
 <span class="ctag ctag-general">SWE</span>
 </div>
 <span class="domain-sub">System Design · Architecture · Craft · Reliability · Career</span>
-<span class="domain-meta" aria-label="81 topics, about 3h 40m to read"
->81 topics · ~3h 40m</span>
+<span class="domain-meta" aria-label="81 topics, about 3h 50m to read"
+>81 topics · ~3h 50m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -92469,6 +92636,17 @@ the tech stack.
 <tr><td>Use cases</td><td>Application-specific orchestration</td></tr>
 <tr><td>Adapters</td><td>DB <span class="acro-exp">(Database)</span>, web, external APIs <span class="acro-exp">(Application Programming Interface)</span> — the replaceable edge</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The dependency direction is the whole idea, and
+it is the only rule worth enforcing.</strong> Inner
+layers may not know about outer ones — the domain must
+not import the web framework or the database client —
+and every other benefit follows from that one
+constraint. If you adopt nothing else, put the check in
+the build: a lint rule that fails when the domain
+package imports an adapter is worth more than any amount
+of architecture documentation.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -94416,6 +94594,15 @@ packaging wrappers. Scripting is essential; software design is not.</td>
 </tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The line to hold is the last one: this role
+writes glue, not products.</strong> Endpoint work drifts
+toward building internal tooling that then has no owner,
+no tests and no successor — and the drift is rewarded,
+because the tool is useful. Keep the scripts small and
+disposable, and when something grows into a product, say
+so out loud and get it treated as one.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -94514,12 +94701,12 @@ use poisons the first.
 </div>
 <!-- /domain-body eng -->
 <!-- ── TOPIC: CAPEX VS OPEX ──────────────────────────────────── -->
-<div class="topic" id="capex-vs-opex-why-the-same-purchase-is-two-different-decisio" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="capex-vs-opex-why-the-same-purchase-is-two-different-decisio" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💵</span>
 <span class="topic-name">CapEx vs OpEx — Why the Same Purchase Is Two Different Decisions</span>
 <span class="topic-badge">IT Finance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -94545,6 +94732,14 @@ impossible in the other.
 <tr><td>Runs out</td><td>When the budget is spent</td><td>Never — but it compounds, forever</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the one engineers underestimate: operating spend
+never ends, and it compounds.</strong> A subscription approved once because
+it was small is a permanent line that grows with headcount and consumption,
+and it is re-examined every year by somebody who was not there when it was
+chosen. Capital spend hurts once and stops; that difference is why the two
+budgets behave so unlike each other.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -94593,6 +94788,14 @@ yes to.
 <tr><td>The initiative may be cancelled</td><td>OpEx keeps the exit cheap; that optionality is worth paying for</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Ask which budget has room before deciding what to propose.</strong>
+The same requirement can usually be met in either form, and the version that
+matches the budget with room gets approved in weeks rather than quarters —
+which is not gaming anything, it is asking in the form the organisation can
+currently say yes to. The last row is the honest one: for anything that
+might be cancelled, keeping the exit cheap is worth paying for.
+</div>
 </div>
 </div>
 </div>
@@ -94671,12 +94874,12 @@ exception to it.
 </div>
 </div>
 <!-- ── TOPIC: TCO ────────────────────────────────────────────── -->
-<div class="topic" id="total-cost-of-ownership-the-costs-that-never-appear-on-the-q" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="total-cost-of-ownership-the-costs-that-never-appear-on-the-q" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧊</span>
 <span class="topic-name">Total Cost of Ownership — The Costs That Never Appear on the Quote</span>
 <span class="topic-badge">IT Finance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -94703,6 +94906,14 @@ price often means less included.
 <tr><td>Exit: migration out, parallel running, data extraction</td><td>Never</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Price the staff time; it is usually the largest line and it never
+appears on a quote.</strong> An option that saves twenty thousand in
+licensing and costs half a person to operate is more expensive from the
+first year, and that comparison is one you can actually make before signing.
+The exit row is the one nobody costs at all — and it is what makes a cheap
+decision expensive five years later.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95096,12 +95307,12 @@ production.
 </div>
 </div>
 <!-- ── TOPIC: NEGOTIATION FOR IT BUYERS ──────────────────────── -->
-<div class="topic" id="negotiation-for-it-buyers-timing-leverage-what-is-actually-d" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="negotiation-for-it-buyers-timing-leverage-what-is-actually-d" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤝</span>
 <span class="topic-name">Negotiation for IT Buyers — Timing, Leverage &amp; What Is Actually Discountable</span>
 <span class="topic-badge">Procurement</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95126,6 +95337,15 @@ before the commercial conversation.
 <tr><td>Their quarter or year end</td><td>A genuine, recurring window regardless of the above</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Do the negotiating while the alternative is still real, because
+after that you are asking for a favour.</strong> The curve in this table is
+the entire lesson: leverage is a function of whether you could still walk
+away, and once the product is embedded the switching cost is yours, not
+theirs. Keep a second option genuinely alive until the terms are signed —
+not as a bluff, which they will read, but because you have not actually
+decided.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95149,6 +95369,14 @@ easier to get and worth more.
 <tr><td>Exit assistance defined up front</td><td>The single most valuable clause, and the least resisted early</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>A cap on annual uplift beats a bigger discount almost every time,
+and it is easier to get.</strong> A percentage off the first year is a one-
+off; an uncapped uplift compounds through every renewal for as long as you
+use the product, which is where the money actually goes. The exit clause is
+the card's own nomination and it is right: it costs the vendor nothing today
+and is worth everything on the day you leave.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95170,6 +95398,14 @@ naivety.
 <tr><td>Negotiate alone if procurement exists</td><td>It is their profession, and they are on your side</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The first row is the one engineers give away without noticing, out
+of helpfulness.</strong> "We have about forty thousand for this" is answered
+by a quote for thirty-nine, whatever the product would otherwise have cost —
+and the information cannot be taken back. If procurement exists, bring them
+in early: it is their profession, they are on your side, and the second row
+is the mistake they will stop you making.
+</div>
 </div>
 </div>
 </div>
@@ -95377,12 +95613,12 @@ discover it produces an undocumented format missing the attachments.
 </div>
 </div>
 <!-- ── TOPIC: SAAS SPRAWL ────────────────────────────────────── -->
-<div class="topic" id="saas-sprawl-discovery-consolidation-reclaiming-seats" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="saas-sprawl-discovery-consolidation-reclaiming-seats" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧹</span>
 <span class="topic-name">SaaS <span class="acro-exp">(Software as a Service)</span> Sprawl — Discovery, Consolidation &amp; Reclaiming Seats</span>
 <span class="topic-badge">IT Finance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95407,6 +95643,14 @@ matter.
 <tr><td>Orphaned ownership</td><td>The buyer left; the card expired; nobody can log in to cancel</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The identity row is the one that outlives everything else on this
+list.</strong> Duplicate spend is embarrassing and recoverable; accounts
+outside single sign-on survive offboarding, hold company data, and cannot be
+revoked centrally because nobody knows they exist. Start the register with
+an expense-report sweep for recurring card payments — it is unglamorous,
+takes an afternoon, and finds the estate.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95437,12 +95681,12 @@ reclaimed the week after renewal is paid for anyway for a full year.
 </div>
 </div>
 <!-- ── TOPIC: TECH DEBT AS A FINANCIAL ARGUMENT ──────────────── -->
-<div class="topic" id="technical-debt-as-a-financial-argument-language-that-funds-i" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="technical-debt-as-a-financial-argument-language-that-funds-i" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏗️</span>
 <span class="topic-name">Technical Debt as a Financial Argument — Language That Funds It</span>
 <span class="topic-badge">IT Finance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95465,6 +95709,14 @@ investment case, which is a category the business already knows how to evaluate.
 <tr><td>Default risk</td><td>What happens if it fails outright</td><td>"Unsupported after March; a failure is a multi-day outage"</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Name the interest, in hours per month, and the conversation changes
+character.</strong> "We should clean this up" is a preference; "this costs
+two engineer-days a month and blocks the thing you asked for in March" is an
+investment case a manager can weigh against other work. The rate row is what
+turns a nice-to-have into a now: debt whose cost is rising has a deadline
+even when nobody has set one.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95639,12 +95891,12 @@ of the utilisation argument in
 </div>
 </div>
 <!-- ── TOPIC: REPORTING TO THE BOARD ─────────────────────────── -->
-<div class="topic" id="reporting-upward-three-slides-no-jargon-no-surprises" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="reporting-upward-three-slides-no-jargon-no-surprises" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏛️</span>
 <span class="topic-name">Reporting Upward — Three Slides, No Jargon, No Surprises</span>
 <span class="topic-badge">IT Finance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95691,6 +95943,14 @@ subsequent report — including the ones where you were right.
 <tr><td>Never bury it on slide nine</td><td>They will find it, and then wonder what else is on slide nine</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Escalate before you are certain — the incomplete early report beats
+the complete late one every time.</strong> Waiting until you know everything
+means somebody else tells them first, and the cost is not the incident but
+your credibility on every future report. The third row is the one people
+leave out: an escalation that asks for nothing is a status update wearing an
+alarm.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95751,6 +96011,14 @@ assessed on and will be bad at for a while.
 <tr><td>Failure looks like</td><td>A bug</td><td>Someone resigning three months from now</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The feedback-loop row is why the first year feels like
+failing.</strong> You have moved from minutes to months, and from
+unambiguous to never quite knowing — so the sense of having done nothing all
+day is a property of the job rather than evidence about you. Decide in
+advance how you will measure a good week, because the old measure is gone
+and nothing replaces it automatically.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95795,12 +96063,12 @@ paths; this is what the second one costs.
 </div>
 </div>
 <!-- ── TOPIC: FIRST 90 DAYS LEADING ──────────────────────────── -->
-<div class="topic" id="the-first-90-days-leading-a-team-listen-map-stabilise-then-c" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="the-first-90-days-leading-a-team-listen-map-stabilise-then-c" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗓️</span>
 <span class="topic-name">The First 90 Days Leading a Team — Listen, Map, Stabilise, Then Change</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95823,6 +96091,14 @@ were not there for.
 <tr><td>60–90</td><td>Change</td><td>Now, with a reason people recognise as their own</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The one thing to protect is the listening, and it is what everyone
+compresses.</strong> Arriving with changes buys a fortnight of appearing
+decisive and spends the credibility you will need for the change that
+matters — usually on a decision that was tried in a year you were not there
+for. The stabilise row is what makes the wait affordable: fixing the one
+thing everyone named earns the room to keep listening.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95854,12 +96130,12 @@ telling you things changes nothing.
 </div>
 </div>
 <!-- ── TOPIC: DELEGATION ─────────────────────────────────────── -->
-<div class="topic" id="delegation-the-levels-and-why-ill-just-do-it-is-a-trap" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="delegation-the-levels-and-why-ill-just-do-it-is-a-trap" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎚️</span>
 <span class="topic-name">Delegation — The Levels, and Why "I'll Just Do It" Is a Trap</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95931,17 +96207,25 @@ in the person.
 <tr><td>The outcome was wrong</td><td>The <em>goal</em> was never explained, only the task</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The first row is the finding: it came back different and fine, and
+the instinct to correct it is the thing to resist.</strong> Every other row
+is a missing sentence at handover — the level, the boundaries, the check-in,
+the goal — and all four take under a minute to say. Delegation failures are
+handover failures, and the handover is the cheapest part of the whole
+exercise to fix.
+</div>
 </div>
 </div>
 </div>
 </div>
 <!-- ── TOPIC: ONE-TO-ONES ────────────────────────────────────── -->
-<div class="topic" id="one-to-ones-that-are-worth-having-structure-cadence-what-not" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="one-to-ones-that-are-worth-having-structure-cadence-what-not" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💬</span>
 <span class="topic-name">One-to-Ones That Are Worth Having — Structure, Cadence &amp; What Not to Use Them For</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -95966,6 +96250,14 @@ simply do not arrive, and the first news is a resignation.
 <tr><td>Things they will not say in a group</td><td>Anything that should have been said immediately</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>If it becomes a status meeting, the channel is gone and nothing
+replaces it.</strong> Everything in the left-hand column only surfaces in a
+private conversation somebody trusts, and the moment it is spent on project
+updates people stop bringing them — usually silently, and you find out at
+the resignation. Ask what is in their way, then be quiet for longer than is
+comfortable.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -95997,12 +96289,12 @@ it eventually appears.
 </div>
 </div>
 <!-- ── TOPIC: FEEDBACK ───────────────────────────────────────── -->
-<div class="topic" id="feedback-difficult-conversations-specific-timely-survivable" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="feedback-difficult-conversations-specific-timely-survivable" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🪞</span>
 <span class="topic-name">Feedback &amp; Difficult Conversations — Specific, Timely &amp; Survivable</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96050,6 +96342,13 @@ cushioning.
 <tr><td>Saving it for the review</td><td>Same day, or as close as practical; feedback decays fast</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Same day, plainly, and own it — the last row is the one that does
+the most damage when ignored.</strong> Feedback saved for a review is
+feedback about an event the person can no longer picture, delivered when it
+can only feel like a verdict. And second-hand criticism is worse than none:
+if you will not put your name to it, do not carry it.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96139,6 +96438,14 @@ and are watching how it is handled.
 <tr><td>Decide, and act without drift</td><td>Extending it repeatedly is the cruelty, not the decision</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is where the kindness actually lives.</strong>
+Extending a plan because the conversation is hard keeps somebody in a job
+they are failing at, on a salary they will lose anyway, while the team
+carries it and nobody says so — that is the cruelty, not the ending. Decide
+on the date you agreed, and be able to show the person that nothing in the
+outcome was a surprise.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96198,6 +96505,14 @@ better candidates from a smaller pool — which is the pool you want.
 <tr><td>No salary range</td><td>The range — its absence costs you applications from the people with options</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Publish the range; its absence is the single most expensive omission
+on this list.</strong> Candidates who will not apply without one are
+disproportionately the careful, in-demand ones, and the conversation you
+avoid at the advert happens at the offer instead with less goodwill. The
+technology list is the other cheap fix: naming four things you actually use
+attracts people who read carefully, which is who you want.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96257,12 +96572,12 @@ candidates act on it. General preparation from the other side of the table is in
 </div>
 </div>
 <!-- ── TOPIC: ONBOARDING ─────────────────────────────────────── -->
-<div class="topic" id="onboarding-the-306090-that-produces-a-contributor-not-a-spec" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="onboarding-the-306090-that-produces-a-contributor-not-a-spec" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚀</span>
 <span class="topic-name">Onboarding — The 30/60/90 That Produces a Contributor, Not a Spectator</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96313,6 +96628,13 @@ asset — and it is genuine work, not a chore.
 <tr><td>Ask at day 30 what surprised them</td><td>The most honest audit of your team you will get all year</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The window closes in about a month, so ask on a date rather than
+when you get round to it.</strong> Everything in this table depends on
+catching somebody while they can still see what is confusing — after that
+the sight is gone permanently and cannot be recovered by asking harder. Put
+the day-30 conversation in the calendar during week one.
+</div>
 </div>
 </div>
 </div>
@@ -96394,12 +96716,12 @@ fix; asking for more focus is not.
 </div>
 </div>
 <!-- ── TOPIC: MANAGING UP ────────────────────────────────────── -->
-<div class="topic" id="managing-up-cross-team-politics-picking-battles-and-being-ba" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="managing-up-cross-team-politics-picking-battles-and-being-ba" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⬆️</span>
 <span class="topic-name">Managing Up &amp; Cross-Team Politics — Picking Battles, and Being Backed</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96424,6 +96746,14 @@ continuously and in smaller pieces.
 <tr><td>Disagree privately, commit publicly</td><td>Buys you the right to disagree next time</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The first row is load-bearing; without it the other four do not
+work.</strong> A manager who has been surprised once discounts everything
+after, so bringing options and learning their pressures only pays on a
+foundation of never having to hear it from somebody else. The last row is
+what makes disagreement sustainable — argue hard in private, then back the
+decision, and you keep the right to argue next time.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96469,12 +96799,12 @@ got addressed and what did not.
 </div>
 </div>
 <!-- ── TOPIC: THE MANAGER'S CALENDAR ─────────────────────────── -->
-<div class="topic" id="your-calendar-is-the-strategy-where-a-managers-time-really-g" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="your-calendar-is-the-strategy-where-a-managers-time-really-g" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📅</span>
 <span class="topic-name">Your Calendar Is the Strategy — Where a Manager's Time Really Goes</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96499,6 +96829,13 @@ available.
 <tr><td>Thinking time</td><td>Almost always zero, and that is the actual problem</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the finding, and it is almost always zero.</strong>
+Every other category defends itself because somebody else is waiting;
+thinking time has no advocate and disappears first, which is why leaders end
+up reacting to a quarter they never planned. Book it as a recurring meeting
+with a name, because an unnamed gap in a calendar is an invitation.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96532,12 +96869,12 @@ calendars, and that leverage runs both ways.
 </div>
 </div>
 <!-- ── TOPIC: KEEPING TECHNICAL ENOUGH ───────────────────────── -->
-<div class="topic" id="keeping-technical-enough-credible-without-taking-the-work-ba" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="keeping-technical-enough-credible-without-taking-the-work-ba" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔧</span>
 <span class="topic-name">Keeping Technical Enough — Credible Without Taking the Work Back</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96561,6 +96898,13 @@ without needing to write the answer yourself.
 <tr><td>Cannot represent the work upward accurately</td><td>Your own management work does not get done</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Both columns are diagnosed by the team's behaviour rather than by
+your own sense of it.</strong> If they have stopped explaining, you have
+drifted; if they have stopped deciding, you are too close — and neither
+symptom is visible from the inside. Ask a senior engineer directly which way
+you are wrong; they know, and mostly will not volunteer it.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96646,6 +96990,14 @@ at this stage win more candidates than money does, and cost nothing.
 <tr><td>Answer their real question</td><td>Usually "what will my first six months be like?" — have an answer</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Ring them yourself, the same day, before any paperwork.</strong>
+Everything in this table is free and fast, and the candidate is comparing
+your process against another company's as a preview of what working there is
+like — a week of silence after a verbal yes is the most common way a good
+offer is lost. Exploding deadlines are the opposite mistake and select for
+exactly the candidate you did not want.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96663,12 +97015,12 @@ everyone still on the team remembers.
 </div>
 </div>
 <!-- ── TOPIC: PLANNING WITHOUT THEATRE ───────────────────────── -->
-<div class="topic" id="planning-without-theatre-roadmaps-velocity-honest-estimates" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="planning-without-theatre-roadmaps-velocity-honest-estimates" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗺️</span>
 <span class="topic-name">Planning Without Theatre — Roadmaps, Velocity &amp; Honest Estimates</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96716,6 +97068,13 @@ function, and it is worth recognising as one pattern rather than three coinciden
 <tr><td>Sizing a plan against observed throughput</td><td>Reporting it upward as productivity</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The moment it goes on a slide for anyone outside the team, it is
+finished as a measurement.</strong> Points are a local unit with no meaning
+across teams, so comparison and targets both produce inflation rather than
+throughput — and the number rises reassuringly while nothing changes. Keep
+it inside the team as a forecasting aid, and report outcomes upward instead.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96746,12 +97105,12 @@ makes an honest estimate safe to give.
 </div>
 </div>
 <!-- ── TOPIC: PM FOR TECHNICAL LEADS ─────────────────────────── -->
-<div class="topic" id="project-management-for-technical-leads-the-minimum-viable-pr" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="project-management-for-technical-leads-the-minimum-viable-pr" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📋</span>
 <span class="topic-name">Project Management for Technical Leads — The Minimum Viable Process</span>
 <span class="topic-badge">Leading Teams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96800,6 +97159,15 @@ are invisible on a board that only tracks your own tasks.
 <tr><td>Have a plan for the two most likely to slip</td><td>The whole project stopping while you invent one</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The second row is the one that separates a list from a
+plan.</strong> A dependency you wrote down and they never agreed to is not a
+dependency, it is an assumption with a due date — and it will fail silently,
+because nobody on the other side knows they are on your critical path.
+Confirm each one in writing with the named person, and the fourth row makes
+the rest survivable: check in before the date, when there is still time to
+react.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96821,17 +97189,25 @@ report status at all.
 <tr><td>"Slight delay"</td><td>"Two weeks late; here is the cause and the two options"</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Percentages are unfalsifiable, which is exactly why they are
+comfortable to report.</strong> "Sixty percent" cannot be checked and
+precedes every late project; "four of seven components, and the two hardest
+are not started" can be argued with, which is the property you actually want
+in a status report. It also costs less to say than it looks, because you
+already know the answer.
+</div>
 </div>
 </div>
 </div>
 </div>
 <!-- ── TOPIC: WHERE A BUILD COMES FROM ───────────────────────── -->
-<div class="topic" id="where-a-build-actually-comes-from-every-input-including-the-" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="where-a-build-actually-comes-from-every-input-including-the-" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏗️</span>
 <span class="topic-name">Where a Build Actually Comes From — Every Input, Including the Ones You Forgot</span>
 <span class="topic-badge">Supply Chain</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96878,6 +97254,15 @@ or three inputs nobody had thought of as inputs at all.
 <tr><td>Install and post-install scripts</td><td>Arbitrary execution at install time, on every machine</td><td>Disable where the ecosystem allows; review where it does not</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The runner and the continuous-integration plugins are the rows most
+teams have never looked at, and they hold every secret in the
+build.</strong> A third-party action pinned to a moving tag is arbitrary
+code with access to your credentials, refreshed silently whenever its author
+chooses — pin to a commit hash and use ephemeral runners, and two of the
+worst rows close. Do the enumeration for one real service before anything
+else; it is the part that finds inputs nobody counted.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -96985,6 +97370,14 @@ and take about five minutes to check.
 <tr><td>Whether you would use ten percent of it</td><td>The best dependency decision is frequently forty lines of your own code</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the best decision available and it is the one nobody
+makes.</strong> A package you would use a tenth of is a package whose whole
+surface, and everything under it, you have adopted — and writing the twenty
+lines yourself is frequently cheaper over five years than carrying the tree.
+Where you do adopt, the maintainer-count and install-script rows are the two
+that predict trouble.
+</div>
 </div>
 </div>
 </div>
@@ -97300,6 +97693,14 @@ satisfies a contractual clause.
 <tr><td>Coverage of what runs</td><td>Tie SBOMs to deployed digests, so the query returns services, not builds</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Generate at build time, or the inventory answers a different
+question from the one you will ask.</strong> A scan of a finished artefact
+reconstructs what it thinks is inside; a bill of materials produced by the
+build knows. And the last row is what makes it operational rather than
+contractual: tied to deployed digests, "are we affected" is a query, and
+everything else is a document somebody attaches to a tender.
+</div>
 </div>
 </div>
 <div class="concept-card">

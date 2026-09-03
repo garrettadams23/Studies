@@ -840,6 +840,17 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>7045</td><td>Service installed — classic psexec / persistence</td></tr>
                     <tr><td>1102</td><td>Audit log cleared — attackers covering tracks</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Turn on command-line auditing for 4688 today;
+                    without it the most useful row on this list records
+                    almost nothing.</strong> "A process started" is weak
+                    evidence, and "this process started with these
+                    arguments" is the single richest field in Windows
+                    telemetry — it is off by default and costs one policy
+                    setting. The last row is the other one to alert on
+                    unconditionally: an audit log cleared is not an event
+                    with a benign explanation.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -1402,6 +1413,17 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>SRUM</td><td>App resource/network usage over time</td></tr>
                     <tr><td>Jump Lists / LNK / Shellbags</td><td>Files &amp; folders a user opened</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>These matter precisely because the attacker
+                    deleted the binary, and they are also the ones that age
+                    out.</strong> Prefetch and the application caches will
+                    prove execution when nothing else can, and each has a
+                    limited size and lifetime — so the value of a forensic
+                    image collected today is far higher than one collected
+                    next month. Know which of these your imaging process
+                    actually captures; several are missed by a file-level
+                    copy.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -1460,6 +1482,15 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Chain of custody log</td><td>Who had it, when, why — an unbroken documented trail</td></tr>
                     <tr><td>Documentation</td><td>Record every action; reproducibility = credibility</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Assume every investigation might become legal,
+                    because you find out afterwards.</strong> The cost of
+                    following this table on an incident that never goes
+                    anywhere is a few hours; the cost of not following it on
+                    the one that does is the case. Hash on acquisition and
+                    start the custody log before analysis — those two are
+                    the ones that cannot be reconstructed later.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -2641,6 +2672,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Fails as</td><td>A missed incident</td><td>A rule everyone learned to ignore</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The failure row is the one to design against: a rule everyone
+          learned to ignore is worse than no rule.</strong> It consumes triage time,
+          it makes the coverage map lie, and it trains analysts to close alerts
+          without reading them — which is the habit that loses the real one. Treat
+          detections as software with owners, tests and a retirement path, and that
+          outcome becomes visible instead of ambient.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2700,6 +2739,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>7</td><td>Retire</td><td>The behaviour is impossible, better covered, or the rule is measurably useless</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Stage 4 is the one that turns a query into a detection.</strong> A
+          rule that has never fired on an emulated instance of the behaviour is a
+          hypothesis, and shipping it means you will discover it never worked during
+          the incident it was written for. Emulate the technique, watch it fire, keep
+          the artefact — that single step is what makes the rest of the pipeline
+          meaningful.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2721,6 +2768,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>"We have 900 rules and 40 fire"</td><td>7 — nothing has ever been retired</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Write the response before the rule ships, and the first symptom
+          disappears.</strong> "What is this alert telling me to do?" is answerable at
+          authoring time and unanswerable at three in the morning by somebody who did
+          not write it — which is why the requirement stage is the cheapest quality
+          control available. And put a review date on every rule, because retirement
+          never happens on its own.
+        </div>
       </div>
     </div>
   </div>
@@ -2824,6 +2879,13 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Fields present</td><td>The specific fields rules depend on, which vendors quietly change</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Draw the coverage map from the telemetry inventory, not from the
+          rule set.</strong> A rule reading a log source deployed on 40% of hosts
+          covers 40% of the estate, and a map built from rules will show it green —
+          which is the single most misleading artefact a security programme produces.
+          The estate-coverage column is the one to publish alongside every claim.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2886,6 +2948,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>"Whatever the vendor sent"</td><td>Nobody</td><td>The default, and the reason rule portability is usually zero</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Pick a schema deliberately, because the default in the last row is
+          the reason nothing is portable.</strong> Normalising at ingest costs work
+          once; leaving each source in whatever shape the vendor sent costs a rewrite
+          every time you change a product, and it makes shared rule content unusable.
+          Which schema matters far less than having one — the choice is between any of
+          the first three and permanent lock-in.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2971,6 +3041,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Test before deploy</td><td>Not possible</td><td>CI runs the rule's tests</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The rebuild row is the one that decides this on its own.</strong>
+          Losing a platform — a migration, a tenant mistake, a vendor change — is
+          weeks of reconstruction from memory when the rules live only in a console,
+          and a redeploy when they live in a repository. Everything else on the list
+          is quality of life; that one is whether the detection estate is recoverable
+          at all.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2992,6 +3070,13 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Metadata</td><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> mapping, severity, owner, log sources depended on</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The runbook belongs in the same commit as the logic, or it will
+          describe a rule that no longer exists.</strong> Documentation kept anywhere
+          else drifts, and the drift is invisible until an analyst follows steps for a
+          version that was tuned six months ago. Version them together and a rule
+          change that needs a runbook change cannot be merged without one.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3014,6 +3099,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Promote to production</td><td>—</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Build the first stage and stop; it catches most of what review
+          would, in an afternoon.</strong> Linting and schema validation prevent the
+          two breakages that actually reach production — an invalid rule and one
+          referencing a field that does not exist — and they need no test corpus, no
+          staging tenant and no cultural change. Add the rest as the rule set earns
+          them.
+        </div>
       </div>
     </div>
   </div>
@@ -3173,6 +3266,13 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Technique covered</td><td>Was covered, until a field rename in March</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Publish the map with its caveats attached, or do not publish
+          it.</strong> A heat map handed to an executive is read as capability, and
+          all four failure modes in the right-hand column are invisible on it — which
+          makes a well-intentioned artefact into a false assurance. If you must show
+          one, colour it by tested-and-deployed rather than by rule-exists.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3313,6 +3413,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>False-positive feedback</td><td>Where to report noise so the rule improves</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Write the known-benign row, because it is the one that saves the
+          most analyst time and the one authors skip.</strong> The engineer knows what
+          legitimately does this in your environment; the analyst at three in the
+          morning does not, and rediscovering it costs twenty minutes per alert
+          forever. Everything here is written once and read hundreds of times, which
+          is the best ratio in security operations.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3372,6 +3480,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Drop cloud audit logs</td><td>Identity-based attacks lose their only evidence trail</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Put a detection engineer in the room whenever ingest is cut, and
+          cost the loss in detections rather than gigabytes.</strong> Every row is a
+          spending decision that silently removes a capability, and the person making
+          it is usually optimising a bill with no visibility of what depends on the
+          source. "Dropping this saves £40k and ends endpoint behavioural detection"
+          is a decision somebody can make; "reduce ingest by 20%" is not.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3481,6 +3597,13 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Review exclusions on a schedule</td><td>The temporary ones outlive the thing they were for</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The third row is a security control, not hygiene.</strong> Excluding
+          on a filename, a path or a command line hands the adversary a published
+          bypass — they need only name their tool the same thing, and your own
+          allowlist carries them past the rule. Exclude on identity and host where you
+          can, on nothing the attacker chooses ever, and put a date on it either way.
+        </div>
       </div>
     </div>
   </div>
@@ -3514,6 +3637,13 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Best for</td><td>Known-bad, commodity tooling, intel-driven blocking</td><td>Hands-on-keyboard activity, novel tooling</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>You need both, and the evasion-cost row is why the behavioural half
+          cannot be skipped.</strong> Signatures are cheap, precise and free to evade
+          — a recompile defeats them — while behavioural rules force the adversary to
+          change how they work, which is expensive. A programme that is all signatures
+          looks excellent against last year's samples and catches nothing hands-on.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3649,6 +3779,15 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Rarity join</td><td>Common event, uncommon pairing</td><td>An ordinary binary run by a user who never runs it</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Reach for a stateful rule only when no single event could carry the
+          meaning.</strong> The absence and fan-out patterns are the two that
+          genuinely cannot be expressed any other way, and they are worth the cost;
+          thresholds are frequently a slower way of saying something one enriched
+          event already said. And when you do build one, write down where the window
+          came from — nobody can derive it later, and everybody will want to change
+          it.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3840,6 +3979,14 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>"Walk me through a rule you wrote."</td><td>Can you state its false positives honestly?</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The first question is the whole interview in miniature: ask what
+          telemetry exists before proposing a rule.</strong> A candidate who designs a
+          perfect detection for a log source the organisation does not collect has
+          demonstrated the exact failure the job is about. Prepare by having one
+          honest story about a rule you wrote, its false positives, and what you did
+          about them.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3898,6 +4045,16 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     <tr><td>False-positive rate falls</td><td>Fewer rules fire at all, which is not the same as being more accurate</td></tr>
                     <tr><td>Coverage rises</td><td>The matrix was coloured from rule inventory rather than from test results</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Every row here improves without anybody lying,
+                    which is what makes these metrics dangerous rather than
+                    merely imperfect.</strong> The person reporting decides
+                    what counts as detected, resolved or noise, and the
+                    incentive is to define the boundary favourably one small
+                    step at a time. If a number improved sharply without a
+                    corresponding change in practice, look for the
+                    definition that moved.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -3918,6 +4075,16 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     <tr><td><strong>Dwell time on confirmed incidents</strong></td><td>Measured backwards from evidence, not forwards from the ticket. Cannot be improved by narrowing the definition</td></tr>
                     <tr><td><strong>Analyst-hours per incident</strong></td><td>Reveals automation and tooling gaps that every quality metric hides</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Report telemetry coverage first; it is the one
+                    that cannot be argued with and the one that constrains
+                    everything else.</strong> A percentage of assets sending
+                    the log source is a fact about deployment, improvable
+                    only by deploying — and it explains most of what the
+                    gameable metrics were hiding. The card's own rule is the
+                    durable one: trust a metric roughly in proportion to how
+                    uncomfortable it is to publish.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">

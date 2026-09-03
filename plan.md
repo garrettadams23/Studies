@@ -18868,3 +18868,33 @@ pentest 31→0 m365 30→0       endpoint 27→0
 verdicts written by hand              508
 runway                                ~88 topics   (stop line: 40)
 ```
+
+### `eng` and `blueteam`, all 49 — fifteen domains, 557 verdicts
+
+`eng` is the domain where the tables are about people and money rather than
+systems, and the verdicts change shape accordingly: they name the row that is
+load-bearing for the rest, or the one everybody gives away without noticing.
+`blueteam` is detection engineering, where nearly every table has one row that is
+the difference between a control and a document.
+
+> **A cap on annual uplift beats a bigger discount almost every time, and it is
+> easier to get.**
+
+> **The first row is the one engineers give away without noticing, out of
+> helpfulness.** "We have about forty thousand for this" is answered by a quote
+> for thirty-nine.
+
+> **The last row is the finding, and it is almost always zero.** Thinking time has
+> no advocate and disappears first.
+
+> **Draw the coverage map from the telemetry inventory, not from the rule set.**
+
+> **Put a detection engineer in the room whenever ingest is cut, and cost the loss
+> in detections rather than gigabytes.**
+
+```
+tables_without_verdict   748 → … → 238 → 189
+fifteen domains cleared; only `script` (74) remains at any size
+verdicts written by hand              557
+runway                                ~84 topics   (stop line: 40)
+```
