@@ -61,7 +61,11 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # 712 -> 688: 24 more in `military`. The 12 left there are pure lookup tables
 # — the staff-code cross-matrix, the SF form series — where a verdict would be
 # filler. Deliberate, and recorded rather than chipped at.
-CEILINGS = {"inline style attribute": 1565, "table with no verdict": 688}
+#
+# 688 -> 635: all 53 in `ops`, the largest single domain pass so far and the
+# one where the rubric earns its keep — operations tables are lists of options,
+# and the missing sentence is always which option and when.
+CEILINGS = {"inline style attribute": 1565, "table with no verdict": 635}
 
 
 class Nesting(HTMLParser):

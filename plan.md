@@ -18559,3 +18559,37 @@ tables_without_verdict     748 → 712 → 688
 career                     36 → 0
 military                   36 → 12 (all 12 deliberate lookups)
 ```
+
+### `ops`, all 53, and the shape a verdict takes when the table is a list of options
+
+The third pass cleared `ops` entirely — the largest domain pass so far, and the
+one where the rubric was easiest to apply, because operations tables are almost
+always **lists of options with no recommendation**. The missing sentence is
+therefore always the same shape: *which one, and when*.
+
+> **Pick by the restore, not by the backup window.** The backup runs at three in
+> the morning when nobody is watching; the restore runs on the worst day of the
+> year with an executive standing behind you, and that is the column to optimise.
+
+> **Every row except the last describes luck, and luck is not a control.** The
+> pattern to look for is the word "happened" — happened to be looking, happened
+> to succeed, happened to know the trick.
+
+> **The split is between automating what a human was typing and automating what a
+> human was deciding.**
+
+One more landed under the wrong table and was caught by the same read-back check:
+the business-continuity card carries two tables, and a verdict about incremental
+versus differential backups ended up under the hot/warm/cold **site** table. The
+backup point already had its own card, so this one was rewritten to answer the
+table it actually sits under. **Two mis-landings in 113 verdicts, both found by
+printing the table header beside the verdict and reading the pair.**
+
+```
+tables_without_verdict   748 → 712 → 688 → 635
+career                   36 → 0
+military                 36 → 12 (deliberate lookups)
+ops                      53 → 0
+verdicts written by hand              113
+page raw                 7.4 MB, 8% headroom, ~127 topics of runway
+```
