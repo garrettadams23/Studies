@@ -68,6 +68,12 @@ jobs:
       - name: Lint content conventions
         run: python tools/lint_content.py
 
+      # The window that decides "is this already explained nearby" is measured
+      # in text, not in markup. A styling commit moved it once; this is so one
+      # cannot again.
+      - name: Acronym window is markup-independent
+        run: python tools/annotate_acronyms.py --self-test
+
       - name: Check inline acronym expansions
         run: python tools/annotate_acronyms.py --check
 

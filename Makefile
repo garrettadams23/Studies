@@ -48,6 +48,7 @@ check:
 	$(PY) tools/check_markup.py
 	$(PY) tools/lint_content.py
 	$(PY) tools/fix_topic_names.py --check
+	$(PY) tools/annotate_acronyms.py --self-test
 	$(PY) tools/annotate_acronyms.py --check
 	$(PY) tools/check_renames.py
 	$(PY) tools/check_contradictions.py --self-test

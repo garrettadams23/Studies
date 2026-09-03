@@ -109,9 +109,34 @@ def strip_tags(fragment):
     return html.unescape(TOKEN_RE.sub(" ", fragment))
 
 
+# How much text counts as "right next to", each side of the match. Measured in
+# *stripped text*, deliberately: the question is what a reader can see from
+# here, and counting raw HTML answers a different one. It used to slice
+# source[start-250:end+250] and strip afterwards, so the window shrank wherever
+# markup was dense and grew wherever it was sparse. Removing
+# `style="color: var(--purple)"` from three neighbouring cells was enough to pull
+# "Ticket Granting Service" into range of a `TGT` and delete its expansion — a
+# styling commit silently changing what the page explains.
+#
+# **180, because that is what the old rule was really doing.** Measured over
+# 9,328 matches, the raw 250-character slice stripped to a median of 182 text
+# characters — p10 126, p90 225 — so the reach was right and only the *unit* was
+# wrong. Picking 250 text characters instead would have widened it by 39% and
+# skipped 333 expansions, which is a different decision wearing this one's
+# clothes. At 180 the reach is held and 194 decisions change: the ones where
+# markup density, not distance, had been deciding.
+WINDOW = 180
+# Enough raw HTML to be sure of finding WINDOW characters of text inside it,
+# even where markup is at its densest. Slicing generously and trimming after is
+# cheaper than walking the document, and cannot under-read.
+RAW_WINDOW = 4000
+
+
 def already_expanded(source, start, end, expansion):
     """True when the expansion is already spelled out right next to the match."""
-    window = strip_tags(source[max(0, start - 250):end + 250]).lower()
+    before = strip_tags(source[max(0, start - RAW_WINDOW):start])[-WINDOW:]
+    after = strip_tags(source[end:end + RAW_WINDOW])[:WINDOW]
+    window = (before + strip_tags(source[start:end]) + after).lower()
     words = [w for w in re.findall(r"[a-z0-9]+", expansion.lower()) if len(w) > 3]
     if not words:
         words = re.findall(r"[a-z0-9]+", expansion.lower())
@@ -229,7 +254,48 @@ def annotate_text(text, terms, pattern, seen, source, offset):
     return "".join(pieces), added
 
 
+# The property the WINDOW comment above is really asserting: the decision must
+# depend on the text a reader sees, not on how much markup happens to surround
+# it. Each fixture is the same prose twice — once plain, once with the sort of
+# attributes a styling pass adds and removes — and the two must agree.
+_WORDS = "and the service that hands it out is documented just below in the table"
+_CELLS = " ".join(f'<td style="color: var(--cyan)" class="c-cyan">{w}</td>'
+                  for w in _WORDS.split())
+
+DENSITY_FIXTURES = [
+    # 71 characters of text, wrapped in 110 bytes of markup and then in 895 —
+    # the density of a real reference table. The raw-byte window answers True
+    # and False to the identical prose; this is the bug, reduced.
+    ("the same prose reads the same through dense markup",
+     f"<p>The TGT {_WORDS} Ticket Granting Ticket.</p>",
+     f'<p><span class="c-amber">The</span> TGT <table class="ref-table"><tr>{_CELLS}'
+     f"</tr></table> Ticket Granting Ticket.</p>"),
+    ("expansion far away is not seen, however sparse the markup",
+     "<p>The TGT is here.</p><p>" + ("filler words to push it away. " * 12)
+     + "Ticket Granting Ticket.</p>",
+     '<p style="color: var(--cyan)">The TGT is here.</p><p class="x">'
+     + ("filler words to push it away. " * 12) + "Ticket Granting Ticket.</p>"),
+]
+
+
+def self_test():
+    """The window must not move when only the markup around it does."""
+    failures = 0
+    for name, plain, dense in DENSITY_FIXTURES:
+        got = []
+        for src in (plain, dense):
+            i = src.index("TGT")
+            got.append(already_expanded(src, i, i + 3, "Ticket Granting Ticket"))
+        ok = got[0] == got[1]
+        failures += not ok
+        print(f"  {'ok  ' if ok else 'FAIL'} {name}  (plain={got[0]}, dense={got[1]})")
+    print(f"\nself-test: {len(DENSITY_FIXTURES)} fixtures, {failures} failure(s).")
+    return 1 if failures else 0
+
+
 def main():
+    if "--self-test" in sys.argv:
+        return self_test()
     check_only = "--check" in sys.argv
 
     total = 0

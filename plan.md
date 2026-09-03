@@ -58,7 +58,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Related links | **1,471 topics, 4,584 links, 0 one-way** | `suggest_related.py --check` |
 | Page budget | **4% raw** headroom — room for ~70 more topics | `page_budget.py` |
 | Throttled load | **~2.9 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
-| Gates | **29**, and the same 29 in `make all` and in CI | `check_gates.py` |
+| Gates | **30**, and the same 30 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
 
@@ -19616,4 +19616,78 @@ converted                            250 colour styles, 12 files, proved
 excluded by specificity                7 <th>, now a lint error
 deferred                              29 in sec.html, waiting on the annotator
 next                                  measure that window in text, not bytes
+```
+
+---
+
+## Session record — the window that was measured in markup
+
+The last wave deferred `sec.html` because a styling change had moved
+`annotate_acronyms.py`'s decision about whether an acronym is already explained
+nearby. That window was a ±250-character slice of **raw HTML**, stripped of tags
+only afterwards — so it asked "what can a reader see from here?" and answered by
+counting markup.
+
+### Measure first, and the measurement changed the fix
+
+The obvious repair is to strip first and then take 250 characters of text. That
+is what the first attempt did, and it flipped **334 of 9,328** decisions, all but
+one in the same direction — 333 expansions skipped. A change that one-sided is a
+warning, so the old rule's *real* reach got measured:
+
+```
+the raw 250-character slice, in text characters, one side
+  p10  126     p25  156     p50  182     p75  205     p90  225     mean 178
+```
+
+The reach was never 250. It was **about 180, give or take 50 depending on how
+much markup happened to be nearby.** So "250 text characters" would have widened
+the rule by 39% while claiming to fix its units — a different decision wearing
+this one's clothes.
+
+`WINDOW = 180`, the measured median, holds the reach and changes only what should
+change: **194 decisions, 57 of them gaining an expansion and 137 losing one**,
+which is the shape a correction should have. Site-wide the content moves by
+**3,739 → 3,728 expansions**, in both directions across 17 files: a glossary
+heading stops re-explaining AI two lines above the table that defines it; a card
+whose expansion sat behind a dense table gets one back.
+
+### The guard was vacuous, and testing the test is what found it
+
+`--self-test` now asserts the property the fix is really about: **the same prose
+must get the same answer however much markup surrounds it.** The first pair of
+fixtures passed — and then passed against the *old* implementation too, which
+means they tested nothing. The bug needs real density to reproduce:
+
+```
+71 characters of text, wrapped in 110 bytes of markup, then in 895
+  old (raw bytes)        plain=True   dense=False   <- the bug
+  new (stripped text)    plain=True   dense=True
+```
+
+With that fixture the guard fails on the old code and passes on the new, which is
+the only evidence that it guards anything. **A test written from the fix rather
+than from the failure will agree with whatever it is shown.** Same lesson as the
+cheat-sheet guard that enumerated what was wrong, arrived at from the other end.
+
+In `make check` and in CI — 30 gates now, still the same 30 on both sides.
+
+### And the ambiguity guard did its job on the way past
+
+Narrowing the window made `CSP` newly annotate in `ops`, where the dictionary
+holds **two** meanings — Content Security Policy and Configuration Service
+Provider — and no `byDomain` decision existed. `lint_content.py` refused the
+build and named the choice rather than guessing at it. The card is about web
+security headers and spells out `Content-Security-Policy` in the same paragraph,
+so `ops` is recorded as Content Security Policy.
+
+That guard has now caught an ambiguity introduced by a *tooling* change, not by
+new content — which is the case it was least likely to have been designed for.
+
+```
+already_expanded()   window measured in stripped text, WINDOW = 180
+expansions           3,739 -> 3,728 (net -11, 27 added, 38 removed)
+acronyms.json        CSP in `ops` decided, not guessed
+gates                29 -> 30
+next                 sec.html's 29 colour conversions, now unblocked
 ```
