@@ -50,11 +50,12 @@ The colours needed **seven exclusions the specificity rules above predict**: a
 header. That batch was written, measured, and seven elements put back before it
 shipped — see `dead_header_classes()`.
 
-`sec.html`'s 29 are deliberately not among them. Shortening its markup moved
-`annotate_acronyms.py`'s ±250-character window — which is measured in *raw HTML*,
-not in text a reader sees — and one acronym expansion was dropped as a side
-effect. A commit claiming a proved no-op should not carry the one domain where
-the proof does not hold, so those wait for the window to be fixed.
+`sec.html`'s 29 were deferred for a wave: shortening its markup moved
+`annotate_acronyms.py`'s window, which was measured in *raw HTML* rather than in
+text a reader sees, and one acronym expansion was dropped as a side effect. With
+that window fixed the same conversion leaves the annotator completely stable —
+**0 files out of date**, where the identical edit had rewritten one before — and
+they are in. **792 -> 430 -> 401.**
 
 `ai-table` is no longer a warning at all. It was labelled "prefer ref-table",
 which asserted a preference nobody had agreed and the stylesheet contradicts:
@@ -120,7 +121,7 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # The ceiling is 12 rather than 0 for that reason. If it ever reads 13, either
 # a new card ends on a table or one of those twelve was edited: both are worth
 # a look, which is what a ceiling at the true floor buys you.
-CEILINGS = {"inline style attribute": 430, "table with no verdict": 12}
+CEILINGS = {"inline style attribute": 401, "table with no verdict": 12}
 
 
 # A `style=` attribute is either avoidable or it is not, and the old count mixed

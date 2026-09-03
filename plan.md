@@ -19689,5 +19689,19 @@ already_expanded()   window measured in stripped text, WINDOW = 180
 expansions           3,739 -> 3,728 (net -11, 27 added, 38 removed)
 acronyms.json        CSP in `ops` decided, not guessed
 gates                29 -> 30
-next                 sec.html's 29 colour conversions, now unblocked
 ```
+
+### The deferred work, finished
+
+`sec.html`'s 29 colour conversions went in immediately after, and the evidence
+that the window fix worked is that **the identical edit that rewrote a file last
+wave now leaves the annotator completely stable** — `--check` reports 0 files out
+of date. `style_equiv.mjs`: 150,237 elements, no computed style changed.
+
+```
+inline style attribute (avoidable)   792 -> 680 -> 430 -> 401
+```
+
+**Nearly half the avoidable inline-style debt is gone in four proved steps**, and
+none of it could have been touched a day ago, because nothing could show a
+conversion was safe.
