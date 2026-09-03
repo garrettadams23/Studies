@@ -19416,3 +19416,70 @@ unexplained             17 -> 0
 verdict file            data/duplicate-verdicts.json, with staleness reporting
 content changed         none — the two that needed changing were merged already
 ```
+
+---
+
+## Session record — a ceiling that counted two populations, and so could not be worked
+
+`lint_content.py` tracks `inline style attribute` as a ceiling rather than a
+zero, because some of those styles can never become classes:
+`.ref-table td:first-child` sets a colour and a utility class on that cell
+provably cannot outrank it — the linter has an *error* for making exactly that
+mistake. The ceiling was 1,565 and the count had crept to **1,549**.
+
+Sixteen from firing. The next content wave would have failed the build.
+
+### The measurement
+
+Classifying every `style=` attribute by where it sits:
+
+```
+757   the first cell of a .ref-table row   — can never be a class
+375   a <div>                              — could be
+117   a <strong>
+116   a <table>
+ 71   a later cell in a table
+ 68   a <span>
+ 44   a <code>, <pre>, <a>
+────
+792   avoidable
+```
+
+**A ceiling over the sum ratchets down to 757 and then stops.** Worse, it was
+about to block a content wave over four new styles while 757 unavoidable ones sat
+underneath, permanently, doing nothing but consuming the budget. The number could
+not be worked, because it was two numbers.
+
+This is the **fourth instance this session** of the same defect: the gzip
+tripwire measuring a proportion in kilobytes, the search ceiling measuring a
+share in hits, the load threshold measuring a machine in milliseconds, and now a
+ceiling measuring two populations as one. The pattern is worth stating plainly:
+
+> **A ceiling only ratchets if everything under it can actually move.** Anything
+> in the count that is structurally fixed becomes a floor the number stalls at,
+> and the day it stalls is the day the ceiling starts blocking work instead of
+> tracking it.
+
+### What changed
+
+`inline_styles()` returns the two counts. The ceiling is **792**, exactly today's
+avoidable count and no slack — which is what a ratchet is for; the previous 16 of
+headroom was an accident of when the number was last set, not a decision. The 757
+are printed as a census line beside the `.ai-table` one, in the same "not debt"
+register.
+
+```
+TREND ambiguous=4 inline=1549 table=12      before
+TREND ambiguous=4 inline=792  table=12      after — the same page, a different question
+```
+
+### What this deliberately does not do
+
+It does not reduce the 792. The largest single shape is `margin-bottom: 14px`
+(112 of them) and converting it is a one-line class — but nothing here can prove
+the rendering did not change. `visual_test.mjs` shoots the **filter bar** and
+deliberately nothing else, because content screenshots fail on every content
+wave. So paying this debt down needs a check that does not exist yet: build
+before and after, then compare *computed* styles of the affected elements in a
+browser rather than pixels. That is a wave of its own, and it is now the thing
+standing between 792 and a real floor.

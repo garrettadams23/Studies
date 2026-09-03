@@ -14,11 +14,25 @@ ratchets — they can no longer regress:
   * hard-coded colours (was 148, of which 8 were never colours at all)
 
 `inline style attribute` is the third, and it graduated differently, because it
-can never reach zero: 806 of them colour the first cell of a `.ref-table`, where
-a utility class provably cannot win on specificity. So it is a **ceiling**
+can never reach zero: hundreds of them colour the first cell of a `.ref-table`,
+where a utility class provably cannot win on specificity. So it is a **ceiling**
 rather than a zero — the count may fall and may not rise. It was 2,707 when the
 ceiling was introduced and 1,565 immediately after, because 1,142 of them were
 one shape (`.concept-desc` with a top margin) that already had a class name.
+
+**And then it stopped meaning anything, because it counted two populations.**
+At 1,534 topics there were 1,549 attributes: **757 on a `.ref-table` first cell,
+which can never become classes, and 792 which could.** A ceiling over the sum
+ratchets down to 757 and then stops, and it had already crept to within 16 of
+firing — so the next content wave would have failed the build over four styles
+while 757 unavoidable ones sat underneath doing nothing. The ceiling now tracks
+the 792; the 757 are reported as a census line. Same defect as the gzip
+tripwire and the search ceiling: **a single number over a mixed population
+cannot be acted on.**
+
+The ceiling therefore sits *exactly* at today's avoidable count, with no slack —
+which is what a ratchet means. A new card that genuinely needs an inline style
+raises it deliberately, in its own commit, with the reason written here.
 
 `ai-table` is no longer a warning at all. It was labelled "prefer ref-table",
 which asserted a preference nobody had agreed and the stylesheet contradicts:
@@ -84,7 +98,47 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # The ceiling is 12 rather than 0 for that reason. If it ever reads 13, either
 # a new card ends on a table or one of those twelve was edited: both are worth
 # a look, which is what a ceiling at the true floor buys you.
-CEILINGS = {"inline style attribute": 1565, "table with no verdict": 12}
+CEILINGS = {"inline style attribute": 792, "table with no verdict": 12}
+
+
+# A `style=` attribute is either avoidable or it is not, and the old count mixed
+# the two. `.ref-table td:first-child` sets a colour, and a utility class on that
+# cell provably cannot outrank it — `dead_first_cell_classes()` below is an error
+# for exactly that mistake. So those styles can never become classes, and a
+# ceiling that counts them alongside the ones that could is a number nobody can
+# act on: it stalls at whatever the unavoidable population happens to be.
+#
+# Measured at 1,534 topics: 1,549 attributes, of which 757 are that first cell.
+# The ceiling now tracks the other 792.
+def inline_styles(text):
+    """(avoidable, unavoidable) counts of `style=` in one domain file.
+
+    Unavoidable means the first cell of a `.ref-table` row. Everything else —
+    a `<div>`, a `<strong>`, a `<table>`, a later cell — could carry a class
+    instead, whether or not anybody has written that class yet.
+    """
+    avoidable = unavoidable = 0
+    table_cls, cell = None, 0
+    for m in re.finditer(r"<(/?)(\w+)([^>]*)>", text):
+        close, tag, attrs = m.group(1), m.group(2).lower(), m.group(3)
+        if tag == "table":
+            if close:
+                table_cls = None
+            else:
+                cm = re.search(r'class="([^"]*)"', attrs)
+                table_cls = cm.group(1) if cm else ""
+        elif tag == "tr" and not close:
+            cell = 0
+        elif tag in ("td", "th") and not close:
+            cell += 1
+        if close or 'style="' not in attrs:
+            continue
+        if (tag in ("td", "th") and cell == 1
+                and table_cls is not None and "ref-table" in table_cls):
+            unavoidable += 1
+        else:
+            avoidable += 1
+    return avoidable, unavoidable
 
 
 class Nesting(HTMLParser):
@@ -473,6 +527,7 @@ def main():
     today = datetime.now(timezone.utc).strftime("%Y-%m")
     all_titles, xrefs = set(), []
     ai_tables = 0
+    first_cell_styles = 0
 
     # Domain order matters: script.js walks .domain-section in document order,
     # so a collision is only real if it survives that ordering.
@@ -603,7 +658,9 @@ def main():
             warns["table with no verdict"] += sum(
                 1 for _ in tables_without_verdict(text))
 
-        warns["inline style attribute"] += len(re.findall(r'\bstyle="', text))
+        avoidable, unavoidable = inline_styles(text)
+        warns["inline style attribute"] += avoidable
+        first_cell_styles += unavoidable
         ai_tables += text.count('class="ai-table"')
 
     # Cross-references, once every title is known.
@@ -656,6 +713,9 @@ def main():
 
     print(f"{ai_tables} .ai-table(s) in use — the second table style, not debt. "
           f"See this file's docstring.\n")
+    print(f"{first_cell_styles} inline style(s) on the first cell of a .ref-table row "
+          f"— unavoidable, not debt: a class there provably cannot win. Reported so "
+          f"the ceiling below can mean the ones that could be classes.\n")
     print("Warnings (tracked, not blocking):")
     for k, v in sorted(warns.items(), key=lambda kv: -kv[1]):
         ceiling = CEILINGS.get(k)
