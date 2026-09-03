@@ -34338,7 +34338,9 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
 <div class="concept-desc verdict">
 Then enforce it: an admission controller can <strong class="c-green">reject
 unsigned images</strong> at deploy time — provenance you actually check, not just
-generate.
+generate. Generating an SBOM is the easy half and the
+half that gets done; <span class="xref" data-xref="sbom-in-practice-vex-querying-it-and-saying-not-affected-cre" role="link" tabindex="0">SBOM in Practice &amp; VEX — Querying It, and Saying "Not Affected" Credibly</span>
+is the other one.
 </div>
 </div>
 </div>
@@ -108455,12 +108457,12 @@ to contain. That is the same drift the servicing split describes in
 </div>
 </div>
 <!-- ── TOPIC: WINDOWS AUTOPATCH ──────────────────────────────── -->
-<div class="topic" id="windows-autopatch-what-it-takes-over" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="windows-autopatch-what-it-takes-over" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤖</span>
 <span class="topic-name">Windows Autopatch — What It Takes Over</span>
 <span class="topic-badge">Intune • Servicing</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -108499,6 +108501,37 @@ devices where update babysitting is eating a person.
 <strong class="c-red">Poor fit:</strong> heavily regulated change windows,
 machines pinned to a validated OS <span class="acro-exp">(Operating System)</span> build, or anywhere "we patch when the plant is
 down" is a real constraint.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">What Surprises People in the First Quarter</div>
+<div class="concept-desc">
+None of these is a defect; each is the service doing what it says, meeting an
+assumption nobody wrote down. They surface weeks after enrolment, which is
+also when the old configuration has stopped being fresh enough to go back to.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>The assumption</th><th>What actually happens</th></tr></thead>
+<tbody>
+<tr><td>"Our rings carry over"</td><td>Populations are rebuilt and balanced by the service; the groups you curated become an input at best</td></tr>
+<tr><td>"We can pause one ring"</td><td>Pausing is a blunter instrument than the per-ring control you had</td></tr>
+<tr><td>"Compliance will look better"</td><td>It is measured differently, so the trend line breaks at the enrolment date and comparisons across it are meaningless</td></tr>
+<tr><td>"Excluded devices stay excluded"</td><td>Registration is the boundary, not policy — a device that gets registered is in scope</td></tr>
+<tr><td>"It halts a bad rollout"</td><td>On <em>its</em> signals, which do not include your line-of-business app falling over</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+The last row is the one worth planning for: <strong class="c-amber">the service
+watches the platform, and you still have to watch the applications.</strong> So
+the question before enrolling is not whether Autopatch is good — it is whether
+the exception rate is low enough that a service optimising for the whole fleet
+is also optimising for you. The number that answers it already exists: how many
+devices currently sit outside your standard rings, and why. If that list is
+short and boring, this is a straightforward win; if every entry has a story,
+the stories are the workload and Autopatch does not take them.
 </div>
 </div>
 </div>

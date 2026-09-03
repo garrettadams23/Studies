@@ -20330,3 +20330,47 @@ And the cost, stated rather than skipped: it is public, durable, and ages — a
 confident post about a technology used for a week is equally findable, by the
 same search. One filter resolves both: *would I still stand behind this in three
 years, in front of somebody who knows the subject?*
+
+---
+
+## Session record — the sibling rule applied in both directions
+
+Two cards, one wave, and the rule from two waves ago deciding which treatment
+each got.
+
+**A pointer, because the depth exists.** `[devops] Software Supply Chain
+Security — SBOM, SLSA & Sigstore` is 1,569 characters and one card, and `eng`
+carries `SBOM in Practice & VEX` at 4,221. So the devops card keeps its tools
+table and gains one sentence: *generating an SBOM is the easy half and the half
+that gets done* — then points at the other one.
+
+**Depth, because it does not.** `[endpoint] Windows Autopatch — What It Takes
+Over` sits beside *Windows Update for Business — Rings, Deferrals & Deadlines*
+(3,779) and *Feature vs Quality vs Driver Updates* (3,498) — adjacent, and
+neither about the handover.
+
+```
+1 card, 1,757 chars   ->   2 cards, 3,519 chars
+```
+
+**What surprises people in the first quarter**, and none of it is a defect —
+each is the service doing what it says, meeting an assumption nobody wrote down.
+Rings do not carry over, they are rebuilt. Pausing is blunter than the per-ring
+control that was given up. Compliance is measured differently, so *the trend line
+breaks at the enrolment date* and comparisons across it are meaningless.
+Registration is the boundary, not policy. And the rollout halts on the service's
+signals, which do not include the line-of-business app falling over.
+
+The decision that falls out: not *is Autopatch good* but **is the exception rate
+low enough that a service optimising for the fleet is optimising for us** — and
+the number already exists. How many devices sit outside the standard rings, and
+why? If that list is short and boring it is a straightforward win; if every entry
+has a story, the stories are the workload, and Autopatch does not take them.
+
+### A small mechanical note
+
+The xref was written from memory and did not match the target title. The
+established form was already in the corpus — the acronym expansions are dropped,
+the rest is exact — and copying an existing xref is more reliable than
+reconstructing one. `lint_content.py` would have caught it either way, which is
+why it is a note rather than a lesson.
