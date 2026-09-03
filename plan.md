@@ -57,6 +57,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Learning paths | **101 paths, 1,570 steps, 1,475 of 1,535 topics** | `check_paths.py` |
 | Related links | **1,473 topics, 4,588 links, 0 one-way** | `suggest_related.py --check` |
 | Page budget | **4% raw** headroom — room for ~69 more topics | `page_budget.py` |
+| Throttled load | **~2.9 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Gates | **29**, and the same 29 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
@@ -2294,7 +2295,9 @@ shipped in the Track AJ wave. Read the ticks, not the original list.*
   `href="#"` and **one** external link in 1,355 topics. Cross-references are the real mechanism, and
   all 201 are checked by `lint_content.py` and now resolved to ids by `build.py`. There is nothing
   left for this item to check; it was written before the `xref` convention existed.
-- [x] **Performance budget** — `tools/page_budget.py`, in CI, four metrics with headroom.
+- [x] **Performance budget** — `tools/page_budget.py`, in CI, four metrics with headroom. Its
+  companion is `tools/measure_load.mjs` (`make measure`), which produces the measurement the
+  budget stands for: a measurement, not a gate, deliberately outside `make all`.
 - [x] **Visual regression** — `tools/visual_test.mjs`, in CI and behind `make visual`. Deliberately
   **not** "a few representative topics": it shoots the **filter bar** in both themes and nothing
   else. Content screenshots fail on every content wave, and a check that fails constantly is one
@@ -5174,6 +5177,14 @@ written against an assumption that lazy loading will rescue it.
 > full-text search into partial search. Bytes stopped being the binding
 > constraint, so the trade is no longer worth making: the site keeps full-text
 > search and does not build the trimmed index.
+>
+> **The 3-second trigger is retired — see the record "The load-time table was
+> wrong, and the trigger could not be checked".** Re-measuring on a different
+> machine gives ~2.9 s for the *same commit* that reads ~1.2 s elsewhere, so a
+> threshold in absolute milliseconds cannot be evaluated anywhere but where it
+> was set. What replaces it is a within-run shape test, in `page_budget.py`'s
+> docstring. The other half of the trigger — "or `page_budget.py` actually
+> fails" — is unaffected and still stands.
 
 ## 4c. Session 19 — the `script` duplication, resolved and partly disproved
 
@@ -19014,3 +19025,93 @@ page raw                              7.7 MB, 4% headroom, ~69 topics of runway
 page budget across the session — deliberately, and it is spent. At ~69 remaining
 the next structural conversation in `page_budget.py` is closer than any content
 plan, and the stop line written down earlier (40) is now two content waves away.
+
+---
+
+## Session record — the load-time table was wrong, and the trigger could not be checked
+
+`page_budget.py` ended with an instruction: *"Re-measure there rather than
+assuming this table still holds."* Nobody could have followed it — there was no
+tool, only a table someone had produced once by hand. So it went on being quoted
+— and each of its three claims fails, in a different way.
+
+**`tools/measure_load.mjs` is now that tool** (`make measure`). It duplicates the
+deferred domain blocks 0-3x, loads each under a 4x CPU throttle, and times
+everything with the Navigation Timing API *inside* the page, which is the one
+measurement lesson this file has carried since session 19 and the one an ad-hoc
+harness keeps getting wrong. It is deliberately outside `make all`: it
+is a measurement, it never fails on a number, and `check_gates.py` is untouched
+by it (29 gates, still the same 29 on both sides).
+
+### Three findings, and only one of them was expected
+
+**1. The absolute milliseconds do not transfer between machines.** The old table
+says 1,164 ms at 8.1 MB. The identical procedure on this container says ~2,900 ms
+at 7.7 MB. Neither is wrong; neither is a reader's phone — and unthrottled, the
+same page on the same container loads in **629 ms**.
+
+**2. Load is not linear in raw size, because most of it is not raw size.**
+Running every variant a second time with `script.js` stubbed out splits the cost,
+and the split is the interesting number:
+
+```
+mult   raw MB   tokenise only   with script.js   script.js's share
+ 0x      0.4          533 ms           554 ms              21 ms
+ 1x      7.7        1,917 ms         3,126 ms           1,209 ms
+ 2x     14.9        3,308 ms         4,183 ms             875 ms
+ 3x     22.2        3,469 ms         4,390 ms             921 ms
+```
+
+**script.js's share is flat** — about a second whether the page carries one copy
+of the library or three. That is the deferral doing exactly what it was built to
+do, and this is the first measurement that says so rather than assuming it. What
+grows is the browser's own tokenising, ~190 ms per MB across the first two steps.
+(The 3x step came in at a third of that. One run each is not enough to call it a
+ceiling, and it does not change the decision either way.)
+
+So load decomposes as **~0.5 s shell + ~1.0 s script.js + ~190 ms per MB**. At
+today's size the fixed 1.5 s is *larger* than the 1.4 s the content costs.
+**Trimming the library cannot get below that floor** — worth knowing before
+anyone proposes deleting cards to make the page fast.
+
+**3. The search and heap columns were never measurable this way.** The
+duplication multiplies markup; it does not touch the id map `build.py` inlines as
+JSON, which is what `topicIndex()` — and therefore search — reads. The tool now
+prints `blocks` and `indexed` side by side to say so out loud: blocks go 30 -> 90
+while indexed stays at 1,535. Those columns are flat **by construction**, and the
+old table's rising ones cannot be reproduced by this model. Nothing here bounds
+search or heap, and the file now says that instead of implying otherwise.
+
+### The trigger that could not be evaluated
+
+§4b set the revisit line for lazy-loading at *"the throttled load passes roughly
+3 s"*. On this container, today's page is already there. On the machine that set
+the line, it would not be. The line is not conservative or generous — it is
+**unevaluable**, an absolute number standing in for something relative.
+
+That is the **third instance of the same defect this fortnight**: the gzip
+tripwire that measured a proportion of a growing corpus in kilobytes, the
+`search_test.mjs` ceiling that measured a share of the corpus in hits, and now
+a load threshold that measures a machine in milliseconds. The fix is the same
+shape every time — express it as a ratio the run can compute for itself.
+
+**The replacement is a shape test:** revisit when the 1x -> 2x load delta stops
+being *smaller* than the 0x -> 1x delta. Today they are 2.5 s and 1.3 s. It is
+computable from one `make measure` run on any machine, and it doubles as a
+regression detector for the deferral itself — if doubling the content ever costs
+what the first copy cost, the deferral has stopped deferring.
+
+### What did not change, and why that is the result
+
+**`raw_mb` stays at 8.0.** The runway is ~69 topics and the instinct after a
+measurement like this is to spend it. The measurement does not support that:
+raising a ceiling needs a *positive* argument, and the one that would supply it
+is precisely what this model cannot make — search and heap against a real index
+of N topics. The absence of a reason to keep 8.0 is not a reason to move it.
+
+```
+tools/measure_load.mjs        new   (make measure — a measurement, not a gate)
+gates                          29   unchanged, still the same 29 on both sides
+BUDGET values                   4   unchanged, deliberately
+docstring claims retired        3   the 125 ms/MB line, the 22 MB headroom, the 3 s trigger
+```

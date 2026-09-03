@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test a11y og og-check visual all fmt acronyms stamp census clean help search browser resilience mobile backup
+.PHONY: build check test a11y og og-check visual all fmt acronyms stamp census clean help search browser resilience mobile backup measure
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -68,6 +68,14 @@ census:
 	@echo "── duplicates ──"  && $(PY) tools/near_duplicates.py
 	@echo "── orphans ──"     && $(PY) tools/orphan_report.py
 	@echo "── questions ──"   && $(NODE) tools/query_probe.mjs --zero
+
+## measure: time the load, and what N times the content would do to it
+#
+# Not in `make all` and it never fails: page_budget.py enforces a size, this is
+# the measurement that size stands for. Its own output says which of its columns
+# mean anything — read that before quoting one.
+measure:
+	$(NODE) tools/measure_load.mjs
 
 ## test: drive the built page in a real browser (needs playwright + chromium)
 test:

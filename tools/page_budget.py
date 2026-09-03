@@ -41,18 +41,7 @@ is not, and the reason is structural rather than a matter of taste:
                                   every load, cache or no cache
 
 So the number that was being enforced is the one that amortises away, and the
-number that was not being enforced is the one paid on every visit. Measured by
-duplicating the deferred blocks (the load path never parses them, so this
-models "the same page with N times the cards"), Chromium at 4x CPU throttle:
-
-    raw size    ~topics   load event   search (warm)   JS heap
-     4.1 MB      1,080       768 ms          57 ms      14 MB   <- today
-     8.1 MB      2,150     1,164 ms          97 ms      26 MB
-    12.2 MB      3,230     1,822 ms         147 ms      40 MB
-    16.3 MB      4,300     2,298 ms         179 ms      69 MB
-
-Linear, about 125 ms of load per additional MB. The 3-second throttled-load
-line session 19 set as its revisit trigger is not reached until roughly 22 MB.
+number that was not being enforced is the one paid on every visit.
 
 The owner's call, explicitly: a slow first visit does not matter for this site.
 That is the one cost of ignoring bytes — nobody else pays it, since Netlify's
@@ -63,10 +52,85 @@ raw_mb always fails first and gzip_kb only fires if something goes wrong that
 bytes see and raw size does not. It was 2,200 KB, from a 3.85x ratio; the ratio
 has since drifted, and the section below is what that cost.
 
-raw_mb is set to 8.0 because a budget that will actually be reached is worth
-more than one that will not: it is ~1,000 more cards, and ~1.2 s of throttled
-load when it lands. Re-measure there rather than assuming this table still
-holds.
+## Re-measured at 1,535 topics, and what the old table got wrong
+
+This file used to carry a four-row table ending "linear, about 125 ms of load
+per additional MB", and told the next person to re-measure without leaving them
+anything to re-measure with. `tools/measure_load.mjs` is now that thing
+(`make measure`). Three runs, this container, Chromium at 4x CPU throttle:
+
+    mult   raw MB   domInteractive   load event   search   JS heap   indexed
+     0x      0.4          416-531      461-561      2 ms     10 MB     1,535
+     1x      7.7        1884-2005    2726-3027     33 ms     28 MB     1,535
+     2x     14.9        3207-3467    4199-4400     34 ms     28 MB     1,535
+     3x     22.2        3362-3691    4337-4735     35-41ms   28 MB     1,535
+
+Unthrottled on the same container the 1x page loads in **629 ms**, so the 4x
+throttle is doing what it is there for — standing in for a slow phone — and
+none of these figures describes the machine anyone actually develops on.
+
+**Three things in that table contradict the one it replaces.**
+
+*The absolute figures do not transfer.* The old table says 1,164 ms at 8.1 MB;
+the same procedure here says ~2,900 ms at 7.7 MB. Neither machine is wrong and
+neither is a reader's phone. So a threshold written in milliseconds cannot be
+checked anywhere but where it was set — see the revisit trigger below.
+
+*Load is not linear in raw size, because most of it is not raw size.* Running
+each variant twice, once with script.js stubbed out, splits the cost:
+
+    mult   tokenise only   with script.js   script.js's share
+     0x          533 ms           554 ms              21 ms
+     1x        1,917 ms         3,126 ms           1,209 ms
+     2x        3,308 ms         4,183 ms             875 ms
+     3x        3,469 ms         4,390 ms             921 ms
+
+**script.js's share is flat**: ~1 s whether the page carries one copy of the
+library or three. That is the deferral working exactly as designed — it was
+built so the load path never parses the content, and this is the measurement
+that says so. What grows is the browser's own tokenising, ~190 ms per MB across
+the first two steps (the 3x point came in below that line in the one run made,
+which is not enough to call a ceiling).
+
+So the load decomposes, on this machine, as **~0.5 s of shell + ~1.0 s of
+script.js + ~190 ms per MB of content**. At today's 7.7 MB the fixed 1.5 s is
+larger than the 1.4 s the content costs. **Trimming content cannot get below
+that floor**, which is worth knowing before anyone proposes shrinking the
+library to make the page fast.
+
+*The search and heap columns were never measurable this way.* The duplication
+multiplies the markup; it does not touch the id map build.py inlines as JSON,
+which is what topicIndex() and therefore search read. Measured: `blocks` goes
+30 -> 90 while `indexed` stays at 1,535. Search and heap are flat **by
+construction**, so the old table's rising search and heap columns cannot be
+reproduced by this model and nothing here bounds either. Sizing them needs a
+different model — real extra topics, or a synthetic index.
+
+### The revisit trigger, corrected
+
+Session 19 set one: revisit lazy-loading when the throttled load passes ~3 s.
+On this container today's page is already there, and on the machine that set the
+line it would not be. **The trigger is unevaluable as written** — it is an
+absolute number standing in for something relative, which is the same defect as
+the gzip tripwire below and the absolute ceiling in `search_test.mjs`, now the
+third instance.
+
+What replaces it is a *shape* test, computable from a single `make measure` run
+on whatever machine is to hand and therefore portable: **revisit when the
+1x -> 2x load delta stops being smaller than the 0x -> 1x delta.** Today they
+are 2.5 s and 1.3 s — decelerating hard, because the growing term is tokenising
+and the fixed term is not. If doubling the content ever costs what the first
+copy cost, something structural has changed (the likeliest being that the
+deferral stopped deferring), and that is worth acting on wherever it is seen.
+
+### Why raw_mb stays at 8.0
+
+Not because 8 MB is where the page becomes slow — the curve says it is not.
+Because **raising a ceiling needs a positive argument**, and the measurement
+that would supply one is the one this model cannot make: search and heap against
+a real index of N topics. Until that exists, raw_mb is a proxy that at least
+fails on something, and 8.0 is where it was set. Move it when the missing
+measurement exists, not when the runway gets short.
 
 ### The tripwire had got in front of the wall
 
@@ -118,7 +182,7 @@ PAGE = ROOT / "index.html"
 # values. raw_mb is the one meant to bind; the other three sit behind it so that
 # whichever fails, it is the one a content wave actually moves.
 BUDGET = {
-    "raw_mb": 8.0,                # ~1.2 s throttled load, ~2,150 topics. The real ceiling.
+    "raw_mb": 8.0,                # the real ceiling — held, not derived from load time; see above
     "gzip_kb": 2_350,             # what 8.0 MB compresses to, with room for ratio drift — see below
     "dom_elements": 1_500,        # built at load: shell + one header per domain. ~70 domains of room
     "content_elements": 175_000,  # the deferred library at the raw_mb ceiling, at 80 elements/topic
