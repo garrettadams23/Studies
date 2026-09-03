@@ -1,0 +1,104 @@
+{
+  "_comment": [
+    "Near-duplicate pairs that have been opened and read, with the verdict.",
+    "plan.md Phase 9 §3's test is: open both, and write one sentence saying who",
+    "each is for. If the sentence is the same, one of them should not exist.",
+    "This file is where that sentence goes, so tools/near_duplicates.py can stop",
+    "reporting a pair as unread once somebody has read it.",
+    "",
+    "A pair is keyed by domain and title exactly as the census prints them. A",
+    "retitle therefore invalidates the verdict, which is correct: a new title can",
+    "change the answer. near_duplicates.py reports entries whose pair no longer",
+    "scores above the floor, so this file cannot quietly rot.",
+    "",
+    "Only 'keep' verdicts belong here. A pair that should be consolidated is not",
+    "recorded, it is merged - see tools/retire_topic.py."
+  ],
+  "verdicts": [
+    {
+      "a": ["net", "OSI Model — 7 Layers"],
+      "b": ["net", "TCP/IP Model — 4 Layers vs OSI Mapping"],
+      "why": "Two different reference models: the seven-layer teaching model, and the four-layer one the internet actually runs — which exists to map onto it."
+    },
+    {
+      "a": ["grc", "Risk Management Lifecycle"],
+      "b": ["ops", "Vulnerability Management Lifecycle"],
+      "why": "Different objects, same word. One cycles risks a business accepts or treats; the other cycles findings a scanner produced."
+    },
+    {
+      "a": ["devops", "Message Queues &amp; Event-Driven Architecture"],
+      "b": ["eng", "Event-Driven Architecture"],
+      "why": "One is for choosing and operating the queue — pub/sub, delivery guarantees, idempotence. The other is for the reasoning change events force, where you trade the stack trace for a correlation ID."
+    },
+    {
+      "a": ["linux", "Linux File Permissions Model"],
+      "b": ["linux", "Linux Permissions — Who Can Do What, In Depth"],
+      "why": "One is the model — the bit layout, and what those bits mean on a directory, where write lets you delete a file you cannot read. The other is the job: read it, change it, and the four mechanisms that override it."
+    },
+    {
+      "a": ["script", "Progressive Web Apps (PWA) — Web Apps That Feel Native"],
+      "b": ["web", "Progressive Web Apps — Offline &amp; Installable"],
+      "why": "The teaching card and the caveat card: four cards introducing service workers, beside the one saying a service worker makes the browser a distributed-systems node."
+    },
+    {
+      "a": ["sec", "OWASP Top 10 — The Most Critical Web Security Risks"],
+      "b": ["sec", "The OWASP API Security Top 10 — Where the Web List Stops Being Enough"],
+      "why": "Two different lists. The API list exists because the API's bugs are not the web list's, which the second card's own subtitle says."
+    },
+    {
+      "a": ["sec", "OWASP Top 10 — The Most Critical Web Security Risks"],
+      "b": ["pentest", "OWASP Top 10 (2021)"],
+      "why": "An explainer beside the list itself for exam recall — §3's reference row, which the census cannot see here because the card is a list without calling itself one."
+    },
+    {
+      "a": ["ops", "Asset &amp; Configuration Management — A CMDB That Stays True"],
+      "b": ["devops", "Configuration Management — Ansible &amp; the Alternatives"],
+      "why": "A name collision. One is ITIL — a CMDB that stays true, and why most are wrong. The other is Ansible — making servers match a desired state."
+    },
+    {
+      "a": ["script", "SOLID Principles — Writing Code That Survives Change"],
+      "b": ["eng", "SOLID Principles"],
+      "why": "The teaching card and the caveat card: five principles with a before-and-after, beside 'an interface with one implementation is a guess about the future'."
+    },
+    {
+      "a": ["cloud", "AWS IAM — Users, Roles &amp; Policies"],
+      "b": ["cloud", "AWS IAM Deep — AssumeRole, STS &amp; Boundaries"],
+      "why": "The basics — who can do what, and iam:PassRole — beside the delegation layer: AssumeRole, STS, and why a permission can be granted and still denied. The level marker is in the title, not the badge, which is why §3's first row cannot see it."
+    },
+    {
+      "a": ["net", "Network Automation — Ansible, Netmiko &amp; NAPALM"],
+      "b": ["script", "Network Automation – Configuring Switches &amp; Routers with Python ▶"],
+      "why": "The teaching card and the caveat card: connecting with Netmiko and looping over devices, beside 'the config is not the state, and the device you lock out is the one you are standing in'."
+    },
+    {
+      "a": ["devops", "Container Security — Hardening Docker &amp; Images"],
+      "b": ["cloud", "Container Breakout Paths &amp; Pod Security Standards"],
+      "why": "Hardening the image beside the escape paths — what to do, and what an attacker reaches for when you did not."
+    },
+    {
+      "a": ["script", "API Design — Versioning, Pagination, Rate Limits &amp; Idempotency"],
+      "b": ["eng", "API-First &amp; Contract-Driven Design"],
+      "why": "The teaching card and the caveat card: versioning, pagination and rate limits, beside the contract and the three questions to ask of it."
+    },
+    {
+      "a": ["script", "OLTP vs OLAP — Transactional vs Analytical Data"],
+      "b": ["data", "OLTP vs OLAP — Rows vs Columns"],
+      "why": "The teaching card and the caveat card: two jobs and two storage layouts, beside 'the update is the problem, not the query'."
+    },
+    {
+      "a": ["script", "Web Accessibility (a11y) — Building for Everyone"],
+      "b": ["web", "Web Accessibility (a11y) — WCAG &amp; ARIA"],
+      "why": "The teaching card and the caveat card: POUR and the highest-impact habits, beside 'a clean automated scan is the floor, not the result'."
+    },
+    {
+      "a": ["sec", "Secrets Management — Stop Hardcoding Passwords"],
+      "b": ["devops", "Secrets Management — Vault &amp; Kubernetes Secrets"],
+      "why": "The essentials card and the caveat card: where secrets leak and what to store them in, beside 'nothing can be rotated, because rotation was never once performed'."
+    },
+    {
+      "a": ["ops", "Difficult Conversations — Angry Users, VIP Pressure &amp; Saying No"],
+      "b": ["eng", "Feedback &amp; Difficult Conversations — Specific, Timely &amp; Survivable"],
+      "why": "Different audiences. A service desk facing an angry user and VIP pressure, and a team lead giving feedback to a report."
+    }
+  ]
+}

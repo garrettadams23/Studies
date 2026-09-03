@@ -51,7 +51,15 @@ sheets among them. Both are now structural signals; see `_SHAPE_BADGE_RE`. This
 is the cheat-sheet guard's lesson again: **a rule that enumerates one spelling
 of a thing will miss every other spelling of it.**
 
-**3. §3 had no row for vendors.** The site carries AWS, GCP and Azure families
+**3. There was nowhere to put a verdict.** §3's test ends in a sentence, and
+the tool had no way to hear it, so every pair somebody had already opened and
+settled came back unexplained on the next run. `data/duplicate-verdicts.json`
+holds that sentence now; `verdicts()` reads it. **`--unexplained` therefore
+means "not yet read"**, not "still a problem", and it goes to zero when the
+queue is worked. A verdict whose pair no longer scores is reported as stale, so
+a merge or a retitle cannot leave a sentence behind about content that changed.
+
+**4. §3 had no row for vendors.** The site carries AWS, GCP and Azure families
 of the same subject on purpose, plus vendor-neutral principle cards beside them.
 63 titles name a provider, and pairs across two of them read as unexplained.
 `vendors()` closes it, for the three cloud providers only.
@@ -346,6 +354,30 @@ def head(title):
     return _HEAD_RE.split(title, 1)[0]
 
 
+VERDICTS = DATA / "duplicate-verdicts.json"
+
+
+def verdicts():
+    """(domain, title) pair -> the sentence somebody wrote after reading both.
+
+    §3's test ends in a sentence, and until now there was nowhere to put it, so
+    every pair a reader had already settled came back unexplained on the next
+    run. A census that reports the same seventeen lines every session is one
+    people stop reading — the same failure the visual gate's docstring describes
+    from the other direction.
+
+    So `--unexplained` now means *not yet read*, which is what it should have
+    meant, and it goes to zero when the queue is worked rather than staying at
+    whatever the last honest reading left behind.
+    """
+    try:
+        raw = json.loads(VERDICTS.read_text(encoding="utf-8"))["verdicts"]
+    except (OSError, ValueError, KeyError):
+        return {}
+    return {frozenset({(v["a"][0], v["a"][1]), (v["b"][0], v["b"][1])}): v["why"]
+            for v in raw}
+
+
 def contained(a_head, b_head, a_plain, b_plain):
     """Is one title's subject wholly inside the other's?
 
@@ -401,6 +433,9 @@ def main():
     # list fills with umbrella cards, which are inside everything they cover.
     sub_floor = floor / 2
 
+    read = verdicts()
+    seen_verdicts = set()
+
     pairs = []
     for (a, ka, ha, pa), (b, kb, hb, pb) in itertools.combinations(rows, 2):
         score = overlap(ka, kb)
@@ -409,23 +444,46 @@ def main():
             if score < sub_floor or not contained(ha, hb, pa, pb):
                 continue
             by_containment = True
-        pairs.append((score, a, b, differences(a, b), by_containment))
+        key = frozenset({(a["domain"], a["title"]), (b["domain"], b["title"])})
+        if key in read:
+            seen_verdicts.add(key)
+        pairs.append((score, a, b, differences(a, b), by_containment, read.get(key)))
     pairs.sort(key=lambda p: (-p[0], p[1]["title"]))
 
-    for score, a, b, diff, sub in pairs:
-        if only_unexplained and diff:
+    for score, a, b, diff, sub, why in pairs:
+        if only_unexplained and (diff or why):
             continue
+        if diff:
+            note = "; ".join(diff)
+        elif why:
+            note = f"read and kept — {why}"
+        else:
+            note = "§3 offers nothing — read both"
         print(f'  {"⊂" if sub else " "}{score:.2f}  [{a["domain"]}] {a["title"][:60]}\n'
               f'         [{b["domain"]}] {b["title"][:60]}\n'
-              f'         → {"; ".join(diff) if diff else "§3 offers nothing — read both"}')
+              f'         → {note}')
 
-    unexplained = sum(1 for p in pairs if not p[3])
+    unexplained = sum(1 for p in pairs if not p[3] and not p[5])
+    adjudicated = sum(1 for p in pairs if not p[3] and p[5])
     by_sub = sum(1 for p in pairs if p[4])
     print(f"\n{len(pairs)} pair(s) across {len(rows):,} titles: {len(pairs) - by_sub} at or "
           f"above {floor:.2f}, and {by_sub} marked ⊂ — one title's subject wholly inside "
           f"the other's, at or above {sub_floor:.2f}.")
-    print(f"{len(pairs) - unexplained} differ on something §3 calls deliberate; "
-          f"**{unexplained} differ on nothing** — `--unexplained` lists those alone.")
+    print(f"{len(pairs) - unexplained - adjudicated} differ on something §3 calls "
+          f"deliberate; {adjudicated} were read and kept, with the reason in "
+          f"data/duplicate-verdicts.json; **{unexplained} have not been read** — "
+          f"`--unexplained` lists those alone.")
+
+    # A verdict whose pair no longer scores is a verdict about content that has
+    # since been merged or retitled. Saying so is what stops the file rotting.
+    stale = sorted(set(read) - seen_verdicts)
+    if stale:
+        print(f"\n{len(stale)} verdict(s) in data/duplicate-verdicts.json no longer "
+              f"match a reported pair — the content was merged or retitled, so the "
+              f"sentence needs re-reading or removing:")
+        for key in stale:
+            for dom, title in sorted(key):
+                print(f"  [{dom}] {title[:66]}")
     print("A census, not a gate — see this file's docstring.")
     return 0
 

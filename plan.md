@@ -52,7 +52,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
 | Mean chars per concept card | **1,280** — the padding counter-metric | `depth_report.py` |
 | Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
-| Near-duplicate pairs | **92** (38 by overlap, 54 by containment), of which 17 differ on nothing §3 names | `near_duplicates.py` |
+| Near-duplicate pairs | **92** (38 by overlap, 54 by containment) — 75 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
 | Learning paths | **101 paths, 1,569 steps, 1,473 of 1,533 topics** | `check_paths.py` |
 | Related links | **1,471 topics, 4,584 links, 0 one-way** | `suggest_related.py --check` |
@@ -11747,6 +11747,8 @@ appears once for a beginner and once in depth **on purpose**.
 | The same subject from two *perspectives* — an attacker's and a defender's | **Keep both.** `pentest`↔`redteam` and `threat`↔`blueteam` pairs are usually this |
 | A *certification-objective* card and a practitioner card | **Keep both.** Added by measurement, not by design — 37 cards are badged with an exam rather than a subject, and `depth_report.py` already exempts them from deepening because an objective summary that grew would stop being a skim |
 | The same subject for **two cloud providers**, or for one provider beside the vendor-neutral principle | **Keep both.** Added by measurement: 63 titles name AWS, GCP or Azure, and the site carries whole provider families on purpose. `AWS Data Protection — KMS & Secrets Manager` beside `GCP Data Protection — Cloud KMS, Secret Manager & VPC-SC` scored 0.60 and read as unexplained until this row existed. Three cloud providers only — `windows`, `linux` and `kubernetes` are platforms half the site mentions in passing |
+| A **teaching card** in a broad domain and a **caveat card** in the specialist one — four cards introducing the subject, beside two whose second is the thing that only shows up in production | **Keep both.** Added by reading, not by measurement: seven instances, all with the same shape (`script`/`web` PWA, `script`/`eng` SOLID, `script`/`data` OLTP-OLAP, `script`/`web` a11y, `script`/`net` network automation, `script`/`eng` API design, `sec`/`devops` secrets). **No tool can see this one** — the badges and titles are silent about it, and it takes opening both |
+| A **name collision** — two subjects that share a word and are not the same subject | **Keep both.** `Configuration Management` is ITIL in `ops` and Ansible in `devops`; `Lifecycle` covers risks in `grc` and scanner findings in `ops`; `Difficult Conversations` is an angry user in `ops` and a report in `eng`. Also reader-only |
 | Two cards with the same badge, the same depth, and no stated difference | **Consolidate.** This is the real population |
 
 **The test:** open both, and write one sentence saying who each is for. If the sentence is
@@ -11756,9 +11758,11 @@ the same, one of them should not exist.
 every pair, what it differs on in this table's terms — `level beginner/core`,
 `reference/concept`, `attacker/defender view`, `cert objective/practitioner`, `vendor aws vs
 gcp` — or *"§3 offers nothing — read both"*. Stated as fact, not as a verdict, because only
-reading both settles it. **76 of the 95 pairs differ on something above; 19 differ on
-nothing**, and `--unexplained` lists those alone. That number is the last row's population,
-and it is the one worth working.
+reading both settles it. **75 of the 92 pairs differ on something above; the other 17 were
+opened and read**, and the sentence each reading produced is in
+`data/duplicate-verdicts.json`. `--unexplained` now means *not yet read* and stands at
+**0** — it rises when new content creates a pair nobody has looked at, which is the only
+number worth watching.
 
 The counts moved because the census was reading the table through a narrower lens than the
 table itself: it saw "reference" only where a card used that word, it had no vendor row at
@@ -19332,4 +19336,83 @@ topics                 1,534 -> 1,533
 near-duplicate pairs      93 -> 92; unexplained 18 -> 17
 related links          4,586 -> 4,584, still 0 one-way
 paths                  1,569 steps, unchanged — the step was repointed, not dropped
+```
+
+---
+
+## Session record — the queue read to zero, and the verdict finally has somewhere to live
+
+Two of the census's pairs were real and were merged. This wave opened the other
+seventeen, applied §3's test to each — *write one sentence saying who each card
+is for* — and **every one came back "keep both"**. The queue was a naming
+problem, not a content problem.
+
+### Two rows §3 was missing, and no tool will ever find them
+
+Seven of the seventeen have the same shape, and it is deliberate editorial
+structure nobody had written down:
+
+| Teaching card — four concept cards | Caveat card — two, and the second is the point |
+|---|---|
+| `script` PWA — one codebase, three ingredients, service workers, PWA vs native | `web` — *A Service Worker Makes the Browser a Distributed-Systems Node* |
+| `script` SOLID — five principles, before-and-after, injection | `eng` — *An Interface With One Implementation Is a Guess About the Future* |
+| `script` OLTP vs OLAP — two jobs, side by side, row vs column stores | `data` — *The Update Is the Problem, Not the Query* |
+| `script` a11y — POUR, the habits, ARIA sparingly | `web` — *A Clean Automated Scan Is the Floor, Not the Result* |
+| `script` network automation — Netmiko, looping over devices | `net` — *The Config Is Not the State, and the Device You Lock Out Is the One You Are Standing In* |
+| `script` API design — versioning, pagination, rate limits | `eng` — *The Contract, and the Three Questions to Ask of It* |
+| `sec` secrets management — where they leak, what to store them in | `devops` — *Nothing Can Be Rotated, Because Rotation Was Never Once Performed* |
+
+Four more are **name collisions**: `Configuration Management` is ITIL in `ops`
+and Ansible in `devops`; `Lifecycle` cycles risks in `grc` and scanner findings
+in `ops`; `Difficult Conversations` is an angry user in `ops` and a report in
+`eng`; two `REFERENCE MODEL` cards in `net` are the seven-layer model and the
+four-layer one that maps onto it.
+
+**Neither row is detectable.** The vendor row added last wave came from 63
+measured titles; these came from opening thirty-four cards. §3 now says which of
+its rows a tool can evaluate and which need a reader, because the difference
+matters when someone next tries to automate it.
+
+### The structural problem underneath
+
+§3's test ends in a sentence and there was nowhere to put it. So every pair
+somebody had already settled came back unexplained on the next run, and *"38
+pairs, of which 8 differ on nothing"* had been printing unchanged for sessions
+while nobody re-read it. **A census that reports the same lines every session is
+one people stop reading** — the failure `visual_test.mjs`'s docstring describes
+from the other direction, arrived at from this one.
+
+`data/duplicate-verdicts.json` holds the sentence now, keyed by domain and
+title. So:
+
+```
+--unexplained   was "differs on nothing §3 names"   ->  now "nobody has read this"
+                17                                       0
+```
+
+It rises when new content creates a pair nobody has looked at, which is the only
+number here worth watching. And a verdict whose pair no longer scores is printed
+as **stale** — the content was merged or retitled, so the sentence needs
+re-reading — which is what stops the file rotting into a list of claims about
+cards that changed. Negative-tested: an invented pair is reported, and the real
+seventeen are not.
+
+### The change that was considered and not made
+
+`[cloud] AWS IAM` and `AWS IAM Deep` are §3's first row — the basics and the
+delegation layer — but `level_of()` reads the badge, and both badges say `AWS`.
+The obvious fix is to match `_ADVANCED_RE` against the title too. It was not
+made: that regex is `advanced|expert|deep`, and against titles it would mark
+*Deep Learning Fundamentals* and *Deep Packet Inspection* as advanced cards.
+**A signal that fires on the word rather than the meaning is how the reference
+rule went wrong in the first place**, and the cost of being wrong here is
+hiding a real pair. The verdict file carries the answer instead, which is
+exactly what it is for.
+
+```
+pairs read              17, all "keep both"
+§3 rows added            2, both marked reader-only
+unexplained             17 -> 0
+verdict file            data/duplicate-verdicts.json, with staleness reporting
+content changed         none — the two that needed changing were merged already
 ```
