@@ -18593,3 +18593,33 @@ ops                      53 → 0
 verdicts written by hand              113
 page raw                 7.4 MB, 8% headroom, ~127 topics of runway
 ```
+
+### `grc`, all 46, and the same gap in a different vocabulary
+
+`grc` cleared entirely. Compliance tables have a characteristic failure that is
+the governance version of the `ops` one: they **list obligations without saying
+which of them bind you, or in what order to satisfy them**. A reader finishes the
+table knowing that eight frameworks exist and nothing about which two are theirs.
+
+> **Work out which of these actually binds you before designing a single
+> control.** Most organisations are touched by two or three of these rows and
+> behave as though they are touched by all of them.
+
+> **The cheapest requirement to satisfy is the one that removes the data.** Every
+> goal in this table becomes smaller as scope shrinks… Do the scoping exercise
+> before the gap analysis.
+
+> **Zero exceptions is the reading most people get backwards.** It looks like
+> compliance and it almost always means the process is unknown, unusable, or
+> slower than ignoring it.
+
+```
+tables_without_verdict   748 → 712 → 688 → 635 → 589
+career    36 → 0      military  36 → 12 (deliberate)
+ops       53 → 0      grc       46 → 0
+verdicts written by hand              158
+```
+
+Four domains done, twenty-two to go, and the backlog is down by 159 from the
+corrected figure. The read-back check has now been run on all 158 and caught two
+mis-landings, both in cards carrying more than one table.

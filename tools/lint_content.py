@@ -65,7 +65,10 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # 688 -> 635: all 53 in `ops`, the largest single domain pass so far and the
 # one where the rubric earns its keep — operations tables are lists of options,
 # and the missing sentence is always which option and when.
-CEILINGS = {"inline style attribute": 1565, "table with no verdict": 635}
+#
+# 635 -> 589: all 46 in `grc`. Compliance tables list obligations without
+# saying which bind you or in what order, which is the same shape of gap.
+CEILINGS = {"inline style attribute": 1565, "table with no verdict": 589}
 
 
 class Nesting(HTMLParser):
