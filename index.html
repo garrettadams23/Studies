@@ -34405,12 +34405,12 @@ than anyone cleans it &mdash; into a dated commitment somebody has to actively p
 </div>
 </div>
 </div>
-<div class="topic" id="artifact-registry-management" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="artifact-registry-management" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗄️</span>
 <span class="topic-name">Artifact &amp; Registry Management</span>
 <span class="topic-badge">Delivery</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -34434,6 +34434,54 @@ control, scanning, and immutability.
 <code>:v1.2.3</code>), retention policies to prune old images, scan on push, and
 promote the <em>same</em> digest through dev→staging→prod rather than rebuilding —
 build once, promote everywhere.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">A Tag Is a Pointer, So &ldquo;We Run v1.2.3 Everywhere&rdquo; Is a Claim About a Name</div>
+<div class="concept-desc">
+Every registry lets a tag be moved. <code>:v1.2.3</code> is a label that currently
+happens to point at a digest, and re-pushing it silently repoints it &mdash; nothing
+errors, nothing warns, and every dashboard still reads <em>v1.2.3</em> in all three
+environments. <strong class="c-cyan">The digest is the version; the tag is a
+convenience.</strong> This is why promotion means moving a digest through the
+environments rather than rebuilding from the same commit: two builds of identical
+source produce different bytes often enough that &ldquo;it built from the same tag&rdquo;
+is not evidence of anything.
+</div>
+<div class="concept-desc">
+The fingerprint is a rollback that does not roll back. Somebody deploys the previous
+tag, the incident continues, and the reason is that the tag no longer names the image
+it named last week &mdash; or names nothing at all, because retention pruned it.
+<strong class="c-amber">If an incident ever ends with &ldquo;that is not the build we
+thought it was&rdquo;, the cause is upstream of the deploy: a mutable tag was treated
+as an identity.</strong>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Retention Is a Policy for Deleting Your Own Rollback Targets</div>
+<div class="concept-desc">
+Retention rules get written against the storage bill, and they are read by nobody
+again until the day one deletes something load-bearing. Each of the common ones has a
+specific thing it takes away.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Rule</th><th>Written for</th><th>What it eventually deletes</th></tr>
+<tr><td>Keep the last N tags</td><td>Bounding a busy repository</td><td>The last-known-good you skipped past &mdash; N releases ago is not N weeks ago</td></tr>
+<tr><td>Delete untagged digests</td><td>Clearing build churn</td><td>Digests a moved tag no longer names but running workloads still pull</td></tr>
+<tr><td>Age-based, e.g. 30 days</td><td>A predictable bill</td><td>Everything from a quarterly or seasonal release cadence</td></tr>
+<tr><td>Keep whatever is deployed</td><td>Safety</td><td>Nothing &mdash; until it is asked which cluster counts, and staging is not on the list</td></tr>
+</table>
+<div class="concept-desc verdict">
+Write retention against the <strong class="c-cyan">rollback horizon</strong> &mdash;
+how far back you would ever deploy &mdash; and not against the storage bill, then
+price that answer. A registry is cheap; the twenty minutes spent discovering the
+image is gone, during an incident, is not. The rule worth having is the boring one:
+<em>anything a running workload references, plus every release for as long as you
+would consider returning to it.</em>
 </div>
 </div>
 </div>

@@ -20000,3 +20000,34 @@ DELIBERATE          + securityx    (15 topics, a certification like the rest)
 deliberately-short    69 -> 71 of the bottom decile
 lifestyle           left alone, on a measured median of 4,257
 ```
+
+---
+
+## Session record — deepening, second card: the practices were there and the failures were not
+
+`[devops] Artifact & Registry Management` had one card: a three-row registry
+table and a verdict listing the practices — immutable tags, retention policies,
+scan on push, promote the same digest. Correct, and it reads like a checklist
+because the *reasons* were missing. Somebody who has not been bitten cannot tell
+which of those four matters at 2am.
+
+```
+1 card, 1,276 chars   ->   3 cards, 4,385 chars
+```
+
+- **A tag is a pointer, so "we run v1.2.3 everywhere" is a claim about a name.**
+  Every registry lets a tag be moved; re-pushing repoints it, nothing errors, and
+  all three environments still read *v1.2.3* on every dashboard. The digest is the
+  version. The fingerprint is a rollback that does not roll back — the tag no
+  longer names the image it named last week, or names nothing, because retention
+  pruned it.
+- **Retention is a policy for deleting your own rollback targets.** Each common
+  rule has a specific thing it takes: *keep the last N tags* removes the
+  last-known-good you skipped past; *delete untagged digests* removes what a
+  moved tag no longer names and a running workload still pulls; *30 days* removes
+  a quarterly cadence entirely. Write it against the rollback horizon and then
+  price that, rather than writing it against the storage bill.
+
+The padding counter-metric held at **1,108 excluding verdicts** across both
+deepening waves, which is the number that had to stay still for either of them
+to count as depth rather than volume.
