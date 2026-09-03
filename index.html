@@ -47428,8 +47428,8 @@ separated by design rather than by filtering.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Regex · PowerShell · Bash · HTML · CSS · JavaScript · JSON · SQL</span>
-<span class="domain-meta" aria-label="149 topics, about 4h 45m to read"
->149 topics · ~4h 45m</span>
+<span class="domain-meta" aria-label="149 topics, about 4h 50m to read"
+>149 topics · ~4h 50m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -58701,12 +58701,12 @@ that argument no longer selects C on its own; see
 </div>
 </div>
 </div>
-<div class="topic" id="assembly-how-programs-actually-run" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="assembly-how-programs-actually-run" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚙️</span>
 <span class="topic-name">Assembly &amp; How Programs Actually Run</span>
 <span class="topic-badge">Fundamentals</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -58731,6 +58731,54 @@ performance, debugging, and — crucially — how exploits like buffer overflows
 Why it matters: overwriting a saved <em>return address</em> on the stack is the
 classic buffer-overflow exploit — and why we have stack canaries, ASLR <span class="acro-exp">(Address Space Layout Randomization)</span>, and NX.
 Reading disassembly is core to malware analysis and CTF <span class="acro-exp">(Capture The Flag)</span> pwn/rev challenges.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Inversion</div>
+<div class="concept-title">The Assembly Is Not a Translation of Your Code, It Is a Translation of What the Compiler Proved About It</div>
+<div class="concept-desc">
+The instinct is to expect a line-by-line rendering of the source. What a compiler
+actually emits is a program it has argued is <em>equivalent</em> under the
+language's rules &mdash; and equivalence leaves it free to inline the function,
+hoist the check out of the loop, keep a variable only in a register, reorder the two
+stores, or delete the branch it proved unreachable.
+<strong class="c-cyan">Whole statements you wrote may have no instructions at
+all.</strong>
+</div>
+<div class="concept-desc">
+Two everyday consequences follow, and both look like magic until this is understood.
+A debugger stepping through an optimised build jumps backwards and shows variables
+as <em>optimised out</em>, because the line-to-instruction mapping stopped being
+one-to-one. And <strong class="c-amber">a bug that disappears at <code>-O0</code> is
+not a compiler bug nine times in ten</strong> &mdash; it is code whose meaning was
+never defined by the language, and the optimiser was entitled to assume the case
+that bites you cannot happen.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Every Memory Mitigation Is a Different Answer to the Same Stack Layout</div>
+<div class="concept-desc">
+The stack grows down and the saved return address sits <em>above</em> a function's
+locals, so a buffer that overflows writes towards the thing that decides where
+execution resumes. That single fact shapes the whole defence stack, and each layer
+answers a different part of it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Mitigation</th><th>The question it answers</th><th>What it does not stop</th></tr>
+<tr><td>Stack canary</td><td>&ldquo;Was the return address overwritten?&rdquo;</td><td>Overwrites that skip the canary &mdash; a pointer write, not a linear overflow</td></tr>
+<tr><td>NX / DEP <span class="acro-exp">(Data Execution Prevention)</span></td><td>&ldquo;Can the attacker run the bytes they wrote?&rdquo;</td><td>Reusing code that is already executable &mdash; which is why ROP exists</td></tr>
+<tr><td>ASLR</td><td>&ldquo;Do they know where to jump?&rdquo;</td><td>Anything that leaks one address, since the whole image moves together</td></tr>
+<tr><td>Memory-safe language</td><td>&ldquo;Can the overflow happen at all?&rdquo;</td><td>The <code>unsafe</code> block, and every C library still underneath</td></tr>
+</table>
+<div class="concept-desc verdict">
+Read the third column as the design brief for the next mitigation: <strong>ROP is
+what NX produced, and info-leak bugs became valuable the day ASLR shipped.</strong>
+Defences here do not eliminate the class, they raise what an exploit has to
+contain &mdash; which is why the honest summary of the last row is the only one
+that changes the shape of the problem rather than its price.
 </div>
 </div>
 </div>

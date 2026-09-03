@@ -20113,3 +20113,43 @@ padding metric    1,108 excluding verdicts, unmoved
 
 **The tail is what moved, which is what a deepening wave is for.** The mean did
 not, and that is the point of measuring both.
+
+---
+
+## Session record — deepening, fifth card, and the guard catching my own writing
+
+`[script] Assembly & How Programs Actually Run`: one card, a four-row table of
+registers and instructions, and a good closing line about the saved return
+address.
+
+```
+1 card, 1,507 chars   ->   3 cards, 4,668 chars
+```
+
+- **The assembly is not a translation of your code — it is a translation of what
+  the compiler proved about it.** Equivalence under the language's rules leaves
+  it free to inline, hoist, reorder, keep a variable in a register, or delete a
+  branch it proved unreachable, so whole statements may have no instructions at
+  all. Two everyday consequences stop being magic once that is said: a debugger
+  jumping backwards through an optimised build and reporting variables as
+  *optimised out*, and the fact that **a bug which disappears at `-O0` is nine
+  times in ten undefined behaviour rather than a compiler bug** — the optimiser
+  was entitled to assume the case that bites you cannot happen.
+- **Every memory mitigation is a different answer to the same stack layout.** The
+  stack grows down and the return address sits above the locals, so an overflow
+  writes toward it. Canary asks *was it overwritten*, NX asks *can they run what
+  they wrote*, ASLR asks *do they know where to jump*, a memory-safe language
+  asks *can it happen at all*. The third column — what each does not stop — reads
+  as the design brief for the next one: **ROP is what NX produced, and info-leak
+  bugs became valuable the day ASLR shipped.**
+
+### The guard caught my own writing
+
+`make check` went red: the card writes *NX / DEP*, and `DEP` has two meanings in
+the dictionary — Data Execution Prevention and Apple's Device Enrollment
+Program — with no decision recorded for `script`. In a memory-protection context
+it is unambiguous, and it is now written down rather than guessed.
+
+**Second time this session that guard has stopped a new ambiguity**, and the
+first was also mine — CSP in `ops`, from the annotator change. A rule that fires
+on the author rather than only on inherited content is the useful kind.
