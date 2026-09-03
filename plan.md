@@ -48,15 +48,15 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,535** across 30 domains | `depth_report.py` |
+| Topics | **1,534** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
 | Mean chars per concept card | **1,280** — the padding counter-metric | `depth_report.py` |
 | Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
-| Near-duplicate pairs | **95** (38 by overlap, 57 by containment), of which 19 differ on nothing §3 names | `near_duplicates.py` |
+| Near-duplicate pairs | **93** (38 by overlap, 55 by containment), of which 18 differ on nothing §3 names | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,570 steps, 1,475 of 1,535 topics** | `check_paths.py` |
-| Related links | **1,473 topics, 4,588 links, 0 one-way** | `suggest_related.py --check` |
-| Page budget | **4% raw** headroom — room for ~69 more topics | `page_budget.py` |
+| Learning paths | **101 paths, 1,569 steps, 1,474 of 1,534 topics** | `check_paths.py` |
+| Related links | **1,472 topics, 4,586 links, 0 one-way** | `suggest_related.py --check` |
+| Page budget | **4% raw** headroom — room for ~70 more topics | `page_budget.py` |
 | Throttled load | **~2.9 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Gates | **29**, and the same 29 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
@@ -19225,4 +19225,66 @@ check_contradictions.py   the same definition of "near-duplicate": 38 -> 95 pair
 §3                        one new row, written from 63 measured titles
 unexplained               8 -> 19, because the instrument stopped lying
 content changed           none this wave — the defect was in the tools
+```
+
+---
+
+## Session record — the containment pass finds its first real merge
+
+The pass added last wave was justified by an instance it could not act on. Its
+first *actionable* find was in `career`, and it is the shape the argument
+predicted: two cards whose titles overlap too little for Jaccard and whose
+subjects sit one inside the other.
+
+```
+⊂0.44  [career] Home Lab – Practicing IT Skills Without Breaking Production ▶
+       [career] Building a Home Lab Without Breaking the Bank ▶
+```
+
+Both badged **Beginner**, both in `career`, and §3's test — open both, write one
+sentence saying who each is for — produced the same sentence twice: *for a
+beginner deciding whether a lab is worth building, with three budget tiers.*
+That is §3's last row, and the verdict is consolidate.
+
+**The site already knew.** `paths.json` had both cards as steps **6 and 7** of
+*Building a Career That Compounds* — consecutive. Somebody building that path put
+the same lesson in twice and nothing said so.
+
+### What the merge preserved
+
+`retire_topic.py` moves the permalink and the five `localStorage` prefixes; the
+content judgement is by hand, and the retired card had two things the survivor
+lacked:
+
+- **a first lab session, start to finish** — hypervisor, ISO, host-only
+  networking, first commands, snapshot before experimenting;
+- **the isolation warning** — a deliberately vulnerable VM on a bridged adapter
+  is reachable from the whole house.
+
+These arrived as two separate cards and were rewritten as **one**, ending on the
+warning rather than stating it separately: the walkthrough's step 3 is the step
+people skip, so the card closes by saying so. Absorbing content is not pasting
+it — the rubric wants a card that ends on a decision, and two cards that each
+half-make the point are what produced the duplication in the first place.
+
+What was *not* merged: `Building a Home Lab — Where You Actually Learn` is badged
+`LIFESTYLE • Hands-On` rather than `Beginner`, so §3's first row keeps it. Two
+home-lab cards in `career` at two levels is the teaching model working; three was
+not.
+
+### The gate that fired
+
+`make check` stopped on `gen_og_image.mjs --check`: the social card still claimed
+**1,535** topics and the site now has **1,534**. That is the gate added two waves
+ago catching its first real drift, in exactly the direction it was written for —
+a card that quietly tells everyone who shares a link the wrong number. Regenerated
+and green.
+
+```
+topics                 1,535 -> 1,534
+paths                  1,570 -> 1,569 steps (the duplicated step is gone)
+related links          4,588 -> 4,586, still 0 one-way
+near-duplicate pairs      95 -> 93; unexplained 19 -> 18
+page runway               ~69 -> ~70 topics
+slug-aliases.json        118 entries; the old permalink still resolves
 ```

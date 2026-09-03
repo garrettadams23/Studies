@@ -1095,12 +1095,48 @@
     </div>
 
     <div class="concept-card">
+      <div class="concept-label">Hands-on</div>
+      <div class="concept-title">Your First Lab Session, Start to Finish</div>
+      <div class="concept-desc">
+        The tiers above say what to buy. This says what to do on the evening you
+        actually start, and the order matters more than the tooling does.
+      </div>
+      <pre class="code-block"><span class="com"># 1. Install a free hypervisor (VirtualBox shown; VMware Player works too)
+#    Download it from the official site — never a third-party mirror.</span>
+
+<span class="com"># 2. Download a beginner-friendly Linux ISO
+#    Ubuntu Server or Debian; or a deliberately vulnerable image from
+#    VulnHub, TryHackMe or HackTheBox if you are practising security.</span>
+
+<span class="com"># 3. Create the VM with "host-only" or "internal" networking —
+#    NOT bridged. Bridged puts the machine on your real home network.</span>
+
+<span class="com"># 4. Boot it, then practise the fundamentals:</span>
+ssh labuser@192.168.56.20
+sudo apt update &amp;&amp; sudo apt upgrade -y
+sudo systemctl status ssh
+ip a
+df -h
+
+<span class="com"># 5. Snapshot BEFORE you experiment. Break something, restore, and you
+#    are back to a clean state in seconds — the lab's actual superpower.</span></pre>
+      <div class="concept-desc">
+        <strong>Step 3 is the one people skip, and it is the only one that can
+        reach past the lab.</strong> A deliberately vulnerable VM <span class="acro-exp">(Virtual Machine)</span> on a bridged
+        adapter is reachable from every device in the house and, depending on the
+        router, from outside it. <em>"I assumed it was isolated"</em> is the most
+        common and most avoidable home-lab mistake there is: check the adapter
+        before you boot anything you have chosen precisely because it is broken.
+      </div>
+    </div>
+
+    <div class="concept-card">
       <div class="concept-label">Project Ideas</div>
       <div class="concept-title">Lab Projects That Actually Build Skills</div>
       <div class="concept-desc">
         Don't just install things — build small projects that mirror
         real work. Here are projects mapped to the domains in this guide:<br><br>
-        &bull; <strong>Networking</strong>: Set up a router/firewall VM <span class="acro-exp">(Virtual Machine)</span>,
+        &bull; <strong>Networking</strong>: Set up a router/firewall VM,
           create VLANs <span class="acro-exp">(Virtual Local Area Network)</span>, configure DHCP/DNS, capture and analyse your own
           traffic with Wireshark.<br>
         &bull; <strong>Security/SOC</strong>: Deploy Wazuh or Security
@@ -1262,74 +1298,6 @@ grc domain          →  Governance/Compliance  →  CISA, CRISC, ISO 27001 Lead
   </div>
 </div>
 <!-- BEGINNER41-LIFESTYLE v1 -->
-<div class="topic" data-reviewed="2026-08">
-  <div class="topic-header">
-    <span class="topic-icon">🧪</span>
-    <span class="topic-badge">Beginner</span>
-    <span class="topic-name">Building a Home Lab Without Breaking the Bank</span>
-    <span class="topic-chev">▶</span>
-  </div>
-  <div class="topic-body">
-    <div class="concept-card">
-      <span class="concept-label">Why this matters</span>
-      <h4 class="concept-title">You learn IT by breaking things you're allowed to break</h4>
-      <p class="concept-desc">Reading about Linux, networking, or virtualization only gets you so far — at some point you
-      need a place to actually try things, watch them fail, and figure out why. A home lab is exactly that: an
-      environment that's entirely yours, where "I broke it" is a learning opportunity instead of an incident report.
-      The good news is that a genuinely useful lab doesn't require expensive server hardware — many people start with
-      nothing more than the laptop they already own.</p>
-    </div>
-    <div class="concept-card">
-      <span class="concept-label">Concept</span>
-      <h4 class="concept-title">Three tiers of home lab, roughly by budget</h4>
-      <table class="ai-table">
-        <tr><th>Tier</th><th>What it looks like</th><th>What you can practice</th></tr>
-        <tr><td>$0 — Virtual only</td><td>VirtualBox or VMware Workstation Player on your existing laptop, running Linux/Windows VMs <span class="acro-exp">(Virtual Machine)</span></td><td>OS <span class="acro-exp">(Operating System)</span> administration, networking basics, scripting, vulnerable-VM practice (CTF-style boxes)</td></tr>
-        <tr><td><span class="volatile" data-checked="2026-08">~$100–300</span> — Single-board / mini PC</td><td>A Raspberry Pi, a used mini PC (e.g. an old Dell Optiplex), or a NAS <span class="acro-exp">(Network Attached Storage)</span> device</td><td>Always-on services (Pi-hole, file sharing, monitoring dashboards), real hardware troubleshooting</td></tr>
-        <tr><td><span class="volatile" data-checked="2026-08">$300+</span> — Small cluster / used enterprise gear</td><td>Several mini PCs or a used rack-mount server running a hypervisor (Proxmox, ESXi)</td><td>Virtualization at scale, container orchestration (Kubernetes), simulating multi-server environments</td></tr>
-      </table>
-      <p class="concept-desc">Most people get more learning value from spending six months deeply exploring a $0 virtual
-      lab than from buying $1,000 of gear and never finding time to use it. Start at the bottom of this table — you can
-      always grow upward once you've outgrown what virtualization alone can teach you.</p>
-    </div>
-    <div class="concept-card">
-      <span class="concept-label">Hands-on</span>
-      <h4 class="concept-title">Your first lab session, start to finish</h4>
-      <pre class="code-block"><span class="com"># 1. Install a free hypervisor (VirtualBox shown; VMware Player works too)
-#    Download from the official site — never a third-party mirror.</span>
-
-<span class="com"># 2. Download a beginner-friendly Linux ISO</span>
-<span class="com">#    Ubuntu Server, Debian, or a purpose-built vulnerable distro
-#    like those found on VulnHub or in TryHackMe/HackTheBox labs</span>
-
-<span class="com"># 3. Create a VM with isolated "host-only" or "internal" networking
-#    so it can't reach (or be reached from) your real home network —
-#    this matters MOST when you're deliberately running vulnerable software</span>
-
-<span class="com"># 4. Once it's running, practice the fundamentals:</span>
-ssh labuser@192.168.56.20
-sudo apt update &amp;&amp; sudo apt upgrade -y
-sudo systemctl status ssh
-ip a
-df -h
-
-<span class="com"># 5. Take a snapshot BEFORE you experiment — this is the home lab's
-#    superpower. Break something? Restore the snapshot and you're
-#    back to a clean state in seconds, no consequences.</span></pre>
-    </div>
-    <div class="concept-card">
-      <span class="concept-label">Mindset</span>
-      <h4 class="concept-title">Assume makes an ass out of you and me — isolate before you experiment</h4>
-      <p class="concept-desc">Before you spin up a deliberately vulnerable VM to practice exploitation, double — then
-      triple — check that its network adapter is set to host-only or internal mode, not bridged. A bridged vulnerable
-      machine is directly reachable from (and can potentially reach out to) your entire home network and, depending on
-      your router, the wider internet. "I assumed it was isolated" is one of the most common — and most avoidable —
-      home lab mistakes.</p>
-    </div>
-  </div>
-</div>
-
-<!-- BEGINNER47-LIFESTYLE v1 -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">💰</span>
