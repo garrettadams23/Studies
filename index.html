@@ -7765,8 +7765,8 @@ visit in the trade, and it is entirely preventable by one phone call.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">CIA Triad · AAA · Access Control · PKI · Crypto · Cloud · Zero Trust · Kerberos</span>
-<span class="domain-meta" aria-label="92 topics, about 4h 05m to read"
->92 topics · ~4h 05m</span>
+<span class="domain-meta" aria-label="92 topics, about 4h 35m to read"
+>92 topics · ~4h 35m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -8363,12 +8363,12 @@ mistake; see
 </div>
 </div>
 <!-- ── TOPIC: ZERO TRUST ────────────────────────────────────── -->
-<div class="topic" id="password-authentication-attack-types" data-reviewed="2026-07" data-read="5" data-level="core">
+<div class="topic" id="password-authentication-attack-types" data-reviewed="2026-07" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔓</span>
 <span class="topic-name">Password &amp; Authentication Attack Types</span>
 <span class="topic-badge">ATTACK TAXONOMY</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -8463,6 +8463,17 @@ Social engineering, shoulder surfing, dumpster diving
 <td>Credential Guard, least privilege</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The defence column collapses to two things:
+unique passwords and a second factor.</strong> Length
+and complexity help against the first two rows and do
+nothing against the last three, because credential
+stuffing, spraying and pass-the-hash all use a
+credential that is already correct. Lockout policies are
+the row to be careful with — set them too tight and a
+spraying attack becomes a denial of service against your
+own users, which is sometimes the point of the spray.
+</div>
 <div class="dt">▸ SIDEJACKING / SESSION HIJACKING</div>
 <div class="card-grid">
 <div
@@ -8822,6 +8833,16 @@ makes the same argument from the breach side.
 <tr><td style="color:var(--green)">Fine-Grained Password Policy</td><td>Different password policies per group (admins get stricter rules).</td></tr>
 <tr><td style="color:var(--green)">Audit Policy</td><td>Log account logon, privilege use, DS access, and object changes. Feed into SIEM <span class="acro-exp">(Security Information and Event Management)</span>.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The tiered admin model is the control that makes the others matter;
+without it they are speed bumps on the same road.</strong> Every attack in
+the card above ends at a credential, and a domain admin who logs on to a
+workstation has put that credential where the workstation's compromise
+reaches it — which is the mechanism behind most of the escalation paths, not
+the individual technique. LAPS and Credential Guard are cheap and worth
+deploying today; the tiering is a programme, and it is the one that changes
+the outcome.
+</div>
 </div>
 </div>
 </div>
@@ -8829,12 +8850,12 @@ makes the same argument from the breach side.
 <!-- ═══════════════════════════════════════════════════
 TOPIC: TLS Handshake
 ═══════════════════════════════════════════════════ -->
-<div class="topic" id="tls-handshake-cipher-suites-certificate-chain" data-reviewed="2026-08" data-read="6" data-level="core">
+<div class="topic" id="tls-handshake-cipher-suites-certificate-chain" data-reviewed="2026-08" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔒</span>
 <span class="topic-name">TLS <span class="acro-exp">(Transport Layer Security)</span> — Handshake, Cipher Suites &amp; Certificate Chain</span>
 <span class="topic-badge">SEC+ · SECX</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -8957,14 +8978,41 @@ TLS_CHACHA20_POLY1305_SHA256   <span class="com"># for devices without hardware 
 <tr><td style="color:var(--red)">CRIME / BREACH</td><td>TLS compression</td><td>Compress-then-encrypt leaks secrets if attacker can inject</td><td>Disable TLS compression; CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> tokens</td></tr>
 <tr><td style="color:var(--red)">SSL Stripping</td><td>HTTP redirect</td><td>MITM downgrades HTTPS to HTTP at the redirect</td><td>HSTS; HSTS preloading</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Almost every row here is a mitigation for a protocol version you
+should not be running.</strong> BEAST, POODLE and DROWN are attacks on TLS
+1.0, SSLv3 and SSLv2; disabling everything below TLS 1.2 removes them as a
+class, which is why that single configuration change is worth more than
+understanding any one of them. The two that survive a modern configuration
+are the ones to actually plan for: keep the library patched, and use HSTS
+with preloading so the first request is never plaintext.
+</div>
 </div>
 </div>
 </div>
 </div>
 <!-- BEGINNER-SEC v1 -->
-<div class="topic" id="security-basics-in-plain-english" data-reviewed="2026-07" data-read="2" data-level="core"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">Security Basics in Plain English</span><span class="topic-badge">Sec+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">2 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">The CIA Triad (No Spies Involved)</div><div class="concept-desc">Security protects three things. Confidentiality = only the right people can see it (a sealed letter). Integrity = nobody changed it secretly (a tamper seal). Availability = it's there when you need it (the door is unlocked for you). Almost every security idea protects one of these three.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Authentication vs. Authorization</div><div class="concept-desc">Authentication proves who you are (showing your ID at the door). Authorization decides what you're allowed to do once inside (your key only opens certain rooms). You authenticate first, then you're authorized.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Encryption = a Locked Box</div><div class="concept-desc">Encryption scrambles data so only someone with the key can read it. Picture putting a note in a locked box: anyone can carry the box, but only the key-holder can open it. That's why 'https' sites are safer.</div></div><div class="concept-card"><div class="concept-label">HABIT</div><div class="concept-title">Passwords → Passphrases + MFA</div><div class="concept-desc">Long beats complicated: 'correct-horse-battery-staple' is stronger and easier than 'P@ss1'. Multi-factor authentication (MFA) adds a second proof (a code on your phone) so a stolen password alone isn't enough.</div></div><div class="concept-card"><div class="concept-label">MINDSET</div><div class="concept-title">Least Privilege</div><div class="concept-desc">Give people (and programs) only the access they truly need — nothing extra. The new intern doesn't get the master key. Less access means less damage if an account is ever stolen.</div></div><div class="concept-card"><div class="concept-label">STREET-SMART</div><div class="concept-title">Spotting Phishing</div><div class="concept-desc">Phishing is a fake message that tricks you into clicking or typing a password. Red flags: urgency ('act now!'), odd sender addresses, surprise links, and requests for credentials. When unsure, don't click — verify through a channel you trust.</div></div><table class="ai-table"><thead><tr><th>You Hear…</th><th>It Really Means…</th></tr></thead><tbody><tr><td>Vulnerability</td><td>A weakness (an unlocked window)</td></tr><tr><td>Threat</td><td>Something that could exploit it (a burglar)</td></tr><tr><td>Risk</td><td>The chance it actually hurts you (likelihood × impact)</td></tr><tr><td>Zero Trust</td><td>Verify everyone every time — assume nothing is safe by default</td></tr><tr><td>Hardening</td><td>Closing doors you don't use to shrink the target</td></tr></tbody></table></div></div>
+<div class="topic" id="security-basics-in-plain-english" data-reviewed="2026-07" data-read="2" data-level="core"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">Security Basics in Plain English</span><span class="topic-badge">Sec+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">2 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">The CIA Triad (No Spies Involved)</div><div class="concept-desc">Security protects three things. Confidentiality = only the right people can see it (a sealed letter). Integrity = nobody changed it secretly (a tamper seal). Availability = it's there when you need it (the door is unlocked for you). Almost every security idea protects one of these three.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Authentication vs. Authorization</div><div class="concept-desc">Authentication proves who you are (showing your ID at the door). Authorization decides what you're allowed to do once inside (your key only opens certain rooms). You authenticate first, then you're authorized.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Encryption = a Locked Box</div><div class="concept-desc">Encryption scrambles data so only someone with the key can read it. Picture putting a note in a locked box: anyone can carry the box, but only the key-holder can open it. That's why 'https' sites are safer.</div></div><div class="concept-card"><div class="concept-label">HABIT</div><div class="concept-title">Passwords → Passphrases + MFA</div><div class="concept-desc">Long beats complicated: 'correct-horse-battery-staple' is stronger and easier than 'P@ss1'. Multi-factor authentication (MFA) adds a second proof (a code on your phone) so a stolen password alone isn't enough.</div></div><div class="concept-card"><div class="concept-label">MINDSET</div><div class="concept-title">Least Privilege</div><div class="concept-desc">Give people (and programs) only the access they truly need — nothing extra. The new intern doesn't get the master key. Less access means less damage if an account is ever stolen.</div></div><div class="concept-card"><div class="concept-label">STREET-SMART</div><div class="concept-title">Spotting Phishing</div><div class="concept-desc">Phishing is a fake message that tricks you into clicking or typing a password. Red flags: urgency ('act now!'), odd sender addresses, surprise links, and requests for credentials. When unsure, don't click — verify through a channel you trust.</div></div><table class="ai-table"><thead><tr><th>You Hear…</th><th>It Really Means…</th></tr></thead><tbody><tr><td>Vulnerability</td><td>A weakness (an unlocked window)</td></tr><tr><td>Threat</td><td>Something that could exploit it (a burglar)</td></tr><tr><td>Risk</td><td>The chance it actually hurts you (likelihood × impact)</td></tr><tr><td>Zero Trust</td><td>Verify everyone every time — assume nothing is safe by default</td></tr><tr><td>Hardening</td><td>Closing doors you don't use to shrink the target</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>Vulnerability, threat and risk get used interchangeably and only the
+third one is a management decision.</strong> A vulnerability is a fact about
+your system, a threat is a fact about the world, and risk is the two
+combined with what it would cost you — which is why "we have a
+vulnerability" is not by itself an argument for spending anything. Learn to
+say which of the three you mean; most disagreements between security teams
+and everyone else are two people using one word for different things.
+</div></div></div>
 <!-- BEGINNER2-SEC v1 -->
-<div class="topic" id="everyday-security-hygiene" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🧱</span><span class="topic-name">Everyday Security Hygiene</span><span class="topic-badge">Sec+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">DO THESE</div><div class="concept-title">The Habits That Stop Most Attacks</div><div class="concept-desc">You don’t need to be an expert to be safe. A handful of boring habits blocks the vast majority of real-world attacks — the digital equivalent of washing your hands and locking your door.</div></div><div class="concept-card"><div class="concept-label">BACKUPS</div><div class="concept-title">The 3-2-1 Rule</div><div class="concept-desc">Keep 3 copies of anything important, on 2 different kinds of storage, with 1 copy kept offsite/offline. Then a lost laptop, a crashed drive, or ransomware becomes an annoyance instead of a disaster — if you’ve tested that the restore actually works.</div></div><div class="concept-card"><div class="concept-label">PASSWORDS</div><div class="concept-title">Use a Manager + MFA</div><div class="concept-desc">Humans can’t remember 100 strong, unique passwords — so don’t. A password manager remembers them for you; you remember one good master passphrase. Turn on multi-factor authentication everywhere it’s offered.</div></div><table class="ai-table"><thead><tr><th>Habit</th><th>Why It Helps</th></tr></thead><tbody><tr><td>Install updates promptly</td><td>Patches close known holes attackers use</td></tr><tr><td>Password manager</td><td>Unique strong passwords without memorizing</td></tr><tr><td>Enable MFA</td><td>A stolen password alone won’t get in</td></tr><tr><td>Think before you click</td><td>Stops most phishing cold</td></tr><tr><td>Lock your screen</td><td>30 seconds away ≠ open to anyone walking by</td></tr><tr><td>Back up (3-2-1)</td><td>Turns disasters into inconveniences</td></tr></tbody></table></div></div>
+<div class="topic" id="everyday-security-hygiene" data-reviewed="2026-07" data-read="2" data-level="core"><div class="topic-header"><span class="topic-icon">🧱</span><span class="topic-name">Everyday Security Hygiene</span><span class="topic-badge">Sec+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">2 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">DO THESE</div><div class="concept-title">The Habits That Stop Most Attacks</div><div class="concept-desc">You don’t need to be an expert to be safe. A handful of boring habits blocks the vast majority of real-world attacks — the digital equivalent of washing your hands and locking your door.</div></div><div class="concept-card"><div class="concept-label">BACKUPS</div><div class="concept-title">The 3-2-1 Rule</div><div class="concept-desc">Keep 3 copies of anything important, on 2 different kinds of storage, with 1 copy kept offsite/offline. Then a lost laptop, a crashed drive, or ransomware becomes an annoyance instead of a disaster — if you’ve tested that the restore actually works.</div></div><div class="concept-card"><div class="concept-label">PASSWORDS</div><div class="concept-title">Use a Manager + MFA</div><div class="concept-desc">Humans can’t remember 100 strong, unique passwords — so don’t. A password manager remembers them for you; you remember one good master passphrase. Turn on multi-factor authentication everywhere it’s offered.</div></div><table class="ai-table"><thead><tr><th>Habit</th><th>Why It Helps</th></tr></thead><tbody><tr><td>Install updates promptly</td><td>Patches close known holes attackers use</td></tr><tr><td>Password manager</td><td>Unique strong passwords without memorizing</td></tr><tr><td>Enable MFA</td><td>A stolen password alone won’t get in</td></tr><tr><td>Think before you click</td><td>Stops most phishing cold</td></tr><tr><td>Lock your screen</td><td>30 seconds away ≠ open to anyone walking by</td></tr><tr><td>Back up (3-2-1)</td><td>Turns disasters into inconveniences</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>Two of these six carry most of the weight, and they are the two that
+need no judgement in the moment.</strong> A password manager and multi-
+factor authentication protect you even when you are tired, distracted or
+fooled — "think before you click" is genuinely useful and it fails exactly
+when the attacker is competent. Set up the two mechanical ones first, and
+treat the vigilance rows as what reduces the remainder rather than as the
+plan.
+</div></div></div>
 <!-- BEGINNER6-SEC v1 -->
 <!-- ── TOPIC: PASSWORDS & HASHING ────────────────────────── -->
 <div class="topic" id="passwords-hashing-how-logins-are-stored-safely" data-reviewed="2026-07" data-read="2" data-level="core">
@@ -9055,6 +9103,15 @@ MFA <span class="acro-exp">(Multi-Factor Authentication)</span> requires 2 or mo
 <tr><td>Passkeys</td><td>Yes</td><td>FIDO2 <span class="acro-exp">(Fast Identity Online 2)</span> using device biometrics; replacing passwords</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The phish-resistant column is the only one that matters, and it splits
+this table in two.</strong> Codes and push prompts can all be relayed by an
+attacker in real time, so they raise the effort and do not change the outcome
+against anyone competent; hardware tokens and passkeys are cryptographically
+bound to the domain, which means the fake site cannot use what it captures.
+Everything above the line is a stepping stone — worth having, and not the
+destination.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">HOW TOTP WORKS</div>
@@ -9110,12 +9167,12 @@ MFA <span class="acro-exp">(Multi-Factor Authentication)</span> requires 2 or mo
 </div>
 <!-- BEGINNER9-SEC v1 -->
 <!-- ── TOPIC: TLS/HTTPS HOW IT WORKS ─────────────────────── -->
-<div class="topic" id="tls-https-how-secure-connections-work" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="tls-https-how-secure-connections-work" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔒</span>
 <span class="topic-name">TLS <span class="acro-exp">(Transport Layer Security)</span> &amp; HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> — How Secure Connections Work</span>
 <span class="topic-badge">SEC • Foundation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9162,6 +9219,14 @@ If you trust the root, and the root signed the intermediate, and the intermediat
 <tr><td>Incomplete chain</td><td>missing intermediate cert</td><td>Include full chain in server config</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The incomplete-chain row is the one that wastes days, because it works
+on your machine.</strong> Browsers cache intermediates from previous sites, so a
+server missing one is fine for the person who set it up and broken for a
+customer, a mobile app or a curl in a pipeline. Test every certificate change
+from something that has never visited the site — that single habit catches the
+only failure in this table that does not announce itself.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">LET'S ENCRYPT</div>
@@ -9209,6 +9274,14 @@ sudo certbot renew --dry-run</pre>
 <tr><td>Used in TLS</td><td>Session data (after handshake)</td><td>Handshake / key exchange</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is what the whole table is for: real systems use both, and the
+asymmetric part is only there to agree the symmetric key.</strong> That is why "is
+RSA slow?" is the wrong question — it runs once per connection, over a few hundred
+bytes, and everything after it is AES <span class="acro-exp">(Advanced Encryption Standard)</span>. Understanding that division makes forward
+secrecy obvious too: if the session key is generated fresh and never transmitted,
+stealing the private key later reveals nothing.
+</div>
 <div class="concept-card">
 <div class="concept-label">DIGITAL SIGNATURES</div>
 <div class="concept-title">Prove It Came From You and Wasn't Changed</div>
@@ -9327,6 +9400,15 @@ Principles:<br>
 <tr><td>A10</td><td>SSRF <span class="acro-exp">(Server-Side Request Forgery)</span></td><td>User-supplied URL fetched by server → internal services exposed</td><td>Allowlist URLs; block RFC-1918 addresses</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>A01 has been at the top since the list was reordered by real-world data, and
+it is the one no scanner finds for you.</strong> Injection and misconfiguration have
+tools; broken access control is a logic bug — "can this particular user do this
+particular thing to this particular object" — and it can only be caught by checking
+authorisation server-side on every request, including the ones that only the front
+end was supposed to be able to make. Treat the list as a design checklist rather
+than a test plan.
+</div>
 <div class="concept-card">
 <div class="concept-label">SQL <span class="acro-exp">(Structured Query Language)</span> INJECTION DEEP DIVE</div>
 <div class="concept-title">The Most Classic Vulnerability</div>
@@ -9353,12 +9435,12 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
 </div>
 <!-- BEGINNER15-SEC v1 -->
 <!-- ── TOPIC: ENDPOINT SECURITY ──────────────────────────── -->
-<div class="topic" id="endpoint-security-protecting-the-devices-people-actually-use" data-reviewed="2026-07" data-read="4" data-level="core">
+<div class="topic" id="endpoint-security-protecting-the-devices-people-actually-use" data-reviewed="2026-07" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💻</span>
 <span class="topic-name">Endpoint Security — Protecting the Devices People Actually Use</span>
 <span class="topic-badge">SEC • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9380,6 +9462,14 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
 <tr><td>MDR</td><td>Managed Detection &amp; Response</td><td>EDR/XDR + a human SOC <span class="acro-exp">(Security Operations Center)</span> team running it for you</td><td>Outsourced — less direct control</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The honest question is not which acronym to buy but whether anyone will
+read what it produces.</strong> Detection and response tools generate work —
+alerts to triage, hunts to run, isolations to decide on — and an organisation
+without people to do that gets the same outcome as antivirus at several times
+the price. That is what the managed row is for, and choosing it is a staffing
+decision made honestly rather than a lesser product.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">EDR CAPABILITIES</div>
@@ -9395,6 +9485,15 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
 <tr><td>Root cause analysis</td><td>Reconstruct the full attack chain from initial access to impact</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Isolation is the capability you will be glad of at two in the morning,
+and it needs a decision made in daylight.</strong> Cutting a host off the
+network stops an intrusion spreading and also stops whatever that host was doing
+for the business — so who is allowed to press it, out of hours, without waiting
+for approval, is a policy question. Settle it before the incident; the
+alternative is an analyst watching lateral movement while trying to reach a
+director by phone.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">ENDPOINT HARDENING</div>
@@ -9411,6 +9510,14 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
 <tr><td>USB <span class="acro-exp">(Universal Serial Bus)</span> control</td><td>Blocks malicious USB drops and data exfiltration</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Removing local administrator rights is the single highest-value row and
+the one that gets negotiated away.</strong> It breaks the most common escalation
+path and it makes several other rows unnecessary; it also generates complaints
+in week one from people who have always installed their own tools. Pair it with
+a fast, genuinely responsive route for legitimate installations, or it will be
+quietly rolled back within a quarter — which is how this control usually dies.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DLP</div>
@@ -9424,17 +9531,26 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
 <tr><td>Data in use</td><td>Endpoint actions (copy, print, USB)</td><td>Blocks copying customer DB to a USB drive</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Deploy in monitor mode and expect to spend months on false positives
+before blocking anything.</strong> Content inspection catches the accidental
+send well and the determined insider poorly — they can photograph a screen — so
+the realistic goal is preventing mistakes and creating a record, not stopping a
+motivated leak. A programme that starts in blocking mode teaches the
+organisation that security breaks work, and the exceptions granted in the first
+fortnight will outlive everything else.
+</div>
 </div>
 </div>
 </div>
 <!-- BEGINNER19-SEC v1 -->
 <!-- ── TOPIC: SECRETS MANAGEMENT ─────────────────────────── -->
-<div class="topic" id="secrets-management-stop-hardcoding-passwords" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="secrets-management-stop-hardcoding-passwords" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗝️</span>
 <span class="topic-name">Secrets Management — Stop Hardcoding Passwords</span>
 <span class="topic-badge">SEC • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9452,6 +9568,15 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
 <tr><td>Shared admin credentials</td><td>Individual accounts + just-in-time access</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>A secret that has ever been committed is compromised, and the fix is
+rotation rather than deletion.</strong> Removing it from the current file leaves
+it in history, in every clone, and in whatever scraped the repository within
+minutes of the push — so the first response is always to revoke and reissue, and
+cleaning the history is housekeeping afterwards. Add secret scanning to the
+pipeline so this is caught before the push, because it is the cheapest control
+on this list by a wide margin.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">SECRETS MANAGERS</div>
@@ -9466,6 +9591,15 @@ cursor.execute(<span class="str">"SELECT * FROM users WHERE name=? AND password=
 <tr><td>Sealed Secrets / SOPS</td><td>Encrypt secrets so they CAN live in Git safely</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the one that resolves the argument teams keep
+having.</strong> "Secrets must never live in Git" collides with "our whole
+deployment is in Git", and sealed secrets or SOPS is the answer that satisfies
+both — encrypted at rest in the repository, decryptable only by the cluster or
+key holder. For anything beyond a small team, prefer whatever your cloud already
+runs: the rotation story matters more than the feature list, and the native tool
+is the one that will actually be wired into everything.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">KEY MANAGEMENT</div>
@@ -9503,12 +9637,12 @@ trufflehog git file://.             <span class="com"># also scans git history</
 </div>
 <!-- BEGINNER20-SEC v1 -->
 <!-- ── TOPIC: WEB SECURITY HEADERS ───────────────────────── -->
-<div class="topic" id="web-security-headers-free-defense-in-a-few-lines" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="web-security-headers-free-defense-in-a-few-lines" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛡️</span>
 <span class="topic-name">Web Security Headers — Free Defense in a Few Lines</span>
 <span class="topic-badge">SEC • Practical</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9527,6 +9661,15 @@ trufflehog git file://.             <span class="com"># also scans git history</
 <tr><td>Permissions-Policy</td><td>Abuse of browser features (camera, mic)</td><td><code>geolocation=(), camera=()</code></td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Five of these six are a single afternoon; the first one is a project,
+and pretending otherwise is why so many sites ship a useless policy.</strong>
+HSTS <span class="acro-exp">(HTTP Strict Transport Security)</span>, frame options, nosniff, referrer and permissions can go on today and break
+almost nothing. A real Content-Security-Policy means enumerating every script
+your site loads, which is why the common outcome is a policy permissive enough
+to allow the attack it names — start in report-only mode and read the reports
+for a fortnight before enforcing.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">COOKIE SECURITY</div>
@@ -9540,6 +9683,14 @@ trufflehog git file://.             <span class="com"># also scans git history</
 <tr><td><code>SameSite=Strict/Lax</code></td><td>Not sent on cross-site requests — defeats CSRF</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>All three, on every session cookie, and SameSite is the one worth
+understanding rather than copying.</strong> Secure and HttpOnly have no downside
+and stop two whole attack classes; SameSite trades away cross-site flows, so
+Strict will log people out when they arrive from a link and Lax is usually the
+right default. Getting these three right removes more real-world session risk
+than any amount of clever token design.
+</div>
 <pre class="code-block"><span class="com"># A well-secured session cookie</span>
 Set-Cookie: session=abc123; Secure; HttpOnly; SameSite=Strict; Path=/</pre>
 </div>
@@ -9569,12 +9720,12 @@ curl -sD - https://example.com -o /dev/null   <span class="com"># dump headers</
 </div>
 <!-- BEGINNER22-SEC v1 -->
 <!-- ── TOPIC: IDS/IPS & NETWORK DETECTION ────────────────── -->
-<div class="topic" id="idsips-detection-catching-attacks-on-the-wire" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="idsips-detection-catching-attacks-on-the-wire" data-reviewed="2026-07" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚨</span>
 <span class="topic-name">IDS/IPS &amp; Detection — Catching Attacks on the Wire</span>
 <span class="topic-badge">SEC • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9591,6 +9742,14 @@ curl -sD - https://example.com -o /dev/null   <span class="com"># dump headers</
 <tr><td>Tools</td><td>Snort, Suricata, Zeek</td><td>Snort/Suricata (inline mode)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Run detection first and convert rules to prevention only once you know
+their false-positive rate in your environment.</strong> The failure mode of an
+intrusion prevention system is an outage caused by your own security control,
+which costs more trust than the attack it stopped — and it always happens on a
+rule nobody had measured. Deploy inline, but start with almost everything in
+alert mode and promote rules individually on evidence.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DETECTION METHODS</div>
@@ -9603,6 +9762,14 @@ curl -sD - https://example.com -o /dev/null   <span class="com"># dump headers</
 <tr><td>Behavior-based</td><td>Detect malicious sequences of actions</td><td>+ Catches TTPs <span class="acro-exp">(Tactics, Techniques, and Procedures)</span>; − needs tuning</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>You need all three, and the mistake is expecting the second one to work
+out of the box.</strong> Signatures are cheap and catch the commodity attacks
+that make up most of what arrives; anomaly detection needs a baseline that only
+exists after months in your specific environment and will otherwise flag every
+quarter-end as an intrusion. Behavioural rules are where the effort pays best —
+they survive the attacker changing tools, which signatures do not.
+</div>
 <pre class="code-block"><span class="com"># A simple Suricata/Snort rule (signature)</span>
 alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
   content:"UNION SELECT"; nocase; sid:1000001;)
@@ -9621,6 +9788,14 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 <tr><td>False Negative</td><td>No alert, but there WAS an attack (the scary one)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The bottom-right cell is the one nobody measures, and it is the only one
+that matters.</strong> A team can report a beautiful false-positive rate by
+tuning until almost nothing fires, and the number that would reveal it — attacks
+that produced no alert — is invisible by definition. Buy that number
+deliberately: purple-team exercises and honest post-incident questions about
+what should have fired are the only ways to see it.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DECEPTION TECHNOLOGY</div>
@@ -9635,17 +9810,25 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 <tr><td>Canary</td><td>A tripwire (e.g., a file or DNS token) signaling a breach</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Start with the bottom two rows; they give most of the value at almost
+none of the risk.</strong> A honeytoken — a fake credential in a config file, a
+canary document, a DNS <span class="acro-exp">(Domain Name System)</span> token — costs nothing to deploy, has essentially no false
+positives, and fires only when somebody is somewhere they should not be. Full
+high-interaction honeypots are genuinely useful research and are a live system
+you have chosen to let attackers into, which needs an owner and a plan.
+</div>
 </div>
 </div>
 </div>
 <!-- BEGINNER25-SEC v1 -->
 <!-- ── TOPIC: CRYPTOGRAPHY FUNDAMENTALS ──────────────────── -->
-<div class="topic" id="cryptography-fundamentals-the-building-blocks-of-security" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="cryptography-fundamentals-the-building-blocks-of-security" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔐</span>
 <span class="topic-name">Cryptography Fundamentals — The Building Blocks of Security</span>
 <span class="topic-badge">SEC • Foundation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9697,6 +9880,15 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 <tr><td>CRL <span class="acro-exp">(Certificate Revocation List)</span> / OCSP <span class="acro-exp">(Online Certificate Status Protocol)</span></td><td>Ways to check if a cert was revoked</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The whole edifice rests on the root store, which is a list somebody else
+maintains on your behalf.</strong> Every certificate authority in it can issue a
+valid certificate for any domain, including yours — which is why certificate
+transparency logs exist and why monitoring them for your own domains is worth
+the ten minutes it takes. Revocation is the part that does not really work:
+checks fail open in most browsers, so short certificate lifetimes are the
+practical answer rather than the list in the last row.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DON'T ROLL YOUR OWN</div>
@@ -9707,12 +9899,12 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 </div>
 <!-- BEGINNER27-SEC v1 -->
 <!-- ── TOPIC: ZERO TRUST ARCHITECTURE ────────────────────── -->
-<div class="topic" id="zero-trust-never-trust-always-verify" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="zero-trust-never-trust-always-verify" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚫</span>
 <span class="topic-name">Zero Trust — Never Trust, Always Verify</span>
 <span class="topic-badge">SEC • Architecture</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9729,6 +9921,14 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 <tr><td>VPN <span class="acro-exp">(Virtual Private Network)</span> grants broad network access</td><td>Per-app access, continuously re-verified</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The right-hand column is a destination, not a product, and the first
+honest step is usually per-application access instead of a broad VPN.</strong>
+Nobody arrives at zero trust by buying something; they arrive by removing the
+assumption in the top-left cell one system at a time. Pick the flat internal
+network that would give an intruder the most and segment that first — the value
+is in the specific lateral path you close, not in the architecture diagram.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">CORE PRINCIPLES</div>
@@ -9741,6 +9941,14 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 <tr><td>Assume breach</td><td>Act as if attackers are already inside — segment, monitor, limit blast radius</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Assume breach is the one that changes what you build, because the other
+two are things everybody already claims to do.</strong> Verifying explicitly and
+granting least privilege appear in every policy document; designing as though
+the attacker is already inside is what produces segmentation, blast-radius
+limits and monitoring of internal traffic — work that looks unnecessary right up
+until it is the only thing that helped.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">BUILDING BLOCKS</div>
@@ -9756,6 +9964,15 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 <tr><td>Encryption everywhere</td><td>Protect data in transit even "inside"</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Identity and device posture are the two that must come first;
+microsegmentation without them is expensive theatre.</strong> A policy engine
+can only decide well if it knows who and what is asking, so multi-factor
+authentication and managed-device signals are the prerequisites rather than
+parallel workstreams. Sequence it that way and each step is useful on its own;
+sequence it the other way and you have divided a network you still cannot make
+decisions about.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">IN PRACTICE</div>
@@ -9825,12 +10042,12 @@ SIEM <span class="acro-exp">(Security Information and Event Management)</span>, 
 </div>
 <!-- BEGINNER29-SEC v1 -->
 <!-- ── TOPIC: THREAT MODELING & SECURE SDLC ──────────────── -->
-<div class="topic" id="threat-modeling-finding-flaws-before-you-build-them" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="threat-modeling-finding-flaws-before-you-build-them" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗺️</span>
 <span class="topic-name">Threat Modeling — Finding Flaws Before You Build Them</span>
 <span class="topic-badge">SEC • Design</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9851,6 +10068,14 @@ SIEM <span class="acro-exp">(Security Information and Event Management)</span>, 
 <tr><td>4. Did we do a good job?</td><td>Review and validate the model</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Question one is where the value is and where the time goes.</strong>
+Most teams cannot draw their own data flows and trust boundaries without
+argument, and the argument is the finding — the threats in question two fall out
+almost mechanically once the diagram is agreed. Timebox it to an hour, on a
+whiteboard, for one feature at a time; the version of this that produces a
+document nobody reads is the version that started by trying to model everything.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">STRIDE</div>
@@ -9867,6 +10092,14 @@ SIEM <span class="acro-exp">(Security Information and Event Management)</span>, 
 <tr><td><strong>E</strong></td><td>Elevation of privilege</td><td>Authorization</td><td>Least privilege, input validation</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Use it as a prompt per trust boundary, not per system.</strong> Running
+the six letters against "the application" produces generic answers; running them
+against "data crossing from the browser to the API <span class="acro-exp">(Application Programming Interface)</span>" produces specific ones,
+which is the difference between a threat model and a list of security words. R
+is the letter teams skip and regulators ask about — if you cannot prove who did
+what afterwards, several of the other mitigations become unverifiable too.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">SECURE SDLC <span class="acro-exp">(Software Development Life Cycle)</span></div>
@@ -10661,12 +10894,12 @@ token blocklist).
 </div>
 </div>
 <!-- BEGINNER40-SEC v1 -->
-<div class="topic" id="phishing-beyond-email-smishing-vishing-and-qr-code-scams" data-reviewed="2026-07" data-read="3" data-level="beginner">
+<div class="topic" id="phishing-beyond-email-smishing-vishing-and-qr-code-scams" data-reviewed="2026-07" data-read="4" data-level="beginner">
 <div class="topic-header">
 <span class="topic-icon">🎣</span>
 <span class="topic-badge">Beginner</span>
 <span class="topic-name">Phishing Beyond Email – Smishing, Vishing, and QR <span class="acro-exp">(Quick Response)</span> Code Scams</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -10689,6 +10922,15 @@ Only the delivery method changes.</p>
 <tr><td>Quishing</td><td>QR codes (on posters, parking meters, restaurant tables)</td><td>A sticker placed over a legitimate QR code, redirecting to a cloned login page</td></tr>
 <tr><td>Spear phishing</td><td>Any of the above, but personalized</td><td>References your actual manager's name, a real project, or a recent purchase — built from information gathered about you specifically</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The channel changes, the pretext never does: urgency plus a link plus a
+plausible reason you were expecting it.</strong> Training people to recognise
+"phishing" by its email conventions leaves them defenceless against the same
+message as a text or a call, which is exactly where attacks moved when email
+filtering improved. Teach the shape rather than the medium, and give people one
+verified route to check — a known number, a known page — because that is what
+works in every row.
+</div>
 </div>
 <div class="concept-card">
 <span class="concept-label">Hands-on</span>
@@ -10795,12 +11037,12 @@ and that's worth noting before you trust them with something sensitive.</p>
 </div>
 </div>
 <!-- BEGINNER44-SEC v1 -->
-<div class="topic" id="zero-trust-never-trust-always-verify-explained-simply" data-reviewed="2026-07" data-read="3" data-level="beginner">
+<div class="topic" id="zero-trust-never-trust-always-verify-explained-simply" data-reviewed="2026-07" data-read="4" data-level="beginner">
 <div class="topic-header">
 <span class="topic-icon">🛂</span>
 <span class="topic-badge">Beginner</span>
 <span class="topic-name">Zero Trust – "Never Trust, Always Verify" Explained Simply</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -10827,6 +11069,14 @@ wall, imagine every single room has its own locked door and its own ID check —
 <tr><td>One login grants broad access to "the network"</td><td>Each request to each resource is evaluated on its own merits, continuously</td></tr>
 <tr><td>Internal traffic is implicitly trusted</td><td>Internal traffic is monitored and verified just like external traffic</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The middle row is where the practical work is, and it is the one that
+survives translation into a project.</strong> "Do not trust the network" is a
+slogan; "one login must stop granting broad access to everything" is a change
+you can point at a system and make. Start with whatever a single stolen
+credential currently unlocks, and shrink that — the philosophy is downstream of
+that specific reduction.
+</div>
 </div>
 <div class="concept-card">
 <span class="concept-label">Concept</span>
@@ -10839,6 +11089,14 @@ wall, imagine every single room has its own locked door and its own ID check —
 <tr><td>Continuous monitoring</td><td>Behavior is watched constantly — a login from a new country at 3 AM is a signal worth checking, even from a "trusted" account</td></tr>
 <tr><td>Device health checks</td><td>Access can depend on whether the requesting device is patched, encrypted, and free of known malware</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Order matters more than completeness: identity, then device health, then
+segmentation.</strong> Continuous monitoring and micro-segmentation are only as
+good as the signals feeding them, and those signals come from the first two rows
+— a policy engine that does not know whether a device is managed cannot make a
+decision worth enforcing. Teams that buy the segmentation first end up with a
+divided network and the same authentication they had before.
+</div>
 </div>
 <div class="concept-card">
 <span class="concept-label">Mindset</span>
@@ -10882,6 +11140,14 @@ security.</p>
 <tr><td><code>X-Content-Type-Options</code></td><td>Tells the browser "don't try to guess the file type — trust what I told you it is"</td><td>MIME-sniffing attacks that disguise malicious files as harmless ones</td></tr>
 <tr><td><code>Referrer-Policy</code></td><td>Controls how much of the originating URL <span class="acro-exp">(Uniform Resource Locator)</span> gets shared when a user clicks a link to another site</td><td>Accidentally leaking sensitive information (like search queries or internal URLs) to third-party sites</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Set four of these today and treat the content policy as a separate piece
+of work.</strong> That is the honest split — the other four are one-line changes
+with almost no chance of breaking a site, and a real Content-Security-Policy
+requires knowing every script source you load. The commonest bad outcome is a
+policy so permissive that it satisfies a scanner and prevents nothing; report-
+only first, then enforce.
+</div>
 </div>
 <div class="concept-card">
 <span class="concept-label">Hands-on</span>
@@ -10918,12 +11184,12 @@ requiring them to do anything at all. Few security investments offer that kind o
 </div>
 </div>
 </div>
-<div class="topic" id="oauth-20-oidc-saml-federated-identity" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="oauth-20-oidc-saml-federated-identity" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎫</span>
 <span class="topic-name">OAuth <span class="acro-exp">(Open Authorization)</span> 2.0, OIDC <span class="acro-exp">(OpenID Connect)</span> &amp; SAML <span class="acro-exp">(Security Assertion Markup Language)</span> — Federated Identity</span>
 <span class="topic-badge">Identity</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -10951,6 +11217,17 @@ same job as OIDC but with XML <span class="acro-exp">(eXtensible Markup Language
 <tr><td>OIDC</td><td>"Who is this user?"</td><td>JSON + JWT (ID token)</td><td>Modern app / mobile login</td></tr>
 <tr><td>SAML 2.0</td><td>"Who is this user?"</td><td>XML assertions</td><td>Enterprise SSO (Okta, ADFS)</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The row people get wrong is the first one: OAuth
+is not a login protocol, and using it as one is a
+recurring vulnerability rather than a style
+choice.</strong> An access token proves an application
+was granted permission, not who is sitting at the
+keyboard — which is precisely the gap OpenID Connect was
+added to fill. For new work choose OIDC; keep SAML where
+the enterprise identity provider requires it, and expect
+that to be for years yet.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -10999,6 +11276,17 @@ POST https://auth.example.com/token
 <tr><td><span class="c-cyan">IdP</span></td><td>Identity Provider — the system that authenticates the user (Okta, Google, Entra ID).</td></tr>
 <tr><td><span class="c-cyan">SP / RP</span></td><td>Service Provider (SAML) / Relying Party (OIDC) — the app trusting the IdP.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The refresh token is the credential worth
+protecting, because it is the one that outlives
+everything.</strong> Access tokens expire in minutes and
+are the ones everybody worries about; a stolen refresh
+token quietly mints new ones for as long as nobody
+notices, which makes storage, rotation and revocation of
+that row the design decision that matters. If you take
+one rule from this table: bearer tokens are passwords,
+and anything holding one is inside your trust boundary.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -11013,16 +11301,27 @@ POST https://auth.example.com/token
 <tr><td>Missing <code>state</code> parameter</td><td>Use <code>state</code> to bind the request and block CSRF <span class="acro-exp">(Cross-Site Request Forgery)</span> on the callback.</td></tr>
 <tr><td>SAML XML signature wrapping</td><td>Validate the signature covers the whole assertion; use a hardened library.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Every row is a case of trusting something the
+client supplied.</strong> The redirect URI, the token,
+the assertion, the missing state — in each the server
+accepted a value it should have checked against
+something it already knew. Use a well-maintained library
+and resist the temptation to hand-roll validation: these
+are old, well-understood bugs, and they keep recurring
+because each one looks like a small piece of glue code
+at the time.
 </div>
 </div>
 </div>
 </div>
-<div class="topic" id="passkeys-webauthn-killing-the-password" data-reviewed="2026-07" data-read="3" data-level="core">
+</div>
+<div class="topic" id="passkeys-webauthn-killing-the-password" data-reviewed="2026-07" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔑</span>
 <span class="topic-name">Passkeys &amp; WebAuthn <span class="acro-exp">(Web Authentication)</span> — Killing the Password</span>
 <span class="topic-badge">Auth</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -11073,6 +11372,17 @@ browser API) + CTAP <span class="acro-exp">(Client to Authenticator Protocol)</s
 <tr><td>User friction</td><td class="c-amber">Type + remember</td><td class="c-amber">Type a code</td><td class="c-green">One tap / glance</td></tr>
 <tr><td>Server secret to steal</td><td class="c-red">Yes</td><td class="c-red">Yes</td><td class="c-green">No</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the one that changes your breach
+exposure rather than your users' habits.</strong>
+Passwords and shared secrets mean your server holds
+something worth stealing; a passkey leaves you holding a
+public key, so a database breach discloses nothing
+usable. That is the argument to make internally, because
+the phishing resistance is the benefit users never see
+and the absent server secret is the one your incident
+response will thank you for.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -11088,6 +11398,17 @@ browser API) + CTAP <span class="acro-exp">(Client to Authenticator Protocol)</s
 <tr><td><span class="c-cyan">Device-bound</span></td><td>Never leaves the hardware (e.g. a FIDO security key) — highest assurance.</td></tr>
 <tr><td><span class="c-cyan">Attestation</span></td><td>Optional proof of what kind of authenticator was used — matters in high-security orgs.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Synced against device-bound is the decision, and
+for most organisations synced is the right
+answer.</strong> Device-bound keys are stronger and mean
+a lost phone is a lost credential and a support call;
+synced passkeys inherit the security of the platform
+account, which is a real dependency and is still far
+better than the password it replaces. Reserve device-
+bound hardware keys for administrators and anyone whose
+compromise would be catastrophic.
+</div>
 </div>
 </div>
 </div>
@@ -11126,6 +11447,17 @@ server remembers) and <strong class="c-amber">stateless tokens / JWT</strong>
 <tr><td>Scales across servers</td><td class="c-amber">Needs shared store</td><td class="c-green">No lookup needed</td></tr>
 <tr><td>Best for</td><td>Classic web apps</td><td>APIs <span class="acro-exp">(Application Programming Interface)</span>, microservices, mobile</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Revocation is the row that decides it, and it is
+usually discovered late.</strong> Stateless tokens scale
+beautifully until the day you need to log somebody out
+immediately — a departing employee, a stolen laptop, a
+compromised account — and the honest answer becomes
+"within fifteen minutes". Either keep sessions server-
+side, or keep token lifetimes genuinely short and accept
+the refresh traffic; the hybrid that pretends otherwise
+is the one that fails an audit.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -11170,12 +11502,12 @@ leaks while keeping users logged in.
 </div>
 </div>
 </div>
-<div class="topic" id="sast-dast-sca-automated-security-testing" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="sast-dast-sca-automated-security-testing" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔎</span>
 <span class="topic-name">SAST <span class="acro-exp">(Static Application Security Testing)</span>, DAST <span class="acro-exp">(Dynamic Application Security Testing)</span> &amp; SCA <span class="acro-exp">(Software Composition Analysis)</span> — Automated Security Testing</span>
 <span class="topic-badge">AppSec</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -11205,6 +11537,17 @@ runtime, and code you borrowed.
 <tr><td>Weakness</td><td>False positives; no runtime view</td><td>Misses source-level bugs; needs a live target</td><td>Only known vulns</td></tr>
 <tr><td>Tools</td><td>Semgrep, CodeQL, SonarQube</td><td>OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> ZAP <span class="acro-exp">(Zed Attack Proxy)</span>, Burp</td><td>Dependabot, Snyk, Trivy</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Start with dependency scanning; it finds the
+most real risk for the least noise.</strong> Known
+vulnerabilities in libraries you did not write are the
+majority of what actually gets exploited, and the
+finding comes with a version number rather than a
+judgement call. Static analysis pays off next but only
+after tuning; dynamic scanning is the slowest to set up
+and the one that finds what the other two structurally
+cannot.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -11235,16 +11578,26 @@ warn on the rest.
 <tr><td>Coverage gaps</td><td>Scanners find <em>known</em> patterns. Business-logic flaws (e.g. bypassing a checkout step) still need a human.</td></tr>
 <tr><td>Defense in depth</td><td>Automated scanning complements — not replaces — code review, threat modeling, and periodic pentests.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The middle row is the one to design your
+programme around.</strong> Scanners find patterns, and
+the vulnerabilities that end up in incident reports are
+frequently business-logic flaws — a user who can approve
+their own request, an order that can be repriced — which
+no rule set describes. Budget for humans reading code
+and abusing the application, and treat a clean scan as
+the beginning of a review rather than the end of one.
 </div>
 </div>
 </div>
 </div>
-<div class="topic" id="web-application-firewalls-waf" data-reviewed="2026-08" data-read="3" data-level="core">
+</div>
+<div class="topic" id="web-application-firewalls-waf" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛡️</span>
 <span class="topic-name">Web Application Firewalls (WAF)</span>
 <span class="topic-badge">AppSec</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -11303,6 +11656,17 @@ through.
 <tr><td>Not a fix for bad code</td><td>A WAF is defense-in-depth — it can be bypassed with clever encoding. Fix the vulnerability too.</td></tr>
 <tr><td>Business logic is invisible</td><td>A WAF can't tell that a valid-looking request abuses your workflow (e.g. skipping a payment step).</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>A web application firewall buys you time to fix
+code, and that is the honest way to fund one.</strong>
+It is genuinely valuable for exactly that — blocking a
+live exploit while a patch is written, absorbing
+commodity scanning — and it is regularly sold as a
+substitute for the patch. Both of the last two rows say
+the same thing from different directions: anything
+requiring an understanding of your business rules is
+invisible to it, permanently.
+</div>
 </div>
 </div>
 </div>
@@ -11879,6 +12243,15 @@ makes the machine legal to run.
 <tr><td>A failed change</td><td>Roll back</td><td>May be unrecoverable, or dangerous</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>An IT security professional's instincts are actively dangerous here,
+and the first row is why.</strong> Every reflex that serves you well in an
+enterprise — patch quickly, scan often, block what looks wrong — is
+optimised for confidentiality first, and in a plant the worst outcome is not
+a leak. Arrive expecting to learn the process before proposing controls, and
+treat the engineer who says "you cannot take that offline" as a source of
+requirements rather than an obstacle.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -11915,12 +12288,12 @@ lets you see it.
 </div>
 </div>
 <!-- ── TOPIC: ICS PROTOCOLS ───────────────────────── -->
-<div class="topic" id="ics-protocols-modbus-dnp3-opc-ua-and-their-security-assumpti" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="ics-protocols-modbus-dnp3-opc-ua-and-their-security-assumpti" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔌</span>
 <span class="topic-name">ICS <span class="acro-exp">(Industrial Control System)</span> Protocols — Modbus, DNP3, OPC UA and Their Security Assumptions</span>
 <span class="topic-badge">SecurityX • OT</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -11945,6 +12318,14 @@ protocol hardening, is the primary OT control.
 <tr><td>EtherNet/IP, PROFINET</td><td>Factory automation</td><td>Largely trust-the-network</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>You cannot fix these protocols, so stop trying and fix what can
+reach them.</strong> The security column is not a list of gaps to close — it
+is the reason the entire defence is segmentation and monitoring rather than
+authentication. OPC UA is the exception and the direction of travel, but it
+arrives with new equipment over decades, not with a project; plan for the
+other rows to still be there in fifteen years.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -11968,17 +12349,26 @@ classic way to cause the very outage you were trying to prevent.
 <tr><td>Block the suspicious traffic inline</td><td>Alert, don't block — an inline device that fails can stop production</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The third row is the one an IT team will breach first, and the
+failure mode is physical.</strong> Inline blocking is the instinct
+everywhere else, and here a device that fails closed can stop a process that
+must not stop — which is why passive monitoring is not timidity but the
+correct engineering choice. Get the tap and the baseline first; alerting on
+an engineering workstation issuing an unusual command is worth more than any
+control you could put in the path.
+</div>
 </div>
 </div>
 </div>
 </div>
 <!-- ── TOPIC: SECURING & RESPONDING IN OT ───────────────────────── -->
-<div class="topic" id="securing-ot-without-breaking-it-segmentation-access-safety-f" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="securing-ot-without-breaking-it-segmentation-access-safety-f" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🦺</span>
 <span class="topic-name">Securing OT Without Breaking It — Segmentation, Access &amp; Safety-First IR <span class="acro-exp">(Incident Response)</span></span>
 <span class="topic-badge">SecurityX • OT</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -12002,6 +12392,15 @@ formalize it (IEC 62443's zones and conduits; NERC CIP for the North American po
 <tr><td>Unidirectional gateways</td><td>Data diodes let telemetry out while making inbound physically impossible</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Remote access is where real incidents come from, and it is the row
+under the most commercial pressure.</strong> Vendors want permanent
+connections for support, integrators want their own tooling, and every one
+of those is a path from the internet to a controller that cannot
+authenticate anything. Broker it, require multi-factor authentication,
+record the sessions and switch it off when the work is finished — the
+inconvenience is the control.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12028,12 +12427,12 @@ on touching a live controller.
 </div>
 </div>
 <!-- ── TOPIC: PHYSICAL SECURITY SYSTEMS ───────────────────────── -->
-<div class="topic" id="physical-security-systems-access-control-cctv-the-facility-l" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="physical-security-systems-access-control-cctv-the-facility-l" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚪</span>
 <span class="topic-name">Physical Security Systems — Access Control, CCTV &amp; the Facility Layers</span>
 <span class="topic-badge">SecurityX • Physical</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -12057,6 +12456,15 @@ a deterrent and a detector.
 <tr><td>Asset</td><td>Locked racks, cable locks, safes, media in a controlled store</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Tailgating defeats every layer in this table, and it is a social
+problem rather than a technical one.</strong> Badge readers, mantraps and
+locked racks all assume one person per authentication, and holding a door
+for somebody carrying boxes is behaviour every polite culture teaches.
+Decide whether you actually want people to challenge strangers — and if you
+do, say so publicly and back the person who does it, because otherwise the
+control exists only in the policy.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12151,12 +12559,12 @@ version of this discipline is in
 </div>
 </div>
 <!-- ── TOPIC: INTERNAL INVESTIGATIONS ───────────────────────── -->
-<div class="topic" id="internal-investigations-evidence-handling-staying-in-your-la" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="internal-investigations-evidence-handling-staying-in-your-la" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔍</span>
 <span class="topic-name">Internal Investigations &amp; Evidence Handling — Staying in Your Lane</span>
 <span class="topic-badge">SecurityX • Investigations</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -12180,6 +12588,15 @@ move deliberately, under authority, and to know precisely where your lane ends.
 <tr><td>Do not tip off the subject</td><td>Altered permissions or an obvious pull warns them and can trigger destruction</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The first row is the one that protects you personally, and it is the
+one people skip because a manager asked nicely.</strong> Pulling someone's
+mailbox on a verbal request is misconduct regardless of what you find, and
+"I was told to" has ended careers on both sides of that conversation. Ask
+for it in writing with a scope, every time — the delay is measured in hours
+and it is the difference between being the technical support to an
+investigation and being part of it.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12212,12 +12629,12 @@ at the boundary — overreaching here is how a solid technical case gets thrown 
 </div>
 </div>
 <!-- ── TOPIC: DOING THE PQC MIGRATION ───────────────────────── -->
-<div class="topic" id="doing-the-pqc-migration-inventory-crypto-agility-the-roadmap" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="doing-the-pqc-migration-inventory-crypto-agility-the-roadmap" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔀</span>
 <span class="topic-name">Doing the PQC <span class="acro-exp">(Post-Quantum Cryptography)</span> Migration — Inventory, Crypto-Agility &amp; the Roadmap</span>
 <span class="topic-badge">SecurityX • Crypto</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -12244,6 +12661,15 @@ a cryptography project.
 <tr><td>5 Migrate PKI <span class="acro-exp">(Public Key Infrastructure)</span> &amp; the long tail</td><td>Certificate chains, HSMs <span class="acro-exp">(Hardware Security Module)</span>, and the embedded devices that will never update</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Step 3 is what you are actually buying with this whole
+programme.</strong> The algorithms will change again after this migration,
+and an estate where the choice is a configuration value rather than a hard-
+coded call can follow; one where it is not will repeat the entire exercise
+from the inventory stage. Start step 1 now regardless of your view on
+timelines — the discovery takes longer than anyone expects and is useful
+even if nothing is migrated for years.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12311,6 +12737,15 @@ that will not perform.
 <tr><td>Confidential computing (TEE)</td><td>Process data in a hardware enclave shielded from the host</td><td>Available on major clouds today</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The maturity column is the one to read, and today it points at the
+last two rows.</strong> Confidential computing and threshold signatures are
+deployable now with real products behind them; homomorphic encryption is
+genuine and still costs orders of magnitude more compute than the plaintext
+version. Be suspicious of any vendor whose pitch depends on the middle rows
+for general-purpose use — the technology is real and the performance claims
+usually are not.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12598,6 +13033,15 @@ awareness training.
 <tr><td>Photographs with visible detail</td><td>Badges, screens, whiteboards, home layout</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>All of this is assembled from public sources, which means the
+mitigation is also outside your systems.</strong> No corporate control
+removes a home address from a data broker or a family member's public
+profile, so the programme has to be personal: broker opt-outs, a review of
+what is public, a private number for the finance-approval path. Offer it as
+a service to the dozen people who need it rather than as a policy, because
+it is their private life you are asking them to change.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12662,6 +13106,14 @@ the spreadsheet.
 <tr><td>Record the accepted risks explicitly</td><td>"Not fixing, and here is who decided" is a legitimate outcome</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Rank by exploitability, not by the score in the report.</strong> A
+medium-severity flaw reachable from the internet with no authentication is a
+worse day than a critical one behind three controls, and the scanner cannot
+know the difference because it does not know your network. That single
+reordering is what turns hundreds of findings into a list somebody can start
+on — and the last row is what makes the rest of it defensible afterwards.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12726,6 +13178,15 @@ granted by systems outside the identity provider.
 <tr><td>Physical badge and building access</td><td>Depends entirely on a separate system and a separate process</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Everything with "yes" in the right-hand column needs its own
+trigger, because nothing links it to the leaver record.</strong> Sessions
+and tokens in particular survive a password change and a disable, so a same-
+day revocation step belongs in the checklist explicitly. Build the list once
+from this table, attach it to the HR event, and audit it against a real
+departure — the gap between the documented process and what actually
+happened is where the incident lives.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12892,12 +13353,12 @@ identity, and nothing in the firmware that unlocks anyone else's.
 </div>
 </div>
 <!-- ── TOPIC: FIRMWARE EXTRACTION & ANALYSIS ─────────────────── -->
-<div class="topic" id="firmware-extraction-analysis-getting-the-code-off-and-readin" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="firmware-extraction-analysis-getting-the-code-off-and-readin" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📦</span>
 <span class="topic-name">Firmware Extraction &amp; Analysis — Getting the Code Off, and Reading It</span>
 <span class="topic-badge">Device Security</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -12919,6 +13380,15 @@ device to obtain something that was on a support page.
 <tr><td>4</td><td>Desolder the storage and read it directly</td><td>Destructive, and the last resort</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Try row one before touching a screwdriver, every time.</strong> A
+surprising proportion of firmware is on a public support page, and starting
+with the destructive option to obtain something freely downloadable is the
+classic beginner's expense. Work down in order and stop at the first that
+works; the chip-clip route is the sweet spot when the vendor publishes
+nothing, and desoldering is what you do when you have already accepted
+losing the device.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -13057,6 +13527,15 @@ compromises live.
 <tr><td>"Attestation proves it is healthy"</td><td>It proves what loaded, not what happened afterwards</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Verified boot answers one question — what loaded — and every row
+here is a different question people expect it to answer.</strong> Signed
+does not mean safe, boot-time does not mean runtime, and authentic means
+authentic to whoever holds the key, which includes an attacker who has
+stolen it. Use attestation as one input into a trust decision rather than as
+the decision, and pair it with runtime monitoring, which is the gap it
+structurally cannot cover.
+</div>
 </div>
 </div>
 </div>
@@ -13221,6 +13700,15 @@ Choosing by the destination rather than by habit is the whole decision.
 <tr><td>Destroy</td><td>Everything; the media is unusable afterwards</td><td>The data warrants it, or purge is not available for that media</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Choose by destination, and note that the middle row is unavailable
+on most modern storage.</strong> Purge assumes you can reach the whole
+medium, which is exactly what wear levelling and over-provisioning on solid-
+state drives prevent — so the practical answer for anything leaving the
+building is full-disk encryption from day one, then destroy the key. That
+turns disposal into a key-management decision rather than a physical one,
+which is the only version that scales.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -13281,12 +13769,12 @@ that storage intact unless somebody asked.
 </div>
 </div>
 <!-- ── TOPIC: OWASP API SECURITY TOP 10 ──────────────────────── -->
-<div class="topic" id="the-owasp-api-security-top-10-where-the-web-list-stops-being" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="the-owasp-api-security-top-10-where-the-web-list-stops-being" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔌</span>
 <span class="topic-name">The OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> API <span class="acro-exp">(Application Programming Interface)</span> Security Top 10 — Where the Web List Stops Being Enough</span>
 <span class="topic-badge">API Security</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -13334,6 +13822,14 @@ resource-consumption failures, and inventory failures. Nearly everything falls i
 <tr><td>Unsafe consumption of third-party APIs</td><td>Trusting a partner's response because it came from a partner</td><td>Inventory</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Read the cluster column, because it tells you where to spend the
+testing budget.</strong> Six of these are authorization failures, and
+authorization is the one thing no scanner can check for you — it needs a
+test that knows which user should be able to reach which object. Write those
+tests once, per resource type, and run them for every endpoint; it is the
+only approach that keeps up with an API surface that grows weekly.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -13421,6 +13917,15 @@ obvious one and usually the one that got fixed; the rest are where it survives.
 <tr><td>Export, report and webhook payloads</td><td>A scheduled job's output</td><td>Runs as a service account with everything</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Enforce authorization in one place that every path must go through,
+because this table is a list of paths people forgot.</strong> Checking at
+the controller means checking in every controller, and the batch endpoint,
+the GraphQL resolver and the scheduled export were each written by someone
+who assumed the check had happened upstream. Push it down to the data-access
+layer — "fetch this object as this principal" — and the rows here stop being
+separate bugs.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -13449,12 +13954,12 @@ measurably longer than a 404 still tells the attacker the object exists.
 </div>
 </div>
 <!-- ── TOPIC: API ABUSE & RATE LIMITING ──────────────────────── -->
-<div class="topic" id="api-abuse-rate-limiting-quotas-bursts-and-telling-abuse-from" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="api-abuse-rate-limiting-quotas-bursts-and-telling-abuse-from" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚦</span>
 <span class="topic-name">API <span class="acro-exp">(Application Programming Interface)</span> Abuse &amp; Rate Limiting — Quotas, Bursts and Telling Abuse From Success</span>
 <span class="topic-badge">API Security</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -13480,6 +13985,14 @@ many deployments protect nothing while annoying everyone.
 <tr><td>Credential-attempt limit</td><td>Stuffing and spraying</td><td>Account <em>and</em> source, separately</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>You need several of these at once, keyed differently, and the bottom
+two are the ones usually missing.</strong> A single infrastructure limit
+high enough not to page you is high enough for credential stuffing to hide
+beneath, and business-flow abuse looks like ordinary traffic to every per-
+request counter. Start from what the flow is worth — signups per hour,
+vouchers per account — rather than from what the servers can take.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -13620,17 +14133,25 @@ The fix is procedural, agreed once, and applied without renegotiation each time.
 <tr><td>Old versions inherit patches or get switched off</td><td>The zombie frozen at an old posture</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The sunset date set at launch is what makes every other row
+enforceable.</strong> Deciding to retire a version after it exists is a
+negotiation with whoever is still using it; deciding at launch that v1 ends
+in two years is a published fact, and the brownouts are how you find the
+consumers who did not read it. Without that, "someone might still be using
+it" wins every argument forever.
+</div>
 </div>
 </div>
 </div>
 </div>
 <!-- ── TOPIC: FEDERATION ATTACK SURFACE ──────────────────────── -->
-<div class="topic" id="federation-attack-surface-golden-saml-token-forgery-reply-ur" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="federation-attack-surface-golden-saml-token-forgery-reply-ur" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎫</span>
 <span class="topic-name">Federation Attack Surface — Golden SAML <span class="acro-exp">(Security Assertion Markup Language)</span>, Token Forgery &amp; Reply-URL Abuse</span>
 <span class="topic-badge">Identity</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -13676,6 +14197,15 @@ why it keeps appearing.
 <tr><td>Federated-domain takeover</td><td>Attacker adds their own trusted domain or signing certificate to the tenant</td><td>Alert on trust and federation configuration changes; these are rare and always notable</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The redirect row needs no cryptography, which is why it keeps
+happening long after the signing is done properly.</strong> Teams invest in
+key protection and assertion validation and then register a wildcard reply
+URL <span class="acro-exp">(Uniform Resource Locator)</span> because a developer needed flexibility — and the whole federation is
+bypassed by a link. Exact-match registration, no wildcards, reviewed like a
+firewall rule; and test the third row deliberately, because a relying party
+that never verifies signatures fails silently and looks perfect.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -13850,6 +14380,14 @@ rarely where attention has been going.
 <tr><td>Last used: never, or not this year</td><td>Pure standing risk with zero offsetting value</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The first row is the one to audit this week: application permissions
+act on the whole tenant with nobody in the loop.</strong> A delegated grant
+is bounded by what its user can do; an application permission is bounded by
+nothing, and it was usually consented to once, years ago, by an
+administrator solving an immediate problem. Sort the list by that column
+alone and the top of it will contain integrations nobody currently owns.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -13880,12 +14418,12 @@ which is precisely the property that lets the review actually finish.
 </div>
 </div>
 <!-- ── TOPIC: NON-HUMAN IDENTITY ─────────────────────────────── -->
-<div class="topic" id="non-human-identity-service-accounts-workloads-and-the-sprawl" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="non-human-identity-service-accounts-workloads-and-the-sprawl" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤖</span>
 <span class="topic-name">Non-Human Identity — Service Accounts, Workloads and the Sprawl Nobody Owns</span>
 <span class="topic-badge">Identity</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -13930,6 +14468,15 @@ would otherwise be permanent.
 <tr><td>Legacy system with no better option</td><td>Vaulted secret, automated rotation, checked out per use</td><td>Everything else, and it is more common than any of the above</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Every row is the same instruction: let the platform issue a short-
+lived identity rather than storing a secret.</strong> Get this right at
+creation and the rotation problem never exists; get it wrong and you have
+signed up to rotating something forever, which is why so many long-lived
+keys are years old. The last row is the honest one — legacy systems that
+cannot do better are common, and vaulting with automated rotation is the
+correct answer there rather than an admission of failure.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -14173,12 +14720,12 @@ problem is in
 </div>
 </div>
 <!-- ── TOPIC: SECRETS, TOKENS & KEYS TAXONOMY ────────────────── -->
-<div class="topic" id="secrets-tokens-keys-a-taxonomy-that-prevents-the-wrong-contr" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="secrets-tokens-keys-a-taxonomy-that-prevents-the-wrong-contr" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗝️</span>
 <span class="topic-name">Secrets, Tokens &amp; Keys — A Taxonomy That Prevents the Wrong Control</span>
 <span class="topic-badge">Identity</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -14207,6 +14754,15 @@ environment variable.
 <tr><td>Platform identity</td><td>A workload is running where it claims</td><td>Minutes, invisible</td><td>Nothing to handle — the goal state</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The lifetime column is the one that dictates handling, and it is
+what the vocabulary confusion destroys.</strong> Treating an access token
+like an API key means storing something that should have lived in memory for
+minutes; treating a certificate like a password means a manual renewal that
+will be missed at two in the morning. When somebody says "we keep our keys
+in the vault", ask which row they mean — the answer is frequently three
+different rows and only one of them belongs there.
+</div>
 </div>
 </div>
 <div class="concept-card">

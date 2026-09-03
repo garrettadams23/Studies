@@ -18667,3 +18667,42 @@ tables_without_verdict   748 → 712 → 688 → 635 → 589 → 535
 career 36→0   military 36→12 (deliberate)   ops 53→0   grc 46→0   net 54→0
 verdicts written by hand              211
 ```
+
+### `sec`, all 66 — the largest domain pass, and the one where the rubric is hardest
+
+Sixth domain clear, and the biggest. Security tables are the hardest to write a
+verdict for honestly, because the temptation is to end every one with "and this
+is why security matters" — which is the purest possible filler. The discipline
+that held: **say which row is the decision, and say what the others are downstream
+of.**
+
+> **The phish-resistant column is the only one that matters, and it splits this
+> table in two.** Codes and push prompts can all be relayed by an attacker in
+> real time… Everything above the line is a stepping stone.
+
+> **Removing local administrator rights is the single highest-value row and the
+> one that gets negotiated away.** …Pair it with a fast, genuinely responsive
+> route for legitimate installations, or it will be quietly rolled back within a
+> quarter.
+
+> **An IT security professional's instincts are actively dangerous here.** Every
+> reflex that serves you well in an enterprise — patch quickly, scan often, block
+> what looks wrong — is optimised for confidentiality first, and in a plant the
+> worst outcome is not a leak.
+
+> **The bottom-right cell is the one nobody measures, and it is the only one that
+> matters.** A team can report a beautiful false-positive rate by tuning until
+> almost nothing fires, and the number that would reveal it — attacks that
+> produced no alert — is invisible by definition.
+
+```
+tables_without_verdict   748 → 712 → 688 → 635 → 589 → 535 → 469
+career 36→0   military 36→12 (deliberate)   ops 53→0
+grc 46→0      net 54→0                      sec 66→0
+verdicts written by hand              277
+runway                                ~110 topics
+```
+
+Six domains, 277 verdicts, backlog down 279 from the corrected figure. The runway
+has moved 139 → 110 over the whole programme — 29 topics for 277 judgements, which
+is the trade as measured rather than as estimated.
