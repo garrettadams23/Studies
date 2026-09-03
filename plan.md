@@ -52,7 +52,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
 | Mean chars per concept card | **1,280** — the padding counter-metric | `depth_report.py` |
 | Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
-| Near-duplicate pairs | **38**, of which 8 differ on nothing §3 names | `near_duplicates.py` |
+| Near-duplicate pairs | **95** (38 by overlap, 57 by containment), of which 19 differ on nothing §3 names | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
 | Learning paths | **101 paths, 1,570 steps, 1,475 of 1,535 topics** | `check_paths.py` |
 | Related links | **1,473 topics, 4,588 links, 0 one-way** | `suggest_related.py --check` |
@@ -11746,6 +11746,7 @@ appears once for a beginner and once in depth **on purpose**.
 | A *Reference* card (a table) and a *Concept* card | **Keep both.** Different jobs; the reference card is looked up, the concept card is read |
 | The same subject from two *perspectives* — an attacker's and a defender's | **Keep both.** `pentest`↔`redteam` and `threat`↔`blueteam` pairs are usually this |
 | A *certification-objective* card and a practitioner card | **Keep both.** Added by measurement, not by design — 37 cards are badged with an exam rather than a subject, and `depth_report.py` already exempts them from deepening because an objective summary that grew would stop being a skim |
+| The same subject for **two cloud providers**, or for one provider beside the vendor-neutral principle | **Keep both.** Added by measurement: 63 titles name AWS, GCP or Azure, and the site carries whole provider families on purpose. `AWS Data Protection — KMS & Secrets Manager` beside `GCP Data Protection — Cloud KMS, Secret Manager & VPC-SC` scored 0.60 and read as unexplained until this row existed. Three cloud providers only — `windows`, `linux` and `kubernetes` are platforms half the site mentions in passing |
 | Two cards with the same badge, the same depth, and no stated difference | **Consolidate.** This is the real population |
 
 **The test:** open both, and write one sentence saying who each is for. If the sentence is
@@ -11753,11 +11754,16 @@ the same, one of them should not exist.
 
 **And the census now says which row each pair lands on.** `near_duplicates.py` prints, under
 every pair, what it differs on in this table's terms — `level beginner/core`,
-`reference/concept`, `attacker/defender view`, `cert objective/practitioner` — or
-*"§3 offers nothing — read both"*. Stated as fact, not as a verdict, because only reading
-both settles it. **29 of the 39 pairs differ on something above; 10 differ on nothing**, and
-`--unexplained` lists those alone. That number is the row-4 population, and it is the one
-worth working.
+`reference/concept`, `attacker/defender view`, `cert objective/practitioner`, `vendor aws vs
+gcp` — or *"§3 offers nothing — read both"*. Stated as fact, not as a verdict, because only
+reading both settles it. **76 of the 95 pairs differ on something above; 19 differ on
+nothing**, and `--unexplained` lists those alone. That number is the last row's population,
+and it is the one worth working.
+
+The counts moved because the census was reading the table through a narrower lens than the
+table itself: it saw "reference" only where a card used that word, it had no vendor row at
+all, and it could not see a title wholly contained in another title. Those are recorded in
+the tool's docstring with the instance that exposed each.
 
 ## 4. What consolidation costs, and the rule that follows
 
@@ -19114,4 +19120,109 @@ tools/measure_load.mjs        new   (make measure — a measurement, not a gate)
 gates                          29   unchanged, still the same 29 on both sides
 BUDGET values                   4   unchanged, deliberately
 docstring claims retired        3   the 125 ms/MB line, the 22 MB headroom, the 3 s trigger
+```
+
+---
+
+## Session record — reading eight pairs, and finding the census was the thing that was wrong
+
+`make census` had been reporting the same line for several sessions: *38 pairs,
+of which 8 differ on nothing §3 names.* Eight is a small, tidy number and it had
+never been read. Reading it found that **all eight were the census's fault, not
+the content's** — and that behind them sat a whole shape of duplicate the tool
+could not report at all.
+
+### Three blind spots, each with the instance that exposed it
+
+**1. Jaccard cannot see one title inside another.** `[ai] Machine Learning
+Pipeline` and `[ai] ML Pipeline – From Raw Data to a Serving Model` are the same
+subject, in the same domain, and score **0.14**: the subtitle's five extra words
+sit in the union and sink it. The tool already had `covered()` — containment —
+and used it only for the `--title` pre-flight, where it was added after exactly
+this mistake in the other direction. The census now runs a containment pass over
+title *subjects* (the part before the subtitle) and reports what it finds marked
+`⊂`, at half the floor: containment is evidence, so it lowers the bar rather than
+removing it.
+
+**2. "Reference" was one word.** §3's second row exempts a reference card sitting
+beside a concept card, and the tool tested it with `\breference\b`. So
+`6-PHASE CYCLE`, `ATTACK TAXONOMY` and `8-STAGE WORKFLOW` — 17 single-card
+diagrams — were invisible to it, as were the 6 topics that contain no concept
+card at all and are nothing but tables. `[shortcut] VS Code` (805 chars, no
+concept cards, a keyboard sheet) had been sitting in the unexplained list beside
+`VS Code — Debugging` for want of this. **The cheat-sheet guard's lesson, again:
+a rule that enumerates one spelling of a thing misses every other spelling.**
+Both signals are now structural — a badge that counts its own steps, or a topic
+with no concept card — rather than another word added to a list.
+
+**3. §3 had no row for vendors.** The site carries AWS, GCP and Azure families of
+the same subject on purpose, and vendor-neutral principle cards beside them. 63
+titles name a provider. `AWS Data Protection — KMS & Secrets Manager` beside
+`GCP Data Protection — Cloud KMS, Secret Manager & VPC-SC` scored 0.60 and read
+as unexplained because the table it was being read against had no way to say
+"different cloud". §3 has that row now; the tool reports `vendor aws vs gcp`.
+Three cloud providers only — `windows`, `linux` and `kubernetes` are platforms
+half the site mentions in passing, and treating them as vendors would explain
+away pairs that are genuinely the same subject.
+
+### The count went up, and that is the result
+
+```
+                          pairs   unexplained
+before                       38             8
++ containment pass           95            31
++ structural reference       95            23
++ vendor row                 95            19
+```
+
+**A rising count is normally the warning sign this file keeps.** Here it is the
+finding: the old 8 was small because the instrument was blind, not because the
+site was clean. 57 of the 95 pairs are ones the census was structurally unable to
+report, and the honest reading of "8 unexplained" was never "8 pairs need work".
+
+### What was verified by reading, not by the number
+
+- The four pairs the vendor row newly explains were opened and read; none is a
+  duplicate. `[cloud] GCP Service Accounts & Workload Identity` beside
+  `[cloud] Service Account Tokens & Workload Identity` is one cloud's
+  implementation beside the credential mechanism itself.
+- The pairs the reference widening newly explains were opened too.
+  `[threat] Social Engineering Techniques` is a one-card attack taxonomy;
+  `[threat] Social Engineering — People Are the Attack Surface` is Cialdini,
+  pretexting and out-of-band verification. Same subject, different jobs — §3's
+  second row exactly, which the tool could not previously see.
+- **What is deliberately not claimed:** the `⊂` tail is noisy and no title-only
+  rule fixes it. An umbrella card is inside every card it covers, so
+  `[cloud] Google Cloud — Getting Started` matches all nine GCP cards. The
+  docstring says so, and says where reading stops being worth it.
+
+### The queue this leaves
+
+19 pairs differ on nothing §3 names — the row-4 population, and the real one.
+The same-domain ones are where a merge is most likely to be right:
+`[linux] Linux File Permissions Model` vs `Linux Permissions — Who Can Do What`,
+`[linux] Advanced Bash Scripting ▶` vs `Advanced Bash — Traps, Expansion`,
+`[cloud] AWS IAM` vs `AWS IAM Deep`, `[sec] OWASP Top 10` vs
+`The OWASP API Security Top 10`. Each needs the §3 test — open both, write one
+sentence saying who each is for — and a merge costs an alias, a paths pass and a
+related-links pass, so they are a wave of their own rather than a footnote to
+this one.
+
+### The sibling tool was blind in the same way
+
+`check_contradictions.py --pairs` narrows its claim comparison to near-duplicate
+pairs, on the argument that two cards about the same subject that disagree have a
+bug rather than a coincidence. It took "near-duplicate" from `near_duplicates.py`
+— and so inherited the old, Jaccard-only definition. Fixing the census and
+leaving the gate on the old meaning would have left it blind to exactly the pairs
+the census had just learned to see. It now compares 95 pairs instead of 38, and
+still finds 0 disagreements, which is the expected result and the reason to keep
+running it.
+
+```
+near_duplicates.py        containment pass · structural reference · vendor row
+check_contradictions.py   the same definition of "near-duplicate": 38 -> 95 pairs
+§3                        one new row, written from 63 measured titles
+unexplained               8 -> 19, because the instrument stopped lying
+content changed           none this wave — the defect was in the tools
 ```

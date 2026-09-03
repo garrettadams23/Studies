@@ -23,15 +23,44 @@ all deliberate. So it is a census, and the mode that matters is `--title`:
 run *before* writing, because by review time the cost is already sunk.
 
 Every pair also carries what it **differs on**, in §3's terms — see
-`differences()` for why that was missing and what it changes. Of 39 pairs, 29
-differ on something §3 calls deliberate and 10 differ on nothing; those 10 are
+`differences()` for why that was missing and what it changes. Of 95 pairs, 76
+differ on something §3 calls deliberate and 19 differ on nothing; those 19 are
 §3's last row, "the real population", and `--unexplained` lists them alone.
+
+## What this census could not see, and now can
+
+Reading the eight pairs it once called unexplained turned up three blind spots,
+each with an instance rather than a theory. The count of unexplained pairs went
+31 -> 23 -> 19 as they were closed, and the report gained one shape it had been
+structurally unable to report at all.
+
+**1. Jaccard cannot see a title inside another title.** `Machine Learning
+Pipeline` and `ML Pipeline – From Raw Data to a Serving Model` are the same
+subject in the same domain and score **0.14** — the subtitle's extra words sit
+in the union and sink it. Pairs where one title's *subject* is wholly inside the
+other's are now reported too, marked `⊂`, at half the floor. See `contained()`
+for the two guards and for what still gets through: an umbrella card is inside
+every card it covers, and no title-only rule separates `Google Cloud — Getting
+Started` from a real duplicate. The tail of the `⊂` list is that, and reading
+stops being worth it well before the bottom of it.
+
+**2. "Reference" was one word, and cards say it in other ways.** `\breference\b`
+missed `6-PHASE CYCLE`, `ATTACK TAXONOMY`, `8-STAGE WORKFLOW` — 17 single-card
+diagrams — and the 6 topics that are nothing but tables, `shortcut`'s keyboard
+sheets among them. Both are now structural signals; see `_SHAPE_BADGE_RE`. This
+is the cheat-sheet guard's lesson again: **a rule that enumerates one spelling
+of a thing will miss every other spelling of it.**
+
+**3. §3 had no row for vendors.** The site carries AWS, GCP and Azure families
+of the same subject on purpose, plus vendor-neutral principle cards beside them.
+63 titles name a provider, and pairs across two of them read as unexplained.
+`vendors()` closes it, for the three cloud providers only.
 
 Usage:
   python3 tools/near_duplicates.py                 # every pair at or above the floor
   python3 tools/near_duplicates.py --unexplained   # only the pairs §3 does not explain
   python3 tools/near_duplicates.py --title "…"     # does this card already exist?
-  python3 tools/near_duplicates.py --floor 0.4     # widen it
+  python3 tools/near_duplicates.py --floor 0.4     # widen it, and halve the ⊂ bar with it
 """
 
 import itertools
@@ -155,6 +184,26 @@ _BEGINNER_RE = re.compile(r"\bbeginner\b", re.I)
 _ADVANCED_RE = re.compile(r"\b(advanced|expert|deep)\b", re.I)
 _REFERENCE_RE = re.compile(r"\breference\b", re.I)
 
+# §3 row 2 again, and the same lesson the cheat-sheet guard taught: a rule that
+# enumerates one word misses every card that is a reference without using it.
+# Two structural signals, both measured rather than guessed:
+#
+#   a badge that names a *shape* instead of a subject — `6-PHASE CYCLE`,
+#   `8-STAGE WORKFLOW`, `ATTACK TAXONOMY`. 17 topics, every one a single
+#   concept card holding a diagram or a table. A badge counting its own steps
+#   is telling the reader this is looked up, not read.
+#
+#   no concept card at all — 6 topics that are nothing but tables, among them
+#   the `shortcut` domain's keyboard sheets. `VS Code` (805 chars, no cards)
+#   sat unexplained beside `VS Code — Debugging` for want of this.
+#
+# Deliberately *not* the bare word "lifecycle": `Certificate Lifecycle —
+# Auto-Enrolment and the Expiry Nobody Owns` is a practitioner card, and
+# marking it a reference would hide a real pair rather than explain one.
+_SHAPE_BADGE_RE = re.compile(r"\b(taxonomy|matrix|cheat ?sheet)\b"
+                             r"|\b\d+\s*[-–\s]\s*(phase|step|stage|part|tier)s?\b", re.I)
+CONCEPT_RE = re.compile(r'class="concept-title"')
+
 # §3 row 3, encoded as §3 states it: two *domain pairings*, not a two-way split
 # of the security domains. `pentest`↔`redteam` is methodology beside adversary
 # tradecraft; `threat`↔`blueteam` is what the attacker does beside how you catch
@@ -162,6 +211,26 @@ _REFERENCE_RE = re.compile(r"\breference\b", re.I)
 # reports the pairing and leaves the judgement to whoever opens both.
 PERSPECTIVE_PAIRS = {frozenset({"pentest", "redteam"}),
                      frozenset({"threat", "blueteam"})}
+
+# §3 gained a row from this census: the same subject for two clouds, or for one
+# cloud beside the vendor-neutral principle, is deliberate and the site is built
+# that way — 63 titles name one of these three. `AWS Data Protection — KMS &
+# Secrets Manager` and `GCP Data Protection — Cloud KMS , Secret Manager &
+# VPC-SC` scored 0.60 and read as unexplained for want of saying so.
+#
+# Only the three cloud providers. `windows`, `linux` and `kubernetes` are
+# platforms half the site mentions in passing, and treating them as vendors
+# would explain away pairs that are genuinely the same subject. Tokens are
+# matched after tokens()' crude singular fold, which is why `windows` would
+# have to be spelled `window` here at all.
+VENDORS = {"aws": "aws", "amazon": "aws",
+           "gcp": "gcp", "google": "gcp",
+           "azure": "azure", "entra": "azure", "m365": "azure",
+           "microsoft": "azure", "intune": "azure"}
+
+
+def vendors(title):
+    return frozenset(VENDORS[w] for w in tokens(title) if w in VENDORS)
 
 # A fourth class, which §3's table did not have and measurement supplied: the
 # site keeps 37 **certification-objective** cards, badged with the exam rather
@@ -205,6 +274,9 @@ def differences(a, b):
         out.append("attacker/defender view")
     if a["cert"] != b["cert"]:
         out.append("cert objective/practitioner")
+    if a["vendors"] != b["vendors"]:
+        name = lambda v: "/".join(sorted(v)) if v else "vendor-neutral"
+        out.append(f'vendor {name(a["vendors"])} vs {name(b["vendors"])}')
     return out
 
 
@@ -239,8 +311,11 @@ def titles():
                     # and so is one the repo files under references, whatever
                     # its title says.
                     "reference": in_ref_file
-                                 or bool(_REFERENCE_RE.search(title + " " + badge)),
+                                 or bool(_REFERENCE_RE.search(title + " " + badge))
+                                 or bool(_SHAPE_BADGE_RE.search(badge))
+                                 or not CONCEPT_RE.search(block),
                     "cert": _is_cert(badge),
+                    "vendors": vendors(title),
                 }
 
 
@@ -261,17 +336,55 @@ def covered(want, have):
     return len(want & have) / len(want) if want else 0.0
 
 
+# A title's subject is the part before its subtitle. "Regular Expressions —
+# Pattern Matching Power" is about regular expressions; everything after the dash
+# is the pitch, and it is what drags a Jaccard score below the floor.
+_HEAD_RE = re.compile(r"\s+[—–:]\s+|\s+-\s+|\s+[—–]|[—–]\s+")
+
+
+def head(title):
+    return _HEAD_RE.split(title, 1)[0]
+
+
+def contained(a_head, b_head, a_plain, b_plain):
+    """Is one title's subject wholly inside the other's?
+
+    Jaccard cannot see this shape. `Machine Learning Pipeline` and
+    `ML Pipeline – From Raw Data to a Serving Model` are the same subject and
+    score **0.14**: the subtitle's five extra words sit in the union and sink it.
+    Containment asks the other question — is every word of the shorter subject
+    already in the longer one — and answers 1.00.
+
+    Two guards, both earning their place against the measurement:
+
+    * **Heads, not whole titles.** Comparing everything reports any card whose
+      subtitle happens to name another card's subject.
+    * **At least two meaningful words on the short side.** A one-word subject is
+      a label, not a subject: `SQL — Query Reference` is inside every card that
+      mentions SQL, and none of those is a duplicate.
+
+    What survives both is still not clean — an umbrella card is inside every card
+    it covers, so `Google Cloud — Getting Started` matches all nine GCP cards.
+    That is why containment lowers the bar rather than removing it; see main().
+    """
+    short, long_ = (a_head, b_head) if len(a_plain) <= len(b_plain) else (b_head, a_head)
+    if min(len(a_plain), len(b_plain)) < 2:
+        return False
+    return covered(short, long_) >= 0.999
+
+
 def main():
     args = sys.argv[1:]
     floor = float(args[args.index("--floor") + 1]) if "--floor" in args else FLOOR
     only_unexplained = "--unexplained" in args
-    rows = [(r, tokens(r["title"])) for r in titles()]
+    rows = [(r, tokens(r["title"]), tokens(head(r["title"]), expand=True),
+             tokens(head(r["title"]))) for r in titles()]
 
     if "--title" in args:
         # Both sides expanded — see tokens().
         want = tokens(args[args.index("--title") + 1], expand=True)
         hits = sorted(((covered(want, tokens(r["title"], expand=True)), r["domain"], r["title"])
-                       for r, _ in rows), reverse=True)
+                       for r, *_ in rows), reverse=True)
         near = [h for h in hits if h[0] >= floor]
         for score, d, t in (near or hits[:5]):
             print(f"  {score:.2f}  [{d}] {t[:66]}")
@@ -283,24 +396,34 @@ def main():
         print(f"\nNothing at or above {floor:.2f}; closest shown. Clear to write.")
         return 0
 
+    # Containment is evidence, so it halves the bar rather than removing it.
+    # At the full floor these pairs are already reported; below half of it the
+    # list fills with umbrella cards, which are inside everything they cover.
+    sub_floor = floor / 2
+
     pairs = []
-    for (a, ka), (b, kb) in itertools.combinations(rows, 2):
+    for (a, ka, ha, pa), (b, kb, hb, pb) in itertools.combinations(rows, 2):
         score = overlap(ka, kb)
-        if score >= floor:
-            pairs.append((score, a, b, differences(a, b)))
+        by_containment = False
+        if score < floor:
+            if score < sub_floor or not contained(ha, hb, pa, pb):
+                continue
+            by_containment = True
+        pairs.append((score, a, b, differences(a, b), by_containment))
     pairs.sort(key=lambda p: (-p[0], p[1]["title"]))
 
-    shown = 0
-    for score, a, b, diff in pairs:
+    for score, a, b, diff, sub in pairs:
         if only_unexplained and diff:
             continue
-        shown += 1
-        print(f'  {score:.2f}  [{a["domain"]}] {a["title"][:60]}\n'
-              f'        [{b["domain"]}] {b["title"][:60]}\n'
-              f'        → {"; ".join(diff) if diff else "§3 offers nothing — read both"}')
+        print(f'  {"⊂" if sub else " "}{score:.2f}  [{a["domain"]}] {a["title"][:60]}\n'
+              f'         [{b["domain"]}] {b["title"][:60]}\n'
+              f'         → {"; ".join(diff) if diff else "§3 offers nothing — read both"}')
 
-    unexplained = sum(1 for _, _, _, d in pairs if not d)
-    print(f"\n{len(pairs)} pair(s) at or above {floor:.2f}, across {len(rows):,} titles.")
+    unexplained = sum(1 for p in pairs if not p[3])
+    by_sub = sum(1 for p in pairs if p[4])
+    print(f"\n{len(pairs)} pair(s) across {len(rows):,} titles: {len(pairs) - by_sub} at or "
+          f"above {floor:.2f}, and {by_sub} marked ⊂ — one title's subject wholly inside "
+          f"the other's, at or above {sub_floor:.2f}.")
     print(f"{len(pairs) - unexplained} differ on something §3 calls deliberate; "
           f"**{unexplained} differ on nothing** — `--unexplained` lists those alone.")
     print("A census, not a gate — see this file's docstring.")

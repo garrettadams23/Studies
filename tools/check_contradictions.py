@@ -31,8 +31,9 @@ because the dictionary is the one place with an authoritative answer.
 A third mode narrows the same two checks to the place they are most likely to
 find something. Site-wide, two cards that disagree are usually two cards about
 different things that happen to share a word. Inside a **near-duplicate pair**
-— two topics whose titles overlap by half or more, per `near_duplicates.py` —
-both cards are about the same subject by construction, so a disagreement
+— two topics whose titles overlap by half or more, or whose subjects sit one
+inside the other, per `near_duplicates.py` — both cards are about the same
+subject by construction, so a disagreement
 between them is a bug in one of them rather than a coincidence. plan.md Phase
 10 T9.
 
@@ -301,15 +302,24 @@ def disagreements(c1, c2):
 
 
 def check_pairs(vocab, floor):
-    """Disagreements *between* the two halves of a near-duplicate pair."""
+    """Disagreements *between* the two halves of a near-duplicate pair.
+
+    "Near-duplicate" means whatever `near_duplicates.py` means by it, and that
+    widened: a title wholly inside another title is the same subject and scores
+    below any Jaccard floor. Fixing the census and leaving this on the old
+    definition would have left the sibling tool blind to exactly the pairs the
+    census had just learned to see. 38 pairs -> 95, and still 0 disagreements.
+    """
     import itertools
     import near_duplicates as nd
 
-    rows = [(d, t, nd.tokens(t), claims(body, vocab))
+    rows = [(d, t, nd.tokens(t), claims(body, vocab),
+             nd.tokens(nd.head(t), expand=True), nd.tokens(nd.head(t)))
             for d, t, body in topic_bodies()]
     findings, compared = [], 0
-    for (d1, t1, k1, c1), (d2, t2, k2, c2) in itertools.combinations(rows, 2):
-        if nd.overlap(k1, k2) < floor:
+    for (d1, t1, k1, c1, h1, p1), (d2, t2, k2, c2, h2, p2) in itertools.combinations(rows, 2):
+        if nd.overlap(k1, k2) < floor and not (
+                nd.overlap(k1, k2) >= floor / 2 and nd.contained(h1, h2, p1, p2)):
             continue
         compared += 1
         for kind, key, a, b in disagreements(c1, c2):
