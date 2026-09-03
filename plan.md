@@ -49,15 +49,17 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Measure | Value | Tool |
 |---|---|---|
 | Topics | **1,534** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **22**, 1% — at its floor, and audited | `depth_report.py` |
-| Mean chars per concept card | **1,369**, or **1,108 excluding verdicts** — the second is the padding counter-metric | `depth_report.py` |
-| Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
+| Thin (one card, under 1,800 chars) | **15**, 1% — eight deepening waves below the old floor | `depth_report.py` |
+| Mean chars per concept card | **1,369**, or **1,109 excluding verdicts** — the second is the padding counter-metric, and it moved by one character across eight deepening waves | `depth_report.py` |
+| Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **92** (38 by overlap, 54 by containment) — 75 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
 | Learning paths | **101 paths, 1,570 steps, 1,474 of 1,534 topics** | `check_paths.py` |
 | Related links | **1,472 topics, 4,592 links, 0 one-way** | `suggest_related.py --check` |
-| Page budget | **4% raw** headroom — room for ~70 more topics | `page_budget.py` |
-| Throttled load | **~2.9 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
+| Page budget | **4% raw** headroom — room for ~66 more topics | `page_budget.py` |
+| Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
+| Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
+| Depth tail | **10th percentile 2,083 chars**, median 3,655 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **30**, and the same 30 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
