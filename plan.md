@@ -19544,3 +19544,76 @@ each shape can be converted and *proved*, one wave at a time, instead of being
 carried forever because nobody could show a change was safe. The tool is also
 general — any future stylesheet refactor can be held to the same standard, which
 is what makes it worth more than the 112 lines it just cleared.
+
+---
+
+## Session record — the second conversion, and the two traps it walked into
+
+`style_equiv.mjs` earned itself twice over on the next batch: 286 colour-only
+inline styles converted to the `.c-*` utilities that have existed for this since
+session 18. It caught **both** problems before either shipped.
+
+### Trap one: every table style colours its own header
+
+Five `military` staff-branch headers and two `net` protocol headers turned cyan.
+`.ref-table th` sets `color: var(--cyan)` at (0,1,1); `.c-green` is (0,1,0) and
+loses — the identical specificity trap as `.ref-table td:first-child`, which the
+linter has errored on since session 18, one row up and nobody had noticed.
+
+```
+military: element 513 <th>  color: rgb(0, 255, 153) -> rgb(0, 212, 255)
+military: element 514 <th>  color: rgb(255, 176, 32) -> rgb(0, 212, 255)
+military: element 515 <th>  color: rgb(255, 77, 109) -> rgb(0, 212, 255)
+```
+
+Seven elements put back, and `dead_header_classes()` added so it cannot return —
+covering `.ref-table th`, `.ai-table th` and `.rx-table th`, all three of which
+colour their headers.
+
+### And a guard I had broken myself, one commit earlier
+
+Writing that check meant reading the existing one, which matched
+`class="(?:ref-table|ai-table)"` — an **exact attribute**. The previous wave had
+turned 102 tables into `class="ref-table mb-14"`. Those tables had silently
+dropped out of the dead-class guard's view, and nothing failed, because the count
+it guards is zero.
+
+> **A guard whose subject can be renamed out from under it fails open, and
+> silently.** The regex now matches a class *list*, and seven fixtures cover it —
+> including the exact case that broke it.
+
+This is the third guard this fortnight found to be looking at the wrong thing:
+the cheat-sheet guard enumerating div classes, the verdict rule using a
+character window instead of a card, and now this one keying on an exact
+attribute. All three failed silently, in the safe-looking direction.
+
+### Trap two: the annotator measures its window in bytes
+
+Removing `style="color: var(--purple)"` from elements near a `TGT` in `sec`
+widened `annotate_acronyms.py`'s ±250-**character** window — measured over raw
+HTML — until it reached the words "Ticket Granting Service" one row below. The
+annotator concluded TGT was already explained and dropped its expansion, and
+`make check` failed on the generated file being out of date.
+
+`style_equiv.mjs` reported it exactly as designed: *"sec: 8423 elements -> 8422.
+A structural change, not a styling one — this tool cannot align the two, so it
+stops here."*
+
+**This is the fifth instance this session of a number measuring the wrong
+thing** — after gzip in kilobytes, search in absolute hits, load in milliseconds,
+and a ceiling over two populations. A window that is supposed to ask *"can a
+reader see the expansion from here?"* is counted in markup, so the answer changes
+when unrelated attributes are added or removed nearby. Measured: **334 of 9,328
+acronym decisions flip** when the window is measured in stripped text instead.
+
+That is a content change of its own and does not belong inside a styling commit,
+so `sec.html`'s 29 conversions are deferred with it. **A commit that claims a
+proved no-op must not carry the one domain where the proof does not hold.**
+
+```
+inline style attribute (avoidable)   680 -> 430
+converted                            250 colour styles, 12 files, proved
+excluded by specificity                7 <th>, now a lint error
+deferred                              29 in sec.html, waiting on the annotator
+next                                  measure that window in text, not bytes
+```

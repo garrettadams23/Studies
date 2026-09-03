@@ -34,12 +34,27 @@ The ceiling therefore sits *exactly* at today's avoidable count, with no slack �
 which is what a ratchet means. A new card that genuinely needs an inline style
 raises it deliberately, in its own commit, with the reason written here.
 
-**792 -> 680.** The largest single shape was `style="margin-bottom: 14px"` on 112
-elements, 102 of them a `.ref-table`. It could not become a rule on `.ref-table`
-— only 102 of the site's 2,271 want that gap — so it became a `.mb-14` utility
-class. `tools/style_equiv.mjs` compared 150,248 elements across all 30 domains on
-33 computed properties before and after: nothing changed. That tool is what makes
-this number workable at all; before it, no conversion could be shown to be safe.
+**792 -> 680 -> 430.** Two conversions, each proved with
+`tools/style_equiv.mjs` — 150,248 elements across all 30 domains, 33 computed
+properties, before and after. That tool is what makes this number workable at
+all; before it, no conversion could be shown to be safe.
+
+    112   style="margin-bottom: 14px"      -> .mb-14
+    250   style="color: var(--…)"          -> .c-cyan and friends
+
+The margin could not become a rule on `.ref-table`: only 102 of the site's 2,271
+want that gap, so the obvious fix would have been a redesign of 2,169 tables.
+
+The colours needed **seven exclusions the specificity rules above predict**: a
+`th` cannot take a utility class, because every table style colours its own
+header. That batch was written, measured, and seven elements put back before it
+shipped — see `dead_header_classes()`.
+
+`sec.html`'s 29 are deliberately not among them. Shortening its markup moved
+`annotate_acronyms.py`'s ±250-character window — which is measured in *raw HTML*,
+not in text a reader sees — and one acronym expansion was dropped as a side
+effect. A commit claiming a proved no-op should not carry the one domain where
+the proof does not hold, so those wait for the window to be fixed.
 
 `ai-table` is no longer a warning at all. It was labelled "prefer ref-table",
 which asserted a preference nobody had agreed and the stylesheet contradicts:
@@ -105,7 +120,7 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # The ceiling is 12 rather than 0 for that reason. If it ever reads 13, either
 # a new card ends on a table or one of those twelve was edited: both are worth
 # a look, which is what a ceiling at the true floor buys you.
-CEILINGS = {"inline style attribute": 680, "table with no verdict": 12}
+CEILINGS = {"inline style attribute": 430, "table with no verdict": 12}
 
 
 # A `style=` attribute is either avoidable or it is not, and the old count mixed
@@ -270,10 +285,18 @@ def hex_colours(text):
 # td:first-child` and `.ai-table td:first-child` — so a utility class loses to
 # either. `.ai-table` has never carried a dead class; the guard covers it so it
 # never starts.
+# Matched as a class *list*, not an exact attribute. It used to be
+# `class="(?:ref-table|ai-table)"`, and the day a table gained a second class
+# — `class="ref-table mb-14"`, 102 of them — this guard silently stopped
+# looking at those tables. Nothing failed, because the count it guards is zero:
+# **a guard whose subject can be renamed out from under it fails open, and
+# silently.** Matching the list is the fix, and the self-test below covers it.
 REF_TABLE_RE = re.compile(
-    r'<table\b[^>]*class="(?:ref-table|ai-table)"[^>]*>.*?</table\s*>', re.S)
+    r'<table\b[^>]*class="[^"]*\b(?:ref-table|ai-table|rx-table)\b[^"]*"[^>]*>'
+    r'.*?</table\s*>', re.S)
 ROW_RE = re.compile(r"<tr\b[^>]*>.*?</tr\s*>", re.S)
 FIRST_CELL_RE = re.compile(r"<(td|th)\b([^>]*)>")
+CELL_RE = re.compile(r"<(td|th)\b([^>]*)>")
 COLOUR_CLASS_RE = re.compile(r"\bc-(?:cyan|green|amber|red|purple|muted)\b")
 
 
@@ -287,6 +310,24 @@ def dead_first_cell_classes(text):
             hit = COLOUR_CLASS_RE.search(cell.group(2) or "")
             if hit:
                 at = table.start() + row.start() + cell.start()
+                yield text[:at].count("\n") + 1, hit.group(0)
+
+
+# The same specificity trap, one row up, and it was found the hard way: a batch
+# converting `style="color: var(--…)"` to `.c-*` turned five coloured military
+# staff-branch headers cyan, because **every** table style colours its own header
+# cells at (0,1,1) — `.ref-table th` and `.ai-table th` cyan, `.rx-table th`
+# purple — and a utility class at (0,1,0) loses to all three. Caught by
+# tools/style_equiv.mjs before it shipped; this is so it cannot come back.
+def dead_header_classes(text):
+    """(line_number, class) for colour classes on a table header cell."""
+    for table in REF_TABLE_RE.finditer(text):
+        for cell in CELL_RE.finditer(table.group(0)):
+            if cell.group(1) != "th":
+                continue
+            hit = COLOUR_CLASS_RE.search(cell.group(2) or "")
+            if hit:
+                at = table.start() + cell.start()
                 yield text[:at].count("\n") + 1, hit.group(0)
 
 
@@ -652,6 +693,15 @@ def main():
                 f"never renders — .ref-table td:first-child outranks it. Drop the "
                 f"class (the column is already styled), or use "
                 f"style=\"color: var(--…)\" if it genuinely needs a different colour"
+            )
+
+        for line_no, cls in dead_header_classes(text):
+            errors.append(
+                f"{name}:{line_no}: '{cls}' on a table header cell never renders "
+                f"— .ref-table th, .ai-table th and .rx-table th each set a colour "
+                f"at higher specificity. Drop the class (the header is already "
+                f"styled), or use style=\"color: var(--…)\" if this header "
+                f"genuinely needs a different colour"
             )
 
         for line_no in verdict_margins(text):
