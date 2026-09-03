@@ -48,14 +48,14 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,534** across 30 domains | `depth_report.py` |
+| Topics | **1,533** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
 | Mean chars per concept card | **1,280** — the padding counter-metric | `depth_report.py` |
 | Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
-| Near-duplicate pairs | **93** (38 by overlap, 55 by containment), of which 18 differ on nothing §3 names | `near_duplicates.py` |
+| Near-duplicate pairs | **92** (38 by overlap, 54 by containment), of which 17 differ on nothing §3 names | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,569 steps, 1,474 of 1,534 topics** | `check_paths.py` |
-| Related links | **1,472 topics, 4,586 links, 0 one-way** | `suggest_related.py --check` |
+| Learning paths | **101 paths, 1,569 steps, 1,473 of 1,533 topics** | `check_paths.py` |
+| Related links | **1,471 topics, 4,584 links, 0 one-way** | `suggest_related.py --check` |
 | Page budget | **4% raw** headroom — room for ~70 more topics | `page_budget.py` |
 | Throttled load | **~2.9 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Gates | **29**, and the same 29 in `make all` and in CI | `check_gates.py` |
@@ -19287,4 +19287,49 @@ related links          4,588 -> 4,586, still 0 one-way
 near-duplicate pairs      95 -> 93; unexplained 19 -> 18
 page runway               ~69 -> ~70 topics
 slug-aliases.json        118 entries; the old permalink still resolves
+```
+
+---
+
+## Session record — the second merge, where the duplicate was one card, not one topic
+
+`linux` carried three cards on writing bash that does not destroy things:
+
+| Topic | Badge | What it is |
+|---|---|---|
+| Advanced Bash Scripting – Patterns for Reliable Scripts ▶ | `Intermediate` | the teaching layer — safe header, functions, argument parsing, signals |
+| Robust Bash — Scripts That Don't Silently Destroy Things | `LINUX • Advanced` | the four-part tutorial: strict mode, quoting, arrays, traps |
+| Advanced Bash — Traps, Expansion & Robust Scripts | `Scripting` | **one compressed duplicate of the row above, plus one card that exists nowhere else** |
+
+That third card is where §3's test gets interesting, because the answer is
+neither "keep both" nor "merge and drop". Its first concept card — labelled
+`Reference`, carrying the same `set -Eeuo pipefail` header, the same trap, the
+same ShellCheck advice — says nothing the row above does not. Its second,
+labelled `The Fingerprint`, is the best thing in all three cards: **`set -e` has
+holes, and they are exactly the places people lean on it** — the left of `&&`,
+an `if` condition, a function called in that position, an assignment on older
+bash, a pipeline without `pipefail`.
+
+So the merge carried one card and dropped one, and the survivor now ends on the
+fingerprint rather than on "run ShellCheck": *a good default and a poor
+guarantee.* Five concept cards, 7,372 chars, closing on a decision, which is what
+the rubric asks of a card and what the retired topic's title had been promising
+without delivering.
+
+**What this adds to §3's method.** The existing test — open both, write one
+sentence saying who each is for — assumes the unit of duplication is the topic.
+Here it was one concept card inside a topic whose other card was unique and
+excellent. Two sentences were needed, one per card, and the verdicts differed.
+Worth carrying: **when a pair's sentences come out "mostly the same, except…",
+the exception is usually a single card, and it is usually the one worth keeping.**
+
+The Intermediate card stays. §3's first row, and this time the level really is
+the difference: it teaches argument parsing and background jobs, which neither
+of the others covers.
+
+```
+topics                 1,534 -> 1,533
+near-duplicate pairs      93 -> 92; unexplained 18 -> 17
+related links          4,586 -> 4,584, still 0 one-way
+paths                  1,569 steps, unchanged — the step was repointed, not dropped
 ```

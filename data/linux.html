@@ -3321,6 +3321,39 @@ log INFO <span class="str">"Starting backup"</span>
 log ERROR <span class="str">"Disk full"</span></pre>
       <div class="concept-desc"><strong>Lint your scripts with <code>shellcheck</code></strong> — it catches quoting bugs, unsafe patterns, and common mistakes automatically. Run it on every script; it will make you a dramatically better bash author.</div>
     </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The Fingerprint</div>
+      <div class="concept-title">set -e Is Necessary, Not Sufficient — It Silently Doesn't Fire Where You Expect</div>
+      <div class="concept-desc">
+        The safety header gives false confidence, because <code>set -e</code> has holes that
+        are exactly the places people lean on it. It does <strong class="c-amber">not
+        trigger for a command whose failure is being &ldquo;used&rdquo;</strong> — anything on
+        the left of <code>&amp;&amp;</code>/<code>||</code>, or the condition of an
+        <code>if</code>, or a function called in that position: <code>if my_func; then</code>
+        masks every failure inside <code>my_func</code>, because its non-zero exit is being
+        tested, not raised. It can be swallowed by a substitution assignment on older bash
+        (<code>out=$(might_fail)</code> carries on). And <code>pipefail</code> is what makes a
+        mid-pipe failure count at all — without it <code>false | true</code> succeeds. So the
+        header is a good default and a poor guarantee.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Looks guarded by set -e, isn't</th><th>Why</th><th>Do this instead</th></tr>
+          <tr><td><code>if bigfunc; then …</code></td><td>The function's internal failures are being tested, not raised</td><td>Check the specific command; don't bury logic in the condition</td></tr>
+          <tr><td><code>out=$(cmd)</code> (older bash)</td><td>Assignment can swallow the command's exit status</td><td>Split: <code>local out; out=$(cmd)</code>, then check</td></tr>
+          <tr><td><code>cmd1 | cmd2</code>, no pipefail</td><td>Only the last stage's status counts</td><td><code>set -o pipefail</code> — part of the header</td></tr>
+          <tr><td><code>foo || true</code></td><td>You told it to ignore failure</td><td>Fine — just know <code>-e</code> is off for that line</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          So keep <code>set -Eeuo pipefail</code> as the header — it catches the careless
+          majority — but treat it as a <strong>seatbelt, not a guarantee</strong>: for the
+          handful of commands whose failure must stop the script, check the exit code
+          explicitly. The scripts that fail in production with <code>set -e</code> at the top
+          are the ones that trusted it to cover a case it structurally cannot see.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -5112,79 +5145,6 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
                     with root — which is what <code>zfs send</code> to another machine is for, and
                     why that replica should be somewhere the source cannot delete it. See
                     <span class="xref">Snapshots Are Not Backups — What They Cost and How They Bite</span>.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="topic" data-reviewed="2026-09">
-            <div class="topic-header">
-              <span class="topic-icon">🐚</span>
-              <span class="topic-name">Advanced Bash — Traps, Expansion &amp; Robust Scripts</span>
-              <span class="topic-badge">Scripting</span>
-              <span class="topic-chev">▶</span>
-            </div>
-            <div class="topic-body">
-              <div class="concept-card">
-                <div class="concept-label">Reference</div>
-                <div class="concept-title">Writing Bash That Doesn't Break</div>
-                <div class="concept-desc">
-                  Beyond one-liners, a few habits and features separate fragile scripts from robust
-                  ones. These show up constantly in real automation and CI.
-                </div>
-                <div class="dw">
-                  <pre class="code-block"><span class="com"># Fail fast, and clean up on exit</span>
-<span class="kw">set</span> <span class="var">-Eeuo</span> pipefail
-tmp=$(mktemp)
-<span class="kw">trap</span> <span class="str">'rm -f "$tmp"'</span> EXIT
-
-<span class="com"># Parameter expansion: defaults, trimming</span>
-name=<span class="str">"${1:-world}"</span>          <span class="com"># default if unset</span>
-base=<span class="str">"${path##*/}"</span>           <span class="com"># strip dir → filename</span></pre>
-                  <table class="ref-table">
-                    <tr><th>Tool</th><th>Why</th></tr>
-                    <tr><td><code>set -euo pipefail</code></td><td>Exit on error/unset var/failed pipe — the safety header</td></tr>
-                    <tr><td><code>trap</code></td><td>Run cleanup on EXIT/ERR/signals</td></tr>
-                    <tr><td>Parameter expansion</td><td><code>${v:-def}</code>, <code>${v##pat}</code>, <code>${v/a/b}</code> — no sed needed</td></tr>
-                    <tr><td>ShellCheck</td><td>Lints scripts for the bugs everyone writes</td></tr>
-                  </table>
-                  <div class="concept-desc verdict">
-                    <strong class="c-amber">Golden rules:</strong> quote your variables
-                    (<code>"$var"</code>) to survive spaces, and run ShellCheck. Past ~100 lines with
-                    real data structures, reach for Python instead.
-                  </div>
-                </div>
-              </div>
-              <div class="concept-card">
-                <div class="concept-label">The Fingerprint</div>
-                <div class="concept-title">set -e Is Necessary, Not Sufficient — It Silently Doesn't Fire Where You Expect</div>
-                <div class="concept-desc">
-                  The safety header gives false confidence, because <code>set -e</code> has holes that
-                  are exactly the places people lean on it. It does <strong class="c-amber">not
-                  trigger for a command whose failure is being &ldquo;used&rdquo;</strong> — anything on
-                  the left of <code>&amp;&amp;</code>/<code>||</code>, or the condition of an
-                  <code>if</code>, or a function called in that position: <code>if my_func; then</code>
-                  masks every failure inside <code>my_func</code>, because its non-zero exit is being
-                  tested, not raised. It can be swallowed by a substitution assignment on older bash
-                  (<code>out=$(might_fail)</code> carries on). And <code>pipefail</code> is what makes a
-                  mid-pipe failure count at all — without it <code>false | true</code> succeeds. So the
-                  header is a good default and a poor guarantee.
-                </div>
-                <div class="dw">
-                  <table class="ref-table">
-                    <tr><th>Looks guarded by set -e, isn't</th><th>Why</th><th>Do this instead</th></tr>
-                    <tr><td><code>if bigfunc; then …</code></td><td>The function's internal failures are being tested, not raised</td><td>Check the specific command; don't bury logic in the condition</td></tr>
-                    <tr><td><code>out=$(cmd)</code> (older bash)</td><td>Assignment can swallow the command's exit status</td><td>Split: <code>local out; out=$(cmd)</code>, then check</td></tr>
-                    <tr><td><code>cmd1 | cmd2</code>, no pipefail</td><td>Only the last stage's status counts</td><td><code>set -o pipefail</code> — part of the header</td></tr>
-                    <tr><td><code>foo || true</code></td><td>You told it to ignore failure</td><td>Fine — just know <code>-e</code> is off for that line</td></tr>
-                  </table>
-                  <div class="concept-desc verdict">
-                    So keep <code>set -Eeuo pipefail</code> as the header — it catches the careless
-                    majority — but treat it as a <strong>seatbelt, not a guarantee</strong>: for the
-                    handful of commands whose failure must stop the script, check the exit code
-                    explicitly. The scripts that fail in production with <code>set -e</code> at the top
-                    are the ones that trusted it to cover a case it structurally cannot see.
                   </div>
                 </div>
               </div>
