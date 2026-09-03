@@ -20282,3 +20282,49 @@ have caught it costs one command:
 That is now the first step of a deepening wave, and this is the wave that paid
 for it — about forty minutes of writing, thrown away, which is cheaper than
 shipping a duplicate but not free.
+
+---
+
+## Session record — the new first step earns its cost immediately
+
+The rule added last wave — *before deepening a card, read the domain's longest
+topics, not only its shortest* — was applied to the next two candidates and
+stopped both.
+
+```
+[script] Building a REST API        1,376 · 1 card
+  neighbours:  REST & HTTP 2,964 · APIs & HTTP 3,502 · Consuming APIs Robustly
+               3,933 · API Design — Versioning, Pagination… 4,279
+[script] Reproducible Python Envs   1,275 · 3 cards
+  neighbours:  Virtual Environments 2,149 · Modules, Packages & pip 2,967
+```
+
+Both are **siblings, not gaps.** And a pattern falls out of the four cases now
+seen: the successful deepenings were in `eng`, `data` and `redteam` — 82, 47 and
+59 topics — while the abandoned ones were in `script` and `web`, 151 and 39
+topics with dense clusters. **In a large or densely-covered domain a thin card is
+more often a sibling than a gap**, which is a heuristic rather than a law, and
+cheap to check either way.
+
+### The one that was a gap
+
+`[career] Building in Public — Your Reputation Compounds`, whose only neighbours
+are Professional Networking (2,097) and Technical Writing (2,731) — adjacent, and
+neither about this.
+
+```
+2 cards, 1,381 chars   ->   3 cards, 2,993 chars
+```
+
+**It compounds through retrieval, not reach.** The usual advice — post
+consistently — names the habit and not the mechanism. What accumulates is
+searchable evidence that outlives the conversation: a post that goes wide reaches
+people with no use for it and is gone in a day, while one naming a specific error
+is found by the few people who have it, every month, for years. Impressions
+measure the first kind and miss the second, which is why the numbers look
+discouraging while the effect works.
+
+And the cost, stated rather than skipped: it is public, durable, and ages — a
+confident post about a technology used for a week is equally findable, by the
+same search. One filter resolves both: *would I still stand behind this in three
+years, in front of somebody who knows the subject?*
