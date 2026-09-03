@@ -38,14 +38,38 @@ for the reasoning rather than the tasks.
 | **The card rubric** | ~10,988 | What the good cards have, measured from forty written in one session | 📘 reference |
 | **Phase 9 — the duplication problem** | ~11,072 | Queue C1–C6 complete: **12 merges, 1 move, 1 link**, a dozen documented refusals | ✅ **closed** |
 | **Phase 10 — the tooling** | ~11,175 | All nine shipped. **Five of them found a defect in something other than themselves** | ✅ **closed** |
-| Domain shape | ~11,322 | The connectivity graph: hubs, broadcasters, islands | 📘 reference |
-| **Phase 11 — the verification debt** | ~11,411 | 51 dated claims, and why the denominator is not countable | ⬜ **live** |
+| Domain shape | ~11,322 | The connectivity graph: hubs, broadcasters, islands. **Both navigation layers are now complete** — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
+| **Phase 11 — the verification debt** | ~11,411 | 51 dated claims, and why the denominator is not countable. **All five waves audited**; stays open as a standing discipline, not a queue | 📘 **living** |
 | **The session operating manual** | ~11,522 | The loop, the ordering constraints, and ten failures with their guards | 📘 **start here** |
 | The risk register, revisited | ~11,624 | Four accumulation risks that only a measurement could find | 📘 living |
 
-**If you read three things:** the session operating manual, the card rubric, and whichever
-live phase you are about to work on. Line numbers drift as records are appended — the headings
-are stable, the numbers are a hint.
+**The measured state, as of the last session record.** Every number below is produced by a
+tool in `tools/`, not by anybody's recollection, and `make census` prints the first four:
+
+| Measure | Value | Tool |
+|---|---|---|
+| Topics | **1,534** across 30 domains | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
+| Mean chars per concept card | **1,280** — the padding counter-metric | `depth_report.py` |
+| Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
+| Near-duplicate pairs | **38**, of which 8 differ on nothing §3 names | `near_duplicates.py` |
+| Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
+| Learning paths | **101 paths, 1,570 steps, 1,475 of 1,534 topics** | `check_paths.py` |
+| Related links | **1,473 topics, 4,588 links, 0 one-way** | `suggest_related.py --check` |
+| Page budget | **9% raw, 7% gzip** headroom | `page_budget.py` |
+| Gates | check · smoke **148** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+
+**Where new work comes from now.** The content programmes (Phases 7–10) are closed and the
+navigation ones are complete, so the queue is no longer a list — it is whichever census
+reports something a human should read. In practice this session that meant: a reader
+question returning nothing (two new cards), a duplicate pair with no stated difference (two
+retitles), an acronym expanded wrongly (three fixes), a flashcard with a blank back, a quiz
+that answered itself, a search returning half the site, and a stray `%` that killed every
+link on the page. **None of those were on any list before the tool that found them ran.**
+
+**If you read three things:** the session operating manual, the card rubric, and the
+docstring of whichever census last reported something. Line numbers drift as records are
+appended — the headings are stable, the numbers are a hint.
 
 ---
 
