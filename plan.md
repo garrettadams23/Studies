@@ -56,9 +56,10 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
 | Learning paths | **101 paths, 1,570 steps, 1,475 of 1,535 topics** | `check_paths.py` |
 | Related links | **1,473 topics, 4,588 links, 0 one-way** | `suggest_related.py --check` |
-| Page budget | **8% raw** headroom — room for ~139 more topics | `page_budget.py` |
+| Page budget | **4% raw** headroom — room for ~69 more topics | `page_budget.py` |
 | Gates | **29**, and the same 29 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
