@@ -19849,3 +19849,59 @@ over-broad queries        1 -> 0
 **Two censuses had to be satisfied for one card**, and each caught a different
 thing the other could not see: the probe found the gap and proved the card
 answered it, the orphan report found that nothing pointed at it.
+
+---
+
+## Session record — the measurement the budget argument had been waiting for
+
+Two records back, `page_budget.py` was left saying raw_mb stays at 8.0 because
+raising a ceiling needs a positive argument, and the measurement that would
+supply one — search and heap against a *real* index — was one the duplication
+model structurally could not make. That was an honest place to stop and a bad
+place to stay: the runway is ~70 topics, and the day it binds is the worst day
+to start measuring.
+
+**`measure_load.mjs --synthetic`** makes it. Each domain is cloned into
+`<id>__k` with every topic id suffixed, across three things that have to move
+together — the shell section, the deferred source block and the topic-index
+payload. An index entry with no block is a topic search can name and not read; a
+block with no index entry is invisible. Clone all three and `topicIndex()`
+really returns N times the topics.
+
+```
+indexed   raw MB   load event   search (warm)   JS heap
+  1,534      7.6      3,022 ms          36 ms     28 MB   <- today
+  3,068     15.0      5,277 ms          53 ms     65 MB
+  4,602     22.4      6,956 ms          86 ms     93 MB
+```
+
+### Three answers, and the third is the surprise
+
+**Search is not the constraint.** About 16 ms per additional 1,000 topics, and
+86 ms at three times the site — inside the band where a filter feels immediate.
+§4b spent a whole section on whether full-text search would survive growth and
+concluded "keep it, revisit later". At this scale the worry is measurably
+unfounded.
+
+**Heap grows steadily** and boringly: ~20 MB per 1,000 topics.
+
+**Load is what grows** — 3.0 s to 7.0 s over the same range, and it is the only
+one of the three a reader waits for. Which means **raw_mb, a byte budget, is
+aimed at the binding constraint after all.** Not by design — the file spends
+four paragraphs explaining that bytes-over-the-wire do not matter here, and it is
+right about that; it happens that raw size is also the best available proxy for
+*parse* time, which does.
+
+So the budget stays, and for the first time it stays for a reason that was
+measured rather than assumed. If a later session moves it, the trade is on the
+table: 16 MB buys about twice the content for ~5.3 s of throttled load, ~53 ms
+of search and 65 MB of heap.
+
+### One thing the tool got wrong until it was run
+
+The closing note printed after the table said *"read the search and heap columns
+as flat by construction"* — true of the default model, and now false in the mode
+that had just been added. It printed that under the synthetic run, beneath
+numbers that plainly moved. **A footer that explains a limitation has to know
+which model it is explaining**, and the fix was two minutes; noticing it took
+running the thing and reading all of the output rather than the table.

@@ -123,14 +123,39 @@ and the fixed term is not. If doubling the content ever costs what the first
 copy cost, something structural has changed (the likeliest being that the
 deferral stopped deferring), and that is worth acting on wherever it is seen.
 
-### Why raw_mb stays at 8.0
+### The missing measurement, made — and it argues for the budget
 
-Not because 8 MB is where the page becomes slow — the curve says it is not.
-Because **raising a ceiling needs a positive argument**, and the measurement
-that would supply one is the one this model cannot make: search and heap against
-a real index of N topics. Until that exists, raw_mb is a proxy that at least
-fails on something, and 8.0 is where it was set. Move it when the missing
-measurement exists, not when the runway gets short.
+The paragraph that used to sit here said raw_mb stayed at 8.0 because raising a
+ceiling needs a positive argument, and the measurement that would supply one —
+search and heap against a *real* index of N topics — was one the duplication
+model could not make. `measure_load.mjs --synthetic` makes it: every domain is
+cloned into `<id>__k` with its topic ids suffixed, across the shell, the
+deferred blocks and the topic-index payload, so topicIndex() really returns N
+times the topics.
+
+    indexed   raw MB   load event   search (warm)   JS heap
+      1,534      7.6      3,022 ms          36 ms     28 MB   <- today
+      3,068     15.0      5,277 ms          53 ms     65 MB
+      4,602     22.4      6,956 ms          86 ms     93 MB
+
+**Search is not the constraint.** ~16 ms per additional 1,000 topics, and 86 ms
+at three times the current site — still inside the band where a filter feels
+immediate. The fear that full-text search would not survive growth, which §4b of
+plan.md spent a section on, is measurably unfounded at this scale.
+
+**Heap grows steadily** — about 20 MB per 1,000 topics, 93 MB at 3x. Worth
+knowing, not alarming.
+
+**Load is what grows.** 3.0 s to 7.0 s across the same range, and it is the
+number a reader actually waits for. So the surprise is that **raw_mb, a size
+budget, is aimed at the binding constraint after all** — not by design, but it
+is. That is the positive argument this section asked for, and it argues for
+keeping the budget rather than moving it.
+
+If it is moved, the numbers to move it against are above: 16 MB buys ~2x the
+content for ~5.3 s of throttled load, ~53 ms of search and 65 MB of heap. That
+is a judgement about readers on slow devices, and it can now be made with the
+curve in front of whoever makes it.
 
 ### The tripwire had got in front of the wall
 

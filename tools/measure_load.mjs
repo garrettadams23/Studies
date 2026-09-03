@@ -17,14 +17,25 @@
  * instead, which prices the shell on its own, so the rest of the table reads as
  * what the content adds.
  *
- * ## What this model does not measure — read this before quoting a number
+ * ## Two models, and the columns each one can answer
  *
- * The duplication multiplies the *markup*. It does not touch the id map build.py
- * inlines as JSON, which is what topicIndex() — and therefore search — reads.
- * The `indexed` and `blocks` columns are printed to keep that honest: blocks
- * triples while indexed does not move. So **the search and heap columns are flat
- * by construction and say nothing about a page with three times the topics.**
- * Sizing those needs a different model: real extra topics, or a synthetic index.
+ * **Default — duplicate the markup.** Cheap and faithful to what a content wave
+ * does to the *file*, but it does not touch the id map build.py inlines as JSON,
+ * which is what topicIndex() — and therefore search — reads. The `indexed` and
+ * `blocks` columns keep that honest: blocks triples while indexed does not move.
+ * So in this mode **the search and heap columns are flat by construction** and
+ * say nothing about a page with three times the topics.
+ *
+ * **`--synthetic` — clone the domains.** Each domain is cloned into `<id>__k`
+ * with every topic id suffixed, across the shell sections, the deferred source
+ * blocks *and* the topic-index payload. topicIndex() then really does return N
+ * times the topics, and search really does have N times the corpus to walk. This
+ * is the model the default one could not be, and it is what the budget argument
+ * in tools/page_budget.py was missing.
+ *
+ * The clones are searchable but not perfectly faithful: the matcher runs staged,
+ * and a bigger corpus changes which stage fires, so hit counts do not scale by
+ * exactly N. The timings do.
  *
  * Nor are the millisecond figures portable. The same script on the same commit
  * gives ~1.2 s here and ~2.9 s in a CI container, and neither machine is a
@@ -58,6 +69,7 @@ const arg = (name, fallback) => {
 const MULTS = String(arg("--mult", "0,1,2,3")).split(",").map(Number);
 const THROTTLE = Number(arg("--throttle", 4));
 const KEEP = process.argv.includes("--keep");
+const SYNTHETIC = process.argv.includes("--synthetic");
 
 const chromium = await (async () => {
   try {
@@ -95,8 +107,47 @@ for (const asset of ["script.js", "style.css", "sw.js", "Img"]) {
   try { symlinkSync(join(ROOT, asset), join(dir, asset)); } catch { /* absent is fine */ }
 }
 
+// --synthetic: clone each domain into `<id>__k`, with every topic id suffixed,
+// across the shell section, the deferred block and the topic-index payload. The
+// three have to move together — an index entry with no block is a topic search
+// can name and not read, and a block with no index entry is invisible.
+const INDEX_RE = /(<script type="application\/json" id="topic-index"[^>]*>)([\s\S]*?)(<\/script>)/;
+const SECTION_RE = /<div class="domain-section domain-[a-z0-9-]+" data-domain="([a-z0-9-]+)"[\s\S]*?(?=<div class="domain-section |<script [^>]*class="domain-src")/g;
+const SRC_RE = /<script [^>]*class="domain-src"[^>]*data-domain="([a-z0-9-]+)"[^>]*>[\s\S]*?<\/script>/g;
+
+function synthesise(mult) {
+  const m = src.match(INDEX_RE);
+  if (!m) throw new Error("no topic-index payload — is this a built page?");
+  const index = JSON.parse(m[2]);
+  const sections = {}, srcs = {};
+  for (const s of src.matchAll(SECTION_RE)) sections[s[1]] = s[0];
+  for (const s of src.matchAll(SRC_RE)) srcs[s[1]] = s[0];
+
+  const clone = (text, dom, k) => {
+    let out = text.split(`data-domain="${dom}"`).join(`data-domain="${dom}__${k}"`);
+    for (const id of index[dom]) out = out.split(`"${id}"`).join(`"${id}__${k}"`);
+    return out;
+  };
+
+  const grown = { ...index };
+  const extra = [];
+  for (let k = 1; k < mult; k++) {
+    for (const dom of Object.keys(index)) {
+      grown[`${dom}__${k}`] = index[dom].map(id => `${id}__${k}`);
+      if (sections[dom]) extra.push(clone(sections[dom], dom, k));
+      if (srcs[dom]) extra.push(clone(srcs[dom], dom, k));
+    }
+  }
+  const withIndex = src.slice(0, m.index + m[1].length) + JSON.stringify(grown)
+                  + src.slice(m.index + m[1].length + m[2].length);
+  const at = withIndex.lastIndexOf("</script>", withIndex.length) + "</script>".length;
+  return withIndex.slice(0, at) + extra.join("") + withIndex.slice(at);
+}
+
 const variants = MULTS.map(mult => {
-  const html = mult === 0
+  const html = SYNTHETIC
+    ? synthesise(Math.max(mult, 1))
+    : mult === 0
     ? src.replace(BLOCK, '<script type="text/html" class="domain-src" data-domain="empty"></script>')
     : src.slice(0, lastEnd) + (mult === 1 ? "" : blocks.join("").repeat(mult - 1)) + src.slice(lastEnd);
   const path = join(dir, `idx-${mult}x.html`);
@@ -147,9 +198,14 @@ try {
                 `${col(shape.blocks, 6)}`);
     await ctx.close();
   }
-  console.log("\nindexed does not move while blocks multiplies: this model grows the markup,");
-  console.log("not the search index. Read the search and heap columns as flat by construction,");
-  console.log("and do not compare the millisecond columns against a run on another machine.");
+  console.log(SYNTHETIC
+    ? "\nindexed grows with blocks: the id map was cloned too, so search really does\n"
+      + "have this much corpus to walk and the search and heap columns mean something.\n"
+      + "Hit counts do not scale by exactly N — the matcher is staged — but timings do."
+    : "\nindexed does not move while blocks multiplies: this model grows the markup,\n"
+      + "not the search index. Read the search and heap columns as flat by construction;\n"
+      + "--synthetic is the mode that grows the index.");
+  console.log("Do not compare the millisecond columns against a run on another machine.");
 } finally {
   await browser.close();
   if (KEEP) console.log(`\nGenerated pages left in ${dir}`);
