@@ -683,6 +683,52 @@ index=auth <span class="str">"Failed password"</span>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Config Is the Product; the Driver Is Just What Runs It</div>
+                <div class="concept-desc">
+                  Sysmon installs in a minute and that is the misleading part. Out of the box it
+                  logs almost nothing useful, and turned fully on it produces so much that the cost
+                  lands somewhere else &mdash; on the SIEM licence, on the analyst reading it, or on
+                  the retention window that quietly shrinks to a fortnight.
+                  <strong class="c-cyan">Every decision that matters lives in the XML <span class="acro-exp">(eXtensible Markup Language)</span>.</strong>
+                </div>
+                <div class="concept-desc">
+                  Which is why the community templates are the actual artefact rather than a
+                  convenience: they encode thousands of hours of &ldquo;this event ID is worth having,
+                  this one is a million rows of nothing&rdquo;. Take one, and then own it &mdash; a
+                  config that has never been edited is a config nobody has checked against
+                  <em>your</em> estate, where the noisy process is some line-of-business agent the
+                  template's author never saw. <strong class="c-amber">The template is a starting
+                  position, and the exclusions are where the local knowledge goes.</strong>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">What It Gives You That the Native Log Does Not</div>
+                <div class="concept-desc">
+                  Windows already logs process creation, and teams often conclude Sysmon is a
+                  duplicate. The difference is what each record carries, and it decides whether a
+                  detection can be written at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Question a detection asks</th><th>Native auditing</th><th>Sysmon</th></tr>
+                    <tr><td>What was the full command line?</td><td>Only if 4688 command-line auditing was enabled &mdash; often it was not</td><td>Always, in event 1</td></tr>
+                    <tr><td>What is the binary&rsquo;s hash?</td><td>No</td><td>Yes, several algorithms</td></tr>
+                    <tr><td>Which process opened LSASS?</td><td>Not usefully</td><td>Event 10, with the calling process</td></tr>
+                    <tr><td>Did that process resolve a domain?</td><td>No</td><td>Event 22, per process</td></tr>
+                    <tr><td>What loaded this unsigned DLL?</td><td>No</td><td>Event 7, with signature status</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The pattern in the right-hand column is <strong>attribution</strong>: native
+                    logging tends to record that a thing happened, and Sysmon records which process
+                    did it. That is the difference between an alert somebody can investigate and one
+                    they close as unclear &mdash; and it is why this is the highest-value free
+                    telemetry on Windows, provided somebody owns the XML.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

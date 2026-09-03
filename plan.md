@@ -49,7 +49,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Measure | Value | Tool |
 |---|---|---|
 | Topics | **1,534** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **15**, 1% — eight deepening waves below the old floor | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **13**, 1% — ten deepening waves below the old floor | `depth_report.py` |
 | Mean chars per concept card | **1,369**, or **1,109 excluding verdicts** — the second is the padding counter-metric, and it moved by one character across eight deepening waves | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **92** (38 by overlap, 54 by containment) — 75 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
@@ -59,7 +59,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Page budget | **4% raw** headroom — room for ~66 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,083 chars**, median 3,655 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,090 chars**, median 3,658 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **30**, and the same 30 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
@@ -20374,3 +20374,40 @@ established form was already in the corpus — the acronym expansions are droppe
 the rest is exact — and copying an existing xref is more reliable than
 reconstructing one. `lint_content.py` would have caught it either way, which is
 why it is a note rather than a lesson.
+
+---
+
+## Session record — deepening, tenth card: the config is the product
+
+`[blueteam] Sysmon — The Windows Telemetry Powerhouse`: one card, a table of
+high-value event IDs, and a verdict naming the community configs. Its neighbours
+— *Windows Event Logs — The IDs That Matter* (3,524) and *Log Source Inventory &
+Telemetry Gaps* (2,964) — are adjacent and about different things, so this was a
+gap rather than a sibling.
+
+```
+1 card, 1,780 chars   ->   3 cards, 4,555 chars
+```
+
+- **The config is the product; the driver is just what runs it.** Sysmon
+  installs in a minute, which is the misleading part: out of the box it logs
+  almost nothing useful, and fully on it produces enough that the cost lands
+  somewhere else — the SIEM licence, the analyst, or a retention window that
+  quietly shrinks to a fortnight. The community templates are the actual artefact
+  rather than a convenience, because they encode thousands of hours of *this ID
+  is worth having, this one is a million rows of nothing*. **A config that has
+  never been edited is one nobody has checked against your estate**, where the
+  noisy process is a line-of-business agent the template's author never saw.
+- **What it gives that native auditing does not**, as a table of questions a
+  detection asks: the full command line, the binary's hash, which process opened
+  LSASS, which process resolved a domain, what loaded an unsigned DLL. The
+  pattern in the right-hand column is **attribution** — native logging records
+  that a thing happened, Sysmon records which process did it, and that is the
+  difference between an alert somebody can investigate and one they close as
+  unclear.
+
+```
+thin topics       23 -> 13 across ten waves
+10th percentile   2,048 -> 2,090
+padding metric    1,108 -> 1,109 excluding verdicts
+```
