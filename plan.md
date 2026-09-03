@@ -18037,3 +18037,65 @@ badging into something a reader can choose.
 Cost: gzip headroom held at 7%, raw unchanged.
 
 Check PASS · smoke **148/148** · axe **6/6** · mobile **9/9** · determinism reproducible.
+
+---
+
+## Session record — the freshness stamps were two months behind, and half the fix was wrong
+
+Every domain's landing card carries **"Updated: <month>, N topics"**, built from
+`data-reviewed`. It answers the one question a reference site cannot otherwise answer — *is
+anyone still maintaining this?* — and `stamp_freshness.py --check` reported **27 of 34 files
+would move**.
+
+The last forty commits in this repository are all dated **2026-09**. Several sessions of real
+content work — six `data` cards, the `web` and `redteam` waves, this session's own three
+cards and sixteen verdicts — landed in September and the stamps still said July and August.
+A site edited yesterday was telling readers it had last been touched two months ago.
+
+### The full pass produced 453 moves, and only 158 of them were defensible
+
+`stamp_freshness.py`'s own docstring is emphatic:
+
+> **Prefer `--only`.** A whole-tree write re-derives every stamp from `git blame`, and blame
+> heuristics differ between git releases — one content wave that added 18 cards also moved
+> ~250 untouched topics into later months with no edit behind the move.
+
+Running it across every domain produced exactly that shape:
+
+```
+158 topics moved to 2026-09       ← months whose commits are demonstrably real content work
+295 topics shuffled 2026-07 → 2026-08   ← re-derivations of history that has not changed
+```
+
+The second number is the warning made concrete. Those 295 topics were not edited in August;
+the *derivation* changed. Shipping them would invent freshness, and a "last reviewed" date
+that over-claims is worse than one that under-claims — the conservative error is the safe
+one, and a stale stamp is conservative.
+
+**So the pass was filtered.** Every move landing on 2026-09 was kept, and every earlier-month
+move restored to what it was. 146 topics across twenty files now say September, which is the
+month their content actually changed, and nothing else moved at all.
+
+| | |
+|---|---|
+| `data` | 16 — the six data-engineering cards plus the earlier depth waves |
+| `web`, `blueteam`, `redteam` | 15, 14, 14 |
+| `cloud`, `eng`, `devops` | 13, 12, 10 |
+| the rest | 1–9 each |
+
+### The rule this leaves behind
+
+The tool offers `--only <domain>` and `--check` but nothing that says *"stamp what genuinely
+changed and leave the rest"*, because it cannot know which re-derivations are real. **A
+session that runs it should diff the result and keep only the moves into the current month.**
+That is a five-line filter and it converts a tool the docstring warns about into one that is
+safe to run.
+
+What it should not become is a build step. `--verify` stays the gate (it asks only whether
+every stamp is plausible, using no git at all, so its answer does not depend on the git
+version running it); `--check` stays a report; and the write stays a deliberate act with a
+human reading the diff — which is exactly what happened here, and the reason 295 wrong
+moves did not ship.
+
+Check PASS · smoke **148/148** · axe **6/6** · mobile **9/9** · every changelog entry names
+real topics and a real month.
