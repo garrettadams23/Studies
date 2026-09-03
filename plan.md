@@ -18099,3 +18099,45 @@ moves did not ship.
 
 Check PASS · smoke **148/148** · axe **6/6** · mobile **9/9** · every changelog entry names
 real topics and a real month.
+
+---
+
+## Session record — the filter became a flag
+
+The record above ends on a rule and a five-line filter applied by hand:
+
+> A session that runs it should diff the result and keep only the moves into the current
+> month. That is a five-line filter and it converts a tool the docstring warns about into one
+> that is safe to run.
+
+Writing that down and then not shipping it would be leaving the next session to re-derive it,
+which is the failure this file records more often than any other. So it is a flag.
+
+**`stamp_freshness.py --current-only`** re-derives every stamp on the site and writes only
+the ones landing in *this* month, holding every earlier-month re-derivation at whatever the
+file already said. The docstring carries the measurement that produced it, so the number is
+in the tool rather than only in this record:
+
+> 453 moves, 158 into the current month — real content work nobody had re-stamped — and 295
+> shuffling between two earlier months where the content had not changed and only the
+> derivation had.
+
+Running it across the whole tree immediately found **12 more topics in
+`script.05-platform.html`** that the by-hand pass had missed, because that pass named domains
+from memory and `script` was not among them. Which is the argument for the flag in one line:
+*the by-hand version requires knowing what changed, and the flag does not.*
+
+```
+--check --current-only, after:  kept 0 · held 404
+```
+
+Zero is the right answer — it is idempotent now, and the 404 held are the earlier-month
+re-derivations the flag exists to refuse. They will stay held until content in those topics
+genuinely changes, at which point the move lands in the current month and is written.
+
+**`--only` is still the usual case.** Stamping the file you just edited is one command and
+one file's blame. `--current-only` is for the other situation: several sessions have gone by,
+nobody knows which files carry unstamped work, and the answer needs to be safe rather than
+complete.
+
+Check PASS · smoke **148/148** · `--verify` clean · the flag idempotent on a second run.

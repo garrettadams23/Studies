@@ -23,6 +23,7 @@ maintain by hand.
 
 Usage:
     python3 tools/stamp_freshness.py --only m365   # stamp one domain — the usual case
+    python3 tools/stamp_freshness.py --current-only   # whole tree, safely: see below
     python3 tools/stamp_freshness.py            # stamp everything; see the warning below
     python3 tools/stamp_freshness.py --verify   # CI gate: are the stamps valid?
     python3 tools/stamp_freshness.py --check    # report drift, write nothing
@@ -33,6 +34,14 @@ Usage:
 that added 18 cards also moved ~250 untouched topics into later months with no
 edit behind the move. Stamping the file you actually changed avoids inventing
 freshness for the rest of the site.
+
+**Or `--current-only`, when several sessions have gone unstamped.** It re-derives
+everything and then writes only the moves that land in *this* month, holding every
+earlier-month re-derivation at whatever the file already said. Measured on the pass
+that produced it: 453 moves, 158 into the current month — real content work nobody
+had re-stamped — and 295 shuffling between two earlier months where the content had
+not changed and only the derivation had. The second kind is what `--only` exists to
+avoid, and this is how to avoid it without knowing in advance which files to name.
 
 --verify and --check are not the same question. --verify asks whether every
 topic carries a plausible stamp, using no git at all, so its answer does not
@@ -338,9 +347,23 @@ def domain_files(only=None):
     return [p for p in files if p in picked and not (p in seen or seen.add(p))]
 
 
-def stamp(check_only=False, only=None):
+def stamp(check_only=False, only=None, current_only=False):
+    """Re-derive every stamp in `files` and write the ones that moved.
+
+    `current_only` keeps only the moves that land in **this month** and restores
+    every other re-derivation to what the file already said. That is the filter
+    that makes a whole-tree write safe, and it exists because the alternative was
+    doing it by hand: a pass across every domain produced 453 moves, of which 158
+    landed on the current month — real content work several sessions had never
+    re-stamped — and 295 shuffled between two earlier months, where the content
+    had not changed and only the blame derivation had.
+
+    A "last reviewed" date that over-claims is worse than one that under-claims,
+    so a stale stamp is the conservative error and the one to keep when in doubt.
+    """
     files = domain_files(only)
-    changed, stamped = [], 0
+    this_month = datetime.now(timezone.utc).strftime("%Y-%m")
+    changed, stamped, kept, held = [], 0, 0, 0
     for path in files:
         rel = f"data/{path.name}"
         ignore = mechanical_revs(rel)
@@ -354,6 +377,14 @@ def stamp(check_only=False, only=None):
             if not span_times:
                 continue
             when = datetime.fromtimestamp(max(span_times), timezone.utc).strftime("%Y-%m")
+            if current_only:
+                was = REVIEWED_ATTR_RE.search(out[start - 1])
+                had = was.group(0).split('"')[1] if was else None
+                # Hold everything except a move into the month we are in now.
+                if had and had != when and when != this_month:
+                    when, held = had, held + 1
+                elif had != when:
+                    kept += 1
             line = REVIEWED_ATTR_RE.sub("", out[start - 1])
             out[start - 1] = TOPIC_OPEN_RE.sub(
                 lambda m: f'<div class="topic" data-reviewed="{when}"{m.group(1)}>',
@@ -370,6 +401,9 @@ def stamp(check_only=False, only=None):
                 path.write_text(result, encoding="utf-8")
 
     print(f"\n{stamped} topics stamped across {len(files)} file(s).")
+    if current_only:
+        print(f"--current-only: kept {kept} move(s) into {this_month}, "
+              f"held {held} earlier-month re-derivation(s).")
     if changed:
         print(("Would update: " if check_only else "Updated: ") + ", ".join(changed))
     return 1 if (check_only and changed) else 0
@@ -485,4 +519,5 @@ if __name__ == "__main__":
         sys.exit(report())
     if "--candidates" in sys.argv:
         sys.exit(candidates())
-    sys.exit(stamp(check_only="--check" in sys.argv, only=parse_only(sys.argv)))
+    sys.exit(stamp(check_only="--check" in sys.argv, only=parse_only(sys.argv),
+                   current_only="--current-only" in sys.argv))
