@@ -49,7 +49,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Measure | Value | Tool |
 |---|---|---|
 | Topics | **1,534** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **22**, 1% — at its floor, and audited | `depth_report.py` |
 | Mean chars per concept card | **1,369**, or **1,108 excluding verdicts** — the second is the padding counter-metric | `depth_report.py` |
 | Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
 | Near-duplicate pairs | **92** (38 by overlap, 54 by containment) — 75 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
@@ -19905,3 +19905,52 @@ that had just been added. It printed that under the synthetic run, beneath
 numbers that plainly moved. **A footer that explains a limitation has to know
 which model it is explaining**, and the fix was two minutes; noticing it took
 running the thing and reading all of the output rather than the table.
+
+---
+
+## Session record — a deepening wave of one, and the card that should not be deepened
+
+`depth_report.py` names the bottom decile as *"what a deepening wave has to
+move"*, and marks the deliberately-short ones with a `·` — the beginner layer and
+the per-certification skims, 69 of 143. That leaves the unmarked ones, and the
+shortest of those looked obvious.
+
+**It was not.** `[redteam] Rules of Engagement — Read This First` is 1,134
+characters and one card, and it is not a thin topic at all: it is the domain's
+**legal banner** — *these tools are for authorised testing, work inside a signed
+scope, here is why each card carries a blue-team note*. Deepening it would make
+the first thing a reader meets in `redteam` longer and worse. `_deliberate()`
+does not mark it because its badge is `Ethics` and the list keys on the beginner
+and certification badges.
+
+Not fixed in the tool, deliberately: adding `ethics` to that list would exempt
+exactly one card today and could hide a genuinely thin one later. **A report is
+allowed to surface something a reader has to judge** — what it must not do is
+surface it without the reader being able to tell. This record is the note.
+
+### The one that was genuinely thin
+
+`[eng] The Engineering Ladder — Junior to Principal` — one card, a five-row scope
+table, and a good closing line about senior → staff. A real subject with nothing
+under it.
+
+```
+1 card, 1,237 chars   ->   3 cards, 4,220 chars
+```
+
+Two cards added, and neither is a longer version of the table:
+
+- **Where people stall.** Each boundary rewards a behaviour the next level needs
+  you to stop. Mid → senior rewards shipping features and then needs you to stop
+  being the fastest coder and the team's bottleneck; senior → staff rewards
+  solving the hard problems and then needs you to stop hoarding them. The table's
+  fourth column is the stall, and it is the honest one to read.
+- **The fingerprint.** You are promoted for *already* doing the next job, so
+  "have I done enough?" is the wrong question and "where is the evidence I am
+  already doing it?" is the right one. The corollary is the part nobody says:
+  **a team with no scope at the next level cannot promote you however well you
+  work** — which is the honest reason to move, and it is not about
+  dissatisfaction.
+
+A stray `</div>` in the splice was caught by `check_markup.py` on the first run,
+which is what it is for.
