@@ -57,6 +57,15 @@ that window fixed the same conversion leaves the annotator completely stable —
 **0 files out of date**, where the identical edit had rewritten one before — and
 they are in. **792 -> 430 -> 401.**
 
+**And that is where the mechanical phase ends.** Of the 401 left, **126 occur
+exactly once** and the largest repeated shape is 26. The wins so far were
+conversions — an existing class, or a one-line utility, applied to a shape used
+a hundred times. What remains is naming things: the 26 that read
+`background: var(--bg3); border: 1px solid var(--border); border-radius: 3px;
+padding: 5px` are a component nobody has named, and naming it is a design
+decision rather than a cleanup. Returns per wave have dropped roughly tenfold,
+and knowing that is worth more than another 26.
+
 `ai-table` is no longer a warning at all. It was labelled "prefer ref-table",
 which asserted a preference nobody had agreed and the stylesheet contradicts:
 the two are different designs (12px versus ~14px text, and an amber versus a

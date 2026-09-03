@@ -50,7 +50,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 |---|---|---|
 | Topics | **1,533** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
-| Mean chars per concept card | **1,280** — the padding counter-metric | `depth_report.py` |
+| Mean chars per concept card | **1,369**, or **1,108 excluding verdicts** — the second is the padding counter-metric | `depth_report.py` |
 | Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
 | Near-duplicate pairs | **92** (38 by overlap, 54 by containment) — 75 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
@@ -19705,3 +19705,64 @@ inline style attribute (avoidable)   792 -> 680 -> 430 -> 401
 **Nearly half the avoidable inline-style debt is gone in four proved steps**, and
 none of it could have been touched a day ago, because nothing could show a
 conversion was safe.
+
+---
+
+## Session record — the counter-metric said the verdict programme was padding
+
+`make census` prints `mean chars per concept card` with the words *"it must not
+rise"* beside it. It reads **1,369**. The state table above had been carrying
+**1,280** since before the verdict programme, so the rise had never been looked
+at — and a 7% move in a metric whose entire job is to catch filler is exactly
+what a session should stop and explain.
+
+### Where it came from
+
+```
+49f5eb5  1,281   before the programme
+e1d80e4  1,285   career
+e75feaa  1,295   ops
+7b1a9d1  1,316   sec
+4ed7f38  1,350   eng + blueteam
+04cf768  1,368   the backlog cleared — 722 verdicts
+0f7f26f  1,369   everything since (two merges, +1)
+```
+
+Monotonic, and entirely inside the verdict programme. Nothing this session moved
+it more than a character.
+
+### The measurement that settles it
+
+Excluding the closing judgement from the count:
+
+```
+                       cards    mean, verdicts excluded    verdict characters
+before  49f5eb5        4,195                    1,106               733,244
+after   04cf768        4,195                    1,108             1,093,911
+today   0f7f26f        4,191                    1,108             1,093,646
+```
+
+**Body prose per card did not move — 1,106 to 1,108, two characters — while
+360,667 characters of closing judgement were added.** The programme added
+exactly what it said it was adding and padded nothing, and that is now a
+measurement rather than an assurance.
+
+### Why the metric could not say so
+
+Because it mixed two populations, which is the *sixth* instance this session:
+the prose a card gets padded with, and the one sentence it is supposed to end
+on. A programme adding the second reads identically to a programme adding the
+first — so the counter-metric would have called the site's best content wave a
+regression, forever.
+
+`depth_report.py` now prints both, and says which one to watch:
+
+```
+mean chars per concept card: 1,369  (1,108 excluding verdicts)
+   ← the padding counter-metric: the second number must not rise
+```
+
+**A counter-metric has to exclude the thing you are deliberately doing, or it
+will read every deliberate act as the failure it was built to catch.** The
+first number stays because the total is worth seeing; the second is the one with
+the rule attached.

@@ -48,6 +48,23 @@ TAG_RE = re.compile(r"<[^>]+>")
 NAME_RE = re.compile(r'class="topic-name"[^>]*>(.*?)</span>\s*(?:<span class="topic-badge|</div>)', re.S)
 BADGE_RE = re.compile(r'class="topic-badge">(.*?)</span>', re.S)
 
+# The closing judgement after a table. It is prose, so it counts in a card's
+# characters, and the verdict programme therefore moved the padding metric from
+# 1,281 to 1,368 — a 7% rise, in a number this file prints with the words "it
+# must not rise" beside it.
+#
+# Measured, rather than argued about. Excluding verdicts, the same corpus reads
+# **1,106 before the programme and 1,108 after**: body prose per card did not
+# move at all, while 360,667 characters of closing judgement were added. So the
+# rise was entirely the thing the programme set out to add.
+#
+# The metric could not say that, because it mixed two populations — the prose a
+# card is padded with, and the one sentence it is supposed to end on. Both
+# numbers are printed now. The one to watch is the second.
+VERDICT_RE = re.compile(
+    r'<(?:div|p)\b[^>]*class="[^"]*\bconcept-desc verdict\b[^"]*"[^>]*>'
+    r'.*?</(?:div|p)\s*>', re.S)
+
 # Badge prefixes that mark a card as *deliberately* short. Wave D10 went looking
 # for the shortest cards on the site and found these: the beginner layer, and
 # per-certification objective summaries. Neither wants deepening — one would
@@ -71,7 +88,8 @@ def topics(domain, badges=False):
         name = NAME_RE.search(block)
         title = re.sub(r"\s+", " ", TAG_RE.sub("", name.group(1))).strip() if name else "?"
         row = (title, len(TAG_RE.sub("", block)),
-               len(re.findall(r'class="concept-card"', block)))
+               len(re.findall(r'class="concept-card"', block)),
+               len(TAG_RE.sub("", VERDICT_RE.sub("", block))))
         if not badges:
             yield row
             continue
@@ -86,16 +104,17 @@ def main():
         only = args[args.index("--domain") + 1]
 
     rows, thin_rows, lengths = [], [], []
-    total = thin = chars = cards = 0
+    total = thin = chars = cards = body_chars = 0
     for dom in json.loads((DATA / "domains.json").read_text(encoding="utf-8")):
         did = dom["id"]
         if only and did != only:
             continue
         n = t = 0
-        for title, length, cc in topics(did):
+        for title, length, cc, body in topics(did):
             total += 1
             n += 1
             chars += length
+            body_chars += body
             cards += cc
             if did not in REFERENCE_DOMAINS:
                 lengths.append(length)
@@ -119,7 +138,7 @@ def main():
             did = dom["id"]
             if did in REFERENCE_DOMAINS or (only and did != only):
                 continue
-            for title, length, cc, badge in topics(did, badges=True):
+            for title, length, cc, _body, badge in topics(did, badges=True):
                 every.append((length, cc, did, title, badge))
         every.sort()
         for length, cc, did, title, badge in every[:n]:
@@ -143,7 +162,7 @@ def main():
         return 0
 
     if only:
-        for title, length, cc in sorted(topics(only), key=lambda r: r[1]):
+        for title, length, cc, _body in sorted(topics(only), key=lambda r: r[1]):
             mark = "thin" if cc <= 1 and length < THIN_CHARS else "    "
             print(f"{mark} {length:>6} chars  {cc} card(s)  {title[:56]}")
         return 0
@@ -151,8 +170,9 @@ def main():
     rows.sort(reverse=True)
     print(f"{total:,} topics · {thin} single-concept and under {THIN_CHARS:,} plain "
           f"chars ({round(100 * thin / total)}%)")
-    print(f"mean chars per concept card: {round(chars / max(cards, 1)):,}   "
-          f"← the padding counter-metric: it must not rise")
+    print(f"mean chars per concept card: {round(chars / max(cards, 1)):,}"
+          f"  ({round(body_chars / max(cards, 1)):,} excluding verdicts)   "
+          f"← the padding counter-metric: the second number must not rise")
     # The mean is not enough on its own, and Phase 8's closing record said so
     # before this line existed: seven waves each picked eight cards and nothing
     # forced them to be the eight hardest. A programme that only ever deepened
