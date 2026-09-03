@@ -19810,7 +19810,26 @@ regardless.
 ```
 
 **A card that answers a question only counts if it is phrased in the words
-somebody would type.**
+somebody would type** — *when the card is about that question.* That bound
+matters, because `query_probe.mjs`'s docstring rules the general version out:
+for its **kind three** zeros — `wifi keeps dropping`, `git detached head`,
+`terraform state locked` — it says **"leave these alone. Seeding symptom phrases
+into cards is keyword stuffing with a rationalisation attached; a symptom index
+is a different product from a reference, and this is a reference."**
+
+This case is not that, and the difference is worth stating so a later session
+does not read the line above as a licence:
+
+| | kind three | this card |
+|---|---|---|
+| The query | a symptom | the card's actual subject |
+| Where the phrase would go | into a technology card that is about something else | into the opening sentence of a card about exactly this |
+| What it does to the card | adds a keyword | states what the card is for |
+
+The test is whether the sentence would be worth writing if no probe existed.
+*"The honest first answer is that it means a rule matched"* is the thesis of the
+card; it earns its place before it earns the match. The nine kind-three zeros
+stay zero.
 
 ### And the orphan report caught what would have shipped
 
