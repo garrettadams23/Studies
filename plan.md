@@ -18525,3 +18525,37 @@ after the career pass                      712
 career, cards ending on a table          36 → 0
 page raw                            7.3 → 7.4 MB (8% headroom, ~136 topics)
 ```
+
+### The second domain, and the rule for stopping
+
+`military` was the next pass: **24 verdicts of 36**, and the 12 left are the
+point. The staff-code cross-matrix, the prefix table, the SF form series — these
+are lookup tables, and a judgement appended to a list of form numbers is the
+padding this whole plan is written against. They stay flagged, deliberately, and
+the reason is recorded in the ceilings block rather than argued again next
+session.
+
+Where a lookup table *did* have a judgement in it, it got one:
+
+> **The SF 702 is the one that gets signed without being checked, and it is the
+> only one that would have caught the mistake.** …the independent end-of-day
+> check exists precisely because the person who closed the safe is the worst
+> possible person to confirm it is closed.
+
+### A verdict has to answer the table it is under, not the card it is in
+
+One of the 24 landed wrong and was caught by reading it back. `military` has a
+beginner topic built as four small cards followed by one shared summary table, so
+the card immediately above the table is "24-Hour (Military) Time" while the table
+itself lists the staff-function numbers. A verdict written from the card title
+was about midnight and sat under a table about logistics and intelligence.
+
+The check that found it is worth keeping: for every verdict, print the header row
+of the table directly above it and read the pair. 63 pairs across the two
+domains, one wrong. **Write the verdict from the table, never from the title.**
+
+```
+tables_without_verdict     748 → 712 → 688
+career                     36 → 0
+military                   36 → 12 (all 12 deliberate lookups)
+```

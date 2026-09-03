@@ -57,7 +57,11 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 #
 # 748 -> 712 in that same commit: every card in `career` that ended on a table
 # now ends on a judgement instead. 36 written by hand, none of them filler.
-CEILINGS = {"inline style attribute": 1565, "table with no verdict": 712}
+#
+# 712 -> 688: 24 more in `military`. The 12 left there are pure lookup tables
+# — the staff-code cross-matrix, the SF form series — where a verdict would be
+# filler. Deliberate, and recorded rather than chipped at.
+CEILINGS = {"inline style attribute": 1565, "table with no verdict": 688}
 
 
 class Nesting(HTMLParser):
