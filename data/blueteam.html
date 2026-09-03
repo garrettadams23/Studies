@@ -4116,3 +4116,81 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
               </div>
             </div>
           </div>
+
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🔎</span>
+              <span class="topic-name">Alert Triage — Working the Queue From Alert to Verdict</span>
+              <span class="topic-badge">BLUETEAM • Operations</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">An Alert Is a Rule Matching, Not a Thing That Happened</div>
+                <div class="concept-desc">
+                  The question in front of you is <em>what does this alert mean</em>, and the honest first answer is
+                  that it means a rule matched. The title of an alert is a claim made in advance by whoever wrote
+                  that rule, about a situation they imagined. Triage is the work of deciding whether <em>this</em> firing is that situation. Analysts
+                  who read the title as the conclusion make both errors at once: they close real intrusions because
+                  the rule was named vaguely, and they escalate authorised work because the rule was named
+                  dramatically. <strong class="c-cyan">The alert tells you a condition was met. It does not tell you
+                  what met it.</strong>
+                </div>
+                <div class="concept-desc">
+                  The practical consequence is that triage starts with the raw event, not with the rule&rsquo;s
+                  summary. A rule matching <code>powershell.exe</code> with an encoded command is describing a
+                  syntax, and the same syntax is produced by an attacker, by a monitoring agent, and by the
+                  configuration-management tool that has run at 02:00 every night for three years.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Order</div>
+                <div class="concept-title">Ask the Cheapest Disconfirming Question First</div>
+                <div class="concept-desc">
+                  Every alert has a question that would end the investigation in under a minute, and analysts who
+                  work in a fixed order rather than by cost spend twenty minutes reaching it. The order below is
+                  roughly by how quickly each question can be answered, not by how interesting it is.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Ask</th><th>Where you look</th><th>What a clear answer settles</th></tr>
+                    <tr><td>Is the rule doing what it says?</td><td>The raw event beside the rule logic</td><td>A broken or over-broad rule &mdash; a detection bug, not an incident</td></tr>
+                    <tr><td>Is this normal for this asset?</td><td>Same host and user, previous 30 days</td><td>Scheduled and routine activity, in seconds</td></tr>
+                    <tr><td>Did anything follow it?</td><td>Process, network and identity telemetry after the event</td><td>An isolated match versus the middle of a chain</td></tr>
+                    <tr><td>Who owns this, and were they doing it?</td><td>The asset owner, directly</td><td>Authorised work &mdash; often the fastest answer available</td></tr>
+                    <tr><td>What would make me wrong?</td><td>Evidence that should exist if the benign story is true</td><td>Whether you have concluded or merely assumed</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Work them in that order and most alerts close on the first or second row, which is what makes
+                    the queue survivable. The last row is the one under time pressure that gets skipped, and it is
+                    the only one that distinguishes a verdict from a guess: <strong class="c-amber">if you cannot
+                    name the evidence that would have changed your mind, you have not finished.</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">&ldquo;False Positive&rdquo; Is Three Different Verdicts Wearing One Label</div>
+                <div class="concept-desc">
+                  The closing reason on a ticket is the input to detection engineering, and one overloaded label
+                  destroys it. Three genuinely different outcomes get written down the same way, and only one of
+                  them is an argument for changing the rule.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What actually happened</th><th>Usually closed as</th><th>What it should drive</th></tr>
+                    <tr><td>The rule matched something it was never meant to match</td><td>False positive</td><td>Fix the rule &mdash; this is the only true positive-for-tuning</td></tr>
+                    <tr><td>The rule matched exactly what it meant to, and the activity was authorised</td><td>False positive</td><td>An exception scoped to that asset or account, not a weaker rule</td></tr>
+                    <tr><td>The rule matched, and the telemetry could not settle it either way</td><td>False positive</td><td>A logging gap &mdash; the finding is the missing evidence</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Separate the three and tuning stops removing detections: <span class="xref">Detection Tuning &amp; the Pyramid of Pain</span>
+                    asks whether you removed the noise or the detection, and this is where that question is answered
+                    or lost. The third row is the one worth chasing &mdash; an alert nobody can resolve is a
+                    telemetry problem being recorded, every time, as a rule problem.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

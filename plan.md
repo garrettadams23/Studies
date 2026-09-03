@@ -48,14 +48,14 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,533** across 30 domains | `depth_report.py` |
+| Topics | **1,534** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
 | Mean chars per concept card | **1,369**, or **1,108 excluding verdicts** — the second is the padding counter-metric | `depth_report.py` |
 | Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
 | Near-duplicate pairs | **92** (38 by overlap, 54 by containment) — 75 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,569 steps, 1,473 of 1,533 topics** | `check_paths.py` |
-| Related links | **1,471 topics, 4,584 links, 0 one-way** | `suggest_related.py --check` |
+| Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
+| Learning paths | **101 paths, 1,570 steps, 1,474 of 1,534 topics** | `check_paths.py` |
+| Related links | **1,472 topics, 4,592 links, 0 one-way** | `suggest_related.py --check` |
 | Page budget | **4% raw** headroom — room for ~70 more topics | `page_budget.py` |
 | Throttled load | **~2.9 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Gates | **30**, and the same 30 in `make all` and in CI | `check_gates.py` |
@@ -19766,3 +19766,67 @@ mean chars per concept card: 1,369  (1,108 excluding verdicts)
 will read every deliberate act as the failure it was built to catch.** The
 first number stays because the total is worth seeing; the second is the one with
 the rule attached.
+
+---
+
+## Session record — one card, and the two censuses that had to be satisfied
+
+`make census` reported something new: **one reader query returning more than
+60 results.** `"what does this alert mean"` matched **73 topics** — the probe's
+own words for that state are *"a query returning a tenth of the site is a query
+nobody can use"*.
+
+Reading `blueteam` found a real gap behind it. The domain has detection quality,
+enrichment, tuning, alert fatigue, analyst burnout, a phishing-report runbook —
+and nothing answering the thing an analyst actually does all day: **there is an
+alert in front of me, what now?** `--title` pre-flight confirmed it: clear to
+write.
+
+**Alert Triage — Working the Queue From Alert to Verdict.** Three cards: an
+alert is a rule matching rather than an event; the triage order sorted by
+cheapest disconfirming question; and the fingerprint — *"false positive" is
+three different verdicts wearing one label*, and only one of the three is an
+argument for changing the rule. The other two are an exception and a logging
+gap, and recording all three the same way is how tuning ends up removing
+detections.
+
+### Writing it did not, at first, do anything
+
+The probe still said 73, and the new card was **not among them**. The search
+note explained why: *"no exact match, so these contain all your words"* — the
+card contains "alert" and never contains "mean".
+
+That is the failure mode the census already records elsewhere as *"the card
+exists and does not use these words"*, and the fix is the site's own technique:
+phrase the reader's question in the reader's words. The card now opens *"The
+question in front of you is what does this alert mean, and the honest first
+answer is that it means a rule matched"* — which is a better first line
+regardless.
+
+```
+"what does this alert mean"    73 widened matches  ->  1 exact match
+                               the note changes from "no exact match, so these
+                               contain all your words" to "1 match in 1 domain"
+```
+
+**A card that answers a question only counts if it is phrased in the words
+somebody would type.**
+
+### And the orphan report caught what would have shipped
+
+The new card had no inbound link: a **deep orphan** — 3 cards, 3,599 chars —
+which is precisely the class `orphan_report.py` names *"good cards that are dead
+ends"*, and which the navigation programme had driven to zero. Four symmetric
+related links and a step in *SOC Analyst Starter* (16 -> 17), and the count is
+back to 60 orphans, all generated, 0 deep.
+
+```
+topics                1,533 -> 1,534
+paths                 1,569 -> 1,570 steps
+related links         4,584 -> 4,592, still 0 one-way
+over-broad queries        1 -> 0
+```
+
+**Two censuses had to be satisfied for one card**, and each caught a different
+thing the other could not see: the probe found the gap and proved the card
+answered it, the orphan report found that nothing pointed at it.
