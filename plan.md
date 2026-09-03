@@ -18759,3 +18759,32 @@ net 54→0     sec 66→0        ai 39→0   devops 38→0
 verdicts written by hand              354
 runway                                ~102 topics   (stop line: 40)
 ```
+
+### `linux`, all 35 — nine domains, 389 verdicts
+
+Linux tables are reference material with a trap in one row, so the verdict's job
+is usually to name the trap and the habit that avoids it.
+
+> **The row people get wrong is the stderr one, and the order matters.** `2>&1`
+> copies wherever stdout currently points, so putting it before the redirect
+> sends errors to the terminal and output to the file.
+
+> **Day-of-week and day-of-month are ORed, not ANDed**, and that is the cron
+> mistake everybody makes once.
+
+> **The last row is the habit that makes the other three survivable.** Everyone
+> eventually applies a firewall rule that severs their own session, and a
+> scheduled job that flushes the rules in five minutes turns that from a
+> data-centre visit into a five-minute wait.
+
+> **On disks larger than a few terabytes, treat RAID 5 as deprecated.** A rebuild
+> reads every remaining disk end to end for many hours, which is precisely the
+> load that finds the second failure.
+
+```
+tables_without_verdict   748 → … → 392 → 357
+career 36→0  military 36→12  ops 53→0   grc 46→0    net 54→0
+sec 66→0     ai 39→0         devops 38→0  linux 35→0
+verdicts written by hand              389
+runway                                ~99 topics   (stop line: 40)
+```

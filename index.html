@@ -37496,8 +37496,8 @@ equivalent of all this paperwork is
 <span class="ctag ctag-aplus">A+</span>
 </div>
 <span class="domain-sub">FHS · Permissions · Boot Process · Signals · systemd · RAID · Hardware</span>
-<span class="domain-meta" aria-label="62 topics, about 2h 00m to read"
->62 topics · ~2h 00m</span>
+<span class="domain-meta" aria-label="62 topics, about 2h 10m to read"
+>62 topics · ~2h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -38071,12 +38071,12 @@ NEW TOPIC: Tmux Terminal Multiplexer
 Source: Tmux Cheat Sheet — 241-400pg PDF
 Domain: Linux & Systems
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="tmux-terminal-multiplexer" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="tmux-terminal-multiplexer" data-reviewed="2026-07" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">Tmux — Terminal Multiplexer</span>
 <span class="topic-badge">COMPLETE REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -38308,6 +38308,16 @@ COPY MODE (vi keys)
 <td>Exit copy mode</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Three of these shortcuts are the whole reason to
+install it: new session, detach, reattach.</strong>
+Everything else is convenience you will pick up over
+months; those three mean a dropped connection stops
+destroying an hour of work, which is the problem tmux
+exists to solve. Name your sessions from the start — at
+two in the morning, four unnamed sessions is a puzzle
+you set yourself.
+</div>
 <div class="code-label">
 ~/.tmux.conf — USEFUL CUSTOMISATIONS
 </div>
@@ -38342,12 +38352,12 @@ NEW TOPIC: Unix / Linux Commands Quick Reference
 Source: Unix Commands Cheat Sheet — 241-400pg PDF
 Domain: Linux & Systems
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="unix-linux-commands-quick-reference" data-reviewed="2026-07" data-read="7" data-level="core">
+<div class="topic" id="unix-linux-commands-quick-reference" data-reviewed="2026-07" data-read="8" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⌨️</span>
 <span class="topic-name">Unix / Linux Commands — Quick Reference</span>
 <span class="topic-badge">COMPLETE REFERENCE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -38431,6 +38441,16 @@ class).
 <td><code>echo "today: $(date)"</code></td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The row people get wrong is the stderr one, and
+the order matters.</strong> `2>&1` copies wherever
+stdout currently points, so putting it before the
+redirect sends errors to the terminal and output to the
+file — the opposite of what was intended. Write `cmd >
+file 2>&1`, and reach for `&&` rather than `;` in
+anything scripted, because a chain joined by semicolons
+cheerfully carries on after the step that failed.
+</div>
 <div class="dt">▸ FILE &amp; DIRECTORY MANAGEMENT</div>
 <pre class="code-block"><span class="com"># Listing and navigation</span>
 <span class="fn">ls</span>
@@ -38647,12 +38667,12 @@ class).
 NEW TOPIC: RAID Levels Reference
 Source: CompTIA A+ Cheat Sheet PDF
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="raid-levels-reference" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="raid-levels-reference" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💾</span>
 <span class="topic-name">RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span> Levels Reference</span>
 <span class="topic-badge">STORAGE REDUNDANCY</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -38738,6 +38758,16 @@ Databases, high-performance high-availability workloads
 </td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The card's own warning is the most important
+sentence on it: this is not a backup.</strong> Every
+level here survives a disk dying and none survives a
+deletion, a corruption or a ransomware event, because
+all of them replicate the mistake faithfully. On large
+modern disks prefer RAID 6 or 10 over RAID 5: a rebuild
+reads every remaining disk for hours, which is exactly
+when the second one fails.
+</div>
 <div
 class="info-bar"
 style="
@@ -38857,6 +38887,15 @@ RAM <span class="acro-exp">(Random Access Memory)</span> · Storage · CPU <span
 <td>Form factor, not protocol; can be SATA or NVMe</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the one that produces a wasted
+afternoon: M.2 is a shape, not a speed.</strong> An M.2
+drive may be SATA or NVMe, the slots are keyed
+differently, and a board that has the socket may not
+have the lanes — so "it fits" and "it works at the speed
+on the box" are separate questions. Check the key and
+the motherboard's manual before ordering, every time.
+</div>
 <div class="dt">
 ▸ LASER PRINTER IMAGING PROCESS (7 STEPS)
 </div>
@@ -39092,6 +39131,15 @@ volumes:
 <tr><td style="color:var(--green)">Limit resources</td><td>--memory 512m --cpus 1</td><td>Prevents container consuming all host resources (DoS)</td></tr>
 <tr><td style="color:var(--green)">Use distroless/slim</td><td>FROM gcr.io/distroless/python3</td><td>Minimal attack surface — no shell, no package manager</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the one that decides architecture, not the boot-time
+row.</strong> Containers share the host kernel, so a kernel escape is a host
+compromise — which is why untrusted or multi-tenant workloads still belong
+in virtual machines, or in something that gives each container its own
+kernel. Choose containers for your own code and speed of iteration; choose
+virtual machines when the boundary has to hold against the thing running
+inside it.
+</div>
 </div>
 </div>
 </div>
@@ -39099,12 +39147,12 @@ volumes:
 <!-- ═══════════════════════════════════════════════════
 TOPIC: YAML
 ═══════════════════════════════════════════════════ -->
-<div class="topic" id="yaml-config-language-reference" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="yaml-config-language-reference" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📄</span>
 <span class="topic-name">YAML — Config Language Reference</span>
 <span class="topic-badge">DEVOPS · CONFIG</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -39176,6 +39224,14 @@ api:
 <tr><td style="color:var(--amber)">Wrong indentation silently ignored</td><td>Item at wrong indent level joins wrong parent</td><td>Use a YAML linter (yamllint)</td></tr>
 <tr><td style="color:var(--amber)">0644 becomes 420 (integer)</td><td>Leading zero = octal in YAML</td><td>Quote file permissions: "0644"</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Every row is the same lesson: YAML guesses types, and the fix is
+quotation marks.</strong> The permissions one is the most expensive — `0644`
+silently becoming 420 produces a file mode nobody intended and no error
+anywhere — and the country code `NO` parsing as false is its famous cousin.
+Run a linter in the pipeline; these are all caught statically, and none of
+them is caught by reading.
+</div>
 <div class="dt">▸ YAML IN PRACTICE — GitHub Actions Example</div>
 <pre class="code-block">
 <span class="com"># .github/workflows/ci.yml</span>
@@ -39216,21 +39272,64 @@ TOPIC: Kubernetes
 <!-- LINUX-DOMAIN v1 -->
 <div class="topic" id="filesystem-navigation" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">📁</span><span class="topic-name">Filesystem &amp; Navigation</span><span class="topic-badge">Linux+ • FHS</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">LAYOUT</div><div class="concept-title">Filesystem Hierarchy (FHS)</div><div class="concept-desc">Everything hangs off / (root). Config in /etc, logs &amp; variable data in /var, users in /home, binaries in /bin and /usr.</div></div><div class="concept-card"><div class="concept-label">FIND</div><div class="concept-title">Locating Files</div><div class="concept-desc">find walks the tree live with rich filters; locate is instant but uses a database (updatedb).</div><pre class="code-block"><span class='com'># Logs modified in the last 7 days</span>
 <span class='fn'>find</span> /var/log -name '*.log' -mtime -7
-<span class='fn'>locate</span> sshd_config</pre></div><table class="ai-table"><thead><tr><th>Path</th><th>Holds</th></tr></thead><tbody><tr><td>/etc</td><td>System &amp; service config</td></tr><tr><td>/var</td><td>Logs, mail, spool, web data</td></tr><tr><td>/home</td><td>User home directories</td></tr><tr><td>/usr</td><td>User programs &amp; libraries</td></tr><tr><td>/bin /sbin</td><td>Essential / admin binaries</td></tr><tr><td>/proc /sys</td><td>Kernel &amp; process info (virtual)</td></tr><tr><td>/opt</td><td>Add-on / third-party software</td></tr></tbody></table></div></div>
+<span class='fn'>locate</span> sshd_config</pre></div><table class="ai-table"><thead><tr><th>Path</th><th>Holds</th></tr></thead><tbody><tr><td>/etc</td><td>System &amp; service config</td></tr><tr><td>/var</td><td>Logs, mail, spool, web data</td></tr><tr><td>/home</td><td>User home directories</td></tr><tr><td>/usr</td><td>User programs &amp; libraries</td></tr><tr><td>/bin /sbin</td><td>Essential / admin binaries</td></tr><tr><td>/proc /sys</td><td>Kernel &amp; process info (virtual)</td></tr><tr><td>/opt</td><td>Add-on / third-party software</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>Learn where the two that matter live and the rest follows from
+context.</strong> Configuration is in `/etc` and evidence is in `/var/log` —
+between them they answer most of "why is this behaving like that", and the
+virtual filesystems are where you look when you need to know what the kernel
+currently thinks. If a directory's contents surprise you, `/proc` and `/sys`
+are the two where that is expected: they are not files on a disk.
+</div></div></div>
 <div class="topic" id="file-ops-text-processing" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">📝</span><span class="topic-name">File Ops &amp; Text Processing</span><span class="topic-badge">Linux+ • CLI</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">FILES</div><div class="concept-title">Manage &amp; View</div><div class="concept-desc">cp / mv / rm / mkdir / touch / ln manage files; cat / less / head / tail view them. tail -f follows a live log.</div></div><div class="concept-card"><div class="concept-label">TEXT</div><div class="concept-title">grep, sed, awk &amp; Pipes</div><div class="concept-desc">Chain small tools with pipes (|) and redirection (&gt; &gt;&gt; 2&gt;&amp;1) to slice text. grep filters, sed edits, awk handles columns.</div><pre class="code-block"><span class='com'># Top source IPs hitting 404s</span>
 <span class='fn'>cat</span> access.log | <span class='fn'>grep</span> ' 404 ' | <span class='fn'>awk</span> '{print $1}' | <span class='fn'>sort</span> | <span class='fn'>uniq</span> -c | <span class='fn'>sort</span> -rn | <span class='fn'>head</span></pre></div></div></div>
 <div class="topic" id="permissions-ownership" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🔐</span><span class="topic-name">Permissions &amp; Ownership</span><span class="topic-badge">Linux+ • Security</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">MODEL</div><div class="concept-title">rwx for User / Group / Other</div><div class="concept-desc">Three triads of read(4)/write(2)/execute(1). chmod sets them numerically or symbolically; chown / chgrp set ownership; umask sets defaults.</div><pre class="code-block"><span class='com'># rwxr-xr-x  then add exec for owner, remove write for group</span>
 <span class='fn'>chmod</span> 755 deploy.sh
 <span class='fn'>chmod</span> u+x,g-w report.txt
-<span class='fn'>chown</span> alice:devs report.txt</pre></div><div class="concept-card"><div class="concept-label">SPECIAL</div><div class="concept-title">SUID <span class="acro-exp">(Set User ID)</span> / SGID / Sticky</div><div class="concept-desc">SUID (4000) runs as the file owner — a classic privesc target. SGID (2000) inherits group. Sticky (1000) on /tmp lets only owners delete their files.</div></div><table class="ai-table"><thead><tr><th>Octal</th><th>Symbolic</th><th>Meaning</th></tr></thead><tbody><tr><td>7</td><td>rwx</td><td>Read, write, execute</td></tr><tr><td>6</td><td>rw-</td><td>Read, write</td></tr><tr><td>5</td><td>r-x</td><td>Read, execute</td></tr><tr><td>4</td><td>r--</td><td>Read only</td></tr><tr><td>755</td><td>rwxr-xr-x</td><td>Common for scripts/dirs</td></tr><tr><td>644</td><td>rw-r--r--</td><td>Common for files</td></tr></tbody></table></div></div>
-<div class="topic" id="users-groups-privilege" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">👤</span><span class="topic-name">Users, Groups &amp; Privilege</span><span class="topic-badge">Linux+ • IAM</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">ACCOUNTS</div><div class="concept-title">Where Identity Lives</div><div class="concept-desc">/etc/passwd lists accounts, /etc/shadow stores password hashes (root-only), /etc/group defines groups. Manage with useradd / usermod / passwd.</div></div><div class="concept-card"><div class="concept-label">ELEVATE</div><div class="concept-title">sudo vs. su</div><div class="concept-desc">su switches to another user (needs their password); sudo runs a single command with elevated rights per /etc/sudoers (use visudo to edit safely).</div></div><table class="ai-table"><thead><tr><th>File</th><th>Purpose</th></tr></thead><tbody><tr><td>/etc/passwd</td><td>User accounts (no passwords)</td></tr><tr><td>/etc/shadow</td><td>Hashed passwords (root-only)</td></tr><tr><td>/etc/group</td><td>Group memberships</td></tr><tr><td>/etc/sudoers</td><td>Who may run what as whom</td></tr></tbody></table></div></div>
+<span class='fn'>chown</span> alice:devs report.txt</pre></div><div class="concept-card"><div class="concept-label">SPECIAL</div><div class="concept-title">SUID <span class="acro-exp">(Set User ID)</span> / SGID / Sticky</div><div class="concept-desc">SUID (4000) runs as the file owner — a classic privesc target. SGID (2000) inherits group. Sticky (1000) on /tmp lets only owners delete their files.</div></div><table class="ai-table"><thead><tr><th>Octal</th><th>Symbolic</th><th>Meaning</th></tr></thead><tbody><tr><td>7</td><td>rwx</td><td>Read, write, execute</td></tr><tr><td>6</td><td>rw-</td><td>Read, write</td></tr><tr><td>5</td><td>r-x</td><td>Read, execute</td></tr><tr><td>4</td><td>r--</td><td>Read only</td></tr><tr><td>755</td><td>rwxr-xr-x</td><td>Common for scripts/dirs</td></tr><tr><td>644</td><td>rw-r--r--</td><td>Common for files</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>The special bits above the table are the ones worth understanding;
+the octal is arithmetic you will look up forever.</strong> A set-user-ID
+binary runs as its owner regardless of who launched it, which is precisely
+why enumerating them is the first thing any privilege-escalation checklist
+does — and why adding one to solve a permissions problem is a decision, not
+a workaround. Audit what carries it on your systems; most estates have one
+nobody can explain.
+</div></div></div>
+<div class="topic" id="users-groups-privilege" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">👤</span><span class="topic-name">Users, Groups &amp; Privilege</span><span class="topic-badge">Linux+ • IAM</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">ACCOUNTS</div><div class="concept-title">Where Identity Lives</div><div class="concept-desc">/etc/passwd lists accounts, /etc/shadow stores password hashes (root-only), /etc/group defines groups. Manage with useradd / usermod / passwd.</div></div><div class="concept-card"><div class="concept-label">ELEVATE</div><div class="concept-title">sudo vs. su</div><div class="concept-desc">su switches to another user (needs their password); sudo runs a single command with elevated rights per /etc/sudoers (use visudo to edit safely).</div></div><table class="ai-table"><thead><tr><th>File</th><th>Purpose</th></tr></thead><tbody><tr><td>/etc/passwd</td><td>User accounts (no passwords)</td></tr><tr><td>/etc/shadow</td><td>Hashed passwords (root-only)</td></tr><tr><td>/etc/group</td><td>Group memberships</td></tr><tr><td>/etc/sudoers</td><td>Who may run what as whom</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>Prefer sudo, and edit the file with visudo rather than an
+editor.</strong> Per-command elevation leaves an audit trail and does not
+require sharing a password, which is the whole argument; and a syntax error
+written directly into the sudoers file locks everybody out of privilege on
+that machine, which visudo exists to prevent. The shadow row is the other
+thing to internalise: password hashes live in a root-only file for a reason,
+and anything that reads it is a finding.
+</div></div></div>
 <div class="topic" id="processes-services" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">⚙️</span><span class="topic-name">Processes &amp; Services</span><span class="topic-badge">Linux+ • A+</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">PROCESSES</div><div class="concept-title">Inspect &amp; Signal</div><div class="concept-desc">ps / top / htop show running processes. kill sends signals: SIGTERM(15) asks nicely, SIGKILL(9) forces. nohup / &amp; / bg / fg manage jobs.</div><pre class="code-block"><span class='com'># Find and stop a process</span>
 <span class='fn'>ps</span> aux | <span class='fn'>grep</span> nginx
 <span class='fn'>kill</span> -15 1337    <span class='com'># graceful</span>
 <span class='fn'>kill</span> -9 1337     <span class='com'># force</span></pre></div><div class="concept-card"><div class="concept-label">SERVICES</div><div class="concept-title">systemd</div><div class="concept-desc">systemctl controls services and boot behavior; journalctl reads the systemd log.</div><pre class="code-block"><span class='fn'>systemctl</span> status sshd
 <span class='fn'>systemctl</span> enable --now nginx
-<span class='fn'>journalctl</span> -u sshd -n 50 --no-pager</pre></div><table class="ai-table"><thead><tr><th>Signal</th><th>Number</th><th>Effect</th></tr></thead><tbody><tr><td>SIGHUP</td><td>1</td><td>Reload config</td></tr><tr><td>SIGINT</td><td>2</td><td>Interrupt (Ctrl+C)</td></tr><tr><td>SIGKILL</td><td>9</td><td>Force kill (uncatchable)</td></tr><tr><td>SIGTERM</td><td>15</td><td>Graceful terminate (default)</td></tr><tr><td>SIGSTOP</td><td>19</td><td>Pause process</td></tr></tbody></table></div></div>
-<div class="topic" id="package-management" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">📦</span><span class="topic-name">Package Management</span><span class="topic-badge">Linux+ • Distros</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">WHY</div><div class="concept-title">Packages &amp; Repos</div><div class="concept-desc">Package managers resolve dependencies and pull signed software from repositories. The tool depends on the distro family.</div></div><table class="ai-table"><thead><tr><th>Family</th><th>Manager</th><th>Install / Update</th></tr></thead><tbody><tr><td>Debian / Ubuntu</td><td>apt, dpkg</td><td>apt install / apt update &amp;&amp; apt upgrade</td></tr><tr><td>RHEL <span class="acro-exp">(Red Hat Enterprise Linux)</span> / Fedora</td><td>dnf, yum, rpm</td><td>dnf install / dnf upgrade</td></tr><tr><td>Arch</td><td>pacman</td><td>pacman -S / pacman -Syu</td></tr><tr><td>Universal</td><td>snap, flatpak</td><td>snap install / flatpak install</td></tr></tbody></table></div></div>
+<span class='fn'>journalctl</span> -u sshd -n 50 --no-pager</pre></div><table class="ai-table"><thead><tr><th>Signal</th><th>Number</th><th>Effect</th></tr></thead><tbody><tr><td>SIGHUP</td><td>1</td><td>Reload config</td></tr><tr><td>SIGINT</td><td>2</td><td>Interrupt (Ctrl+C)</td></tr><tr><td>SIGKILL</td><td>9</td><td>Force kill (uncatchable)</td></tr><tr><td>SIGTERM</td><td>15</td><td>Graceful terminate (default)</td></tr><tr><td>SIGSTOP</td><td>19</td><td>Pause process</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>Reach for 15 and only then for 9.</strong> A graceful terminate lets
+a process flush buffers, finish a write and remove its lock file; `kill -9`
+is uncatchable, which means the process cannot clean up and you may be
+trading a slow shutdown for a corrupt file or a stale lock. Use SIGKILL when
+the polite signal has been ignored, not as the first move — and note that a
+process stuck in uninterruptible I/O <span class="acro-exp">(Input/Output)</span> will ignore both.
+</div></div></div>
+<div class="topic" id="package-management" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">📦</span><span class="topic-name">Package Management</span><span class="topic-badge">Linux+ • Distros</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">WHY</div><div class="concept-title">Packages &amp; Repos</div><div class="concept-desc">Package managers resolve dependencies and pull signed software from repositories. The tool depends on the distro family.</div></div><table class="ai-table"><thead><tr><th>Family</th><th>Manager</th><th>Install / Update</th></tr></thead><tbody><tr><td>Debian / Ubuntu</td><td>apt, dpkg</td><td>apt install / apt update &amp;&amp; apt upgrade</td></tr><tr><td>RHEL <span class="acro-exp">(Red Hat Enterprise Linux)</span> / Fedora</td><td>dnf, yum, rpm</td><td>dnf install / dnf upgrade</td></tr><tr><td>Arch</td><td>pacman</td><td>pacman -S / pacman -Syu</td></tr><tr><td>Universal</td><td>snap, flatpak</td><td>snap install / flatpak install</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>The universal row is the trade-off worth naming: bigger, slower and
+sandboxed, in exchange for not caring which distribution you are
+on.</strong> Snaps and flatpaks bundle their dependencies, so they update
+independently of the system and start more slowly — which is the right trade
+for a desktop application and the wrong one for a server daemon. On servers,
+stay with the distribution's own manager so security updates arrive through
+the channel you are already monitoring.
+</div></div></div>
 <div class="topic" id="networking-cli" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🌐</span><span class="topic-name">Networking (CLI)</span><span class="topic-badge">Linux+ • Net</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">INSPECT</div><div class="concept-title">Interfaces &amp; Sockets</div><div class="concept-desc">ip replaces ifconfig for addresses and routes; ss (or netstat) lists listening ports and connections.</div><pre class="code-block"><span class='fn'>ip</span> a            <span class='com'># addresses</span>
 <span class='fn'>ss</span> -tulpn       <span class='com'># listening TCP/UDP + PID</span>
 <span class='fn'>ip</span> route</pre></div><div class="concept-card"><div class="concept-label">CONNECT</div><div class="concept-title">Transfer &amp; Remote</div><div class="concept-desc">curl / wget fetch URLs <span class="acro-exp">(Uniform Resource Locator)</span>; ssh / scp / rsync handle remote shells and sync. Firewall via ufw, firewalld, or raw iptables/nftables.</div><pre class="code-block"><span class='fn'>ssh</span> -i key.pem user@10.0.0.5
@@ -39238,20 +39337,44 @@ TOPIC: Kubernetes
 <span class='fn'>curl</span> -sI https://example.com</pre></div></div></div>
 <div class="topic" id="shell-cron-hardening" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🛡️</span><span class="topic-name">Shell, Cron &amp; Hardening</span><span class="topic-badge">Linux+ • SecOps</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">SHELL</div><div class="concept-title">Bash Environment</div><div class="concept-desc">Variables and PATH live in the shell; persistent settings go in ~/.bashrc or /etc/profile. export makes a variable available to child processes.</div></div><div class="concept-card"><div class="concept-label">SCHEDULE</div><div class="concept-title">cron &amp; systemd timers</div><div class="concept-desc">crontab -e schedules recurring jobs; at runs one-off jobs; systemd timers are the modern alternative with logging.</div><pre class="code-block"><span class='com'># min hr dom mon dow   command</span>
 0 2 * * *   /usr/bin/backup.sh    <span class='com'># 02:00 every day</span>
-*/15 * * * * /usr/bin/healthcheck  <span class='com'># every 15 min</span></pre></div><div class="concept-card"><div class="concept-label">HARDEN</div><div class="concept-title">Baseline Hardening</div><div class="concept-desc">Use SSH <span class="acro-exp">(Secure Shell)</span> keys (disable password &amp; root login), keep patched, run fail2ban, and enforce MAC <span class="acro-exp">(Mandatory Access Control)</span> with SELinux <span class="acro-exp">(Security-Enhanced Linux)</span> or AppArmor. Watch /var/log for anomalies.</div></div><table class="ai-table"><thead><tr><th>Cron Field</th><th>Range</th></tr></thead><tbody><tr><td>Minute</td><td>0–59</td></tr><tr><td>Hour</td><td>0–23</td></tr><tr><td>Day of month</td><td>1–31</td></tr><tr><td>Month</td><td>1–12</td></tr><tr><td>Day of week</td><td>0–6 (Sun=0)</td></tr></tbody></table></div></div>
+*/15 * * * * /usr/bin/healthcheck  <span class='com'># every 15 min</span></pre></div><div class="concept-card"><div class="concept-label">HARDEN</div><div class="concept-title">Baseline Hardening</div><div class="concept-desc">Use SSH <span class="acro-exp">(Secure Shell)</span> keys (disable password &amp; root login), keep patched, run fail2ban, and enforce MAC <span class="acro-exp">(Mandatory Access Control)</span> with SELinux <span class="acro-exp">(Security-Enhanced Linux)</span> or AppArmor. Watch /var/log for anomalies.</div></div><table class="ai-table"><thead><tr><th>Cron Field</th><th>Range</th></tr></thead><tbody><tr><td>Minute</td><td>0–59</td></tr><tr><td>Hour</td><td>0–23</td></tr><tr><td>Day of month</td><td>1–31</td></tr><tr><td>Month</td><td>1–12</td></tr><tr><td>Day of week</td><td>0–6 (Sun=0)</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>Day-of-week and day-of-month are ORed, not ANDed, and that is the
+cron mistake everybody makes once.</strong> A schedule specifying both the
+1st and Monday runs on the 1st *and* on every Monday, which is rarely what
+was meant. The other habit worth adopting: redirect output somewhere,
+because a cron job that fails silently and mails root on a machine nobody
+reads mail on is a job you will discover missing months later.
+</div></div></div>
 <!-- BEGINNER-LINUX v1 -->
-<div class="topic" id="linux-for-newcomers" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">Linux for Newcomers</span><span class="topic-badge">Linux+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">What Is an Operating System?</div><div class="concept-desc">The OS is the manager between you and the hardware — it hands out memory, runs programs, and talks to the disk and network. Windows, macOS, and Linux are all operating systems; Linux runs most of the servers on the Internet.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">The Terminal Isn't Scary</div><div class="concept-desc">The terminal (or shell) is just a text way to give commands instead of clicking. Typing 'copy this file there' can be faster and more exact than dragging icons. The blinking prompt is simply asking 'what next?'</div></div><div class="concept-card"><div class="concept-label">MENTAL MODEL</div><div class="concept-title">Everything Is a File</div><div class="concept-desc">In Linux, your documents, your devices, even some settings are all treated as files in one big tree that starts at / (the root). Learn to move around that tree and you've learned half of Linux.</div></div><div class="concept-card"><div class="concept-label">GOTCHA</div><div class="concept-title">Case &amp; Spaces Matter</div><div class="concept-desc">'Report.txt' and 'report.txt' are different files, and a space can confuse a command. Beginners trip on this constantly — when something 'isn't found,' check capitalization and spelling first.</div></div><table class="ai-table"><thead><tr><th>Command</th><th>Says…</th><th>Like…</th></tr></thead><tbody><tr><td>pwd</td><td>Where am I?</td><td>Checking your current room</td></tr><tr><td>ls</td><td>What's here?</td><td>Looking around the room</td></tr><tr><td>cd folder</td><td>Go inside</td><td>Walking through a door</td></tr><tr><td>cp / mv</td><td>Copy / move</td><td>Duplicating or relocating</td></tr><tr><td>cat file</td><td>Show contents</td><td>Reading the page out loud</td></tr><tr><td>man cmd</td><td>Show the manual</td><td>Reading the instructions</td></tr></tbody></table></div></div>
+<div class="topic" id="linux-for-newcomers" data-reviewed="2026-07" data-read="2" data-level="core"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">Linux for Newcomers</span><span class="topic-badge">Linux+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">2 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">What Is an Operating System?</div><div class="concept-desc">The OS is the manager between you and the hardware — it hands out memory, runs programs, and talks to the disk and network. Windows, macOS, and Linux are all operating systems; Linux runs most of the servers on the Internet.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">The Terminal Isn't Scary</div><div class="concept-desc">The terminal (or shell) is just a text way to give commands instead of clicking. Typing 'copy this file there' can be faster and more exact than dragging icons. The blinking prompt is simply asking 'what next?'</div></div><div class="concept-card"><div class="concept-label">MENTAL MODEL</div><div class="concept-title">Everything Is a File</div><div class="concept-desc">In Linux, your documents, your devices, even some settings are all treated as files in one big tree that starts at / (the root). Learn to move around that tree and you've learned half of Linux.</div></div><div class="concept-card"><div class="concept-label">GOTCHA</div><div class="concept-title">Case &amp; Spaces Matter</div><div class="concept-desc">'Report.txt' and 'report.txt' are different files, and a space can confuse a command. Beginners trip on this constantly — when something 'isn't found,' check capitalization and spelling first.</div></div><table class="ai-table"><thead><tr><th>Command</th><th>Says…</th><th>Like…</th></tr></thead><tbody><tr><td>pwd</td><td>Where am I?</td><td>Checking your current room</td></tr><tr><td>ls</td><td>What's here?</td><td>Looking around the room</td></tr><tr><td>cd folder</td><td>Go inside</td><td>Walking through a door</td></tr><tr><td>cp / mv</td><td>Copy / move</td><td>Duplicating or relocating</td></tr><tr><td>cat file</td><td>Show contents</td><td>Reading the page out loud</td></tr><tr><td>man cmd</td><td>Show the manual</td><td>Reading the instructions</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>The last row is the one that makes the other five
+unnecessary.</strong> `man` is how you stop needing a table like this —
+every command carries its own documentation, and the habit of reading it is
+what separates somebody who knows six commands from somebody who can use any
+of them. Start with the examples section at the bottom of most manual pages;
+it is usually the fastest route to the thing you actually wanted.
+</div></div></div>
 <!-- BEGINNER2-LINUX v1 -->
-<div class="topic" id="permissions-packages-for-newcomers" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🧭</span><span class="topic-name">Permissions &amp; Packages for Newcomers</span><span class="topic-badge">Linux+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">WHO CAN DO WHAT</div><div class="concept-title">Read, Write, Execute</div><div class="concept-desc">Every file says what three groups may do with it: the owner, the group, and everyone else. The three powers are read (look), write (change), and execute (run it as a program). ‘rwx’ is just those three letters.</div></div><div class="concept-card"><div class="concept-label">ADMIN MODE</div><div class="concept-title">sudo = “do this as admin”</div><div class="concept-desc">Normal users can’t break the whole system by accident — a safety feature. Putting sudo in front of a command says “I really mean it, run this with admin power.” Use it deliberately; with great power comes great rm -rf.</div><pre class="code-block"><span class='fn'>sudo</span> apt update      <span class='com'># run as administrator</span>
-<span class='fn'>chmod</span> +x script.sh   <span class='com'># make a file runnable</span></pre></div><div class="concept-card"><div class="concept-label">APP STORE FOR THE TERMINAL</div><div class="concept-title">Package Managers</div><div class="concept-desc">You don’t download installers in Linux — a package manager fetches, installs, and updates software from trusted repositories, handling all the pieces it depends on. apt (Debian/Ubuntu), dnf (Fedora), and pacman (Arch) are the common ones.</div></div><table class="ai-table"><thead><tr><th>You Want To…</th><th>Command (Ubuntu/Debian)</th></tr></thead><tbody><tr><td>Refresh the catalog</td><td>sudo apt update</td></tr><tr><td>Install a program</td><td>sudo apt install name</td></tr><tr><td>Update everything</td><td>sudo apt upgrade</td></tr><tr><td>Remove a program</td><td>sudo apt remove name</td></tr><tr><td>Search for one</td><td>apt search keyword</td></tr></tbody></table></div></div>
+<div class="topic" id="permissions-packages-for-newcomers" data-reviewed="2026-07" data-read="2" data-level="core"><div class="topic-header"><span class="topic-icon">🧭</span><span class="topic-name">Permissions &amp; Packages for Newcomers</span><span class="topic-badge">Linux+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">2 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">WHO CAN DO WHAT</div><div class="concept-title">Read, Write, Execute</div><div class="concept-desc">Every file says what three groups may do with it: the owner, the group, and everyone else. The three powers are read (look), write (change), and execute (run it as a program). ‘rwx’ is just those three letters.</div></div><div class="concept-card"><div class="concept-label">ADMIN MODE</div><div class="concept-title">sudo = “do this as admin”</div><div class="concept-desc">Normal users can’t break the whole system by accident — a safety feature. Putting sudo in front of a command says “I really mean it, run this with admin power.” Use it deliberately; with great power comes great rm -rf.</div><pre class="code-block"><span class='fn'>sudo</span> apt update      <span class='com'># run as administrator</span>
+<span class='fn'>chmod</span> +x script.sh   <span class='com'># make a file runnable</span></pre></div><div class="concept-card"><div class="concept-label">APP STORE FOR THE TERMINAL</div><div class="concept-title">Package Managers</div><div class="concept-desc">You don’t download installers in Linux — a package manager fetches, installs, and updates software from trusted repositories, handling all the pieces it depends on. apt (Debian/Ubuntu), dnf (Fedora), and pacman (Arch) are the common ones.</div></div><table class="ai-table"><thead><tr><th>You Want To…</th><th>Command (Ubuntu/Debian)</th></tr></thead><tbody><tr><td>Refresh the catalog</td><td>sudo apt update</td></tr><tr><td>Install a program</td><td>sudo apt install name</td></tr><tr><td>Update everything</td><td>sudo apt upgrade</td></tr><tr><td>Remove a program</td><td>sudo apt remove name</td></tr><tr><td>Search for one</td><td>apt search keyword</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>The first row is not optional, and skipping it is why "package not
+found" happens on a fresh machine.</strong> Update refreshes the catalogue
+and installs nothing; upgrade installs. Learn that pair as one action, and
+be careful with the remove row — it commonly leaves configuration behind,
+which is a feature when you reinstall and a puzzle when you were trying to
+start clean.
+</div></div></div>
 <!-- BEGINNER6-LINUX v1 -->
 <!-- ── TOPIC: SHELL SCRIPTING BASICS ──────────────────────── -->
-<div class="topic" id="shell-scripting-automate-repetitive-work" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="shell-scripting-automate-repetitive-work" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📜</span>
 <span class="topic-name">Shell Scripting — Automate Repetitive Work</span>
 <span class="topic-badge">LINUX • Practical</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -39338,6 +39461,14 @@ i=<span class="num">1</span>
 <tr><td>[ ! condition ]</td><td>NOT (negate)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Quote every variable, and use the numeric operators for
+numbers.</strong> An unquoted empty variable makes the test collapse to a syntax
+error, and `=` on numbers compares strings — which is why 10 sorts before 9 and
+a script silently takes the wrong branch. In bash specifically, prefer `[[ ]]`:
+it does not word-split, which removes most of the ways this table goes wrong in
+practice.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">FUNCTIONS</div>
@@ -39482,6 +39613,13 @@ lsof -p PID</pre>
 <tr><td>SIGCONT</td><td>18</td><td>Continue</td><td>Resume a paused process</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The hang-up signal is the useful one nobody remembers.</strong>
+Reloading configuration without dropping connections is what it is for, and
+reaching for a restart instead is why a config change costs an outage on a busy
+web server. Learn which of your daemons honour it — most of the common ones do —
+and keep SIGKILL for the process that has already ignored a polite request.
+</div>
 <pre class="code-block"><span class="com"># Polite stop (give process time to clean up)</span>
 kill -15 PID
 kill PID      <span class="com"># same — SIGTERM is default</span>
@@ -39641,6 +39779,14 @@ sudo systemctl enable --now myapp</pre>
 <tr><td>Portability</td><td>Very high</td><td>High (but larger images)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Pick by the security row when the workload is not yours, and by the
+startup row when it is.</strong> Everything else on this table favours
+containers, which is why they win by default and why the exception matters: a
+shared kernel means the boundary is only as strong as the kernel's isolation,
+and that is the wrong bet for untrusted code. For your own services, the
+millisecond start is a real change in how you deploy, not just a number.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">BASIC DOCKER COMMANDS</div>
@@ -39874,12 +40020,12 @@ sudo -u www-data whoami</pre>
 </div>
 <!-- BEGINNER13-LINUX v1 -->
 <!-- ── TOPIC: PACKAGE MANAGEMENT ─────────────────────────── -->
-<div class="topic" id="package-management-installing-and-managing-software" data-reviewed="2026-07" data-read="4" data-level="core">
+<div class="topic" id="package-management-installing-and-managing-software" data-reviewed="2026-07" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📦</span>
 <span class="topic-name">Package Management — Installing and Managing Software</span>
 <span class="topic-badge">LINUX • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -39897,6 +40043,14 @@ sudo -u www-data whoami</pre>
 <tr><td>Universal</td><td>Any distro</td><td><code>snap</code>, <code>flatpak</code>, <code>AppImage</code></td><td>Various</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The distribution family is the thing to learn; the individual command is
+a lookup.</strong> Almost every server you meet is in the first two rows, and
+knowing which one tells you the manager, the file format, the configuration
+layout and where the logs go. The universal row is convenient for desktops and a
+poor fit for servers, where you want updates arriving through the same channel
+as your security patching.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">APT COMMANDS</div>
@@ -40057,12 +40211,12 @@ n         <span class="com"># next search result</span></pre>
 </div>
 <!-- BEGINNER16-LINUX v1 -->
 <!-- ── TOPIC: FILE PERMISSIONS DEEP DIVE ─────────────────── -->
-<div class="topic" id="linux-permissions-who-can-do-what-in-depth" data-reviewed="2026-07" data-read="4" data-level="core">
+<div class="topic" id="linux-permissions-who-can-do-what-in-depth" data-reviewed="2026-07" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔑</span>
 <span class="topic-name">Linux Permissions — Who Can Do What, In Depth</span>
 <span class="topic-badge">LINUX • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -40120,6 +40274,14 @@ chgrp devs file.txt            <span class="com"># change group only</span></pre
 <tr><td>Sticky</td><td>1000</td><td>On dir: only the file owner can delete their files</td><td><code>/tmp</code> — anyone can write, but can't delete others' files</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Every set-user-ID binary on a system is a promise that it cannot be
+misused, and most estates cannot say who made it.</strong> The `passwd` example
+is the good case — a small, audited program that needs root for one narrow job —
+and the bad case is a shell script somebody marked as root-owned to avoid a
+permissions conversation. List them, explain each one, and treat anything
+unexplained as a finding rather than a curiosity.
+</div>
 <pre class="code-block"><span class="com"># Set special bits</span>
 chmod u+s binary       <span class="com"># SUID</span>
 chmod g+s shared_dir   <span class="com"># SGID</span>
@@ -40163,12 +40325,12 @@ sudo aa-enforce /path/to/program    <span class="com"># enforce the profile</spa
 </div>
 <!-- BEGINNER18-LINUX v1 -->
 <!-- ── TOPIC: SSH DEEP DIVE & HARDENING ──────────────────── -->
-<div class="topic" id="ssh-secure-remote-access-done-right" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="ssh-secure-remote-access-done-right" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔑</span>
 <span class="topic-name">SSH <span class="acro-exp">(Secure Shell)</span> — Secure Remote Access Done Right</span>
 <span class="topic-badge">LINUX • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -40248,6 +40410,13 @@ Host internal-db
 <tr><td><code>MaxAuthTries</code></td><td><code>3</code></td><td>Limit guesses per connection</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Two rows are the hardening; the port row is noise reduction and the card
+says so.</strong> Disabling password authentication and root login removes
+brute-forcing as a category, which is what the automated internet is actually
+doing to you. Moving the port quiets the logs and stops nothing determined — do
+it if the noise bothers you, and never count it as a control.
+</div>
 <pre class="code-block"><span class="com"># Apply changes safely</span>
 sudo nano /etc/ssh/sshd_config
 sudo sshd -t                      <span class="com"># test config syntax FIRST</span>
@@ -40261,12 +40430,12 @@ sudo apt install fail2ban
 </div>
 <!-- BEGINNER20-LINUX v1 -->
 <!-- ── TOPIC: BOOT PROCESS & LOGS ────────────────────────── -->
-<div class="topic" id="boot-process-logs-understanding-how-linux-starts-and-speaks" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="boot-process-logs-understanding-how-linux-starts-and-speaks" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🥾</span>
 <span class="topic-name">Boot Process &amp; Logs — Understanding How Linux Starts and Speaks</span>
 <span class="topic-badge">LINUX • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -40285,6 +40454,14 @@ sudo apt install fail2ban
 <tr><td>6. Login</td><td>getty/display manager presents login</td><td>Can't log in — auth/PAM/disk-full</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The failure column is the diagnostic, and it narrows the problem before
+you touch anything.</strong> A kernel panic, a GRUB prompt and a hang on a
+service are three completely different problems with three different tools, and
+knowing which stage you are in is most of the work. Learn to recognise stage 4
+in particular: emergency mode with a failing unit is the commonest of these and
+is nearly always a bad mount in `/etc/fstab`.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">WHERE THE LOGS LIVE</div>
@@ -40300,6 +40477,14 @@ sudo apt install fail2ban
 <tr><td><code>journalctl</code> (systemd journal)</td><td>Unified binary log for everything systemd manages</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is where to start on any modern system, and the others are
+where to look when it is not there.</strong> The journal is unified, indexed and
+filterable by unit, priority and time — `journalctl -u service -b` answers most
+questions faster than grepping text files ever did. Keep the paths above for
+containers, appliances and anything not run by systemd, and remember that the
+authentication log is the one an investigation always wants.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">JOURNALCTL</div>
@@ -40432,17 +40617,25 @@ sudo resize2fs /dev/data_vg/data_lv   <span class="com"># grow the filesystem to
 <tr><td>RAID 10 (1+0)</td><td>4</td><td>Per mirror</td><td>Fast AND redundant; popular for databases</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>On disks larger than a few terabytes, treat RAID 5 as
+deprecated.</strong> A rebuild reads every remaining disk end to end for many
+hours, which is precisely the load that finds the second failure — and the array
+that was protecting you is then gone. RAID 6 or 10 for anything you care about,
+and the card's own opening line remains the most important part: none of this is
+a backup.
+</div>
 </div>
 </div>
 </div>
 <!-- BEGINNER24-LINUX v1 -->
 <!-- ── TOPIC: THE IP COMMAND ─────────────────────────────── -->
-<div class="topic" id="the-ip-command-modern-linux-networking" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="the-ip-command-modern-linux-networking" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧩</span>
 <span class="topic-name">The ip Command — Modern Linux Networking</span>
 <span class="topic-badge">LINUX • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -40460,6 +40653,13 @@ sudo resize2fs /dev/data_vg/data_lv   <span class="com"># grow the filesystem to
 <tr><td><code>netstat -tulpn</code></td><td><code>ss -tulpn</code></td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Learn the new column; the old one will not be installed on the machine
+where you need it.</strong> Minimal images and modern distributions ship without
+net-tools entirely, so muscle memory for `ifconfig` becomes "command not found"
+at the worst moment. The `ss` row is the one worth practising first — it is what
+you reach for when something is listening and you need to know what.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">ADDRESSES & LINKS</div>
@@ -40515,6 +40715,14 @@ ss -tn state established       <span class="com"># active connections</span></pr
 <tr><td>ifupdown</td><td>Older Debian</td><td><code>/etc/network/interfaces</code></td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Find out which of these your system uses before you change anything, not
+after.</strong> Editing the wrong one produces a change that appears to work and
+vanishes at reboot, or two systems fighting over the same interface — which is
+the classic way a remote machine becomes unreachable. One command to identify
+the manager, then make the change there, then reboot deliberately while you
+still have another way in.
+</div>
 </div>
 </div>
 </div>
@@ -40628,6 +40836,13 @@ log ERROR <span class="str">"Disk full"</span></pre>
 <tr><td>USER</td><td>User/group IDs — can be root inside, unprivileged outside</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The user namespace is the one that changes the security picture, and it
+is the one most often left off.</strong> Root inside the container mapping to an
+unprivileged user outside is what turns a container escape from a host
+compromise into a nuisance — and many setups still run without it. If you are
+hardening containers and can enable one thing from this list, enable that.
+</div>
 <pre class="code-block"><span class="com"># See namespaces a process belongs to</span>
 ls -l /proc/$$/ns        <span class="com"># $$ = current shell's PID</span>
 
@@ -41551,12 +41766,12 @@ from the host: <code>nsenter -t &lt;PID&gt; -n -p -m sh</code>
 </div>
 </div>
 <!-- BEGINNER41-LINUX v1 -->
-<div class="topic" id="systemd-essentials-services-units-and-why-things-start-at-bo" data-reviewed="2026-07" data-read="3" data-level="beginner">
+<div class="topic" id="systemd-essentials-services-units-and-why-things-start-at-bo" data-reviewed="2026-07" data-read="4" data-level="beginner">
 <div class="topic-header">
 <span class="topic-icon">⚙️</span>
 <span class="topic-badge">Beginner</span>
 <span class="topic-name">systemd Essentials – Services, Units, and Why Things Start at Boot</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -41580,6 +41795,13 @@ highest-leverage things a beginner can learn — the same handful of commands wo
 <tr><td>.mount</td><td>A filesystem mount point</td><td><code>home.mount</code></td></tr>
 <tr><td>.target</td><td>A grouping of other units — a "milestone" the system reaches during boot</td><td><code>multi-user.target</code>, <code>graphical.target</code></td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The timer row is the one to migrate to, and cron is the habit that keeps
+people from it.</strong> Timers give you logging in the journal, dependency
+ordering, resource limits and a clean way to ask when something last ran and
+whether it succeeded — none of which cron offers. Keep cron for the trivial and
+one-off; anything that matters is better as a service plus a timer.
+</div>
 </div>
 <div class="concept-card">
 <span class="concept-label">Hands-on</span>
@@ -41626,12 +41848,12 @@ out of you and me</strong>: always run <span class="kw">systemctl status</span> 
 </div>
 </div>
 <!-- BEGINNER43-LINUX v1 -->
-<div class="topic" id="file-permissions-demystified-rwx-octal-notation-and-chmod" data-reviewed="2026-07" data-read="3" data-level="beginner">
+<div class="topic" id="file-permissions-demystified-rwx-octal-notation-and-chmod" data-reviewed="2026-07" data-read="4" data-level="beginner">
 <div class="topic-header">
 <span class="topic-icon">🗝️</span>
 <span class="topic-badge">Beginner</span>
 <span class="topic-name">File Permissions Demystified – rwx, Octal Notation, and chmod</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -41668,6 +41890,13 @@ commands and deployment scripts everywhere.</p>
 <tr><td>5</td><td>r-x — read and execute, no write</td><td>Shared programs others should run but not modify</td></tr>
 <tr><td>4</td><td>r-- — read only</td><td>Reference files nobody but the owner should change</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Learn 755 and 644 and you have covered almost everything you will
+type.</strong> Executables and directories want the first, ordinary files the
+second, and the reflex to reach for 777 when something does not work is how a
+permissions problem becomes a security finding. If 777 fixes it, the actual
+problem is ownership — change that instead.
+</div>
 </div>
 <div class="concept-card">
 <span class="concept-label">Hands-on</span>
@@ -41930,6 +42159,16 @@ match wins. If nothing matches, the chain's default
 <tr><td>Rules are not persistent by default</td><td>iptables/nft rules vanish on reboot — save them (<code>netfilter-persistent</code>, <code>nft list ruleset &gt; /etc/nftables.conf</code>) or use ufw, which persists.</td></tr>
 <tr><td>Test with a safety net</td><td>Schedule an <code>at</code> job to flush rules in 5 min while you test, so a mistake auto-recovers.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the habit that makes the other
+three survivable.</strong> Everyone eventually applies a
+firewall rule that severs their own session, and a
+scheduled job that flushes the rules in five minutes
+turns that from a data-centre visit into a five-minute
+wait. Set the safety net first, then make the change;
+cancel it once you have confirmed you are still
+connected.
+</div>
 </div>
 </div>
 </div>
@@ -42013,12 +42252,12 @@ tune it before enforcing.
 </div>
 </div>
 </div>
-<div class="topic" id="ebpf-programmable-kernel-observability-security" data-reviewed="2026-08" data-read="3" data-level="advanced">
+<div class="topic" id="ebpf-programmable-kernel-observability-security" data-reviewed="2026-08" data-read="5" data-level="advanced">
 <div class="topic-header">
 <span class="topic-icon">🐝</span>
 <span class="topic-name">eBPF <span class="acro-exp">(Extended Berkeley Packet Filter)</span> — Programmable Kernel Observability &amp; Security</span>
 <span class="topic-badge">Advanced</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -42047,6 +42286,16 @@ networking, and security tooling.
 <tr><td>Run</td><td>It executes in-kernel at event time, extremely fast (often JIT-compiled to native code).</td></tr>
 <tr><td>Report</td><td>Results flow to user space via <strong>maps</strong> (shared key/value structures) or ring buffers.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The verifier is the whole reason this is allowed
+to exist.</strong> Running arbitrary code inside the
+kernel would be unthinkable without a proof that it
+terminates and touches only what it may — which is also
+why eBPF programs feel constrained to write, and why
+that constraint is the feature. When a program is
+rejected, the verifier is not being awkward; it could
+not prove the thing you need it to prove.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -42067,6 +42316,16 @@ analyze it.
 <tr><td>Security</td><td>Runtime detection — flag suspicious syscalls/process behavior (Falco, Tetragon).</td></tr>
 <tr><td>Profiling</td><td>Continuous, low-overhead CPU/off-CPU flame graphs across a fleet.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The observability row is where most people
+should start, and the tools already exist.</strong> You
+rarely need to write eBPF: bcc and bpftrace ship ready-
+made programs that answer questions — which files is
+this process opening, where is the latency — that
+previously required strace and an outage's worth of
+overhead. Learn to run those before learning to write
+your own.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -42404,6 +42663,18 @@ others, and a real hardened build wants all three.
 <tr><td>dm-verity</td><td>Modification of a read-only root</td><td>Every block read, at runtime</td></tr>
 <tr><td>IMA / EVM</td><td>Tampering with files and their metadata</td><td>On file access, against a signed baseline</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>These compose, and each one alone answers a
+question the others do not.</strong> Full-disk
+encryption without measured boot protects a stolen
+laptop and not a tampered one; Secure Boot without
+encryption is the reverse. For most estates the
+practical pair is LUKS plus Secure Boot, with the
+trusted-platform module sealing the key so the disk
+unlocks only on an unmodified boot chain — everything
+below that is for systems where integrity matters more
+than convenience.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -42500,6 +42771,17 @@ a project's install script, and why that habit is worth breaking.
 <tr><td>Distro-agnostic</td><td>Manifest per tool</td><td>fpm to convert; nfpm in CI pipelines</td></tr>
 <tr><td>Sandboxed apps</td><td>Manifest + runtime</td><td>Flatpak, Snap — bundle deps, isolate the app</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The card's closing point is the verdict:
+packaging buys you a clean uninstall and a dependency
+graph, and a tarball buys you neither.</strong> If you
+are shipping software to machines you do not own, build
+a real package for the distributions you support — the
+cross-format tools in the third row make that far
+cheaper than it used to be. The one thing not to do is
+what most internal software does: copy files into place
+with a script nobody can reverse.
+</div>
 </div>
 </div>
 <div class="concept-card">
