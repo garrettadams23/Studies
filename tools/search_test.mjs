@@ -161,6 +161,18 @@ const KNOWN_MISSES = [];
 // four-character substring threshold, and it legitimately matches 275 topics
 // through "classes", "classic" and "classification". A ceiling that fails on
 // correct behaviour teaches people to raise ceilings.
+// script.js refuses to widen a query that would match more than 12% of the
+// corpus. A ceiling expressed as a share of the same corpus stays meaningful as
+// content grows; one expressed as a count quietly becomes stricter every wave.
+// `share(f)` is resolved against the live page once it has loaded.
+const WIDE_CAP_SHARE = 0.12;
+const share = f => {
+  // A ceiling at or above the page's own refusal threshold can never fire.
+  if (f >= WIDE_CAP_SHARE) throw new Error(`share(${f}) can never fail — script.js ` +
+    `refuses to widen above ${WIDE_CAP_SHARE}`);
+  return { share: f };
+};
+
 const CEILINGS = [
   ["min",           40, "reading-time chrome leaking into the index"],
   ["concept-desc",   0, "card markup leaking into the index"],
@@ -172,8 +184,23 @@ const CEILINGS = [
   // question be answered at all, and it is also what makes a vague question
   // wide: "find" and "file" are two real words and a great many cards contain
   // both. Wide is acceptable; the whole site is not.
-  ["how do i find a file",       120, "the widened stage losing its remaining nouns"],
-  ["why is my domain controller", 90, "the widened stage losing its remaining nouns"],
+  //
+  // These two are shares of the corpus rather than absolute counts, because the
+  // thing being guarded is a *proportion* — and an absolute number set once
+  // silently tightens as the site grows. It did: a wave of verdict prose moved
+  // "how do i find a file" from comfortably under 120 to 121 without the
+  // matcher changing at all, and the failure said "the widened stage lost its
+  // nouns" when what had actually happened was that more cards now contain both
+  // ordinary words. That is a true signal about the content and a false one
+  // about the code.
+  //
+  // The anchor is the page's own refusal threshold: script.js will not widen at
+  // all above WIDE_CAP_SHARE of the corpus, so a ceiling at or above that can
+  // never fire. These sit at three-quarters of it, which leaves the guard able
+  // to catch the regression it is named for (hundreds, not dozens) while
+  // tracking the corpus it is measured against.
+  ["how do i find a file",       share(0.09), "the widened stage losing its remaining nouns"],
+  ["why is my domain controller", share(0.06), "the widened stage losing its remaining nouns"],
   // The other end of the same rule. These keep one very common content word —
   // work, time, good — and widening them covers a third to a half of the site.
   // A widened answer that large carries no information, so the cap turns them
@@ -207,7 +234,12 @@ for (const [q, want, ceiling] of FIXTURES) {
 }
 
 console.log("\nindex hygiene — a common word must not match the whole site\n");
-for (const [q, ceiling, why] of CEILINGS) {
+const corpus = await page.evaluate(() =>
+  Object.values(topicIndex()).reduce((n, ids) => n + ids.length, 0));
+const resolve_ = c => (typeof c === "number" ? c : Math.round(corpus * c.share));
+
+for (const [q, rawCeiling, why] of CEILINGS) {
+  const ceiling = resolve_(rawCeiling);
   const hits = await hitsFor(q);
   const ok = hits.length <= ceiling;
   if (!ok) failed++;

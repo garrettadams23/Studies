@@ -18788,3 +18788,51 @@ sec 66→0     ai 39→0         devops 38→0  linux 35→0
 verdicts written by hand              389
 runway                                ~99 topics   (stop line: 40)
 ```
+
+### `threat` and `pentest`, all 62 — and a gate that fired for a true reason and a false one
+
+Eleven domains. Threat tables are attacker behaviour, so the verdict names where a
+defender gets the most for the least; pentest tables are tool lists, and there the
+missing sentence is almost always about **authorisation and blast radius** rather
+than technique.
+
+> **The command-and-control row is where a defender gets the most for the least.**
+> Recon cannot really be stopped and delivery arrives constantly; outbound traffic
+> to something that has no business being talked to is both detectable and rare.
+
+> **A clean sandbox report is not evidence that the sample is clean.**
+
+> **Risk level 3 can update every row in a table, and that is not a hypothetical.**
+
+> **Wireless is the area where the physical boundary of the engagement stops
+> matching the technical one.** Radio does not respect a building line.
+
+### The search gate caught the prose
+
+`search_test.mjs` failed for the first time in the programme:
+
+```
+FAIL : "how do i find a file"  121 result(s) — over ceiling 120
+```
+
+The matcher had not changed. **400 verdicts of prose had.** More cards now contain
+both "find" and "file", so a vague question widens further — which is a true
+signal about the content and a false one about the code, since the failure message
+blames "the widened stage losing its remaining nouns".
+
+This is the same defect as the gzip tripwire earlier in the session: **a fixed
+number measuring a proportion of a corpus that grows.** The two widened-stage
+ceilings are now shares of the corpus, anchored to the page's own behaviour —
+`script.js` refuses to widen above 12%, so `share()` throws if given a fraction at
+or above that, because such a ceiling could never fire. They sit at 9% and 6%.
+
+Negative-tested both ways: tightening to 7% fails on the real count (121 > 107),
+and `share(0.12)` throws rather than silently passing forever.
+
+```
+tables_without_verdict   748 → … → 357 → 295
+career 36→0  military 36→12  ops 53→0    grc 46→0    net 54→0
+sec 66→0     ai 39→0         devops 38→0 linux 35→0  threat 31→0  pentest 31→0
+verdicts written by hand              451
+runway                                ~93 topics   (stop line: 40)
+```

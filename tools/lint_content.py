@@ -76,9 +76,9 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # 535 -> 469: all 66 in `sec`. Six domains, 277 verdicts, and the backlog is
 # down by 279 from the corrected figure.
 #
-# 469 -> 430 -> 392 -> 357: `ai` 39, `devops` 38, `linux` 35. Nine domains,
-# 389 verdicts, and the runway is at ~99 topics — the stop line is 40.
-CEILINGS = {"inline style attribute": 1565, "table with no verdict": 357}
+# 469 -> 430 -> 392 -> 357 -> 295: `ai` 39, `devops` 38, `linux` 35,
+# `threat` 31, `pentest` 31. Eleven domains, 451 verdicts, runway ~93 topics.
+CEILINGS = {"inline style attribute": 1565, "table with no verdict": 295}
 
 
 class Nesting(HTMLParser):
