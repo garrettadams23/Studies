@@ -30,6 +30,23 @@
  * hashes — malformed escapes, markup, path traversal, absurd card indices — each
  * asserting no uncaught error and no injected handler.
  *
+ * ## The third half: storage that lies, and a file that is hostile
+ *
+ * Denied storage is one failure; *corrupted* storage is another. A record
+ * half-written, synced between browsers, or hand-edited leaves `srs:` holding
+ * `{{{not json`, `reviewed:` holding an object, `streak` holding `%%%`. Every
+ * one of those is a `JSON.parse` away from the same page-halt.
+ *
+ * And the import path takes a JSON file the reader chose, which is the only
+ * place this page ingests anything it did not write. Its gate — `bkCategory`
+ * for the key namespace, `bkSerialise` rebuilding each value field by field —
+ * is what stops a hand-edited file writing arbitrary keys or polluting
+ * `Object.prototype`.
+ *
+ * Both passed on first measurement. They are pinned anyway: a guard nobody
+ * tests is a guard somebody removes, and these two were written as fixes in
+ * earlier sessions with no test naming what they were fixing.
+ *
  * Usage:
  *   npm install playwright && node tools/storage_denied_test.mjs
  */
@@ -195,6 +212,82 @@ const navigated = await clean.evaluate(async () => {
   return !!document.getElementById("kerberos-authentication-flow");
 });
 check("navigation still works after a malformed hash at load", navigated);
+
+// ── storage that lies ───────────────────────────────────────────────────────
+// Seeded before any page script runs, one case per context, each asserting the
+// page still boots and the accordion still works — the same "did init finish"
+// test the denied-storage half uses.
+const CORRUPT = {
+  "srs record is not JSON":      { "srs:kerberos-authentication-flow": "{{{not json" },
+  "srs record is an array":      { "srs:kerberos-authentication-flow": "[1,2,3]" },
+  "srs fields are wrong types":  { "srs:kerberos-authentication-flow": '{"i":"x","e":null,"d":[],"n":{}}' },
+  "reviewed flag is an object":  { "reviewed:kerberos-authentication-flow": '{"a":1}' },
+  "streak record is garbage":    { "streak": "%%%" },
+  "theme is a colour nobody set": { "theme": "chartreuse" },
+  "recent visits is garbage":    { "recent": "]]]" },
+  "a note of 200,000 characters": { "note:kerberos-authentication-flow": "x".repeat(200000) },
+};
+for (const [name, seed] of Object.entries(CORRUPT)) {
+  const ctx = await browser.newContext();
+  const cp = await ctx.newPage();
+  const es = []; cp.on("pageerror", e => es.push(String(e).split("\n")[0]));
+  await cp.addInitScript(sd => {
+    try { for (const [k, v] of Object.entries(sd)) localStorage.setItem(k, v); } catch { /* denied */ }
+  }, seed);
+  await cp.goto(PAGE, { waitUntil: "load" });
+  await cp.waitForTimeout(150);
+  const alive = await cp.evaluate(async () => {
+    document.querySelector(".domain-section .domain-header").click();
+    await new Promise(r => setTimeout(r, 250));
+    return !!document.querySelector(".domain-body.open");
+  }).catch(() => false);
+  check(`corrupt storage survives: ${name}`, es.length === 0 && alive, es[0] || (alive ? "" : "page inert"));
+  await ctx.close();
+}
+
+// ── a hostile import file ───────────────────────────────────────────────────
+// The one place the page ingests something it did not write. Asserted on the
+// vetting functions directly rather than through the file picker, because the
+// picker is chrome and the gate is the thing worth pinning.
+const imported = await clean.evaluate(() => {
+  const ex = bkExport();
+  const hdr = `{"format":${JSON.stringify(ex.format)},"version":${JSON.stringify(ex.version)},"data":`;
+  const run = json => {
+    localStorage.clear();
+    let outcome;
+    try {
+      const v = bkValidate(hdr + json + "}");
+      const { kept } = bkSanitise(v.data);
+      bkApply(kept, "replace");
+      outcome = { refused: false, kept: Object.keys(kept).length };
+    } catch { outcome = { refused: true, kept: 0 }; }
+    outcome.polluted = ({}).polluted !== undefined || ({}).x !== undefined || [].bad !== undefined;
+    return outcome;
+  };
+  const r = {
+    proto:       run('{"__proto__":{"polluted":true}}'),
+    nestedProto: run('{"srs:x":{"__proto__":{"polluted":true},"d":"2026-01-01"}}'),
+    ctor:        run('{"constructor":{"prototype":{"x":"y"}}}'),
+    badDate:     run('{"srs:x":{"e":2.5,"i":1,"d":"not-a-date","n":0}}'),
+    flagObject:  run('{"reviewed:x":{"yes":true}}'),
+    junkKeys:    run(JSON.stringify(Object.fromEntries(
+                   Array.from({ length: 2000 }, (_, i) => ["junk:" + i, "1"])))),
+    dataArray:   run('[1,2,3]'),
+    dataNull:    run('null'),
+  };
+  localStorage.clear();
+  return r;
+});
+check("an import cannot pollute Object.prototype",
+  !Object.values(imported).some(o => o.polluted));
+check("a __proto__ key is refused, and one nested in a record is harmless",
+  imported.proto.kept === 0 && imported.ctor.kept === 0 && imported.nestedProto.kept === 1);
+check("a record with a bad shape is dropped rather than written",
+  imported.badDate.kept === 0 && imported.flagObject.kept === 0);
+check("keys outside the page's own namespace are all refused",
+  imported.junkKeys.kept === 0);
+check("a file with no usable data section is refused outright",
+  imported.dataArray.refused && imported.dataNull.refused);
 
 await browser.close();
 

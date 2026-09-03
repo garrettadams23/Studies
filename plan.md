@@ -17856,3 +17856,61 @@ resilience checks   7 → 19
 
 Check PASS · smoke **148/148** · search **44/44** · resilience **19/19** · axe **6/6** ·
 mobile **9/9** · backup **3/3** · determinism reproducible.
+
+---
+
+## Session record — two adversarial passes that found nothing, pinned anyway
+
+The hostile-hash pass found a real bug, so the same method went at the other two places
+where this page meets something it did not write: **storage that lies**, and **a file the
+reader chose**.
+
+### Storage that lies
+
+Denied storage was already covered. Corrupted storage was not, and it is the more likely
+case in practice — a record half-written, synced between two browsers, or hand-edited.
+Eight seeded corruptions, injected before any page script runs:
+
+`srs:` holding `{{{not json` · `srs:` holding an array · `srs:` with every field the wrong
+type · `reviewed:` holding an object · `streak` holding `%%%` · a theme nobody set · a
+garbage recent-visits list · a note of 200,000 characters.
+
+**All eight boot cleanly and the accordion still works.** The hardening from the two earlier
+page-halt sessions covers them; nothing needed fixing.
+
+### A file the reader chose
+
+The import path is the only place this page ingests something it did not write. Twelve
+hostile files against `bkValidate` → `bkSanitise` → `bkApply`:
+
+| Attack | Result |
+|---|---|
+| `"__proto__"` as a raw JSON data key | refused at the key gate; `Object.prototype` untouched |
+| `__proto__` nested *inside* an SRS record | harmless — `bkSerialise` rebuilds the record field by field rather than copying it |
+| `"constructor": {"prototype": …}` | refused |
+| A record with a malformed date, or a flag holding an object | dropped, not written |
+| 2,000 keys outside the page's namespace | all 2,000 refused |
+| `data` as an array, `null`, or a string | refused outright, with the message the reader sees |
+| A 10 MB note, a lone surrogate, a key containing newlines | truncated or written harmlessly |
+
+**Nothing polluted, nothing thrown, nothing written that should not have been.**
+
+### Pinned anyway, and that is the point
+
+Twenty of the twenty-five new checks pass on first measurement and always will unless
+somebody breaks something. That is not a reason to skip them — it is the reason to write
+them:
+
+> A guard nobody tests is a guard somebody removes.
+
+Both of these were shipped as *fixes* in earlier sessions — the load-critical storage
+hardening and the import sanitiser — and neither left behind a test naming what it was
+fixing. The next reader of `bkSerialise` sees a function that rebuilds an object field by
+field and could reasonably simplify it into a copy; now that would turn a check red instead
+of shipping.
+
+```
+resilience checks   7 → 19 → 32
+```
+
+Check PASS · smoke **148/148** · resilience **32/32** · search **44/44** · backup **3/3**.
