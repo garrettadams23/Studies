@@ -20192,3 +20192,46 @@ asks for — every card here pairs the offensive reference with a blue-team note
 10th percentile   2,048 -> 2,064 across six deepening waves
 padding metric    1,108 excluding verdicts, unmoved throughout
 ```
+
+---
+
+## Session record — deepening, seventh card, and the sibling deliberately left alone
+
+`[data] Data Roles — Who Does What`: a six-row role table and a verdict about the
+modern stack blurring the boundaries.
+
+```
+1 card, 1,431 chars   ->   3 cards, 4,371 chars
+```
+
+- **The title describes the team's size, not the work.** The role table is how
+  the jobs differ when an organisation is large enough to separate them, and most
+  are not: one "data analyst" in a team of three writes the ingestion job, owns
+  the warehouse bill, defines the metrics and presents them; the same title at
+  three thousand people means querying a platform somebody else runs. Two
+  questions predict the day better than any title — **who gets paged when the
+  pipeline fails overnight** names the engineer, and **who decides what the metric
+  means** names the analyst. Both answers being "you" is not a promotion, it is
+  two jobs.
+- **Reading the posting for the job.** *Wear many hats* means you are also the
+  DBA; *modern data stack* means analytics engineering; *stakeholder management*
+  means the hard part is agreeing definitions rather than SQL; *productionise our
+  models* means there is an on-call rota. Ending on the one question that is hard
+  to answer vaguely: **"what broke last month, and who fixed it?"** — the answer
+  names the real job, and how readily it comes tells you whether anybody is
+  keeping track.
+
+### The sibling was left alone on purpose
+
+`[data] The Data Interview` is the same shape and the same size, and deepening it
+would have re-derived the eng interview card's insight — *each stage tests
+something other than the thing it looks like* — two waves after writing it. **The
+lesson recorded then was that deepening creates redundancy; skipping this is that
+lesson being used rather than restated.**
+
+```
+thin topics       23 -> 16
+10th percentile   2,048 -> 2,076
+padding metric    1,108 excluding verdicts, unmoved across seven waves
+page budget       4% raw headroom, ~66 topics of runway
+```
