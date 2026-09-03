@@ -56,7 +56,7 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
 | Learning paths | **101 paths, 1,570 steps, 1,475 of 1,535 topics** | `check_paths.py` |
 | Related links | **1,473 topics, 4,588 links, 0 one-way** | `suggest_related.py --check` |
-| Page budget | **8% raw, 7% gzip** headroom | `page_budget.py` |
+| Page budget | **8% raw** headroom — room for ~139 more topics | `page_budget.py` |
 | Gates | **29**, and the same 29 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 
@@ -18388,3 +18388,68 @@ gates in one list only                 8 → 0
 CI jobs green                        0/2 → 2/2
 smoke checks                     149 → 151
 ```
+
+---
+
+## Session record — the tripwire had got in front of the wall
+
+`page_budget.py` spends four paragraphs establishing that for this site **bytes
+are not the cost**: the download is paid once (the service worker precaches, and
+this is a reference people re-open), the parse is paid on every load. So `raw_mb`
+was made the binding budget at 8.0 MB and `gzip_kb` became "a tripwire behind
+it" — set to whatever 8.0 MB of real content compresses to, so that `raw_mb`
+always fails first.
+
+That arrangement had quietly reversed.
+
+```
+compression ratio when the budget was set   3.85x
+compression ratio at 1,535 topics           3.672x
+
+gzip_kb 2,200 KB   ->  trips at 7.89 MB raw
+raw_mb  8.00 MB    ->  trips at 8.00 MB raw
+```
+
+The tripwire was 0.11 MB — about a hundred cards — in front of the wall. When it
+fired, its message ("the page grew past its budget… this is the moment to make
+the page smaller") would have sent the next session to shrink the one cost the
+file itself argues does not matter, and the fix that message implies is a rewrite
+that buys nothing.
+
+`gzip_kb` is now **2,350 KB**: 8.0 MB at the measured 3.672× is 2,231 KB, plus
+room for further drift. `raw_mb` fails first again, by about 5%. The docstring
+now says to re-derive it from a measurement whenever `raw_mb` moves rather than
+carrying a ratio forward — which is what went wrong.
+
+### Where the bytes actually are, since the question came up
+
+Before touching anything, the page was decomposed, because "make it smaller" is
+only advice if you know what is big:
+
+| | chars | share |
+|---|---:|---:|
+| 30 domain payloads | 7,177,799 | **94.7%** |
+| everything else (shell, script, styles, JSON) | 400,572 | 5.3% |
+| — table cell and row tags | 493,521 | 6.5% |
+| — acronym expansion spans | 213,189 | 2.8% |
+| — syntax-highlight spans | 199,819 | 2.6% |
+| — colour class attributes | 119,876 | 1.6% |
+
+**There is no fat.** The page is content, and every markup overhead above is
+doing work a reader can see. Micro-optimising the largest of them would buy 6.5%
+at the cost of the tables. The only structural lever left — moving the payloads
+to separate files fetched on demand — is a real option and is not needed yet.
+
+### The number the report was missing
+
+A percentage does not tell anybody whether the next wave fits. The report now
+ends on a runway:
+
+```
+1,535 topics today. Room for ~139 more at the current average before raw_mb binds.
+```
+
+Computed against `raw_mb`, `gzip_kb` and `content_elements` (not `dom_elements`,
+which grows per *domain*), reporting whichever binds first. When that says ~20,
+the structural conversation is due — and it will say so in topics, which is the
+unit the work is actually planned in.

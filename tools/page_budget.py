@@ -28,7 +28,7 @@ blocks), which changed what "elements" means and split this budget in two:
                        number a content wave moves, and the one that used to be
                        "elements".
 
-## Why the byte ceiling moved from 1,100 KB to 2,200 KB
+## Why the byte ceiling moved from 1,100 KB to 2,200 KB, and then to 2,350
 
 The gzip budget was set when it was assumed to be what hurt. For this site it
 is not, and the reason is structural rather than a matter of taste:
@@ -58,14 +58,36 @@ The owner's call, explicitly: a slow first visit does not matter for this site.
 That is the one cost of ignoring bytes — nobody else pays it, since Netlify's
 free bandwidth allowance is ~23,000 visits a month even at four times this
 size. So **raw_mb is now the binding budget and gzip_kb is a tripwire behind
-it**: 2,200 KB is what 8.0 MB of real content compresses to at the measured
-3.85x ratio, which means raw_mb always fails first and gzip_kb only fires if
-something goes wrong that bytes see and raw size does not.
+it**: gzip_kb is set to whatever 8.0 MB of real content compresses to, so that
+raw_mb always fails first and gzip_kb only fires if something goes wrong that
+bytes see and raw size does not. It was 2,200 KB, from a 3.85x ratio; the ratio
+has since drifted, and the section below is what that cost.
 
 raw_mb is set to 8.0 because a budget that will actually be reached is worth
 more than one that will not: it is ~1,000 more cards, and ~1.2 s of throttled
 load when it lands. Re-measure there rather than assuming this table still
 holds.
+
+### The tripwire had got in front of the wall
+
+3.85x held when it was measured. At 1,535 topics the page compresses at
+**3.672x**. Why it drifted is not measured here and does not need to be — the
+point is that it *can* drift, so a ceiling derived from it once and then carried
+forward stops being what it says it is. That small drift put the arrangement the
+wrong way round:
+
+    gzip_kb 2,200 KB  ->  trips at 7.89 MB raw
+    raw_mb  8.00 MB   ->  trips at 8.00 MB raw
+
+So the tripwire would have fired first, and its failure message would have sent
+the next person to shrink *bytes* — the one cost this file spends four
+paragraphs explaining does not matter for this site. Measured headroom at the
+time: raw 8%, gzip 7%. It was about a hundred cards from firing.
+
+gzip_kb is now 2,350 KB: 8.0 MB at the measured 3.672x is 2,231 KB, plus room
+for the ratio to drift further as content changes shape. raw_mb still fails
+first, by about 5%, which is what "a tripwire behind it" has to mean. **Derive
+this from a measurement whenever raw_mb moves; do not carry the old ratio.**
 
 ## One cost this file does not yet bound
 
@@ -97,10 +119,16 @@ PAGE = ROOT / "index.html"
 # whichever fails, it is the one a content wave actually moves.
 BUDGET = {
     "raw_mb": 8.0,                # ~1.2 s throttled load, ~2,150 topics. The real ceiling.
-    "gzip_kb": 2_200,             # what 8.0 MB compresses to at 3.85x — a tripwire, not a wall
+    "gzip_kb": 2_350,             # what 8.0 MB compresses to, with room for ratio drift — see below
     "dom_elements": 1_500,        # built at load: shell + one header per domain. ~70 domains of room
     "content_elements": 175_000,  # the deferred library at the raw_mb ceiling, at 80 elements/topic
 }
+
+# Topics, so the report can turn "7% left" into "room for ~139 more cards".
+# dom_elements is deliberately excluded: it grows per *domain*, not per topic,
+# so a runway in topics would be meaningless for it.
+PER_TOPIC = ("raw_mb", "gzip_kb", "content_elements")
+TOPIC_RE = re.compile(r'<div class="topic"')
 
 # Counts opening tags only: not closing tags, not comments, not doctype.
 #
@@ -129,7 +157,7 @@ def measure():
         "raw_mb": len(raw) / 1024 / 1024,
         "dom_elements": len(TAG_RE.findall(shell)),
         "content_elements": sum(len(TAG_RE.findall(d)) for d in deferred),
-    }
+    }, len(TOPIC_RE.findall(text))
 
 
 def main():
@@ -137,7 +165,7 @@ def main():
         print("error: index.html not found — run python build.py first", file=sys.stderr)
         return 1
 
-    m = measure()
+    m, topics = measure()
     report_only = "--report" in sys.argv
     over = []
     print(f"{'metric':<17} {'now':>10} {'budget':>10}   headroom")
@@ -149,6 +177,11 @@ def main():
               + ("  ** OVER **" if now > budget else ""))
         if now > budget:
             over.append(f"{key}: {now:,.1f} exceeds the budget of {budget:,.1f}")
+
+    # A percentage does not tell anybody whether the next wave fits. Topics do.
+    runway = min(((BUDGET[k] - m[k]) / (m[k] / topics), k) for k in PER_TOPIC)
+    print(f"\n{topics:,} topics today. Room for ~{runway[0]:,.0f} more at the current "
+          f"average before {runway[1]} binds.")
 
     if over and not report_only:
         print(file=sys.stderr)
