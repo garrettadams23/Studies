@@ -39,6 +39,8 @@ Every formula here also lives on the site as a flashcard and quiz question. 16 t
 | Chain | d/dx f(g(x)) = f′(g(x)) · g′(x) |
 | Implicit | Differentiate both sides in x, write dy/dx whenever you differentiate a y, then solve for dy/dx |
 
+> **The chain rule is the one that appears inside all the others, and forgetting the inner derivative is the commonest error in the subject.** Product and quotient are mechanical once memorised; chain has to be recognised, and it is hiding in most exam questions that look like the power rule. Underline the inside function before you differentiate anything — it costs a second and removes the error entirely.
+
 ### The ones to know cold — Derivatives
 
 | f(x) | f′(x) | f(x) | f′(x) |
@@ -69,15 +71,19 @@ Pattern worth noticing: every co-function derivative (cos, csc, cot) carries a m
 | ∫ 1/(1 + x²) dx | arctan x + C |
 | ∫ 1/√(1 − x²) dx | arcsin x + C |
 
+> **The absolute value on the logarithm row is not decoration, and the constant is not optional.** Both are marks, both are dropped by people who understand the calculus perfectly, and both are avoided by writing them as you write the integral sign rather than at the end. The remaining rows are worth knowing cold: recognition is faster than derivation under time pressure.
+
 ### The Fundamental Theorem, and the three techniques — Integrals
 
 | Name | Statement / method |
 |---|---|
 | FTC Part 1 | d/dx ∫_a^(x) f(t) dt = f(x) — differentiation undoes integration |
 | FTC Part 2 | ∫_a^(b) f(x) dx = F(b) − F(a), where F′ = f |
-| u-substitution | Reverse chain rule. Pick u = the inside function; you need its derivative present (up to a constant). Change the limits when the integral is definite, or convert back before evaluating |
-| By parts | ∫ u dv = uv − ∫ v du. Choose u by LIATE: Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential — earliest in the list becomes u |
-| Partial fractions | For a rational function with the degree of the numerator lower than the denominator: factor the denominator, split into simpler fractions, integrate each. If the degree is not lower, do polynomial long division first |
+| **u-substitution** | Reverse chain rule. Pick u = the inside function; you need its derivative present (up to a constant). **Change the limits** when the integral is definite, or convert back before evaluating |
+| **By parts** | ∫ u dv = uv − ∫ v du. Choose u by **LIATE**: Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential — earliest in the list becomes u |
+| **Partial fractions** | For a rational function with the degree of the numerator lower than the denominator: factor the denominator, split into simpler fractions, integrate each. If the degree is not lower, do polynomial long division first |
+
+> **Try substitution first, always; most integrals a course sets are substitutions in disguise.** Parts is for products of unlike things and the ordering mnemonic exists because choosing the wrong part turns a soluble integral into a harder one; partial fractions is for rational functions and nothing else. Recognising which of the three applies is most of the skill — the execution is bookkeeping.
 
 ### Area, volume, length, average — Applications
 
@@ -90,11 +96,13 @@ Pattern worth noticing: every co-function derivative (cos, csc, cot) carries a m
 | Arc length | L = ∫_a^(b) √(1 + [f′(x)]²) dx |
 | Average value | f_avg = 1/(b−a) · ∫_a^(b) f(x) dx |
 
+> **Draw the region before choosing a formula.** Every row here is the same integral with a different geometric interpretation, and the mistakes are geometric rather than algebraic: subtracting the wrong way round, squaring after subtracting on the washer, or picking disks where shells are far easier. Ten seconds with a sketch decides which formula and which variable to integrate in.
+
 ### Convergence tests and the four Maclaurin series — Series
 
 | Test | Verdict |
 |---|---|
-| nth-term (divergence) | If lim a_n ≠ 0, it diverges. If the limit is 0, this test says nothing |
+| nth-term (divergence) | If lim a_n ≠ 0, it **diverges**. If the limit is 0, this test says nothing |
 | Geometric Σ a·rⁿ | Converges iff \|r\| < 1, to a/(1 − r) |
 | p-series Σ 1/n^(p) | Converges iff p > 1. So Σ1/n diverges, Σ1/n² converges |
 | Ratio test | L = lim \|a_n+1/a_n\|. L < 1 converges, L > 1 diverges, L = 1 inconclusive |
@@ -119,6 +127,8 @@ Taylor series about a: f(x) = Σ f^((n))(a)·(x − a)ⁿ / n!. A Maclaurin seri
 | L'Hôpital (L'Hopital) | Only for 0/0 or ∞/∞: then lim f/g = lim f′/g′. Check the form every time before applying it |
 | Continuity at a | All three: f(a) exists, lim_x→a f(x) exists, and the two are equal |
 
+> **Check the hypothesis before using L'Hôpital; it applies to two indeterminate forms and nothing else.** Applying it to a limit that is not 0/0 or ∞/∞ gives a confident wrong answer, which is worse than being stuck — and the two special limits above it are what the rule is usually being used to avoid deriving. Learn those two by heart and much of the work disappears.
+
 ---
 
 ## Unit 1 — Foundations: Functions, Continuity, Vectors & Trig
@@ -127,10 +137,12 @@ Taylor series about a: f(x) = Σ f^((n))(a)·(x − a)ⁿ / n!. A Maclaurin seri
 
 | Idea | What to hold onto |
 |---|---|
-| Transformations of f(x) | f(x) + k up · f(x + k) left · a·f(x) vertical stretch · f(ax) horizontal compression by 1/a. Inside the parentheses does the opposite of what it looks like |
+| Transformations of f(x) | f(x) + k up · f(x + k) **left** · a·f(x) vertical stretch · f(ax) horizontal compression by 1/a. Inside the parentheses does the opposite of what it looks like |
 | Domain killers | Division by zero, even roots of negatives, logs of non-positives. Almost every "find the domain" question is one of those three |
 | Continuity | Value exists, limit exists, they match. A removable discontinuity is a hole; a jump is one-sided limits disagreeing; an infinite one is a vertical asymptote |
 | Asymptotes | Vertical where the denominator is 0 and the numerator is not. Horizontal from comparing degrees: bottom-heavy → y = 0, equal → ratio of leading coefficients, top-heavy → none (slant instead) |
+
+> **Domain killers are where the marks go before any calculus starts.** Division by zero, even roots of negatives and logarithms of non-positives account for nearly every domain question, and checking them is a habit rather than a technique. The transformation row is the one worth over- learning: inside the function affects x and is backwards, outside affects y and is not.
 
 ### Vectors — Ch 3
 
@@ -138,11 +150,11 @@ Taylor series about a: f(x) = Σ f^((n))(a)·(x − a)ⁿ / n!. A Maclaurin seri
 |---|---|
 | Magnitude | \|v\| = √(v₁² + v₂² + v₃²) |
 | Unit vector | v̂ = v / \|v\| |
-| Dot product | a·b = a₁b₁ + a₂b₂ + a₃b₃ = \|a\|\|b\| cos θ — a scalar. Zero means perpendicular |
+| Dot product | a·b = a₁b₁ + a₂b₂ + a₃b₃ = \|a\|\|b\| cos θ — a **scalar**. Zero means perpendicular |
 | Angle between | cos θ = (a·b) / (\|a\|\|b\|) |
-| Cross product | a × b — a vector, perpendicular to both. \|a × b\| = \|a\|\|b\| sin θ. Zero means parallel |
+| Cross product | a × b — a **vector**, perpendicular to both. \|a × b\| = \|a\|\|b\| sin θ. Zero means parallel |
 
-The one that gets missed on tests: dot gives a number, cross gives a vector. If your answer has the wrong type, you used the wrong product.
+The one that gets missed on tests: **dot gives a number, cross gives a vector.** If your answer has the wrong type, you used the wrong product.
 
 ### Trig values, and the calculator trap — Ch 4–5
 
@@ -152,7 +164,7 @@ The one that gets missed on tests: dot gives a number, cross gives a vector. If 
 | cos | 1 | √3/2 | √2/2 | 1/2 | 0 |
 | tan | 0 | √3/3 | 1 | √3 | undefined |
 
-Degrees versus radians is the single most common avoidable error in a calculus course. Calculus is done in radians. If your calculator is in degree mode, sin(π) returns about 0.0548 instead of 0. Check the mode indicator before every test — this costs one second and has ended many otherwise-correct attempts.
+**Degrees versus radians is the single most common avoidable error in a calculus course.** Calculus is done in radians. If your calculator is in degree mode, sin(π) returns about 0.0548 instead of 0. Check the mode indicator before every test — this costs one second and has ended many otherwise-correct attempts.
 
 Two more calculator habits worth building: parenthesise the whole denominator (1/(2+3), never 1/2+3), and remember that −2² is −4 while (−2)² is 4 — the minus sign is not part of the base unless you make it so.
 
@@ -164,17 +176,17 @@ Two more calculator habits worth building: parenthesise the whole denominator (1
 
 | # | Try | When |
 |---|---|---|
-| 1 | Substitute. If you get a number, you are done | Always first. Most limits are this easy |
-| 2 | Factor and cancel | Substitution gave 0/0 and it is a polynomial or a simple rational |
-| 3 | Multiply by the conjugate | 0/0 with a square root in it |
-| 4 | Divide by the highest power of x in the denominator | x → ±∞ on a rational function |
-| 5 | L'Hôpital / L'Hopital | Confirmed 0/0 or ∞/∞ and the above did not help |
+| 1 | **Substitute.** If you get a number, you are done | Always first. Most limits are this easy |
+| 2 | **Factor and cancel** | Substitution gave 0/0 and it is a polynomial or a simple rational |
+| 3 | **Multiply by the conjugate** | 0/0 with a square root in it |
+| 4 | **Divide by the highest power** of x in the denominator | x → ±∞ on a rational function |
+| 5 | **L'Hôpital / L'Hopital** | Confirmed 0/0 or ∞/∞ and the above did not help |
 
 A nonzero number over zero is not indeterminate — it is infinite (check the sign from each side). Only the seven forms 0/0, ∞/∞, 0·∞, ∞−∞, 1^(∞), 0^(0), ∞^(0) are indeterminate.
 
 ### What a derivative means, before what it computes — Ch 7–8
 
-A derivative is a rate of change and, geometrically, the slope of the tangent line. Everything in this unit is one of those two readings: f′(a) is the instantaneous rate at a, and the tangent line there is y − f(a) = f′(a)(x − a).
+A derivative is a **rate of change** and, geometrically, the slope of the tangent line. Everything in this unit is one of those two readings: f′(a) is the instantaneous rate at a, and the tangent line there is y − f(a) = f′(a)(x − a).
 
 Position → velocity → acceleration is the same fact applied twice: v = s′, a = v′ = s″. Speed is |v|, which is why an object can have negative velocity and increasing speed at the same time.
 
@@ -184,12 +196,12 @@ Position → velocity → acceleration is the same fact applied twice: v = s′,
 |---|---|
 | f′ > 0 | increasing |
 | f′ < 0 | decreasing |
-| f′ = 0 or undefined | at a critical point — a candidate for a max or min, not a guarantee |
+| f′ = 0 or undefined | at a **critical point** — a candidate for a max or min, not a guarantee |
 | f″ > 0 | concave up (holds water) |
 | f″ < 0 | concave down |
 | f″ changes sign | inflection point — the sign must actually change, not merely reach zero |
 
-Second derivative test: at a critical point, f″ > 0 means local minimum, f″ < 0 means local maximum, and f″ = 0 tells you nothing — fall back to the first derivative sign chart.
+**Second derivative test:** at a critical point, f″ > 0 means local minimum, f″ < 0 means local maximum, and f″ = 0 tells you nothing — fall back to the first derivative sign chart.
 
 ### Optimisation and related rates — the same four steps — Ch 10
 
@@ -235,22 +247,22 @@ Always run the nth-term test first. It is one line, and when it applies it ends 
 
 | The integrand looks like… | Try |
 |---|---|
-| A function and (a multiple of) its own derivative | u-substitution |
-| A product of two unrelated types — x·eˣ, x·sin x, ln x | By parts, choosing u by LIATE |
-| A rational function with a factorable denominator | Partial fractions |
-| √(a² − x²), √(a² + x²), √(x² − a²) | Trig substitution |
+| A function and (a multiple of) its own derivative | **u-substitution** |
+| A product of two unrelated types — x·eˣ, x·sin x, ln x | **By parts**, choosing u by LIATE |
+| A rational function with a factorable denominator | **Partial fractions** |
+| √(a² − x²), √(a² + x²), √(x² − a²) | **Trig substitution** |
 | Nothing obvious | Algebra first — expand, split the fraction, or use an identity. Many "hard" integrals are easy once rewritten |
 
-Two habits that catch most errors: after any indefinite integral, differentiate your answer and check you get the integrand back — it takes ten seconds and is a complete verification. And when you substitute in a definite integral, either change the limits to u-values or convert back to x before evaluating. Mixing the two is the most common wrong answer in this chapter.
+Two habits that catch most errors: after any indefinite integral, **differentiate your answer** and check you get the integrand back — it takes ten seconds and is a complete verification. And when you substitute in a definite integral, either change the limits to u-values or convert back to x before evaluating. Mixing the two is the most common wrong answer in this chapter.
 
 ### Differential equations — Ch 15
 
 | Type | Method |
 |---|---|
-| Separable dy/dx = g(x)·h(y) | Separate: dy/h(y) = g(x) dx, integrate both sides, + C on one side only, then solve for y |
-| Initial value problem | Find the general solution first, then use the initial condition to pin down C. Not the other way round |
-| Exponential growth / decay dy/dt = k·y | y = y₀·e^(kt). Positive k grows, negative k decays. Half-life and doubling-time questions are this equation |
-| Slope fields | At each point, the segment's slope is dy/dx evaluated there. A solution curve follows the segments — you are reading a picture, not computing |
+| **Separable** dy/dx = g(x)·h(y) | Separate: dy/h(y) = g(x) dx, integrate both sides, + C on one side only, then solve for y |
+| **Initial value problem** | Find the general solution first, then use the initial condition to pin down C. Not the other way round |
+| **Exponential growth / decay** dy/dt = k·y | y = y₀·e^(kt). Positive k grows, negative k decays. Half-life and doubling-time questions are this equation |
+| **Slope fields** | At each point, the segment's slope is dy/dx evaluated there. A solution curve follows the segments — you are reading a picture, not computing |
 
 Verification works here too, and is even easier: substitute your solution back into the original equation. If both sides match, you are right, regardless of how you got there.
 
@@ -270,11 +282,13 @@ Verification works here too, and is even easier: substitute your solution back i
 | Substituting numbers too early in related rates | Differentiate first, numbers last |
 | Answering the wrong question | The question asks for the value, the rate, or the x where it happens. Re-read the last line before submitting |
 
+> **The first row costs whole questions and takes two seconds to prevent.** A calculator in the wrong angle mode produces plausible wrong answers throughout the paper, and nothing later in the exam will reveal it — check it before question one, every time. The last row is the other cheap one: read what was asked, because a correct value where a rate was wanted earns nothing.
+
 ### Using this site on this course — In practice
 
-Every card here is a flashcard and a quiz option automatically. Pick the 📐 Math deck rather than All domains, and star (★) the cards for the chapter whose test is next so they land in your study list.
+Every card here is a flashcard and a quiz option automatically. Pick the **📐 Math** deck rather than All domains, and star (★) the cards for the chapter whose test is next so they land in your study list.
 
-The techniques in the Productivity domain apply directly: The Memory Palace is well suited to the derivative and integral tables, which are exactly the ordered arbitrary lists it is for. Hansei after each practice set — what broke, what would have caught it — turns a wrong answer into a countermeasure rather than a bad mood. And Sleep matters more here than for most subjects, because a calculation error rate is one of the first things sleep loss moves.
+The techniques in the Productivity domain apply directly: **The Memory Palace** is well suited to the derivative and integral tables, which are exactly the ordered arbitrary lists it is for. **Hansei** after each practice set — what broke, what would have caught it — turns a wrong answer into a countermeasure rather than a bad mood. And **Sleep** matters more here than for most subjects, because a calculation error rate is one of the first things sleep loss moves.
 
 A note on the scores so far: an honest way to read a 73% is that roughly one question in four is going wrong, and the error table above is where those usually live. It is worth spending one practice set doing nothing but checking your own work — differentiate every antiderivative, substitute every solution back — before assuming the gap is conceptual.
 
@@ -298,7 +312,7 @@ log_b(x) = y means exactly b^(y) = x. "What power do I raise b to, to get x?" Ev
 | b^(−n) = 1/b^(n) | log(1/M) = −log M |
 | b^(1/n) = ^(n)√b | log(^(n)√M) = (1/n) · log M |
 
-Change of base: log_b(x) = ln x / ln b = log x / log b. This is how you compute log_7(200) on a calculator that only offers ln and log.
+**Change of base:** log_b(x) = ln x / ln b = log x / log b. This is how you compute log_7(200) on a calculator that only offers ln and log.
 
 ln is log_e, and log with no base written usually means log_10. In calculus assume natural log unless told otherwise — e is the base that makes the derivative clean.
 
@@ -306,11 +320,11 @@ ln is log_e, and log with no base written usually means log_10. In calculus assu
 
 | Wrong | Right |
 |---|---|
-| log(M + N) = log M + log N | No such rule. A log of a sum does not split. log M + log N = log(MN) — the sum is on the outside |
-| log M / log N = log(M − N) | No. log M − log N = log(M/N). A quotient of logs is a change of base, not a subtraction |
+| log(M + N) = log M + log N | **No such rule.** A log of a sum does not split. log M + log N = log(MN) — the sum is on the outside |
+| log M / log N = log(M − N) | **No.** log M − log N = log(M/N). A quotient of logs is a change of base, not a subtraction |
 | (log M)^(p) = p · log M | Only log(M^(p)) = p · log M. The exponent must be inside the log |
 
-And the one that costs marks quietly: a log of a negative number or of zero is undefined, so after solving any log equation you must check every solution in the original. Extraneous roots are normal here, not evidence you made a mistake.
+And the one that costs marks quietly: a log of a negative number or of zero is undefined, so after solving any log equation you must **check every solution in the original**. Extraneous roots are normal here, not evidence you made a mistake.
 
 ### The two shapes, and how each is solved — Hands-on
 
@@ -340,9 +354,9 @@ And the one that costs marks quietly: a log of a negative number or of zero is u
 
 *(diagram — see this card on the site)*
 
-Each point is (cos θ, sin θ). Reading it beats recalling a table: the x-coordinate is the cosine, the y-coordinate is the sine, and the tangent is their ratio. Where the x-coordinate is 0 — at π/2 and 3π/2 — the tangent is undefined, which is exactly where tan has its vertical asymptotes.
+Each point is (cos θ, sin θ). Reading it beats recalling a table: the **x-coordinate is the cosine**, the **y-coordinate is the sine**, and the tangent is their ratio. Where the x-coordinate is 0 — at π/2 and 3π/2 — the tangent is undefined, which is exactly where tan has its vertical asymptotes.
 
-Only the first quadrant needs memorising. Everything else is those values with signs from ASTC: All positive in QI, only Sine in QII, only Tangent in QIII, only Cosine in QIV.
+Only the first quadrant needs memorising. Everything else is those values with signs from **ASTC**: All positive in QI, only Sine in QII, only Tangent in QIII, only Cosine in QIV.
 
 ### Identities worth knowing by heart — Reference
 
@@ -374,6 +388,8 @@ Those ranges are why arcsin(sin(3π/4)) is π/4, not 3π/4 — the answer has to
 | Sines — the law of sines | a/sin A = b/sin B = c/sin C | You have an angle paired with the side opposite it |
 | Cosines — the law of cosines | c² = a² + b² − 2ab·cos C | Three sides, or two sides and the angle between them |
 
+> **Pick the law by what you have, not by what you want.** An angle paired with its opposite side means sines; three sides or an included angle means cosines — and trying to force the first where the second belongs is the standard wasted five minutes. The range point above the table is the exam favourite precisely because the obvious answer is wrong.
+
 ---
 
 ## The Two Pictures — Derivative as Slope, Integral as Area
@@ -382,7 +398,7 @@ Those ranges are why arcsin(sin(3π/4)) is π/4, not 3π/4 — the answer has to
 
 *(diagram — see this card on the site)*
 
-Take two points on the curve. The line through them — the secant — has slope Δy/Δx = [f(x+h) − f(x)] / h, the average rate of change across that interval. Now slide the second point toward the first. The secant pivots, and in the limit as h → 0 it becomes the tangent, whose slope is f′(x) — the instantaneous rate.
+Take two points on the curve. The line through them — the **secant** — has slope Δy/Δx = [f(x+h) − f(x)] / h, the average rate of change across that interval. Now slide the second point toward the first. The secant pivots, and in the limit as h → 0 it becomes the **tangent**, whose slope is f′(x) — the instantaneous rate.
 
 That is the whole definition, and it is worth being able to sketch, because it turns several memorised rules into obvious consequences: f′ = 0 at a peak because the tangent is flat there; a corner has no derivative because the secants approach different slopes from each side; and a vertical tangent means f′ is undefined rather than zero.
 
@@ -390,9 +406,9 @@ That is the whole definition, and it is worth being able to sketch, because it t
 
 *(diagram — see this card on the site)*
 
-Slice the region under the curve into rectangles and add their areas — that is a Riemann sum, and it is an approximation. More, thinner rectangles give a better one; the definite integral is what those sums converge to. The elongated S of ∫ is literally an S, for "sum".
+Slice the region under the curve into rectangles and add their areas — that is a **Riemann sum**, and it is an approximation. More, thinner rectangles give a better one; the **definite integral** is what those sums converge to. The elongated S of ∫ is literally an S, for "sum".
 
-Which is what makes the Fundamental Theorem surprising rather than merely true. These two pictures — slopes of tangents, areas under curves — look unrelated, and the theorem says each undoes the other. Area is found by reversing slope. That is the biggest single idea in the course; almost everything in Units 2 and 3 follows from it.
+Which is what makes the Fundamental Theorem surprising rather than merely true. These two pictures — slopes of tangents, areas under curves — look unrelated, and the theorem says each undoes the other. **Area is found by reversing slope.** That is the biggest single idea in the course; almost everything in Units 2 and 3 follows from it.
 
 One consequence to carry into the tests: a definite integral is a signed area. Region below the axis counts as negative, which is why ∫_0^(2π) sin x dx = 0 even though the curve plainly encloses area. If a question asks for total area rather than for the integral, split at the zeros and take absolute values.
 
@@ -406,7 +422,7 @@ One consequence to carry into the tests: a definite integral is a signed area. R
 |---|---|
 | Quadratic formula | x = (−b ± √(b² − 4ac)) / 2a, for ax² + bx + c = 0 |
 | Discriminant | b² − 4ac — positive gives two real roots, zero gives one, negative gives none real |
-| Pythagorean theorem | a² + b² = c² — legs a, b, hypotenuse c. Only for right triangles; otherwise use the law of cosines, which is its generalisation |
+| **Pythagorean theorem** | a² + b² = c² — legs a, b, hypotenuse c. Only for right triangles; otherwise use the law of cosines, which is its generalisation |
 | Difference of squares | a² − b² = (a + b)(a − b) |
 | Perfect square | (a ± b)² = a² ± 2ab + b² |
 | Sum / difference of cubes | a³ ± b³ = (a ± b)(a² ∓ ab + b²) |
@@ -416,6 +432,8 @@ One consequence to carry into the tests: a definite integral is a signed area. R
 | Midpoint | ((x₁ + x₂)/2, (y₁ + y₂)/2) |
 | Circle (centre h,k) | (x − h)² + (y − k)² = r²; the unit circle is x² + y² = 1 |
 | Ellipse ("oval") | (x − h)²/a² + (y − k)²/b² = 1 — a circle stretched by a and b |
+
+> **Point-slope is the row that earns its place in a calculus course.** Every tangent-line question reduces to a point and a slope, which is exactly what a derivative gives you — so the formula that takes those two directly is the one you will type most. The discriminant is the other: it answers "how many real roots" without solving anything.
 
 ### Geometry — the ones optimisation keeps asking for — Reference
 
@@ -441,7 +459,7 @@ Worth noticing the pattern in the last rows: differentiating a sphere's volume w
 
 *(diagram — see this card on the site)*
 
-Amber marks the dimension the letter names. The single most common geometry error is not forgetting a formula — it is using the diameter where the formula wants the radius. If a problem gives you "a circle 10 cm across", r is 5, not 10.
+Amber marks the dimension the letter names. The single most common geometry error is not forgetting a formula — it is **using the diameter where the formula wants the radius**. If a problem gives you "a circle 10 cm across", r is 5, not 10.
 
 ### Flat shapes — Reference
 
@@ -468,7 +486,7 @@ In a triangle, h is the perpendicular height — the right-angle mark in the dia
 | Hemisphere | V = ⅔πr³ | SA = 3πr² (curved + flat face) |
 | Pyramid | V = ⅓ · (base area) · h | Base + the triangular faces |
 
-The cone's surface area uses the slant height l (green in the diagram), not the vertical height h. They are different lengths related by Pythagoras, and mixing them is the classic cone mistake.
+The cone's surface area uses the **slant height** l (green in the diagram), not the vertical height h. They are different lengths related by Pythagoras, and mixing them is the classic cone mistake.
 
 Notice the pattern: cone and pyramid both carry a ⅓ against the prism or cylinder with the same base and height. A cone is exactly a third of its surrounding cylinder — worth remembering as one fact rather than two formulas.
 
@@ -476,11 +494,11 @@ Notice the pattern: cone and pyramid both carry a ⅓ against the prism or cylin
 
 | Question type | What the shape formula is doing |
 |---|---|
-| Optimisation | One formula is the constraint (fixed volume), the other is the objective (minimise material). "A can holds 355 cm³ — least aluminium" is V = πr²h fixed, SA minimised |
+| Optimisation | One formula is the **constraint** (fixed volume), the other is the **objective** (minimise material). "A can holds 355 cm³ — least aluminium" is V = πr²h fixed, SA minimised |
 | Related rates | Differentiate the formula with respect to time. A cone draining gives dV/dt in terms of dh/dt — and usually needs similar triangles first to write r in terms of h |
 | Volumes of revolution | Disk, washer and shell are just πr² and the cylinder's side, integrated. That is why the formulas look familiar |
 
-A sanity check that catches unit and setup errors: areas come out in square units, volumes in cubic. If a volume answer has an r² and no third length, something is missing.
+A sanity check that catches unit and setup errors: **areas come out in square units, volumes in cubic**. If a volume answer has an r² and no third length, something is missing.
 
 ---
 
@@ -517,9 +535,11 @@ The tiny number is not an error — sin(π) can come back as something like −3
 | Decimal → fraction | MATH → 1: ▶Frac |
 | Table of values | 2nd then GRAPH. Set it up with 2nd then WINDOW |
 
+> **Learn the previous-answer key first; it removes the transcription errors that cost marks in multi-step work.** Retyping a long decimal introduces rounding and typos into a calculation that was correct, and chaining from the stored answer avoids both. The fraction conversion is the other frequent saver — an exam wanting an exact value will not accept 0.3333333.
+
 ### Negative is not minus — The trap
 
-The TI-84 has two different keys and they are not interchangeable. (−), next to ENTER, makes a number negative. −, above +, subtracts. Using the wrong one gives ERR: SYNTAX at best and a wrong answer at worst. If you get a syntax error you cannot explain, this is the first thing to check.
+The TI-84 has **two different keys** and they are not interchangeable. (−), next to ENTER, makes a number negative. −, above +, subtracts. Using the wrong one gives ERR: SYNTAX at best and a wrong answer at worst. If you get a syntax error you cannot explain, this is the first thing to check.
 
 Two more that bite: −2² evaluates as −4 because the square binds tighter than the negation — type (−2)² if you mean 4. And always parenthesise a whole denominator: 1/(2+3) is 0.2, while 1/2+3 is 3.5.
 
@@ -576,7 +596,7 @@ Two more that bite: −2² evaluates as −4 because the square binds tighter th
 
 | Situation | What happens |
 |---|---|
-| nDeriv at a corner or cusp | It returns a number anyway. nDeriv(abs(X),X,0) gives 0, but the derivative does not exist there. The routine estimates with a symmetric difference and cannot tell the difference |
+| nDeriv at a corner or cusp | It returns a number anyway. nDeriv(abs(X),X,0) gives **0**, but the derivative does not exist there. The routine estimates with a symmetric difference and cannot tell the difference |
 | Vertical asymptotes | The graph draws a near-vertical line through the asymptote and it looks like part of the curve. It is not — it is the plotter joining points |
 | Improper integrals | fnInt across an infinite discontinuity returns something, or errors, and neither means "converges" |
 | ERR: INVALID DIM | Usually a stat plot left switched on. 2nd then Y=, turn all Plots off |
@@ -592,7 +612,7 @@ There is a drill for this card in the repo: python tools/ti84_trainer.py asks fo
 | --area calc | The CALC menu and graphing | 7 |
 | --area errors | Errors, traps, and where the calculator lies | 7 |
 
-The most important limitation to understand for a calculus course: the TI-84 has no computer algebra system. nDeriv and fnInt return numbers, never expressions — it cannot tell you that the derivative of x² is 2x, only that it is 6 at x = 3. Symbolic work is the TI-89 and Nspire CAS. So the calculator is a checking tool: do the algebra by hand, then confirm the number.
+The most important limitation to understand for a calculus course: the **TI-84 has no computer algebra system**. nDeriv and fnInt return numbers, never expressions — it cannot tell you that the derivative of x² is 2x, only that it is 6 at x = 3. Symbolic work is the TI-89 and Nspire CAS. So the calculator is a checking tool: do the algebra by hand, then confirm the number.
 
 ---
 
@@ -600,7 +620,7 @@ The most important limitation to understand for a calculus course: the TI-84 has
 
 ### The hypotheses are the answer — Core Concept
 
-Theorem questions are almost never about what the theorem concludes — they are about the conditions it needs. "Which of the following describes Rolle's Theorem?" is really "can you list the hypotheses?" So learn each one as a checklist plus a conclusion, and notice a pattern that runs through all of them: continuity is required on the closed interval [a,b], differentiability only on the open interval (a,b).
+Theorem questions are almost never about what the theorem concludes — they are about **the conditions it needs**. "Which of the following describes Rolle's Theorem?" is really "can you list the hypotheses?" So learn each one as a checklist plus a conclusion, and notice a pattern that runs through all of them: **continuity is required on the closed interval [a,b], differentiability only on the open interval (a,b).**
 
 That asymmetry is deliberate, not a typo. The endpoints need the function to exist and connect; they do not need a two-sided derivative, which could not exist at an endpoint anyway.
 
@@ -608,21 +628,23 @@ That asymmetry is deliberate, not a typo. The endpoints need the function to exi
 
 *(diagram — see this card on the site)*
 
-Same picture twice. On the left the endpoints sit at equal height, so the secant joining them is horizontal and the parallel tangent is flat — f′(c) = 0. On the right the endpoints differ, the secant is tilted, and the guaranteed tangent is parallel to it. Rolle is the Mean Value Theorem with the extra condition f(a) = f(b), which is exactly what makes the slope zero.
+Same picture twice. On the left the endpoints sit at equal height, so the secant joining them is horizontal and the parallel tangent is flat — f′(c) = 0. On the right the endpoints differ, the secant is tilted, and the guaranteed tangent is parallel to it. **Rolle is the Mean Value Theorem with the extra condition f(a) = f(b)**, which is exactly what makes the slope zero.
 
 ### The five, stated properly — Reference
 
 | Theorem | Requires | Guarantees |
 |---|---|---|
-| Rolle's | 1. f continuous on [a,b]; 2. f differentiable on (a,b); 3. f(a) = f(b) | At least one c in (a,b) with f′(c) = 0 |
-| Mean Value (MVT) | 1. continuous on [a,b]; 2. differentiable on (a,b) | At least one c in (a,b) with f′(c) = [f(b) − f(a)]/(b − a) — instantaneous rate equals average rate somewhere |
-| Intermediate Value (IVT) | continuous on [a,b] only — no differentiability needed | For any N between f(a) and f(b), some c with f(c) = N. This is how you prove a root exists: opposite signs at the ends |
-| Extreme Value (EVT) | continuous on a closed, bounded [a,b] | f attains an absolute maximum and an absolute minimum on the interval |
-| Squeeze | g(x) ≤ f(x) ≤ h(x) near a, and lim g = lim h = L | lim f = L. The tool for lim_x→0 x²sin(1/x) = 0, and for proving lim_x→0 (sin x)/x = 1 |
+| **Rolle's** | 1. f continuous on [a,b]; 2. f differentiable on (a,b); 3. f(a) = f(b) | At least one c in (a,b) with f′(c) = 0 |
+| **Mean Value (MVT)** | 1. continuous on [a,b]; 2. differentiable on (a,b) | At least one c in (a,b) with f′(c) = [f(b) − f(a)]/(b − a) — instantaneous rate equals average rate somewhere |
+| **Intermediate Value (IVT)** | continuous on [a,b] only — no differentiability needed | For any N between f(a) and f(b), some c with f(c) = N. This is how you prove a root exists: opposite signs at the ends |
+| **Extreme Value (EVT)** | continuous on a **closed, bounded** [a,b] | f attains an absolute maximum and an absolute minimum on the interval |
+| **Squeeze** | g(x) ≤ f(x) ≤ h(x) near a, and lim g = lim h = L | lim f = L. The tool for lim_x→0 x²sin(1/x) = 0, and for proving lim_x→0 (sin x)/x = 1 |
+
+> **The hypotheses are the examinable part; the conclusions are what everybody remembers.** Marks are awarded for stating that the function is continuous on the closed interval and differentiable on the open one, and lost by jumping to the guarantee — and the intermediate-value theorem is the one where the weaker hypothesis matters, since it needs continuity alone. Say the conditions out loud before you use any of them.
 
 ### Existence, not location — and drop a hypothesis, lose the theorem — The trap
 
-Every one of these is an existence statement. It says some c is there; it does not tell you where, how many, or how to find it. "Find all values of c guaranteed by the MVT" is a separate calculation — set f′(x) equal to the secant slope and solve.
+Every one of these is an **existence** statement. It says some c is there; it does not tell you where, how many, or how to find it. "Find all values of c guaranteed by the MVT" is a separate calculation — set f′(x) equal to the secant slope and solve.
 
 | Drop this | And it breaks |
 |---|---|
@@ -631,14 +653,14 @@ Every one of these is an existence statement. It says some c is there; it does n
 | Closed interval, from EVT | f(x) = x on the open (0,1) gets arbitrarily close to 1 and never reaches a maximum |
 | Bounded interval, from EVT | f(x) = x on [0, ∞) has no maximum at all |
 
-Worth knowing as its own fact, because it is asked directly: differentiable ⇒ continuous, but continuous ⇏ differentiable. The absolute value function at 0 is the standard counterexample. Contrapositive form is the useful one — if a function is not continuous at a point, it cannot be differentiable there.
+Worth knowing as its own fact, because it is asked directly: **differentiable ⇒ continuous, but continuous ⇏ differentiable.** The absolute value function at 0 is the standard counterexample. Contrapositive form is the useful one — if a function is not continuous at a point, it cannot be differentiable there.
 
 ### Two different theorems both get called "average value" — The trap
 
 | Name | Which one |
 |---|---|
-| Mean Value Theorem; sometimes written "average value theorem" | The derivative one above: instantaneous rate equals average rate at some c. Rolle is its special case |
-| Mean Value Theorem for Integrals | The integral one: if f is continuous on [a,b], some c has f(c) = 1/(b−a) · ∫_a^(b) f(x) dx — the average value is actually attained by the function |
+| Mean Value Theorem; sometimes written "average value theorem" | The **derivative** one above: instantaneous rate equals average rate at some c. Rolle is its special case |
+| Mean Value Theorem **for Integrals** | The **integral** one: if f is continuous on [a,b], some c has f(c) = 1/(b−a) · ∫_a^(b) f(x) dx — the average value is actually attained by the function |
 
 Courses and textbooks are not consistent about this naming, so read from context: if the statement involves f′, it is the derivative version; if it involves an integral, it is the integral version. Both say "somewhere the function matches its average" — just average rate versus average value.
 
@@ -673,41 +695,41 @@ Courses and textbooks are not consistent about this naming, so read from context
 
 ### They are ratios, not operations — Core Concept
 
-sin is not something you do to an angle the way squaring is something you do to a number. Each of the six is a ratio of two sides of a right triangle, and which two is the whole definition. Once the angle is fixed, that ratio is fixed too — a triangle twice the size has both sides twice as long and the ratio is unchanged. That scale-independence is exactly why the functions are useful.
+sin is not something you do to an angle the way squaring is something you do to a number. **Each of the six is a ratio of two sides of a right triangle**, and which two is the whole definition. Once the angle is fixed, that ratio is fixed too — a triangle twice the size has both sides twice as long and the ratio is unchanged. That scale-independence is exactly why the functions are useful.
 
 ### The right-triangle definition — Diagram
 
 *(diagram — see this card on the site)*
 
-Adjacent and opposite are named relative to θ — they swap if you measure from the other acute angle. The hypotenuse never changes: it is always the side across from the right angle, and always the longest. So the first thing to do in any triangle problem is label the sides from the angle you were given.
+**Adjacent** and **opposite** are named relative to θ — they swap if you measure from the other acute angle. The **hypotenuse** never changes: it is always the side across from the right angle, and always the longest. So the first thing to do in any triangle problem is label the sides from the angle you were given.
 
-SOH-CAH-TOA is the standard mnemonic: Sine = Opposite/Hypotenuse, Cosine = Adjacent/Hypotenuse, Tangent = Opposite/Adjacent.
+**SOH-CAH-TOA** is the standard mnemonic: Sine = Opposite/Hypotenuse, Cosine = Adjacent/Hypotenuse, Tangent = Opposite/Adjacent.
 
 ### All six, and how they pair up — Reference
 
 | Function | Ratio | Reciprocal of | Read it as |
 |---|---|---|---|
-| sin θ | opposite / hypotenuse | csc | How high, per unit of distance travelled |
-| cos θ | adjacent / hypotenuse | sec | How far across, per unit travelled |
-| tan θ | opposite / adjacent | cot | Slope. Rise over run — this is why tan shows up in every tangent-line question |
+| **sin θ** | opposite / hypotenuse | csc | How high, per unit of distance travelled |
+| **cos θ** | adjacent / hypotenuse | sec | How far across, per unit travelled |
+| **tan θ** | opposite / adjacent | cot | **Slope.** Rise over run — this is why tan shows up in every tangent-line question |
 | csc θ | hypotenuse / opposite | sin | — |
-| sec θ | hypotenuse / adjacent | cos | — |
+| **sec θ** | hypotenuse / adjacent | cos | — |
 | cot θ | adjacent / opposite | tan | — |
 
-The reciprocal pairing is the part that trips people, because the names do not match the pairs. Secant pairs with cosine and cosecant pairs with sine — the "co" is on opposite sides. The reliable trick: look at the third letter. sec → cosine, csc → sine, cot → tangent.
+The reciprocal pairing is the part that trips people, because the names do not match the pairs. **Se**cant pairs with **co**sine and **cose**cant pairs with **s**ine — the "co" is on opposite sides. The reliable trick: look at the third letter. sec → **c**osine, csc → **s**ine, cot → **t**angent.
 
 ### Two definitions, one function — and why courses use both — Concept
 
-A right triangle only has acute angles, so the triangle definition cannot explain sin(120°) or a negative cosine. The unit circle fixes that: put the angle at the origin, and the point where its ray meets the circle of radius 1 has coordinates (cos θ, sin θ).
+A right triangle only has acute angles, so the triangle definition cannot explain sin(120°) or a negative cosine. The **unit circle** fixes that: put the angle at the origin, and the point where its ray meets the circle of radius 1 has coordinates (cos θ, sin θ).
 
 |  | Right triangle | Unit circle |
 |---|---|---|
 | Works for | Acute angles only, 0 to 90° | Every angle, including negative and beyond 360° |
-| sin θ | opp/hyp | The y-coordinate |
-| cos θ | adj/hyp | The x-coordinate |
+| sin θ | opp/hyp | The **y**-coordinate |
+| cos θ | adj/hyp | The **x**-coordinate |
 | Best for | Solving actual triangles — surveying, ladders, ramps | Calculus, periodicity, anything with a sign |
 
-They agree wherever both apply, because on a unit circle the hypotenuse is 1 — so opp/hyp becomes just opp, which is the height, which is y. Same function, described from two directions. See Trigonometry — The Unit Circle, Identities & Inverses for the circle side.
+They agree wherever both apply, because on a unit circle the hypotenuse is 1 — so opp/hyp becomes just opp, which is the height, which is y. Same function, described from two directions. See **Trigonometry — The Unit Circle, Identities & Inverses** for the circle side.
 
 ### Where sec quietly matters, and where it all goes wrong — The trap
 
@@ -715,10 +737,10 @@ sec looks like the least useful of the six until calculus, where it appears cons
 
 | Mistake | What is actually true |
 |---|---|
-| sin⁻¹x means 1/sin x | No. sin⁻¹ is the inverse function, arcsin. The reciprocal is csc x. This notation is genuinely bad and catches everyone once |
+| sin⁻¹x means 1/sin x | **No.** sin⁻¹ is the inverse function, arcsin. The reciprocal is csc x. This notation is genuinely bad and catches everyone once |
 | sin²x means sin(x²) | No — sin²x is (sin x)². The exponent sits after the function name but applies to the output |
 | Any angle works in any function | tan and sec are undefined wherever cos θ = 0 — at π/2, 3π/2 and so on, because those are division by zero. cot and csc break where sin θ = 0 |
-| Degrees are fine | Only in geometry. Every calculus formula on this site — every derivative, every limit — assumes radians |
+| Degrees are fine | Only in geometry. Every calculus formula on this site — every derivative, every limit — assumes **radians** |
 
 Ranges are worth knowing as a sanity check on an answer: sin and cos always land in [−1, 1], so a sine of 1.4 is an arithmetic error. sec and csc are the opposite — they never fall between −1 and 1, because they are 1 over something no bigger than 1.
 
@@ -728,21 +750,21 @@ Ranges are worth knowing as a sanity check on an answer: sin and cos always land
 
 ### Choosing the rule: look at the outermost operation — Core Concept
 
-Before you differentiate anything, ask what is the last thing that happens if you evaluated this at a number. That operation names the rule.
+Before you differentiate anything, ask **what is the last thing that happens** if you evaluated this at a number. That operation names the rule.
 
 | Outermost operation | Rule | Example |
 |---|---|---|
 | Addition / subtraction | Differentiate term by term | x³ + sin x |
-| A product of two functions | Product rule | x²·sin x |
-| A quotient | Quotient rule | (x+1)/(x²−3) |
-| A function wrapped around another | Chain rule | sin(x²) — the sine happens last |
+| A product of two functions | **Product rule** | x²·sin x |
+| A quotient | **Quotient rule** | (x+1)/(x²−3) |
+| A function wrapped around another | **Chain rule** | sin(x²) — the sine happens last |
 | A constant times something | Pull the constant out | 5·tan x |
 
 sin(x²) and sin²x look similar and need different first moves. In sin(x²) the sine is outermost, so chain rule with inner x². In sin²x = (sin x)² the squaring is outermost, so chain rule with inner sin x. Getting the order right is most of the work.
 
 ### The chain rule, said once, properly — Concept
 
-d/dx f(g(x)) = f′(g(x)) · g′(x) — differentiate the outer function leaving the inner one untouched, then multiply by the derivative of the inner. The universal mistake is stopping before that multiplication.
+d/dx f(g(x)) = f′(g(x)) · g′(x) — differentiate the outer function **leaving the inner one untouched**, then multiply by the derivative of the inner. The universal mistake is stopping before that multiplication.
 
 ```
 # Underline the inside before you start. It is the whole trick.
@@ -807,7 +829,7 @@ When y is not solved for, differentiate both sides with respect to x and write d
 | arctan x | 1/(1 + x²) | arccot x | −1/(1 + x²) |
 | arcsec x | 1/(\|x\|·√(x² − 1)) | arccsc x | −1/(\|x\|·√(x² − 1)) |
 
-Learn the left column and negate for the right — each co-inverse is the negative of its partner, so three facts cover six. Note the absolute value in the arcsec pair; it is not decoration, it is what keeps the derivative positive on both branches.
+Learn the left column and negate for the right — **each co-inverse is the negative of its partner**, so three facts cover six. Note the absolute value in the arcsec pair; it is not decoration, it is what keeps the derivative positive on both branches.
 
 These almost always arrive wrapped in a chain rule: d/dx arctan(3x) = 1/(1 + (3x)²) · 3 = 3/(1 + 9x²).
 
@@ -817,9 +839,9 @@ These almost always arrive wrapped in a chain rule: d/dx arctan(3x) = 1/(1 + (3x
 |---|---|
 | f″(x), d²y/dx² | Rate of change of the rate of change — concavity, and acceleration from position |
 | f‴, f⁽⁴⁾ | Keep differentiating. Beyond the third, the superscript goes in parentheses |
-| Antiderivative | The power rule in reverse: add one to the exponent, divide by the new exponent. x³ → x⁴/4. Always + C |
+| **Antiderivative** | The power rule in reverse: **add one to the exponent, divide by the new exponent**. x³ → x⁴/4. Always + C |
 
-A quick check that costs nothing: differentiate your antiderivative. If it does not return the original, you have made an error, and you will know immediately rather than at the end of a three-step problem.
+A quick check that costs nothing: **differentiate your antiderivative**. If it does not return the original, you have made an error, and you will know immediately rather than at the end of a three-step problem.
 
 ---
 
@@ -829,38 +851,38 @@ A quick check that costs nothing: differentiate your antiderivative. If it does 
 
 *(diagram — see this card on the site)*
 
-A rectangle's flat top is wrong almost everywhere — it matches the curve at one point and misses either side. A trapezoid's slanted top joins two points on the curve, so it tracks the function instead of approximating it with a step. Same number of slices, much less error, and it is why the Trapezoidal Rule exists.
+A rectangle's flat top is wrong almost everywhere — it matches the curve at one point and misses either side. A **trapezoid's slanted top joins two points on the curve**, so it tracks the function instead of approximating it with a step. Same number of slices, much less error, and it is why the Trapezoidal Rule exists.
 
 ### The three formulas — Reference
 
 | Rule | Formula, with Δx = (b − a)/n |
 |---|---|
-| Trapezoidal | (Δx/2)·[f(x₀) + 2f(x₁) + 2f(x₂) + … + 2f(x_n−1) + f(x_n)] |
-| Midpoint | Δx·[f(m₁) + f(m₂) + … + f(m_n)], where each m is the centre of its slice |
-| Simpson's | (Δx/3)·[f(x₀) + 4f(x₁) + 2f(x₂) + 4f(x₃) + … + 4f(x_n−1) + f(x_n)] |
+| **Trapezoidal** | (Δx/2)·[f(x₀) + 2f(x₁) + 2f(x₂) + … + 2f(x_n−1) + f(x_n)] |
+| **Midpoint** | Δx·[f(m₁) + f(m₂) + … + f(m_n)], where each m is the centre of its slice |
+| **Simpson's** | (Δx/3)·[f(x₀) + 4f(x₁) + 2f(x₂) + 4f(x₃) + … + 4f(x_n−1) + f(x_n)] |
 
-The coefficient pattern is the thing to memorise, and each is different. Trapezoid: 1, 2, 2, …, 2, 1. Simpson's: 1, 4, 2, 4, 2, …, 4, 1 — ends are 1, then alternate 4 and 2, always ending on a 4 before the final 1.
+The coefficient pattern is the thing to memorise, and each is different. Trapezoid: **1, 2, 2, …, 2, 1**. Simpson's: **1, 4, 2, 4, 2, …, 4, 1** — ends are 1, then alternate 4 and 2, always ending on a 4 before the final 1.
 
-Simpson's requires n to be even. It fits a parabola through each pair of slices, so an odd number leaves one stranded. If a problem gives you n = 5 and asks for Simpson's, re-read it — something is wrong.
+**Simpson's requires n to be even.** It fits a parabola through each pair of slices, so an odd number leaves one stranded. If a problem gives you n = 5 and asks for Simpson's, re-read it — something is wrong.
 
 ### Which way each one is wrong — The trap
 
 | Curve is… | Trapezoid | Midpoint |
 |---|---|---|
-| Concave up | Overestimates — the chord sits above the curve | Underestimates |
-| Concave down | Underestimates | Overestimates |
+| Concave **up** | **Over**estimates — the chord sits above the curve | **Under**estimates |
+| Concave **down** | **Under**estimates | **Over**estimates |
 
 Derive it rather than memorise it: on a concave-up curve the straight chord joining two points lies above the arc between them, so trapezoids include area that is not there. Midpoint errs the other way for the mirror-image reason. Questions asking "is this an over- or under-estimate?" are asking about concavity, which means they are asking about f″.
 
-Simpson's is exact for any polynomial of degree 3 or lower. That surprises people — it fits parabolas, yet handles cubics perfectly, because the cubic error terms cancel between the pairs. If a problem asks you to approximate ∫x³dx by Simpson's and compare with the exact value, the answer is that they match.
+**Simpson's is exact for any polynomial of degree 3 or lower.** That surprises people — it fits parabolas, yet handles cubics perfectly, because the cubic error terms cancel between the pairs. If a problem asks you to approximate ∫x³dx by Simpson's and compare with the exact value, the answer is that they match.
 
 ### When you actually use these — In practice
 
-Numerical rules are not a fallback for weak algebra — they are the only option when there is no elementary antiderivative. ∫e^(−x²)dx is the standard example: it is central to statistics and has no answer in elementary functions, so every value of it anyone has ever used was computed numerically.
+Numerical rules are not a fallback for weak algebra — they are the only option when there is **no elementary antiderivative**. ∫e^(−x²)dx is the standard example: it is central to statistics and has no answer in elementary functions, so every value of it anyone has ever used was computed numerically.
 
-They are also how you integrate data rather than a formula. Given a table of speed readings every 10 seconds, the distance travelled is a trapezoidal sum — there is no function to antidifferentiate. That is the form these questions usually take on a test.
+They are also how you integrate **data** rather than a formula. Given a table of speed readings every 10 seconds, the distance travelled is a trapezoidal sum — there is no function to antidifferentiate. That is the form these questions usually take on a test.
 
-On a TI-84, fnInt( does this for you numerically, so it is a good check on a hand computation — see TI-84 Plus CE. But the exam wants the hand version with the coefficient pattern shown.
+On a TI-84, fnInt( does this for you numerically, so it is a good check on a hand computation — see **TI-84 Plus CE**. But the exam wants the hand version with the coefficient pattern shown.
 
 ---
 
@@ -871,24 +893,24 @@ On a TI-84, fnInt( does this for you numerically, so it is a good check on a han
 |  | Sequence {a_n} | Series Σa_n |
 |---|---|---|
 | Is | A list of terms | The sum of that list |
-| Converges when | The terms approach a limit | The partial sums approach a limit |
-| Example | 1/n → 0, converges | Σ1/n diverges — the harmonic series |
+| Converges when | The terms approach a limit | The **partial sums** approach a limit |
+| Example | 1/n → 0, converges | Σ1/n **diverges** — the harmonic series |
 
-That last row is the single most important fact in the chapter. Terms going to zero is necessary but not sufficient — the harmonic series has terms shrinking to nothing and still sums to infinity. Every test below exists because that one check is not enough.
+That last row is the single most important fact in the chapter. Terms going to zero is **necessary but not sufficient** — the harmonic series has terms shrinking to nothing and still sums to infinity. Every test below exists because that one check is not enough.
 
 ### The full battery, in the order to try them — Reference
 
 | # | Test | Statement | Reach for it when |
 |---|---|---|---|
-| 1 | nth-term | If lim a_n ≠ 0, diverges. Limit 0 proves nothing | Always first — it is one line |
-| 2 | Geometric | Σar^(n) converges iff \|r\| < 1, to a/(1−r) | A constant ratio between terms |
-| 3 | p-series | Σ1/n^(p) converges iff p > 1 | A plain power of n on the bottom |
-| 4 | Integral | If f is positive, continuous and decreasing with a_n = f(n), then Σa_n and ∫_1^(∞)f do the same thing | The term is something you can actually integrate |
-| 5 | Direct comparison | 0 ≤ a_n ≤ b_n and Σb_n converges ⇒ Σa_n converges. Bigger diverges ⇒ smaller may still converge, so pick the direction carefully | The term is almost a p-series or geometric |
-| 6 | Limit comparison | lim a_n/b_n = L with 0 < L < ∞ ⇒ both do the same thing | Comparison is obviously right but the inequality is awkward. Usually easier than #5 |
-| 7 | Ratio | L = lim\|a_n+1/a_n\|. <1 converges, >1 diverges, =1 inconclusive | Factorials or n in an exponent — they cancel beautifully |
-| 8 | Root | L = lim ^(n)√\|a_n\|, same verdicts | The whole term is raised to the n |
-| 9 | Alternating | Converges if terms decrease in magnitude and → 0 | (−1)^(n) present |
+| 1 | **nth-term** | If lim a_n ≠ 0, diverges. Limit 0 proves nothing | Always first — it is one line |
+| 2 | **Geometric** | Σar^(n) converges iff \|r\| < 1, to a/(1−r) | A constant ratio between terms |
+| 3 | **p-series** | Σ1/n^(p) converges iff p > 1 | A plain power of n on the bottom |
+| 4 | **Integral** | If f is positive, continuous and decreasing with a_n = f(n), then Σa_n and ∫_1^(∞)f do the same thing | The term is something you can actually integrate |
+| 5 | **Direct comparison** | 0 ≤ a_n ≤ b_n and Σb_n converges ⇒ Σa_n converges. Bigger diverges ⇒ smaller may still converge, so pick the direction carefully | The term is almost a p-series or geometric |
+| 6 | **Limit comparison** | lim a_n/b_n = L with 0 < L < ∞ ⇒ both do the same thing | Comparison is obviously right but the inequality is awkward. Usually easier than #5 |
+| 7 | **Ratio** | L = lim\|a_n+1/a_n\|. <1 converges, >1 diverges, =1 inconclusive | **Factorials** or n in an exponent — they cancel beautifully |
+| 8 | **Root** | L = lim ^(n)√\|a_n\|, same verdicts | The whole term is raised to the n |
+| 9 | **Alternating** | Converges if terms decrease in magnitude and → 0 | (−1)^(n) present |
 
 Tests 7 and 8 both return "inconclusive" at L = 1, and that is a real answer, not a failure — it means try another test. The ratio test is inconclusive on every p-series, which is why #3 exists separately.
 
@@ -896,12 +918,12 @@ Tests 7 and 8 both return "inconclusive" at L = 1, and that is a real answer, no
 
 | Term | Means | Example |
 |---|---|---|
-| Absolutely convergent | Σ\|a_n\| converges. This is the strong kind — it implies Σa_n converges too | Σ(−1)^(n)/n² |
-| Conditionally convergent | Σa_n converges but Σ\|a_n\| does not | Σ(−1)^(n)/n — the alternating harmonic series |
+| **Absolutely convergent** | Σ\|a_n\| converges. This is the strong kind — it implies Σa_n converges too | Σ(−1)^(n)/n² |
+| **Conditionally convergent** | Σa_n converges but Σ\|a_n\| does not | Σ(−1)^(n)/n — the alternating harmonic series |
 
-The standard exam move: given an alternating series, test the absolute version first. If Σ|a_n| converges you are finished and the answer is "absolutely". Only if it diverges do you run the alternating series test to decide between conditional and divergent.
+The standard exam move: given an alternating series, **test the absolute version first**. If Σ|a_n| converges you are finished and the answer is "absolutely". Only if it diverges do you run the alternating series test to decide between conditional and divergent.
 
-Useful bonus for alternating series: the error from stopping after n terms is no bigger than the first term you left out. That single fact answers every "how many terms for accuracy 0.01?" question.
+Useful bonus for alternating series: the error from stopping after n terms is **no bigger than the first term you left out**. That single fact answers every "how many terms for accuracy 0.01?" question.
 
 ### Radius and interval of convergence — Hands-on
 

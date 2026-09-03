@@ -2299,6 +2299,13 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Point-in-time capture</td><td>Snapshot</td><td>Checkpoint</td><td>Snapshot</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The two rows to check before believing any vendor comparison are
+          live migration and automatic restart.</strong> Everything on this table
+          exists everywhere; what differs is how much operational work each demands
+          and what it costs per socket. Learn the six ideas once and platform
+          migrations become retraining rather than re-learning.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2354,6 +2361,13 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Cost over time</td><td>Grows and slows the VM</td><td>Storage on the target</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Snapshots have an expiry date even when nobody sets one — treat
+          anything older than a day as an incident.</strong> The delta chain grows,
+          the virtual machine slows, and the dependency on the original disk means a
+          storage failure takes the snapshot with it. Take one before a patch, remove
+          it after the change window, and alert on any that survive the week.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2410,6 +2424,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>0 errors</td><td>Verified by test restore</td><td>The backup that never actually worked</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last two digits are the ones added because people lost
+          everything, and they are the ones most often missing.</strong> An immutable
+          or offline copy is what survives an attacker with your backup console; a
+          verified test restore is what proves the whole arrangement was ever real.
+          Three copies on two media off-site with no immutability is the 2015 answer
+          to a 2026 threat.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2525,6 +2547,13 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>RTO <span class="acro-exp">(Recovery Time Objective)</span></td><td>How long can we be down?</td><td>Recovery <em>method</em> and spend</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Set the two numbers with the business, then test against them — not
+          against whether the job succeeded.</strong> A recovery objective nobody has
+          timed is a hope, and the gap between the promised recovery time and the
+          measured one is discovered on the worst day. Restore one real system a
+          quarter and record how long it actually took.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2616,6 +2645,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Cost per usable terabyte</td><td>Highest</td><td>Middle</td><td>Lowest, by a wide margin</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The bad-at row is the one to read first, because that is where the
+          workload will hurt.</strong> A database on object storage and a media
+          archive on a block array are both the same mistake in opposite directions,
+          and both present months later as cost or latency rather than as an error.
+          The price row is the argument for moving everything large and write-once off
+          the expensive tier.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2680,6 +2717,13 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Erasure coding</td><td>Configurable — n of m fragments</td><td>Tunable, far better than mirroring at scale</td><td>Distributed across nodes, not just disks</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>RAID 6 or 10 for anything spinning and large; RAID 5 has been out of
+          its depth for years.</strong> The rebuild reads every remaining disk for
+          hours, which is exactly when the second failure arrives — and the capacity
+          saved is not worth the array. Erasure coding is the row to look at when the
+          scale justifies it, because mirroring costs half of everything.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2710,6 +2754,15 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Monitor and alert on degraded state</td><td>The array that has been degraded for six weeks is common and is one failure from gone</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the one that turns a designed protection into an
+          actual one.</strong> An array that has been running degraded for six weeks
+          because nobody read the alert has the redundancy of a stripe, and this is
+          far more common than a genuine double failure — the monitoring is what makes
+          every other mitigation on the list mean anything. Hot spares are the next
+          best pound spent: they remove the hours between the failure and a human
+          noticing.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3000,6 +3053,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Latency fine at the array, poor at the host</td><td>The problem is in the path, not the storage</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Read the three numbers together or you will optimise the wrong
+          thing.</strong> Low throughput with low latency and a shallow queue is an
+          application that is not asking — buying faster storage changes nothing, and
+          that is the most common misdiagnosis in this table. The last row is the
+          other one worth internalising: when the array reports healthy latency and
+          the host does not, the problem is the path.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3065,6 +3126,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Snapshots retained long-term</td><td>Nothing — they consume, not save</td><td>Change rate rises; the pool fills from an unexpected direction</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Monitor the pool, not the volumes, and alert well before it
+          fills.</strong> Every row here fails the same way — the saving evaporates
+          and the underlying capacity is consumed faster than anyone modelled — and
+          the failure is not gradual: a thin-provisioned pool hitting full takes every
+          volume on it down at once. Efficiency features are worth having and they
+          convert a capacity problem into an availability one.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3477,6 +3546,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Keep the original powered off, not wiped</td><td>For a defined period, as the rollback. Then decommission it properly</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The disconnected first boot is the row that prevents the worst
+          outcome on this list.</strong> Two machines with one identity on one network
+          is an outage plus a directory problem plus a data-divergence problem, all at
+          once, and it is entirely avoidable with one setting. Keep the original
+          powered off rather than wiped for a defined period; the rollback is worth
+          more than the rack space.
+        </div>
       </div>
     </div>
     <div class="concept-card">

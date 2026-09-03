@@ -33,7 +33,11 @@ TOPIC_BADGE_RE = re.compile(r'<span\b[^>]*class="topic-badge"[^>]*>(.*?)</span\s
 CARD_START_RE = re.compile(r'<div class="concept-card">')
 LABEL_RE = re.compile(r'<span\b[^>]*class="concept-label"[^>]*>(.*?)</span\s*>', re.S)
 TITLE_RE = re.compile(r'<h4\b[^>]*class="concept-title"[^>]*>(.*?)</h4\s*>', re.S)
-DESC_RE = re.compile(r'<p\b[^>]*class="concept-desc"[^>]*>(.*?)</p\s*>', re.S)
+# `p` or `div`, and any concept-desc variant. A verdict is
+# `class="concept-desc verdict"`, and matching only the bare class silently
+# dropped every closing judgement the first time verdicts reached this domain.
+DESC_RE = re.compile(
+    r'<(p|div)\b[^>]*class="(concept-desc[^"]*)"[^>]*>(.*?)</\1\s*>', re.S)
 TABLE_RE = re.compile(r'<table\b[^>]*class="ref-table"[^>]*>(.*?)</table\s*>', re.S)
 ROW_RE = re.compile(r"<tr\b[^>]*>(.*?)</tr\s*>", re.S)
 CELL_RE = re.compile(r"<(th|td)\b[^>]*>(.*?)</\1\s*>", re.S)
@@ -49,15 +53,22 @@ ACRO_SPAN_RE = re.compile(r'\s*<span class="acro-exp">\([^<]*?\)</span\s*>')
 # as a heading with nothing under it, and the sheet keeps calling itself
 # "generated from data/math.html" while quietly being less than that. The Math
 # domain uses none of these today; `unrendered` is what notices the day it does.
+#
+# It missed one. The first version matched `<p>` plus a short list of `<div>`
+# classes, so `<div class="concept-desc verdict">` was neither known nor
+# flagged, and eleven verdicts were dropped from the sheet without a word. Both
+# patterns now cover `div` as well as `p`, and the known list names the
+# structural divs explicitly rather than by omission — a guard that enumerates
+# what is wrong will always miss the thing nobody thought of.
 BLOCK_RE = re.compile(
     r"<(?:table|pre|ul|ol|blockquote|svg)\b"
-    r'|<p\b[^>]*class="[^"]*"'
-    r'|<div\b[^>]*class="(?:g-card|callout|note)"'
+    r'|<(?:p|div)\b[^>]*class="[^"]*"'
 )
 KNOWN_BLOCK_RE = re.compile(
     r'<table\b[^>]*class="ref-table"'
     r'|<pre\b[^>]*class="code-block"'
-    r'|<p\b[^>]*class="concept-desc"'
+    r'|<(?:p|div)\b[^>]*class="concept-desc[^"]*"'
+    r'|<div\b[^>]*class="(?:concept-card|concept-label|concept-title|dw|dt)"'
     r"|<svg\b"
 )
 
@@ -78,6 +89,9 @@ def inline(fragment):
     s = re.sub(r"<br\s*/?>", "; ", s)
     s = re.sub(r"<sub\b[^>]*>(.*?)</sub\s*>", r"_\1", s, flags=re.S)
     s = re.sub(r"<sup\b[^>]*>(.*?)</sup\s*>", r"^(\1)", s, flags=re.S)
+    # <strong> carries meaning here — a verdict's lead clause, the word a row
+    # turns on — so it survives as Markdown emphasis rather than being stripped.
+    s = re.sub(r"<(?:strong|b)\b[^>]*>(.*?)</(?:strong|b)\s*>", r"**\1**", s, flags=re.S)
     s = re.sub(r"<[^>]+>", "", s)
     s = html_lib.unescape(s)
     s = s.replace("\xa0", " ")
@@ -135,7 +149,10 @@ def render_card(html):
     for m in TABLE_RE.finditer(html):
         parts.append((m.start(), render_table(m.group(1))))
     for m in DESC_RE.finditer(html):
-        parts.append((m.start(), [inline(m.group(1)), ""]))
+        text = inline(m.group(3))
+        # A verdict is the card's closing judgement; a block quote is how that
+        # reads in Markdown, and it keeps it distinct from the opening prose.
+        parts.append((m.start(), [f"> {text}" if "verdict" in m.group(2) else text, ""]))
     for m in PRE_RE.finditer(html):
         code = ACRO_SPAN_RE.sub("", m.group(1))
         code = html_lib.unescape(re.sub(r"<[^>]+>", "", code)).strip("\n")

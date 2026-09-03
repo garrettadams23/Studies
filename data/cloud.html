@@ -356,6 +356,17 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Infra as Code</td><td>CloudFormation</td><td>Deployment Manager</td><td>ARM <span class="acro-exp">(Azure Resource Manager)</span> / Bicep</td></tr>
                     <tr><td>Monitoring</td><td>CloudWatch</td><td>Cloud Monitoring</td><td>Monitor</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Learn the concept column and the other three
+                    become a lookup.</strong> Every provider's certification
+                    pushes brand names, and the durable knowledge is that
+                    there is one object store, one managed Kubernetes and
+                    one managed relational database in each — so a second
+                    cloud is a translation exercise rather than a second
+                    career. Where the mapping breaks down is networking and
+                    identity, which differ in behaviour and not only in
+                    name; treat those two rows as genuinely new.
+                  </div>
                 </div>
               </div>
             </div>
@@ -902,6 +913,16 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Cloud DNS</td><td>Managed, scalable DNS with 100% SLA <span class="acro-exp">(Service Level Agreement)</span></td></tr>
                     <tr><td>Cloud CDN <span class="acro-exp">(Content Delivery Network)</span></td><td>Edge caching, enabled on the LB backend</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The first row is the genuine differentiator; the
+                    rest have equivalents everywhere.</strong> One address
+                    serving worldwide traffic removes per-region addresses,
+                    DNS-based routing and the pre-warming ritual — which is
+                    a real architectural simplification rather than a
+                    branding difference. If you are choosing a provider for
+                    a globally distributed front end, that is the row to
+                    weigh.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -1032,6 +1053,16 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Savings Plans / Reserved</td><td>1–3 yr commit → ~30–70% off steady load</td></tr>
                     <tr><td>Spot</td><td>Spare capacity ~90% off; can be reclaimed → fault-tolerant jobs</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Do not commit before you have rightsized, and
+                    expect spot capacity to disappear at the worst
+                    moment.</strong> A one-to-three year commitment on
+                    machines you have not yet resized locks in today's waste
+                    for years; spot is genuinely cheap and reclaimable with
+                    minutes of notice, which makes it right for batch and
+                    wrong for anything holding a user's session. On-demand
+                    is the honest default while you are still measuring.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -1143,6 +1174,16 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Preemptible / Spot VMs</td><td>Spot — deep discount, reclaimable</td></tr>
                     <tr><td>Sustained-use discount</td><td>Automatic; no reservation needed</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The last row is the one that changes behaviour
+                    rather than vocabulary.</strong> Discounts applied
+                    automatically for sustained use mean you are not
+                    penalised for failing to predict next year, which
+                    removes a whole planning exercise that the other
+                    providers require — and it is the reason cost
+                    comparisons between clouds are harder than the list
+                    prices suggest. Everything above it is a rename.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -1846,6 +1887,15 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Steampipe</td><td>Query your cloud with SQL <span class="acro-exp">(Structured Query Language)</span> (find issues with a SELECT)</td></tr>
                     <tr><td>Cloud-native</td><td>Security Hub / SCC do continuous CSPM too</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Run one of the open-source scanners this week
+                    rather than choosing a platform this quarter.</strong>
+                    The first finding — a public bucket, an over-broad role,
+                    logging switched off in a region nobody uses — arrives
+                    in an afternoon and is usually enough to justify
+                    whatever comes next. Continuous posture management is
+                    worth buying; it is not worth waiting for.
+                  </div>
                 </div>
               </div>
 
@@ -2751,6 +2801,18 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                       <tr><td>Service endpoint</td><td>Keeps traffic to a PaaS service on the Azure backbone</td><td>Cheaper than a private endpoint, but the service keeps its public IP</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Non-transitive peering is the row that shapes
+                    the topology, and people design past it by
+                    accident.</strong> Two peerings do not make a path, so a
+                    hub-and-spoke design needs either a gateway with transit
+                    enabled or a firewall in the middle to relay — and
+                    discovering that after building the spokes is a rebuild.
+                    The private-endpoint row is the other one to plan early:
+                    without matching private DNS, name resolution keeps
+                    handing back the public address and everything silently
+                    leaves your network.
+                  </div>
                 </div>
               </div>
 
@@ -3385,6 +3447,16 @@ dsregcmd /status
                       <tr><td>Running as root in the container</td><td>Turns any other weakness into a much shorter path</td><td>Badly built images; fixable at build time</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Blanket bans fail here, and admission policy
+                    with a documented exception is the arrangement that
+                    survives.</strong> Every row has a real use, so a rule
+                    that forbids them outright is a rule teams route around
+                    — and the routing-around is invisible. Deny by default
+                    in policy, require a named exception with an owner and a
+                    reason, and the runtime-socket row goes first: it is the
+                    one with a modern replacement and no remaining excuse.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -3548,6 +3620,16 @@ dsregcmd /status
                       <tr><td>The DNS <span class="acro-exp">(Domain Name System)</span> service</td><td>Service discovery reveals what other tenants run</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>If the sentence "we isolate tenants with
+                    namespaces" appears in a design, it is wrong.</strong>
+                    Nothing on this list is partitioned by a namespace, so
+                    genuine isolation needs network policy, separate node
+                    pools and — for anything hostile — separate clusters.
+                    Namespaces are for naming and access control; treat them
+                    as a wall and the first breakout is a whole-cluster
+                    event.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -3931,6 +4013,16 @@ dsregcmd /status
                       <tr><td>SaaS <span class="acro-exp">(Software as a Service)</span> identity and collaboration</td><td>Tenant configuration, sharing defaults, app consent</td><td>Sharing defaults nobody reviewed after rollout</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The higher you go, the fewer things you own and
+                    the more each one is a single click away from
+                    disaster.</strong> That is the trade this table
+                    describes: fewer responsibilities, less forgiving. The
+                    public-bucket row remains the most common cloud incident
+                    of all, which is worth sitting with — the abstraction
+                    did not remove the risk, it concentrated it into one
+                    setting.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -4102,6 +4194,16 @@ dsregcmd /status
                       <tr><td>Service used in a region the organisation never uses</td><td>The cryptomining signature, and it is common</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Build the first row before any of the others,
+                    because it is what protects the rest.</strong> An
+                    attacker who disables logging removes every remaining
+                    detection on this list, so an alert on logging
+                    configuration changes is the one that keeps the others
+                    honest. All nine share the property worth copying: rare
+                    in legitimate operation, and strongly associated with
+                    somebody settling in.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">

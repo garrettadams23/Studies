@@ -2348,6 +2348,16 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                       <tr><td>5xx sustained</td><td>The site is unhealthy; crawl less</td><td>Crawl rate drops after outages and recovers slowly — an availability incident has a tail</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The soft 404 is the expensive one, because it
+                    looks like success to everything that checks.</strong>
+                    Returning 200 with "sorry, not found" tells a crawler to
+                    index the page and tells your own monitoring that the
+                    site is healthy — so the failure is invisible from both
+                    directions. Use 503 for maintenance and 410 when you
+                    mean gone; both are read more decisively than the
+                    alternatives.
+                  </div>
                 </div>
               </div>
 
@@ -2778,6 +2788,16 @@ Wrong                                Right
                       <tr><td>Whitespace is not wasted</td><td>Cramming more in lowers how much is read, not how much is available</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The heading row is the one that silently
+                    misinforms.</strong> Equal space above and below a
+                    heading detaches it from its own section, so the reader
+                    groups it with what came before — and no amount of
+                    typography fixes a structure that the spacing
+                    contradicts. One scale used everywhere is the other
+                    half: an off-scale value reads as meaningful, because
+                    everything else on the page is.
+                  </div>
                 </div>
               </div>
 
@@ -2933,6 +2953,16 @@ Wrong                                Right
                       <tr><td>Also set <code>color-scheme</code></td><td>It makes form controls, scrollbars and the browser's own surfaces match. Skipping it leaves bright scrollbars on a dark page</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Inline and before the stylesheet, or none of the
+                    rest matters.</strong> This is a sequencing problem, so
+                    the fix has to run before the first paint — a deferred
+                    script, a framework hook or an external file all arrive
+                    too late by definition. The try/catch row is not
+                    defensive padding: storage access throws outright in
+                    some privacy modes, and an uncaught error there takes
+                    the whole script with it.
+                  </div>
                 </div>
               </div>
 
@@ -3116,6 +3146,16 @@ Wrong                                Right
                       <tr><td>Required fields you do not need</td><td>Everyone, a little. Every mandatory field costs completions; ask why each one is required and delete the ones with no answer</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Validate that you can send to it, not that it
+                    matches your idea of the shape.</strong> Every row
+                    rejects real people on the basis of a pattern somebody
+                    inferred from their own contacts, and the cost is
+                    invisible because the excluded user simply leaves. The
+                    password row is the one with a security consequence too:
+                    a maximum length is a tell that the value is being
+                    stored somewhere it should not be.
+                  </div>
                 </div>
               </div>
 

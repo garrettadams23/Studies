@@ -18898,3 +18898,44 @@ fifteen domains cleared; only `script` (74) remains at any size
 verdicts written by hand              557
 runway                                ~84 topics   (stop line: 40)
 ```
+
+### Eight small domains at once — and the cheat sheet was silently dropping them
+
+`cloud`, `infra`, `cs`, `web`, `data`, `redteam`, `quotes`, `hw`, `math`, `mind`
+and `productivity` in one pass: **81 verdicts**, taking the backlog to 108.
+
+Two things worth recording from it.
+
+**The `quotes` domain needed a positional inserter.** Three of its cards share
+the title "Traceable to a work", so keying by title — the safeguard that has
+prevented every mis-landing so far — refuses to run. The right response was to
+write those three by position and read them back, not to loosen the safeguard.
+
+**The cheat sheet was dropping every verdict, and the guard built to catch
+exactly that missed it.** `gen_cheatsheet.py` matched `<p class="concept-desc">`;
+verdicts are `<div class="concept-desc verdict">`, so eleven closing judgements
+in `math` rendered as nothing. The `unrendered()` guard added earlier this
+session enumerated a short list of `<div>` classes and did not look at divs
+generally — so the construct it was written to catch walked straight past it.
+
+```
+DESC_RE   <p class="concept-desc">        →  <(p|div) class="concept-desc…">
+BLOCK_RE  <p …> plus three div classes    →  <(p|div) …> generally
+```
+
+**A guard that enumerates what is wrong will always miss the thing nobody
+thought of.** The corrected version enumerates what is *known* and flags
+everything else, which is the only direction that fails safe. Re-tested: silent
+on the five shapes the generator renders, fires on `ai-table`, glossary grids,
+lists and any unknown div class.
+
+The sheet also now keeps `<strong>` as Markdown emphasis rather than stripping
+it — 145 bold runs that were previously flattened — and renders each verdict as
+a block quote, so the closing judgement reads as one.
+
+```
+tables_without_verdict   748 → … → 189 → 108
+verdicts written by hand              638
+remaining: script 74 · philosophy 22 · military 12 (deliberate)
+runway                                ~76 topics   (stop line: 40)
+```

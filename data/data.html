@@ -1029,6 +1029,17 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><td>Extensions</td><td><code>CREATE EXTENSION</code> — pgvector, PostGIS, pg_stat_statements</td></tr>
                     <tr><td>MVCC + VACUUM</td><td>Autovacuum reclaims dead rows; monitor bloat</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Watch the last row; it is the operational
+                    failure that surprises people who came from other
+                    databases.</strong> Multi-version concurrency means
+                    deleted and updated rows linger until vacuum reclaims
+                    them, so a table with heavy churn and an autovacuum that
+                    cannot keep up bloats until performance falls off a
+                    cliff — and nothing about it looks like a query problem.
+                    Monitor bloat and transaction age from the start, and
+                    the rest of Postgres asks very little of you.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">

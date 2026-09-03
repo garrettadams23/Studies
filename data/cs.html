@@ -2206,6 +2206,15 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
             <tr><td>Uninitialised read</td><td>Reads whatever the previous occupant left</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>These are one bug with four faces, and the fix is not care.</strong>
+          Every row is a manual guarantee about memory validity that a human is
+          expected to maintain across a whole codebase, forever — which is why decades
+          of review, sanitisers and fuzzing have moved the proportion so little. The
+          durable answer is a language that makes the guarantee for you, applied to
+          new code first; rewriting what already works is rarely the best available
+          trade.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -2910,6 +2919,14 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Monitoring thresholds</td><td>Healthy periods vastly outnumber incidents</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Ask for the base rate before believing any positive result, in any
+          of these domains.</strong> A test that is 99% accurate for a condition
+          affecting one in ten thousand produces about a hundred false alarms per true
+          one, and the arithmetic feels wrong until you do it. In monitoring, this is
+          the whole reason a rare-event detector with an excellent hit rate can still
+          drown a team.
+        </div>
       </div>
     </div>
   </div>
@@ -2992,6 +3009,14 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Report percentiles and the max</td><td>Correct — describes the shape rather than assuming one</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Report percentiles and the maximum; the mean describes nobody's
+          experience.</strong> Under a heavy tail the average is dragged around by the
+          rare events and the standard deviation stops meaning anything — so "three
+          sigma" is not a bound and sizing for the average guarantees saturation
+          exactly when it matters. Latency, file sizes, incident cost and request
+          volume are all this shape.
+        </div>
       </div>
     </div>
   </div>
@@ -3728,6 +3753,14 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Counterexample</td><td>One case where the claim fails</td><td>Disproving a design claim — the fastest tool here</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The counterexample is the one to reach for first, because it is the
+          cheapest.</strong> Disproving a design claim takes one case, and it converts
+          an argument about opinions into a fact in minutes — whereas proving the
+          claim takes the other three. Write the invariant down anyway: an invariant
+          somebody else can check is the difference between a belief about your
+          concurrency and a property of it.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -3859,6 +3892,13 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Incidents cluster on Mondays</td><td>"Something is wrong with Mondays"</td><td>Check whether the clustering exceeds chance first</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Every row is a dashboard being read as an experiment.</strong>
+          Descriptive statistics say what the data contains; the conclusions in the
+          middle column all require a control, a comparison or a baseline that nobody
+          has — and none of that is visible on the chart. The useful habit is to ask
+          out loud, in the meeting, what else changed at the same time.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4044,6 +4084,14 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Seasonal confound</td><td>A test spanning a holiday measures the holiday</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>These are design errors, and no arithmetic afterwards repairs
+          them.</strong> The multiple-metrics row is the one that produces confident
+          nonsense at scale — twenty measurements give you about one significant
+          result by chance — so decide the primary metric before the test runs, in
+          writing. Leakage is the other: if users can see both variants, the
+          experiment measured nothing at all.
+        </div>
       </div>
     </div>
   </div>
@@ -4260,6 +4308,14 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Signal processing</td><td>Transforms expressed as matrix operations</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Recognising it collapses several unrelated-looking performance
+          problems into one.</strong> When the profile of a graphics workload, a
+          recommender and a neural network all bottleneck in the same place, the
+          optimisation you learn in one transfers directly to the others — which is
+          why the next card is worth more than it looks. The insight is worth having
+          even if you never write the loop yourself.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -4284,6 +4340,13 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Use the tuned library</td><td>All of the above, plus decades of platform-specific work</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Use the tuned library, and take the lesson anyway.</strong> Hand-
+          written loops lose by an order of magnitude to something that walks memory
+          the way the cache wants — and that principle applies far beyond matrices, to
+          every hot loop over a large array you will ever write. The generalisation is
+          the point: the arithmetic is rarely the cost, the memory order is.
+        </div>
       </div>
     </div>
   </div>
@@ -4344,6 +4407,14 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>More and better data</td><td>Not regularisation, and usually the strongest option available</td></tr>
           </tbody>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is not on the list by accident, and it is usually the
+          strongest move available.</strong> More and better data beats every penalty
+          term here, and reaching for regularisation first is how teams tune
+          hyperparameters for a fortnight to recover what a thousand more labelled
+          examples would have given them. Among the actual methods, early stopping is
+          nearly free and should be the default.
+        </div>
       </div>
     </div>
     <div class="concept-card">
