@@ -88,8 +88,21 @@ p { font-size: 31px; line-height: 1.35; color: #8296b3; max-width: 34ch; }
 // browser at all, which is why it now runs in `make check` beside the linter
 // instead of at the end of a Chromium job.
 const KEYWORD = "og-card";
+
+// ROOT is baked into the card: the font faces are rewritten to file:// URLs so
+// Chromium can load them off disk. Hashing the string as-is makes the claim
+// machine-dependent — this repo is /home/user/Studies here and
+// /home/runner/work/Studies/Studies on a runner, so a card stamped on one
+// machine reads as stale on the other, forever. The first push after this check
+// went in failed on exactly that, which is the check working: it took thirteen
+// seconds to say so instead of a fortnight.
+const stableCard = card.split(ROOT).join("{ROOT}");
 const claim = `topics=${topics};domains=${domains.length};` +
-              `card=${createHash("sha256").update(card).digest("hex").slice(0, 16)}`;
+              `card=${createHash("sha256").update(stableCard).digest("hex").slice(0, 16)}`;
+if (claim.includes(ROOT)) {
+  console.error("error: the card's fingerprint still contains an absolute path.");
+  process.exit(1);
+}
 
 const CRC_TABLE = Array.from({ length: 256 }, (_, n) => {
   let c = n;
