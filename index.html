@@ -209,19 +209,19 @@ visitor is never told that 1,426 things are new. -->
 <span class="ctag ctag-netplus">Net+</span>
 </div>
 <span class="domain-sub">OSI · TCP/IP · Topologies · DHCP · Ports · DNS · Cabling · Wireless</span>
-<span class="domain-meta" aria-label="73 topics, about 2h 55m to read"
->73 topics · ~2h 55m</span>
+<span class="domain-meta" aria-label="73 topics, about 3h 20m to read"
+>73 topics · ~3h 20m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
 <script type="text/html" class="domain-src" data-domain="net">
 <!-- ── TOPIC: OSI MODEL ─────────────────────────────────────── -->
-<div class="topic" id="osi-model-7-layers" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="osi-model-7-layers" data-reviewed="2026-07" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📶</span>
 <span class="topic-name">OSI <span class="acro-exp">(Open Systems Interconnection)</span> Model — 7 Layers</span>
 <span class="topic-badge">REFERENCE MODEL</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -378,6 +378,18 @@ Bits &nbsp;|&nbsp; Coax · Fiber · UTP <span class="acro-exp">(Unshielded Twist
 <td>Ethernet, Wi-Fi (802.11), PPP, VLAN <span class="acro-exp">(Virtual Local Area Network)</span></td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The four-layer model is what the internet
+actually runs on; the seven-layer one is what people use
+to talk about it.</strong> Nothing implements layers 5
+and 6 as separate things — TLS sits awkwardly across 4,
+5 and 6 depending on who is arguing — which is why the
+mapping in this table is approximate and always will be.
+Learn the seven for the vocabulary, because "that is a
+layer 2 problem" is a genuinely useful sentence in a
+fault, and use the four when reasoning about what is
+really on the wire.
+</div>
 <div class="info-bar ib-muted">
 ⬆ <strong class="text-purple">Encapsulation</strong> —
 sender adds headers going DOWN &nbsp;|&nbsp; ⬇
@@ -518,12 +530,12 @@ style="padding: 5px 14px; font-size: 11px">
 </div>
 </div>
 <!-- TOPIC: TCP vs UDP + 3-Way Handshake -->
-<div class="topic" id="tcp-vs-udp-transport-layer" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="tcp-vs-udp-transport-layer" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤝</span>
 <span class="topic-name">TCP <span class="acro-exp">(Transmission Control Protocol)</span> vs UDP <span class="acro-exp">(User Datagram Protocol)</span> — Transport Layer</span>
 <span class="topic-badge">NETWORK+</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -580,6 +592,18 @@ need for reliability vs speed.
 <td>DNS <span class="acro-exp">(Domain Name System)</span>, VoIP <span class="acro-exp">(Voice over Internet Protocol)</span>, video streaming, DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span>, gaming</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Choose by what a lost packet should do, not by
+which is faster.</strong> If a retransmission arriving
+late is worse than the loss — voice, video, live
+telemetry — UDP is correct and the application handles
+what it needs; if losing bytes silently corrupts the
+result, TCP's overhead is not overhead. The trap in the
+speed row is that TCP is not slow, it is *fair*: what
+you feel as slowness is usually congestion control
+backing off, which is the behaviour keeping the network
+usable.
+</div>
 <div class="dt">▸ TCP 3-WAY HANDSHAKE &amp; FLAGS</div>
 <pre class="code-block"><span class="com"># 3-Way Handshake (connection establishment)</span>
 Client → Server <span class="str">SYN</span> seq=100 Server
@@ -1316,6 +1340,17 @@ Stateless Address Autoconfiguration — no DHCP <span class="acro-exp">(Dynamic 
 </td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The two rows that change how you work are SLAAC
+and link-local, not the address length.</strong> IPv6
+hosts configure themselves and hold several addresses at
+once, so the assumption underneath most IPv4 operations
+— one host, one address, assigned by something you
+control — stops holding, and inventory, firewalling and
+log correlation all have to be rebuilt around that.
+Expect the addressing to be the easy part and the
+operational habits to be the hard one.
+</div>
 </div>
 </div>
 </div>
@@ -1479,6 +1514,18 @@ Intermediary for client requests; caching, filtering
 <td>Port / content</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The layer column is what tells you where to look
+when something is broken.</strong> A fault that survives
+replacing the cable and dies at a VLAN boundary is layer
+2; one that appears only between subnets is layer 3; one
+that only affects a single application over a working
+path is layer 7 and probably a firewall or proxy rule.
+Modern kit blurs the rows — a managed switch routes, a
+load balancer inspects content — so read the column as
+"what it decides on" rather than as a fixed property of
+the box.
+</div>
 </div>
 </div>
 </div>
@@ -1791,6 +1838,17 @@ Net+, Sec+, CySA <span class="acro-exp">(CompTIA Cybersecurity Analyst)</span>+.
 <td>Dev/proxy; same risks as 80/443</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Learn them in cleartext-and-replacement pairs,
+because that is both the exam pattern and the real
+one.</strong> 23 and 22, 21 and 22, 80 and 443, 25 and
+587: every legacy protocol here has a successor, and the
+security note column is really one instruction repeated
+— if it is cleartext, the finding writes itself. That
+pairing is also how the list stops being rote
+memorisation, since the numbers stick to a story rather
+than to each other.
+</div>
 </div>
 </div>
 </div>
@@ -1799,12 +1857,12 @@ Net+, Sec+, CySA <span class="acro-exp">(CompTIA Cybersecurity Analyst)</span>+.
 NEW TOPIC: DNS Record Types
 Source: CEH Cheat Sheet PDF + Net+ Cheat Sheet PDF
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="dns-record-types" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="dns-record-types" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌐</span>
 <span class="topic-name">DNS <span class="acro-exp">(Domain Name System)</span> Record Types</span>
 <span class="topic-badge">REFERENCE TABLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -1879,6 +1937,17 @@ Arbitrary text; used for SPF, DKIM <span class="acro-exp">(DomainKeys Identified
 </td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>TXT is where most of the security-relevant
+configuration now lives, and it is the least protected
+record you own.</strong> SPF, DKIM and DMARC all ride in
+it, so whoever can edit DNS can silently change who is
+allowed to send mail as your domain — which makes
+registrar and zone access a higher-value target than
+most organisations treat it as. Restrict zone transfers
+as the card says, and put the same care into who can
+write a TXT record.
+</div>
 <div class="code-label">DNS FOOTPRINTING COMMANDS</div>
 <pre class="code-block"><span class="com"># Forward lookup</span>
 <span class="fn">nslookup</span> example.com
@@ -2143,12 +2212,12 @@ might not share an earth.
 NEW TOPIC: NMAP Scan Types
 Source: CEH Cheat Sheet PDF
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="nmap-scan-types-reference" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="nmap-scan-types-reference" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔭</span>
 <span class="topic-name">NMAP Scan Types Reference</span>
 <span class="topic-badge">PENTEST TOOL</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -2244,6 +2313,18 @@ Maps firewall rules; determines filtered/unfiltered
 <td>Host discovery only; no port scan</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Read the response columns rather than memorising
+the flag letters.</strong> Every exotic scan here is a
+way of asking the same question — will this port answer
+— and differs only in which packet the target's stack
+has to reason about, which is why the exam asks what a
+closed port returns rather than what the flag is called.
+In practice you will use `-sS` and `-sU` almost
+exclusively; the FIN, XMAS and NULL scans matter because
+their behaviour is defined by an RFC <span class="acro-exp">(Request for Comments)</span> that Windows never
+followed, and that difference is itself a fingerprint.
+</div>
 <div class="dt">▸ USEFUL NMAP OPTIONS</div>
 <pre class="code-block"><span class="com"># Speed / Timing: -T0 (paranoid) → -T5 (insane)</span>
 <span class="fn">nmap</span> -T4 -A 10.5.23.0/24
@@ -2515,12 +2596,12 @@ famous internet outages.
 NEW TOPIC: Wireless Networking Standards
 Source: Net+ + CEH Cheat Sheet PDFs
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="wireless-networking-80211-standards-security" data-reviewed="2026-07" data-read="7" data-level="core">
+<div class="topic" id="wireless-networking-80211-standards-security" data-reviewed="2026-07" data-read="8" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📶</span>
 <span class="topic-name">Wireless Networking — 802.11 Standards &amp; Security</span>
 <span class="topic-badge">REFERENCE TABLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -2710,6 +2791,18 @@ subcarriers
 <td>PoE Plus — up to 30W per port</td>
 </tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The distinction worth carrying out of this table
+is SSID against BSSID.</strong> Users see a network
+name; the radio sees a per-radio MAC address, and every
+roaming, coverage and "it works over there" fault is
+about which BSSID a client has chosen to stay attached
+to rather than about the SSID it thinks it is on. The
+power rows matter for a different and duller reason: an
+access point that boots and then reboots under load is
+usually a switch port budgeted at 802.3af carrying
+something that wanted 802.3at.
+</div>
 </div>
 </div>
 </div>
@@ -2964,17 +3057,35 @@ out.pcap -c 30
 </div>
 </div>
 <!-- BEGINNER-NET v1 -->
-<div class="topic" id="networking-for-absolute-beginners" data-reviewed="2026-07" data-read="2" data-level="core"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">Networking for Absolute Beginners</span><span class="topic-badge">Net+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">2 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">What Is a Network?</div><div class="concept-desc">A network is just two or more computers that can talk to each other. Your home Wi-Fi is a small network; the Internet is the giant network that connects all the small ones together. If computers are houses, the network is the system of roads between them.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">IP <span class="acro-exp">(Internet Protocol)</span> Address = Mailing Address</div><div class="concept-desc">Every device on a network has an IP address (e.g., 192.168.1.10) so data knows where to go — exactly like a street address tells the mail carrier which house. No address, no delivery.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Packets = Envelopes</div><div class="concept-desc">Big files are chopped into small chunks called packets. Each packet is an envelope with a from-address, a to-address, and a piece of the message. They travel separately and get reassembled at the other end.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Ports = Apartment Numbers</div><div class="concept-desc">One device (one IP) runs many programs at once. A port number says which program the data is for — like an apartment number after the street address. Web pages use port 80/443, email and other services use their own.</div></div><div class="concept-card"><div class="concept-label">ROLES</div><div class="concept-title">Client vs. Server</div><div class="concept-desc">The client asks (your phone opening a website); the server answers (the computer that stores that website). Most of what you do online is a polite back-and-forth of requests and responses.</div></div><div class="concept-card"><div class="concept-label">HARDWARE</div><div class="concept-title">Router vs. Switch</div><div class="concept-desc">A switch connects devices inside one network (like hallways in a building). A router connects different networks together and finds the path between them (like roads between cities). Your home box is usually both in one.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">DNS <span class="acro-exp">(Domain Name System)</span> = The Phonebook</div><div class="concept-desc">Humans remember names (google.com); computers need numbers (an IP). DNS is the phonebook that looks up the name and returns the number, automatically, every time you click a link.</div></div><table class="ai-table"><thead><tr><th>Beginner Term</th><th>Plain-English Meaning</th></tr></thead><tbody><tr><td>Bandwidth</td><td>How wide the pipe is — how much data fits per second</td></tr><tr><td>Latency</td><td>How long one trip takes — the delay / 'lag'</td></tr><tr><td>LAN <span class="acro-exp">(Local Area Network)</span></td><td>Local network — your home or office</td></tr><tr><td>WAN <span class="acro-exp">(Wide Area Network)</span></td><td>Wide network — connects distant sites; the Internet is the biggest</td></tr><tr><td>Wi-Fi</td><td>A network with no cables — radio instead of wires</td></tr><tr><td>Firewall</td><td>A guard that decides which traffic is allowed in or out</td></tr></tbody></table></div></div>
+<div class="topic" id="networking-for-absolute-beginners" data-reviewed="2026-07" data-read="3" data-level="core"><div class="topic-header"><span class="topic-icon">🧒</span><span class="topic-name">Networking for Absolute Beginners</span><span class="topic-badge">Net+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">3 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">BIG IDEA</div><div class="concept-title">What Is a Network?</div><div class="concept-desc">A network is just two or more computers that can talk to each other. Your home Wi-Fi is a small network; the Internet is the giant network that connects all the small ones together. If computers are houses, the network is the system of roads between them.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">IP <span class="acro-exp">(Internet Protocol)</span> Address = Mailing Address</div><div class="concept-desc">Every device on a network has an IP address (e.g., 192.168.1.10) so data knows where to go — exactly like a street address tells the mail carrier which house. No address, no delivery.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Packets = Envelopes</div><div class="concept-desc">Big files are chopped into small chunks called packets. Each packet is an envelope with a from-address, a to-address, and a piece of the message. They travel separately and get reassembled at the other end.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">Ports = Apartment Numbers</div><div class="concept-desc">One device (one IP) runs many programs at once. A port number says which program the data is for — like an apartment number after the street address. Web pages use port 80/443, email and other services use their own.</div></div><div class="concept-card"><div class="concept-label">ROLES</div><div class="concept-title">Client vs. Server</div><div class="concept-desc">The client asks (your phone opening a website); the server answers (the computer that stores that website). Most of what you do online is a polite back-and-forth of requests and responses.</div></div><div class="concept-card"><div class="concept-label">HARDWARE</div><div class="concept-title">Router vs. Switch</div><div class="concept-desc">A switch connects devices inside one network (like hallways in a building). A router connects different networks together and finds the path between them (like roads between cities). Your home box is usually both in one.</div></div><div class="concept-card"><div class="concept-label">ANALOGY</div><div class="concept-title">DNS <span class="acro-exp">(Domain Name System)</span> = The Phonebook</div><div class="concept-desc">Humans remember names (google.com); computers need numbers (an IP). DNS is the phonebook that looks up the name and returns the number, automatically, every time you click a link.</div></div><table class="ai-table"><thead><tr><th>Beginner Term</th><th>Plain-English Meaning</th></tr></thead><tbody><tr><td>Bandwidth</td><td>How wide the pipe is — how much data fits per second</td></tr><tr><td>Latency</td><td>How long one trip takes — the delay / 'lag'</td></tr><tr><td>LAN <span class="acro-exp">(Local Area Network)</span></td><td>Local network — your home or office</td></tr><tr><td>WAN <span class="acro-exp">(Wide Area Network)</span></td><td>Wide network — connects distant sites; the Internet is the biggest</td></tr><tr><td>Wi-Fi</td><td>A network with no cables — radio instead of wires</td></tr><tr><td>Firewall</td><td>A guard that decides which traffic is allowed in or out</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>Bandwidth and latency are the two people mix up, and almost every
+"the internet is slow" complaint is the second one.</strong> More bandwidth
+does nothing for a video call that stutters or a remote desktop that lags,
+because the problem is how long each trip takes, not how much fits in the
+pipe — and upgrading the connection is the expensive answer that changes
+nothing. Ask whether the complaint is about a big file taking a long time or
+about everything feeling delayed; those are different faults with different
+fixes.
+</div></div></div>
 <!-- BEGINNER2-NET v1 -->
-<div class="topic" id="ip-addresses-subnets-gently" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🔢</span><span class="topic-name">IP <span class="acro-exp">(Internet Protocol)</span> Addresses &amp; Subnets (Gently)</span><span class="topic-badge">Net+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">READ IT</div><div class="concept-title">What an IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> Address Looks Like</div><div class="concept-desc">IPv4 is four numbers 0–255 separated by dots, like 192.168.1.50. Each device on a network needs one. We’re slowly running out of them, which is why IPv6 <span class="acro-exp">(Internet Protocol version 6)</span> (much longer, with letters) was invented.</div></div><div class="concept-card"><div class="concept-label">TWO WORLDS</div><div class="concept-title">Public vs. Private</div><div class="concept-desc">Private addresses (like 192.168.x.x and 10.x.x.x) are reused inside homes and offices — like apartment numbers that only mean something in your building. Public addresses are unique on the whole Internet, like a full street address.</div></div><div class="concept-card"><div class="concept-label">NEIGHBORHOODS</div><div class="concept-title">What a Subnet Is</div><div class="concept-desc">A subnet groups nearby addresses into one neighborhood so traffic stays local and organized. The subnet mask (e.g., 255.255.255.0) is just the line that says “these addresses are neighbors; everything else is out of town.”</div></div><table class="ai-table"><thead><tr><th>Term</th><th>Plain-English Meaning</th></tr></thead><tbody><tr><td>DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span></td><td>Hands out IP addresses automatically so you don’t have to</td></tr><tr><td>Default gateway</td><td>The exit door to other networks / the Internet</td></tr><tr><td>Subnet mask</td><td>Marks which part of the address is the neighborhood</td></tr><tr><td>IPv6</td><td>The newer, much larger address system</td></tr><tr><td>NAT <span class="acro-exp">(Network Address Translation)</span></td><td>Lets many private devices share one public address</td></tr></tbody></table></div></div>
+<div class="topic" id="ip-addresses-subnets-gently" data-reviewed="2026-07" data-read="2" data-level="core"><div class="topic-header"><span class="topic-icon">🔢</span><span class="topic-name">IP <span class="acro-exp">(Internet Protocol)</span> Addresses &amp; Subnets (Gently)</span><span class="topic-badge">Net+ • Start Here</span><span class="topic-read" title="Rough reading time, estimated from length">2 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">READ IT</div><div class="concept-title">What an IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> Address Looks Like</div><div class="concept-desc">IPv4 is four numbers 0–255 separated by dots, like 192.168.1.50. Each device on a network needs one. We’re slowly running out of them, which is why IPv6 <span class="acro-exp">(Internet Protocol version 6)</span> (much longer, with letters) was invented.</div></div><div class="concept-card"><div class="concept-label">TWO WORLDS</div><div class="concept-title">Public vs. Private</div><div class="concept-desc">Private addresses (like 192.168.x.x and 10.x.x.x) are reused inside homes and offices — like apartment numbers that only mean something in your building. Public addresses are unique on the whole Internet, like a full street address.</div></div><div class="concept-card"><div class="concept-label">NEIGHBORHOODS</div><div class="concept-title">What a Subnet Is</div><div class="concept-desc">A subnet groups nearby addresses into one neighborhood so traffic stays local and organized. The subnet mask (e.g., 255.255.255.0) is just the line that says “these addresses are neighbors; everything else is out of town.”</div></div><table class="ai-table"><thead><tr><th>Term</th><th>Plain-English Meaning</th></tr></thead><tbody><tr><td>DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span></td><td>Hands out IP addresses automatically so you don’t have to</td></tr><tr><td>Default gateway</td><td>The exit door to other networks / the Internet</td></tr><tr><td>Subnet mask</td><td>Marks which part of the address is the neighborhood</td></tr><tr><td>IPv6</td><td>The newer, much larger address system</td></tr><tr><td>NAT <span class="acro-exp">(Network Address Translation)</span></td><td>Lets many private devices share one public address</td></tr></tbody></table>
+<div class="concept-desc verdict">
+<strong>Three of these five explain almost every home and small-office
+network fault.</strong> No address means DHCP; an address but nothing
+outside works means the default gateway; two devices that cannot see each
+other despite both being online usually means the subnet mask disagrees with
+the neighbourhood they were told they are in. Check them in that order and
+you have diagnosed most of what a service desk sees.
+</div></div></div>
 <!-- BEGINNER6-NET v1 -->
 <!-- ── TOPIC: HOW DNS WORKS ──────────────────────────────── -->
-<div class="topic" id="dns-the-internets-phone-book" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="dns-the-internets-phone-book" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📖</span>
 <span class="topic-name">DNS <span class="acro-exp">(Domain Name System)</span> — The Internet's Phone Book</span>
 <span class="topic-badge">NET • Start Here</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -3008,6 +3119,14 @@ out.pcap -c 30
 <tr><td>SOA</td><td>Start of Authority; zone metadata</td><td>Serial, refresh, retry, expire</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The caches at every step are why DNS changes appear to work for you and not
+for anyone else.</strong> Browser, operating system, resolver and the record's own
+time-to-live each hold an answer, so "I updated the record and it still goes to the
+old server" is normally correct behaviour rather than a fault. Lower the TTL a day
+before you plan a change, not on the day; by then everyone who matters has already
+cached the old value.
+</div>
 <div class="concept-card">
 <div class="concept-label">USEFUL DNS TOOLS</div>
 <div class="concept-title">Dig, nslookup, host</div>
@@ -3101,6 +3220,15 @@ nslookup -type=MX google.com</pre>
 <tr><td>802.11be</td><td>Wi-Fi 7</td><td>46 Gbps</td><td>2.4/5/6 GHz</td><td>2024</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Read the band column, not the speed column.</strong> The headline
+figures are laboratory conditions with every stream in use and no interference,
+and no client will ever see them; what actually determines whether a network is
+usable is which bands it can use and how crowded they are. The genuinely
+important line in this table is the arrival of 6 GHz — not because it is faster,
+but because it is empty, and interference is what wireless problems are almost
+always made of.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">2.4 GHz vs 5 GHz</div>
@@ -3122,12 +3250,12 @@ nslookup -type=MX google.com</pre>
 </div>
 <!-- BEGINNER8-NET v1 -->
 <!-- ── TOPIC: SWITCHING & VLANs ──────────────────────────── -->
-<div class="topic" id="switching-vlans-dividing-your-network-logically" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="switching-vlans-dividing-your-network-logically" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔀</span>
 <span class="topic-name">Switching &amp; VLANs <span class="acro-exp">(Virtual Local Area Network)</span> — Dividing Your Network Logically</span>
 <span class="topic-badge">NET • Foundation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -3170,6 +3298,14 @@ This is why switches are efficient — after learning, minimal unnecessary traff
 <tr><td>Native VLAN</td><td>N/A</td><td>Untagged VLAN (usually VLAN 1)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The native VLAN row is the one that bites, and it bites in two different
+ways.</strong> Untagged frames on a trunk belong to it, so a mismatch between the
+two ends silently merges two networks that were supposed to be separate — and
+leaving it as VLAN 1 is the configuration that makes VLAN-hopping attacks worth
+trying. Set it explicitly to an unused VLAN on both ends of every trunk, and never
+carry user traffic on it.
+</div>
 </div>
 </div>
 <!-- ── TOPIC: ROUTING PROTOCOLS 101 ──────────────────────── -->
@@ -3197,6 +3333,14 @@ This is why switches are efficient — after learning, minimal unnecessary traff
 <tr><td>BGP <span class="acro-exp">(Border Gateway Protocol)</span></td><td>Path Vector</td><td>Policy-based</td><td>Internet backbone; ISP <span class="acro-exp">(Internet Service Provider)</span> routing</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Small and stable is a real argument for static routes, and it stops being
+true the moment there is a second path.</strong> Static is predictable and free of
+protocol overhead right up until a link fails, at which point it does nothing at all
+— no failover is not a limitation of the configuration, it is the configuration. If
+you have redundancy you intend to rely on, you need something in the rows below, and
+for almost every enterprise that means OSPF.
+</div>
 <div class="concept-card">
 <div class="concept-label">BGP</div>
 <div class="concept-title">The Protocol That Runs the Internet</div>
@@ -3303,6 +3447,14 @@ sudo ufw status verbose</pre>
 <tr><td>RPO</td><td>Recovery Point Objective — max acceptable data loss</td><td>Defined in DR plan</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>A health check that only proves the process is listening will happily keep a
+broken server in the pool.</strong> TCP <span class="acro-exp">(Transmission Control Protocol)</span> connect succeeds on a server whose database
+connection died; a `/health` endpoint that returns 200 unconditionally is the same
+failure with more ceremony. Make the check exercise the dependency the request
+actually needs — and keep it cheap, because it runs from every balancer, against
+every backend, forever.
+</div>
 </div>
 </div>
 <!-- BEGINNER10-NET v1 -->
@@ -3339,6 +3491,14 @@ sudo ufw status verbose</pre>
 <tr><td>NACL <span class="acro-exp">(Network Access Control List)</span></td><td>Stateless firewall at subnet level</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Security groups and network ACLs <span class="acro-exp">(Access Control List)</span> are the pair people confuse, and
+stateful versus stateless is the whole difference.</strong> A security group
+that allows traffic in automatically allows the reply out; an ACL does not,
+which is why a rule set that looks correct blocks return traffic on ephemeral
+ports. Use security groups for almost everything and reach for ACLs only when
+you need a subnet-wide deny, which is rarer than it sounds.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">CDN</div>
@@ -3431,17 +3591,26 @@ tcpdump -r capture.pcap</pre>
 <tr><td>App works internally, not externally</td><td>Firewall port not open, NAT <span class="acro-exp">(Network Address Translation)</span> not configured</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Work down this table in order, because it is sorted by how much it
+eliminates.</strong> The first three rows split the problem into "no address",
+"no name resolution" and "no route", and between them they account for most
+faults and take under a minute to distinguish. The row that costs people
+afternoons is the intermittent one: a duplex mismatch produces exactly the
+pattern of small, unexplained loss that gets blamed on the application for
+weeks.
+</div>
 </div>
 </div>
 </div>
 <!-- BEGINNER13-NET v1 -->
 <!-- ── TOPIC: IPv6 FUNDAMENTALS ─────────────────────────── -->
-<div class="topic" id="ipv6-the-internets-upgrade" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="ipv6-the-internets-upgrade" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌐</span>
 <span class="topic-name">IPv6 <span class="acro-exp">(Internet Protocol version 6)</span> — The Internet's Upgrade</span>
 <span class="topic-badge">NET • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -3486,6 +3655,15 @@ http://[2001:db8::1]:8080/path</pre>
 <tr><td>Anycast</td><td>From unicast range</td><td>Nearest of a group</td><td>No direct equivalent</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Link-local is the row with no IPv4 habit to fall back on.</strong> Every
+IPv6 interface has one whether you configured anything or not, and it is used
+for neighbour discovery and routing adjacencies — so "IPv6 is not enabled here"
+is usually false, and a network with no IPv6 policy still has IPv6 traffic on
+it. Unique local addresses are the honest private range; resist the temptation
+to treat them as a security boundary the way RFC 1918 addresses are often
+wrongly treated.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">KEY DIFFERENCES</div>
@@ -3502,6 +3680,14 @@ http://[2001:db8::1]:8080/path</pre>
 <tr><td>Fragmentation</td><td>Routers can fragment</td><td>End hosts only (routers don't)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The row that changes daily operations is auto-configuration, not address
+size.</strong> SLAAC means hosts give themselves addresses without asking
+anything you control, which breaks the quiet assumption behind IPv4 inventory,
+DHCP-based access control and log correlation. If you want DHCP-style records in
+IPv6 you have to choose them deliberately; the default is a network that works
+perfectly and cannot tell you who was on it.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DUAL-STACK & TRANSITION</div>
@@ -3556,6 +3742,14 @@ curl -6 https://ipv6.google.com</pre>
 <tr><td>LDAP <span class="acro-exp">(Lightweight Directory Access Protocol)</span></td><td>389/tcp</td><td>Directory services (AD)</td><td>LDAPS <span class="acro-exp">(Lightweight Directory Access Protocol over SSL)</span> (636)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The right-hand column is a to-do list, and the email rows are the ones
+people never finish.</strong> Web traffic moved to HTTPS almost everywhere;
+internal mail retrieval on 110 and 143, management on SNMPv1 or v2c, and file
+transfer on 21 survive for years inside networks because nothing external forces
+the change. Those are the cleartext credentials an intruder finds after the
+first hop, and none of them require a project to fix.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">TCP <span class="acro-exp">(Transmission Control Protocol)</span> VS UDP <span class="acro-exp">(User Datagram Protocol)</span></div>
@@ -3585,12 +3779,12 @@ gap in the stream.
 </div>
 <!-- BEGINNER15-NET v1 -->
 <!-- ── TOPIC: VPNs AND TUNNELING ─────────────────────────── -->
-<div class="topic" id="vpns-tunneling-secure-connections-over-untrusted-networks" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="vpns-tunneling-secure-connections-over-untrusted-networks" data-reviewed="2026-07" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔐</span>
 <span class="topic-name">VPNs <span class="acro-exp">(Virtual Private Network)</span> &amp; Tunneling — Secure Connections Over Untrusted Networks</span>
 <span class="topic-badge">NET • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -3606,6 +3800,15 @@ gap in the stream.
 <tr><td><strong>Commercial VPN</strong></td><td>Privacy/geo-unblocking for consumers</td><td>NordVPN, hiding traffic from ISP <span class="acro-exp">(Internet Service Provider)</span></td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The three rows solve different problems and only one of them is about
+privacy from your provider.</strong> A corporate VPN moves your traffic to a
+network your employer monitors; a commercial one moves it to a company you have
+chosen to trust instead of your internet provider. Neither makes you anonymous,
+and neither protects a session that is already encrypted end to end — which, on
+the modern web, is nearly all of it. Be clear which problem you are buying a
+solution to.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">VPN PROTOCOLS</div>
@@ -3620,6 +3823,15 @@ gap in the stream.
 <tr><td>PPTP <span class="acro-exp">(Point-to-Point Tunneling Protocol)</span></td><td>Obsolete — broken encryption. Never use.</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>WireGuard unless something specific stops you, and never the last
+row.</strong> Its small size is a security argument rather than a performance
+one — there is far less code to have a flaw in — and it is fast enough that the
+choice is rarely a trade. Reach for IPsec/IKEv2 when you need what is already
+built into every operating system and survives changing networks, and treat PPTP
+as broken rather than legacy: it is not weak encryption, it is encryption that
+does not work.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">PROXIES VS VPNs</div>
@@ -3725,6 +3937,14 @@ subnets = 2^(borrowed bits)</pre>
 <tr><td>/16</td><td>255.255.0.0</td><td>16</td><td>65,534</td><td>65,536</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Learn the block-size column and the rest of the table becomes arithmetic
+you can do in your head.</strong> Sizes double downward — 4, 8, 16, 32, 64, 128,
+256 — so the usable hosts are always the block minus two, and a subnet always
+starts at a multiple of its own block size. That last rule is what makes "is
+192.168.1.100 in 192.168.1.64/26" a two-second question rather than a conversion
+to binary.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">WORKED EXAMPLE</div>
@@ -3770,12 +3990,12 @@ net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
 </div>
 <!-- BEGINNER19-NET v1 -->
 <!-- ── TOPIC: NETWORK DESIGN & TOPOLOGIES ────────────────── -->
-<div class="topic" id="network-design-how-networks-are-structured" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="network-design-how-networks-are-structured" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗺️</span>
 <span class="topic-name">Network Design — How Networks Are Structured</span>
 <span class="topic-badge">NET • Foundation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -3792,6 +4012,14 @@ net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
 <tr><td>Hybrid</td><td>Combination (e.g., star-of-stars)</td><td>Real-world networks are hybrids</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>In practice you will design stars and inherit hybrids.</strong> Every
+modern wired network is a star or a star of stars, and the exam value of the
+other rows is recognising them in questions rather than building them. The one
+genuinely live idea here is partial mesh: it is what redundant links between
+distribution switches actually are, and it is why spanning tree exists in the
+next card.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">THE THREE-TIER MODEL</div>
@@ -3821,6 +4049,15 @@ net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
 <tr><td>Out-of-band management</td><td>Manage gear even when the production network is down</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Out-of-band management is the row that saves you at three in the morning
+and the first cut from the budget.</strong> Every other technique here keeps the
+production path alive; only that one lets you fix the device when the production
+path is gone, which is exactly the case where you need to. Redundancy that has
+never been tested by pulling a cable is also worth suspecting: link aggregation
+and gateway failover both fail quietly in ways that only appear at the moment
+you were relying on them.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">QUALITY OF SERVICE</div>
@@ -3831,12 +4068,12 @@ net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
 </div>
 <!-- BEGINNER22-NET v1 -->
 <!-- ── TOPIC: DNS DEEP DIVE & SECURITY ───────────────────── -->
-<div class="topic" id="dns-deep-dive-records-resolution-security" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="dns-deep-dive-records-resolution-security" data-reviewed="2026-07" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌍</span>
 <span class="topic-name">DNS <span class="acro-exp">(Domain Name System)</span> Deep Dive — Records, Resolution &amp; Security</span>
 <span class="topic-badge">NET • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -3858,6 +4095,15 @@ net = ipaddress.ip_network(<span class="str">'192.168.1.0/26'</span>)
 <tr><td>CAA</td><td>Which CAs <span class="acro-exp">(Certificate Authority)</span> may issue certs</td><td>Prevents rogue certificate issuance</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>CNAME is where beginners get hurt, and the rule has one exception worth
+memorising.</strong> A CNAME cannot coexist with other records for the same
+name, which means the apex of a domain — example.com itself, carrying MX and NS
+— cannot be one; that single constraint is behind most "why will the provider
+not let me point my root domain at this" problems, and the answer is the
+provider's ALIAS or ANAME record. Everything else here is straightforward; that
+one is a rule of the protocol rather than a preference.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DIG — THE DNS SWISS ARMY KNIFE</div>
@@ -3890,6 +4136,15 @@ dig example.com ANY              <span class="com"># all records (often restrict
 <tr><td>DNS filtering</td><td>Blocking</td><td>Resolver blocks malicious/known-bad domains (e.g., Pi-hole, Quad9)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>These solve two different problems, and only the last one is deployable
+this afternoon.</strong> DNSSEC proves an answer is genuine; DoH and DoT stop
+anyone reading the question — neither implies the other, and a signed record
+fetched in cleartext is still a record everyone on the path saw you ask for.
+Filtering is the row with the best return for the least work, and it is also the
+one that breaks when clients start using DNS over HTTPS to a resolver you do not
+run, which is worth deciding a policy on before it happens by default.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DNS-BASED ATTACKS</div>
@@ -4012,6 +4267,15 @@ iptables -t nat -A PREROUTING -p tcp --dport 443 \
 <tr><td>Guest onboarding</td><td>Captive portal, sponsored access</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Posture assessment is what people buy it for and dynamic segmentation is
+what actually pays.</strong> Checking whether antivirus is running catches
+almost nothing an attacker cannot fake; putting the printer, the badge reader
+and the guest laptop on segments that cannot reach the finance system limits
+every intrusion that starts on them. Deploy in monitor mode first — a network
+access control rollout that quarantines a director's laptop on day one is a
+project that ends on day two.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">RADIUS</div>
@@ -4099,12 +4363,12 @@ Content-Length: 142
 </div>
 <!-- BEGINNER28-NET v1 -->
 <!-- ── TOPIC: NETWORK MONITORING ─────────────────────────── -->
-<div class="topic" id="network-monitoring-seeing-what-flows-through" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="network-monitoring-seeing-what-flows-through" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📡</span>
 <span class="topic-name">Network Monitoring — Seeing What Flows Through</span>
 <span class="topic-badge">NET • Operations</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -4124,6 +4388,15 @@ Content-Length: 142
 <tr><td>SNMPv3</td><td>Adds authentication + encryption — use this</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Two rows, one instruction: v3 everywhere, and check what your monitoring
+system is actually using.</strong> A community string is a password sent in
+clear text, and "public" is still on more devices than anyone would like to
+admit — which makes it not just an eavesdropping risk but a free inventory of
+your network for anyone on it. This is one of the cheapest hardening wins
+available, and it is nearly always outstanding because monitoring works fine as
+it is.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">FLOW DATA</div>
@@ -4137,6 +4410,15 @@ Content-Length: 142
 <tr><td>sFlow</td><td>Multi-vendor</td><td>Packet sampling, lower overhead</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Enable flow data before you need it, because it is the only record that
+survives the question you have not thought of yet.</strong> Full packet capture
+is expensive and short-lived; flow records are small enough to keep for months,
+and "which internal host talked to that address, and how much, in March" is
+answerable from them and from nothing else. Prefer IPFIX where the kit supports
+it, and accept sampling — sFlow's approximation is far more useful than the
+exact data you decided not to collect.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">PACKET CAPTURE</div>
@@ -4470,12 +4752,12 @@ next time.
 </div>
 <!-- BEGINNER33-NET v1 -->
 <!-- ── TOPIC: Wireless Security – 802.11 ─────────────────────── -->
-<div class="topic" id="wireless-security-80211-standards-wi-fi-hardening" data-reviewed="2026-07" data-read="5" data-level="beginner">
+<div class="topic" id="wireless-security-80211-standards-wi-fi-hardening" data-reviewed="2026-07" data-read="6" data-level="beginner">
 <div class="topic-header">
 <span class="topic-icon">📶</span>
 <span class="topic-badge">Beginner</span>
 <span class="topic-name">Wireless Security – 802.11 Standards &amp; Wi-Fi Hardening</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -4494,6 +4776,16 @@ history helps you understand why old protocols are dangerous:<br><br>
 <tr><td>WPA3-Personal</td><td>2018</td><td>AES + SAE <span class="acro-exp">(Simultaneous Authentication of Equals)</span></td><td>Best for home/small biz</td></tr>
 <tr><td>WPA3-Enterprise</td><td>2018</td><td>AES-256 + SAE</td><td>Best for enterprise</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The real decision in this table is Personal against Enterprise, not
+the version number.</strong> A shared passphrase is known by everyone who
+ever had it, cannot be revoked for one person, and walks out with every
+departing employee — which is why the enterprise rows exist and why the
+upgrade that matters is to per-user credentials rather than to the next
+protocol generation. WPA3 fixes the offline dictionary attack on the
+passphrase, which is genuinely worth having and does not solve the sharing
+problem at all.
+</div>
 <br>
 <strong>WPA2-Personal weakness:</strong> offline dictionary attacks
 against the 4-way handshake. A weak passphrase = cracked in hours.
@@ -4939,12 +5231,12 @@ with a tool like the one above rather than eyeballing the addresses and assuming
 </div>
 </div>
 <!-- BEGINNER45-NET v1 -->
-<div class="topic" id="load-balancers-explained-spreading-the-work-around" data-reviewed="2026-07" data-read="3" data-level="beginner">
+<div class="topic" id="load-balancers-explained-spreading-the-work-around" data-reviewed="2026-07" data-read="4" data-level="beginner">
 <div class="topic-header">
 <span class="topic-icon">🔀</span>
 <span class="topic-badge">Beginner</span>
 <span class="topic-name">Load Balancers Explained – Spreading the Work Around</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -4966,6 +5258,15 @@ quietly routes them to whichever healthy server makes the most sense at that mom
 <tr><td>IP <span class="acro-exp">(Internet Protocol)</span> hash</td><td>Routes based on a hash of the client's IP — the same client tends to land on the same server</td><td>You need "session stickiness" without a shared session store</td></tr>
 <tr><td>Weighted</td><td>Some servers get proportionally more traffic than others, based on assigned weights</td><td>Your servers have meaningfully different capacities (a newer, beefier box vs. an older one)</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Least connections is the sane default; IP hash is a workaround you
+should be trying to delete.</strong> Round robin assumes every request costs the
+same, which stops being true the moment one endpoint is slow, and sticky
+sessions by client address distribute badly behind corporate proxies and break
+the moment a server is removed. If you need stickiness, the better answer is
+usually to move the session out of the server — at which point every strategy
+above works and you can scale down without logging anybody out.
+</div>
 </div>
 <div class="concept-card">
 <span class="concept-label">Concept</span>
@@ -5040,6 +5341,15 @@ shared <em>session key</em> — without ever transmitting that key in a form an 
 <tr><td>5. Secure session begins</td><td>From here on, all traffic is encrypted with the session key using
 fast symmetric encryption — the certificate-based "slow" cryptography has done its job and steps aside.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Step 3 is the only one that can fail for a reason a user can act on, and
+it is the one browsers explain worst.</strong> Everything else is machinery;
+certificate verification is where an expired certificate, a missing intermediate
+or a name mismatch turns into a warning page. Learn to tell those three apart —
+an expired certificate is a renewal, a missing intermediate is a server
+misconfiguration that works in some clients and not others, and a name mismatch
+usually means the request reached the wrong virtual host.
+</div>
 </div>
 <div class="concept-card">
 <span class="concept-label">Concept</span>
@@ -5070,12 +5380,12 @@ conflating them is one of the most common (and most exploited) assumptions on th
 </div>
 </div>
 </div>
-<div class="topic" id="bgp-how-the-internet-routes-between-networks" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="bgp-how-the-internet-routes-between-networks" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗺️</span>
 <span class="topic-name">BGP <span class="acro-exp">(Border Gateway Protocol)</span> — How the Internet Routes Between Networks</span>
 <span class="topic-badge">Routing</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -5106,6 +5416,17 @@ agreement rather than central control.
 <tr><td>AS_PATH</td><td>The list of ASes a route passes through — used to pick paths and prevent loops.</td></tr>
 <tr><td>eBGP / iBGP</td><td>BGP between different ASes / within one AS.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Peering and transit is the distinction that
+explains why the internet routes the way it
+does.</strong> Paths are chosen by who pays whom, not by
+what is shortest or fastest, so a packet between two
+cities can leave the country and come back because that
+is the commercial arrangement between two autonomous
+systems. Once that is clear, the attributes in the next
+card stop looking arbitrary — they are the knobs for
+expressing a contract in a routing table.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -5124,6 +5445,17 @@ cheaper or contractually-preferred paths.
 <tr><td>AS_PATH length</td><td>Shorter path preferred (fewer ASes to cross).</td></tr>
 <tr><td>MED</td><td>A hint to a neighbor about which entry point to prefer.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Local preference wins over everything below it,
+which means you control your outbound traffic and merely
+influence your inbound.</strong> That asymmetry is the
+whole practical lesson: you decide which of your
+providers your traffic leaves by; getting traffic to
+arrive the way you want depends on other networks
+honouring hints like MED and path prepending, and they
+are under no obligation to. Plan capacity accordingly —
+inbound is the direction you cannot dictate.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -5142,12 +5474,12 @@ a single fat-fingered BGP change at a big provider can make headlines.
 </div>
 </div>
 </div>
-<div class="topic" id="qos-quality-of-service-traffic-shaping" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="qos-quality-of-service-traffic-shaping" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚦</span>
 <span class="topic-name">QoS — Quality of Service &amp; Traffic Shaping</span>
 <span class="topic-badge">Networking</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -5193,6 +5525,17 @@ the other on purpose.
 <tr><td>Queuing</td><td>High-priority marks go into faster queues; routers service them first.</td></tr>
 <tr><td>Shaping vs Policing</td><td><strong>Shaping</strong> buffers excess traffic to smooth it; <strong>policing</strong> just drops it over a limit.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Quality of service does not create bandwidth; it
+decides who suffers when there is not enough.</strong>
+That is worth saying plainly, because it is bought as a
+performance feature and is really a prioritisation
+policy — and on a link that is not congested it does
+nothing at all. Also note that marks are only trusted
+inside your own boundary: a DSCP value set by a host or
+arriving from the internet is a suggestion, and any sane
+edge re-marks it.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -5210,12 +5553,12 @@ latency-sensitive traffic across an MPLS <span class="acro-exp">(Multiprotocol L
 </div>
 </div>
 </div>
-<div class="topic" id="http2-http3-quic-modern-web-transport" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="http2-http3-quic-modern-web-transport" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚀</span>
 <span class="topic-name">HTTP/2 <span class="acro-exp">(HyperText Transfer Protocol version 2)</span>, HTTP/3 <span class="acro-exp">(HyperText Transfer Protocol version 3)</span> &amp; QUIC <span class="acro-exp">(Quick UDP Internet Connections)</span> — Modern Web Transport</span>
 <span class="topic-badge">Networking</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -5243,6 +5586,18 @@ move on the wire to kill latency. Same API <span class="acro-exp">(Application P
 <tr><td>Header compression</td><td>None</td><td>HPACK</td><td>QPACK</td></tr>
 <tr><td>Head-of-line block</td><td class="c-red">Per request</td><td class="c-amber">At TCP layer</td><td class="c-green">Solved</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The head-of-line row is the reason each
+generation exists.</strong> HTTP/2 fixed it between
+requests and left it at the transport, so one lost
+packet still stalls every stream on the connection —
+which is why HTTP/3 moved off TCP entirely rather than
+optimising further. That also explains where the benefit
+lands: on lossy mobile links it is substantial, on a
+good wired connection it is close to nothing, and any
+test that shows otherwise was probably measuring the
+connection setup.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -5312,6 +5667,18 @@ correlate, and TLS <span class="acro-exp">(Transport Layer Security)</span> cert
 <tr><td>Log correlation</td><td>Investigating an incident across servers is impossible if their timestamps don't line up.</td></tr>
 <tr><td>Databases / distributed systems</td><td>Ordering, leases, and conflict resolution can misbehave with clock skew.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Time synchronisation is infrastructure, and its
+failures are always diagnosed as something
+else.</strong> Every row here presents as an
+authentication or certificate problem, so hours get
+spent on the wrong system before somebody checks the
+clock — the five-minute Kerberos tolerance in particular
+produces logins that fail for one server and work
+everywhere else. Monitor drift as a first-class metric,
+and make sure the monitoring does not depend on the
+thing that has drifted.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -5352,12 +5719,12 @@ display.
 </div>
 </div>
 </div>
-<div class="topic" id="reverse-proxies-nginx-haproxy-the-front-door" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="reverse-proxies-nginx-haproxy-the-front-door" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚪</span>
 <span class="topic-name">Reverse Proxies — nginx, HAProxy &amp; the Front Door</span>
 <span class="topic-badge">Networking</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -5386,6 +5753,18 @@ your application servers can stay simple and private.
 <tr><td>Protection</td><td>Rate limiting, request filtering, hiding back-end topology.</td></tr>
 <tr><td>Static files</td><td>Serves assets directly, freeing the app for dynamic work.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>TLS termination is the row that changes your
+security model, and it deserves a deliberate
+decision.</strong> Traffic behind the proxy is plain
+HTTP unless you re-encrypt, which is fine inside a
+trusted segment and is exactly the assumption a zero-
+trust design rejects. Everything else here is
+convenience with an obvious payoff; that one quietly
+answers "where does the encrypted boundary end", and
+most incidents that involve a proxy involve somebody
+having assumed a different answer.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -5641,12 +6020,12 @@ it is what the procurement deck usually says.
 </div>
 </div>
 </div>
-<div class="topic" id="modern-connectivity-5g-private-cellular-satellite-iot-radios" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="modern-connectivity-5g-private-cellular-satellite-iot-radios" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📡</span>
 <span class="topic-name">Modern Connectivity — 5G, Private Cellular, Satellite &amp; IoT <span class="acro-exp">(Internet of Things)</span> Radios</span>
 <span class="topic-badge">Networking • Emerging</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -5672,6 +6051,17 @@ no single technology wins all four.
 <tr><td>Zigbee / Thread / Matter</td><td>Short-range mesh for building &amp; IoT devices</td><td>Ecosystem fragmentation; Matter is the convergence bet</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Choose by the data rate and the power budget,
+not by the marketing generation.</strong> Two of these
+rows carry megabits and two carry kilobits, and a sensor
+network on a technology chosen for its headline speed is
+an expensive way to send a temperature reading. The
+"watch out" column is where the projects actually fail —
+private cellular in particular is technically excellent
+and needs spectrum, hardware and expertise that a small
+network team does not have and cannot hire quickly.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -5909,12 +6299,12 @@ management path is part of the casualty.
 </div>
 </div>
 </div>
-<div class="topic" id="mtu-fragmentation-the-half-loading-website" data-reviewed="2026-08" data-read="7" data-level="core">
+<div class="topic" id="mtu-fragmentation-the-half-loading-website" data-reviewed="2026-08" data-read="8" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📦</span>
 <span class="topic-name">MTU <span class="acro-exp">(Maximum Transmission Unit)</span>, Fragmentation &amp; the Half-Loading Website</span>
 <span class="topic-badge">Network Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -6005,6 +6395,15 @@ Step down until it passes: that value + 28 is your real path MTU.</pre>
 <tr><td>Works from one host, not another</td><td>Different paths. Compare the routes before adjusting anything</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The third row is the one that turns a five-minute test into a
+fortnight of misattributed blame.</strong> When the "packet too big" message
+is filtered, the sender never learns to reduce its size and the connection
+simply stalls — which presents as an application that works for small
+responses and hangs on large ones, and gets blamed on the application every
+time. If a transfer dies at exactly the same point each attempt, test the
+path MTU before anything else.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -6352,6 +6751,14 @@ that produced it.
 <tr><td>Restore one to a spare device occasionally</td><td>The only way to know the archive is a rebuild rather than a text file</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the only one that tells you whether the other four
+worked.</strong> A nightly pull into version control with diff alerting is
+excellent practice and proves only that a file was collected — restoring one
+onto a spare device is what proves it is a rebuild rather than a text file.
+Do it once a year for one device of each type, and treat the result as the
+real measure of your recovery time for network kit.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -6584,6 +6991,15 @@ NAT problems before any capture is needed.
 <tr><td>Policy NAT</td><td>Conditionally, based on the matched policy</td><td>Different translation per destination or per partner</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Name the direction and the address half out loud before touching
+anything.</strong> Nearly every stubborn NAT fault dissolves at the sentence
+"the source address of outbound traffic on the outside interface" — because
+saying it forces you to notice which of the two you had actually configured.
+The row that surprises people is static one-to-one: it applies in both
+directions, so it silently changes outbound behaviour for a host that was
+configured for inbound reasons.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -6719,12 +7135,12 @@ cause is elsewhere in the topology entirely.
 </div>
 </div>
 <!-- ── TOPIC: RF FUNDAMENTALS & SITE SURVEYS ─────────────────── -->
-<div class="topic" id="rf-fundamentals-site-surveys-channels-width-co-channel-inter" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="rf-fundamentals-site-surveys-channels-width-co-channel-inter" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📡</span>
 <span class="topic-name">RF <span class="acro-exp">(Radio Frequency)</span> Fundamentals &amp; Site Surveys — Channels, Width &amp; Co-Channel Interference</span>
 <span class="topic-badge">Network Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -6796,6 +7212,15 @@ signal-strength map is green precisely where the problem is.
 <tr><td>Retry rate</td><td>The clearest early indicator of an unhealthy cell</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Ask for the signal-to-noise and channel views; the signal-strength
+map is the one that is green where the problem is.</strong> In dense
+environments coverage is almost never the constraint — contention is — and a
+survey delivered as strength alone will recommend more access points, which
+makes contention worse. Retry rate is the number to watch afterwards: it
+moves before users complain, and it moves back when the channel plan is
+right.
+</div>
 </div>
 </div>
 </div>
@@ -6831,6 +7256,14 @@ meeting-room AP at a terrible rate, is the classic "Wi-Fi is slow" ticket.
 <tr><td>One device type only</td><td>Driver or supplicant behaviour</td><td>Update the driver before changing the network</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Turn power down before you turn anything up.</strong> The instinct
+on a roaming complaint is to add coverage, and more power makes sticky
+clients stickier and contention worse — the fixes in this table are mostly
+about making a distant access point less attractive rather than making a
+near one louder. And check the last row first when only one device type is
+affected: replacing a driver is cheaper than redesigning a channel plan.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -6861,12 +7294,12 @@ Record which test answered it in the ticket. Wireless complaints recur, and a no
 </div>
 </div>
 <!-- ── TOPIC: STRUCTURED CABLING ─────────────────────────────── -->
-<div class="topic" id="structured-cabling-racks-fibre-in-practice" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="structured-cabling-racks-fibre-in-practice" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧵</span>
 <span class="topic-name">Structured Cabling, Racks &amp; Fibre in Practice</span>
 <span class="topic-badge">Network Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -6890,6 +7323,14 @@ fault in two minutes and unplugging things to see what breaks.
 <tr><td>Update it at the time of the change</td><td>It is never updated later; treat it as part of the change</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the one that makes the scheme survive; everything
+above it decays without it.</strong> Documentation updated "later" is
+documentation that is wrong, and a port map that is wrong is worse than none
+because somebody will trust it during an incident. Treat the record as part
+of the change rather than as a follow-up task, and the rack stays traceable
+for years at almost no marginal cost.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -6944,12 +7385,12 @@ eye damage is permanent — inspect with a scope, and treat every port as live.
 </div>
 </div>
 <!-- ── TOPIC: CUTOVER NIGHTS ─────────────────────────────────── -->
-<div class="topic" id="cutover-nights-gono-go-comms-rollback-triggers" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="cutover-nights-gono-go-comms-rollback-triggers" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌙</span>
 <span class="topic-name">Cutover Nights — Go/No-Go, Comms &amp; Rollback Triggers</span>
 <span class="topic-badge">Network Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -6974,6 +7415,14 @@ survivable.
 <tr><td>What is acceptable to defer</td><td>Cosmetic issues do not stop a cutover; agree which are cosmetic</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The deadline is the row that has to be a clock time, not a
+judgement.</strong> "We roll back if it is not working" fails at four in the
+morning because at four in the morning it always feels like ten more minutes
+will do it — a named time and a named person who is authorised to call it
+are what remove that conversation. Write both into the change record, so the
+decision has already been made by people who were rested.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -7084,12 +7533,12 @@ network.
 </div>
 </div>
 <!-- ── TOPIC: VENDOR FIREWALL CONCEPTS ───────────────────────── -->
-<div class="topic" id="vendor-firewall-concepts-the-ideas-behind-the-different-cons" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="vendor-firewall-concepts-the-ideas-behind-the-different-cons" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏭</span>
 <span class="topic-name">Vendor Firewall Concepts — The Ideas Behind the Different Consoles</span>
 <span class="topic-badge">Network Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -7115,6 +7564,15 @@ the underlying model to be familiar.
 <tr><td>Candidate config and commit</td><td>Edits staged, then applied atomically — a genuine safety feature</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Candidate configuration with an atomic commit is the one row that is
+a genuine capability difference rather than a naming difference.</strong>
+Platforms that stage edits and apply them together let you build a complex
+change safely and back it out as a unit; platforms that apply each line as
+you type it do not, and that changes how you work far more than any menu
+layout. When comparing products, ask about that and about the commit-confirm
+timer, which is what saves you when the change locks you out.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -7161,12 +7619,12 @@ estate will actually run at.
 </div>
 </div>
 <!-- ── TOPIC: CONTROLLER VS CLOUD-MANAGED ────────────────────── -->
-<div class="topic" id="controller-vs-cloud-managed-choosing-a-wireless-operating-mo" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="controller-vs-cloud-managed-choosing-a-wireless-operating-mo" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">☁️</span>
 <span class="topic-name">Controller vs Cloud-Managed — Choosing a Wireless Operating Model</span>
 <span class="topic-badge">Network Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -7188,6 +7646,14 @@ an organisation with strict data-residency requirements and its own network engi
 <tr><td>Controller-less / distributed</td><td>Small sites needing no extra box</td><td>Fewer central features; scaling limits</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Answer "who operates this in three years" before comparing feature
+lists.</strong> Cloud-managed platforms are the right trade for small teams
+and distributed sites and they are a subscription you cannot stop paying
+without losing the network — which is a strategic commitment dressed as an
+operational preference. On-premises control is worth it only if you
+genuinely have, and will keep, the expertise to run the controller.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -7221,12 +7687,12 @@ Engineering domain.
 </div>
 </div>
 <!-- ── TOPIC: FIELD TOOLKIT ──────────────────────────────────── -->
-<div class="topic" id="the-field-toolkit-what-to-carry-and-the-test-each-tool-answe" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="the-field-toolkit-what-to-carry-and-the-test-each-tool-answe" data-reviewed="2026-08" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧰</span>
 <span class="topic-name">The Field Toolkit — What to Carry, and the Test Each Tool Answers</span>
 <span class="topic-badge">Network Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -7276,6 +7742,14 @@ can be avoided entirely, and the other half go faster with five minutes of prepa
 <tr><td>Who is on site, and can they be your hands?</td><td>Often removes the journey entirely</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the one that most often removes the journey
+entirely.</strong> Somebody is usually already at the site and can read a
+light, reseat a cable or photograph a screen — and five minutes establishing
+who that is beats two hours of driving to do the same. The key row is the
+one that stings: arriving at a locked comms room is the most common wasted
+visit in the trade, and it is entirely preventable by one phone call.
+</div>
 </div>
 </div>
 </div>

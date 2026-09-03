@@ -68,7 +68,11 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 #
 # 635 -> 589: all 46 in `grc`. Compliance tables list obligations without
 # saying which bind you or in what order, which is the same shape of gap.
-CEILINGS = {"inline style attribute": 1565, "table with no verdict": 589}
+#
+# 589 -> 535: all 54 in `net`. Five domains clear; 211 verdicts written. The
+# byte cost is tracked in plan.md — roughly one topic of page budget per nine
+# verdicts, which is the trade being made deliberately.
+CEILINGS = {"inline style attribute": 1565, "table with no verdict": 535}
 
 
 class Nesting(HTMLParser):

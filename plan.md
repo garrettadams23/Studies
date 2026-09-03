@@ -18623,3 +18623,47 @@ verdicts written by hand              158
 Four domains done, twenty-two to go, and the backlog is down by 159 from the
 corrected figure. The read-back check has now been run on all 158 and caught two
 mis-landings, both in cards carrying more than one table.
+
+### `net`, all 54 — and what the programme costs in page budget
+
+Fifth domain clear. Networking tables are mostly **taxonomies**, and the missing
+sentence there is different again from `ops` and `grc`: not *which one*, but
+*which row is the one that will actually bite you*.
+
+> **The native VLAN row is the one that bites, and it bites in two different
+> ways.** Untagged frames on a trunk belong to it, so a mismatch between the two
+> ends silently merges two networks that were supposed to be separate.
+
+> **Read the band column, not the speed column.** The headline figures are
+> laboratory conditions… what actually determines whether a network is usable is
+> which bands it can use and how crowded they are.
+
+> **The third row is the one that turns a five-minute test into a fortnight of
+> misattributed blame.** When the "packet too big" message is filtered, the
+> sender never learns to reduce its size and the connection simply stalls.
+
+### The arithmetic, stated rather than discovered later
+
+Five domain passes have moved the page budget measurably, and it is worth being
+explicit about the trade rather than finding out at 3%:
+
+```
+after career + military   ~133 topics of runway
+after ops                 ~127
+after grc                 ~122
+after net                 ~117
+```
+
+About **one topic of runway per nine verdicts**. The 535 still outstanding would
+cost roughly 60 more topics, leaving ~57 — which is affordable, and is a real
+decision rather than a free one. It is being made deliberately: a verdict is the
+highest-value sentence per byte on this site, since it is the one thing the
+rubric says a card must have and the one thing a reference cannot get from
+anywhere else. If the runway drops below about 40, the structural conversation in
+`page_budget.py` comes first and the remaining domains wait.
+
+```
+tables_without_verdict   748 → 712 → 688 → 635 → 589 → 535
+career 36→0   military 36→12 (deliberate)   ops 53→0   grc 46→0   net 54→0
+verdicts written by hand              211
+```
