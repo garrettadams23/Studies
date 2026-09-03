@@ -20153,3 +20153,42 @@ it is unambiguous, and it is now written down rather than guessed.
 **Second time this session that guard has stopped a new ambiguity**, and the
 first was also mine — CSP in `ops`, from the annotator change. A rule that fires
 on the author rather than only on inherited content is the useful kind.
+
+---
+
+## Session record — deepening, sixth card, written entirely on the defensive side
+
+`[redteam] Mythic, Havoc & Empire — The C2 Ecosystem`: one card, four frameworks
+with a line each, and a verdict that already pointed where the depth belonged —
+*the tools change, the behaviour does not.* The card named that and then stopped.
+
+```
+1 card, 1,484 chars   ->   3 cards, 4,370 chars
+```
+
+Both new cards are detection material, which is what the domain's own convention
+asks for — every card here pairs the offensive reference with a blue-team note.
+
+- **Beaconing is a timing property, not a payload property.** Detection effort
+  goes to what the tool *is* — a hash, a header, a TLS fingerprint — and all of
+  it changes with the next build. What cannot change is what the technique
+  requires: an implant with no inbound path has to ask for work on a schedule.
+  So the signal is the distribution of intervals, and the shape a defender should
+  be able to describe without naming a tool is a near-constant period with
+  bounded jitter, a session count no person produces, and a byte ratio
+  asymmetric the wrong way. **The fingerprint is a host whose "web browsing" has
+  a heartbeat.**
+- **Which detections survive the tool being swapped.** Periodic callbacks and an
+  unusual process holding a socket survive, because the technique needs both. A
+  TLS or payload fingerprint does not — a rebuild is enough — and neither does a
+  known-bad destination, because infrastructure is cheap and a popular hosting
+  provider is not known-bad. That is
+  <span class="xref">Detection Tuning &amp; the Pyramid of Pain</span> in one
+  domain: **the signals that cost an adversary something to change are
+  behavioural, and the ones that cost nothing are the easiest to write a rule
+  for** — which is why most rule sets are full of the second kind.
+
+```
+10th percentile   2,048 -> 2,064 across six deepening waves
+padding metric    1,108 excluding verdicts, unmoved throughout
+```

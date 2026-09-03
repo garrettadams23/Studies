@@ -75193,8 +75193,8 @@ the two tasks to start at the far end of that calendar, not the near one.
 <span class="ctag ctag-secx">OSCP</span>
 </div>
 <span class="domain-sub">Recon · Exploitation · AD Attacks · C2 · Password &amp; Wireless</span>
-<span class="domain-meta" aria-label="58 topics, about 2h 05m to read"
->58 topics · ~2h 05m</span>
+<span class="domain-meta" aria-label="58 topics, about 2h 10m to read"
+>58 topics · ~2h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -76660,12 +76660,12 @@ The adoption this card mentions is the operational problem with it. A framework 
 </div>
 </div>
 </div>
-<div class="topic" id="mythic-havoc-empire-the-c2-ecosystem" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="mythic-havoc-empire-the-c2-ecosystem" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧩</span>
 <span class="topic-name">Mythic, Havoc &amp; Empire — The C2 <span class="acro-exp">(Command and Control)</span> Ecosystem</span>
 <span class="topic-badge">C2</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -76690,6 +76690,53 @@ and CTF <span class="acro-exp">(Capture The Flag)</span> players use — and wha
 Detection engineering built on ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> techniques (C2 over web protocols,
 DNS, encrypted channels) generalizes across all of them, unlike per-tool
 signatures.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Inversion</div>
+<div class="concept-title">Beaconing Is a Timing Property, Not a Payload Property</div>
+<div class="concept-desc">
+Detection effort goes to what the tool <em>is</em> &mdash; a payload hash, a
+distinctive header, a TLS <span class="acro-exp">(Transport Layer Security)</span> fingerprint &mdash; and every one of those
+changes with the next build, which is why per-tool signatures age in weeks. What
+cannot change is what the technique <em>requires</em>: an implant that has no
+inbound path has to ask for work on a schedule.
+<strong class="c-cyan">The signal is in the distribution of intervals, not in the
+bytes.</strong>
+</div>
+<div class="concept-desc">
+Which gives the shape a defender should be able to describe without naming a tool:
+a client that contacts one destination at a near-constant period, with jitter that
+is random but bounded; a session count far above what a person browsing produces;
+and a byte ratio that is asymmetric the wrong way &mdash; small regular requests,
+occasional large responses. <strong class="c-amber">The fingerprint is a host whose
+&ldquo;web browsing&rdquo; has a heartbeat.</strong>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">Which Detections Survive the Tool Being Swapped</div>
+<div class="concept-desc">
+Every layer sees something different, and they age at very different rates. The
+useful question when choosing where to spend detection effort is not
+&ldquo;what can we see?&rdquo; but &ldquo;what would still be true if they changed
+framework tomorrow?&rdquo;
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Signal</th><th>Where it lives</th><th>Survives a tool swap?</th></tr>
+<tr><td>Periodic callbacks to one destination</td><td>Netflow, proxy logs</td><td><strong class="c-green">Yes</strong> &mdash; the technique needs it; long sleeps trade detection for tempo</td></tr>
+<tr><td>Unusual process making network calls</td><td>Endpoint telemetry</td><td><strong class="c-green">Yes</strong> &mdash; a document reader with a socket is odd whatever wrote it</td></tr>
+<tr><td>TLS or payload fingerprint</td><td>Network sensor</td><td><strong class="c-red">No</strong> &mdash; a rebuild is enough</td></tr>
+<tr><td>Known-bad destination</td><td>Threat feeds</td><td><strong class="c-red">No</strong> &mdash; infrastructure is cheap, and a popular hosting provider is not known-bad</td></tr>
+</table>
+<div class="concept-desc verdict">
+Spend on the top two. This is
+<span class="xref" data-xref="detection-tuning-the-pyramid-of-pain" role="link" tabindex="0">Detection Tuning &amp; the Pyramid of Pain</span> in one
+domain: the signals that cost an adversary something to change are behavioural,
+and the ones that cost them nothing are the ones easiest to write a rule for
+&mdash; which is exactly why most rule sets are full of the second kind.
 </div>
 </div>
 </div>
