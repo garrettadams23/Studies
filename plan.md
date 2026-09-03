@@ -20031,3 +20031,40 @@ which of those four matters at 2am.
 The padding counter-metric held at **1,108 excluding verdicts** across both
 deepening waves, which is the number that had to stay still for either of them
 to count as depth rather than volume.
+
+---
+
+## Session record — deepening, third card, and a redundancy the deepening created
+
+`[eng] Career Ladders & Interviews` sat one card deep: a four-row table of
+interview stages with a line of prep each, and a verdict that ended on promotion
+advice — *operate at the next level before the title, keep a brag doc*.
+
+That advice had become a **duplicate of something written two waves earlier**:
+the Engineering Ladder card's fingerprint now makes the same point properly, with
+the corollary about a team that has no scope at the next level. So the verdict
+now cross-references it instead of restating it, and the card keeps its own
+subject.
+
+```
+1 card, 1,506 chars   ->   3 cards, 4,149 chars
+```
+
+- **Each stage tests something other than the thing it looks like.** Coding is
+  not whether you know the algorithm but whether you make visible progress while
+  watched; system design is not the right architecture but whether requirements
+  come before boxes and trade-offs get named; behavioural is not the story but
+  whether its *scope* matches the level. Every right-hand column is about working
+  legibly rather than knowing more — which is why the practice that transfers is
+  doing it out loud with somebody listening.
+- **The story one level below the role.** The commonest quiet failure: a good
+  answer pitched low — the senior candidate describing how they personally fixed
+  a hard bug when the question asked what changed for the team. It returns as
+  "not enough scope", which sounds like a verdict on a career rather than on four
+  minutes. *"I fixed it"* is mid; *"and the class of bug stopped happening"* is
+  senior; *"three teams stopped needing to care"* is staff. Same incident.
+
+**Worth noticing as method:** deepening one card made another card's verdict
+redundant. A deepening wave should re-read the neighbours it just made
+overlapping — the census would only catch it if the *titles* had converged, and
+these never did.
