@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test a11y og visual all fmt acronyms stamp census clean help search
+.PHONY: build check test a11y og og-check visual all fmt acronyms stamp census clean help search browser resilience mobile backup
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -31,7 +31,19 @@ stamp:
 	$(PY) tools/stamp_freshness.py --only $(ONLY)
 
 ## check: every static gate CI runs, in the order that fails fastest
+#
+# "every static gate CI runs" was aspirational, not true: the generated
+# artefacts — the acronym domain, the cheat sheet, the social card, the TI-84
+# drill bank — were checked only on the server, and three of the four went stale
+# without anyone noticing, because a red job step is only red where somebody
+# looks. They are cheap and they are first now. None of them needs a browser.
 check:
+	$(PY) tools/check_gates.py
+	$(PY) tools/gen_acronym_domain.py --check
+	$(PY) tools/gen_cheatsheet.py --check
+	$(NODE) tools/gen_og_image.mjs --check
+	$(PY) tools/ti84_trainer.py --verify
+	$(PY) tools/ti84_trainer.py --check-card
 	$(PY) tools/check_markup.py --self-test
 	$(PY) tools/check_markup.py
 	$(PY) tools/lint_content.py
@@ -89,8 +101,16 @@ mobile:
 backup:
 	$(NODE) tools/backup_test.mjs
 
-## all: build, then every check, then the browser tests
-all: build check test a11y visual resilience mobile backup
+## browser: every gate that needs playwright and chromium
+browser: test search a11y visual resilience mobile backup
+
+## all: build, then every check, then every browser gate
+#
+# `make all` is the contract: if this passes, CI passes. It did not used to be —
+# `search` ran in CI and not here, `resilience`, `mobile` and `backup` ran here
+# and not in CI, and neither list was a superset of the other. tools/check_gates.py
+# is what keeps the two honest; it runs inside `make check`.
+all: build check browser
 
 ## help: list these targets
 help:

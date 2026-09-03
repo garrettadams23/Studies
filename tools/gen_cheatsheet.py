@@ -44,6 +44,29 @@ SVG_RE = re.compile(r"<svg\b.*?</svg\s*>", re.S)
 # make the output churn every time it runs.
 ACRO_SPAN_RE = re.compile(r'\s*<span class="acro-exp">\([^<]*?\)</span\s*>')
 
+# Every block-level construct `render_card` knows how to emit. A card built with
+# anything else — an `ai-table`, a verdict paragraph, a glossary grid — renders
+# as a heading with nothing under it, and the sheet keeps calling itself
+# "generated from data/math.html" while quietly being less than that. The Math
+# domain uses none of these today; `unrendered` is what notices the day it does.
+BLOCK_RE = re.compile(
+    r"<(?:table|pre|ul|ol|blockquote|svg)\b"
+    r'|<p\b[^>]*class="[^"]*"'
+    r'|<div\b[^>]*class="(?:g-card|callout|note)"'
+)
+KNOWN_BLOCK_RE = re.compile(
+    r'<table\b[^>]*class="ref-table"'
+    r'|<pre\b[^>]*class="code-block"'
+    r'|<p\b[^>]*class="concept-desc"'
+    r"|<svg\b"
+)
+
+
+def unrendered(html):
+    """Block constructs in one card that `render_card` has no branch for."""
+    masked = KNOWN_BLOCK_RE.sub("", html)
+    return [m.group(0)[:60] for m in BLOCK_RE.finditer(masked)]
+
 
 def inline(fragment):
     """HTML fragment -> plain text, preserving how the site reads mathematics.
@@ -135,7 +158,19 @@ def build():
             continue
         badge = TOPIC_BADGE_RE.search(block)
         body = block[name.end():]
-        cards = [render_card(c) for c in blocks(body, CARD_START_RE)]
+        raw = list(blocks(body, CARD_START_RE))
+        for card in raw:
+            dropped = unrendered(card)
+            if dropped:
+                title = TITLE_RE.search(card)
+                raise SystemExit(
+                    f"error: {SOURCE.name} card "
+                    f"{inline(title.group(1)) if title else '(untitled)'!r} uses "
+                    f"{', '.join(sorted(set(dropped)))}, which this generator does not "
+                    f"render. Add a branch to render_card() — do not ship a sheet that "
+                    f"silently drops it."
+                )
+        cards = [render_card(c) for c in raw]
         topics.append((inline(name.group(1)), inline(badge.group(1)) if badge else "", cards))
 
     n_cards = sum(len(c) for _, _, c in topics)

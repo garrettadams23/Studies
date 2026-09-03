@@ -48,16 +48,21 @@ tool in `tools/`, not by anybody's recollection, and `make census` prints the fi
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,534** across 30 domains | `depth_report.py` |
+| Topics | **1,535** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **23**, 1% — at its floor, and audited | `depth_report.py` |
 | Mean chars per concept card | **1,280** — the padding counter-metric | `depth_report.py` |
 | Orphans | **59**, every one a generated `acronym` index section | `orphan_report.py` |
 | Near-duplicate pairs | **38**, of which 8 differ on nothing §3 names | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,570 steps, 1,475 of 1,534 topics** | `check_paths.py` |
+| Learning paths | **101 paths, 1,570 steps, 1,475 of 1,535 topics** | `check_paths.py` |
 | Related links | **1,473 topics, 4,588 links, 0 one-way** | `suggest_related.py --check` |
-| Page budget | **9% raw, 7% gzip** headroom | `page_budget.py` |
-| Gates | check · smoke **148** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Page budget | **8% raw, 7% gzip** headroom | `page_budget.py` |
+| Gates | **29**, and the same 29 in `make all` and in CI | `check_gates.py` |
+| Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+
+**`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
+if the two lists ever diverge again. Before this was true, the workflow had been red on
+every push for nine commits and `make check` had been green the whole time.
 
 **Where new work comes from now.** The content programmes (Phases 7–10) are closed and the
 navigation ones are complete, so the queue is no longer a list — it is whichever census
@@ -18229,3 +18234,157 @@ smoke checks                         148 → 149
 
 Check PASS · smoke **149/149** · search **44/44** · resilience **32/32** · axe **6/6** ·
 mobile **9/9**.
+
+---
+
+## Session record — CI had been failing on every push, and nobody had looked
+
+Two sweeps of generated output were queued. The print pack came back clean. The
+cheat sheet came back clean. The social card came back **stale**, and pulling on
+that thread found something much worse than a stale image.
+
+### What the queue found
+
+**The print pack (negative).** Every one of the 101 learning paths, built into a
+pack: 1,570 sections for 1,570 steps, every `.topic-body` open, no empty
+sections, no page errors. Pinned anyway as two smoke checks, because the pack is
+assembled from `paths.json` rather than from the DOM — a step naming a topic that
+has since been renamed produces a pack with a hole in it, and nothing else on the
+site reads a path that way. **Smoke 149 → 151.**
+
+**The cheat sheet (negative, with a guard).** `gen_cheatsheet.py` renders 65
+cards, 44 tables, 10 code blocks, 7 diagram pointers. Zero tag-like strings
+markdown would swallow — the `<` bug fixed in the export last session does not
+exist here — and all 44 tables square. But `render_card` has branches for
+`ref-table`, `concept-desc`, `code-block` and `svg`, and for **nothing else**. A
+Math card written with an `ai-table`, a verdict paragraph, a glossary grid or a
+list would render as a heading with nothing under it, and the sheet would go on
+calling itself "generated from data/math.html" while quietly being less than
+that. `unrendered()` now raises on any of them, naming the card. Verified: fires
+on all four hazards, silent on all four shapes it does render.
+
+### The social card said 1,519 topics
+
+The site had 1,534. `node tools/gen_og_image.mjs --check` had been failing, and
+it fails as a step in a CI job, which is the only place it ran.
+
+So the picture attached to every shared link — the one thing about this site most
+people will ever see — had been advertising a number fifteen topics out of date.
+The `og:description` beside it was right, because a smoke check covers the *text*
+of the preview and nothing covered the *picture*.
+
+### And then: the workflow had been red on every push for nine commits
+
+Checking the run history is what turned a stale image into the real finding.
+
+```
+254  failure  main  Markdown export: stop table cells being swallowed…
+253  failure  main  plan.md: put the measured state at the top…
+252  failure  main  stamp_freshness: add --current-only…
+   … all 30 most recent runs: failure
+```
+
+Two independent failures, and in GitHub Actions a failed step **skips every step
+after it**:
+
+| Job | Failed at | Skipped as a result |
+|---|---|---|
+| `verify-build` | step 5 of 25 | the linter, the markup checker, contradictions, volatility, freshness, determinism, the page budget, the related map, the paths check, and the `index.html` staleness check — **21 gates** |
+| `smoke-test` | step 10 of 12 | the visual regression |
+
+`verify-build` was failing on "Fail if `data/acronym.html` is stale". It was
+right. Commit `f0b16d0` added **DB, GIL, HA and PCI** to `data/acronyms.json`, ran
+the annotator, and never re-ran `gen_acronym_domain.py`. So four acronyms — three
+of them used constantly across this site — sat in the dictionary and out of the
+browsable domain, along with an entire subject group (**By Area — Programming**,
+which GIL created) that had never rendered at all. Nine commits, every one of
+them pushed past a red build.
+
+### Why `make check` could not see any of it
+
+Because there were two hand-maintained lists of what must pass, and neither was a
+superset of the other:
+
+| | `make all` | `build-check.yml` |
+|---|---|---|
+| `search_test.mjs` | — | ✅ |
+| `storage_denied_test.mjs` | ✅ | — |
+| `mobile_test.mjs` | ✅ | — |
+| `backup_test.mjs` | ✅ | — |
+| `gen_acronym_domain` staleness | — | ✅ |
+| `gen_cheatsheet.py --check` | — | ✅ |
+| `gen_og_image.mjs --check` | — | ✅ |
+| `ti84_trainer.py --verify` / `--check-card` | — | ✅ |
+
+Every gate that broke was in the right-hand column only. `make check` passed
+throughout, honestly, and told the truth about a subset.
+
+### Four changes, and the fourth is the one that matters
+
+**1. The card carries its own inputs.** `--check` used to compare the rendered
+PNG byte-for-byte. That is a gate on the *rasteriser*: two renders from one
+Chromium build differ by **0 pixels**, but two Chromium builds differ by ~1,090,
+and a one-digit change differs by ~580 — so the false alarm is *larger than the
+signal*. The card now carries a PNG `tEXt` chunk with its two numbers and a hash
+of the HTML it was rendered from, and `--check` compares strings:
+
+```
+$ strings Img/og-card.png | head -2
+IHDR
+4tEXtog-card    topics=1535;domains=30;card=47f5fb08aaacd273
+```
+
+It catches a changed count, changed copy, changed CSS — anything that would
+change the picture — and it cannot fail on a browser upgrade. It also needs no
+browser, so it moved out of the two-minute Chromium job into `make check`, beside
+the linter.
+
+**2. `--check` instead of "generate, then `git diff`".** The old acronym gate ran
+the generator and diffed the tree, which leaves a working copy dirty — so nobody
+ran it locally, so it only ever failed on the server. `gen_acronym_domain.py
+--check` writes nothing and follows the idiom the other two generators already
+used.
+
+**3. `make all` is now the contract.** `make browser` gathers the seven gates that
+need Chromium; `make all` is `build check browser`; the workflow gained the three
+browser gates it was missing. **If `make all` passes, CI passes.**
+
+**4. `tools/check_gates.py` — the gate on the gates.** It parses the Makefile
+recipes reachable from `all` and every `run:` in the workflow, keeps the commands
+that can fail on purpose (`check_*`, `lint_*`, `page_budget.py`, `*_test.mjs`, or
+any of `--check --verify --self-test --strict`), and fails when the two sets
+differ. Generators and censuses are exempt by name, with the reason recorded.
+
+```
+$ python3 tools/check_gates.py
+Gates agree — 29 in both 'make all' and build-check.yml.
+```
+
+Negative-tested from both sides: dropping `mobile_test.mjs` from the workflow and
+dropping `check_renames.py` from the Makefile each fail it, naming the missing
+side.
+
+### The counter-lesson
+
+The last session's entry ended on *"a guard nobody tests is a guard somebody
+removes."* This one is the sharper version: **a guard nobody reads is a guard
+that has already been removed.** `gen_og_image.mjs --check` was correct, ran on
+every push, and printed the right error for weeks. It changed nothing, because
+the only place it spoke was a job step in a workflow that was already red for a
+different reason — and a build that is always red carries exactly as much
+information as no build at all.
+
+The fix for that is not a better message. It is putting the check where the
+person doing the work will run it anyway.
+
+```
+acronyms shipped in the domain     1,097 → 1,101   (DB, GIL, HA, PCI)
+acronym subject groups                59 → 60      (By Area — Programming)
+topics on the site                 1,534 → 1,535
+social card claim                  1,519 → 1,535
+gates in `make all`                   25 → 29
+gates in the workflow                 24 → 29
+gates in one list only                 8 → 0
+CI jobs green                        0/2 → 2/2
+smoke checks                     149 → 151
+```

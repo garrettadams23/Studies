@@ -21,15 +21,25 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Rebuild the acronym dictionary
-        run: python tools/gen_acronym_domain.py
+      # The gate on the gates: this file and the Makefile must agree about what
+      # has to pass. They did not, and the disagreement is how the two failures
+      # below went unnoticed for nine commits — see tools/check_gates.py.
+      - name: Check the Makefile and this workflow run the same gates
+        run: python tools/check_gates.py
 
-      - name: Fail if data/acronym.html is stale
-        run: |
-          if ! git diff --exit-code -- data/acronym.html; then
-            echo "::error::data/acronym.html is out of date. Run 'python tools/gen_acronym_domain.py' and commit the result."
-            exit 1
-          fi
+      # --check rather than "generate, then git diff": the old form left the
+      # working tree dirty, so nobody ran it locally, so it only ever failed
+      # here — where it failed on every push, silently, while four acronyms and
+      # a whole subject group stayed out of the shipped domain.
+      - name: Check the acronym domain is not stale
+        run: python tools/gen_acronym_domain.py --check
+
+      # No browser needed: the card carries its inputs in a PNG tEXt chunk, so
+      # this is a string comparison. It used to compare rendered bytes, which is
+      # a gate on the rasteriser, and it was red long enough that the card
+      # claimed 1,519 topics on every shared link while the site had 1,534.
+      - name: Check the social card is current
+        run: node tools/gen_og_image.mjs --check
 
       - name: Check topic names and the slug alias map
         run: python tools/fix_topic_names.py --check
@@ -180,13 +190,21 @@ jobs:
       - name: Accessibility scan
         run: node tools/a11y_test.mjs
 
-      # The social card's numbers are generated from the content, so a content
-      # wave that does not regenerate it ships a stale claim.
-      - name: Check the social card is current
-        run: node tools/gen_og_image.mjs --check
-
       # Pixel diff of the filter bar against a committed baseline, both themes.
       # Deliberately narrow: a suite that screenshots content fails on every
       # content wave, and a check that fails constantly gets ignored.
       - name: Visual regression (filter bar)
         run: node tools/visual_test.mjs
+
+      # These three ran in `make all` and nowhere else, which meant they ran
+      # only when somebody remembered. They gate the failure modes a reader
+      # actually hits: a browser that denies storage, a phone-width viewport,
+      # and an export that must restore exactly what it saved.
+      - name: Resilience (storage denied)
+        run: node tools/storage_denied_test.mjs
+
+      - name: Mobile layout (375px)
+        run: node tools/mobile_test.mjs
+
+      - name: Backup round-trip
+        run: node tools/backup_test.mjs

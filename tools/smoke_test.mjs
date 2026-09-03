@@ -1501,6 +1501,38 @@ check("steps are numbered, and the pack is invisible on screen",
   `n=${pack.numbered} display=${pack.hiddenOnScreen}`);
 check("the pack is removed after printing", pack.cleared);
 
+// One path proves the design; every path proves the data. The pack is built
+// from `paths.json` rather than from the DOM, so a step naming a topic that has
+// since been renamed or retired produces a pack with a hole in it — and nothing
+// else on the site would notice, because nothing else reads a path this way.
+const allPacks = await page.evaluate(() => {
+  const bad = [];
+  let sections = 0, open = 0, steps = 0;
+  for (const path of learningPaths()) {
+    const rows = pathSteps(path);
+    steps += path.steps.length;
+    let host = null, err = null;
+    try { host = buildPrintPack(rows, path.name); }
+    catch (e) { err = String(e && e.message || e).slice(0, 80); }
+    const s = host ? host.querySelectorAll(".pp-topic").length : 0;
+    const o = host ? host.querySelectorAll(".topic-body.open").length : 0;
+    const empty = host
+      ? [...host.querySelectorAll(".pp-topic")].filter(x => !x.textContent.trim()).length : 0;
+    clearPrintPack();
+    sections += s; open += o;
+    if (err || rows.length !== path.steps.length || s !== rows.length || o !== s || empty)
+      bad.push(`${path.id}: ${err || `${rows.length}/${path.steps.length} steps, ` +
+                                     `${s} sections, ${o} open, ${empty} empty`}`);
+  }
+  return { paths: learningPaths().length, bad, sections, open, steps };
+});
+check("every learning path builds a pack with no holes in it",
+  allPacks.bad.length === 0 && allPacks.sections === allPacks.steps,
+  allPacks.bad.slice(0, 3).join(" · ") || `${allPacks.sections}/${allPacks.steps} sections`);
+check("and every card in every one of them is open",
+  allPacks.open === allPacks.sections,
+  `${allPacks.open} open of ${allPacks.sections} across ${allPacks.paths} paths`);
+
 // ── link preview metadata ───────────────────────────────────────────────────
 // The counts in the description are written by hand and the ones on the card
 // are generated, so they can drift apart. A preview that advertises a number

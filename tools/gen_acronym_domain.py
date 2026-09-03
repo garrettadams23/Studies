@@ -14,6 +14,7 @@ Usage:
 import html
 import json
 import re
+import sys
 from textwrap import indent
 from collections import defaultdict
 from pathlib import Path
@@ -290,12 +291,33 @@ def main():
         "     Regenerate: python3 tools/gen_acronym_domain.py && python3 build.py\n"
         "     ══════════════════════════════════════════════════════════════ -->\n"
     )
-    OUT.write_text(header + "\n\n".join(sections) + "\n", encoding="utf-8")
-    print(
-        f"Wrote {OUT.relative_to(ROOT)}: {len(entries)} acronyms, "
-        f"{total_meanings} meanings, {len(sections)} topics"
-    )
+    content = header + "\n\n".join(sections) + "\n"
+    summary = (f"{len(entries)} acronyms, {total_meanings} meanings, "
+               f"{len(sections)} topics")
+
+    # --check exists because the CI equivalent — run the generator, then
+    # `git diff --exit-code` — leaves the tree dirty on a machine where somebody
+    # is working, so nobody runs it locally. Four acronyms (DB, GIL, HA, PCI) sat
+    # in the dictionary and out of the domain for nine commits, along with a
+    # whole subject group, while CI said so on every push and the message was in
+    # a job step that only ever ran on the server.
+    if "--check" in sys.argv:
+        current = OUT.read_text(encoding="utf-8") if OUT.exists() else ""
+        if current != content:
+            print(
+                f"::error::{OUT.relative_to(ROOT)} is out of date "
+                f"(the dictionary now has {summary}). "
+                f"Run 'python3 tools/gen_acronym_domain.py && python3 build.py' "
+                f"and commit the result."
+            )
+            return 1
+        print(f"{OUT.relative_to(ROOT)} is up to date — {summary}.")
+        return 0
+
+    OUT.write_text(content, encoding="utf-8")
+    print(f"Wrote {OUT.relative_to(ROOT)}: {summary}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
