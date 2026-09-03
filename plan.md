@@ -17969,3 +17969,71 @@ edges for 6 KB of transfer, which is what that encoding was for.
 
 Check PASS · smoke **148/148** · axe **6/6** · mobile **9/9** · visual **2/2** ·
 determinism reproducible.
+
+---
+
+## Session record — every hand-written topic is now on a path
+
+The orphan wave connected the see-also graph; this does the same for the other navigation
+layer. The paths programme stopped at **88 paths, 1,296 of 1,534 topics**, and the record
+that closed it said the remaining 238 were "lookup surfaces plus deliberate duplicates" —
+which was true of the material and wrong as a conclusion, because a reader who wants the
+lookup surfaces has no route to them either.
+
+Reading the unreached list by domain made the gaps obvious:
+
+```
+shortcut   35 of 36 unreached     the domain had one topic on one path
+math       16 of 16               none at all
+script     65 of 149
+quotes      6 of 6
+philosophy  6 of 17
+```
+
+### Thirteen paths, and then a fold
+
+| Path | Steps | What it is |
+|---|---|---|
+| **Faster at the Keyboard** | 34 | The environment rather than the subject: OS keys, browser, VS Code's seven cards, shell and terminal setup, vim, tmux, dotfiles, remote dev |
+| **Calculus, Start to Finish** | 16 | Prerequisites first — where the marks are actually lost — then the two pictures, then each unit in exam order |
+| **The Language Tour** | 14 | *Which Language Should I Learn First?* then twelve languages, each as what it is good at and what it costs |
+| **How to Think** | 25 | Argument, evidence, bias, ethics, then the traditions and the quotes that belong to each |
+| **The Reference Shelf** | 24 | Not a course — the lookup pages worth bookmarking once, across nine domains |
+| **Where You Sit in the Org** | 12 | The titles, ladders and adjacent roles, and what changes at each rung |
+| **IT at Every Size** | 6 | One person · an MSP · fully remote · the very large · a merger · the carbon maths |
+| **The Second Explanation** | 12 | The beginner-badged parallel cards, gathered — *"the same material explained again"* |
+| **Running a SOC Team** | 7 | Handover, burnout, the interview, and the pager |
+| **Writing Software That Lasts** | 17 | The craft that is not the language, including the two data types that humiliate everyone: encodings and time |
+| **Programs Talking to Programs** | 11 | Raw socket up to a versioned public API |
+| **Data From the Program's Side** | 6 | What a developer needs before a DBA is involved |
+| **The Front of the Web** | 4 | The three browser languages, then offline and accessible |
+
+Then **22 remaining singles folded into the paths they already belonged in** rather than
+inventing more: the DoD reference pair into *Handling Classified Material*, Kerberos and
+password-attack types into *Identity Is the Perimeter*, SD-WAN into *Running an Enterprise
+Network*, the three remaining `philosophy` traditions into *How to Think*.
+
+```
+paths            88 → 101
+steps         1,366 → 1,570
+topics on a path 1,296 → 1,475 of 1,534   (85% → 96%)
+```
+
+**The 59 that remain are the `acronym` domain, in its entirety.** Generated A–Z index
+sections from the dictionary — the same 59 the orphan report leaves, and the same domain the
+deck builder excludes by name. **Every hand-written topic on this site is now reachable from
+at least one path**, which is the number the programme was always reaching for and never
+stated.
+
+### The one that was worth writing for its own sake
+
+*The Second Explanation* is not a mop-up. Twelve cards exist because an earlier session
+decided a subject deserved a gentler second treatment — subnetting, DNS, OWASP, container
+security, imposter syndrome — and until now the only way to find one was to scroll past the
+canonical card and notice a *Beginner* badge. Gathering them under *"you read the main card,
+did not follow it, and would rather not conclude you are the problem"* turns an accident of
+badging into something a reader can choose.
+
+Cost: gzip headroom held at 7%, raw unchanged.
+
+Check PASS · smoke **148/148** · axe **6/6** · mobile **9/9** · determinism reproducible.
