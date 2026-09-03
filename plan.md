@@ -20235,3 +20235,50 @@ thin topics       23 -> 16
 padding metric    1,108 excluding verdicts, unmoved across seven waves
 page budget       4% raw headroom, ~66 topics of runway
 ```
+
+---
+
+## Session record — the wave that was written, measured, and thrown away
+
+`[web] SEO & Metadata for Developers` is 1,349 characters and one card, and the
+next obvious deepening target. It was deepened — an inversion card about
+necessary-versus-sufficient, and a table of the crawl failures that return 200
+and produce no error and no traffic.
+
+Then the depth report printed the neighbour:
+
+```
+ 4,141 · 3 cards   SEO & Metadata for Developers          <- the new version
+12,384 · 6 cards   Technical SEO Operations — Crawling, Indexing & Migrations
+```
+
+**The deep card already existed, in the same domain**, and covers crawled versus
+indexed versus ranking, what each status code teaches a crawler, redirect maps as
+the migration deliverable, JavaScript and crawl budget, and logs as the only
+ground truth. The table just written was a worse version of a card sitting
+fifteen topics away.
+
+**Reverted.** The thin card is not under-written; it is the *checklist sibling*
+of a deep one — §3's teaching-card-beside-specialist-card row, added earlier this
+same session. What it was missing was one sentence and a pointer, and that is
+what it has now: everything in the table is necessary and none of it is
+sufficient, ship it once and stop tuning it, and the operational depth is
+<span class="xref">Technical SEO Operations — Crawling, Indexing &amp; Migrations Without Losing Traffic</span>.
+
+```
+1,349 chars, 1 card   ->   1,831 chars, 1 card
+```
+
+### The lesson is the one from two waves ago, arriving late
+
+*"A deepening wave should re-read the neighbours it just made overlapping."* This
+time the overlap existed **before** the writing started, and the check that would
+have caught it costs one command:
+
+> **Before deepening a card, run `depth_report.py --domain <its domain>` and read
+> the longest topics, not only the shortest.** The bottom of the list says what is
+> thin; the top says whether somebody has already written it.
+
+That is now the first step of a deepening wave, and this is the wave that paid
+for it — about forty minutes of writing, thrown away, which is cheaper than
+shipping a duplicate but not free.
