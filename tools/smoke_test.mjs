@@ -1372,6 +1372,27 @@ check("a topic exports as a heading with its concept cards",
   && md.hasCardHeading, md.heading);
 check("reference tables become markdown tables with square rows",
   md.hasTable && md.tableRowsSquare);
+
+// Markdown treats `<main>` or `git clone <url>` in a cell as raw HTML and
+// renders nothing at all, so the HTML-elements reference exported as a column of
+// empty cells and every git command lost its placeholder. Swept across all 30
+// domains because the defect is invisible in any single one.
+const tagLeak = await page.evaluate(() => {
+  const bad = [];
+  for (const dom of Object.keys(topicIndex())) {
+    let fenced = false;
+    mdForTopics(domainTopics(dom), dom).split("\n").forEach(line => {
+      if (line.trim().startsWith("```")) { fenced = !fenced; return; }
+      if (fenced) return;
+      const bare = line.replace(/`[^`]*`/g, "");
+      if (/(^|[^\\])<\/?[a-zA-Z][a-zA-Z0-9]*(\s[^>]*)?>/.test(bare) && bad.length < 4)
+        bad.push(`${dom}: ${line.trim().slice(0, 60)}`);
+    });
+  }
+  return bad;
+});
+check("an exported table cell cannot be swallowed as raw HTML",
+  tagLeak.length === 0, tagLeak.join(" · "));
 // Most tables here have no <thead>; the header is a bare <tr> of <th>. Keying
 // off <thead> silently emitted an empty header row on every table on the site.
 check("a table's header row carries its headings",

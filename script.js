@@ -3250,7 +3250,14 @@ function mdEscape(s) {
   // Only the characters that would change the meaning of a *table* cell or
   // start a list. Escaping every Markdown metacharacter makes prose unreadable
   // for the sake of edge cases that do not occur in this content.
-  return s.replace(/\|/g, "\\|");
+  //
+  // `<` is the exception that had to be added, because the edge case does occur
+  // — 50 times, all of them in table cells. Markdown treats `<main>`,
+  // `<button>` and `git clone <url>` as raw HTML and renders **nothing**, so a
+  // reference table of HTML elements exported as a column of empty cells and
+  // every git command lost its placeholder. Escaped only where it begins a
+  // tag-like run, so `a < b` and `<=` in the maths and code cards are untouched.
+  return s.replace(/\|/g, "\\|").replace(/<(?=[a-zA-Z/!])/g, "\\<");
 }
 
 /** One table -> a Markdown table. Ragged rows are padded, never dropped. */

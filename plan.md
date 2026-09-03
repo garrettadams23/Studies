@@ -18165,3 +18165,67 @@ nobody knows which files carry unstamped work, and the answer needs to be safe r
 complete.
 
 Check PASS · smoke **148/148** · `--verify` clean · the flag idempotent on a second run.
+
+---
+
+## Session record — the export that deleted every placeholder
+
+`make backup` covers the *progress* export; smoke covers the Markdown export's shape on one
+domain. Nothing had ever run the Markdown export across all thirty and looked at the output.
+
+Doing so produced 4.3 million characters, 2,634 tables, and two candidate defects. One
+dissolved and one was real, which is the usual ratio.
+
+### The one that dissolved
+
+**56 "ragged" table rows** — rows whose pipe count differs from their header, which renders
+as dropped or merged cells. All 56 were the detector's own fault: `mdEscape` writes `\|` for
+a literal pipe, and counting `|` characters without accounting for the escape inflates the
+column count. With the escape handled, **zero ragged rows across 2,634 tables**. `mdTable`
+pads short rows and never drops them, exactly as its comment claims.
+
+### The one that was real
+
+**50 tag-like strings, every one inside a table cell.**
+
+```
+| \<header> | Site/section header, logo, top nav |
+| git clone \<url> | Download a remote repo and all its history |
+| Use semantic HTML | A real \<button> is focusable, clickable, announced correctly |
+```
+
+*(shown with the fix applied — before it, the backslashes were not there)*
+
+Markdown treats `<header>` as raw HTML and renders **nothing**. So `script`'s HTML-elements
+reference — a whole card whose subject is the element names — exported as a column of empty
+cells, and every git command in the `shortcut` reference lost its placeholder: `git clone `,
+`git switch -c `. A reader who exported a domain to study offline got a file quietly missing
+the operative word in fifty places.
+
+`mdEscape` escaped `|` and nothing else, with a comment defending exactly that:
+
+> Escaping every Markdown metacharacter makes prose unreadable for the sake of edge cases
+> that do not occur in this content.
+
+**The reasoning was right and the premise was wrong** — the edge case does occur, fifty
+times. `<` is now escaped too, and only where it begins a tag-like run (`<` followed by a
+letter, `/` or `!`), so `a < b` and `<=` in the maths and code cards are untouched. Backslash
+rather than `&lt;`, because the export has to read as plain text as well as render as
+Markdown.
+
+### Why this needed a sweep to find
+
+The existing smoke checks run against one domain and assert *shape* — is there a table, are
+its rows square, does the header carry headings. All correct, all passing, and none of them
+could see this: the defect needs a card whose subject is literally HTML element names, and
+there is one such card on the site. **Check 149 now sweeps all thirty domains** for a cell
+markdown would swallow.
+
+```
+tag-like strings markdown would eat   50 → 0
+ragged table rows                      0 (the 56 were the detector)
+smoke checks                         148 → 149
+```
+
+Check PASS · smoke **149/149** · search **44/44** · resilience **32/32** · axe **6/6** ·
+mobile **9/9**.
