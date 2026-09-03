@@ -18939,3 +18939,77 @@ verdicts written by hand              638
 remaining: script 74 · philosophy 22 · military 12 (deliberate)
 runway                                ~76 topics   (stop line: 40)
 ```
+
+---
+
+## Session record — the verdict backlog is cleared
+
+`script` (74), `philosophy` (22) and the last small domains, and the count that
+started this programme at a corrected **748** now reads **12**.
+
+```
+tables_without_verdict
+  748  the corrected measurement
+  712  career
+  688  military (24 of 36; 12 deliberate)
+  635  ops
+  589  grc
+  535  net
+  469  sec
+  430  ai
+  392  devops
+  357  linux
+  295  threat + pentest
+  238  m365 + endpoint
+  189  eng + blueteam
+  108  eleven small domains
+   12  script + philosophy
+```
+
+**722 verdicts, written by hand, one per card, each answering the table it sits
+under.** The ceiling is now 12 rather than 0, because the twelve that remain are
+the `military` staff-code cross-matrix and the SF form series — lookup tables
+where a closing judgement would be filler. A ceiling set at the true floor is
+also a tripwire: if it ever reads 13, either a new card ends on a table or one of
+those twelve has been edited, and both are worth looking at.
+
+### What the programme actually produced, beyond the number
+
+Four tooling defects, each found by doing the work rather than by planning it:
+
+1. **The rule was wrong in both directions** — a 260-character window is not a
+   card, and the real backlog was under-reported by more than a third.
+2. **A verdict must answer the table, not the card title.** Two mis-landings in
+   722, both caught by printing the table's header row beside the verdict and
+   reading the pair. That check is now the standard step.
+3. **The search gate caught the prose.** 400 verdicts widened a vague query past
+   an absolute ceiling that was measuring a proportion — the same defect as the
+   gzip tripwire, fixed the same way.
+4. **The cheat sheet was silently dropping every verdict**, and the guard written
+   to catch exactly that missed it, because it enumerated what was wrong instead
+   of what was known.
+
+### The three shapes a verdict takes
+
+Worth recording, because they generalise and they are what stopped 722 sentences
+becoming filler:
+
+- **A list of options with no recommendation** (`ops`, `grc`, `cloud`) → *which
+  one, and when.*
+- **A taxonomy** (`net`, `linux`, `hw`) → *which row will actually bite you.*
+- **A list of practices** (`devops`, `eng`, `blueteam`) → *which one comes first,
+  and what the others depend on.*
+
+Where none of the three applied — a table of form numbers, a cross-matrix of
+codes — the honest answer was to leave it alone and say so.
+
+```
+verdicts written by hand              722
+domains cleared                       25 of 26
+page raw                              7.7 MB, 4% headroom, ~69 topics of runway
+```
+
+**The runway is the thing to watch now.** The programme cost about 70 topics of
+page budget across the session — deliberately, and it is spent. At ~69 remaining
+the next structural conversation in `page_budget.py` is closer than any content
+plan, and the stop line written down earlier (40) is now two content waves away.

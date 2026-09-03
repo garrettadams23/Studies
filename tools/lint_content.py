@@ -76,10 +76,15 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # 535 -> 469: all 66 in `sec`. Six domains, 277 verdicts, and the backlog is
 # down by 279 from the corrected figure.
 #
-# 469 -> ... -> 189 -> 108: twenty-three domains cleared, 638 verdicts written
-# by hand. What remains is `script` (74), `philosophy` (22) and the 12
-# deliberate lookup tables in `military`.
-CEILINGS = {"inline style attribute": 1565, "table with no verdict": 108}
+# 469 -> ... -> 108 -> 12. The backlog is cleared. 722 verdicts written by hand
+# across every domain, and the 12 that remain are the `military` staff-code
+# cross-matrix and SF form series — lookup tables where a judgement would be
+# filler, recorded as deliberate rather than chipped at.
+#
+# The ceiling is 12 rather than 0 for that reason. If it ever reads 13, either
+# a new card ends on a table or one of those twelve was edited: both are worth
+# a look, which is what a ceiling at the true floor buys you.
+CEILINGS = {"inline style attribute": 1565, "table with no verdict": 12}
 
 
 class Nesting(HTMLParser):

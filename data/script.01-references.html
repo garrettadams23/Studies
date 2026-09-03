@@ -228,6 +228,16 @@
                       <td>Extended mode for readable patterns</td>
                     </tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Learn the flags before the fancy tokens; they
+                    change what everything above them means.</strong> Case-
+                    insensitive, multiline and dotall between them account
+                    for most "why does this not match" confusion, and the
+                    difference between multiline and dotall in particular is
+                    worth getting right once — one changes what the anchors
+                    mean, the other changes what the dot matches. Everything
+                    else is easier to look up than to remember.
+                  </div>
                   <div class="dt">▸ COMMON PATTERNS</div>
                   <pre class="code-block"><span class="com"># Email address</span>
 <span class="rx-anc">^</span><span class="rx-cls">[\w.+\-]</span><span class="rx-q">+</span>@<span class="rx-cls">[\w\-]</span><span class="rx-q">+</span>\.<span class="rx-cls">[\w.\-]</span><span class="rx-q">+</span><span class="rx-anc">$</span>
@@ -2084,6 +2094,16 @@ http.ResponseWriter,
                     <td>—</td>
                   </tr>
                 </table>
+                <div class="concept-desc verdict">
+                  <strong>Use the full cmdlet names in anything you save, and
+                  the aliases only when typing interactively.</strong> The
+                  aliases exist for the shell and they make a script
+                  unreadable to the next person — worse, some of them shadow
+                  real commands on other platforms, so a script using `ls` and
+                  `cat` behaves differently depending on where it runs. The
+                  verb-noun naming is the actual feature: once you know the
+                  verbs, you can guess most cmdlets.
+                </div>
               </div>
             </div>
             <div class="concept-card">
@@ -2476,6 +2496,15 @@ http.ResponseWriter,
                     <td>Abbreviation with expansion</td>
                   </tr>
                 </table>
+                <div class="concept-desc verdict">
+                  <strong>Choose the element for what it means, not what it
+                  looks like.</strong> Semantic markup is what gives a screen
+                  reader, a search engine and a future maintainer the
+                  structure of the page for free — a `div` with a class named
+                  `header` conveys nothing to any of them. If no element fits
+                  the meaning, `div` is the correct answer; reaching for it
+                  first is what is not.
+                </div>
 
                 <div class="dt">▸ FORMS &amp; INPUTS</div>
                 <pre class="code-block"><span class="tag">&lt;form</span>
@@ -3457,6 +3486,15 @@ team) <span class="kw">AS</span> team_total
                     <td>Unreserved — safe, no encoding needed</td>
                   </tr>
                 </table>
+                <div class="concept-desc verdict">
+                  <strong>Encode by context, because the same character is
+                  safe in one part of a URL and not in another.</strong> A
+                  plus sign means a space in a query string and means a plus
+                  sign in a path, and encoding a whole URL with one function
+                  is how a working link becomes a broken one. Use the encoder
+                  your language provides for the component you are building,
+                  not for the address as a whole.
+                </div>
 
                 <!-- ── STRUCTURE ── -->
                 <div class="dt">▸ URL STRUCTURE — WHICH PARTS GET ENCODED</div>
@@ -3655,6 +3693,14 @@ https://app.sigmacomputing.com/embed?:filter=status%3Aactive%7Cpending
           <tr><td style="color:var(--green)">Assignment</td><td>= += -= *= /=</td><td>Store a value in a variable</td><td>x += 5 ≡ x = x + 5</td></tr>
           <tr><td style="color:var(--amber)">== vs ===</td><td colspan="3">JS <span class="acro-exp">(JavaScript)</span>: == coerces types (1 == "1" → true). === checks type AND value (1 === "1" → false). Use === always.</td></tr>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The operator table is where the bugs are, and two rows account for
+          most of them.</strong> Integer division and remainder behave differently
+          across languages for negative numbers, and `==` compares differently
+          depending on whether the language coerces types — both produce code that is
+          correct on the examples somebody tested and wrong later. Look those two up
+          per language rather than assuming.
+        </div>
 
         <div class="dt">▸ SCOPE — WHERE A VARIABLE EXISTS</div>
         <pre class="code-block">
@@ -3849,6 +3895,14 @@ https://app.sigmacomputing.com/embed?:filter=status%3Aactive%7Cpending
           <tr><td style="color:var(--cyan)">Private field</td><td>__ prefix</td><td># prefix (ES2022)</td><td>private keyword</td><td>lowercase name</td></tr>
           <tr><td style="color:var(--cyan)">Interface</td><td>ABC / Protocol</td><td>—</td><td>interface keyword</td><td>interface keyword</td></tr>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Read down a row, not across a column, and object orientation stops
+          feeling like five different subjects.</strong> The syntax varies wildly and
+          the concepts do not; recognising that a receiver, `self` and `this` are the
+          same idea is what makes a second language a week's work rather than a
+          year's. The last two rows are where the languages genuinely differ in kind —
+          interfaces and privacy are design decisions, not spellings.
+        </div>
 
       </div>
     </div>
@@ -3921,6 +3975,14 @@ https://app.sigmacomputing.com/embed?:filter=status%3Aactive%7Cpending
             <td>Networks, social graphs, routing, dependencies</td>
           </tr>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Reach for the hash map by default and justify anything
+          else.</strong> Most day-to-day problems are lookups, deduplication and
+          counting, and the first row people reach for — a list — turns those into
+          linear scans that are fine at ten items and awful at ten thousand.
+          Everything else on this table earns its place for a specific access pattern;
+          if you cannot name the pattern, you want a map or a list.
+        </div>
 
         <div class="dt">▸ STACK vs QUEUE — VISUALISED</div>
         <pre class="code-block">
@@ -4026,6 +4088,14 @@ https://app.sigmacomputing.com/embed?:filter=status%3Aactive%7Cpending
             <td>Travelling salesman (brute force)</td>
           </tr>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The n = 1,000,000 column is the one that decides
+          architecture.</strong> Everything looks fast at ten items, which is why the
+          difference only appears in production — and the gap between linear and
+          quadratic there is the difference between a page load and an outage. The
+          practical rule is to know which of your operations are inside a loop over
+          the data, because that is where the exponent comes from.
+        </div>
 
         <div class="dt">▸ HOW TO IDENTIFY BIG O IN CODE</div>
         <pre class="code-block">
@@ -4248,6 +4318,13 @@ https://app.sigmacomputing.com/embed?:filter=status%3Aactive%7Cpending
           <tr><td style="color:var(--amber)">4xx</td><td>Client error</td><td>400 Bad Request · 401 Unauthorized · 403 Forbidden · 404 Not Found · 429 Too Many Requests</td></tr>
           <tr><td style="color:var(--red)">5xx</td><td>Server error</td><td>500 Internal Server Error · 502 Bad Gateway · 503 Service Unavailable</td></tr>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Return the honest code, especially when it is bad news.</strong> A
+          200 carrying an error message is the single most expensive habit in this
+          table: caches store it, crawlers index it, monitoring reports the service
+          healthy, and retries never happen. The client cannot behave correctly if the
+          status line lies, and every other row here assumes it does not.
+        </div>
 
         <div class="dt">▸ REST RESOURCE DESIGN CONVENTIONS</div>
         <pre class="code-block">
@@ -4378,6 +4455,14 @@ GET    /users?page=2&amp;limit=25  <span class="com"># pagination</span>
             <td>Auto-changelogs, semantic versioning, clarity</td>
           </tr>
         </table>
+        <div class="concept-desc verdict">
+          <strong>Pick one strategy per repository and write it down where the
+          contributors are.</strong> Most branching arguments are not about the
+          strategies at all — they are two people following different ones in the same
+          project, which produces merge pain nobody can attribute. Choose by release
+          cadence: continuous deployment wants short-lived branches off one trunk, and
+          scheduled releases want the heavier model that exists to support them.
+        </div>
 
       </div>
     </div>

@@ -383,6 +383,16 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Publish</td><td>Versioned artifact, immutable, dated</td><td>Never overwrite an existing version — that breaks reproducibility</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Pinning the source by digest is what makes the
+                    whole pipeline reproducible.</strong> A base image
+                    referenced by a moving tag means two builds a week apart
+                    produce different machines with no record of why, which
+                    defeats the reason for building images at all. And the
+                    hardening row is a genuine security boundary: a build-
+                    time secret left in a layer is readable by anybody who
+                    can pull the image.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -478,6 +488,16 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Rotate on a schedule, and test the rotation</td><td>An untested rotation path means nobody dares revoke during an incident</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Retrieval at run time is the rule the other
+                    three depend on.</strong> A credential written to disk
+                    outlives the process, gets backed up, and appears in an
+                    image or a snapshot nobody thought about — which is the
+                    failure this whole card exists to prevent. The identity
+                    row is the one people miss: authenticating to the vault
+                    with another stored secret has moved the problem, not
+                    solved it.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -549,6 +569,16 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Scheduled and unattended</td><td>All of the above, plus alerting on failure and on suspicious success</td></tr>
                     </tbody>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Match the bar to the blast radius, and treat the
+                    dry run as the minimum for anything that
+                    writes.</strong> The failure this table addresses is
+                    real — administrative scripts change production with
+                    less review than the applications they manage — and the
+                    fix is proportionate rather than uniform. A capped first
+                    batch is the underrated control: it turns a wrong filter
+                    into twenty mistakes instead of twenty thousand.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">

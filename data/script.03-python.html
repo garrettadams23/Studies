@@ -46,6 +46,13 @@
         <tr><td>500</td><td>Internal Server Error</td><td>The server broke (not your fault)</td></tr>
       </tbody>
     </table>
+    <div class="concept-desc verdict">
+      <strong>Handle the 4xx and 5xx split differently, because only one of them is worth
+      retrying.</strong> A 4xx means your request was wrong and repeating it identically
+      will fail identically; a 5xx means the far end had a problem and a retry with
+      backoff is reasonable. Code that retries everything hammers a service that already
+      told you no, and code that retries nothing gives up on a transient blip.
+    </div>
     <div class="concept-card">
       <div class="concept-label">MAKING A REQUEST</div>
       <div class="concept-title">Python fetch example</div>
@@ -252,6 +259,13 @@ deactivate</pre>
           <tr><td>logging</td><td>Proper logging (not just print)</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Check the standard library before installing anything; it is larger than
+        most people assume.</strong> Path handling, JSON, dates, subprocess and HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>
+        clients are all present, and a dependency avoided is a dependency you never have
+        to update, audit or explain. Reach outside for the things the library genuinely
+        lacks — and `requests` remains the honourable exception everybody makes.
+      </div>
     </div>
   </div>
 </div>
@@ -361,6 +375,13 @@ animals = [<span class="fn">Dog</span>(<span class="str">"Rex"</span>), <span cl
         <tr><td>heapq</td><td>Partial</td><td>Yes</td><td>Yes</td><td>Always get the smallest/largest item</td></tr>
       </tbody>
     </table>
+    <div class="concept-desc verdict">
+      <strong>Pick by mutability and lookup, in that order.</strong> If the collection
+      must not change, a tuple says so to every future reader and to the interpreter; if
+      the question is "is this in it", a set turns a linear scan into a constant one. Most
+      performance surprises in beginner Python are a list being asked a membership
+      question thousands of times.
+    </div>
     <div class="concept-card">
       <div class="concept-label">DICT TRICKS</div>
       <div class="concept-title">Patterns You'll Use Weekly</div>
@@ -419,6 +440,14 @@ a ^ b   <span class="com"># {1, 4}  symmetric difference</span></pre>
           <tr><td>heap (priority queue)</td><td>O(1) min</td><td>O(log n)</td><td>"Top N", schedulers</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>The dict is the default and a list of dicts is the anti-
+        pattern.</strong> Searching a list for a matching record is linear and shows up
+        the moment the data grows; keying by the identifier makes the same question
+        constant time and usually simplifies the code. Reach for a deque specifically
+        when you push and pop at both ends — that is the one thing a list is genuinely
+        bad at.
+      </div>
     </div>
 
   </div>
@@ -1335,6 +1364,13 @@ urls = [<span class="str">"https://example.com"</span>] * <span class="num">10</
           <tr><td>a|b</td><td>a or b</td><td><code>cat|dog</code> → "cat" or "dog"</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Use raw strings for every pattern, and name the groups you will refer
+        to.</strong> Backslashes in ordinary strings are interpreted twice, which
+        produces patterns that almost work; a raw string removes the whole class of
+        confusion. Named groups turn an index nobody remembers into a word, which
+        matters the first time somebody edits the pattern.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">PYTHON RE MODULE</div>
@@ -1557,6 +1593,13 @@ x = <span class="num">42</span>
           <tr><td><code>StopIteration</code></td><td>Iterator exhausted</td><td><code>next()</code> on empty iterator</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Read the exception name before the traceback; it usually names the
+        mistake.</strong> A value error means the type was right and the content was
+        wrong, a type error means it was the wrong kind of thing entirely — and that
+        distinction points at different code. Beginners read the last line and skip the
+        name, which is the part carrying the diagnosis.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">CUSTOM EXCEPTIONS</div>
@@ -1603,6 +1646,13 @@ x = <span class="num">42</span>
           <tr><td>EAFP vs LBYL</td><td>Python prefers EAFP (try it)</td><td>Checking every condition first</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>The second row is the one that costs whole afternoons later.</strong> A
+        bare except that passes turns a crash into silent wrong behaviour, and the bug
+        then appears somewhere unrelated with no trace of the original — which is the
+        hardest kind of problem to work backwards from. Catch what you can handle, let
+        the rest propagate, and always log before re-raising.
+      </div>
       <pre class="code-block"><span class="com"># LBYL (Look Before You Leap) — C/Java style</span>
 <span class="kw">if</span> <span class="str">"key"</span> <span class="kw">in</span> my_dict:
     value = my_dict[<span class="str">"key"</span>]
@@ -1682,6 +1732,13 @@ Path(<span class="str">"output/reports"</span>).mkdir(parents=<span class="kw">T
           <tr><td><code>'t'</code></td><td>Text mode (default)</td><td>—</td><td>—</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>The `w` row deletes the file the instant you open it, before you write
+        anything.</strong> That surprises people who expected the truncation to happen
+        on write, and it is how a script that failed early still destroyed the input.
+        Use `x` when the file must not already exist, and write to a temporary file and
+        rename when you are replacing something you cannot afford to lose.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">CSV <span class="acro-exp">(Comma-Separated Values)</span> AND JSON <span class="acro-exp">(JavaScript Object Notation)</span> FILES</div>
@@ -1740,6 +1797,13 @@ text = json.dumps(data, indent=<span class="num">2</span>)       <span class="co
           <tr><td>5. Fix &amp; verify</td><td>Fix it, confirm the bug is gone, confirm you didn't break anything else</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Step 1 is the whole method; the rest is procedure.</strong> A bug you
+        cannot reproduce cannot be confirmed fixed, so time spent making it reliable is
+        never wasted — and it frequently reveals the cause on its own. The step people
+        skip is 3: forming a specific, falsifiable theory before changing anything,
+        rather than changing things until the symptom moves.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">PRINT DEBUGGING</div>
@@ -1851,6 +1915,14 @@ deactivate</pre>
           <tr><td><code>pipx</code></td><td>Install CLI <span class="acro-exp">(Command Line Interface)</span> tools in isolated envs</td><td>Global CLI tools without polluting system</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Use whatever the project already uses; the argument is not worth the
+        switching cost.</strong> All four rows solve the same problem adequately, and a
+        team half-migrated between two of them is worse off than a team on the oldest.
+        For something new, the fast modern one is a reasonable default — and the built-
+        in pair is always available, which is what you want on a server you do not
+        control.
+      </div>
     </div>
   </div>
 </div>
@@ -2076,6 +2148,14 @@ datetime.fromtimestamp(ts, timezone.utc)</pre>
           <tr><td><code>%z</code> / <code>%Z</code></td><td>UTC offset / tz name</td><td>+0000 / UTC</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Store and compute in UTC, and format for a human only at the
+        edge.</strong> Every date bug of consequence comes from a local time stored
+        without its offset, and the format codes here are for display — the moment a
+        naive datetime enters a database it has lost information nothing can recover.
+        Use timezone-aware objects everywhere, and the daylight-saving questions stop
+        arising.
+      </div>
     </div>
   </div>
 </div>
@@ -2166,6 +2246,13 @@ top_attackers.to_csv(<span class="str">"top_attackers.csv"</span>)</pre>
           <tr><td><code>pre-commit</code></td><td>Git hook manager</td><td>Runs all the above automatically before each commit</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Adopt the formatter first; it ends the arguments and makes every diff
+        smaller.</strong> Automatic formatting is the one tool on this list with no
+        judgement attached and an immediate payoff in review. Add the linter next, the
+        type checker on new code only, and the test runner from the first day of the
+        project — retrofitting tests is far harder than starting with one.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">USING THEM</div>
@@ -2292,6 +2379,14 @@ pre-commit run --all-files    <span class="com"># run manually on whole repo</sp
           <tr><td><code>multiprocessing</code></td><td>CPU-bound (math, image processing)</td><td>Yes</td><td>Separate processes, each its own GIL/core</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Match the tool to whether you are waiting or computing, and the whole
+        confusion dissolves.</strong> Threads and async both help when the program is
+        waiting on something outside itself; neither makes arithmetic faster, because
+        only one thread executes Python at a time. If the profile shows the processor
+        busy, the answer is separate processes — or a library that releases the lock and
+        does the work in C.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">THREADING — I/O BOUND</div>
@@ -2514,6 +2609,13 @@ for f in /var/log/*.log; do ./logcheck.py "$f"; done</pre>
           <tr><td>HMAC <span class="acro-exp">(Hash-based Message Authentication Code)</span> signature</td><td>Sign each request with a shared secret</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> API requests</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>The last row is the only one that lets you grant access without handing
+        over a credential.</strong> Everything above it means the caller holds a secret
+        that is as good as the account it belongs to, which is fine inside a system and
+        wrong between organisations. Whatever the method, put it in the header rather
+        than the query string: URLs <span class="acro-exp">(Uniform Resource Locator)</span> end up in logs, proxies and browser history.
+      </div>
       <pre class="code-block"><span class="kw">import</span> requests, os
 
 <span class="com"># Read the key from env — NEVER hardcode</span>
@@ -2635,6 +2737,13 @@ back = data.decode(<span class="str">"utf-8"</span>)        <span class="com"># 
           <tr><td>URL encoding</td><td>Make text safe in URLs (% escaping)</td><td><code>%20</code> = space, <code>%40</code> = @</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>None of these is encryption, and treating base64 as though it were is a
+        recurring mistake.</strong> All three are transformations anybody can reverse
+        without a key — they exist to make bytes survive a channel that expects text,
+        and a password encoded rather than hashed is a password in plain sight. Use them
+        for transport, never for secrecy.
+      </div>
       <pre class="code-block"><span class="kw">import</span> base64, urllib.parse
 
 <span class="com"># Base64</span>
@@ -2698,6 +2807,13 @@ data = Path(<span class="str">"file.iso"</span>).read_bytes()
           <tr><td><strong>D</strong></td><td>Dependency Inversion</td><td>Depend on abstractions, not concrete implementations. Inject dependencies.</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>The first letter is worth more than the other four together.</strong>
+        Single responsibility is what makes code testable, replaceable and readable, and
+        the remaining principles are largely consequences of taking it seriously. The
+        rest are also easy to over-apply — a codebase contorted to satisfy all five is a
+        real failure mode, and usually worse than the duplication it avoided.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">SRP <span class="acro-exp">(Single Responsibility Principle)</span> IN ACTION</div>
@@ -2803,6 +2919,14 @@ s3 = boto3.client(<span class="str">"s3"</span>)
           <tr><td>Airflow / Dagster</td><td>Complex data pipelines with dependencies (DAGs)</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Start at the top and move down only when a specific limitation
+        bites.</strong> A timer on one machine is enough for most jobs, and the
+        complexity of a distributed task queue is real: a broker to run, retries to
+        reason about, and failure modes that only appear under load. Move when you need
+        retries, durability or more than one machine — not because the job feels
+        important.
+      </div>
     </div>
   </div>
 </div>
@@ -2866,6 +2990,13 @@ u = User(name=<span class="str">"Alice"</span>, age=<span class="str">"30"</span
           <tr><td>Don't trust client-side validation</td><td>JS <span class="acro-exp">(JavaScript)</span> checks are UX <span class="acro-exp">(User Experience)</span>, not security — always re-validate server-side</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>The first row is the one that survives contact with an
+        attacker.</strong> A denylist is a list of the attacks somebody thought of; an
+        allowlist is a statement of what your program actually accepts, and everything
+        else is rejected by construction. The last row is the practical companion: type
+        is not validation, and length is the check most often missing.
+      </div>
     </div>
   </div>
 </div>
@@ -2920,6 +3051,14 @@ SECRET = os.environ[<span class="str">"WEBHOOK_SECRET"</span>].encode()
           <tr><td>Validate the payload</td><td>It's untrusted input — validate before acting</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Verify the signature before you parse the payload, not after.</strong>
+        The endpoint is public, so anything that reaches it is untrusted until the
+        signature says otherwise — and code that processes first and checks later has
+        already acted on forged input. Idempotency is the other non-negotiable: senders
+        retry, so a handler that charges a card twice is a bug in your code rather than
+        theirs.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">SENDING NOTIFICATIONS</div>
@@ -2969,6 +3108,13 @@ SECRET = os.environ[<span class="str">"WEBHOOK_SECRET"</span>].encode()
           <tr><td>Protobuf/MessagePack</td><td>Fast binary, cross-language</td><td>✓ Yes (schema-based)</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>The pickle row is not a caution, it is a prohibition.</strong> Loading a
+        pickled object executes code by design, so a pickle from anywhere you do not
+        fully control is remote code execution with extra steps — and "we only load our
+        own files" is a claim about a filesystem, not a guarantee. Use JSON for data,
+        TOML for configuration, and safe loading for YAML.
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">THE PICKLE TRAP</div>
@@ -3073,6 +3219,13 @@ console.print(table)
           <tr><td>Covers edge cases</td><td>Empty, zero, negative, huge, None, unicode</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc verdict">
+        <strong>Fast and isolated are the two that decide whether the suite gets
+        run.</strong> A test suite that takes ten minutes is run before merges; one that
+        takes ten seconds is run constantly, which is where the value actually is — and
+        tests that depend on order fail mysteriously and get deleted. Clear failure is
+        the third: a test that fails without saying what broke costs more than it saves.
+      </div>
     </div>
   </div>
 </div>

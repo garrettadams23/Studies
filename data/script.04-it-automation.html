@@ -25,6 +25,13 @@
           <tr><td>OS <span class="acro-exp">(Operating System)</span></td><td>Linux/macOS</td><td>Windows, Linux, macOS</td></tr>
           <tr><td>Extension</td><td><code>.sh</code></td><td><code>.ps1</code></td></tr>
         </table>
+        <div class="concept-desc verdict">
+          <strong>The output row is the whole difference, and it decides how you write
+          everything else.</strong> Bash pipes text and every stage re-parses it;
+          PowerShell pipes objects with typed properties, so filtering by a field
+          needs no cutting or awk. That is why a Bash idiom translated literally into
+          PowerShell reads badly — you are meant to stop parsing and start selecting.
+        </div>
         <br>
         PowerShell is now open-source and cross-platform (pwsh). For Windows
         administration it is the <em>standard</em> — learn it even if you
@@ -1196,6 +1203,13 @@ tags = data.get(<span class="str">&quot;tags&quot;</span>, [])
         <tr><td><code>()</code></td><td>A "capture group" — pulls out a specific piece of the match</td><td>Grabbing just the IP <span class="acro-exp">(Internet Protocol)</span> address out of a full log line</td></tr>
         <tr><td><code>^</code> / <code>$</code></td><td>Start / end of the line</td><td><code>^ERROR</code> matches lines that *begin* with ERROR</td></tr>
       </table>
+      <div class="concept-desc verdict">
+        <strong>These four cover most of what a working script needs, and the plus sign
+        is the one to understand properly.</strong> Quantifiers are where regular
+        expressions become subtle: greedy by default, so `.+` will run to the end of the
+        line and back off, which is behind most patterns that match too much. Add a
+        question mark to make it lazy when that happens.
+      </div>
     </div>
     <div class="concept-card">
       <span class="concept-label">Hands-on</span>

@@ -110,6 +110,15 @@
                     <tr><td><span class="c-cyan">subprocess</span></td><td>Run shell commands and capture output</td></tr>
                     <tr><td><span class="c-cyan">argparse</span></td><td>Build proper command-line interfaces</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The last row is the one that makes the others
+                    reproducible somewhere else.</strong> A virtual
+                    environment protects your machine; a pinned requirements
+                    file protects the next machine, the pipeline and the
+                    version of you in six months. Freeze after every
+                    dependency change and commit it — an environment nobody
+                    can rebuild exactly is an environment that will drift.
+                  </div>
                 </div>
               </div>
 
@@ -125,6 +134,16 @@
                     <tr><td>Indentation mixing</td><td>Never mix tabs and spaces — Python rejects it. Configure your editor to 4 spaces.</td></tr>
                     <tr><td>Bare <code>except:</code></td><td>Swallows every error including Ctrl-C. Catch specific exceptions instead.</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The mutable-default row is the most surprising
+                    bug in the language and it is silent.</strong> The
+                    default is evaluated once at definition, so every call
+                    without an argument shares one list — which produces
+                    behaviour that looks like data leaking between unrelated
+                    calls. Use `None` as the default and create the object
+                    inside the function; the same instinct fixes the copying
+                    row.
+                  </div>
                 </div>
               </div>
             </div>
@@ -227,6 +246,15 @@
                     <tr><td><code>tsx</code> / <code>ts-node</code></td><td>Run a <code>.ts</code> file directly without a separate build</td></tr>
                     <tr><td><code>@types/*</code></td><td>Community type definitions for untyped npm packages</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Turn on strict mode from the first line of a new
+                    project.</strong> Retrofitting it onto a codebase
+                    written without it is a large, unrewarding job, and most
+                    of the value of the type system is behind that flag —
+                    without it you have annotations that document intent and
+                    catch far less. Type-check separately from bundling, so
+                    the build fails on types rather than shipping them.
+                  </div>
                 </div>
               </div>
 
@@ -322,6 +350,16 @@
                     <tr><td>mutation</td><td>Create / update / delete</td><td>POST / PUT / DELETE</td></tr>
                     <tr><td>subscription</td><td>Real-time stream of updates (usually over WebSocket)</td><td>Webhook / SSE <span class="acro-exp">(Server-Sent Events)</span></td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The subscription row is the one to be sure you
+                    want before adopting.</strong> Queries and mutations are
+                    a different shape of HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>; subscriptions are long-lived
+                    stateful connections with their own scaling,
+                    authentication and reconnection problems, and they
+                    arrive with the rest of the technology whether or not
+                    you need them. Adopt the first two rows and leave the
+                    third until something genuinely requires a stream.
+                  </div>
                   <div class="dt">▸ SCHEMA DEFINITION (SDL)</div>
 <pre class="code-block"><span class="kw">type</span> <span class="type">User</span> {
   <span class="var">id</span>: <span class="type">ID!</span>          <span class="com"># ! = non-nullable</span>
@@ -342,7 +380,7 @@
                     <tr><th>Dimension</th><th>REST</th><th>GraphQL</th></tr>
                     <tr><td>Fetching</td><td class="c-amber">Fixed shapes; may over/under-fetch</td><td class="c-green">Client picks exact fields</td></tr>
                     <tr><td>Endpoints</td><td>Many (one per resource)</td><td>One</td></tr>
-                    <tr><td>Caching</td><td class="c-green">Easy — HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> caches by URL <span class="acro-exp">(Uniform Resource Locator)</span></td><td class="c-amber">Harder — one URL, needs client-side cache</td></tr>
+                    <tr><td>Caching</td><td class="c-green">Easy — HTTP caches by URL <span class="acro-exp">(Uniform Resource Locator)</span></td><td class="c-amber">Harder — one URL, needs client-side cache</td></tr>
                     <tr><td>Versioning</td><td>Often <code>/v2/</code> URLs</td><td class="c-green">Evolve the schema; deprecate fields</td></tr>
                     <tr><td>Learning curve</td><td class="c-green">Low</td><td class="c-amber">Higher (schema, resolvers, tooling)</td></tr>
                     <tr><td>Risk</td><td>N+1 across endpoints</td><td class="c-red">N+1 in resolvers; deep/expensive queries need limits</td></tr>
@@ -390,6 +428,16 @@
                     <tr><td>Wide-Column</td><td>Rows with dynamic columns</td><td>Cassandra, HBase</td><td>Huge write volume, time-series</td></tr>
                     <tr><td>Graph</td><td>Nodes &amp; edges</td><td>Neo4j, Neptune</td><td>Relationships (social, fraud)</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Pick by access pattern, and be honest that most
+                    applications want the relational answer.</strong> Each
+                    row here is excellent at one shape of question and
+                    awkward at the others, and "flexible schema" usually
+                    means the schema is now in the application code and
+                    unenforced. Reach for these when the pattern in the last
+                    column is genuinely yours, not to avoid designing a
+                    schema.
+                  </div>
                 </div>
               </div>
 
@@ -445,6 +493,16 @@
                     <tr><td>Don't index everything</td><td>Each index taxes every write and eats storage</td></tr>
                     <tr><td>Read the query plan</td><td><code>EXPLAIN</code> tells you what the DB actually does — measure, don't guess</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Read the query plan before adding an index, and
+                    after.</strong> Indexes are guesses about how the
+                    database will answer a question, and the plan is the
+                    only thing that tells you whether the guess was used —
+                    quite often it is not, because of the column order in a
+                    composite or a function applied in the predicate. The
+                    third row is the cost nobody accounts for: every index
+                    makes every write slower.
+                  </div>
                 </div>
               </div>
 
@@ -537,6 +595,16 @@
                     <tr><td>Scaling</td><td>Open connections are stateful — many servers need a shared pub/sub layer (e.g. Redis) to broadcast across nodes.</td></tr>
                     <tr><td>Auth</td><td>Browsers can't set custom headers on a WebSocket handshake — pass a token via a cookie or a short-lived ticket in the URL <span class="acro-exp">(Uniform Resource Locator)</span>.</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Reconnection is not optional, and it is the part
+                    every first implementation omits.</strong> Connections
+                    drop for reasons that have nothing to do with your code
+                    — a proxy timeout, a phone changing network, a deploy —
+                    so a client without backoff and resume is a feature that
+                    works in development and fails in the field. Assume
+                    disconnection is normal and design the resume path
+                    first.
+                  </div>
                 </div>
               </div>
             </div>
@@ -629,6 +697,15 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>GET, PUT, DELETE</td><td class="c-green">Yes — same call, same end state</td></tr>
                     <tr><td>POST</td><td class="c-red">No — needs an idempotency key to be safe to retry</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The point of the row is what it lets a client do
+                    safely.</strong> Idempotent methods can be retried after
+                    a timeout without asking whether the first attempt
+                    landed, which is exactly the situation a flaky network
+                    puts you in — and POST without an idempotency key leaves
+                    the client with no safe option. If a client can create
+                    something, give it a way to say which creation it meant.
+                  </div>
                 </div>
               </div>
             </div>
@@ -717,6 +794,15 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Debug by hand</td><td class="c-red">Hard (binary)</td><td class="c-green">Easy (curl)</td></tr>
                     <tr><td>Best for</td><td>Internal microservices</td><td>Public/browser APIs <span class="acro-exp">(Application Programming Interface)</span></td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The browser row decides it more often than the
+                    performance row.</strong> A binary contract over HTTP/2
+                    is genuinely faster and stricter, and it needs a proxy
+                    to reach a browser at all — which makes it excellent
+                    between your own services and awkward as a public API.
+                    Use it internally, expose REST or GraphQL outward, and
+                    stop treating the choice as ideological.
+                  </div>
                 </div>
               </div>
             </div>
@@ -757,6 +843,16 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Data</td><td>Current, detailed</td><td>Historical, often aggregated</td></tr>
                     <tr><td>Examples</td><td>Postgres, MySQL</td><td>BigQuery, Snowflake, Redshift</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Do not run analytics on the transactional
+                    database, however tempting it is.</strong> The two
+                    workloads want opposite things from the same storage, so
+                    a few large aggregations will lock, cache-evict and slow
+                    the queries your users are waiting on — which is how a
+                    reporting request becomes an outage. Replicate to
+                    something built for the right-hand column, even if that
+                    is just a read replica to begin with.
+                  </div>
                 </div>
               </div>
 
@@ -777,6 +873,15 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Great at</td><td>Fetch/modify whole records</td><td>Aggregate a few columns over many rows</td></tr>
                     <tr><td>Compression</td><td class="c-amber">Modest</td><td class="c-green">Excellent (like values together)</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>This is the reason the previous table's split
+                    exists at all.</strong> Fetching whole records and
+                    aggregating a couple of columns over millions of rows
+                    are physically different access patterns, and no amount
+                    of indexing makes one storage layout good at both. When
+                    somebody proposes a single database for everything, this
+                    is the row to point at.
+                  </div>
                 </div>
               </div>
 
@@ -830,6 +935,17 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Sandboxed</td><td>Runs in the same memory-safe browser sandbox as JS — can't touch the system directly.</td></tr>
                     <tr><td>Language-agnostic</td><td>Any language with a WASM backend compiles to it (Rust, C/C++, Go, C#…).</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Reach for it when the profiler says the
+                    bottleneck is computation, not before.</strong> The
+                    benefits here are real and narrow — heavy numeric work,
+                    codecs, existing native libraries — and for ordinary
+                    interface code the JavaScript engine is already fast and
+                    far easier to debug. The sandbox row is worth knowing
+                    for a different reason: it runs inside the same security
+                    model, so it is not a way around the browser's
+                    restrictions.
+                  </div>
                 </div>
               </div>
 
@@ -912,6 +1028,16 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Web App Manifest</td><td>A JSON <span class="acro-exp">(JavaScript Object Notation)</span> file describing the app (name, icons, colors, display mode) so it can be installed to the home screen.</td></tr>
                     <tr><td>HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span></td><td>Required — service workers only run over secure connections (they're powerful, so they must be trusted).</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The service worker is the piece that carries the
+                    risk.</strong> It sits between your users and your
+                    server, and a caching mistake serves a stale application
+                    to people who cannot clear it — which is why every
+                    progressive web app eventually needs a deliberate
+                    update-and-reload strategy. Get the manifest and HTTPS
+                    in place first; add the worker when you know what you
+                    want cached and how it will be replaced.
+                  </div>
                 </div>
               </div>
 
@@ -993,6 +1119,16 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Understandable</td><td>Clear language, predictable navigation, helpful error messages.</td></tr>
                     <tr><td>Robust</td><td>Works across browsers and assistive tech — valid, semantic HTML <span class="acro-exp">(HyperText Markup Language)</span>.</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The last principle is the one that keeps the
+                    other three true next year.</strong> Perceivable,
+                    operable and understandable can all be satisfied by a
+                    bespoke widget that works today and breaks with the next
+                    screen-reader release; robust means using the platform's
+                    own semantics so it keeps working. Almost every
+                    accessibility failure is a custom control replacing
+                    something the browser already provided.
+                  </div>
                 </div>
               </div>
 
@@ -1009,6 +1145,15 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Color contrast ≥ 4.5:1</td><td>Body text must stand out from its background (WCAG AA).</td></tr>
                     <tr><td>Respect reduced motion</td><td>Honor <code>prefers-reduced-motion</code> for users who get motion sickness.</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The first row makes most of the others
+                    unnecessary.</strong> A real button is focusable,
+                    keyboard-operable, announced correctly and styled by
+                    every assistive technology already — and every one of
+                    those has to be rebuilt by hand for a div pretending to
+                    be one. Semantic markup is not a checkbox on this list;
+                    it is the reason the list is short.
+                  </div>
                 </div>
               </div>
 
@@ -1029,6 +1174,15 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     <tr><td>Automated</td><td>axe, Lighthouse, WAVE — catch ~30–40% of issues fast.</td></tr>
                     <tr><td>Manual</td><td>Unplug the mouse and navigate; turn on a screen reader (VoiceOver, NVDA). No tool replaces this.</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>The automated row catches under half, and
+                    knowing that number is the point.</strong> Tools find
+                    contrast, missing labels and structural errors reliably,
+                    and they cannot tell whether the reading order makes
+                    sense or whether the focus lands somewhere useful.
+                    Unplug the mouse for ten minutes: it is the cheapest,
+                    most informative accessibility test there is.
+                  </div>
                 </div>
               </div>
             </div>
@@ -1924,6 +2078,16 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                     <tr><td>Swift</td><td>Native (LLVM)</td><td>Objective-C</td><td>iOS/macOS; some server &amp; systems use</td></tr>
                     <tr><td>Scala</td><td>JVM (also JS, native)</td><td>Joins Java</td><td>Big data (Spark), typed FP shops</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Each of these earns its place by fixing
+                    something specific about the language it joins, not by
+                    being newer.</strong> That framing is what makes the
+                    choice tractable — interoperability with an existing
+                    ecosystem is the feature, so the question is whether the
+                    fix matters to your codebase. All three run alongside
+                    the incumbent, which means adoption can be incremental
+                    rather than a rewrite.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
@@ -2000,6 +2164,16 @@ if let real = name { greet(real) }          <span class="com">// unwrap safely</
                     <tr><td>R</td><td>Statistics and data as a first-class, vectorized concern</td></tr>
                     <tr><td>MATLAB</td><td>Matrix maths as the native datatype (engineering, DSP)</td></tr>
                   </table>
+                  <div class="concept-desc verdict">
+                    <strong>Learn one of these for the idea, not for the
+                    job.</strong> None of the four is likely to be your
+                    working language, and each teaches something that
+                    transfers permanently — supervision trees change how you
+                    think about failure, and a strict type system changes
+                    what you consider a runtime error. A fortnight in one of
+                    them improves the code you write in the language you are
+                    actually paid for.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">
