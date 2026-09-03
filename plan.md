@@ -18734,3 +18734,28 @@ net 54→0     sec 66→0        ai 39→0
 verdicts written by hand              316
 runway                                ~106 topics
 ```
+
+### `devops`, all 38 — eight domains, 354 verdicts
+
+DevOps tables are lists of practices, and the honest verdict is nearly always
+about **sequence**: which one first, and which of the others depend on it.
+
+> **Order the stages by how fast they fail, not by how important they are.**
+
+> **Do the second row before the third, always.** Committing to one or three
+> years of spend on infrastructure you have not yet rightsized locks in the waste.
+
+> **A tested delete path is the row that separates a platform from a mechanism
+> for accumulating cost.**
+
+> **The last row deletes a whole class of incident and takes an afternoon.**
+> Long-lived cloud keys in repository secrets are the credentials that leak…
+> federation means there is nothing stored to steal.
+
+```
+tables_without_verdict   748 → … → 430 → 392
+career 36→0  military 36→12  ops 53→0  grc 46→0
+net 54→0     sec 66→0        ai 39→0   devops 38→0
+verdicts written by hand              354
+runway                                ~102 topics   (stop line: 40)
+```

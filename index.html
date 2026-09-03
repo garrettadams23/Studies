@@ -31282,20 +31282,20 @@ The professional-judgement side of this is in
 <span class="ctag ctag-general">CKA</span>
 </div>
 <span class="domain-sub">CI/CD · IaC · Containers · Kubernetes · GitOps · Secrets · Supply Chain · Serverless · Architecture</span>
-<span class="domain-meta" aria-label="50 topics, about 2h 15m to read"
->50 topics · ~2h 15m</span>
+<span class="domain-meta" aria-label="50 topics, about 2h 30m to read"
+>50 topics · ~2h 30m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
 <script type="text/html" class="domain-src" data-domain="devops">
 <!-- BEGINNER12-OPS v1 -->
 <!-- ── TOPIC: CI/CD CONCEPTS ─────────────────────────────── -->
-<div class="topic" id="cicd-automate-the-path-from-code-to-production" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="cicd-automate-the-path-from-code-to-production" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔄</span>
 <span class="topic-name">CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> — Automate the Path From Code to Production</span>
 <span class="topic-badge">OPS • DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -31323,6 +31323,15 @@ The professional-judgement side of this is in
 <tr><td>Deploy to Production</td><td>Roll out to real users</td><td>k8s rolling update, blue/green</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Order the stages by how fast they fail, not by how important they
+are.</strong> Linting in seconds, unit tests in a minute, end-to-end tests in
+twenty — a pipeline arranged that way tells a developer they made a typo before
+they have made coffee, and one arranged by importance makes them wait twenty
+minutes to find out. The stages people skip are the two security ones, and they
+are also the two that are pure gain: a dependency scan finds real problems,
+needs no test data, and adds seconds.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">GITHUB ACTIONS</div>
@@ -31371,12 +31380,12 @@ jobs:
 </div>
 </div>
 <!-- ── TOPIC: KUBERNETES FUNDAMENTALS ────────────────────── -->
-<div class="topic" id="infrastructure-as-code-servers-you-define-in-text-files" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="infrastructure-as-code-servers-you-define-in-text-files" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏗️</span>
 <span class="topic-name">Infrastructure as Code — Servers You Define in Text Files</span>
 <span class="topic-badge">OPS • Modern</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -31394,6 +31403,14 @@ jobs:
 <tr><td>No change history</td><td>Git history of every infra change</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The right-hand column is only true while nobody clicks in the
+console.</strong> A single manual change makes the code a description of what
+you meant rather than a record of what exists, and the next run either reverts
+somebody's fix or fails confusingly — which is how teams end up afraid to apply
+their own infrastructure code. Enforce it: read-only console access for humans,
+drift detection on a schedule, and the whole column becomes real.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DECLARATIVE VS IMPERATIVE</div>
@@ -31414,6 +31431,14 @@ jobs:
 <tr><td>Pulumi</td><td>Provisioning</td><td>Python/TS/Go</td><td>Teams who prefer real programming languages</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The category column matters more than the tool column: provisioning and
+configuration are different jobs.</strong> Terraform creates the machine and
+Ansible decides what is on it, and most arguments about which to use are really
+teams trying to make one do both. Pick one from each category, and prefer the
+one your team can read at three in the morning over the one with the better
+feature list.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">ANSIBLE BASICS</div>
@@ -31463,12 +31488,12 @@ ansible-playbook -i inventory.ini playbook.yml</pre>
 </div>
 <!-- BEGINNER25-OPS v1 -->
 <!-- ── TOPIC: CONTAINER SECURITY ─────────────────────────── -->
-<div class="topic" id="container-security-hardening-docker-images" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="container-security-hardening-docker-images" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🐳</span>
 <span class="topic-name">Container Security — Hardening Docker &amp; Images</span>
 <span class="topic-badge">OPS • Security</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -31491,6 +31516,14 @@ ansible-playbook -i inventory.ini playbook.yml</pre>
 <tr><td>Multi-stage builds</td><td>Don't ship build tools/source in the final image</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Pinning by digest is the row that makes every other row
+durable.</strong> Scanning an image you rebuilt from a moving tag tells you
+about an image nobody will run again, and "it worked yesterday" becomes
+unanswerable — the digest is what makes a build reproducible and a vulnerability
+report meaningful. Multi-stage builds are the cheapest real win after that: they
+routinely remove most of an image's size and nearly all of its compilers.
+</div>
 <pre class="code-block"><span class="com"># Scan an image for known vulnerabilities</span>
 trivy image python:3.12
 grype nginx:latest
@@ -31516,6 +31549,14 @@ grype nginx:latest
 <tr><td>Network segmentation</td><td>Custom networks; don't expose ports you don't need</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Not running as root and not mounting the Docker socket cover most of
+what actually happens.</strong> Everything else here is genuine hardening; those
+two are the difference between a contained compromise and a host compromise, and
+the socket row in particular turns any container escape into root on the
+machine. Set both as defaults in your base images and templates, because a
+control that has to be remembered per service will be missed.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">THE 4 Cs</div>
@@ -31530,6 +31571,14 @@ grype nginx:latest
 <tr><td><strong>C</strong>ode</td><td>Secure coding, dependency hygiene, secrets management</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Effort flows inward but risk flows outward, which is why teams work on
+the wrong layer.</strong> Image scanning and secure coding are the layers a team
+owns and can act on this week; cluster role-based access and cloud identity are
+where a mistake gives away everything inside them, and they are usually somebody
+else's remit. If you can influence one thing outside your own layer, make it the
+cluster's access model.
+</div>
 </div>
 </div>
 </div>
@@ -31812,6 +31861,14 @@ spec:
 <tr><td style="color:var(--green)">Resource limits</td><td>Always set requests + limits. Prevents resource starvation and limits blast radius.</td></tr>
 <tr><td style="color:var(--green)">Image scanning</td><td>Scan in CI (trivy, Grype) and at admission (Kyverno, OPA Gatekeeper).</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The Secret row is the one whose analogy misleads, and the encoding
+is not the point.</strong> Base64 is not encryption, so a Kubernetes Secret
+is a config map with a warning label until you enable encryption at rest and
+restrict who can read it — and by default, anyone who can create a pod in
+the namespace can mount it. Treat the row as a delivery mechanism and keep
+the actual secret in an external store.
+</div>
 </div>
 </div>
 </div>
@@ -32038,16 +32095,28 @@ changes (<span class="c-amber">~</span>), and destroys
 <tr><td>Modules</td><td>Reusable bundles of resources with inputs/outputs — package a "VPC <span class="acro-exp">(Virtual Private Cloud)</span>" or "web app" once, use it everywhere.</td></tr>
 <tr><td>Never edit state by hand</td><td>Use <code>terraform state</code> subcommands; hand-editing the JSON <span class="acro-exp">(JavaScript Object Notation)</span> corrupts tracking.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The state file is the most valuable and least
+protected artefact in the whole setup.</strong> It
+records what exists, it frequently contains secrets in
+plain text, and losing or corrupting it means
+reconciling reality by hand — so remote state with
+locking and versioning is not an optimisation, it is the
+first thing to configure. Read every plan before
+applying; the diff is the only place a destructive
+change announces itself, and "apply" run from habit is
+how a database gets replaced instead of updated.
 </div>
 </div>
 </div>
 </div>
-<div class="topic" id="message-queues-event-driven-architecture" data-reviewed="2026-08" data-read="4" data-level="core">
+</div>
+<div class="topic" id="message-queues-event-driven-architecture" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📬</span>
 <span class="topic-name">Message Queues &amp; Event-Driven Architecture</span>
 <span class="topic-badge">Architecture</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -32084,6 +32153,18 @@ event-driven systems, where components react to things that
 <tr><td>Dead-letter queue</td><td>Where messages go after repeated processing failures</td></tr>
 <tr><td>Backpressure</td><td>The queue absorbs bursts so a slow consumer isn't overwhelmed</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Choose by how many things should react, and be
+honest that the answer usually grows.</strong> A queue
+is right when exactly one worker should do the job; a
+topic is right when the number of interested parties is
+unknown and will increase — and starting with a queue
+because there is one consumer today is how you end up
+bolting a fan-out on later. The dead-letter queue is the
+row nobody configures and everybody needs: without it, a
+poison message is retried forever and the backlog is
+your outage.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32120,6 +32201,16 @@ ID). This is the single most important habit in event-driven systems.
 <tr><td>Cost: complexity</td><td>Another system to run/monitor; harder to trace a request end-to-end.</td></tr>
 <tr><td>Cost: eventual consistency</td><td>Work happens asynchronously — the result isn't ready the instant you publish.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The tracing cost is the one that surprises teams
+and it lands during an incident.</strong> Decoupling
+means a request no longer has a stack trace — it has a
+message that was accepted, and somewhere else something
+happened or did not — so correlation identifiers passed
+through every message are not optional extras but the
+price of admission. Add them on day one; retrofitting
+them means touching every producer and consumer at once.
+</div>
 </div>
 </div>
 </div>
@@ -32173,6 +32264,17 @@ the harder it is to invalidate. Each layer is a trade of speed vs freshness.
 <tr><td>Write-through</td><td>Writes go to cache <em>and</em> DB together — always fresh, slightly slower writes.</td></tr>
 <tr><td>Write-back</td><td>Write to cache now, flush to DB later — fast, but risks loss on crash.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Cache-aside unless you have a specific reason,
+and never write-back without durable storage behind
+it.</strong> The first is simple, failure-tolerant and
+what most systems mean by "we added a cache"; write-back
+is fast and will lose data when the cache dies, which is
+an acceptable trade only if you have decided what that
+data is worth. The real difficulty is not in this table
+at all — it is invalidation, which every row leaves to
+you.
+</div>
 <div class="dt" style="margin-top:12px">▸ CACHE-ASIDE IN CODE</div>
 <pre class="code-block"><span class="kw">function</span> <span class="fn">getUser</span>(<span class="var">id</span>) {
   <span class="kw">let</span> <span class="var">u</span> = <span class="var">cache</span>.<span class="fn">get</span>(<span class="str">`user:</span>${<span class="var">id</span>}<span class="str">`</span>);
@@ -32203,12 +32305,12 @@ Mitigate with a short lock, request coalescing, or staggered TTLs.
 </div>
 </div>
 </div>
-<div class="topic" id="serverless-faas-code-without-managing-servers" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="serverless-faas-code-without-managing-servers" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">☁️</span>
 <span class="topic-name">Serverless &amp; FaaS <span class="acro-exp">(Function as a Service)</span> — Code Without Managing Servers</span>
 <span class="topic-badge">Cloud</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -32266,6 +32368,17 @@ automatically — each request gets its own isolated run.
 <tr><td>Containers</td><td>The image + app</td></tr>
 <tr><td>Serverless / FaaS</td><td class="c-green">Just the code</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Each step down the second table trades control
+for operational relief, and the trade is one-way in
+practice.</strong> Moving up — off serverless back onto
+containers — means rebuilding assumptions about state,
+timeouts and cold starts that had stopped being visible,
+so choose deliberately rather than by default.
+Serverless is excellent for spiky, short, stateless work
+and poor for long jobs, steady high throughput and
+anything that wants a warm connection pool.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32281,16 +32394,28 @@ automatically — each request gets its own isolated run.
 <tr><td>Vendor lock-in</td><td>Triggers and runtimes are provider-specific; portability takes effort.</td></tr>
 <tr><td>Harder local debugging</td><td>The event-driven, managed environment is tricky to reproduce on your laptop.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>"No ops" is the row that is least true and most
+often used to justify the choice.</strong> There are no
+servers to patch and there is a great deal to operate:
+concurrency limits, cold-start behaviour, retry
+semantics, per-invocation cost, and observability that
+your existing tooling probably does not cover.
+Serverless moves the operational work rather than
+removing it — pick it for scale-to-zero and spiky
+traffic, which are genuine, and budget for the debugging
+row.
 </div>
 </div>
 </div>
 </div>
-<div class="topic" id="object-storage-s3-the-cloud-storage-model" data-reviewed="2026-08" data-read="3" data-level="core">
+</div>
+<div class="topic" id="object-storage-s3-the-cloud-storage-model" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🪣</span>
 <span class="topic-name">Object Storage — S3 <span class="acro-exp">(Simple Storage Service)</span> &amp; the Cloud Storage Model</span>
 <span class="topic-badge">Cloud</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -32321,6 +32446,17 @@ Storage, and MinIO all speak a similar API <span class="acro-exp">(Application P
 <tr><td>Scales to</td><td class="c-green">Effectively unlimited</td><td class="c-amber">Limited</td><td class="c-amber">Limited</td></tr>
 <tr><td>Best for</td><td>Media, backups, data lakes, static sites</td><td>Shared docs</td><td>Databases, VMs <span class="acro-exp">(Virtual Machine)</span></td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The edit-in-place row is the one that decides
+most designs.</strong> Object storage replaces the whole
+thing on every write, which is why it is wrong for
+databases and perfect for anything append-or-replace —
+and why teams who reach for it as a general file system
+end up rewriting large blobs to change one field.
+Default to object storage for everything that is not a
+database or a mounted disk; it is the cheapest, most
+durable and least operable of the three.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32336,6 +32472,17 @@ Storage, and MinIO all speak a similar API <span class="acro-exp">(Application P
 <tr><td>Static website hosting</td><td>Serve a bucket of HTML/JS directly — often fronted by a CDN <span class="acro-exp">(Content Delivery Network)</span>.</td></tr>
 <tr><td>Durability</td><td>Providers replicate objects across facilities — S3 advertises 99.999999999% ("11 nines") durability.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Turn on versioning before you need it, and pair
+it with a lifecycle rule so it does not become the
+bill.</strong> Versioning is the single control that
+makes an accidental overwrite or a ransomware event
+survivable at the storage layer, and it silently retains
+every old copy forever unless a rule expires them.
+Presigned URLs are the other row worth internalising:
+they are how you let a browser upload directly without
+your service touching the bytes or the credentials.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32357,12 +32504,12 @@ single object.
 </div>
 </div>
 </div>
-<div class="topic" id="deployment-strategies-blue-green-canary-rolling" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="deployment-strategies-blue-green-canary-rolling" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎚️</span>
 <span class="topic-name">Deployment Strategies — Blue-Green, Canary &amp; Rolling</span>
 <span class="topic-badge">Reliability</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -32389,6 +32536,16 @@ version at once.
 <tr><td>Canary</td><td>Send a small % of traffic to the new version, watch metrics, then ramp up. Limits blast radius; needs good monitoring.</td></tr>
 <tr><td>Feature flags</td><td>Ship code dark, then toggle it on for cohorts at runtime — decouples <em>deploy</em> from <em>release</em>.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Feature flags are a different axis from the
+other three, and combining them is what makes deployment
+boring.</strong> Rolling, blue-green and canary all
+decide how new code reaches servers; flags decide when
+behaviour reaches users, which means a deploy stops
+being the risky event. Adopt flags first if you can only
+do one thing — they make every other strategy safer and
+let you turn something off without a release.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32420,6 +32577,17 @@ which is why these went mainstream.
 <tr><td>Good metrics/alerts</td><td>Canary is blind without error-rate and latency dashboards to compare versions.</td></tr>
 <tr><td>Automated rollback</td><td>A deploy that can't auto-revert on failing metrics isn't really safe.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Backward compatibility is the requirement that
+governs the database, and it is the one that cannot be
+bought.</strong> The other three are tooling; running
+old and new code against one schema is a discipline in
+how migrations are written — add a column, deploy,
+backfill, then read it, then remove the old one, across
+several releases. Teams that skip the expand-and-
+contract sequence discover that their rollback is
+impossible precisely when they need it.
+</div>
 </div>
 </div>
 </div>
@@ -32502,12 +32670,12 @@ guarantees cost round-trips. There's no free lunch in distributed data.
 </div>
 </div>
 </div>
-<div class="topic" id="service-mesh-istio-linkerd-the-sidecar-pattern" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="service-mesh-istio-linkerd-the-sidecar-pattern" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🕸️</span>
 <span class="topic-name">Service Mesh — Istio, Linkerd &amp; the Sidecar Pattern</span>
 <span class="topic-badge">Cloud Native</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -32552,6 +32720,17 @@ per-pod overhead.
 <tr><td>Observability</td><td>Uniform metrics, logs, and traces for every call, for free.</td></tr>
 <tr><td>Policy</td><td>Who may call whom (authorization), rate limits, fault injection for testing.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Ask whether you need the third row badly enough
+to run a mesh, because that is usually the honest reason
+to adopt one.</strong> Mutual TLS and traffic shifting
+are available in simpler ways for a handful of services;
+uniform observability across dozens of services with no
+application changes is the capability that is genuinely
+hard to get otherwise. Below about a dozen services the
+mesh's operational cost — another control plane,
+sidecars, upgrades — outweighs what it returns.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32573,12 +32752,12 @@ the internal road network.
 </div>
 </div>
 </div>
-<div class="topic" id="gitops-git-as-the-source-of-truth-for-operations" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="gitops-git-as-the-source-of-truth-for-operations" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔃</span>
 <span class="topic-name">GitOps — Git as the Source of Truth for Operations</span>
 <span class="topic-badge">DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -32611,6 +32790,17 @@ desired state from Git and reconciles continuously.
 <tr><td>3. Diff</td><td>It compares Git (desired) against the live cluster (actual).</td></tr>
 <tr><td>4. Reconcile</td><td>It applies changes to close the gap — automatically and continuously.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The security argument is the one that usually
+wins, and it is rarely the one made first.</strong> Push
+deployment means the pipeline holds cluster credentials,
+so anyone who compromises continuous integration owns
+production; pull means the credentials never leave the
+cluster and the pipeline only writes to Git. Step 4 is
+the other half — continuous reconciliation is what makes
+the repository the truth rather than a suggestion, and
+without it this is just deployment with extra steps.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32624,6 +32814,18 @@ desired state from Git and reconciles continuously.
 <tr><td>Better security</td><td>CI no longer needs cluster credentials; the pull agent lives inside and reaches out.</td></tr>
 <tr><td>Reproducible</td><td>Rebuild an entire environment from the repo — great for DR and new clusters.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The audit row is the one that survives contact
+with an auditor, and it is worth more than it
+sounds.</strong> "Every production change is a reviewed,
+attributed, revertible commit" answers change-management
+questions that otherwise cost a governance programme —
+which is frequently the argument that funds the
+migration. The drift row is the one that has to be
+believed: an agent that reverts a manual fix will do so
+during an incident, so agree in advance how you break
+the glass.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32637,16 +32839,26 @@ desired state from Git and reconciles continuously.
 <tr><td>Repo layout</td><td>Common pattern: separate app-code repos from a <em>config</em> repo; a merge to config triggers the deploy.</td></tr>
 <tr><td>Fits declarative best</td><td>GitOps assumes a system that reconciles to a declared state (Kubernetes shines); imperative steps fit less cleanly.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Secrets are the gotcha that stops most first
+attempts, and it has to be decided before the migration
+rather than during it.</strong> Everything else in a
+repository is happily declarative; the moment a manifest
+needs a password, teams either commit something they
+should not or bolt on an operator in a hurry. Pick
+sealed secrets or an external-secrets operator on day
+one, and the rest of the pattern is straightforward.
 </div>
 </div>
 </div>
 </div>
-<div class="topic" id="finops-cloud-cost-management" data-reviewed="2026-08" data-read="3" data-level="core">
+</div>
+<div class="topic" id="finops-cloud-cost-management" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💰</span>
 <span class="topic-name">FinOps — Cloud Cost Management</span>
 <span class="topic-badge">Cloud</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -32673,6 +32885,16 @@ cost. It's a culture, not just a dashboard.
 <tr><td>Optimize</td><td>Cut waste — rightsize, delete idle resources, buy commitments, pick cheaper options.</td></tr>
 <tr><td>Operate</td><td>Make it continuous — budgets, alerts, and cost as a normal engineering metric.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>You cannot skip Inform, and almost everybody
+tries.</strong> Optimisation without attribution
+produces a saving nobody owns and a reappearance next
+quarter, because the team that created the cost never
+saw it. Tagging is dull, political and the prerequisite
+— get cost visible per team and per product first, and a
+surprising share of the optimisation happens without
+anyone being asked.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32689,6 +32911,16 @@ cost. It's a culture, not just a dashboard.
 <tr><td>Storage tiering</td><td>Move cold data to cheaper classes; set lifecycle rules.</td></tr>
 <tr><td>Egress awareness</td><td>Data transfer <em>out</em> is a sneaky cost — cross-region/cross-cloud traffic adds up.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Do the second row before the third,
+always.</strong> Committing to one or three years of
+spend on infrastructure you have not yet rightsized
+locks in the waste — deleting the zombies and resizing
+the over-provisioned machines first is free and changes
+what you should commit to. Egress is the row that
+catches people out, because it never appears in a design
+review and does appear on the invoice.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -32702,6 +32934,17 @@ cost. It's a culture, not just a dashboard.
 <tr><td>Unit economics</td><td>Track <em>cost per customer / per request</em>, not just the total — growth should scale efficiently.</td></tr>
 <tr><td>Right time to optimize</td><td>Don't micro-optimize a tiny bill; focus effort where spend is largest.</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Unit economics is the row that changes
+conversations rather than bills.</strong> A total that
+rose 20% invites a hunt for waste; a cost per customer
+that fell while the total rose is a growth story, and
+being able to say which one is happening is what stops
+cost work becoming an annual panic. Anomaly alerts are
+the cheapest safety net — one misconfigured autoscaler
+over a weekend costs more than a year of paying
+attention.
+</div>
 </div>
 </div>
 </div>
@@ -32737,6 +32980,16 @@ without the culture just automates the old dysfunction faster.
 <tr><td>Measurement</td><td>Instrument everything; decide with data (see DORA)</td></tr>
 <tr><td>Sharing</td><td>Open knowledge, feedback, and tooling across teams</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Culture is the pillar the other four depend on,
+and it is the one that cannot be bought.</strong>
+Automation, lean practice and measurement all get
+adopted by organisations that keep the wall firmly in
+place, which is how "we have a DevOps team" — a new silo
+with a new name — became so common. The test is simple:
+does the team that wrote the code carry the pager for
+it?
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -33097,12 +33350,12 @@ matters, because deleting tests to go faster is how a pipeline stops being evide
 </div>
 </div>
 </div>
-<div class="topic" id="github-actions-workflows-jobs-secrets" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="github-actions-workflows-jobs-secrets" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎬</span>
 <span class="topic-name">GitHub Actions — Workflows, Jobs &amp; Secrets</span>
 <span class="topic-badge">DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -33137,6 +33390,16 @@ workflow has <strong>jobs</strong> (run in parallel by default) made of
 <tr><td>Reusable/composite</td><td>Factor shared steps into called workflows/actions</td></tr>
 <tr><td>OIDC <span class="acro-exp">(OpenID Connect)</span></td><td>Assume a cloud role with no stored keys (ties to IAM)</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row deletes a whole class of incident
+and takes an afternoon.</strong> Long-lived cloud keys
+in repository secrets are the credentials that leak, get
+forked, and outlive the person who created them;
+federation means the pipeline exchanges a short-lived
+token for a role and there is nothing stored to steal.
+Do that before anything clever with matrices or reusable
+workflows.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -33360,12 +33623,12 @@ incidents.
 </div>
 </div>
 </div>
-<div class="topic" id="docker-deep-multi-stage-builds-image-slimming" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="docker-deep-multi-stage-builds-image-slimming" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🐳</span>
 <span class="topic-name">Docker Deep — Multi-Stage Builds &amp; Image Slimming</span>
 <span class="topic-badge">DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -33400,6 +33663,16 @@ cache across builds).
 <tr><td>Non-root USER</td><td>Don't run containers as root</td></tr>
 <tr><td>.dockerignore</td><td>Keep secrets/junk out of the build context</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Layer order is the row that buys back the most
+developer time per minute spent.</strong> Copying
+dependency manifests and installing before copying
+source means a one-line code change rebuilds in seconds
+instead of minutes, on every build, for everyone — which
+compounds far faster than image size does. Multi-stage
+builds are the bigger win for what ships; layer order is
+the bigger win for how it feels to work here.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -33500,12 +33773,12 @@ that reflects real usage.
 </div>
 </div>
 </div>
-<div class="topic" id="helm-kustomize-packaging-manifests" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="helm-kustomize-packaging-manifests" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⎈</span>
 <span class="topic-name">Helm &amp; Kustomize — Packaging Manifests</span>
 <span class="topic-badge">DevOps</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -33526,6 +33799,17 @@ layers <em>overlays</em> that patch a common base — no templating language.
 <tr><td>Complexity</td><td>Powerful but templating can get gnarly</td><td class="c-green">Simple, YAML-native (built into kubectl)</td></tr>
 <tr><td>Best for</td><td>Distributing apps (Postgres, nginx)</td><td>Your own app across environments</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Kustomize for your own applications, Helm for
+other people's.</strong> The best-for row is the whole
+answer: templating earns its complexity when you are
+distributing a chart to strangers who need knobs, and it
+is overhead when the only variation is three
+environments you control. Many teams end up using both —
+Helm to install third-party components, overlays for
+their own services — and that is a coherent choice
+rather than indecision.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -34096,6 +34380,17 @@ never asked to do any of it.
 <tr><td>Run a support channel with a service expectation</td><td>Unanswered questions become permanent workarounds</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>"Say no, with a reason" is the practice that
+decides whether the platform is still usable in three
+years.</strong> Every accepted request adds surface the
+team must support forever, and a platform that
+accommodates everything becomes a thin, expensive
+wrapper over the cloud with no opinions left. The reason
+matters as much as the no: a documented escape hatch
+keeps the relationship intact where a flat refusal sends
+the team off to build their own.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -34179,6 +34474,17 @@ secured, without the team assembling anything themselves.
 <tr><td>A documented way to leave the path</td><td>Teams fork the template silently and you lose visibility</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is what stops the path becoming a
+fork.</strong> Teams will need to do something the
+template does not support, and if leaving is
+undocumented they copy the template, diverge silently,
+and you lose both the visibility and the ability to
+migrate them later. Design the exit deliberately — what
+you still require of a service off the path — and the
+path stays a choice people keep making rather than a
+rule they route around.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -34301,12 +34607,12 @@ adoption argument. Teams do not resist a standard that costs them nothing to mee
 </div>
 </div>
 <!-- ── TOPIC: SELF-SERVICE & ENVIRONMENTS ────────────────────── -->
-<div class="topic" id="self-service-infrastructure-environment-management" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="self-service-infrastructure-environment-management" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎛️</span>
 <span class="topic-name">Self-Service Infrastructure &amp; Environment Management</span>
 <span class="topic-badge">Platform</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -34360,6 +34666,16 @@ infrastructure quickly.
 <tr><td>Everything through code, so it is reviewable and reproducible</td><td>Console-created resources drift outside every process</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>A tested delete path is the row that separates a
+platform from a mechanism for accumulating
+cost.</strong> Creation is what gets built because it is
+what was asked for; without deletion, every experiment
+is permanent, and this is the single largest structural
+reason cloud bills only ever climb. Pair it with the
+expiry row for non-production and the environment
+created for a fortnight actually goes away.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -34456,6 +34772,16 @@ permanently short-staffed.
 <tr><td>Track migration progress publicly</td><td>Social pressure works, and stragglers become visible early</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>Do the migration for them wherever you can — it
+is cheaper than persuading forty teams to prioritise
+your work.</strong> A codemod and a merged pull request
+turn a project into a review; a deadline and an
+announcement turn it into a negotiation you will lose to
+whatever those teams committed to last quarter. And the
+final row is the honest test: if the new path is only
+newer, expect the migration to take years.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -34535,6 +34861,16 @@ must be read against.
 <tr><td>Developer satisfaction, asked specifically</td><td>The thing the metrics are proxies for</td><td>Response rate; unhappy teams stop answering</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The first row is the one to protect from its own
+success: adoption you mandated measures compliance, not
+quality.</strong> A platform that teams choose is
+evidence it is the easy option; a platform teams are
+required to use tells you nothing and hides the friction
+that would otherwise have shown up as a falling number.
+If adoption is mandated, the satisfaction row becomes
+the only honest signal you have.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -34569,12 +34905,12 @@ stop — that half-hour reliably produces more adoption than a quarter of featur
 </div>
 </div>
 <!-- ── TOPIC: DEVELOPER EXPERIENCE ───────────────────────────── -->
-<div class="topic" id="developer-experience-inner-loop-build-speed-onboarding-toil-" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="developer-experience-inner-loop-build-speed-onboarding-toil-" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⏱️</span>
 <span class="topic-name">Developer Experience — Inner Loop, Build Speed, Onboarding &amp; Toil Audits</span>
 <span class="topic-badge">Platform</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -34618,6 +34954,16 @@ needs sixteen gigabytes and forty minutes.
 <tr><td>Works locally, fails deployed</td><td>Same container image locally and in production</td></tr>
 </tbody>
 </table>
+<div class="concept-desc verdict">
+<strong>The last row is the one that resolves the
+argument the other five are having.</strong> Running the
+same container image locally and in production removes
+an entire category of "works on my machine" without
+requiring the whole system to fit on a laptop —
+everything above it is about narrowing the remaining
+gap. Start there, then point at shared staging for the
+services you are not changing.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -35116,6 +35462,16 @@ lines of `fix: typo` &mdash; and everyone learns to skip it.
 <tr><td>On-call</td><td>&ldquo;What went out in the hour before this started?&rdquo;</td></tr>
 <tr><td>The team next year</td><td>&ldquo;When did this behaviour change, and why?&rdquo;</td></tr>
 </table>
+<div class="concept-desc verdict">
+<strong>Write it for the fourth reader and the other
+four are served too.</strong> The on-call engineer at
+two in the morning needs to know what changed in the
+last hour, with enough detail to correlate and enough
+brevity to scan — which is exactly the standard that
+also makes it useful to support, security and customers.
+A changelog generated verbatim from commit messages
+fails all five, and that is the version most teams ship.
+</div>
 </div>
 </div>
 <div class="concept-card">
