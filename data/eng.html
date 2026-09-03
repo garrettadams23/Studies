@@ -1962,6 +1962,51 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">You Are Not Choosing Speed Against Integrity, You Are Choosing Speed Against Optionality</div>
+                <div class="concept-desc">
+                  The usual framing is normalised-and-correct versus denormalised-and-fast, which
+                  makes it sound like a taste. The sharper reading is that a normalised schema keeps
+                  <strong class="c-cyan">access patterns you have not thought of yet</strong> cheap,
+                  and every denormalisation spends some of that to make one known pattern faster. The
+                  joins are what the option costs.
+                </div>
+                <div class="concept-desc">
+                  Which is why a single-table design binds hardest. It is genuinely the fastest thing
+                  for the queries it was drawn around, and when the product asks for a new one the
+                  choices are a scan, another index, or a migration &mdash; all three of which the
+                  relational version would have answered with a <code>WHERE</code> clause.
+                  <strong class="c-amber">Denormalise where the access pattern is settled and the
+                  volume is real</strong>; keep the parts still being argued about in third normal
+                  form, because that argument is exactly the thing you are buying the option for.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Every Cheap Schema Decision Is Paid For by Every Future Reader</div>
+                <div class="concept-desc">
+                  Schema changes are the hardest thing in a system to reverse, because the data
+                  outlives the code that wrote it. The decisions below all cost nothing on the day and
+                  bill somebody else forever.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Cheap today</th><th>What it actually creates</th><th>The signal it has gone wrong</th></tr>
+                    <tr><td>Make the column nullable &ldquo;for now&rdquo;</td><td>A third state every reader must handle, forever</td><td>Null-handling repeated in several services, differently</td></tr>
+                    <tr><td>A <code>deleted</code> flag instead of deleting</td><td>A predicate every query must remember</td><td>One report counts deleted rows and nobody notices for a quarter</td></tr>
+                    <tr><td>Store the computed total alongside the parts</td><td>Two sources of truth that agree only if every writer says so</td><td>A reconciliation job exists, and is load-bearing</td></tr>
+                    <tr><td>Use the business identifier as the primary key</td><td>A key that changes when the business changes</td><td>A &ldquo;never changes&rdquo; identifier changes, and the foreign keys are wrong</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    None of these are wrong in themselves &mdash; soft deletes and stored totals are
+                    often exactly right. The failure is choosing them for the reason they are tempting:
+                    <strong>they are cheap to write and the cost lands on somebody reading the table in
+                    two years.</strong> Write down which one you picked and why, next to the schema, so
+                    that person is arguing with a decision rather than guessing at an accident.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

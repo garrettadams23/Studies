@@ -20068,3 +20068,48 @@ subject.
 redundant. A deepening wave should re-read the neighbours it just made
 overlapping — the census would only catch it if the *titles* had converged, and
 these never did.
+
+---
+
+## Session record — deepening, fourth card, and a third shape that must not be deepened
+
+`[eng] Schema & Data Modeling Patterns`: one card, a five-row trade-off table,
+and the old rule *"normalise until it hurts, denormalise until it works"*.
+
+```
+1 card, 1,440 chars   ->   3 cards, 4,527 chars
+```
+
+- **The trade is not speed against integrity, it is speed against optionality.**
+  A normalised schema keeps access patterns nobody has thought of yet cheap, and
+  every denormalisation spends some of that to make one known pattern faster —
+  the joins are what the option costs. Which is why a single-table design binds
+  hardest: it is genuinely fastest for the queries it was drawn around, and the
+  new one costs a scan, an index or a migration, all three of which the
+  relational version answers with a `WHERE` clause. Denormalise where the access
+  pattern is settled; leave what is still being argued about in third normal
+  form, because that argument is what the option is for.
+- **Every cheap schema decision is paid for by every future reader.** A nullable
+  column "for now" is a third state every reader handles forever; a `deleted`
+  flag is a predicate every query must remember, and one report will forget for a
+  quarter; a stored total is two sources of truth that agree only while every
+  writer says so; a business identifier as primary key is a key that changes when
+  the business does. None is wrong in itself — the failure is picking it *for the
+  reason it is tempting*, which is that the cost lands on somebody else in two
+  years.
+
+### And `web`'s Full-Stack Picture was left alone
+
+It is 1,460 characters and one card because it is an **orientation card**: a
+request path, and a table of which domain teaches each layer. Deepening a map
+makes it a worse map. That is the third shape of deliberate brevity this session
+has had to recognise by reading — after `redteam`'s legal banner and the
+`mind`/`philosophy` maxims — and none of the three is visible from a badge.
+
+```
+10th percentile   2,048 -> 2,061 across four deepening waves
+padding metric    1,108 excluding verdicts, unmoved
+```
+
+**The tail is what moved, which is what a deepening wave is for.** The mean did
+not, and that is the point of measuring both.
