@@ -34,6 +34,13 @@ The ceiling therefore sits *exactly* at today's avoidable count, with no slack �
 which is what a ratchet means. A new card that genuinely needs an inline style
 raises it deliberately, in its own commit, with the reason written here.
 
+**792 -> 680.** The largest single shape was `style="margin-bottom: 14px"` on 112
+elements, 102 of them a `.ref-table`. It could not become a rule on `.ref-table`
+— only 102 of the site's 2,271 want that gap — so it became a `.mb-14` utility
+class. `tools/style_equiv.mjs` compared 150,248 elements across all 30 domains on
+33 computed properties before and after: nothing changed. That tool is what makes
+this number workable at all; before it, no conversion could be shown to be safe.
+
 `ai-table` is no longer a warning at all. It was labelled "prefer ref-table",
 which asserted a preference nobody had agreed and the stylesheet contradicts:
 the two are different designs (12px versus ~14px text, and an amber versus a
@@ -98,7 +105,7 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # The ceiling is 12 rather than 0 for that reason. If it ever reads 13, either
 # a new card ends on a table or one of those twelve was edited: both are worth
 # a look, which is what a ceiling at the true floor buys you.
-CEILINGS = {"inline style attribute": 792, "table with no verdict": 12}
+CEILINGS = {"inline style attribute": 680, "table with no verdict": 12}
 
 
 # A `style=` attribute is either avoidable or it is not, and the old count mixed

@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test a11y og og-check visual all fmt acronyms stamp census clean help search browser resilience mobile backup measure
+.PHONY: build check test a11y og og-check visual all fmt acronyms stamp census clean help search browser resilience mobile backup measure equiv
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -76,6 +76,14 @@ census:
 # mean anything — read that before quoting one.
 measure:
 	$(NODE) tools/measure_load.mjs
+
+## equiv: prove a styling change rendered identically — make equiv [REF=HEAD~1]
+#
+# Compares computed styles, not pixels, against a git ref. visual_test.mjs shoots
+# the filter bar and deliberately nothing else, so this is the only thing that can
+# say a style-to-class conversion across the content changed nothing.
+equiv:
+	$(NODE) tools/style_equiv.mjs --against $(or $(REF),HEAD)
 
 ## test: drive the built page in a real browser (needs playwright + chromium)
 test:

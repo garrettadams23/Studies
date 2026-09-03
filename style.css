@@ -2687,6 +2687,14 @@ mark.sh {
 .c-red    { color: var(--red); }
 .c-purple { color: var(--purple); }
 .c-muted  { color: var(--muted); }
+/* ── Utility spacing (prefer these over inline style="margin-…") ── */
+/* 102 of the site's 2,271 .ref-tables want a gap under them and 2,169 do not,
+   so this cannot live on .ref-table itself — it would be a redesign, not a
+   cleanup. As a class it is 0,1,0 and nothing sets margin-bottom on those
+   elements at all, so it simply applies. Verified element by element with
+   tools/style_equiv.mjs: 112 conversions, no computed style changed. */
+.mb-14 { margin-bottom: 14px; }
+
 /* No utility class was added for the accents in :root above, deliberately.
    These six lose to `.ref-table td:first-child` (0,2,1 against 0,1,0), and 1614
    first cells had accumulated a class that never rendered because of it — since

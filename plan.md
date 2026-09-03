@@ -19483,3 +19483,64 @@ wave. So paying this debt down needs a check that does not exist yet: build
 before and after, then compare *computed* styles of the affected elements in a
 browser rather than pixels. That is a wave of its own, and it is now the thing
 standing between 792 and a real floor.
+
+> **Done in the next wave — see the record below.** `tools/style_equiv.mjs` is
+> that check, and the 112 were converted with it: 792 → 680.
+
+---
+
+## Session record — the check that did not exist, and the first debt it let us pay
+
+The previous record ended by naming what was missing: a way to show a
+style-to-class conversion changed nothing. `visual_test.mjs` shoots the filter
+bar and deliberately nothing else — content screenshots fail on every content
+wave, so a screenshot can never be the answer here.
+
+**`tools/style_equiv.mjs` compares computed styles instead of pixels**, which is
+the right unit for this question. A class that resolves to the same computed
+value *is* the same rendering, and it stays true when the content around it
+changes — the promise a screenshot cannot make. It builds a reference from any
+git ref into a temp tree with `git archive` (so it runs against uncommitted work,
+which is the whole point), loads both pages, opens each domain — the content is
+deferred, so it does not exist in the DOM until then — and walks every element in
+the opened section across 33 longhand properties.
+
+### It was tested in both directions before it was trusted
+
+A verification tool that has only ever printed "no differences" has not been
+verified. So:
+
+- **positive** — working tree against `HEAD` with nothing changed: 4,789 elements,
+  no differences, exit 0.
+- **negative** — `.concept-desc` font-size nudged 13px → 13.5px: caught on 10
+  elements across two domains, naming the property, the element and the derived
+  `line-height: 22.75px -> 23.625px`, exit 1. Reverted.
+
+Longhands only, deliberately: a shorthand reads back inconsistently and would
+report differences that are not differences. And it aligns elements by position,
+so a structural change is reported as a count mismatch rather than guessed at.
+
+### The first conversion it made possible
+
+`style="margin-bottom: 14px"` on **112 elements**, 102 of them a `.ref-table`.
+It could not become a rule on `.ref-table`: only 102 of the site's **2,271** want
+that gap, so the "obvious" fix would have been a redesign of 2,169 tables. It
+became a `.mb-14` utility class instead, in the block beside the `.c-*` colours
+that exists for exactly this reason.
+
+```
+150,248 elements compared across 30 domains, 33 properties each
+No computed style changed. The rendering is the same.
+```
+
+```
+inline style attribute (avoidable)   792 -> 680
+elements converted                   112, in 16 files across 15 domains
+make equiv                           new — a verification tool, not a gate
+```
+
+**What this establishes beyond the number.** The remaining 680 are now workable:
+each shape can be converted and *proved*, one wave at a time, instead of being
+carried forever because nobody could show a change was safe. The tool is also
+general — any future stylesheet refactor can be held to the same standard, which
+is what makes it worth more than the 112 lines it just cleared.
