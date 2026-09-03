@@ -18706,3 +18706,31 @@ runway                                ~110 topics
 Six domains, 277 verdicts, backlog down 279 from the corrected figure. The runway
 has moved 139 → 110 over the whole programme — 29 topics for 277 judgements, which
 is the trade as measured rather than as estimated.
+
+### `ai`, all 39 — where the missing sentence is usually "and here is what that costs you"
+
+Seventh domain. AI tables describe capabilities and options in a field where
+every row sounds like an improvement, so the verdict's job is almost always to
+name the price or the constraint the table left out.
+
+> **A large window is permission to be lazy, and laziness costs money and
+> accuracy.** …models attend less carefully to material buried in the middle of a
+> very long context. Treat the window as headroom, not as a target.
+
+> **Work down this table in order and stop at the first row that works.** Almost
+> every problem people bring to fine-tuning is solved by better prompting or
+> retrieval.
+
+> **The last row is a security control, not a curiosity.** Text inside an image is
+> instruction-shaped to a model that reads both in one context.
+
+> **Fix the permissions before the pilot, because the assistant is a search engine
+> for everything you got wrong.**
+
+```
+tables_without_verdict   748 → … → 469 → 430
+career 36→0  military 36→12  ops 53→0  grc 46→0
+net 54→0     sec 66→0        ai 39→0
+verdicts written by hand              316
+runway                                ~106 topics
+```
