@@ -2557,6 +2557,47 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             </div>
             <div class="topic-body">
               <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Cloud Credential Is a Lease, Not a Key</div>
+                <div class="concept-desc">
+                  On-premises credential theft yields a <strong>secret at rest</strong>: a hash out of
+                  LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span>, a password in a scheduled task, a key in a dotfile. It is reusable for as long
+                  as nobody rotates it, and the work after stealing it is keeping your grip on the
+                  machine you stole it from. A cloud credential is the opposite object. It is a token
+                  with <strong class="c-amber">an expiry stamped inside it</strong> —
+                  <span class="volatile" data-checked="2026-09">an hour by default for an instance
+                  role, up to twelve for an assumed session</span> — and it is not bound to the host at
+                  all. Two instincts carried over from the on-prem chain are therefore backwards:
+                  there is nothing worth persisting <em>on the box</em>, because the box was never the
+                  asset; and the operator is not settling in, they are <strong class="c-red">racing a
+                  clock</strong>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>On-prem instinct</th><th>What is actually true in an account</th><th>So the operator</th></tr>
+                    <tr><td>Steal the secret, reuse it for months</td><td>The token dies on its own, unprompted</td><td class="c-amber">Converts the lease into something durable, fast</td></tr>
+                    <tr><td>Hold a foothold on the host</td><td>The token works from anywhere the API <span class="acro-exp">(Application Programming Interface)</span> is reachable</td><td>Leaves the host and calls the API from their own infrastructure</td></tr>
+                    <tr><td>Move host to host across the network</td><td>Movement is role to role, and the network is irrelevant</td><td>Enumerates what the role may assume, not what it can ping</td></tr>
+                    <tr><td>Hide from the endpoint agent</td><td>No agent sees an API call; there is no process to catch</td><td>Blends into the control-plane log, the only witness there is</td></tr>
+                  </table>
+                  <div class="concept-desc">
+                    That first row is the whole engagement in miniature. A one-hour credential is
+                    useless for anything but a smash-and-grab, so the near-universal next move is to
+                    mint a permanent one with it: create an access key on the identity, add a user, or
+                    edit a role's trust policy so it can be assumed from outside. Each of those is a
+                    write to the control plane, attributed, and rare in ordinary operation.
+                  </div>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Build the detection on the conversion, not on the
+                    theft.</strong> The theft itself is quiet by construction — a metadata fetch, a
+                    federated login, an API call from a role that is supposed to make API calls. The
+                    conversion is loud, and the adversary cannot skip it without giving up the account
+                    an hour later. An emulation that stops at &ldquo;we obtained credentials&rdquo; has
+                    demonstrated the quietest link in the chain and left the noisy one untested.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> → Metadata → Role, and Closing the Loop</div>
                 <div class="concept-desc">
@@ -2577,6 +2618,56 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     against ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span>; the blue team confirms each step is detected/blocked (IMDSv2,
                     CSPM, GuardDuty). That collaboration — offense proving, defense hardening — is the
                     whole point of pairing these two domains.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Trust Policy That Replaced the Leaked Key</div>
+                <div class="concept-desc">
+                  Every hardening guide — this site included — says to delete long-lived keys from CI
+                  and let the pipeline federate with OIDC <span class="acro-exp">(OpenID Connect)</span> instead, so there is no secret to leak. That
+                  advice is right, and it <strong class="c-amber">moves the failure rather than
+                  removing it</strong>. Once no key exists, the role's <strong>trust policy</strong> is
+                  the credential: it decides who may mint that role's tokens, and it decides on a
+                  string comparison against the <code>sub</code> claim of a token the CI provider
+                  issues. Loosen that string and you have swapped a secret that might leak for a door
+                  that never needed one — and unlike a leaked key, it will not appear in any secret
+                  scanner, any rotation report, or any credential inventory.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>What the condition says</th><th>Who can actually mint the role's credentials</th></tr>
+                    <tr><td>Audience checked, no <code>sub</code> condition at all</td><td class="c-red">Every repository on the provider — anyone's, not just yours</td></tr>
+                    <tr><td><code>repo:acme/*</code></td><td>Any repository in the organisation, including one created this afternoon</td></tr>
+                    <tr><td><code>repo:acme/api:*</code></td><td>Any ref in that repo: every branch, and pull-request builds too</td></tr>
+                    <tr><td><code>repo:acme/api:ref:refs/heads/main</code></td><td>Workflows on <code>main</code> — what almost everybody meant to write</td></tr>
+                    <tr><td><code>repo:acme/api:environment:prod</code></td><td class="c-green">Only jobs that entered a protected environment, so an approval gates the token</td></tr>
+                  </table>
+                  <div class="concept-desc">
+                    Rows two and three are the ones that get written by accident, because a wildcard is
+                    how you stop the pipeline failing on a branch rename and nothing rejects it. Row
+                    three is worse than it reads: a workflow triggered by
+                    <code>pull_request_target</code> runs with the base repository's permissions while
+                    building a contributor's branch, so &ldquo;any ref&rdquo; can include code that
+                    arrived from a fork twenty minutes ago.
+                  </div>
+                  <div class="concept-desc">
+                    <strong class="c-cyan">Fingerprint:</strong> a federated assume-role event whose
+                    session name or subject claim names a repository, branch or environment that has
+                    never deployed anything — and, earlier, the trust-policy edit that made it
+                    possible. Both are ordinary-looking configuration changes, which is exactly why
+                    <span class="xref">Cloud Detection Engineering — The Control-Plane Log as a Detection Source</span>
+                    puts &ldquo;trust policy or federation configuration changed&rdquo; on the day-one
+                    detection list.
+                  </div>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Federate, then read the condition out loud.</strong> Two
+                    decisions follow. Treat the trust policy as a credential — same review, same change
+                    process, same blast-radius question you would apply to handing someone a key. And
+                    prefer <code>environment:</code> over <code>ref:</code> wherever a protected
+                    environment already exists, because that ties the credential to an approval a human
+                    gave rather than to a branch name anyone with write access can create.
                   </div>
                 </div>
               </div>

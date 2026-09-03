@@ -20411,3 +20411,94 @@ thin topics       23 -> 13 across ten waves
 10th percentile   2,048 -> 2,090
 padding metric    1,108 -> 1,109 excluding verdicts
 ```
+
+---
+
+## Session record — the eleventh wave, and the point where deepening stops
+
+Two topics, judged by the sibling rule from the tenth wave — read the domain's
+*longest* topics before deepening its shortest.
+
+**`[redteam] Cloud Credential Attacks & the Purple-Team Bridge`** — a gap. Its
+neighbours (*Purple Team Mechanics* 3,327, *CloudFox & enumerate-iam* 3,375,
+*Mimikatz* 3,487) are adjacent and each about something else, and the title
+promised a plural the body did not deliver: one chain, SSRF → metadata → role.
+
+```
+1 card, 1,564 chars   ->   3 cards, 8,109 chars
+```
+
+- **A cloud credential is a lease, not a key.** On-prem theft yields a secret at
+  rest, reusable until somebody rotates it, and the work afterwards is holding
+  the machine. A cloud credential carries its own expiry and is not bound to the
+  host at all — so there is nothing worth persisting *on the box*, and the
+  operator is racing a clock rather than settling in. The consequence is the
+  card's point: a one-hour credential is useless for anything but a
+  smash-and-grab, so the near-universal next move is to mint a permanent one
+  with it — a new access key, a new user, an edited trust policy. **Build the
+  detection on that conversion, not on the theft**, which is quiet by
+  construction. An emulation that stops at "we obtained credentials" has
+  demonstrated the quietest link in the chain.
+- **The trust policy that replaced the leaked key.** Every guide, this site
+  included, says to delete long-lived CI keys and federate with OIDC. That is
+  right and it *moves* the failure: with no key to steal, the role's trust
+  policy is the credential, and it decides on a string comparison against the
+  `sub` claim. The table prices five conditions from *audience checked, no
+  `sub` condition* — every repository on the provider, not just yours — down to
+  `environment:`, which ties the credential to an approval a human gave. Unlike
+  a leaked key it appears in no secret scanner and no rotation report. Nobody in
+  the corpus had written the failure mode; three files recommend the fix.
+
+**`[sec] CIA Triad`** — a sibling, and left as one. It sits in a dense
+foundational cluster (*Security Basics in Plain English*, *Encryption
+Fundamentals*, *Cryptography Fundamentals*) in a 92-topic domain. It got one
+card rather than a wave: the pillars **trade against each other**, and every row
+of that table is a control that buys one and spends another — own-key encryption
+buys confidentiality and spends availability, an immutable audit log buys
+integrity and spends the erasure request you must legally honour. Saying which
+pillar you are buying and which you are paying with is what makes the model a
+tool rather than three definitions.
+
+```
+1 card, 1,709 chars   ->   2 cards, 3,714 chars
+```
+
+### Where the deepening programme actually ends
+
+The eleven topics still below the threshold were each put to the sibling test,
+and **not one of them is a gap**:
+
+| The shape | Topics |
+|---|---|
+| Reference tables that are supposed to be short | `military` Common Codes Decoded, Staff Functions 1–9; `ai` AI Glossary |
+| An orientation map, deliberately thin | `web` The Full-Stack Picture |
+| A legal banner | `redteam` Rules of Engagement — Read This First |
+| A cert-objective card paired with a practitioner one, already adjudicated in `duplicate-verdicts.json` | `linux` Package Management (999) beside *Package Management — Installing and Managing Software* (4,726); `devops` SBOM beside `sec` Supply Chain Security |
+| A thin sibling inside a dense cluster | `data` The Data Interview beside `career` *Interview Preparation* (6,503); `eng` Cert Roadmaps beside two career roadmaps; `script` Building a REST API inside eight API topics; `endpoint` Update Compliance Reporting inside nine update topics |
+
+**So the queue is empty, and the next honest move is not another card.** Every
+one of these is fine as it stands *provided a reader who lands on it can reach
+the fuller treatment*, which turns the remaining work from writing into
+navigation.
+
+```
+thin topics       23 -> 11 across eleven waves
+10th percentile   2,048 -> 2,092
+padding metric    1,108 -> 1,109 excluding verdicts
+```
+
+### A mechanical note that cost twenty minutes
+
+The waiter that blocks on `BROWSER_DONE` matched a marker in a log file left
+behind by the *previous* session, and reported a clean run for a build that no
+longer existed — it claimed 1,535 topics against a corpus of 1,534, which is the
+only reason it was caught. **Delete the marker file before starting the run that
+writes it**, or the wait returns immediately and the evidence is somebody else's.
+
+And the specificity guard caught the new table on the first run: two `c-red` /
+`c-green` classes on the *first* cell of a `.ref-table` row, which
+`.ref-table td:first-child` outranks and which therefore never render. This is
+the rule two earlier records in this file describe, broken by the person who
+wrote them down. The classes were dropped rather than converted to inline
+styles — the second column already carries the colour and the meaning, so the
+row reads the same and the inline-style ceiling did not move.
