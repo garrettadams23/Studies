@@ -19954,3 +19954,49 @@ Two cards added, and neither is a longer version of the table:
 
 A stray `</div>` in the splice was caught by `check_markup.py` on the first run,
 which is what it is for.
+
+---
+
+## Session record — two more cards that should not be deepened, and only one of them is a badge
+
+The last record noted `redteam`'s legal banner as a card the depth report ranks
+low and nobody should touch. Working further down the list found two more, so
+the question stopped being *which card* and became *how many of these are there,
+and can the report tell?*
+
+Measured: of the 144 topics in the bottom decile, **four** have the shape of
+deliberate brevity that no badge marks — three or more concept cards averaging
+under 300 characters each.
+
+```
+  933 · 4 cards (233/card)  [mind]       Communication & Relationships     [Lifestyle • People]
+ 1093 · 4 cards (273/card)  [philosophy] Decision-Making                   [Lifestyle • Judgment]
+ 1242 · 5 cards (248/card)  [philosophy] More Models for a Clear Head      [Lifestyle • Decision-M]
+ 1324 · 5 cards (264/card)  [ai]         LLMs & Generative AI              [SecurityX • GenAI]
+```
+
+**One of those is a badge problem and three are not**, and the measurement is
+what separates them.
+
+`SecurityX` is CompTIA's rename of CASP+. It is a certification badge exactly
+like `sec+`, `pentest+`, `linux+` and `a+`, all already exempt; it was missing
+only because the rename postdates the list. 15 topics carry it, they are
+objective skims, and deepening one would stop it being a skim. **Added.**
+
+`Lifestyle` looked like the same fix and is not. 61 topics carry it and their
+**median is 4,257 characters** — the badge does not mean short. The three short
+ones are short because they are **maxims**: four or five aphorisms of a couple of
+hundred characters each — *seek first to understand · use "I" statements · assume
+good intent · praise in public, correct in private* — a format padding would
+ruin. That is a judgement about three cards, and exempting the badge to record it
+would have hidden the other 58.
+
+> **The rule that came out of it:** exempt a *category* when the category is
+> genuinely uniform, and judge a *card* when it is not. The measurement that
+> tells them apart is the median of the category, and it costs one query.
+
+```
+DELIBERATE          + securityx    (15 topics, a certification like the rest)
+deliberately-short    69 -> 71 of the bottom decile
+lifestyle           left alone, on a measured median of 4,257
+```

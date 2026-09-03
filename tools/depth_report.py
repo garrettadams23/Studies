@@ -69,8 +69,20 @@ VERDICT_RE = re.compile(
 # for the shortest cards on the site and found these: the beginner layer, and
 # per-certification objective summaries. Neither wants deepening — one would
 # stop being a beginner card and the other would stop being a skim.
+# `securityx` is CompTIA's rename of CASP+ — a certification badge exactly like
+# the others here, and it was missing only because the rename postdates the list.
+# 15 topics carry it; they are objective skims and deepening one would stop it
+# being a skim, which is the whole reason this list exists.
+#
+# `lifestyle` is deliberately *not* here, and the measurement is why: 61 topics
+# carry it and their median is 4,257 characters. The badge does not mean short.
+# Three of them are short — `mind`'s Communication & Relationships and two
+# `philosophy` cards — because they are **maxims**: four or five aphorisms of a
+# couple of hundred characters each, a format that padding would ruin. That is a
+# judgement about those three cards, not about the badge, and exempting the badge
+# would hide the other 58.
 DELIBERATE = ("beginner", "linux+", "pentest+", "military", "mil ", "sec+", "net+",
-              "a+", "security+", "reference", "all tracks")
+              "a+", "security+", "securityx", "reference", "all tracks")
 
 
 def _deliberate(badge):
