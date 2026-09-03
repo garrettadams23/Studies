@@ -18453,3 +18453,75 @@ Computed against `raw_mb`, `gzip_kb` and `content_elements` (not `dom_elements`,
 which grows per *domain*), reporting whichever binds first. When that says ~20,
 the structural conversation is due — and it will say so in topics, which is the
 unit the work is actually planned in.
+
+---
+
+## Session record — the verdict rule was wrong in both directions
+
+`lint_content.py` has warned on "table with no verdict" since the `.verdict`
+class was introduced, with a ceiling of 513 and a count of 499. Going to fix some
+of them meant reading the rule, and the rule was measuring something else.
+
+```python
+# before
+tail = text[m.end():m.end() + 260]
+if "concept-desc" not in tail:
+```
+
+**260 characters is not a card.** It is too much in one direction and too little
+in the other, and it was wrong both ways at once:
+
+```
+460   flagged by both rules  — real, and were being counted
+ 39   old rule only          — mid-card tables, where the fix it implies is worse
+288   new rule only          — the window bled into the *next card's* prose
+```
+
+The 39 are cards that lay out three reference tables under three `▸` headings.
+The old rule counted each one, and the edit it asks for — a paragraph wedged
+between two tables that belong together — makes the card worse. The 288 are the
+real finding: a card that ends on a table, followed by a card that opens with a
+paragraph, passed. So the backlog was never 499. **It is 748, and it has been
+under-reported by more than a third for as long as the rule has existed.**
+
+The rule is now card-aware: is there any `.concept-desc` between this `</table>`
+and the end of the card it belongs to. No window, no heuristic.
+
+### Raising a ceiling, which is not something to do quietly
+
+The ceilings block says: *"Counts that may fall and may not rise. Lower a number
+here in the same commit that earns it; raising one needs a reason written beside
+it."* 513 → 748 is a rise, and the reason is written beside it: the number did
+not grow, the instrument was replaced. Nothing on the site got worse between one
+commit and the next.
+
+### And then 748 → 712, in the same commit
+
+A re-baselined ceiling with no work behind it is a ceiling nobody believes, so
+**every card in `career` that ended on a table now ends on a judgement**. 36
+verdicts, written by hand against the table each one closes:
+
+> **R is the letter people skip, and it is the only one being scored.** S and T
+> are context, A is what you did, R is whether it worked. An answer that ends at
+> "and so I fixed it" has said nothing about your judgement. Give the result with
+> a number if you have one — and "we never measured it, which I would do
+> differently now" is a better ending than a number you invented.
+
+> **The fourth row is the one to believe when it hurts.** If nobody ever
+> declines, your rate is a measurement of your nerve rather than of your value…
+> Losing roughly one prospect in four or five is what a correctly set rate looks
+> like from the inside.
+
+The discipline that made them worth writing: **a verdict names the row that
+matters and says why the others are downstream of it.** A verdict that summarises
+the table is filler, and filler is what a metric like this produces if you chase
+the number. Every one of the 36 either picks a row, names the trap, or reverses
+the order the reader was about to do things in.
+
+```
+tables_without_verdict, old rule           499
+                        corrected rule     748
+after the career pass                      712
+career, cards ending on a table          36 → 0
+page raw                            7.3 → 7.4 MB (8% headroom, ~136 topics)
+```

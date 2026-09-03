@@ -46,7 +46,18 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 
 # Counts that may fall and may not rise. Lower a number here in the same commit
 # that earns it; raising one needs a reason written beside it.
-CEILINGS = {"inline style attribute": 1565, "table with no verdict": 513}
+#
+# "table with no verdict" went 513 -> 748 when the rule was corrected, and that
+# is not a relaxation: the old rule looked 260 characters past the table and
+# accepted whatever prose it found, including the *next card's*. 288 cards that
+# genuinely end on a table were passing because the card after them opened with
+# a paragraph. The reason is written out in tables_without_verdict() below, with
+# the decomposition — 460 flagged by both rules, 39 the old rule got wrong, 288
+# it never saw.
+#
+# 748 -> 712 in that same commit: every card in `career` that ended on a table
+# now ends on a judgement instead. 36 written by hand, none of them filler.
+CEILINGS = {"inline style attribute": 1565, "table with no verdict": 712}
 
 
 class Nesting(HTMLParser):
@@ -222,14 +233,40 @@ def verdict_margins(text):
 # legitimate — a reference table in `shortcut` needs no verdict, which is why
 # that domain and the generated `acronym` domain are excluded outright.
 VERDICT_EXEMPT = {"shortcut", "acronym"}
-_AFTER_TABLE_WINDOW = 260
+_CARD_RE = re.compile(r'<div class="concept-card">')
 
 
 def tables_without_verdict(text):
-    """Line numbers where a table is followed by no prose at all."""
+    """Line numbers where a *card* ends on a table and says nothing after it.
+
+    This used to be "a table with no `.concept-desc` in the next 260
+    characters", which is a different and worse question. A card that lays out
+    three reference tables under three `.dt` headings was counted three times,
+    and the fix it implied — prose wedged between two tables that belong
+    together — makes the card worse, not better.
+
+    It was also wrong in the other and larger direction. 260 characters reaches
+    past the end of a short card, so a card that ended on a table and was
+    followed by a card opening with a paragraph counted as satisfied. Decomposed
+    against the corrected rule:
+
+        460   flagged by both — real, and were being counted
+         39   old rule only — mid-card tables, the wrong edit to ask for
+        288   new rule only — the window bled into the next card
+
+    So the backlog was never 499. It is 748, and it was under-reported by more
+    than a third for as long as the rule has existed.
+
+    A card whose last element is a table has genuinely left the reader with data
+    and no judgement, which is what `.concept-desc.verdict` is for.
+    """
+    starts = [m.start() for m in _CARD_RE.finditer(text)]
+    bounds = list(zip(starts, starts[1:] + [len(text)]))
     for m in re.finditer(r"</table\s*>", text):
-        tail = text[m.end():m.end() + _AFTER_TABLE_WINDOW]
-        if "concept-desc" not in tail:
+        card_end = next((e for s, e in bounds if s <= m.start() < e), None)
+        if card_end is None:
+            continue  # a table outside any concept card — not this rule's business
+        if "concept-desc" not in text[m.end():card_end]:
             yield text[: m.start()].count("\n") + 1
 
 
