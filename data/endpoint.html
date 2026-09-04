@@ -1712,6 +1712,103 @@ Get-ChildItem <span class="str">'HKLM:\SOFTWARE\Microsoft\Provisioning\NodeCache
     </div>
   </div>
 </div>
+<!-- ── TOPIC: GPO TO INTUNE MIGRATION ──────────────────────────── -->
+<div class="topic" data-reviewed="2026-09">
+  <div class="topic-header">
+    <span class="topic-icon">🚚</span>
+    <span class="topic-name">GPO <span class="acro-exp">(Group Policy Object)</span> to Intune — What Ports, What You Rebuild, and What Wins a Conflict</span>
+    <span class="topic-badge">Intune • Migration</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">The Leftovers Are the Project</div>
+      <div class="concept-desc">
+        Group Policy analytics will tell you that most of your settings have a direct equivalent, and
+        that number is genuinely encouraging — it is also the easy part. The settings that map across
+        are data entry. What decides whether the migration lands is the <strong>residue</strong>: the
+        policy objects that were never really settings at all, but small programs that happened to live
+        in Group Policy because that was the only place to put them.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>The leftover</th><th>Why it does not port</th><th>Where the work goes</th></tr>
+          <tr><td>Logon and startup scripts</td><td>There is no logon trigger, and no domain share to read from off the network</td><td>Rebuild as a platform script or a remediation, and decide what it does on a device that is never on the corporate network</td></tr>
+          <tr><td>Drive mappings and printer deployment</td><td>Group Policy Preferences has no counterpart at all</td><td>Cloud file storage, or Universal Print. If a mapped drive survives the migration, something else did not get migrated</td></tr>
+          <tr><td>Item-level targeting</td><td>The per-item conditions live inside the preference, not in the assignment</td><td>Assignment filters, or splitting one policy into several with different groups</td></tr>
+          <tr><td>WMI <span class="acro-exp">(Windows Management Instrumentation)</span> filters and security filtering</td><td>Targeting moved from the object to the assignment</td><td>Entra groups plus filters — a different model, not a translation</td></tr>
+          <tr><td>Loopback processing</td><td>No equivalent exists; the user/device split is expressed differently</td><td>A design decision about scope, made once, per policy</td></tr>
+          <tr><td>Folder redirection</td><td>Depends on a file server the device may never see</td><td>Known Folder Move, which is a change to how people work, not just where files sit</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Size the project from the leftovers, not from the coverage
+          report.</strong> A tenant that ports nine hundred settings in a fortnight can still spend six
+          months on eleven login scripts, because each one encodes an assumption about the corporate
+          network that nobody wrote down. Inventory those first — they set the timeline.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">While Both Systems Are Live, Group Policy Wins by Default</div>
+      <div class="concept-desc">
+        Every migration has a middle period where a device is domain-joined and enrolled, and both
+        systems have an opinion about the same setting. The default is not a merge and not
+        last-writer-wins: for conflicting settings, <strong>Group Policy takes precedence</strong>. So
+        an Intune policy can report success, show as applied, and be doing nothing — because a GPO you
+        forgot about is setting the same key.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Question</th><th>Answer</th></tr>
+          <tr><td>What flips it?</td><td>The <code>MDMWinsOverGP</code> setting under the ControlPolicyConflict policy</td></tr>
+          <tr><td>What does it cover?</td><td>Conflicts in the Policy configuration service provider only</td></tr>
+          <tr><td>What does it not cover?</td><td>Settings delivered through other providers, which is a great deal of what an estate actually configures</td></tr>
+          <tr><td>Its fingerprint</td><td>Intune reports Succeeded, the device does not behave that way, and the setting matches an old GPO exactly</td></tr>
+          <tr><td>The cheap check</td><td>Read the setting's real value on the device, not the console's compliance status</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Treat &ldquo;Succeeded&rdquo; as &ldquo;delivered&rdquo;, never as
+          &ldquo;in effect&rdquo;.</strong> That distinction is the whole of this failure mode, and it
+          survives the migration: the same gap explains conflicts between two Intune policies later on.
+          Flipping the precedence setting is worth doing, but do it knowing it only settles one class
+          of conflict — the rest are settled by removing the old policy, which is the only complete fix.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Habit</div>
+      <div class="concept-title">Migrate by Setting, Not by Policy Object</div>
+      <div class="concept-desc">
+        The instinct is to move a GPO at a time, because that is how the estate is organised. It is the
+        wrong unit. A GPO is an accident of who needed something in 2014; a setting is the thing that
+        either works or does not. Migrating object-by-object carries every historical compromise into
+        a system that will hold it for another decade.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Step</th><th>What it buys</th></tr>
+          <tr><td>Export and analyse the estate before touching anything</td><td>A list, rather than an argument about what is in use</td></tr>
+          <tr><td>Delete first — anything for an OS <span class="acro-exp">(Operating System)</span> or product you no longer run</td><td>Estates routinely shed a third here, and nothing deleted needs porting</td></tr>
+          <tr><td>Port the security baseline as a baseline, not as settings</td><td>You inherit updates to it instead of owning a snapshot forever</td></tr>
+          <tr><td>Move one pilot ring fully, including the leftovers</td><td>The leftovers are what the pilot is <em>for</em>; a pilot of easy settings proves nothing</td></tr>
+          <tr><td>Remove the GPO as each setting lands</td><td>The only thing that actually ends double management</td></tr>
+          <tr><td>Keep a register of the deliberate non-migrations</td><td>Stops the same argument being had annually by different people</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The removal step is the one that gets skipped, and skipping it is what makes
+          migrations last for years.</strong> Leaving the old GPO in place feels like a safe rollback
+          and is actually a permanent second source of truth that quietly wins conflicts. If removing
+          it is too frightening, that is a signal the setting was not really migrated — scope the GPO
+          out of the pilot ring instead, so removal is a step with evidence behind it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ── TOPIC: ASSIGNMENT STRATEGY ────────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">

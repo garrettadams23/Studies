@@ -21740,3 +21740,38 @@ own. Grepping service names at content level and reading where they land, rather
 than trusting a matrix, is the second time that has caught an over-claim.
 Genuinely absent: Remote Help, Microsoft Tunnel, Advanced Analytics, Enterprise
 App Management.
+
+## Session — GPO to Intune, the part the site pointed at and skipped
+
+The ADMX topic's verdict ends: *"port those first, and keep a deliberate list of
+the leftovers. The leftovers are the project — everything else is data entry."*
+It then stops. That is the third time this pattern has produced a topic: the
+corpus names the hard part precisely and never covers it.
+
+Three cards, placed directly after the ADMX topic they follow from.
+
+**The leftovers are the project.** Named, with why each fails to port: logon and
+startup scripts (no logon trigger, no domain share off-network), drive maps and
+printers (Group Policy Preferences has no counterpart), item-level targeting,
+WMI and security filtering (targeting moved from the object to the assignment),
+loopback processing, folder redirection. The verdict is a sizing argument — nine
+hundred settings can port in a fortnight while eleven login scripts take six
+months, because each encodes an unwritten assumption about the corporate network.
+
+**Group Policy wins by default.** The sharpest fact in the wave, and the one
+worth verifying: while both systems are live, a conflicting setting goes to
+Group Policy unless `MDMWinsOverGP` is set — and that setting only governs
+conflicts in the Policy configuration service provider, not the many settings
+delivered through other providers. Its fingerprint is an Intune policy reporting
+Succeeded while the device behaves otherwise. Hence the rule the card ends on:
+"Succeeded" means delivered, never in effect.
+
+**Migrate by setting, not by policy object.** A GPO is an accident of who needed
+something in 2014. The step that gets skipped is removing the old GPO as each
+setting lands, and skipping it is exactly what makes these migrations last years
+— a permanent second source of truth that quietly wins conflicts.
+
+```
+endpoint +1 topic · 1,539 -> 1,540 · raw 7.7 MB of 12.0
+31 gates green · 296 browser checks green
+```
