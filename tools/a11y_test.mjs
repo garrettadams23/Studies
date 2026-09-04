@@ -268,6 +268,45 @@ for (const theme of ["dark", "light"]) {
   await kb.close();
 }
 
+// ── the card-link affordance on every concept card ──────────────────────────
+// A `.concept-label` copies a link to that card. It was a bare <div> with a
+// pointer cursor and a hover colour: no tab stop, no accessible name, nothing
+// announced as actionable — the same shape as the chips, on every card on the
+// site. Annotated rather than rewritten as a <button>, because the kicker text
+// is authored in the domain files and read back by the markdown exporter.
+{
+  const kb = await browser.newPage();
+  await kb.goto(PAGE, { waitUntil: "load" });
+  await kb.evaluate(async () => {
+    openDomain(domainSection(document.querySelector(".domain-section").dataset.domain));
+    await new Promise(r => setTimeout(r, 400));
+    document.querySelector(".domain-body.open .topic-header")?.click();
+    await new Promise(r => setTimeout(r, 350));
+  });
+  const shape = await kb.evaluate(() => {
+    const all = [...document.querySelectorAll(".domain-body.open .concept-label")];
+    return { total: all.length,
+             annotated: all.filter(l => l.getAttribute("role") === "button"
+                                     && l.getAttribute("tabindex") === "0"
+                                     && (l.getAttribute("aria-label") || "").length > 0).length };
+  });
+  record("every card label is an announced control",
+         shape.total > 0 && shape.annotated === shape.total ? []
+           : [{ id: "card-label-role", impact: "serious", nodes: [],
+                help: `${shape.annotated}/${shape.total} annotated` }]);
+
+  // role="button" is a promise about the keyboard; this is the promise kept.
+  await kb.evaluate(() => document.querySelector(".domain-body.open .concept-label").focus());
+  await kb.keyboard.press("Enter");
+  await kb.waitForTimeout(250);
+  const fired = await kb.evaluate(() =>
+    document.querySelector(".domain-body.open .concept-label").classList.contains("copied"));
+  record("Enter on a card label copies its link",
+         fired ? [] : [{ id: "card-label-enter", impact: "serious", nodes: [],
+                         help: "Enter did nothing on a role=button element" }]);
+  await kb.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => r.violations.length);

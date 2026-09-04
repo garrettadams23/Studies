@@ -21373,3 +21373,44 @@ a11y suite   6 -> 15 checks across three waves
 
 Reverting the chips to `<div>`s fails three of them, the last one plainly:
 `12 Tab presses from the top never landed on a chip`.
+
+---
+
+## Session record — the last row of the census, and the census is empty
+
+The pointer-cursor census left two single-instance rows unexplained, and one of
+them was real.
+
+`span.acro-exp` is not a control — it inherits the pointer from the element it
+sits inside, and that element is the other row. **`div.concept-label` copies a
+link to that card.** A real feature, on every concept card on the site, wearing
+a hover colour and a pointer cursor and offering the keyboard nothing: no tab
+stop, no role, no accessible name. `0/223` annotated in a single open domain.
+
+It is annotated rather than rewritten as a `<button>`, and the reason is worth
+recording because it cuts against this file's own precedent. The kicker text is
+authored in the domain files and read back by `mdText`'s
+`cls.contains("concept-label")` branch; restructuring it into a button changes
+what the exporter walks, and **no visual test covers concept cards** — the chips
+conversion was safe precisely because `chips-*.png` could prove it. Where a
+structural change cannot be proved invisible, `role="button"` + `tabindex="0"` +
+a real Enter/Space handler is the complete control, and ARIA exists for content
+you cannot restructure.
+
+The keyboard cost is bounded and worth stating: a collapsed topic's cards are
+`display: none`, so they are not focusable. Only the expanded topic's labels
+join the tab order — two to seven stops, not two hundred.
+
+```
+pointer cursor and not focusable, after three waves:
+
+  73  div.topic-header    wrapper around the real toggle button
+  73  span.topic-tools    wrapper around bookmark and note
+  73  span.topic-chev     decorative, aria-hidden
+
+a11y suite   6 -> 17 checks
+```
+
+**Every row that remains is a wrapper around a control that is already
+reachable.** The census that found the filter bar and the card links now returns
+nothing actionable, which is the result that closes it.

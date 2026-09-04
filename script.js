@@ -551,6 +551,20 @@ function enhanceDomain(section) {
     header.removeAttribute("aria-expanded");
     toggle.setAttribute("aria-expanded", header.classList.contains("open") ? "true" : "false");
 
+    // A concept card's label copies a link to that card — a real control, and it
+    // was a bare <div> with a pointer cursor: no tab stop, no name, nothing a
+    // screen reader would announce as actionable. The kicker text is authored in
+    // the domain files and read back by the markdown exporter, so it is annotated
+    // here rather than restructured into a <button>; that keeps the exporter's
+    // `cls.contains("concept-label")` and the layout exactly as they were, which
+    // matters because no visual test covers concept cards.
+    topic.querySelectorAll(".concept-label:not([role])").forEach(label => {
+      label.setAttribute("role", "button");
+      label.setAttribute("tabindex", "0");
+      label.setAttribute("aria-label",
+        `Copy a link to this card: ${(label.textContent || "").trim()}`);
+    });
+
     if (safeLS.get(REVIEWED_PREFIX + topic.id) === "1") topic.classList.add("reviewed");
     if (safeLS.get(BOOKMARK_PREFIX + topic.id) === "1") topic.classList.add("bookmarked");
     if (safeLS.get(NOTE_PREFIX + topic.id)) topic.classList.add("noted");
@@ -1086,6 +1100,13 @@ function handleGlobalKeys(e) {
   const t = e.target;
   const typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" ||
     t.tagName === "SELECT" || t.isContentEditable);
+
+  // A role="button" that only answers the mouse is worse than no role at all.
+  if ((e.key === "Enter" || e.key === " ") && t?.closest?.(".concept-label[role='button']")) {
+    e.preventDefault();
+    copyCardLink(t.closest(".concept-label"));
+    return;
+  }
 
   if (e.key === "Escape") {
     const si = document.getElementById("search-input");
