@@ -2768,6 +2768,130 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
               </div>
             </div>
           </div>
+          <!-- ── TOPIC: AZURE WORKLOAD IDENTITY ──────────────────────────── -->
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🪪</span>
+              <span class="topic-name">Azure Workload Identity — Managed Identities, Service Principals &amp; Federated Credentials</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The App Registration Is Not the Thing That Holds Permissions</div>
+                <div class="concept-desc">
+                  Registering an application creates two objects, and almost every confusing permission
+                  problem in Entra comes from acting on the wrong one. The <strong>application
+                  object</strong> is the global definition, and it lives in exactly one tenant — the one
+                  that owns the app. The <strong>service principal</strong> is the local instance of
+                  that app inside a tenant, and it is what role assignments and consent actually attach
+                  to. One definition, one service principal per tenant that uses it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Symptom</th><th>What is actually going on</th></tr>
+                    <tr><td>&ldquo;I granted the role and it still gets denied&rdquo;</td><td>The grant landed on a different object than the token is issued for</td></tr>
+                    <tr><td>The app appears twice in searches</td><td>It does not — that is the registration and its service principal, correctly</td></tr>
+                    <tr><td>A multi-tenant app works in one tenant, not another</td><td>Each tenant needs its own service principal and its own consent</td></tr>
+                    <tr><td>Deleting the registration did not remove access elsewhere</td><td>Service principals in other tenants are separate objects</td></tr>
+                    <tr><td>The portal shows an object ID that matches nothing you created</td><td>Service principals get their own identifiers, distinct from the application ID</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">When a permission does not work, check which object ID the
+                    grant is on before changing anything.</strong> The reflex is to widen the
+                    permission, which usually appears to help — because a broad enough grant hits the
+                    right object eventually. That leaves standing over-permission behind and never
+                    teaches anyone which object was wrong.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Choosing</div>
+                <div class="concept-title">Three Identities, Decided on Lifecycle</div>
+                <div class="concept-desc">
+                  These are usually chosen on convenience and should be chosen on <strong>what happens
+                  when the resource is deleted and redeployed</strong>. That single question separates
+                  them cleanly, and it is also the one nobody asks until an infrastructure pipeline has
+                  quietly broken every permission.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Identity</th><th>Lifecycle</th><th>Choose it when</th></tr>
+                    <tr><td>System-assigned managed identity</td><td>Created and destroyed with its one resource</td><td>One resource needs its own identity and nothing else shares it. The right default</td></tr>
+                    <tr><td>User-assigned managed identity</td><td>A resource in its own right; outlives anything it is attached to</td><td>Several resources share an identity, or the role assignments must exist before the resource does</td></tr>
+                    <tr><td>Service principal with a secret or certificate</td><td>Whatever you remember to do about it</td><td>Only when the workload is outside Azure and cannot federate. Otherwise it is a rotation task you invented</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Redeploying a resource with a system-assigned identity
+                    gives it a new one, and leaves the old role assignments behind as identifiers that
+                    resolve to nothing.</strong> The permission does not error — it simply is not there
+                    any more, and the console shows an assignment to an unknown principal. If a pipeline
+                    tears resources down and rebuilds them, that is the case for a user-assigned
+                    identity: the grant survives the rebuild, which is the entire point.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Federated Credentials Remove the Last Secret</div>
+                <div class="concept-desc">
+                  A pipeline outside Azure has traditionally held a client secret, which means a secret
+                  in a settings store, an expiry nobody diarised, and an outage the morning it lapses.
+                  Federation replaces it: the external system already issues its own signed token, and
+                  a federated credential says <em>this issuer, this subject, this audience may become
+                  this identity</em>. Nothing is stored, so nothing expires and nothing leaks.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Field</th><th>Must match</th><th>When it does not</th></tr>
+                    <tr><td>Issuer</td><td>The external provider's token issuer exactly</td><td>Rejected outright; the clearest failure of the three</td></tr>
+                    <tr><td>Subject</td><td>The precise workload — a specific repository and branch, or a namespace and account</td><td>The subtle one: works from one branch, fails from another, and the message names neither</td></tr>
+                    <tr><td>Audience</td><td>What the external system was asked to mint the token for</td><td>A token that is valid and meant for something else</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Write the subject as narrowly as the workload allows, and expect to revisit
+                    it.</strong> A subject pinned to one branch is a security property, not a
+                    limitation — it means a pull request from a fork cannot mint a production
+                    credential. It is also the reason the first deployment from a new branch fails, so
+                    the narrow subject and the confusing failure are the same decision, and worth
+                    documenting next to the pipeline rather than in a ticket.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Running Code on a Resource Is Being Its Identity</div>
+                <div class="concept-desc">
+                  Azure separates the right to manage a resource from the right to grant access — which
+                  is a genuinely good design, and is routinely undone by a second path: if you can
+                  execute code on something that carries an identity, you hold that identity's
+                  permissions. The role that looks harmless is the one attached to a virtual machine
+                  whose managed identity is powerful.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Path</th><th>Why it works</th></tr>
+                    <tr><td>Contributor on a VM <span class="acro-exp">(Virtual Machine)</span> that has a managed identity</td><td>Running a command on the machine runs as that identity. Managing the resource is acting as it</td></tr>
+                    <tr><td>Permission to attach a user-assigned identity</td><td>Attach a powerful identity to a resource you control, then run code there</td></tr>
+                    <tr><td>User Access Administrator anywhere</td><td>The right to grant roles is the right to grant yourself roles</td></tr>
+                    <tr><td>An application permission over the directory</td><td>An app that can write directory roles can promote anything, including itself</td></tr>
+                    <tr><td>Global Administrator</td><td>Can elevate to manage all subscriptions at the root scope — a directory role reaching into resource access</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Audit which identities are attached to compute, not just
+                    who holds which role.</strong> A permissions review that reads role assignments
+                    alone will pronounce an estate healthy while a broadly-scoped identity sits on a
+                    machine half the organisation can run commands on. The question to ask of every
+                    managed identity is not what it can do, but who can make it do it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <!-- ── TOPIC: AZURE NETWORKING ──────────────────────────────────── -->
           <div class="topic" data-reviewed="2026-08">

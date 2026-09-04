@@ -21810,3 +21810,67 @@ things can be switched off.
 endpoint +1 topic · 1,540 -> 1,541 · raw 7.7 MB of 12.0
 31 gates green · 296 browser checks green
 ```
+
+## Session — Azure workload identity, and three over-claims corrected
+
+### The gap, established by counting topics rather than trusting a matrix
+
+- AWS: *IAM — Users, Roles & Policies* **and** *IAM Deep — AssumeRole, STS & Boundaries*.
+- GCP: *IAM — Members, Roles & Hierarchy* **and** *Service Accounts & Workload Identity*.
+- Azure: *Hierarchy, RBAC Scopes & Policy* — and nothing else. That topic contains
+  zero occurrences of "managed identity", "service principal" or "federat".
+
+Same shape as the PaaS compute gap: two providers complete, one left with the
+human half of identity and none of the workload half. Four cards, placed next to
+the RBAC topic.
+
+**The app registration is not the thing that holds permissions.** The application
+object is the global definition in one tenant; the service principal is the local
+instance, and it is what grants attach to. The verdict targets the actual damage:
+the reflex on a denied permission is to widen it, which appears to work because a
+broad enough grant eventually hits the right object — leaving standing
+over-permission and teaching nobody which object was wrong.
+
+**Three identities, decided on lifecycle.** Not on convenience — on what happens
+when the resource is deleted and redeployed. A system-assigned identity comes back
+as a different one, and the old role assignments remain as identifiers resolving
+to nothing. No error, just absent permission.
+
+**Federated credentials remove the last secret.** Issuer, subject and audience,
+with the failure mode of each. The verdict makes the point that a subject pinned
+to one branch is a security property and the reason the first deployment from a
+new branch fails — the same decision seen from two ends.
+
+**Running code on a resource is being its identity.** Azure's separation of
+managing a resource from granting access is good design and is undone by execution
+paths: Contributor on a VM with a managed identity is that identity. Hence the
+audit instruction — review which identities are attached to compute, not only who
+holds which role. Complements rather than repeats *Cloud IAM Pitfalls*, which is
+AWS-shaped (PassRole, AssumeRole, CreateAccessKey); 92 near-duplicate pairs, 0
+disagreements.
+
+### Three over-claims of my own, corrected
+
+Each found the same way — grepping the bare service name at content level and
+reading where it lands, instead of trusting a summary:
+
+1. **Endpoint Privilege Management** was recorded as absent. It has a full topic.
+2. **Azure edge and ingress** looked absent (Front Door 0, Application Gateway 1).
+   Wrong: the networking topic's *Four Load Balancers, One Right Answer* covers
+   Load Balancer, Application Gateway, Front Door and Traffic Manager, plus
+   private and service endpoints. The vendor-prefixed names simply never appear.
+3. **Azure messaging** (Service Bus, Event Grid, Event Hubs) is genuinely absent —
+   and so are SQS, EventBridge, Kinesis and Pub/Sub. Messaging is covered
+   conceptually, in *Message Queues & Event-Driven Architecture* and *Streaming &
+   Event Pipelines*. That is a consistent editorial choice, not a hole, and an
+   Azure-only messaging topic would break it. **Not a gap. Deliberately not doing it.**
+
+Intune was swept the same way: update rings, compliance, app protection, Win32
+apps, baselines, BitLocker, Autopilot, ESP, Apple Business Manager/ADE/VPP and
+Android work profiles all have topics or substantial cards. Nothing thin enough to
+justify another topic.
+
+```
+cloud 77 -> 78 topics · 1,541 -> 1,542 · raw 7.7 MB of 12.0
+31 gates green · 296 browser checks green
+```
