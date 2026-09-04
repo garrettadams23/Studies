@@ -21874,3 +21874,52 @@ justify another topic.
 cloud 77 -> 78 topics · 1,541 -> 1,542 · raw 7.7 MB of 12.0
 31 gates green · 296 browser checks green
 ```
+
+## Session — the eight new topics nobody could have found
+
+A check worth making after any content wave, and one I had not been making: are
+the new topics reachable from anywhere other than search?
+
+```
+azure-databases          []      azure-native-iac         []
+azure-paas-compute       []      azure-workload-identity  []
+certificate-delivery     []      gpo-to-intune            []
+intune-rbac              []      the-intune-suite         []
+```
+
+All eight topics written today appeared in no learning path. Writing a topic and
+not routing to it is half a job — the paths are how somebody working through a
+subject meets content they did not know to search for.
+
+Nine insertions across three paths, each placed where the sequence already
+argued for it rather than appended for tidiness:
+
+- **Running Azure** 13 → 17. Workload identity after the RBAC hierarchy, since it
+  is the other half of that subject. PaaS compute and Databases after the SKU
+  topic, which is where they were previously one table row each. Native IaC after
+  Arc and before the troubleshooting playbook — how you deploy all of the above
+  repeatably, before the chapter on what to do when it breaks.
+- **Endpoint Engineering with Intune** 30 → 34. GPO-to-Intune directly after the
+  ADMX topic whose verdict it finishes. Certificate delivery after *Policy
+  Conflicts — Proving Which One Won*, because it is the profile whose failure is
+  silent and the section is about proving what actually applied. The Intune Suite
+  after the local-admin/EPM topic it cross-references. Scope tags last: the path
+  ends by handing the fleet to a team.
+- **Securing Cloud-Native** 17 → 18. Workload identity after *Cloud IAM Pitfalls
+  & Privilege Escalation*, which is AWS-shaped; the path's other identity step is
+  Kubernetes-shaped, so Azure had no representation in a path about cloud
+  identity escalation.
+
+```
+101 paths · 1,570 -> 1,579 steps · 1,482 of 1,542 topics reachable from a path
+31 gates green · 296 browser checks green
+```
+
+### Where the Intune and Azure programme stands
+
+Eight topics, all from evidenced gaps, and three claimed gaps rejected on
+inspection — Azure edge/ingress and Azure messaging are covered, and Intune's
+mobile, update, app and compliance areas all have topics or substantial cards.
+Sweeping both subjects at content level now returns nothing thin enough to
+justify another topic, which is the point at which to stop rather than to keep
+counting.
