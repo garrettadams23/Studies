@@ -20502,3 +20502,54 @@ the rule two earlier records in this file describe, broken by the person who
 wrote them down. The classes were dropped rather than converted to inline
 styles — the second column already carries the colour and the meaning, so the
 row reads the same and the inline-style ceiling did not move.
+
+---
+
+## Session record — the navigation wave the depth queue asked for
+
+The previous record ended by saying every remaining thin topic is fine *provided
+a reader who lands on it can reach the fuller treatment*. That is a claim about
+`data/related.json`, and it was not true.
+
+Six thin siblings were checked against the topic they are a sibling *of*, and
+four had no route to it:
+
+| Thin topic | Could not reach |
+|---|---|
+| `linux` Package Management (999) | *Package Management — Installing and Managing Software* (4,726), the practitioner half of a pair `duplicate-verdicts.json` already adjudicates |
+| `data` The Data Interview (1,380) | `career` *Interview Preparation — Getting the Job* (6,503) |
+| `endpoint` Update Compliance Reporting (1,753) | *Reporting on Drift* and *Windows Update for Business*, in a nine-topic update cluster it sat beside with one link |
+| `ai` AI Glossary (1,339) | *ML Foundations* and *LLMs & Generative AI* — the two topics whose terms it defines |
+
+**The cert-objective pair is the one that matters.** A reader on the 999-char
+card had no way to know the 4,726-char treatment existed; the split is
+deliberate and the isolation was not. That is what "a sibling, not a gap" costs
+when nobody checks the second half of the sentence.
+
+### And two topics had no See-also strip at all
+
+Counting topics absent from `related.json` rather than under-linked in it:
+**62 of 1,534**, of which 60 are the `acronym` dictionary's A–Z and By-Area
+index pages, where a see-also strip would mean nothing. The other two were
+ordinary content topics that had simply never been linked:
+
+- `devops` *DORA Metrics — Measuring Delivery Performance* → *Progressive
+  Delivery* and *SRE*. (The near neighbour by slug is `grc`'s **DORA** — the
+  Digital Operational Resilience Act — which is a different acronym entirely and
+  the wrong link to make.)
+- `script` *Web Accessibility (a11y) — Building for Everyone* → `web`'s
+  *Web Accessibility (a11y) — WCAG & ARIA*, its already-adjudicated
+  near-duplicate, and *Accessibility Remediation*.
+
+```
+20 edges added across 10 pairs, both directions
+1,472 -> 1,474 topics carrying links · 4,588 -> 4,612 links · 0 one-way
+```
+
+**The check that would have found this does not exist.** `suggest_related.py
+--check` proves every link resolves; nothing asks whether a topic has any. The
+count is in its output — *1,472 topics carry links across 1,534 topics* — and
+the 60-strong `acronym` block is exactly the reason nobody reads the gap as a
+number. A gate would need that exclusion to be meaningful, which is a decision
+about the reference domain rather than a mechanical rule, so this stays a
+measurement to re-run rather than a new gate.
