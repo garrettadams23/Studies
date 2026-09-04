@@ -21068,3 +21068,38 @@ exactly why a hedge is not a substitute for being right.
 ```
 2026-08: 24 -> 16      2026-09: 23 -> 32      one factual correction
 ```
+
+---
+
+## Session record — the freshness queue, closed to what a search can close
+
+Third and last verification wave. Four more confirmed and moved to `2026-09`:
+EOP's quarantine retention (30 days is both the default *and* the maximum — the
+card's "configurable downward" is exactly right), the Windows Server 180-day
+evaluation, Azure Monitor's 93-day platform-metric retention, and PCI DSS
+`v4.x` (v4.0.1 is the only valid version in 2026, so the card's deliberate `.x`
+is doing its job).
+
+```
+2026-08:  52 -> 12       2026-09:  0 -> 36
+```
+
+### What is left, and why each one is left
+
+The twelve that keep their old date are not a backlog to grind down. Each is
+there for a reason worth stating, because *the reason is what tells the next
+person whether to bother*:
+
+| Claim | Why it stays |
+|---|---|
+| `gMSA password 240 characters, 30-day rotation` | Half verified. The rotation checks out; the length was never returned. **Half a fact anchor is not a verified fact anchor.** |
+| `cs` NIST key-size table | Same. The source and the 128-bit ↔ RSA-3072 row confirm; the other three rows were not quoted, and the anchor claims the table. |
+| `Entra admin center ▸ Conditional Access ▸ What If` | The console name is verified. The menu path inside it is not, and the span covers the breadcrumb. |
+| `ai` "this year's snapshot", `grc` "a 2026 snapshot" | Self-describing framing. Re-dating would claim I re-checked the table underneath, which I did not. |
+| `career` used-hardware prices ×2 | Phase 11 §7 already ruled these: hedged with `~`, pedagogical anchors, and a price search returns noise rather than an answer. |
+| `m365` tier-gating ×3, message-trace retention, licence-on-hold rule | Licensing claims. A search returns marketing pages and reseller blogs; the cards already say "verify for your tier", which is the right shape. |
+| `net` "the heaviest feature on most platforms" | A comparative claim about vendor hardware. No source states it; the card is right that it is true, and no search settles it. |
+
+**The queue is now as closed as this container can close it.** What remains
+needs either a tenant to look at or a document this proxy will not fetch, and
+saying so is more useful than a date nobody stood behind.
