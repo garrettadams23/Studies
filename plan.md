@@ -21923,3 +21923,34 @@ mobile, update, app and compliance areas all have topics or substantial cards.
 Sweeping both subjects at content level now returns nothing thin enough to
 justify another topic, which is the point at which to stop rather than to keep
 counting.
+
+## Session — main went red on a commit that touched no code
+
+Run 327 failed on the paths commit. The cause was not the diff:
+
+```
+npm error 404 Not Found - GET https://registry.npmjs.org/playwright/-/playwright-1.63.0.tgz
+```
+
+`playwright@1.63.0` had been published minutes earlier. The registry was serving
+its metadata — it was already the `latest` tag — while the tarball had not yet
+propagated, so `npm install playwright` resolved a version it could not fetch.
+Re-checking the same URL afterwards returned 200, confirming a publish race
+rather than a broken release.
+
+The interesting part is what the failure exposed. The workflow installed
+Playwright and axe-core **unpinned**, and there is no `package.json`. So CI had
+been running whatever npm published most recently — 1.63.0 — while `make browser`
+locally is green against **1.56.0**. Every "296 browser checks green" in today's
+commit messages was true of the local pair and was never evidence about the
+versions CI actually ran. The two had silently diverged, and the publish race is
+only the loudest way that could have surfaced; a behavioural change between
+Playwright versions would have been quieter and much harder to attribute.
+
+Pinned both to the versions the local suite is green against, with the reasoning
+in a comment above the line so the next person to bump them knows to run
+`make browser` on the new pair first.
+
+This is the same failure shape the site itself keeps documenting, turned on the
+repository: something reported success (a green local run) that was never
+evidence for the thing it was taken to prove.

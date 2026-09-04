@@ -177,8 +177,15 @@ jobs:
         with:
           node-version: "22"
 
+      # Pinned deliberately. Unpinned, this line installs whatever npm published
+      # most recently, so CI ran a different Playwright than `make browser`
+      # proves locally — and on 2026-09-04 it took playwright@1.63.0 minutes
+      # after publication, when the registry served the metadata but not yet the
+      # tarball, and main went red on a content commit that touched no code.
+      # These are the versions the local browser suite is green against; bump
+      # them together, after running `make browser` on the new pair.
       - name: Install Playwright, axe-core and Chromium
-        run: npm install playwright axe-core && npx playwright install --with-deps chromium
+        run: npm install playwright@1.56.0 axe-core@4.13.0 && npx playwright install --with-deps chromium
 
       - name: Build the page
         run: python build.py
