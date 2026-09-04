@@ -22,7 +22,10 @@ let allExpanded = false;
 // would halt the whole script and leave the page inert.
 const safeLS = {
   get(k)    { try { return localStorage.getItem(k); } catch { return null; } },
-  set(k, v) { try { localStorage.setItem(k, v); } catch { /* blocked or full */ } },
+  // Returns whether the write landed. It used to swallow the failure and return
+  // undefined, so a caller that had just told the reader "saved" had no way to
+  // find out it had not been — see npSave and saveTopicNote below.
+  set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
   remove(k) { try { localStorage.removeItem(k); } catch { /* blocked */ } },
   // The key enumeration is its own hazard: `localStorage.length` and `.key(i)`
   // throw when storage is blocked, so a `for (…length…)` loop throws at the bound
@@ -295,14 +298,23 @@ function topicNote(id) {
   try { return localStorage.getItem(NOTE_PREFIX + id) || ""; } catch { return ""; }
 }
 
+/**
+ * Save a topic note, and report whether it actually went to storage.
+ *
+ * The old comment here read "quota — the note stays on screen, just unsaved",
+ * which is true and was never told to the reader: the note rendered, the topic
+ * gained its noted marker, and the text was gone on the next load. A screen
+ * that shows saved state the storage does not have is worse than an error.
+ */
 function saveTopicNote(id, text) {
   const value = (text || "").slice(0, NOTE_MAX).trim();
+  let stored = true;
   try {
     if (value) { localStorage.setItem(NOTE_PREFIX + id, value); streakTouch(); }
     else localStorage.removeItem(NOTE_PREFIX + id);
-  } catch { /* quota — the note stays on screen, just unsaved */ }
-  document.getElementById(id)?.classList.toggle("noted", !!value);
-  return value;
+  } catch { stored = false; }
+  document.getElementById(id)?.classList.toggle("noted", !!value && stored);
+  return { value, stored };
 }
 
 /**
@@ -329,16 +341,22 @@ function renderTopicNote(topic, { open = false } = {}) {
       '<button type="button" class="tn-edit">Edit</button>' +
       '<button type="button" class="tn-clear" hidden>Delete</button></div>' +
       '<div class="tn-text"></div>' +
+      '<div class="tn-warn" hidden>⚠ Not saved — this browser\'s storage is full. ' +
+      'Copy the text somewhere else before you leave the page.</div>' +
       '<textarea class="tn-input" rows="3" maxlength="' + NOTE_MAX +
       '" placeholder="A note only you see. Stored in this browser, and included in your progress export."></textarea>';
     body.prepend(block);
 
     const input = block.querySelector(".tn-input");
     const commit = () => {
-      const saved = saveTopicNote(topic.id, input.value);
-      block.querySelector(".tn-text").textContent = saved;
+      const { value, stored } = saveTopicNote(topic.id, input.value);
+      block.querySelector(".tn-text").textContent = value;
+      // Never silently. The text stays on screen either way, because deleting
+      // what somebody just typed is the one unrecoverable move here.
+      const warn = block.querySelector(".tn-warn");
+      warn.hidden = !value || stored;
       setEditing(false);
-      if (!saved) block.remove();
+      if (!value) block.remove();
     };
     block.querySelector(".tn-edit").addEventListener("click", () => setEditing(true));
     block.querySelector(".tn-clear").addEventListener("click", () => {
@@ -2197,8 +2215,8 @@ function npLoad() {
 }
 
 function npSave(notes) {
-  try { localStorage.setItem(NP_STORE_KEY, JSON.stringify(notes)); }
-  catch (e) { console.error("Notepad storage write failed", e); }
+  try { localStorage.setItem(NP_STORE_KEY, JSON.stringify(notes)); return true; }
+  catch (e) { console.error("Notepad storage write failed", e); return false; }
 }
 
 function npRelativeTime(ts) {
@@ -2354,7 +2372,17 @@ function mountNotepad(root) {
       id: Math.random().toString(36).slice(2),
       author, body, ts: Date.now(), sessionId,
     });
-    npSave(notes);
+    // A full store used to produce "✓ note posted" over a note that was never
+    // written — the reader learned it was gone on the next load, if ever. On a
+    // failed write the note is rolled back out of the list and the text is left
+    // in the box, so what is on screen matches what is stored and nothing the
+    // reader typed is thrown away.
+    if (!npSave(notes)) {
+      notes.shift();
+      renderList();
+      showToast("⚠ not saved — this browser's storage is full");
+      return;
+    }
     inputEl.value = "";
     updateCharCount();
     renderList();
@@ -2362,8 +2390,12 @@ function mountNotepad(root) {
   }
 
   function deleteNote(id) {
-    notes = npLoad().filter(n => n.id !== id);
-    npSave(notes);
+    const kept = npLoad().filter(n => n.id !== id);
+    if (!npSave(kept)) {
+      showToast("⚠ not removed — this browser's storage is full");
+      return;                      // the note is still stored; leave it shown
+    }
+    notes = kept;
     renderList();
     showToast("note removed");
   }

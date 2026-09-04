@@ -457,6 +457,67 @@ for (const [name, [raw, wantKept]] of Object.entries(NOTES)) {
   await ctx.close();
 }
 
+// ── a full store must not be reported as a saved one ────────────────────────
+// Storage that is *denied* is covered above; storage that is *full* is the
+// third state and the one the page used to lie about. `safeLS.set` swallowed
+// the quota error and returned undefined, so `postNote` said "✓ note posted"
+// over a note that was never written, and `saveTopicNote` added the topic's
+// noted marker to a note that would not survive a reload. Filled to the real
+// edge here — big blocks, then smaller, until a 200-byte write throws — because
+// a half-full store is not a test of anything.
+{
+  const ctx = await browser.newContext();
+  const p = await ctx.newPage();
+  const errs = []; p.on("pageerror", e => errs.push(String(e).split("\n")[0]));
+  await p.goto(PAGE, { waitUntil: "load" });
+  const out = await p.evaluate(async () => {
+    for (const size of [512 * 1024, 64 * 1024, 8 * 1024, 1024, 200]) {
+      const blob = "x".repeat(size);
+      for (let i = 0; i < 4000; i++) {
+        try { localStorage.setItem(`filler:${size}:${i}`, blob); } catch { break; }
+      }
+    }
+    let full = false;
+    try { localStorage.setItem("filler:probe", "x".repeat(200)); } catch { full = true; }
+
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    mountNotepad(host);
+    const input = host.querySelector(".np-input");
+    input.value = "a note the reader would have believed was saved";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    host.querySelector(".np-post").click();
+    await new Promise(r => setTimeout(r, 250));
+
+    // Long enough that it cannot fit in whatever slack the fill left behind — a
+    // twelve-character note does squeeze in, which is a true fact about the
+    // browser and a useless assertion about the page.
+    const note = saveTopicNote("kerberos-authentication-flow", "note ".repeat(200));
+    return {
+      full,
+      reports: typeof safeLS.set("filler:one-more", "x".repeat(200)) === "boolean",
+      setReturnedFalse: safeLS.set("filler:one-more", "x".repeat(200)) === false,
+      toast: host.querySelector(".np-toast")?.textContent?.trim() || "",
+      rendered: host.querySelectorAll(".np-body").length,
+      stored: localStorage.getItem("shared-notepad-notes"),
+      textKept: input.value,
+      noteStored: note.stored,
+    };
+  });
+  check("the fill actually exhausted the quota", out.full, JSON.stringify(out).slice(0, 120));
+  check("safeLS.set reports whether the write landed",
+        out.reports && out.setReturnedFalse, JSON.stringify(out.reports));
+  check("a note that could not be stored is not reported as posted",
+        /not saved/.test(out.toast) && out.rendered === 0 && out.stored === null,
+        `toast="${out.toast}" rendered=${out.rendered} stored=${out.stored}`);
+  check("and the text the reader typed is still in the box",
+        out.textKept === "a note the reader would have believed was saved", out.textKept);
+  check("a topic note that could not be stored says so",
+        out.noteStored === false, String(out.noteStored));
+  check("no uncaught error with storage full", errs.length === 0, errs[0]);
+  await ctx.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => !r.ok);

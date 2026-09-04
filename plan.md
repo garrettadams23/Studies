@@ -21103,3 +21103,63 @@ person whether to bother*:
 **The queue is now as closed as this container can close it.** What remains
 needs either a tenant to look at or a document this proxy will not fetch, and
 saying so is more useful than a date nobody stood behind.
+
+---
+
+## Session record — "✓ note posted", over a note that was never written
+
+Denied storage is covered. Corrupt storage is now covered. **Full** storage is
+the third state, and it was the one the page lied about.
+
+```
+storage filled to the real edge, then one note posted:
+
+  toast     "✓ note posted"
+  rendered  1
+  stored    null
+```
+
+`safeLS.set` swallowed the quota error and returned `undefined`, so no caller
+could ask whether the write had landed — and two callers had already told the
+reader it had. `postNote` cleared the textarea and showed a tick over a note
+that existed only on screen until the next reload. `saveTopicNote` carried a
+comment that said the quiet part — *"quota — the note stays on screen, just
+unsaved"* — and added the topic's **noted** marker anyway, so the browsing view
+showed saved state the storage did not have.
+
+**A screen that shows saved state the storage does not have is worse than an
+error**, because the reader has no reason to keep a copy.
+
+### The fix reports, and refuses to throw away what was typed
+
+- `safeLS.set` returns whether the write landed. It is the whole enabling
+  change; everything else was a caller that had no way to ask.
+- `postNote` rolls the note back out of the list on failure, **leaves the text
+  in the box**, and says *"⚠ not saved — this browser's storage is full"*.
+  Deleting what somebody just typed is the one unrecoverable move available
+  here, so it does not happen.
+- `deleteNote` reports too, and leaves the note visible — it is still stored.
+- `saveTopicNote` returns `{ value, stored }`, withholds the noted marker when
+  the write failed, and the editor shows a line telling the reader to copy the
+  text elsewhere before leaving the page.
+
+### Six assertions, checked against a faithful before-state
+
+The first attempt at the before-state reverted the helpers but left the callers
+checking their return values, which made `postNote` report failure *always* —
+and the test passed for the wrong reason. Reverting the callers too gives the
+real thing, and four of six then fail with the defect printed:
+
+```
+FAIL : a note that could not be stored is not reported as posted
+       — toast="✓ note posted" rendered=1 stored=null
+```
+
+One assertion needed fixing for the same class of reason: a twelve-character
+topic note *did* squeeze into the slack a full store leaves behind, which is a
+true fact about the browser and a useless claim about the page. The fixture note
+is now a kilobyte.
+
+```
+resilience suite   53 -> 59 checks
+```
