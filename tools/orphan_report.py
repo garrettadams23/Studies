@@ -25,6 +25,7 @@ Usage:
   python3 tools/orphan_report.py --domain productivity
 """
 
+import collections
 import json
 import re
 import sys
@@ -80,6 +81,7 @@ def main():
 
     linked = linked_ids()
     rows, total, orphans = [], 0, 0
+    by_domain = collections.Counter()
     parsed = list(built_topics())
     # A census that finds nothing on a 1,400-topic site is broken, not clean.
     # This tool once printed "0 of 0 topics have no related link" for two weeks
@@ -97,6 +99,7 @@ def main():
         if tid in linked:
             continue
         orphans += 1
+        by_domain[did] += 1
         deep = cards >= DEEP_CARDS and chars >= DEEP_CHARS
         if deep or show_all:
             rows.append((cards, chars, did, tid))
@@ -108,6 +111,16 @@ def main():
     scope = f" in {only}" if only else ""
     print(f"\n{orphans:,} of {total:,} topics{scope} have no related link and no "
           f"cross-reference pointing at them.")
+    # Where they are, because the headline number is meaningless without it.
+    # Today all 60 are the generated acronym dictionary's A-Z and By-Area index
+    # pages, where a see-also strip would point at nothing — and a reader of the
+    # bare count has to work that out by hand every time. The same 60 are the
+    # whole of the gap in `suggest_related.py --check` and in `check_paths.py`,
+    # so three reports were each re-deriving the same exclusion in the reader's
+    # head. One line here says it once.
+    if by_domain:
+        print("  " + " · ".join(f"{d} {n}" for d, n in by_domain.most_common(8))
+              + (" · …" if len(by_domain) > 8 else ""))
     if not show_all:
         print(f"{len(rows)} of those are deep ({DEEP_CARDS}+ concept cards, "
               f"{DEEP_CHARS:,}+ chars) — good cards that are dead ends.")

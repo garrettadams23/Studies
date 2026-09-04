@@ -20623,3 +20623,68 @@ FAIL  and one of them ends in a digit: 'SOC 2'       — specification=True, ind
 That is the test the earlier annotator self-test in this file was not, and the
 reason to write it that way is in that record. Wired into `make check` and
 `build-check.yml` together — 31 gates in both.
+
+---
+
+## Session record — where all four content programmes actually stand
+
+With the depth queue closed and the navigation gap filled, the censuses were run
+together rather than one at a time, and they agree with each other:
+
+| Census | Reads | Outstanding |
+|---|---|---|
+| `depth_report.py` | 1,534 topics, median 3,665 plain chars, 10th percentile 2,092 | 11 below the threshold, **every one of them deliberate or a sibling** — read the previous record |
+| `near_duplicates.py` | 92 pairs — 38 overlap, 54 containment | 75 explained by a Phase 9 §3 rule, 17 adjudicated by hand in `duplicate-verdicts.json`, **0 unread** |
+| `orphan_report.py` | 60 of 1,534 unlinked | **0 deep** — no good card is a dead end |
+| `query_probe.mjs` | 66 reader questions | 57 answered, **9 zeros, all recorded as deliberate** — seeding symptom phrases into cards is keyword stuffing with a rationalisation attached |
+
+### The same 60 topics are the whole of three different gaps
+
+`suggest_related.py --check` says 1,474 topics carry links of 1,534.
+`check_paths.py` says 1,474 distinct topics of 1,534. `orphan_report.py` says
+60 have nothing pointing at them. **It is the same 60 every time** — the
+generated acronym dictionary's A–Z and By-Area index pages, where a see-also
+strip, a learning-path step and an inbound cross-reference would each point at
+nothing.
+
+Three reports were each making the reader re-derive that exclusion by hand, and
+a structural 60 is indistinguishable from 60 units of debt if nobody says which
+it is. `orphan_report.py` now prints the domain breakdown under its headline,
+which is one line and settles it:
+
+```
+60 of 1,534 topics have no related link and no cross-reference pointing at them.
+  acronym 60
+0 of those are deep (3+ concept cards, 3,000+ chars) — good cards that are dead ends.
+```
+
+So **content coverage is complete on all three axes** — see-also, learning path
+and inbound reference — for every topic that is not a generated index page.
+
+### The one thing left is a judgement, not a task
+
+```
+raw_mb   7.7 of 8.0    4% left    ~63 more topics at the current average
+```
+
+`measure_load.mjs --synthetic` settled what that budget is protecting: not
+search (86 ms at three times the content — the fear §4b of this file spent a
+section on is measurably unfounded), and not heap (93 MB at 3x). **Load.**
+3.0 s → 7.0 s across the same range on a 4× throttled CPU.
+
+That makes the next move a choice between three things, and it is the owner's:
+
+1. **Hold the budget.** ~63 topics, then every new card displaces an old one.
+2. **Raise it, with the curve in front of you.** 16 MB buys twice the library
+   for ~5.3 s of throttled load, ~53 ms of search, 65 MB of heap. That is a
+   judgement about readers on slow devices, not a measurement.
+3. **Remove the wall.** Fetch each domain's deferred block as its own file
+   instead of inlining all thirty, which drops the load to the ~1.5 s floor of
+   shell + `script.js` and makes raw size stop mattering. It is also the largest
+   change on this list: `sw.js` precaching, offline use, and the four features
+   that deliberately read domains *without* hydrating them — markdown export,
+   the print pack, the dashboard and search — all read the inlined blocks
+   synchronously today, and the smoke tests assert exactly that.
+
+Nothing here should be done on a tool's initiative. The measurements exist; the
+decision does not follow from them.
