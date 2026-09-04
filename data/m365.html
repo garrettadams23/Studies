@@ -709,10 +709,10 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
         <table class="ref-table">
           <thead><tr><th>Limit</th><th>Surfaces as</th><th>Fix</th></tr></thead>
           <tbody>
-            <tr><td>URL <span class="acro-exp">(Uniform Resource Locator)</span> path length, <span class="volatile" data-checked="2026-08">around 400 characters</span></td><td>Sync failures and unopenable files deep in a tree</td><td>Shorter site and folder names; flatten the nesting</td></tr>
-            <tr><td>List view threshold, <span class="volatile" data-checked="2026-08">5,000 items</span></td><td>Views break while the data is fine</td><td>Index the column, filter the view — not "split the list"</td></tr>
+            <tr><td>URL <span class="acro-exp">(Uniform Resource Locator)</span> path length, <span class="volatile" data-checked="2026-09">around 400 characters</span></td><td>Sync failures and unopenable files deep in a tree</td><td>Shorter site and folder names; flatten the nesting</td></tr>
+            <tr><td>List view threshold, <span class="volatile" data-checked="2026-09">5,000 items</span></td><td>Views break while the data is fine</td><td>Index the column, filter the view — not "split the list"</td></tr>
             <tr><td>Unique permissions per list</td><td>Slow lists and inconsistent access</td><td>Stop breaking inheritance per item</td></tr>
-            <tr><td>Recycle bin retention, <span class="volatile" data-checked="2026-08">93 days across both stages</span></td><td>"Deleted last quarter" being genuinely gone</td><td>Retention policy, not the recycle bin, is the safety net</td></tr>
+            <tr><td>Recycle bin retention, <span class="volatile" data-checked="2026-09">93 days across both stages</span></td><td>"Deleted last quarter" being genuinely gone</td><td>Retention policy, not the recycle bin, is the safety net</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -1003,10 +1003,13 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          Expiration policies commonly run on a
-          <span class="volatile" data-checked="2026-08">30, 90 or 180-day cycle or a custom
-          value</span>, and deleted groups sit recoverable for a grace period before the site and
-          mailbox go with them. Confirm both numbers before enabling it on a live tenant.
+          The policy offers
+          <span class="volatile" data-checked="2026-09">a lifetime of 180 or 365 days, or a custom
+          value of at least 30</span>, and a group deleted at the end of it stays recoverable for
+          <span class="volatile" data-checked="2026-09">30 days</span> before the site and mailbox
+          go with it. Owners are chased at 30, 15 and 1 day before expiry, which is the whole
+          mechanism: <strong>a policy with no reachable owner deletes the team on schedule and
+          nobody reads the warning.</strong>
         </div>
       </div>
     </div>
@@ -1113,7 +1116,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           <thead><tr><th>Workload</th><th>Stages after a user deletes</th></tr></thead>
           <tbody>
             <tr><td>Exchange</td><td>Deleted Items → Recoverable Items (user-visible) → Purges (admin-only, held if on hold)</td></tr>
-            <tr><td>SharePoint / OneDrive</td><td>Site recycle bin → second-stage recycle bin → gone, <span class="volatile" data-checked="2026-08">93 days across both</span></td></tr>
+            <tr><td>SharePoint / OneDrive</td><td>Site recycle bin → second-stage recycle bin → gone, <span class="volatile" data-checked="2026-09">93 days across both</span></td></tr>
             <tr><td>Teams chat</td><td>Follows the mailbox copy the compliance system keeps</td></tr>
           </tbody>
         </table>
@@ -1952,7 +1955,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           <thead><tr><th>Symptom</th><th>Handling</th></tr></thead>
           <tbody>
             <tr><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 from Graph</td><td>Sleep for the interval the response names, then retry — do not back off blindly</td></tr>
-            <tr><td>A loop of thousands of single reads</td><td>Batch them; Graph accepts <span class="volatile" data-checked="2026-08">up to 20 requests per batch</span></td></tr>
+            <tr><td>A loop of thousands of single reads</td><td>Batch them; Graph accepts <span class="volatile" data-checked="2026-09">up to 20 requests per batch</span></td></tr>
             <tr><td>Re-reading data that has not changed</td><td>Use delta queries and ask only for the properties you use</td></tr>
             <tr><td>Exchange cmdlets slowing over a long session</td><td>Reconnect; long-lived sessions accumulate their own limits</td></tr>
           </tbody>
@@ -2212,7 +2215,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
           <tbody>
             <tr><td>Deleting a team removed a SharePoint site nobody expected</td><td>The site belonged to the group; deletion cascades</td></tr>
-            <!-- fact: Microsoft 365 Group soft delete 30 days | source: Entra ID deleted group retention | checked: 2026-08 -->
+            <!-- fact: Microsoft 365 Group soft delete 30 days | source: Entra ID deleted group retention | checked: 2026-09 -->
             <tr><td>A deleted group came back</td><td>Soft delete: recoverable for 30 days by default</td></tr>
             <tr><td>Renaming the team did not rename the site URL <span class="acro-exp">(Uniform Resource Locator)</span></td><td>The display name changes; the site address does not</td></tr>
             <tr><td>Owners left the company and nobody can manage the team</td><td>Ownerless groups are a governance gap — set an ownerless policy</td></tr>

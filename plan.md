@@ -21019,3 +21019,52 @@ domain change they never read about.
 The count rose by one, which §6's counter-discipline says to justify: the new
 span is a claim about a migration in flight, and it is the *only* kind of claim
 that should be born dated.
+
+---
+
+## Session record — the freshness pass found a wrong number, which is the point
+
+Second verification wave, over the service limits rather than the console names.
+Eight claims checked; seven confirmed, **one wrong**.
+
+Confirmed and moved to `2026-09`: SharePoint's 5,000-item list view threshold,
+its ~400-character path limit and its 93-day recycle bin (all three fixed and
+unchangeable in SharePoint Online); Purview's 93-day retention across both
+stages; Microsoft Graph's 20-request JSON batch ceiling; the Microsoft 365 Group
+30-day soft delete; and Active Directory's 180-day tombstone lifetime.
+
+Left at `2026-08` on purpose, and the reason matters more than the count:
+
+- **`gMSA password 240 characters, 30-day rotation`** — the search confirmed the
+  30-day rotation and said nothing about the password length. *Half a fact
+  anchor verified is not a verified fact anchor*, so the whole thing keeps its
+  old date.
+- **`Windows Server evaluation runs 180 days`** — the search returned nothing on
+  it at all.
+- **`Entra admin center ▸ Conditional Access ▸ What If`** — from the previous
+  wave: the console name is verified, the menu path inside it is not.
+
+### The one that was wrong
+
+> Expiration policies commonly run on a **30, 90 or 180-day cycle** or a custom
+> value, and deleted groups sit recoverable for a grace period…
+
+The Microsoft 365 group expiration policy offers **180 or 365 days, or a custom
+value of at least 30**. There is no 90-day preset and no 30-day preset; a reader
+would have opened the blade looking for options that are not there. The grace
+period is a known 30 days, so it is now stated rather than gestured at, and the
+renewal chase — 30, 15 and 1 day before expiry — is named, because that is the
+mechanism the whole control rests on:
+
+> **a policy with no reachable owner deletes the team on schedule and nobody
+> reads the warning.**
+
+**This is what the dating convention is for.** The claim had been sitting in a
+verdict for months, hedged just enough to sound careful (*"commonly"*, *"confirm
+both numbers"*) that nobody would check it. The hedge is what let a wrong number
+survive — and the hedge is also what would have saved the reader, which is
+exactly why a hedge is not a substitute for being right.
+
+```
+2026-08: 24 -> 16      2026-09: 23 -> 32      one factual correction
+```
