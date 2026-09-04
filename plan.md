@@ -20959,3 +20959,63 @@ import gate was stricter than the read gate, or — for the notepad — neither 
 strict at all. **Anything that reaches storage without going through the
 importer is a shape nobody checked**, and on this site that includes every
 record the page wrote under an older build.
+
+---
+
+## Session record — the freshness pass that could actually check something
+
+The previous pass refused to re-date anything, on the grounds that
+`data-checked` means somebody checked it and this container could not verify a
+Microsoft console name. That turned out to be half true, and the half that was
+false is worth writing down: **`WebSearch` works here; `WebFetch` does not.**
+
+```
+WebFetch  https://learn.microsoft.com/…  ->  EGRESS_BLOCKED by the network proxy
+WebSearch "…"                            ->  results, with Learn among the sources
+```
+
+So primary documentation cannot be fetched and read, but a search that returns
+Learn pages and quotes the address out of them can. That is weaker evidence than
+opening the doc, and it is not *no* evidence — so the rule applied here is: date
+what the search states unambiguously, and leave anything the search only
+gestures at.
+
+### Nineteen re-dated, one deliberately not
+
+Verified today and moved to `2026-09`: `admin.microsoft.com`,
+`entra.microsoft.com`, `admin.exchange.microsoft.com`,
+`admin.teams.microsoft.com`, `purview.microsoft.com`, `intune.microsoft.com`,
+`<tenant>-admin.sharepoint.com`, `security.microsoft.com`, and the console
+*names* beside them — Entra, M365, Purview, Teams, Intune, Defender — plus
+`infra`'s three *Windows Admin Center* spans, which is still what the product is
+called (version 2606, July 2026).
+
+Left at `2026-08` on purpose: `cloud`'s **Entra admin center ▸ Conditional
+Access ▸ What If**. The console name checks out; the menu path inside it does
+not, and the span covers the whole breadcrumb. Re-dating it would have claimed a
+check that was not made.
+
+### And the check found something the cards did not say
+
+Microsoft is moving these consoles onto the `cloud.microsoft` domain, one
+service at a time — the Exchange centre already answers at
+`admin.cloud.microsoft/exchange`, and Teams is mid-migration with
+`teams.microsoft.com` redirecting to `teams.cloud.microsoft`. **This is exactly
+the change the volatile-span convention exists to catch**, and the card whose
+verdict already read *"let the addresses change, because they will"* now carries
+the live example that proves it.
+
+The sentence is written the §5 way: the timeline is hedged and dated, because it
+will move; the operational half is not, because it will not. Anything filtering
+by domain — a proxy, a secure web gateway, a Conditional Access named location,
+a firewall rule — needs `cloud.microsoft` allowed *before* the redirect arrives,
+or the symptom is a console that will not load and nobody connects it to a
+domain change they never read about.
+
+```
+40 -> 41 volatile spans      2026-08: 24    2026-09: 23
+```
+
+The count rose by one, which §6's counter-discipline says to justify: the new
+span is a claim about a migration in flight, and it is the *only* kind of claim
+that should be born dated.

@@ -22,10 +22,10 @@
         <table class="ref-table">
           <thead><tr><th>Layer</th><th>What lives there</th><th>Changed from</th></tr></thead>
           <tbody>
-            <tr><td>Directory</td><td>Users, groups, devices, app registrations, roles</td><td><span class="volatile" data-checked="2026-08">Entra admin centre</span></td></tr>
-            <tr><td>Subscription</td><td>Licences, service plans, billing</td><td><span class="volatile" data-checked="2026-08">M365 admin centre</span></td></tr>
+            <tr><td>Directory</td><td>Users, groups, devices, app registrations, roles</td><td><span class="volatile" data-checked="2026-09">Entra admin centre</span></td></tr>
+            <tr><td>Subscription</td><td>Licences, service plans, billing</td><td><span class="volatile" data-checked="2026-09">M365 admin centre</span></td></tr>
             <tr><td>Workload</td><td>Mailboxes, sites, teams, policies</td><td>That workload's own console</td></tr>
-            <tr><td>Compliance</td><td>Retention, labels, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-08">Purview portal</span></td></tr>
+            <tr><td>Compliance</td><td>Retention, labels, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-09">Purview portal</span></td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -49,15 +49,27 @@
         <table class="ref-table">
           <thead><tr><th>Console</th><th>Owns</th><th>Address</th></tr></thead>
           <tbody>
-            <tr><td>Microsoft 365 admin</td><td>Users, licences, billing, service health</td><td><span class="volatile" data-checked="2026-08">admin.microsoft.com</span></td></tr>
-            <tr><td>Entra admin</td><td>Groups, roles, Conditional Access, app registrations</td><td><span class="volatile" data-checked="2026-08">entra.microsoft.com</span></td></tr>
-            <tr><td>Exchange admin</td><td>Mailboxes, mail flow, connectors, transport rules</td><td><span class="volatile" data-checked="2026-08">admin.exchange.microsoft.com</span></td></tr>
-            <tr><td>SharePoint admin</td><td>Sites, storage, sharing policy</td><td><span class="volatile" data-checked="2026-08">the tenant's -admin.sharepoint.com host</span></td></tr>
-            <tr><td>Teams admin</td><td>Teams policies, voice, meeting settings</td><td><span class="volatile" data-checked="2026-08">admin.teams.microsoft.com</span></td></tr>
-            <tr><td>Purview</td><td>Retention, labels, DLP <span class="acro-exp">(Data Loss Prevention)</span>, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-08">purview.microsoft.com</span></td></tr>
-            <tr><td>Intune</td><td>Devices, compliance, app deployment</td><td><span class="volatile" data-checked="2026-08">intune.microsoft.com</span></td></tr>
+            <tr><td>Microsoft 365 admin</td><td>Users, licences, billing, service health</td><td><span class="volatile" data-checked="2026-09">admin.microsoft.com</span></td></tr>
+            <tr><td>Entra admin</td><td>Groups, roles, Conditional Access, app registrations</td><td><span class="volatile" data-checked="2026-09">entra.microsoft.com</span></td></tr>
+            <tr><td>Exchange admin</td><td>Mailboxes, mail flow, connectors, transport rules</td><td><span class="volatile" data-checked="2026-09">admin.exchange.microsoft.com</span></td></tr>
+            <tr><td>SharePoint admin</td><td>Sites, storage, sharing policy</td><td><span class="volatile" data-checked="2026-09">the tenant's -admin.sharepoint.com host</span></td></tr>
+            <tr><td>Teams admin</td><td>Teams policies, voice, meeting settings</td><td><span class="volatile" data-checked="2026-09">admin.teams.microsoft.com</span></td></tr>
+            <tr><td>Purview</td><td>Retention, labels, DLP <span class="acro-exp">(Data Loss Prevention)</span>, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-09">purview.microsoft.com</span></td></tr>
+            <tr><td>Intune</td><td>Devices, compliance, app deployment</td><td><span class="volatile" data-checked="2026-09">intune.microsoft.com</span></td></tr>
           </tbody>
         </table>
+        <div class="concept-desc">
+          <strong class="c-amber">And they are changing now.</strong> Microsoft is moving these
+          consoles onto the <code>cloud.microsoft</code> domain, one service at a time —
+          <span class="volatile" data-checked="2026-09">the Exchange centre already answers at
+          <code>admin.cloud.microsoft/exchange</code>, and Teams is mid-migration with
+          <code>teams.microsoft.com</code> redirecting to <code>teams.cloud.microsoft</code></span>.
+          The operational half does not wait for the rename: anything that filters by domain — a
+          proxy, a secure web gateway, a Conditional Access named location, a firewall rule — needs
+          <code>cloud.microsoft</code> allowed <em>before</em> the redirect reaches your tenant.
+          Otherwise the symptom is a console that will not load, and nobody connects that to a
+          domain change they never read about.
+        </div>
         <div class="concept-desc verdict">
           <strong>Memorise the ownership column and let the addresses change, because
           they will.</strong> Microsoft renames and relocates portals regularly; what
@@ -1494,7 +1506,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
       <div class="concept-title">Two Tools, and Knowing Which Question You Have</div>
       <div class="concept-desc">
         "Teams calls are bad" is two different investigations. One user on one call is a per-call
-        problem, answered by the call analytics on that user in the <span class="volatile" data-checked="2026-08">Teams admin centre</span>. "Calls are
+        problem, answered by the call analytics on that user in the <span class="volatile" data-checked="2026-09">Teams admin centre</span>. "Calls are
         bad in the Manchester office" is a trend, answered by the Call Quality Dashboard, which
         aggregates across the tenant and can group by building and subnet — but only if someone
         uploaded a building map first.
@@ -2572,7 +2584,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Guest permissions in the directory</td><td>Entra</td><td>Whether guests can read other users and groups</td></tr>
             <tr><td>External sharing level</td><td>SharePoint, per site</td><td>The tenant setting is a ceiling; each site can be stricter</td></tr>
             <tr><td>Default link type</td><td>SharePoint</td><td>"Anyone" versus "specific people" — the single highest-impact default</td></tr>
-            <tr><td>Guest access in Teams</td><td><span class="volatile" data-checked="2026-08">Teams admin</span></td><td>A separate switch that can silently contradict the others</td></tr>
+            <tr><td>Guest access in Teams</td><td><span class="volatile" data-checked="2026-09">Teams admin</span></td><td>A separate switch that can silently contradict the others</td></tr>
             <tr><td>Group-level guest policy</td><td>Entra group settings</td><td>Blocks guests on sensitive teams without blocking the tenant</td></tr>
           </tbody>
         </table>
