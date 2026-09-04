@@ -21775,3 +21775,38 @@ setting lands, and skipping it is exactly what makes these migrations last years
 endpoint +1 topic · 1,539 -> 1,540 · raw 7.7 MB of 12.0
 31 gates green · 296 browser checks green
 ```
+
+## Session — the Intune Suite, and a licence boundary that moved
+
+Placed beside the Endpoint Privilege Management topic it cross-references rather
+than duplicates. Three cards.
+
+The framing changed once the facts were checked. The plan for this topic assumed
+"these are premium capabilities you must buy separately" — which was true when
+the gap was recorded and is no longer the interesting part. From mid-2026 the
+Suite capabilities fold into Microsoft 365 E3 and E5 rather than being sold as a
+per-user add-on, with a price rise attached and an uneven split between the
+tiers. So the inversion is not "is it worth buying" but **"what are we already
+entitled to and not using"** — a team still carrying a design restriction, or a
+third-party renewal, that quietly stopped being necessary.
+
+Licensing is the most volatile thing on the page, so the claim carries a
+`volatile` span dated 2026-09 and a fact anchor recording that it was corroborated
+across several independent write-ups rather than one. The verdict tells the
+reader to check the terms rather than the table, and says what is durable: the
+shape of the mistake, not the boundary.
+
+The components card is written around what each one *retires*, since that column
+is the one that says whether a component is relevant. Enterprise App Management
+and Cloud PKI are called out as the two that remove a system somebody maintains —
+and Cloud PKI's column points back at the certificate-authority expiry named in
+the certificate topic shipped earlier today.
+
+The habit card exists because the failure here is predictable: switch on four
+capabilities, retire none, end with more consoles than before. Adopt in the order
+things can be switched off.
+
+```
+endpoint +1 topic · 1,540 -> 1,541 · raw 7.7 MB of 12.0
+31 gates green · 296 browser checks green
+```

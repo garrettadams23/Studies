@@ -2999,6 +2999,105 @@ Remove-PSSession $s
     </div>
   </div>
 </div>
+<!-- ── TOPIC: THE INTUNE SUITE ─────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-09">
+  <div class="topic-header">
+    <span class="topic-icon">🧰</span>
+    <span class="topic-name">The Intune Suite — What It Adds, and What Changed in 2026</span>
+    <span class="topic-badge">Intune • Licensing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">The Add-On Stopped Being an Add-On</div>
+      <div class="concept-desc">
+        For several years the answer to &ldquo;can Intune do this?&rdquo; was often &ldquo;yes, for
+        more money&rdquo; — a set of premium capabilities sold as a separate per-user add-on. That
+        changed:
+        <span class="volatile" data-checked="2026-09">from mid-2026 the Suite capabilities are folded
+        into Microsoft 365 E3 and E5 rather than sold separately, with a list-price rise attached and
+        the capabilities split unevenly between the two tiers</span>. So the useful question inverted.
+        It is no longer &ldquo;is this worth buying?&rdquo; but <strong>&ldquo;what are we already
+        entitled to and not using?&rdquo;</strong>
+      </div>
+      <!-- fact: Intune Suite capabilities move into M365 E3/E5 from mid-2026, split across tiers |
+           source: vendor licensing announcements, corroborated across several independent write-ups |
+           checked: 2026-09 -->
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>What people do</th><th>What it costs them</th></tr>
+          <tr><td>Renew a third-party remote-control tool out of habit</td><td>A licence for something the estate may now already have</td></tr>
+          <tr><td>Plan a project around &ldquo;we cannot afford the add-on&rdquo;</td><td>A design constraint that expired</td></tr>
+          <tr><td>Assume E3 and E5 got the same set</td><td>A rollout that stalls on the tier that does not include the piece it depends on</td></tr>
+          <tr><td>Treat the entitlement as the deployment</td><td>Nothing. Each capability still has to be configured, and some need infrastructure</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read the licensing terms, not this table, before committing
+          money.</strong> Entitlement boundaries are the most volatile thing written on this page, they
+          differ by tier and by region, and they change on Microsoft's schedule rather than anyone
+          else's. What is durable here is the shape of the mistake: a team carrying a design
+          restriction, or a renewal, that stopped being true and nobody re-checked.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Components, and What Each One Retires</div>
+      <div class="concept-desc">
+        Every capability here substitutes for something an estate is usually already running or paying
+        for. Read the right-hand column first — it is the one that says whether a component is
+        relevant to you.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Component</th><th>What it is</th><th>What it can retire</th></tr>
+          <tr><td>Remote Help</td><td>Attended remote assistance, with directory identity and role-based access on both ends</td><td>A third-party remote-control tool — and, more usefully, the shared credentials that tools tend to accumulate</td></tr>
+          <tr><td>Microsoft Tunnel</td><td>A VPN <span class="acro-exp">(Virtual Private Network)</span> gateway for mobile, run as a container on a Linux host you provide</td><td>A mobile VPN appliance, though not the network work behind it</td></tr>
+          <tr><td>Advanced Analytics</td><td>Deeper endpoint analytics: device timelines, anomaly detection, richer device query</td><td>The scripts people write to answer &ldquo;what happened to this device on Tuesday&rdquo;</td></tr>
+          <tr><td>Enterprise App Management</td><td>A catalogue of pre-packaged third-party applications, with updates handled for you</td><td>Most of a third-party patching product, and the packaging effort behind it</td></tr>
+          <tr><td>Cloud PKI <span class="acro-exp">(Public Key Infrastructure)</span></td><td>A hosted certificate authority issuing directly to enrolled devices</td><td>Running your own issuing authority and connector servers for device certificates</td></tr>
+          <tr><td>Endpoint Privilege Management</td><td>Elevation of approved actions for standard users</td><td>Standing local administrator rights. Covered in its own topic here</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Enterprise App Management and Cloud PKI are the two that change an
+          operating model rather than adding a feature.</strong> The others make an existing job nicer;
+          those two remove a system somebody currently maintains — a packaging pipeline, and a pair of
+          certificate servers whose expiry is the estate-wide failure named in the certificate topic.
+          Retiring infrastructure is worth more than any of the conveniences.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Habit</div>
+      <div class="concept-title">Adopt in the Order Things Can Be Switched Off</div>
+      <div class="concept-desc">
+        An entitlement produces no value until something stops. The common failure is enabling four
+        capabilities in a month, running them alongside the tools they were meant to replace, and
+        ending with more to maintain than before — every new console adopted, nothing decommissioned.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Step</th><th>Why this order</th></tr>
+          <tr><td>List what each component would replace, by name and renewal date</td><td>A component with nothing in its column is one to skip, however good it looks</td></tr>
+          <tr><td>Start with the one whose replacement renews soonest</td><td>The deadline does the prioritising, and the saving is provable</td></tr>
+          <tr><td>Pilot against the old tool, not against nothing</td><td>&ldquo;It works&rdquo; is not the bar; &ldquo;it does what we relied on the old one for&rdquo; is</td></tr>
+          <tr><td>Decommission before adopting the next</td><td>The only step that converts an entitlement into a saving</td></tr>
+          <tr><td>Re-check entitlements each renewal cycle</td><td>This boundary moved once and will move again</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>One component fully adopted beats four switched on.</strong> The measure of this
+          programme is not how many capabilities are enabled — it is how many things the team no longer
+          runs. A tenant with every Suite feature turned on and every legacy tool still under contract
+          has spent effort and saved nothing, which is the outcome the licence change makes easiest to
+          reach by accident.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ── TOPIC: WINDOWS LAPS ───────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
