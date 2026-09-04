@@ -590,12 +590,31 @@ function enhanceDomain(section) {
       // decorative arrow does not belong inside the button's accessible name.
       const chev = header.querySelector(":scope > .topic-chev");
       chev?.setAttribute("aria-hidden", "true");
+      header.querySelector(":scope > .topic-icon")?.setAttribute("aria-hidden", "true");
       [...header.childNodes].forEach(n => { if (n !== chev) toggle.appendChild(n); });
       chev ? header.insertBefore(toggle, chev) : header.appendChild(toggle);
     }
     header.removeAttribute("tabindex");
-    header.removeAttribute("role");
     header.removeAttribute("aria-expanded");
+    // The control is the .topic-toggle button built just above, which leaves
+    // this element free to be what it has always looked like: a heading. That
+    // matters more here than on most sites — a 1,534-topic reference is
+    // navigated by heading, and the outline was `h1` then nothing.
+    //
+    // Expressed in ARIA rather than by wrapping the header in a real <h3>,
+    // because four call sites reach the topic through `header.parentElement`
+    // (setTopicOpen, renderSeeAlso, renderTopicNote, updateTopicHash) and
+    // style.css:2517 selects `.topic.reviewed > .topic-header`. A wrapper breaks
+    // all five; this breaks none, and reads identically to assistive technology.
+    header.setAttribute("role", "heading");
+    header.setAttribute("aria-level", "3");
+    // Name it explicitly. A heading's name is computed from everything inside
+    // it, and this header also holds the badge, the read time and four tool
+    // buttons — so the rotor entry came out as "OSI Model — 7 Layers REFERENCE
+    // MODEL 7 min Save topic to study list Mark topic as reviewed…". A
+    // twenty-five-word heading is worse than no heading.
+    const nameEl = header.querySelector(".topic-name");
+    if (nameEl) header.setAttribute("aria-label", nameEl.textContent.replace(/\s+/g, " ").trim());
     toggle.setAttribute("aria-expanded", header.classList.contains("open") ? "true" : "false");
 
     // A concept card's label copies a link to that card — a real control, and it
@@ -605,6 +624,11 @@ function enhanceDomain(section) {
     // here rather than restructured into a <button>; that keeps the exporter's
     // `cls.contains("concept-label")` and the layout exactly as they were, which
     // matters because no visual test covers concept cards.
+    topic.querySelectorAll(".concept-title:not(h4):not([role])").forEach(title => {
+      title.setAttribute("role", "heading");
+      title.setAttribute("aria-level", "4");
+    });
+
     topic.querySelectorAll(".concept-label:not([role])").forEach(label => {
       label.setAttribute("role", "button");
       label.setAttribute("tabindex", "0");
@@ -1292,6 +1316,9 @@ function initAccessibilityAndTools() {
     h.setAttribute("tabindex", "0");
     h.setAttribute("role", "button");
     h.setAttribute("aria-expanded", "false");
+    // Decoration. Exposed, it reads as the emoji's name in front of the domain.
+    h.querySelector(".domain-icon")?.setAttribute("aria-hidden", "true");
+    h.querySelector(".chevron")?.setAttribute("aria-hidden", "true");
   });
 
   domainSections().forEach(updateDomainProgress);

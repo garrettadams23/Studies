@@ -350,6 +350,7 @@ def build_domain_section(domain, body_content):
     topics, read_time = domain_stats(body_content)
     return f"""\
       <div class="domain-section {domain['colorClass']}" data-domain="{domain['id']}">
+        <h2 class="sr-only">{domain['title']}</h2>
         <div class="domain-header">
           <span class="domain-icon">{domain['icon']}</span>
           <span class="domain-title">{domain['title']}</span>

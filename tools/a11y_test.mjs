@@ -395,6 +395,63 @@ for (const theme of ["dark", "light"]) {
                 help: `default=${normal} reduced=${asked}` }]);
 }
 
+// ── the heading outline ─────────────────────────────────────────────────────
+// The page was `h1` → nothing → the occasional orphan `h4`: domains and topics
+// were buttons, never headings, so a screen-reader user could not move through
+// 30 domains or 1,534 topics by heading at all. axe's heading-order rule fires
+// on headings in the wrong order, never on headings that are absent, so this
+// was invisible to every scan the suite already ran.
+{
+  const kb = await browser.newPage();
+  await kb.goto(PAGE, { waitUntil: "load" });
+  await kb.evaluate(async () => {
+    openDomain(domainSection(document.querySelector(".domain-section").dataset.domain));
+    await new Promise(r => setTimeout(r, 450));
+    document.querySelector(".domain-body.open .topic-header")?.click();
+    await new Promise(r => setTimeout(r, 350));
+  });
+  const outline = await kb.evaluate(() => {
+    const level = el => {
+      const m = /^H([1-6])$/.exec(el.tagName);
+      if (m) return +m[1];
+      return el.getAttribute("role") === "heading" ? +(el.getAttribute("aria-level") || 0) : 0;
+    };
+    const all = [...document.querySelectorAll('h1,h2,h3,h4,h5,h6,[role="heading"]')]
+      .filter(e => e.offsetParent !== null || e.classList.contains("sr-only"));
+    const levels = all.map(level);
+    const counts = {};
+    levels.forEach(l => { counts[l] = (counts[l] || 0) + 1; });
+    const skips = [];
+    for (let i = 1; i < levels.length; i++) {
+      if (levels[i] > levels[i - 1] + 1) skips.push(`${levels[i - 1]}->${levels[i]}`);
+    }
+    return { counts, skips, domains: document.querySelectorAll(".domain-section").length };
+  }).catch(e => ({ error: String(e.message || e).split("\n")[0] }));
+
+  const c = outline.counts || {};
+  record("the outline runs h1 → h2 → h3 → h4 with no level skipped",
+         c[1] === 1 && c[2] === outline.domains && c[3] > 0 && c[4] > 0
+           && (outline.skips || []).length === 0 ? []
+           : [{ id: "heading-outline", impact: "serious", nodes: [],
+                help: JSON.stringify(outline) }]);
+
+  // A heading's name is computed from everything inside it, and a topic header
+  // also holds a badge, a read time and four tool buttons. Unnamed, the rotor
+  // entry came out twenty-five words long, which is worse than no heading.
+  const names = await kb.evaluate(async () => {
+    const h = document.querySelector(".domain-body.open .topic-header");
+    const nameEl = h?.querySelector(".topic-name");
+    return { label: h?.getAttribute("aria-label") || "",
+             title: (nameEl?.textContent || "").replace(/\s+/g, " ").trim(),
+             iconHidden: h?.querySelector(".topic-icon")?.getAttribute("aria-hidden") };
+  }).catch(() => ({}));
+  record("a topic heading is named by its title alone",
+         names.label && names.label === names.title && names.iconHidden === "true" ? []
+           : [{ id: "heading-name", impact: "serious", nodes: [],
+                help: `label="${names.label}" title="${names.title}" icon-hidden=${names.iconHidden}` }]);
+  await kb.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => r.violations.length);

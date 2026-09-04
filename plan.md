@@ -21494,3 +21494,93 @@ FAIL : a reduced-motion reader gets no smooth scrolling — scrollBehavior is no
 ```
 a11y suite   17 -> 22 checks
 ```
+
+---
+
+## Session record — the outline was `h1` and then nothing
+
+The rendered page held **one heading**. Measured, on the pre-change build with a
+domain open and a topic expanded:
+
+```
+{"counts":{"1":1},"domains":30}
+```
+
+`index-shell.html` has the `h1`; `data/*.html` holds 338 `<h4 class="concept-
+title">` against 3,877 `<div class="concept-title">`; domains and topics are
+buttons and were never headings. On a 1,534-topic reference, heading navigation
+is *the* way a screen-reader user moves, and it did not exist. **axe cannot see
+this** — its `heading-order` rule fires on headings in the wrong order, never on
+headings that are absent — so every scan the suite ran came back clean.
+
+```
+after:  {"counts":{"1":1,"2":30,"3":73,"4":…}, "skips":[]}
+```
+
+### Three levels, three different techniques, and the asymmetry is the point
+
+**Topics got the good pattern for free.** `initAccessibilityAndTools` already
+moves the header's children into a real `.topic-toggle` button and then
+*removes* `role` from `.topic-header` — so the header element was already
+semantically free, and `role="heading" aria-level="3"` on it is exactly
+`<h3><button></button></h3>` written in ARIA. A real `<h3>` wrapper would have
+broken four `header.parentElement` call sites and `style.css:2517`; this breaks
+none.
+
+**Domains could not have it cheaply.** There the header *is* the button, so a
+heading needs a separate element. Wrapping it means making the button a flex
+container, fixing two badge-insertion sites that call
+`header.insertBefore(badge, chev)` — which throws once the chevron is a
+grandchild — and restyling focus. For a semantic nicety over a visually-hidden
+`<h2>` that gives the same rotor entry. **They got the safe one**, and that
+asymmetry is recorded rather than smoothed over: topics have the heading and the
+control associated, domains have them adjacent.
+
+**Concept titles are annotated, not rewritten.** 3,877 divs and 338 `h4`s is a
+content-file inconsistency; normalising it is 4,000 edits and a merge hazard.
+`role="heading" aria-level="4"` on the ones that are not already `h4` is a line
+in the hydration pass.
+
+### The heading nobody could have used
+
+First measurement of the accessibility tree, not the DOM:
+
+```
+3: OSI (Open Systems Interconnection) Model — 7 Layers REFERENCE MODEL 7 min
+   Save topic to study list Mark topic as reviewed Write a note on this topic
+   Copy link to this topic
+```
+
+A heading's name is computed from everything inside it, and the header also
+holds a badge, a read time and four tool buttons. **A twenty-five-word rotor
+entry is worse than no heading.** Named explicitly from `.topic-name`, and with
+the decorative icon and chevron `aria-hidden`, it reads as the title alone.
+
+This was only visible by reading `page.accessibility.snapshot()`. `textContent`
+looked fine, and `aria-hidden` does not change `textContent` — a probe that
+reads the DOM cannot check an accessibility fix.
+
+### Proving it invisible, when the usual tool declines
+
+`make equiv` stopped on every domain: *"4372 elements → 4373. A structural
+change, not a styling one — this tool cannot align the two."* Correct, and the
+tool saying so is it working: the `<h2 class="sr-only">` is a real new element.
+
+So the proof came from two narrower measurements instead. Remove the 30 headings
+from the live page and re-measure every box: **429 boxes, 0 moved.** And
+`grep '\[role\|\[aria-'` over `style.css` returns only `aria-checked` on the
+theme switches — nothing selects on `role`, `aria-level`, `aria-hidden` or
+`aria-label`, so the attribute half of the change cannot render at all.
+
+### One existing assertion had to be tightened, and re-proved
+
+`smoke_test.mjs` asserted *"the header claims no role"* — written when the
+header was a fake `role="button"` around four real buttons. The intent is in its
+own comment: **a control inside a control.** `role="heading"` is not that, so
+the check now names interactive roles specifically. Loosening a guard is only
+honest if it still bites: re-introducing `role="button"` fails it with
+`header role="button"`.
+
+```
+a11y suite   22 -> 24 checks    (6 -> 24 across the whole pass)
+```

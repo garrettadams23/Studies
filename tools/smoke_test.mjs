@@ -543,7 +543,7 @@ const kbTopic = await page.evaluate(() => {
   return {
     expanded: toggle?.getAttribute("aria-expanded"),
     isButton: toggle?.tagName,
-    headerHasRole: document.querySelector(".domain-body.open .topic-header")?.hasAttribute("role"),
+    headerRole: document.querySelector(".domain-body.open .topic-header")?.getAttribute("role") || "",
     bodyOpen: !!toggle?.parentElement.parentElement
       .querySelector(":scope > .topic-body")?.classList.contains("open"),
   };
@@ -552,9 +552,18 @@ check("Enter opens a topic and sets aria-expanded",
   kbTopic.expanded === "true" && kbTopic.bodyOpen, `aria-expanded=${kbTopic.expanded}`);
 // The violation this replaced: role="button" on a header that contains four
 // real buttons is a control inside a control, and axe reports it as serious.
-check("the topic toggle is a real button and the header claims no role",
-  kbTopic.isButton === "BUTTON" && kbTopic.headerHasRole === false,
-  `${kbTopic.isButton}, header role=${kbTopic.headerHasRole}`);
+//
+// So the check is that the header claims no *interactive* role — not that it
+// claims none at all. It now carries role="heading", which is the other half of
+// the accordion pattern (a heading wrapping a button) and creates no nesting:
+// a 1,534-topic reference is navigated by heading, and the outline used to be
+// `h1` and then nothing. Asserting "no role" would have blocked that and read
+// like a regression, which is why the intent is spelled out rather than the
+// letter.
+const INTERACTIVE_ROLES = ["button", "link", "checkbox", "switch", "menuitem", "tab", "option"];
+check("the topic toggle is a real button and the header claims no interactive role",
+  kbTopic.isButton === "BUTTON" && !INTERACTIVE_ROLES.includes(kbTopic.headerRole),
+  `${kbTopic.isButton}, header role="${kbTopic.headerRole}"`);
 
 // ── domain landing cards ────────────────────────────────────────────────────
 // The card is data, not content: it must render above the topics, link only to
