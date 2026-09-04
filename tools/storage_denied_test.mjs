@@ -222,9 +222,13 @@ const CORRUPT = {
   "srs record is an array":      { "srs:kerberos-authentication-flow": "[1,2,3]" },
   "srs fields are wrong types":  { "srs:kerberos-authentication-flow": '{"i":"x","e":null,"d":[],"n":{}}' },
   "reviewed flag is an object":  { "reviewed:kerberos-authentication-flow": '{"a":1}' },
-  "streak record is garbage":    { "streak": "%%%" },
+  // These two named the wrong key for as long as they existed — the page stores
+  // the streak under "study-streak" and the visit list under "recent-topics" —
+  // so both cases seeded something nothing reads and passed without exercising
+  // anything. Found by probing the streak and getting the default record back.
+  "streak record is garbage":    { "study-streak": "%%%" },
   "theme is a colour nobody set": { "theme": "chartreuse" },
-  "recent visits is garbage":    { "recent": "]]]" },
+  "recent visits is garbage":    { "recent-topics": "]]]" },
   "a note of 200,000 characters": { "note:kerberos-authentication-flow": "x".repeat(200000) },
 };
 for (const [name, seed] of Object.entries(CORRUPT)) {
@@ -344,6 +348,42 @@ for (const [name, raw] of Object.entries(MALFORMED)) {
   check("ease and interval stay inside the bounds the import gate enforces",
         capped.e <= 4 && capped.i <= 36500 && /^\d{4}-\d{2}-\d{2}$/.test(capped.d),
         JSON.stringify(capped));
+  await ctx.close();
+}
+
+// ── the streak must not compute with what it did not check ──────────────────
+// Same defect as the scheduler, same cause: `streakGet` checked that `last` was
+// a string and handed `n` and `best` straight to arithmetic. `n: "x"` grew a
+// string — "x" + 1 — so the page showed a run of "x1"; a missing `n` stored
+// null and displayed "null"; and a corrupt `best` beside a perfectly good `n`
+// made Math.max({}, 4) NaN, destroying the best-ever run. Each case here seeds
+// yesterday, so a healthy record must *continue* the run rather than restart
+// it — otherwise "repaired" and "wiped" look the same.
+const YESTERDAY = (() => {
+  const d = new Date(); d.setDate(d.getDate() - 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+})();
+const STREAKS = {
+  "a run length that is a string": [`{"last":"${YESTERDAY}","n":"x","best":0}`, 1, 1],
+  "a run length that is missing":  [`{"last":"${YESTERDAY}"}`, 1, 1],
+  "a best that is an object":      [`{"last":"${YESTERDAY}","n":3,"best":{}}`, 4, 4],
+  "a negative run":                [`{"last":"${YESTERDAY}","n":-5,"best":-9}`, 1, 1],
+  "a healthy record":              [`{"last":"${YESTERDAY}","n":3,"best":11}`, 4, 11],
+};
+for (const [name, [raw, wantN, wantBest]] of Object.entries(STREAKS)) {
+  const ctx = await browser.newContext();
+  const p = await ctx.newPage();
+  await p.addInitScript(v => { try { localStorage.setItem("study-streak", v); } catch { /* denied */ } }, raw);
+  await p.goto(PAGE, { waitUntil: "load" });
+  const out = await p.evaluate(() => {
+    streakTouch();
+    streakTouch();                                   // twice in a day counts once
+    return { stored: JSON.parse(localStorage.getItem("study-streak")), current: streakCurrent() };
+  });
+  const r = out.stored || {};
+  check(`the streak survives ${name}`,
+        r.n === wantN && r.best === wantBest && out.current === wantN,
+        `n=${JSON.stringify(r.n)} best=${JSON.stringify(r.best)} current=${JSON.stringify(out.current)}`);
   await ctx.close();
 }
 

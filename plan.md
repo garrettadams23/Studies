@@ -20853,3 +20853,51 @@ that reason. The suite goes 32 → 41.
 asserted only that the page still booted and an accordion still opened. It was
 never graded. A resilience test that loads the corrupt state but never *uses* it
 proves the page survives, not that the feature does.
+
+---
+
+## Session record — two resilience fixtures that named a key nothing reads
+
+Following the scheduler fix into the streak, and the same defect was there: it
+checked one field and computed with three.
+
+`streakGet` required `typeof r.last === "string"` and handed `n` and `best`
+straight to arithmetic. Measured, on a record seeded with yesterday's date:
+
+```
+n is a string      current="x1"   stored={"last":"…","n":"x1","best":null}
+n missing          current=null   stored={"last":"…","n":null,"best":null}
+best is an object  current=4      stored={"last":"…","n":4,"best":null}
+n is negative      current=-4     stored={"last":"…","n":-4,"best":-4}
+```
+
+Row one grows a *string*: `"x" + 1` is `"x1"`, then `"x11"`. Row two shows the
+reader "null days". **Row three is the worst** — a perfectly good run length
+beside an unreadable `best` makes `Math.max({}, 4)` NaN, so the next touch
+destroys the best-ever run. Row four keeps a negative streak and promotes it to
+the best.
+
+The fix is again the invariant `bkSerialise` has always applied on import,
+moved to the read path, plus one shared `DAY_STAMP_RE` — the scheduler and the
+streak both store a day written by `srsToday()` and both compare it as a string,
+so they should agree on what one looks like.
+
+### And the thing that made this hard to find
+
+The probe kept returning the *default* record no matter what it seeded. The key
+is `study-streak`, not `streak` — and `storage_denied_test.mjs` had been seeding
+`streak`. So had it been seeding `recent`, where the page uses `recent-topics`.
+
+**Two of the eight corrupt-storage fixtures wrote keys nothing reads**, and both
+passed every run since they were written, because what they assert — the page
+still boots and the accordion still opens — is true of a page that was handed
+nothing at all. A fixture with the wrong key is not a weak test, it is a test of
+nothing wearing the name of one.
+
+```
+resilience suite   32 -> 46 checks
+```
+
+Reverting the streak guard fails four of the five new streak assertions; the
+fifth is the healthy record, which must keep counting *up* — 3 → 4 with best 11
+— because otherwise "repaired" and "wiped" look identical from the outside.

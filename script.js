@@ -2385,7 +2385,9 @@ function srsToday(offsetDays = 0) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-const SRS_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+// A day stamp as srsToday() writes it. Shared: the scheduler and the streak
+// both store one, and both compare it as a string.
+const DAY_STAMP_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
  * A stored record is usable only if every field the scheduler reads is usable.
@@ -2407,7 +2409,7 @@ const SRS_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 function srsUsable(r) {
   return !!r && typeof r === "object" && !Array.isArray(r)
     && Number.isFinite(r.e) && Number.isFinite(r.i) && Number.isFinite(r.n)
-    && typeof r.d === "string" && SRS_DATE_RE.test(r.d);
+    && typeof r.d === "string" && DAY_STAMP_RE.test(r.d);
 }
 
 function srsGet(id) {
@@ -3587,10 +3589,32 @@ function stOpenPrint() {
 // run. Days rather than sessions, and no list of dates — a streak that needs a
 // growing array to answer "how many days in a row" is storing the wrong thing.
 
+/**
+ * The stored run, with every field it is about to do arithmetic on made safe.
+ *
+ * This used to check `typeof r.last === "string"` and return the record as-is,
+ * so `n` and `best` reached `streakTouch` unexamined. Three ways that went
+ * wrong, all measured: `n: "x"` grew a *string* — `"x" + 1` — so the streak
+ * read "x1", then "x11"; a missing `n` wrote `null` and the page showed "null
+ * days"; and a corrupt `best` beside a perfectly good `n` made
+ * `Math.max({}, 4)` NaN, which **destroys the best-ever run** and stores it as
+ * null. A negative `n` produced a negative streak that then became the new
+ * best.
+ *
+ * `bkSerialise` has always rebuilt this shape field by field on import. This is
+ * the same rule on the read path, where anything that arrived another way is.
+ */
 function streakGet() {
   try {
     const r = JSON.parse(localStorage.getItem(STREAK_KEY) || "null");
-    if (r && typeof r === "object" && typeof r.last === "string") return r;
+    if (r && typeof r === "object" && !Array.isArray(r)
+        && typeof r.last === "string" && DAY_STAMP_RE.test(r.last)) {
+      return {
+        last: r.last,
+        n: Number.isFinite(r.n) && r.n >= 0 ? Math.round(r.n) : 0,
+        best: Number.isFinite(r.best) && r.best >= 0 ? Math.round(r.best) : 0,
+      };
+    }
   } catch { /* corrupt — start again */ }
   return { last: "", n: 0, best: 0 };
 }
