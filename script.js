@@ -4354,7 +4354,12 @@ function initStudyTools() {
 
   const menu = fab.querySelector("#study-menu");
   const btn = fab.querySelector("#study-fab");
-  const closeMenu = () => { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); };
+  const items = () => [...menu.querySelectorAll(".study-mi")];
+  const closeMenu = (returnFocus) => {
+    menu.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    if (returnFocus) btn.focus();
+  };
   btn.addEventListener("click", e => {
     // Stop this click from also reaching the document "click-outside" handler,
     // which could otherwise re-close the menu we just opened (touch devices).
@@ -4362,10 +4367,35 @@ function initStudyTools() {
     const willOpen = menu.hidden;      // currently hidden -> we're opening
     menu.hidden = !willOpen;           // toggle
     btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    // Opening a menu has to put the reader *in* it. The markup places
+    // #study-menu before #study-fab in the DOM, so forward Tab from the button
+    // walks past the menu entirely and into the page header — measured: Enter
+    // opened the menu, and the next four Tab presses reached body, then the
+    // three header buttons, and no menu item at all. Every study tool was
+    // unreachable by keyboard in the obvious direction.
+    if (willOpen) items()[0]?.focus();
+  });
+
+  // The rest of the menu-button pattern. Escape closed nothing before this —
+  // the global Escape handler only knew about the dialog — so a keyboard user
+  // who opened the menu had no way to dismiss it.
+  fab.addEventListener("keydown", e => {
+    if (menu.hidden) return;
+    const list = items();
+    const at = list.indexOf(document.activeElement);
+    if (e.key === "Escape") { e.preventDefault(); closeMenu(true); }
+    else if (e.key === "ArrowDown") { e.preventDefault(); list[(at + 1 + list.length) % list.length]?.focus(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); list[(at - 1 + list.length) % list.length]?.focus(); }
+    else if (e.key === "Home") { e.preventDefault(); list[0]?.focus(); }
+    else if (e.key === "End") { e.preventDefault(); list[list.length - 1]?.focus(); }
+    else if (e.key === "Tab") closeMenu(false);   // tabbing away dismisses it
   });
   menu.addEventListener("click", e => {
     const mi = e.target.closest(".study-mi"); if (!mi) return;
-    closeMenu();
+    // Focus back on the launcher before the tool opens, so the dialog records a
+    // still-visible element to return to rather than a menu item it is about to
+    // hide — otherwise closing the dialog restores focus to nothing.
+    closeMenu(true);
     ({ jump: stOpenJump, cards: stOpenFlashcards, due: stOpenDue, quiz: stOpenQuiz,
        acro: stOpenAcroQuiz, list: stOpenStudyList, paths: stOpenPaths,
        progress: stOpenProgress, exam: stOpenExam, md: stOpenExport,

@@ -173,6 +173,56 @@ for (const theme of ["dark", "light"]) {
   await kb.close();
 }
 
+// ── the launcher menu, which is the way in to all of it ─────────────────────
+// #study-menu is written *before* #study-fab in the DOM, so forward Tab from
+// the button walked past the whole menu into the page header. Measured before
+// this was fixed: Enter opened the menu, focus stayed on the button, and the
+// next four Tab presses reached body and the three header buttons — no menu
+// item at all. Escape closed nothing, because the global handler only knew
+// about the dialog. Every study tool was unreachable by keyboard in the
+// direction anyone would try first.
+{
+  const kb = await browser.newPage();
+  await kb.goto(PAGE, { waitUntil: "load" });
+  const state = () => kb.evaluate(() => {
+    const menu = document.getElementById("study-menu");
+    const el = document.activeElement;
+    return { open: menu && !menu.hidden,
+             expanded: document.getElementById("study-fab")?.getAttribute("aria-expanded"),
+             inMenu: !!menu && menu.contains(el),
+             id: el?.id || "",
+             label: (el?.textContent || "").trim().slice(0, 18) };
+  });
+  const bad = (id, help) => [{ id, impact: "serious", nodes: [], help }];
+
+  await kb.evaluate(() => document.getElementById("study-fab").focus());
+  await kb.keyboard.press("Enter");
+  await kb.waitForTimeout(200);
+  const opened = await state();
+  record("opening the study menu focuses its first item",
+         opened.open && opened.inMenu && opened.expanded === "true" ? []
+           : bad("menu-focus-on-open", `open=${opened.open} inMenu=${opened.inMenu} focus=${opened.id}`));
+
+  await kb.keyboard.press("ArrowDown");
+  const second = await state();
+  await kb.keyboard.press("ArrowUp");
+  const back = await state();
+  await kb.keyboard.press("End");
+  const last = await state();
+  record("arrow keys walk the menu",
+         second.inMenu && back.inMenu && last.inMenu && second.label !== back.label
+           && last.label !== back.label ? []
+           : bad("menu-arrows", `${second.label} / ${back.label} / ${last.label}`));
+
+  await kb.keyboard.press("Escape");
+  await kb.waitForTimeout(200);
+  const closed = await state();
+  record("Escape closes the menu and returns focus to the launcher",
+         !closed.open && closed.expanded === "false" && closed.id === "study-fab" ? []
+           : bad("menu-escape", `open=${closed.open} focus=${closed.id}`));
+  await kb.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => r.violations.length);

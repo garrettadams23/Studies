@@ -21269,3 +21269,53 @@ a11y suite   6 -> 9 checks
 
 Reverting the fix fails all three, printing the defect:
 `focus-trap: 41 of 72 Tab presses left the dialog`.
+
+---
+
+## Session record — the way in to every study tool was closed to the keyboard
+
+Having fixed the dialog, the same question of the thing that opens it. The
+launcher is a menu button — `aria-haspopup="true"`, `aria-expanded` maintained
+correctly — and it behaved like this:
+
+```
+Enter on the launcher   menu opens, aria-expanded="true", focus stays on the button
+Tab                     body
+Tab                     hdr-link-btn
+Tab                     hdr-theme-btn
+Tab                     hdr-expand-btn
+Escape                  nothing; the menu is still open
+```
+
+**Not one of the twelve menu items is reachable by tabbing forward.**
+`#study-menu` is written *before* `#study-fab` in the DOM, so forward Tab from
+the button steps over the entire menu and into the page header. Shift+Tab would
+have found it, which is not a thing anyone tries first. And Escape closed
+nothing, because the global Escape handler only knew about the dialog.
+
+So the entry point to flashcards, the quiz, exam mode, learning paths, progress,
+export, print packs and backup was keyboard-inaccessible in the obvious
+direction, behind a button that announced itself as a menu.
+
+Now the menu-button pattern in full: opening focuses the first item, Arrow
+Up/Down walk and wrap, Home/End jump, Escape closes and hands focus back to the
+launcher, and Tab dismisses it rather than stranding an open menu behind the
+focus ring. Choosing an item returns focus to the launcher *before* the tool
+opens, so the dialog records a still-visible element to come back to instead of
+a menu item it is about to hide.
+
+```
+a11y suite   6 -> 12 checks across two waves
+```
+
+Reverting fails all three, and the first line is the whole finding:
+`menu-focus-on-open: open=true inMenu=false focus=study-fab`.
+
+### What this pass is actually measuring
+
+Two waves, nine defects, and none of them visible to `axe`. The rule that found
+them all: **axe reads what the page *is*; a keyboard test reads what the page
+*does*.** A site can hold `role="dialog" aria-modal="true" aria-haspopup="true"`
+and a clean scan in both themes while being unusable without a mouse. The
+attributes were all correct. That was the problem — they described behaviour
+nobody had implemented.
