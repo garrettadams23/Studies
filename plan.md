@@ -20732,3 +20732,53 @@ So 12.0 MB at 3.628x is 3,387 KB, and `gzip_kb` is set to 3,550 KB — raw_mb
 fails about 5% first, which is what "a tripwire behind it" has to mean.
 `content_elements` scales with the ceiling it describes: 175,000 → 262,500.
 `dom_elements` does not move, because it grows per *domain*, not per topic.
+
+---
+
+## Session record — a freshness pass that removed promises instead of renewing them
+
+Phase 11 §6's counter-discipline: *every wave should reduce the number of dated
+claims where it can, by rewriting.* This is the first pass run under it, and it
+starts by refusing the obvious move. **`data-checked` means "somebody checked
+this on this date."** Bumping 52 dates from a container with no way to verify a
+Microsoft console name would not be a freshness pass, it would be a lie with a
+timestamp. So nothing was re-dated. What was done instead is read all 52 and ask
+which of them should never have carried a date at all.
+
+Seven should not, in three shapes:
+
+**A date on the advice rather than on the claim.** `cs`'s key-size equivalence
+table is followed by *"these are estimates and shift as methods improve — check
+current guidance before choosing a parameter"*, and the span was around the
+advice. Advice to check cannot go stale; the table can. The span became a fact
+anchor on the table, naming NIST SP 800-57 Part 1 as the source, so the promise
+now attaches to the numbers somebody would actually re-verify. Same shape in
+`m365`: *"verify the current default for your tier rather than assuming a
+year"*, and *"treat the split above as the shape of the decision, not as a
+current feature list"* — both are the §5 rewrite already done, with the span
+left on top of it.
+
+**A date on a historical event.** `grc`: *"the 2022 revision reorganized Annex A
+into 93 controls"*. The 2022 revision will still have done that in 2035.
+
+**A date on the observation that things change.** `net`, twice: *"the console
+layouts do not [transfer], and both change between major releases"*, and
+*"the terms change between product generations"*. These are permanent properties
+of the vendors, not facts about a moment.
+
+And one genuine rewrite: `grc`'s FedRAMP card said the programme's routes were
+*"restructured in the past couple of years"* — a relative expression with no
+fixed origin, which is stale on the day it is read and gets worse. It now reads
+*"have been restructured more than once"*, which stays true, and the sentence
+after it already tells the reader to confirm current paths with the programme
+rather than with this card.
+
+```
+52 dated items  ->  46      (7 spans removed, 1 fact anchor added)
+volatile spans  47 -> 40    fact anchors 5 -> 6
+```
+
+The other 45 are correctly dated: vendor console names and hosts (the thing the
+convention was built for), service limits people design around, tier gating, and
+two self-describing snapshots. They stay dated, and undated, until somebody who
+can actually check them does.
