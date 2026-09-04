@@ -802,8 +802,16 @@ function toggleTopic(h) {
 
 // ── FILTER ─────────────────────────────────────────────────────────────────
 function filter(domain, chip) {
-  document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  // The chips are buttons now, so the pressed state is theirs to announce —
+  // `.active` is a paint, `aria-pressed` is the fact. They were <div>s with a
+  // pointer cursor: 31 primary navigation controls that no keyboard could reach
+  // and no screen reader could name.
+  document.querySelectorAll(".chip").forEach(c => {
+    c.classList.remove("active");
+    c.setAttribute("aria-pressed", "false");
+  });
   chip.classList.add("active");
+  chip.setAttribute("aria-pressed", "true");
   domainSections().forEach(s => {
     s.classList.toggle("hidden", domain !== "all" && s.dataset.domain !== domain);
   });

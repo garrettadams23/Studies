@@ -21319,3 +21319,57 @@ them all: **axe reads what the page *is*; a keyboard test reads what the page
 and a clean scan in both themes while being unusable without a mouse. The
 attributes were all correct. That was the problem — they described behaviour
 nobody had implemented.
+
+---
+
+## Session record — thirty-one `<div>`s where the site's navigation should be
+
+Third keyboard wave, and this one was found by a census rather than a hunch:
+**what has a pointer cursor and cannot be focused?**
+
+```
+  73  div.topic-header      wrapper — the real toggle button is inside it
+  73  span.topic-tools      wrapper — bookmark and note are buttons
+  73  span.topic-chev       wrapper
+  31  div.chip              ← the domain filter bar
+   1  div.concept-label
+   1  span.acro-exp
+```
+
+Everything on that list but one row is a wrapper around a real control. The
+exception is the **domain filter bar** — thirty-one plain `<div>`s with a
+pointer cursor, no `role`, no `tabindex`, no label. Tab went from the search
+controls straight to the first domain header:
+
+```
+before   hdr-link-btn · sw-btn · hdr-random-btn · search-input · search-clear · domain-header
+after    hdr-link-btn · sw-btn · hdr-random-btn · chip c-all · chip c-net · chip c-linux · …
+```
+
+The site's primary navigation could not be reached, operated or announced. They
+are `<button type="button">` now, with `aria-pressed` tracking the `.active`
+class — a paint is not a state — and the scaffolder writes new domains the same
+way so this cannot come back one chip at a time.
+
+**The visual test is what made the conversion safe.** A `<div>` and a `<button>`
+do not render alike by default; `.chip` needed `appearance: none`, `margin: 0`,
+`line-height: inherit` and `text-align: center` before `chips-dark.png` and
+`chips-light.png` matched again. That is the gate doing exactly the job it
+exists for — proving a structural change is invisible, rather than being
+re-baselined until it agrees.
+
+### And the assertion had the wrong premise, again
+
+The first version tabbed forward from the search box looking for a chip, and
+failed on a page where the chips work perfectly — **the filter bar is above the
+search box in the DOM.** Same shape as the dialog probe that clicked the
+launcher and asserted against a modal that had not opened yet: a test that is
+wrong about the page reports a defect that is not there, and the fix is to
+correct the premise, not to loosen the assertion.
+
+```
+a11y suite   6 -> 15 checks across three waves
+```
+
+Reverting the chips to `<div>`s fails three of them, the last one plainly:
+`12 Tab presses from the top never landed on a chip`.

@@ -67,7 +67,8 @@ def main():
     # chip_label is the full label. It used to be prefixed with `icon`, which
     # produced "🏢 🏢 WINDOWS SERVER" whenever a caller included the icon — and
     # every caller does, because every existing chip in the file has one.
-    chip = f'          <div class="chip c-{did}"    data-domain="{did}">{chip_label}</div>\n'
+    chip = (f'          <button type="button" class="chip c-{did}"    data-domain="{did}"'
+            f' aria-pressed="false">{chip_label}</button>\n')
     if f'data-domain="{did}"' in shell:
         print(f"  index-shell.html: chip {did} already present")
     else:

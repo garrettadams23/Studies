@@ -223,6 +223,51 @@ for (const theme of ["dark", "light"]) {
   await kb.close();
 }
 
+// ── the domain filter chips ─────────────────────────────────────────────────
+// Thirty-one <div>s with a pointer cursor, no role, no tabindex and no label.
+// Tab went from the search controls straight to the first domain header, so the
+// filter bar — the site's primary navigation — could not be reached, operated
+// or announced at all. They are <button>s now, and the visual test is what
+// proves the conversion changed no pixels.
+{
+  const kb = await browser.newPage();
+  await kb.goto(PAGE, { waitUntil: "load" });
+  const shape = await kb.evaluate(() => {
+    const chips = [...document.querySelectorAll(".chip")];
+    return {
+      total: chips.length,
+      focusable: chips.filter(c => c.matches('a[href],button,[tabindex]:not([tabindex="-1"])')).length,
+      pressedSet: chips.filter(c => c.hasAttribute("aria-pressed")).length,
+      pressedMatchesActive: chips.every(c =>
+        (c.getAttribute("aria-pressed") === "true") === c.classList.contains("active")),
+    };
+  });
+  record("every domain chip is a real control",
+         shape.total > 0 && shape.focusable === shape.total && shape.pressedSet === shape.total ? []
+           : [{ id: "chip-controls", impact: "serious", nodes: [],
+                help: `${shape.focusable}/${shape.total} focusable, ${shape.pressedSet} with aria-pressed` }]);
+  record("the pressed chip is the active one",
+         shape.pressedMatchesActive ? []
+           : [{ id: "chip-pressed", impact: "serious", nodes: [],
+                help: "aria-pressed and .active disagree" }]);
+
+  // And genuinely in the tab order, not merely focusable in principle. From the
+  // top of the document, because the filter bar sits *above* the search box —
+  // the first version of this assertion tabbed forward from the search input
+  // and failed on a page where the chips work perfectly, which is a wrong
+  // premise about the DOM rather than a finding about the page.
+  await kb.evaluate(() => { document.body.focus(); });
+  let reached = false, steps = 0;
+  for (; steps < 12 && !reached; steps++) {
+    await kb.keyboard.press("Tab");
+    reached = await kb.evaluate(() => !!document.activeElement?.classList?.contains("chip"));
+  }
+  record("tabbing from the top of the page reaches the filter bar",
+         reached ? [] : [{ id: "chip-taborder", impact: "serious", nodes: [],
+                           help: `${steps} Tab presses from the top never landed on a chip` }]);
+  await kb.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => r.violations.length);
