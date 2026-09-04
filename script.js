@@ -2385,12 +2385,37 @@ function srsToday(offsetDays = 0) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+const SRS_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * A stored record is usable only if every field the scheduler reads is usable.
+ *
+ * This guard used to be `typeof r === "object"`, which let a malformed record
+ * through into arithmetic. Grading a card whose record was `{}` computed
+ * `undefined + 1`, and the write that followed was
+ * `{"e":null,"i":null,"d":"NaN-NaN-NaN","n":null}` — at which point
+ * `srsIsDue` compares `"NaN-NaN-NaN" <= "2026-09-04"` as strings, `"N"` sorts
+ * after `"2"`, and **the card is never due again**. Silent, permanent, and
+ * indistinguishable from a topic the reader had finished with.
+ *
+ * The import path already vets exactly this shape (`bkSerialise`); the read
+ * path did not, so anything that reached storage another way — an older build,
+ * a hand edit, another tool on the same origin — was a black hole. Treating a
+ * malformed record as a *new* card is the recoverable answer: the topic comes
+ * back into rotation and the next grade writes a clean record over it.
+ */
+function srsUsable(r) {
+  return !!r && typeof r === "object" && !Array.isArray(r)
+    && Number.isFinite(r.e) && Number.isFinite(r.i) && Number.isFinite(r.n)
+    && typeof r.d === "string" && SRS_DATE_RE.test(r.d);
+}
+
 function srsGet(id) {
   try {
     const raw = localStorage.getItem(SRS_PREFIX + id);
     if (!raw) return null;
     const r = JSON.parse(raw);
-    return (typeof r === "object" && r) ? r : null;
+    return srsUsable(r) ? r : null;
   } catch { return null; }        // a corrupt record is treated as "new"
 }
 
@@ -2432,6 +2457,12 @@ function srsGrade(id, grade) {
   else if (grade === "hard")  { n += 1; i = Math.max(1, Math.round(i * 1.2)); e = Math.max(1.3, e - 0.15); }
   else if (grade === "good")  { n += 1; i = n === 1 ? 1 : n === 2 ? 6 : Math.round(i * e); }
   else                        { n += 1; i = Math.max(4, Math.round(i * e * 1.3)); e = e + 0.15; }
+  // The same bounds the import gate applies, so a file round trip cannot
+  // silently reschedule a card: ease was capped there at 4 and not here, and
+  // an uncapped interval eventually overflows Date and lands back on
+  // "NaN-NaN-NaN" by another route. 36,500 days is a century, i.e. never.
+  e = Math.min(4, Math.max(1.3, e));
+  i = Math.min(36500, Math.max(1, i));
   const rec = { e: Math.round(e * 100) / 100, i, d: srsToday(i), n };
   try { localStorage.setItem(SRS_PREFIX + id, JSON.stringify(rec)); } catch { /* quota */ }
   if (grade !== "again") safeLS.set(KNOWN_PREFIX + id, "1");

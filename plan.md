@@ -20782,3 +20782,74 @@ The other 45 are correctly dated: vendor console names and hosts (the thing the
 convention was built for), service limits people design around, tier gating, and
 two self-describing snapshots. They stay dated, and undated, until somebody who
 can actually check them does.
+
+---
+
+## Session record — the card you would never see again
+
+First pass at hardening the study platform rather than the content, and it found
+a live data-loss defect in the spaced-repetition scheduler.
+
+`srsGet` guarded its parse with `typeof r === "object" && r` — enough to survive
+`{{{not json`, which is what the existing resilience test seeds, and not enough
+to survive an object with the wrong fields in it. Everything downstream does
+arithmetic on those fields:
+
+```
+srsGrade("…", "good") on a stored record of {}
+
+  n = undefined + 1              -> NaN
+  i = Math.round(i * e)          -> NaN
+  d = srsToday(NaN)              -> "NaN-NaN-NaN"
+  written: {"e":null,"i":null,"d":"NaN-NaN-NaN","n":null}
+```
+
+And `srsIsDue` compares those dates **as strings**. `"NaN-NaN-NaN" <=
+"2026-09-04"` is false, because `"N"` sorts after `"2"`. The card is never due
+again — silent, permanent, and indistinguishable from a topic the reader had
+simply finished with. Worse for `{}` and `{"e":2.5}`: `undefined <= "2026-09-04"`
+is also false, so **the card leaves the rotation the moment the record is
+malformed**, with no grade required.
+
+### It is reachable without any corruption at all
+
+The bounds check was written as belt-and-braces and the test proved it was
+load-bearing. Sixty `easy` grades on a *perfectly healthy* card, on the old code:
+
+```
+FAIL : ease and interval stay inside the bounds the import gate enforces
+       — {"e":11.5,"i":1.7065026372721293e+55,"d":"NaN-NaN-NaN","n":60}
+```
+
+Ease had no upper bound, so the interval compounds until it overflows `Date`,
+and the same `"NaN-NaN-NaN"` comes back by a second route. Slow — sixty sessions
+on one card — but ordinary use, not corruption.
+
+### The fix is the invariant the import gate already had
+
+`bkSerialise` has always vetted this exact shape on the way in: `d` must match
+`YYYY-MM-DD`, `e` clamped to [1.3, 4], `i` a positive integer, `n` a
+non-negative integer. **The read path had no such check**, so anything reaching
+storage another way — an older build, a hand edit, another tool on the same
+origin — bypassed it entirely.
+
+- `srsUsable(r)` requires finite `e`, `i`, `n` and a `YYYY-MM-DD` `d`, and
+  `srsGet` returns `null` otherwise. A malformed record now means *new card*,
+  which is the recoverable answer: the topic comes back into rotation and the
+  next grade writes a clean record over it.
+- `srsGrade` clamps what it writes to the same bounds, so a file round trip
+  cannot silently reschedule a card and the interval cannot overflow.
+
+### The test was checked against the bug, not just against the fix
+
+Nine assertions added to `storage_denied_test.mjs` — four malformed shapes × two
+grades, plus the bound. Reverting the two changes fails seven of them with the
+`NaN-NaN-NaN` records printed above; the two that pass under both are the ones
+where the old guard happened to survive, and they are worth keeping for exactly
+that reason. The suite goes 32 → 41.
+
+**What the existing test got wrong is instructive.** It already seeded
+`{"i":"x","e":null,"d":[],"n":{}}` — the precise record that breaks this — and
+asserted only that the page still booted and an accordion still opened. It was
+never graded. A resilience test that loads the corrupt state but never *uses* it
+proves the page survives, not that the feature does.

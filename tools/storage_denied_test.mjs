@@ -289,6 +289,64 @@ check("keys outside the page's own namespace are all refused",
 check("a file with no usable data section is refused outright",
   imported.dataArray.refused && imported.dataNull.refused);
 
+const TOPIC = "kerberos-authentication-flow";
+
+// ── a malformed record must not become a card you never see again ───────────
+// The block above proves a corrupt record does not stop the page booting. It
+// never graded one, and that was where the defect lived: `srsGet` accepted
+// anything object-shaped, `srsGrade` then did arithmetic on `undefined`, and
+// the write that followed was {"e":null,"i":null,"d":"NaN-NaN-NaN","n":null}.
+// `srsIsDue` compares those dates as strings, "N" sorts after "2", so the card
+// was **never due again** — silent, permanent, and looking exactly like a topic
+// the reader had finished with. Graded here rather than merely loaded, because
+// loading was always survivable and grading was not.
+const MALFORMED = {
+  "an empty object":       "{}",
+  "fields of wrong types": '{"i":"x","e":null,"d":[],"n":{}}',
+  "some fields missing":   '{"e":2.5}',
+  "a date that is a date but not a day": '{"e":2.5,"i":1,"d":"2026-09","n":1}',
+};
+for (const [name, raw] of Object.entries(MALFORMED)) {
+  for (const grade of ["good", "easy"]) {
+    const ctx = await browser.newContext();
+    const p = await ctx.newPage();
+    await p.addInitScript(([k, v]) => { try { localStorage.setItem(k, v); } catch { /* denied */ } },
+                          [`srs:${TOPIC}`, raw]);
+    await p.goto(PAGE, { waitUntil: "load" });
+    const out = await p.evaluate(([id, g]) => {
+      const dueBefore = srsIsDue(id);          // unreadable record => a new card
+      srsGrade(id, g);
+      const stored = JSON.parse(localStorage.getItem("srs:" + id));
+      return { dueBefore, stored };
+    }, [TOPIC, grade]);
+    const r = out.stored || {};
+    const ok = out.dueBefore
+      && Number.isFinite(r.e) && Number.isFinite(r.i) && Number.isFinite(r.n)
+      && /^\d{4}-\d{2}-\d{2}$/.test(String(r.d))
+      && r.e >= 1.3 && r.e <= 4 && r.i >= 1 && r.i <= 36500;
+    check(`grading "${grade}" survives ${name}`, ok,
+          `due before=${out.dueBefore} stored=${JSON.stringify(out.stored)}`);
+    await ctx.close();
+  }
+}
+
+// And the bound the import gate has always applied, now applied here too, so a
+// file round trip cannot silently reschedule a card.
+{
+  const ctx = await browser.newContext();
+  const p = await ctx.newPage();
+  await p.goto(PAGE, { waitUntil: "load" });
+  const capped = await p.evaluate(id => {
+    let r;
+    for (let k = 0; k < 60; k++) r = srsGrade(id, "easy");   // ease up, every time
+    return r;
+  }, TOPIC);
+  check("ease and interval stay inside the bounds the import gate enforces",
+        capped.e <= 4 && capped.i <= 36500 && /^\d{4}-\d{2}-\d{2}$/.test(capped.d),
+        JSON.stringify(capped));
+  await ctx.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => !r.ok);
