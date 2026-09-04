@@ -518,6 +518,47 @@ for (const [name, [raw, wantKept]] of Object.entries(NOTES)) {
   await ctx.close();
 }
 
+// ── replace must not delete progress it cannot replace ──────────────────────
+// bkApply's replace mode drops everything the page owns *before* writing the
+// file. A store full of something else — another app on the origin, an
+// oversized notepad — meant the writes then failed one by one, silently, and
+// the reader was left with their progress deleted, nothing in its place, and a
+// green "Restored." above it. Replace is now all-or-nothing; merge stays
+// best-effort because it deletes nothing, and reports what landed.
+for (const mode of ["replace", "merge"]) {
+  const ctx = await browser.newContext();
+  const p = await ctx.newPage();
+  const errs = []; p.on("pageerror", e => errs.push(String(e).split("\n")[0]));
+  await p.goto(PAGE, { waitUntil: "load" });
+  const out = await p.evaluate(async m => {
+    for (let i = 0; i < 40; i++) localStorage.setItem("reviewed:existing-" + i, "1");
+    for (const size of [512 * 1024, 64 * 1024, 8 * 1024, 1024, 200]) {
+      const blob = "x".repeat(size);
+      for (let i = 0; i < 4000; i++) {
+        try { localStorage.setItem(`filler:${size}:${i}`, blob); } catch { break; }
+      }
+    }
+    // Deliberately larger than what replace frees, so the write cannot fit.
+    const kept = {};
+    for (let i = 0; i < 40; i++) kept["note:imported-" + i] = "n".repeat(2048);
+    const result = bkApply(kept, m);
+    const owned = safeLS.keys().filter(bkCategory);
+    return { result,
+             existingKept: owned.filter(k => k.includes("existing-")).length,
+             importedWritten: owned.filter(k => k.includes("imported-")).length };
+  }, mode);
+  // The reader's own progress survives either way — that is the whole point.
+  check(`a full store cannot destroy progress on ${mode}`,
+        out.existingKept === 40 && errs.length === 0,
+        `${out.existingKept}/40 kept${errs.length ? ` — ${errs[0]}` : ""}`);
+  check(`${mode} reports what it did`,
+        mode === "replace"
+          ? out.result.rolledBack === true && out.result.written === 0 && out.importedWritten === 0
+          : out.result.rolledBack === false && out.result.failed > 0,
+        JSON.stringify(out.result));
+  await ctx.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => !r.ok);

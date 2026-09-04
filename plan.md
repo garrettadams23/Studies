@@ -21163,3 +21163,58 @@ is now a kilobyte.
 ```
 resilience suite   53 -> 59 checks
 ```
+
+---
+
+## Session record — the import deleted first and asked questions never
+
+The quota fix made `safeLS.set` report. This is what asking it found.
+
+`bkApply`'s **replace** mode drops every key the page owns *before* writing the
+file. The writes were wrapped in a `try` that swallowed the quota error one key
+at a time, so a store full of something else — another app on the origin, an
+oversized notepad, a browser being stingy — produced this:
+
+```
+old bkApply, replace, store full:
+
+  existing progress kept   0 / 40
+  imported entries written 0
+  what the reader saw      "Restored. This device now holds …" in green
+```
+
+**Everything deleted, nothing written, and the confirmation was green.** The
+counts in that sentence were even correct — they read zero — which is the
+detail that makes it worse: the page had the truth and framed it as success.
+
+### The two modes now mean what their names promise
+
+- **Replace is all-or-nothing.** What it deletes is kept in a snapshot; the
+  first failed write removes whatever was partially written and puts the
+  snapshot back. The space arithmetic works: the snapshot is exactly what was
+  just freed. Measured — `{written: 0, failed: 1, rolledBack: true}` with all
+  40 of the reader's entries restored.
+- **Merge is best-effort**, because it deletes nothing and a partial union
+  cannot lose existing progress. It reports what landed:
+  `{written: 0, failed: 40, rolledBack: false}`, with the existing 40 intact.
+
+The confirmation now has three states rather than one — restored, partly
+restored with the counts, or *"Not restored — this browser's storage is full,
+so nothing was changed. Your progress is as it was."* Amber rather than green,
+because the reader has something to do before trying again.
+
+Reverting `bkApply` fails three assertions, the first of which prints the whole
+defect: `a full store cannot destroy progress on replace — 0/40 kept`.
+
+```
+resilience suite   59 -> 63 checks
+```
+
+### The pattern this pass has been following
+
+Four defects now, and each one was the same question asked of a different
+layer: **what does this code do when the write does not happen?** Denied
+storage was already handled. Corrupt storage was handled for the container and
+not the contents. Full storage was not handled at all — it was *caught*, which
+is not the same thing, and a caught error that nobody reports is a silent
+failure with a comment explaining it.

@@ -4108,18 +4108,47 @@ function bkDiff(kept, mode) {
  *             wins, so importing can never pull a card forward unexpectedly.
  *   replace — drop everything we own first, then write the file verbatim.
  */
+/**
+ * Returns {written, failed, rolledBack}. It used to return nothing and swallow
+ * every quota error, which was survivable for `merge` and destructive for
+ * `replace`: replace deletes everything the page owns *first*, so a store that
+ * is full of something else — another app on the origin, an oversized notepad —
+ * left the reader with their progress deleted, nothing written in its place,
+ * and a green "Restored." above the wreckage.
+ *
+ * So the two modes now mean what their names promise. **Replace is
+ * all-or-nothing**: what it deletes is kept, and the first failed write undoes
+ * the whole thing. The space arithmetic works out — the snapshot is exactly
+ * what was just freed, and anything partially written is removed before the
+ * restore. **Merge is best-effort**, because it deletes nothing and a partial
+ * union loses no existing progress; it reports how much landed and the caller
+ * says so.
+ */
 function bkApply(kept, mode) {
-  if (mode === "replace") bkOwnedKeys().forEach(k => safeLS.remove(k));
-  Object.keys(kept).forEach(k => {
+  const undo = mode === "replace" ? bkOwnedKeys().map(k => [k, safeLS.get(k)]) : null;
+  if (undo) undo.forEach(([k]) => safeLS.remove(k));
+
+  const done = [];
+  let failed = 0;
+  for (const k of Object.keys(kept)) {
     if (mode === "merge" && k.startsWith(SRS_PREFIX)) {
       const mine = safeLS.get(k);
       if (mine) {
         const a = bkParse(mine), b = bkObj(kept[k]);
-        if (a && b && typeof a.d === "string" && a.d > b.d) return;   // local is later
+        if (a && b && typeof a.d === "string" && a.d > b.d) continue;  // local is later
       }
     }
-    try { localStorage.setItem(k, bkStored(kept[k])); } catch { /* quota — skip the rest of this key */ }
-  });
+    if (safeLS.set(k, bkStored(kept[k]))) done.push(k);
+    else {
+      failed++;
+      if (undo) {                       // replace: put it back exactly as it was
+        done.forEach(w => safeLS.remove(w));
+        undo.forEach(([key, value]) => { if (value !== null) safeLS.set(key, value); });
+        return { written: 0, failed, rolledBack: true };
+      }
+    }
+  }
+  return { written: done.length, failed, rolledBack: false };
 }
 
 /** Re-read storage into the page so an import is visible without a reload. */
@@ -4218,12 +4247,21 @@ function stOpenBackup() {
           if (!pending) return;
           // The notepad renders from a closure, so only it needs a reload.
           const touchedNotes = NP_STORE_KEY in pending.kept;
-          bkApply(pending.kept, pending.mode);
+          const result = bkApply(pending.kept, pending.mode);
           bkRefreshUI();
           pending = null;
-          out.className = "st-bk-out st-bk-ok";
-          out.innerHTML = `Restored. This device now holds ${esc(bkCountLine(bkCounts(bkCollect())))}.` +
-            (touchedNotes ? ' <button id="st-bk-reload" class="st-link">Reload to refresh notes</button>' : "");
+          const held = esc(bkCountLine(bkCounts(bkCollect())));
+          out.className = "st-bk-out " + (result.failed ? "st-bk-warn" : "st-bk-ok");
+          out.innerHTML = result.rolledBack
+            ? `Not restored — this browser's storage is full, so nothing was changed. ` +
+              `Your progress is as it was: ${held}. Free some space and try again.`
+            : result.failed
+            ? `Partly restored — ${result.written} entr${result.written === 1 ? "y" : "ies"} written, ` +
+              `${result.failed} refused because this browser's storage is full. ` +
+              `This device now holds ${held}.`
+            : `Restored. This device now holds ${held}.`;
+          out.innerHTML +=
+            (touchedNotes && !result.rolledBack ? ' <button id="st-bk-reload" class="st-link">Reload to refresh notes</button>' : "");
           out.querySelector("#st-bk-reload")?.addEventListener("click", () => location.reload());
         });
       };
