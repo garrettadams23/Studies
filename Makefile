@@ -46,6 +46,7 @@ check:
 	$(PY) tools/ti84_trainer.py --check-card
 	$(PY) tools/check_markup.py --self-test
 	$(PY) tools/check_markup.py
+	$(PY) tools/lint_content.py --self-test
 	$(PY) tools/lint_content.py
 	$(PY) tools/fix_topic_names.py --check
 	$(PY) tools/annotate_acronyms.py --self-test

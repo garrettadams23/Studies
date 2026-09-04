@@ -20553,3 +20553,73 @@ the 60-strong `acronym` block is exactly the reason nobody reads the gap as a
 number. A gate would need that exclusion to be meaningful, which is a decision
 about the reference domain rather than a mechanical rule, so this stays a
 measurement to re-run rather than a new gate.
+
+---
+
+## Session record — the gate that was 184 seconds of asking the wrong question
+
+`make check` took roughly ten minutes, of which `lint_content.py` was six. That
+had been true for long enough to feel like a property of the site rather than a
+defect, which is what a profiler is for.
+
+```
+ 24,414,469 function calls in 201.066 seconds
+
+ ncalls  tottime  cumtime  filename:lineno(function)
+ 206977  184.657  184.657  {method 'search' of 're.Pattern' objects}
+      1    0.167  183.637  lint_content.py:549(broadly_rendered)
+      1    0.018    9.632  lint_content.py:497(undecided_meanings)
+```
+
+**91% of the gate was one function asking one question the wrong way round.**
+Two acronym censuses need to know which acronyms a domain *renders with an
+expansion beside them*, and both asked it per acronym: 1,101 dictionary entries
+× 30 domains × a few hundred KB of text, each a full scan with a lookbehind.
+The cost grows with the dictionary *and* the corpus, so every wave of either
+made it worse.
+
+Every one of those 1,101 patterns ends in the same literal — `&nbsp;<span
+class="acro-exp">`. So find the literal once per domain and work backwards from
+it, returning every string the per-acronym scan could have matched, and let the
+caller intersect that with its own dictionary.
+
+```
+scan per acronym   198.26 s
+reverse index        0.03 s
+lint_content.py    201 s  ->  4.8 s      report byte-identical
+make check         ~600 s  ->   83 s
+```
+
+### The proof came before the commit, and it failed the first time
+
+A throwaway script ran both implementations over the real corpus — 30 domains ×
+1,101 acronyms, 33,030 answers — and the first version disagreed on five:
+
+```
+  grc:   only-slow=['PCI DSS', 'SOC 2']
+  infra: only-slow=['AD CS', 'AD DS', 'AD FS']
+```
+
+It took the preceding run of non-space characters as the candidate, which is
+right for every acronym that has no space in it — **1,096 of 1,101**, enough
+that a spot check would have passed. The five that do have one are why the
+index now works over a fixed-width window instead. Without the corpus-wide
+comparison this ships as a silent 0.5% hole in a census whose entire job is to
+notice a single borrowed meaning.
+
+### And the self-test was checked against the bug, not just against the fix
+
+`lint_content.py --self-test` is nine fixtures — plain, `UDP` not containing
+`DP`, both plural forms, a hyphen prefix, a key with a space, a key ending in a
+digit, and two negatives — and each asserts that **the index and the regex
+agree**, rather than asserting an answer. Reintroducing the whitespace bug makes
+it fail on exactly the two rows that name the problem:
+
+```
+FAIL  five dictionary keys contain a space: 'PCI DSS' — specification=True, index=False
+FAIL  and one of them ends in a digit: 'SOC 2'       — specification=True, index=False
+```
+
+That is the test the earlier annotator self-test in this file was not, and the
+reason to write it that way is in that record. Wired into `make check` and
+`build-check.yml` together — 31 gates in both.

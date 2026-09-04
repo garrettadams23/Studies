@@ -494,6 +494,45 @@ def _rendered_re(acronym):
                       r'e?s? <span class="acro-exp">')
 
 
+# The specification above, run the other way round. Asking it per acronym is
+# O(dictionary x corpus): 1,101 entries against 30 domains of a few hundred KB
+# each was **184 of lint_content's 201 seconds**, and it grows with both the
+# dictionary and the content. Every one of those patterns ends in the same
+# literal, so this finds the literal once per domain and works backwards from
+# it, returning every string the per-acronym scan could have matched. The
+# caller intersects that with its own dictionary.
+#
+# Measured against the specification over the whole corpus — 30 domains x 1,101
+# acronyms, 33,030 answers, zero disagreements — and `--self-test` keeps the two
+# in step on the shapes that made the difference. The first attempt took the
+# preceding run of non-space characters, which is wrong for the five entries
+# that contain a space (`PCI DSS`, `SOC 2`, `AD CS`, `AD DS`, `AD FS`); the
+# window below is why they come back.
+_EXPANSION_RE = re.compile(r' <span class="acro-exp">')
+_ALNUM = set("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+
+
+def rendered_acronyms(text, longest):
+    """Every string that `_rendered_re(a).search(text)` would find, for any `a`.
+
+    `longest` bounds the window: no candidate longer than the longest key in
+    the dictionary can be an acronym, and without the bound this walks the
+    whole preceding line.
+    """
+    out = set()
+    for m in _EXPANSION_RE.finditer(text):
+        window = text[max(0, m.start() - longest - 2):m.start()]
+        for suffix in ("", "e", "s", "es"):        # the pattern's own `e?s?`
+            if suffix and not window.endswith(suffix):
+                continue
+            base = window[:len(window) - len(suffix)] if suffix else window
+            for p in range(max(0, len(base) - longest), len(base)):
+                # The lookbehind: an acronym is not the tail of a longer word.
+                if p == 0 or base[p - 1] not in _ALNUM:
+                    out.add(base[p:])
+    return out
+
+
 def undecided_meanings(files):
     """(acronym, domain, default, meanings) for a rendering nobody decided.
 
@@ -517,14 +556,16 @@ def undecided_meanings(files):
     by_domain = collections.defaultdict(str)
     for path in files:
         by_domain[domain_of(path)] += path.read_text(encoding="utf-8")
+    longest = max((len(e["a"]) for e in entries), default=1)
     out = []
     for domain, text in sorted(by_domain.items()):
         if domain == "acronym":
             continue
+        rendered = rendered_acronyms(text, longest)
         for e in multi:
             if domain in e.get("byDomain", {}):
                 continue
-            if _rendered_re(e["a"]).search(text):
+            if e["a"] in rendered:
                 out.append((e["a"], domain,
                             e.get("annotate", e["m"][0]["e"]),
                             [m["e"] for m in e["m"]]))
@@ -554,13 +595,13 @@ def broadly_rendered(files):
     by_domain = collections.defaultdict(str)
     for path in files:
         by_domain[domain_of(path)] += path.read_text(encoding="utf-8")
+    longest = max((len(e["a"]) for e in entries), default=1)
     seen = collections.defaultdict(set)
     for domain, text in by_domain.items():
         if domain == "acronym":
             continue
-        for a in single:
-            if _rendered_re(a).search(text):
-                seen[a].add(domain)
+        for a in rendered_acronyms(text, longest) & single.keys():
+            seen[a].add(domain)
     return sorted(((a, single[a], sorted(d)) for a, d in seen.items()
                    if len(d) >= BREADTH_FLOOR),
                   key=lambda r: (-len(r[2]), r[0]))
@@ -809,5 +850,47 @@ def main():
     return 0
 
 
+# Fixtures for the reverse index, not for the regex. Each one is a shape that
+# separates the two implementations: get any of them wrong and the census that
+# has caught two live mis-expansions silently stops seeing a domain. The test
+# asserts agreement with `_rendered_re` rather than a hard-coded answer, so the
+# specification stays the thing being satisfied.
+RENDERED_FIXTURES = [
+    ("API <span class=\"acro-exp\">(Application Programming Interface)</span>",
+     "API", True, "the plain case"),
+    ("UDP <span class=\"acro-exp\">(User Datagram Protocol)</span>",
+     "DP", False, "an acronym is not the tail of a longer word"),
+    ("APIs <span class=\"acro-exp\">(Application Programming Interface)</span>",
+     "API", True, "the pattern's own plural"),
+    ("OSes <span class=\"acro-exp\">(Operating System)</span>",
+     "OS", True, "and its -es plural"),
+    ("the e-DP <span class=\"acro-exp\">(Data Processor)</span>",
+     "DP", True, "a hyphen is not alphanumeric, so the lookbehind allows it"),
+    ("PCI DSS <span class=\"acro-exp\">(Payment Card Industry …)</span>",
+     "PCI DSS", True, "five dictionary keys contain a space"),
+    ("SOC 2 <span class=\"acro-exp\">(System and Organization Controls)</span>",
+     "SOC 2", True, "and one of them ends in a digit"),
+    ("API without an expansion beside it", "API", False, "no expansion, no row"),
+    ("<span class=\"acro-exp\">(Application Programming Interface)</span>",
+     "API", False, "an expansion with nothing in front of it"),
+]
+
+
+def self_test():
+    failures = 0
+    longest = max(len(a) for _, a, _, _ in RENDERED_FIXTURES)
+    for text, acronym, want, why in RENDERED_FIXTURES:
+        spec = bool(_rendered_re(acronym).search(text))
+        fast = acronym in rendered_acronyms(text, longest)
+        if spec != want or fast != want:
+            failures += 1
+            print(f"FAIL  {why}: {acronym!r} — specification={spec}, "
+                  f"index={fast}, expected={want}")
+    print(f"self-test: {len(RENDERED_FIXTURES)} fixtures, {failures} failure(s).")
+    return 1 if failures else 0
+
+
 if __name__ == "__main__":
+    if "--self-test" in sys.argv:
+        sys.exit(self_test())
     sys.exit(main())

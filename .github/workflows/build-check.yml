@@ -65,6 +65,13 @@ jobs:
       - name: Self-test the markup checker
         run: python tools/check_markup.py --self-test
 
+      # The acronym censuses ask "does this domain render X" for every entry in
+      # the dictionary. Asking it per acronym was 184 of this gate's 201
+      # seconds, so it is asked once per domain and answered from an index —
+      # and this proves the index still answers what the pattern would.
+      - name: Self-test the rendered-acronym index
+        run: python tools/lint_content.py --self-test
+
       - name: Lint content conventions
         run: python tools/lint_content.py
 
