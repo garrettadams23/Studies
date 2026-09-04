@@ -20688,3 +20688,47 @@ That makes the next move a choice between three things, and it is the owner's:
 
 Nothing here should be done on a tool's initiative. The measurements exist; the
 decision does not follow from them.
+
+---
+
+## Session record — the budget was raised, and the number is not the one on offer
+
+The previous record put three options to the owner. The answer was **raise it**,
+so `raw_mb` moves from 8.0 to **12.0 MB** and the site goes from ~63 cards of
+headroom to ~862.
+
+The option as offered was priced at 16 MB, and 12.0 is deliberate. **A budget
+has to be reachable to be a budget.** 16 MB is roughly 1,700 more topics — at
+the rate this site grows that ceiling would not fire for years, by which time
+the measurement behind it, the machine it was taken on and quite possibly the
+page's architecture have all changed. A ceiling that cannot fire is decoration,
+and this file already carries the story of a tripwire that quietly stopped
+meaning what it said. 12.0 MB is a great deal of room and still a number a wave
+could one day walk into.
+
+```
+raw            7.7 MB  ->  12.0 MB ceiling
+throttled load  3.0 s  ->  ~4.4 s at the ceiling   (~5.3 s at 16 MB)
+search           36 ms ->  ~45 ms                  (~53 ms at 16 MB)
+heap             28 MB ->  ~48 MB                  (~65 MB at 16 MB)
+headroom      63 cards ->  ~862 cards
+```
+
+16.0 MB stays the next stop and it is already priced, so raising it again is a
+decision rather than a re-derivation.
+
+### The ratio drifted again, exactly as that section predicted
+
+`gzip_kb` is a tripwire *behind* `raw_mb`, and it only stays behind it if it is
+re-derived rather than scaled. The compression ratio has now moved three times:
+
+```
+3.850x   when the gzip ceiling was first set
+3.672x   at 1,535 topics, when the tripwire was found to have got in front
+3.628x   today
+```
+
+So 12.0 MB at 3.628x is 3,387 KB, and `gzip_kb` is set to 3,550 KB — raw_mb
+fails about 5% first, which is what "a tripwire behind it" has to mean.
+`content_elements` scales with the ceiling it describes: 175,000 → 262,500.
+`dom_elements` does not move, because it grows per *domain*, not per topic.

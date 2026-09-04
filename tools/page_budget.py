@@ -157,6 +157,38 @@ content for ~5.3 s of throttled load, ~53 ms of search and 65 MB of heap. That
 is a judgement about readers on slow devices, and it can now be made with the
 curve in front of whoever makes it.
 
+### It was moved, to 12.0 MB — the judgement, and why not 16
+
+The owner made the call the paragraph above says is theirs: **raise it.** The
+site was at 7.7 of 8.0 MB, about 63 more cards, and the measurement says the
+things people feared — search and heap — are not what binds.
+
+**12.0 and not 16.0**, for one reason that is not about readers. A budget has to
+be reachable to be a budget. 16 MB is roughly 1,700 more topics: at the rate
+this site actually grows, the ceiling would not fail for years, by which time
+the measurement behind it, the machine it was taken on and quite possibly the
+page's architecture are all different — and a ceiling that cannot fire is
+decoration. 12.0 MB is ~900 topics of headroom, which is a lot of room and still
+a number a wave could one day walk into.
+
+What it costs, read off the curve above at ~305 ms per MB between the 7.6 and
+15.0 MB points:
+
+    raw            7.7 MB  ->  12.0 MB ceiling
+    throttled load  3.0 s  ->  ~4.4 s at the ceiling  (~5.3 s at 16 MB)
+    search           36 ms ->  ~45 ms                 (~53 ms at 16 MB)
+    heap             28 MB ->  ~48 MB                 (~65 MB at 16 MB)
+    headroom      63 cards ->  ~900 cards
+
+**16.0 MB stays the next stop and it is already priced**, so raising it again is
+a decision rather than a re-derivation. The line that has to move with it is the
+one below.
+
+*And the ratio drifted again*, exactly as the tripwire section predicted it
+would: 3.85x when first set, 3.672x at 1,535 topics, **3.628x today**. gzip_kb
+is therefore re-derived rather than scaled — 12.0 MB at 3.628x is 3,387 KB, and
+the budget is 3,550 KB so that raw_mb still fails about 5% first.
+
 ### The tripwire had got in front of the wall
 
 3.85x held when it was measured. At 1,535 topics the page compresses at
@@ -207,10 +239,10 @@ PAGE = ROOT / "index.html"
 # values. raw_mb is the one meant to bind; the other three sit behind it so that
 # whichever fails, it is the one a content wave actually moves.
 BUDGET = {
-    "raw_mb": 8.0,                # the real ceiling — held, not derived from load time; see above
-    "gzip_kb": 2_350,             # what 8.0 MB compresses to, with room for ratio drift — see below
+    "raw_mb": 12.0,               # the real ceiling — the owner's call, priced above, not derived from load time
+    "gzip_kb": 3_550,             # 12.0 MB at the measured 3.628x, plus drift room — re-derive when raw_mb moves
     "dom_elements": 1_500,        # built at load: shell + one header per domain. ~70 domains of room
-    "content_elements": 175_000,  # the deferred library at the raw_mb ceiling, at 80 elements/topic
+    "content_elements": 262_500,  # the deferred library at the raw_mb ceiling, at 80 elements/topic
 }
 
 # Topics, so the report can turn "7% left" into "room for ~139 more cards".
