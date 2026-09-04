@@ -126,6 +126,53 @@ for (const theme of ["dark", "light"]) {
   record(`a study dialog (${theme})`, await scan());
 }
 
+// ── the dialog's focus contract, which axe cannot see ───────────────────────
+// axe reads the static properties of a page; it cannot press Tab. `aria-modal`
+// was already set here and passed every scan while the keyboard walked straight
+// out of the dialog into the page behind it — the worst combination there is,
+// because assistive technology is told the background does not exist.
+//
+// Measured before this was fixed: **Shift+Tab escaped on the first press**, and
+// forward Tab escaped after 31, which is just how many focusable things the
+// progress dialog happens to hold. Sixty presses here for that reason — a trap
+// test shorter than the dialog's own focusable count proves nothing, and the
+// first version of this probe said "trapped" at twenty.
+{
+  const kb = await browser.newPage();
+  await kb.goto(PAGE, { waitUntil: "load" });
+  await kb.evaluate(() => document.querySelector("#study-fab").focus());
+  await kb.evaluate(() => stOpenProgress());
+  await kb.waitForTimeout(400);
+
+  const inside = () => kb.evaluate(() => {
+    const m = document.getElementById("st-modal");
+    return !!m && m.contains(document.activeElement);
+  });
+
+  const openedInside = await inside();
+  let out = 0;
+  for (let i = 0; i < 60; i++) { await kb.keyboard.press("Tab"); if (!await inside()) out++; }
+  for (let i = 0; i < 12; i++) { await kb.keyboard.press("Shift+Tab"); if (!await inside()) out++; }
+
+  await kb.keyboard.press("Escape");
+  await kb.waitForTimeout(250);
+  const restored = await kb.evaluate(() => ({
+    closed: document.getElementById("st-overlay").hidden,
+    focus: document.activeElement?.id || document.activeElement?.tagName,
+  }));
+
+  record("opening a dialog moves focus into it", openedInside ? [] :
+         [{ id: "focus-on-open", impact: "serious", nodes: [],
+            help: "focus stayed outside #st-modal when the dialog opened" }]);
+  record("Tab and Shift+Tab stay inside the dialog", out === 0 ? [] :
+         [{ id: "focus-trap", impact: "serious", nodes: [],
+            help: `${out} of 72 Tab presses left the dialog` }]);
+  record("closing it puts focus back where it was", restored.closed && restored.focus === "study-fab" ? [] :
+         [{ id: "focus-restore", impact: "serious", nodes: [],
+            help: `closed=${restored.closed} focus=${restored.focus}` }]);
+  await kb.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => r.violations.length);

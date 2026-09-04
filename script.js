@@ -2599,15 +2599,67 @@ function stModal() {
   _stOverlay = ov;
   return ov;
 }
+// Everything the browser will stop on inside the dialog, in document order.
+// Queried per keypress rather than cached: every tool re-renders #st-body as it
+// goes — the flashcard flips, the exam moves to the next question — so a list
+// taken at open time is stale by the second Tab.
+const ST_FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), ' +
+  'textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function stFocusable() {
+  const modal = _stOverlay?.querySelector("#st-modal");
+  if (!modal) return [];
+  return [...modal.querySelectorAll(ST_FOCUSABLE)]
+    .filter(el => el.offsetParent !== null || el === document.activeElement);
+}
+
+/**
+ * Keep Tab inside the dialog.
+ *
+ * `aria-modal="true"` was already set, which tells assistive technology the rest
+ * of the page is inert — and the keyboard walked straight into it anyway.
+ * Measured before this existed: **Shift+Tab left on the very first press**, into
+ * the domain headers behind the overlay, and forward Tab left after 31 presses,
+ * which is simply how many focusable things the progress dialog happens to
+ * contain. That combination is the worst of both: the screen reader is told
+ * nothing else exists while the focus ring is somewhere it will not read.
+ */
+function stTrapTab(e) {
+  if (e.key !== "Tab" || !_stOverlay || _stOverlay.hidden) return;
+  const items = stFocusable();
+  if (!items.length) return;
+  const first = items[0], last = items[items.length - 1];
+  const active = document.activeElement;
+  const inside = _stOverlay.contains(active);
+  if (e.shiftKey && (active === first || !inside)) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && (active === last || !inside)) { e.preventDefault(); first.focus(); }
+}
+
+let _stReturnFocus = null;
+
 function stOpen(renderFn) {
   const ov = stModal();
+  // Remember where the reader was, so closing puts them back rather than at the
+  // top of the document — the launcher is a fixed button most of the way down.
+  _stReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   ov.hidden = false;
   document.body.classList.add("st-lock");
   renderFn(ov.querySelector("#st-body"));
+  // Into the dialog, not merely near it. Preference order: whatever the tool
+  // wants typed into first, else the dialog's own close button.
+  const target = stFocusable()[0] || ov.querySelector("#st-close");
+  // After the render's own setTimeout(…, 30) focus calls, so a tool that wants
+  // the caret in its input still wins.
+  setTimeout(() => {
+    if (!ov.hidden && !ov.contains(document.activeElement)) target?.focus();
+  }, 60);
 }
 function stClose() {
   if (_stOverlay) _stOverlay.hidden = true;
   document.body.classList.remove("st-lock");
+  if (_stReturnFocus && document.contains(_stReturnFocus)) _stReturnFocus.focus();
+  _stReturnFocus = null;
   _stQuizState = null;
   _stCardState = null;
   // The exam's clock is an interval, and an interval outlives the modal that
@@ -4329,7 +4381,8 @@ function initStudyTools() {
   // Global keyboard shortcuts
   document.addEventListener("keydown", e => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); stOpenJump(); return; }
-    if (e.key === "Escape" && _stOverlay && !_stOverlay.hidden) { stClose(); }
+    if (e.key === "Escape" && _stOverlay && !_stOverlay.hidden) { stClose(); return; }
+    stTrapTab(e);
   });
 }
 

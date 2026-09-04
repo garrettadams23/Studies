@@ -21218,3 +21218,54 @@ storage was already handled. Corrupt storage was handled for the container and
 not the contents. Full storage was not handled at all — it was *caught*, which
 is not the same thing, and a caught error that nobody reports is a silent
 failure with a comment explaining it.
+
+---
+
+## Session record — `aria-modal="true"`, and the keyboard walking out of the dialog
+
+The write-failure question is exhausted, so this pass asked a different one:
+**what does axe not check?** It reads the static properties of a page. It cannot
+press Tab.
+
+The study dialog carried `role="dialog" aria-modal="true"` and passed every scan
+in both themes, while the keyboard did this:
+
+```
+opening the dialog     focus stays on the launcher, outside #st-modal
+Shift+Tab              leaves on the FIRST press, into the domain headers behind
+Tab                    leaves after 31 presses
+closing it             focus lands on <body>, not back on the launcher
+```
+
+**That combination is the worst one available.** `aria-modal` tells assistive
+technology the rest of the page is inert; the focus ring then walks into content
+the screen reader has been told does not exist. Passing an automated scan is
+what let it sit there.
+
+Fixed to the three things the dialog pattern actually requires: focus moves into
+the dialog on open (after the tools' own `setTimeout(…, 30)` focus calls, so a
+tool that wants the caret in its search box still wins), Tab and Shift+Tab wrap
+inside it, and closing restores focus to whatever opened it. The focusable list
+is queried per keypress rather than cached, because every tool re-renders
+`#st-body` as it goes — a list taken at open time is stale by the second Tab.
+
+### The probe that nearly reported the opposite
+
+The first version of this measurement clicked `#study-fab` and asserted against
+`#st-modal` — but the launcher opens a *menu*, and the dialog does not exist
+until a tool is chosen. Every assertion then read against `null`: *"focus is not
+inside"*, *"0 tabs escaped"*, *"Escape did not close it"*. Three findings, two of
+them backwards, all of them about a dialog that was not on screen.
+
+And the corrected probe still under-reported: at twenty presses it said
+**trapped**. The progress dialog holds 31 focusable elements, so a trap test
+shorter than the dialog's own focusable count proves nothing. Sixty forward and
+twelve backward is what found it, and the assertion is written at those numbers
+with the reason beside them.
+
+```
+a11y suite   6 -> 9 checks
+```
+
+Reverting the fix fails all three, printing the defect:
+`focus-trap: 41 of 72 Tab presses left the dialog`.
