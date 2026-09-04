@@ -20901,3 +20901,61 @@ resilience suite   32 -> 46 checks
 Reverting the streak guard fails four of the five new streak assertions; the
 fifth is the healthy record, which must keep counting *up* — 3 → 4 with best 11
 — because otherwise "repaired" and "wiped" look identical from the outside.
+
+---
+
+## Session record — the notepad froze, and a guard so the fixtures cannot lie again
+
+Third read path, same shape, worst symptom yet. `npLoad` checked
+`Array.isArray` and nothing about the elements, and `renderList` calls
+`n.body.toLowerCase()` the moment somebody types in the filter box:
+
+```
+elements that are numbers    Uncaught TypeError: … undefined (reading 'toLowerCase')
+a note with no body          Uncaught TypeError: … undefined (reading 'toLowerCase')
+a body that is an object     Uncaught TypeError: n.body.toLowerCase is not a function
+one good, one broken         Uncaught TypeError: … undefined (reading 'toLowerCase')
+healthy                      clean
+```
+
+The throw escapes the input handler, so the list never updates: **the notepad
+looks frozen and says nothing about why.** Unlike the scheduler and the streak,
+the import gate did not have this invariant either — `bkSerialise` checks the
+notes value is an array and stops — so fixing the read path covers both, every
+consumer going through `npLoad`.
+
+A note *is* its body, so an element without a usable one is dropped; the rest is
+metadata the renderer already defaults, so it is repaired rather than thrown
+away with somebody's writing. The row that matters is *one good note beside a
+broken one*: the real note survives.
+
+### The guard that makes the fixture bug impossible
+
+Two of the eight corrupt-storage fixtures had been seeding keys nothing reads.
+Naming the keys once was not enough — the wrong name would simply be wrong in
+one place instead of two — so the test now reads `script.js`, extracts every
+storage key it can see (`const *_KEY`/`*_PREFIX` literals, and the literals
+passed to `safeLS` and `localStorage` directly), and fails if a key this file
+seeds is not among them:
+
+```
+FAIL : every key this file seeds is a key the page actually reads — streak="streak"
+```
+
+That is the original mistake, reproduced deliberately, now failing three ways
+at once: the guard names it, and the streak and notepad assertions that depend
+on the key fail beside it.
+
+```
+resilience suite   32 -> 53 checks across three sessions of this pass
+```
+
+### The pattern all three had
+
+Each was a read path that validated the *container* and computed with the
+*contents*: `typeof r === "object"` for the scheduler, `typeof r.last ===
+"string"` for the streak, `Array.isArray` for the notepad. In each case the
+import gate was stricter than the read gate, or — for the notepad — neither was
+strict at all. **Anything that reaches storage without going through the
+importer is a shape nobody checked**, and on this site that includes every
+record the page wrote under an older build.

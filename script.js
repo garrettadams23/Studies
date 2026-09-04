@@ -2160,11 +2160,39 @@ function npSessionId() {
   return id;
 }
 
+/**
+ * The stored notes, with anything unusable dropped and the rest safe to render.
+ *
+ * This checked `Array.isArray` and nothing about the elements, and `renderList`
+ * calls `n.body.toLowerCase()` the moment somebody types in the filter box. One
+ * malformed note therefore threw an uncaught TypeError out of the filter
+ * handler and the list silently stopped updating — measured on four shapes
+ * (elements that are numbers, a note with no body, a body that is an object,
+ * one good note beside one broken one) and all four threw.
+ *
+ * Unlike the scheduler and the streak, the import gate did not have this
+ * invariant either: `bkSerialise` checks that the notes value is an array and
+ * stops there. Fixing it on the read path covers both, because every consumer
+ * goes through here.
+ *
+ * A note *is* its body, so an element without a usable one has nothing worth
+ * keeping and is dropped. The rest is metadata the renderer can default, so it
+ * is repaired rather than thrown away with somebody's writing.
+ */
 function npLoad() {
   try {
     const raw = localStorage.getItem(NP_STORE_KEY);
     const arr = raw ? JSON.parse(raw) : [];
-    return Array.isArray(arr) ? arr : [];
+    if (!Array.isArray(arr)) return [];
+    return arr
+      .filter(n => n && typeof n === "object" && typeof n.body === "string")
+      .map(n => ({
+        id: typeof n.id === "string" ? n.id : Math.random().toString(36).slice(2),
+        author: typeof n.author === "string" ? n.author : "",
+        body: n.body,
+        ts: Number.isFinite(n.ts) ? n.ts : 0,
+        sessionId: typeof n.sessionId === "string" ? n.sessionId : "",
+      }));
   } catch { return []; }
 }
 

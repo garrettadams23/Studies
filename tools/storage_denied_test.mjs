@@ -51,6 +51,8 @@
  *   npm install playwright && node tools/storage_denied_test.mjs
  */
 
+import { readFileSync } from "node:fs";
+
 const PAGE = "file://" + process.cwd() + "/index.html";
 
 // Same resolution dance as smoke_test.mjs / a11y_test.mjs: a local install in
@@ -217,19 +219,50 @@ check("navigation still works after a malformed hash at load", navigated);
 // Seeded before any page script runs, one case per context, each asserting the
 // page still boots and the accordion still works — the same "did init finish"
 // test the denied-storage half uses.
+const TOPIC = "kerberos-authentication-flow";
+
+// Every storage key this file seeds, named once — and then checked against
+// script.js, because two of them were wrong for as long as they existed. The
+// page stores the streak under "study-streak" and the visit list under
+// "recent-topics"; this file seeded "streak" and "recent". Both cases passed
+// every run, because what they assert — the page still boots, the accordion
+// still opens — is equally true of a page handed nothing at all. A fixture with
+// the wrong key is not a weak test, it is a test of nothing wearing the name of
+// one, so the guard below makes that a failure rather than a silence.
+const KEYS = {
+  srs:      "srs:",
+  note:     "note:",
+  reviewed: "reviewed:",
+  streak:   "study-streak",
+  recent:   "recent-topics",
+  notepad:  "shared-notepad-notes",
+  theme:    "theme",
+};
+
+{
+  const src = readFileSync("script.js", "utf-8");
+  const vocabulary = new Set();
+  for (const re of [/const\s+\w*(?:KEY|PREFIX)\s*=\s*"([^"]+)"/g,
+                    /safeLS\.(?:get|set|remove)\("([^"]+)"/g,
+                    /localStorage\.(?:getItem|setItem|removeItem)\("([^"]+)"/g]) {
+    for (const m of src.matchAll(re)) vocabulary.add(m[1]);
+  }
+  const unknown = Object.entries(KEYS).filter(([, k]) => !vocabulary.has(k));
+  check("every key this file seeds is a key the page actually reads",
+        unknown.length === 0,
+        unknown.map(([n, k]) => `${n}="${k}"`).join(", "));
+}
+
 const CORRUPT = {
-  "srs record is not JSON":      { "srs:kerberos-authentication-flow": "{{{not json" },
-  "srs record is an array":      { "srs:kerberos-authentication-flow": "[1,2,3]" },
-  "srs fields are wrong types":  { "srs:kerberos-authentication-flow": '{"i":"x","e":null,"d":[],"n":{}}' },
-  "reviewed flag is an object":  { "reviewed:kerberos-authentication-flow": '{"a":1}' },
-  // These two named the wrong key for as long as they existed — the page stores
-  // the streak under "study-streak" and the visit list under "recent-topics" —
-  // so both cases seeded something nothing reads and passed without exercising
-  // anything. Found by probing the streak and getting the default record back.
-  "streak record is garbage":    { "study-streak": "%%%" },
-  "theme is a colour nobody set": { "theme": "chartreuse" },
-  "recent visits is garbage":    { "recent-topics": "]]]" },
-  "a note of 200,000 characters": { "note:kerberos-authentication-flow": "x".repeat(200000) },
+  "srs record is not JSON":      { [KEYS.srs + TOPIC]: "{{{not json" },
+  "srs record is an array":      { [KEYS.srs + TOPIC]: "[1,2,3]" },
+  "srs fields are wrong types":  { [KEYS.srs + TOPIC]: '{"i":"x","e":null,"d":[],"n":{}}' },
+  "reviewed flag is an object":  { [KEYS.reviewed + TOPIC]: '{"a":1}' },
+  "streak record is garbage":    { [KEYS.streak]: "%%%" },
+  "theme is a colour nobody set": { [KEYS.theme]: "chartreuse" },
+  "recent visits is garbage":    { [KEYS.recent]: "]]]" },
+  "notepad holds a bare array":  { [KEYS.notepad]: "[1,2,3]" },
+  "a note of 200,000 characters": { [KEYS.note + TOPIC]: "x".repeat(200000) },
 };
 for (const [name, seed] of Object.entries(CORRUPT)) {
   const ctx = await browser.newContext();
@@ -293,8 +326,6 @@ check("keys outside the page's own namespace are all refused",
 check("a file with no usable data section is refused outright",
   imported.dataArray.refused && imported.dataNull.refused);
 
-const TOPIC = "kerberos-authentication-flow";
-
 // ── a malformed record must not become a card you never see again ───────────
 // The block above proves a corrupt record does not stop the page booting. It
 // never graded one, and that was where the defect lived: `srsGet` accepted
@@ -315,7 +346,7 @@ for (const [name, raw] of Object.entries(MALFORMED)) {
     const ctx = await browser.newContext();
     const p = await ctx.newPage();
     await p.addInitScript(([k, v]) => { try { localStorage.setItem(k, v); } catch { /* denied */ } },
-                          [`srs:${TOPIC}`, raw]);
+                          [KEYS.srs + TOPIC, raw]);
     await p.goto(PAGE, { waitUntil: "load" });
     const out = await p.evaluate(([id, g]) => {
       const dueBefore = srsIsDue(id);          // unreadable record => a new card
@@ -373,7 +404,7 @@ const STREAKS = {
 for (const [name, [raw, wantN, wantBest]] of Object.entries(STREAKS)) {
   const ctx = await browser.newContext();
   const p = await ctx.newPage();
-  await p.addInitScript(v => { try { localStorage.setItem("study-streak", v); } catch { /* denied */ } }, raw);
+  await p.addInitScript(([k, v]) => { try { localStorage.setItem(k, v); } catch { /* denied */ } }, [KEYS.streak, raw]);
   await p.goto(PAGE, { waitUntil: "load" });
   const out = await p.evaluate(() => {
     streakTouch();
@@ -384,6 +415,45 @@ for (const [name, [raw, wantN, wantBest]] of Object.entries(STREAKS)) {
   check(`the streak survives ${name}`,
         r.n === wantN && r.best === wantBest && out.current === wantN,
         `n=${JSON.stringify(r.n)} best=${JSON.stringify(r.best)} current=${JSON.stringify(out.current)}`);
+  await ctx.close();
+}
+
+// ── one malformed note must not break the filter for the rest ───────────────
+// `renderList` calls `n.body.toLowerCase()` as soon as somebody types in the
+// filter box, and `npLoad` checked only that the stored value was an array.
+// One bad element therefore threw an uncaught TypeError out of the filter
+// handler and the list stopped updating — the notepad looked frozen, with no
+// hint why. Measured before the fix: all four shapes below threw, the healthy
+// one did not. The "one good, one broken" row is the one that matters — a real
+// note must survive beside a broken one.
+const NOTES = {
+  "elements that are numbers": ["[1,2,3]", 0],
+  "a note with no body":       ['[{"id":"a","author":"x","ts":1,"sessionId":"s"}]', 0],
+  "a body that is an object":  ['[{"id":"a","author":"x","body":{},"ts":1,"sessionId":"s"}]', 0],
+  "one good note beside a broken one":
+    ['[{"id":"a","author":"x","body":"real note","ts":1,"sessionId":"s"},{"id":"b"}]', 1],
+  "healthy notes":
+    ['[{"id":"a","author":"x","body":"real note","ts":1,"sessionId":"s"}]', 1],
+};
+for (const [name, [raw, wantKept]] of Object.entries(NOTES)) {
+  const ctx = await browser.newContext();
+  const p = await ctx.newPage();
+  const errs = []; p.on("pageerror", e => errs.push(String(e).split("\n")[0]));
+  await p.addInitScript(([k, v]) => { try { localStorage.setItem(k, v); } catch { /* denied */ } },
+                        [KEYS.notepad, raw]);
+  await p.goto(PAGE, { waitUntil: "load" });
+  const out = await p.evaluate(async () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    mountNotepad(host);
+    const f = host.querySelector(".np-filter");
+    f.value = "real";                                  // the throw was here
+    f.dispatchEvent(new Event("input", { bubbles: true }));
+    await new Promise(r => setTimeout(r, 300));
+    return host.querySelectorAll(".np-body").length;
+  }).catch(() => -1);
+  check(`filtering survives ${name}`, out === wantKept && errs.length === 0,
+        `rendered ${out}, wanted ${wantKept}${errs.length ? ` — ${errs[0]}` : ""}`);
   await ctx.close();
 }
 
