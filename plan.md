@@ -21693,3 +21693,50 @@ everything written in that domain afterwards.
 endpoint +2 topics · 1,536 -> 1,538 · raw 7.7 MB of 12.0
 31 gates green · 296 browser checks green
 ```
+
+## Session — Azure PaaS compute, the third leg of a three-provider set
+
+AWS and GCP each had a full *Serverless & Containers* topic. Azure had three
+consecutive rows in a SKU table — App Service, Functions, Container Apps — and a
+single cell in the cross-provider matrix. That is not a judgement call about
+depth; it is one provider of three left unfinished.
+
+Three cards, matching the siblings' weight, each carrying something the AWS and
+GCP topics cannot say:
+
+**The plan is the machine.** The Azure-specific inversion, and the one that
+generates the support tickets: an App Service plan reads like a pricing tier and
+is a set of VMs that every app on it shares. Slowdowns with no deploy, a bill
+that triples on scale-out, a staging slot that competes with production — all one
+fact, none of it visible from the app's own blade.
+
+**A Functions plan is a capability boundary, not a price.** Consumption, Flex
+Consumption, Premium and Dedicated differ on three things bought together:
+private-network reach, the execution ceiling, and whether cold starts exist. The
+verdict argues against the reflex purchase — a function that needs more than ten
+minutes usually needs Durable Functions, because work that long in one execution
+has no checkpoint and restarts whole on any failure.
+
+**The same container, three operating models.** The reason to reach past App
+Service is almost never "we need Kubernetes" and almost always "we need to scale
+on a queue" — which Container Apps expresses and App Service cannot. Choosing AKS
+to get a scale rule is buying a cluster to solve a configuration problem.
+
+Sources disagreed on Flex Consumption's exact maximum execution time, so the
+table says the ten-minute ceiling is lifted rather than naming a number that
+would be wrong in one of them.
+
+```
+cloud 76 -> 77 topics · 1,538 -> 1,539 · raw 7.7 MB of 12.0
+31 gates green · 296 browser checks green
+```
+
+### A correction to this file's own gap list
+
+The entry claiming the Intune Suite was "absent from the corpus entirely" was
+wrong about Endpoint Privilege Management, which has a full topic — *Local Admin
+Rights — Removing Them, and Endpoint Privilege Management* — with a card of its
+own. Grepping service names at content level and reading where they land, rather
+than trusting a matrix, is the second time that has caught an over-claim.
+Genuinely absent: Remote Help, Microsoft Tunnel, Advanced Analytics, Enterprise
+App Management.

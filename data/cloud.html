@@ -2906,6 +2906,102 @@ az storage blob generate-sas --account-name stprod01 --container-name backups \
               </div>
             </div>
           </div>
+          <!-- ── TOPIC: AZURE PAAS COMPUTE ───────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🧩</span>
+              <span class="topic-name">Azure PaaS <span class="acro-exp">(Platform as a Service)</span> Compute — App Service, Functions &amp; Container Apps</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Plan Is the Machine, and Your Apps Share It</div>
+                <div class="concept-desc">
+                  An App Service plan reads like a pricing tier and is not one. It is a set of virtual
+                  machines. Every app assigned to that plan runs <strong>on the same instances</strong>
+                  and draws from the same CPU <span class="acro-exp">(Central Processing Unit)</span> and memory. This single fact explains most of the
+                  surprises people meet in App Service, and none of it is visible from the app's own
+                  blade.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>What it looks like</th><th>What is actually happening</th></tr>
+                    <tr><td>&ldquo;My app slowed down and I changed nothing&rdquo;</td><td>Another app on the same plan is busy. You are sharing its instances</td></tr>
+                    <tr><td>&ldquo;Scaling out fixed it, but the bill tripled&rdquo;</td><td>You scaled the plan. Every app on it got another instance too</td></tr>
+                    <tr><td>&ldquo;It is slow only on the first request&rdquo;</td><td>The app unloaded while idle. Always On is off, and it is off by default</td></tr>
+                    <tr><td>&ldquo;Staging is fine, production is not&rdquo;</td><td>The deployment slot shares the plan; the load did not move, only the label</td></tr>
+                    <tr><td>&ldquo;We are on Premium, so it must be sized right&rdquo;</td><td>The tier buys features and instance size. It does not stop apps competing</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Put anything with a real load on its own plan, and turn
+                    Always On on for anything a human waits for.</strong> Co-tenanting apps on one plan
+                    is a legitimate way to use spare capacity — for the dozen small internal tools that
+                    are idle most of the day. It stops being legitimate the moment one of them matters,
+                    because the blast radius of that app's bad afternoon is every other app sharing its
+                    instances.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Choosing</div>
+                <div class="concept-title">A Functions Plan Decides What the Function Can Do, Not Just What It Costs</div>
+                <div class="concept-desc">
+                  The hosting plan is usually picked as a price and then discovered to be a capability
+                  boundary. It governs three things that are expensive to change later: whether the
+                  function can reach a private network, how long a single execution may run, and
+                  whether cold starts exist at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Plan</th><th>Scales to zero</th><th>Private network</th><th>Execution ceiling</th><th>Pick it when</th></tr>
+                    <tr><td>Consumption</td><td>Yes — you pay nothing idle</td><td class="c-red">No</td><td>10 minutes, hard</td><td>Bursty work against public endpoints; the cheapest thing that works</td></tr>
+                    <tr><td>Flex Consumption</td><td>Yes, with an optional warm floor</td><td class="c-green">Yes</td><td>The 10-minute ceiling is lifted</td><td>The default for new work that needs a private network but not a fixed bill</td></tr>
+                    <tr><td>Premium</td><td>No — you pay for a warm floor</td><td class="c-green">Yes</td><td>Configurable, up to unbounded</td><td>Steady load where a cold start is never acceptable</td></tr>
+                    <tr><td>Dedicated (App Service plan)</td><td>No</td><td class="c-green">Yes</td><td>Unbounded, with Always On set</td><td>You already run a plan with spare capacity and want no new bill</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The execution ceiling is the one that turns into a
+                    rewrite.</strong> A function that &ldquo;just needs a few more minutes&rdquo; on
+                    Consumption meets a hard stop at ten, and the reflex is to buy a plan that hides it.
+                    That is usually the wrong purchase: work which runs for tens of minutes in one
+                    execution has no checkpoint, so any failure restarts all of it. Durable Functions
+                    exists to break that work into steps that can resume — reach for the design before
+                    reaching for the tier.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Same Container, Three Operating Models</div>
+                <div class="concept-desc">
+                  Azure will run an identical image in three places. The image is not the decision;
+                  what you are choosing is how much of Kubernetes you are agreeing to operate, and what
+                  you can express about scaling.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Service</th><th>You operate</th><th>Scales on</th><th>Gives up</th></tr>
+                    <tr><td>App Service (container)</td><td>Nothing below the app</td><td>CPU, memory, request count — and never to zero</td><td>Anything multi-container or event-shaped</td></tr>
+                    <tr><td>Container Apps</td><td>Revisions and scale rules</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>, plus queue depth, topic lag and other event sources</td><td>Direct access to the cluster, nodes and arbitrary operators</td></tr>
+                    <tr><td>AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td><td>Node pools, upgrades, add-ons, the whole surface</td><td>Whatever you install to do it</td><td>Your evenings, unless a team genuinely owns it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Container Apps is the answer more often than teams expect, because its
+                    scaling is event-shaped.</strong> The reason to reach past App Service is rarely
+                    &ldquo;we need Kubernetes&rdquo; and almost always &ldquo;we need to scale on a
+                    queue&rdquo; — a worker that should run ten instances when a queue is deep and none
+                    when it is empty. App Service cannot express that and cannot scale to zero; AKS can
+                    express it after you install and own the machinery. Choosing AKS to get a scale
+                    rule is buying a cluster to solve a configuration problem.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <!-- ── TOPIC: AZURE MONITOR & KQL ───────────────────────────────── -->
           <div class="topic" data-reviewed="2026-08">
