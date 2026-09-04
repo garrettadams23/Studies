@@ -301,6 +301,22 @@ header p {
   .chip-group { flex-wrap: nowrap; }
 }
 
+/* Read by assistive technology, never painted. `display: none` and
+   `visibility: hidden` are both skipped by screen readers, which is the whole
+   failure this class exists to avoid. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .chip {
   /* A real <button>, so the browser's own button styling has to be undone for
      the box to render exactly as the old <div> did — the visual test is the
@@ -991,10 +1007,9 @@ header p {
   box-shadow: 0 0 0 2px var(--accent, #38bdf8);
   transition: box-shadow 0.4s ease;
 }
-@media (prefers-reduced-motion: reduce) {
-  .concept-card.card-linked { transition: none; }
-  .concept-label::after { transition: none; }
-}
+/* The universal prefers-reduced-motion block near the end of this file already
+ * zeroes every transition on the page, these two included. A second rule
+ * saying the same thing is one somebody later edits in only one place. */
 @media print {
   .concept-label::after { content: ""; }
   .concept-card.card-linked { box-shadow: none; }

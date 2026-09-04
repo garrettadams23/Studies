@@ -307,6 +307,94 @@ for (const theme of ["dark", "light"]) {
   await kb.close();
 }
 
+// ── does the page ever say what it just did? ────────────────────────────────
+// axe checks that a live region is *well formed*; it cannot check that one
+// exists where a result appears. Before this pass the whole app had two, and
+// one of them (the service-worker bar) is populated before insertion, which
+// many AT/browser pairs do not announce. Everything else — search counts, quiz
+// answers, exam scores, the notepad's storage-full warning, the card-link
+// confirmation — wrote into a bare element and said nothing.
+{
+  const kb = await browser.newPage();
+  await kb.goto(PAGE, { waitUntil: "load" });
+  const bad = (id, help) => [{ id, impact: "serious", nodes: [], help }];
+  const liveShape = sel => kb.evaluate(s => {
+    const e = document.querySelector(s);
+    return e && e.getAttribute("aria-live") === "polite"
+        && (e.getAttribute("role") === "status" || e.getAttribute("role") === "alert");
+  }, sel);
+
+  record("the shared announcer exists and is polite",
+         await liveShape("#a11y-announcer") ? [] : bad("announcer", "#a11y-announcer is not a live region"));
+
+  // Search is the highest-traffic result in the app: debounced, and it fires
+  // without focus ever leaving the input.
+  const searchLive = await liveShape("#search-count");
+  await kb.evaluate(() => searchContent("kerberos"));
+  await kb.waitForTimeout(400);
+  const searchText = await kb.evaluate(() => document.getElementById("search-count").textContent)
+    .catch(() => "");
+  record("search announces its result",
+         searchLive && /match/.test(searchText) ? []
+           : bad("search-live", `live=${searchLive} text="${searchText}"`));
+
+  // The announcer has to re-announce the same string twice — pressing the same
+  // button again is a new event to the reader even if the text is identical.
+  const repeated = await kb.evaluate(async () => {
+    const el = document.getElementById("a11y-announcer");
+    announce("same message");
+    await new Promise(r => requestAnimationFrame(r));
+    const first = el.textContent;
+    announce("same message");
+    const cleared = el.textContent;          // must go empty before it is re-set
+    await new Promise(r => requestAnimationFrame(r));
+    return { first, cleared, second: el.textContent };
+  }).catch(e => ({ error: String(e.message || e).split("\n")[0] }));
+  record("the announcer re-announces an identical message",
+         repeated.first === "same message" && repeated.cleared === ""
+           && repeated.second === "same message" ? []
+           : bad("announcer-repeat", JSON.stringify(repeated)));
+
+  // Every dialog announced "Study tools" whatever it was.
+  await kb.evaluate(() => stOpenProgress());
+  await kb.waitForTimeout(400);
+  const named = await kb.evaluate(() => {
+    const m = document.getElementById("st-modal");
+    const id = m.getAttribute("aria-labelledby");
+    return { id, label: m.getAttribute("aria-label"),
+             name: id ? (document.getElementById(id)?.textContent || "").trim() : "" };
+  });
+  record("a dialog announces its own name, not the launcher's",
+         named.id && /Progress/.test(named.name) && !named.label ? []
+           : bad("dialog-name", JSON.stringify(named)));
+  await kb.close();
+}
+
+// ── prefers-reduced-motion has to reach JavaScript ──────────────────────────
+// The CSS block covers every transition and animation on the page, but a
+// `behavior: "smooth"` passed in a scroll-options object overrides the
+// `scroll-behavior` property, so five programmatic scrolls ignored the
+// preference entirely. script.js had no matchMedia call at all.
+{
+  const motion = await browser.newPage();
+  await motion.goto(PAGE, { waitUntil: "load" });
+  const normal = await motion.evaluate(() => scrollBehavior())
+    .catch(e => `error: ${String(e.message || e).split("\n")[0]}`);
+  await motion.close();
+
+  const reduced = await browser.newContext({ reducedMotion: "reduce" });
+  const rp = await reduced.newPage();
+  await rp.goto(PAGE, { waitUntil: "load" });
+  const asked = await rp.evaluate(() => scrollBehavior())
+    .catch(e => `error: ${String(e.message || e).split("\n")[0]}`);
+  await reduced.close();
+
+  record("a reduced-motion reader gets no smooth scrolling",
+         normal === "smooth" && asked === "auto" ? []
+           : [{ id: "reduced-motion", impact: "serious", nodes: [],
+                help: `default=${normal} reduced=${asked}` }]);
+}
+
 await browser.close();
 
 const failed = results.filter(r => r.violations.length);

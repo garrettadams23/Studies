@@ -21414,3 +21414,83 @@ a11y suite   6 -> 17 checks
 **Every row that remains is a wrapper around a control that is already
 reachable.** The census that found the filter bar and the card links now returns
 nothing actionable, which is the result that closes it.
+
+---
+
+## Session record — the page did the thing and never said so
+
+Four keyboard waves closed the *input* side: controls can be reached and
+operated. This is the *output* side, and it was almost entirely missing.
+
+**The whole app had two live regions.** The backup dialog's output panel, and
+the service-worker update bar — and that second one is populated *before* it is
+inserted, which is the classic pattern many AT/browser pairs do not announce. So
+in practice: one. Roughly forty other places write a count, a score or a status
+into a bare element.
+
+```
+search       "26 matches in 9 domains"  ->  a bare <span>, announced to nobody
+notepad      "⚠ not saved — storage is full"  ->  a 2.2s opacity fade on a
+                                                  pointer-events:none div
+card link    " ✓ copied"  ->  CSS ::after content, which AT cannot reach
+quiz         "Correct!" / "Not quite."  ->  a bare div, while focus sits on a
+                                            button that has just been disabled
+dialogs      every one announced "Study tools", whatever it actually was
+```
+
+Two of those are follow-ons from this session's own work: I made the notepad's
+storage-full failure *visible* this morning and the card-link control
+*operable* — and neither was audible.
+
+### A live region per feature, and the reason the choice matters
+
+Not one global region: overlapping announcements from unrelated features
+interrupt each other. Each result announces from the element it already
+occupies, so the text and the announcement cannot drift apart.
+
+**Except where the element is replaced rather than written into.** The
+flashcard, quiz and exam stages are rebuilt with `innerHTML` on every render, so
+a live region inside them is a *new element* each time — the same defect as the
+update bar. Those go through one shared visually-hidden announcer instead, and
+the rule is worth stating: **mark it live when the text mutates in place;
+announce it when the element is replaced.**
+
+The announcer clears before it writes, on the next frame. A live region set to
+the string it already holds is not re-announced, so pressing the same button
+twice would be silent the second time — a fixture pins that.
+
+### And the exam clock is the counter-example
+
+A per-second live region is unusable — nothing else can be heard over it. The
+clock announces exactly once, at the minute mark, which is the moment the number
+actually changes a decision.
+
+### prefers-reduced-motion reached the CSS and not the code
+
+`style.css` zeroes every transition and animation through one universal block,
+and it is genuinely complete — it reaches all 33 `transition:` declarations, the
+single `@keyframes`, and `scroll-behavior: smooth`. A second, older block was
+redundant and is gone.
+
+But **`script.js` had no `matchMedia` call at all**, and a `behavior: "smooth"`
+in a scroll-options object *overrides* the CSS property. Five programmatic
+scrolls — every domain open, both deep-link paths, back-to-top, the progress
+dialog — animated regardless of the preference. One `scrollBehavior()` helper
+now answers for all five.
+
+### The test died instead of reporting, which is its own lesson
+
+Reverting the source to prove the assertions bite made the suite abort on
+`announce is not defined`, so the remaining checks never ran. A probe that
+throws takes the rest of the run with it. Guarded, it reports the defect
+plainly:
+
+```
+FAIL : search announces its result — live=false text="26 matches in 9 domains"
+FAIL : a dialog announces its own name — {"id":null,"label":"Study tools"}
+FAIL : a reduced-motion reader gets no smooth scrolling — scrollBehavior is not defined
+```
+
+```
+a11y suite   17 -> 22 checks
+```

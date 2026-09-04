@@ -20,6 +20,41 @@ let allExpanded = false;
 // already guard it inline; these helpers cover the rest so a storage failure
 // degrades one feature instead of throwing — which, at the load-time theme IIFE,
 // would halt the whole script and leave the page inert.
+/**
+ * Say something to assistive technology that has no on-screen home of its own.
+ *
+ * Most feedback on this page has an element — the search count, a toast, a
+ * quiz's answer line — and those announce from where they already are, so the
+ * text and the announcement cannot drift apart. This is for the rest: a copied
+ * link whose only confirmation is CSS `::after` content, a domain opening, the
+ * exam clock crossing a minute.
+ *
+ * The message is cleared first and set on the next frame. A live region whose
+ * text is replaced with the *same* string is not re-announced, so pressing the
+ * same button twice would be silent the second time without this.
+ */
+function announce(msg) {
+  const el = document.getElementById("a11y-announcer");
+  if (!el || !msg) return;
+  el.textContent = "";
+  requestAnimationFrame(() => { el.textContent = msg; });
+}
+
+/**
+ * `"auto"` for a reader who asked for less motion, `"smooth"` otherwise.
+ *
+ * The CSS handles every transition and animation in one universal block, but a
+ * `behavior: "smooth"` passed explicitly in a scroll-options object *overrides*
+ * the `scroll-behavior` property, so `scroll-behavior: auto !important` does not
+ * reach any of the page's five programmatic scrolls. This is the only way to
+ * honour the preference from JavaScript.
+ */
+function scrollBehavior() {
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  } catch { return "smooth"; }
+}
+
 const safeLS = {
   get(k)    { try { return localStorage.getItem(k); } catch { return null; } },
   // Returns whether the write landed. It used to swallow the failure and return
@@ -341,8 +376,7 @@ function renderTopicNote(topic, { open = false } = {}) {
       '<button type="button" class="tn-edit">Edit</button>' +
       '<button type="button" class="tn-clear" hidden>Delete</button></div>' +
       '<div class="tn-text"></div>' +
-      '<div class="tn-warn" hidden>⚠ Not saved — this browser\'s storage is full. ' +
-      'Copy the text somewhere else before you leave the page.</div>' +
+      '<div class="tn-warn" role="status" aria-live="polite" aria-atomic="true" hidden></div>' +
       '<textarea class="tn-input" rows="3" maxlength="' + NOTE_MAX +
       '" placeholder="A note only you see. Stored in this browser, and included in your progress export."></textarea>';
     body.prepend(block);
@@ -353,8 +387,16 @@ function renderTopicNote(topic, { open = false } = {}) {
       block.querySelector(".tn-text").textContent = value;
       // Never silently. The text stays on screen either way, because deleting
       // what somebody just typed is the one unrecoverable move here.
+      // Written on reveal rather than sitting in the markup: flipping `hidden`
+      // is not a mutation a live region reliably announces, and a warning
+      // nobody hears is the defect this whole pass is about.
       const warn = block.querySelector(".tn-warn");
-      warn.hidden = !value || stored;
+      const unsaved = !!value && !stored;
+      warn.textContent = unsaved
+        ? "Not saved — this browser's storage is full. Copy the text somewhere "
+          + "else before you leave the page."
+        : "";
+      warn.hidden = !unsaved;
       setEditing(false);
       if (!value) block.remove();
     };
@@ -508,7 +550,12 @@ function openDomain(section, opts = {}) {
   // its whole self — otherwise the chips and the search disagree about what the
   // page is showing.
   if (_searchTerm) applySearchToDomain(section);
-  if (opts.scroll) header.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (opts.scroll) {
+    header.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+    const n = section.querySelectorAll(".topic").length;
+    announce(`${labelText(section.querySelector(".domain-title")).trim() || "Domain"} opened, `
+      + `${n} topic${n === 1 ? "" : "s"}.`);
+  }
 }
 
 function closeDomain(section) { dehydrateDomain(section); }
@@ -1278,7 +1325,11 @@ function handleTopicTool(btn) {
     toggleTopicNote(topic);
   } else if (btn.classList.contains("topic-permalink")) {
     const url = `${location.origin}${location.pathname}#${topic.id}`;
-    const done = () => { btn.classList.add("copied"); setTimeout(() => btn.classList.remove("copied"), 1200); };
+    const done = () => {
+      announce("Link to this topic copied");   // the only other signal is a colour
+      btn.classList.add("copied");
+      setTimeout(() => btn.classList.remove("copied"), 1200);
+    };
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(url).then(done).catch(() => { location.hash = topic.id; });
     } else {
@@ -1503,12 +1554,16 @@ function openHashTarget() {
     ? topic.querySelectorAll(".topic-body > .concept-card")[parsed.card - 1]
     : null;
   recordVisit(topic.id);
+  // Scrolling moves the viewport, not the reader. Without this the page jumps
+  // and assistive technology stays where it was with nothing to say about it.
+  const toggle = topicToggle(topic.querySelector(":scope > .topic-header"));
+  if (toggle) setTimeout(() => toggle.focus({ preventScroll: true }), 0);
   if (card) {
-    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    card.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
     card.classList.add("card-linked");
     setTimeout(() => card.classList.remove("card-linked"), 2200);
   } else {
-    topic.scrollIntoView({ behavior: "smooth", block: "start" });
+    topic.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   }
 }
 
@@ -1527,6 +1582,7 @@ function copyCardLink(label) {
   if (n < 1) return;
   const url = `${location.origin}${location.pathname}#${topic.id}/${n}`;
   const done = () => {
+    announce("Link to this card copied");
     label.classList.add("copied");
     setTimeout(() => label.classList.remove("copied"), 1200);
   };
@@ -1551,7 +1607,7 @@ function initBackToTop() {
   btn.title = "Back to top";
   btn.setAttribute("aria-label", "Back to top");
   btn.textContent = "↑";
-  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: scrollBehavior() }));
   document.body.appendChild(btn);
 
   let ticking = false;
@@ -2303,7 +2359,7 @@ function mountNotepad(root) {
         <button class="np-sort" type="button" data-sort="oldest">OLDEST</button>
       </div>
       <div class="np-list"></div>
-      <div class="np-toast"></div>
+      <div class="np-toast" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
   `);
 
@@ -2677,6 +2733,20 @@ function stOpen(renderFn) {
   renderFn(ov.querySelector("#st-body"));
   // Into the dialog, not merely near it. Preference order: whatever the tool
   // wants typed into first, else the dialog's own close button.
+  // Each tool renders its own <h2 class="st-h">; point the dialog's name at it
+  // so opening Progress says "Progress" rather than "Study tools". Falls back to
+  // the static label for any tool that renders no heading.
+  const modal = ov.querySelector("#st-modal");
+  const h = ov.querySelector("#st-body .st-h");
+  if (h) {
+    if (!h.id) h.id = "st-dialog-title";
+    modal.setAttribute("aria-labelledby", h.id);
+    modal.removeAttribute("aria-label");
+  } else {
+    modal.removeAttribute("aria-labelledby");
+    modal.setAttribute("aria-label", "Study tools");
+  }
+
   const target = stFocusable()[0] || ov.querySelector("#st-close");
   // After the render's own setTimeout(…, 30) focus calls, so a tool that wants
   // the caret in its input still wins.
@@ -2883,6 +2953,7 @@ function stGradeBtn(grade, label, id) {
 function stRenderCard(stage) {
   const s = _stCardState; if (!s) return;
   if (s.i >= s.deck.length) {
+    announce(`Deck complete — ${s.total} card${s.total === 1 ? "" : "s"} reviewed.`);
     stage.innerHTML = `<div class="st-result"><div class="st-result-big">✅</div><p>Deck complete — ${s.total} card${s.total === 1 ? "" : "s"} reviewed.</p>` +
       '<button id="st-fc-again" class="st-btn st-btn-primary">Shuffle &amp; repeat</button></div>';
     stage.querySelector("#st-fc-again").addEventListener("click", () => { s.deck = shuffle(s.deck); s.i = 0; s.done = 0; stRenderCard(stage); });
@@ -2891,7 +2962,8 @@ function stRenderCard(stage) {
   const t = s.deck[s.i];
   stage.innerHTML =
     `<div class="st-progress">Card ${s.i + 1} / ${s.deck.length}</div>` +
-    `<div class="st-card${s.flipped ? " flipped" : ""}" id="st-card" tabindex="0" role="button" aria-label="Flip card">` +
+    `<div class="st-card${s.flipped ? " flipped" : ""}" id="st-card" tabindex="0" role="button" ` +
+      `aria-label="${esc(s.flipped ? (t.title || t.name) : t.name)} — flip card">` +
       `<div class="st-card-face st-card-front"><span class="st-card-dom">${esc(t.domainIcon)} ${esc(t.domainTitle)}</span>` +
         `<span class="st-card-q">${esc(t.name)}</span><span class="st-card-tap">Tap or press Space to flip</span></div>` +
       `<div class="st-card-face st-card-back"><span class="st-card-title">${esc(t.title || t.name)}</span>` +
@@ -2903,6 +2975,8 @@ function stRenderCard(stage) {
         stGradeBtn("good", "Good", t.id) + stGradeBtn("easy", "Easy", t.id) +
         '<button id="st-open" class="st-btn">Open topic ↗</button></div>'
       : '<div class="st-card-actions"><button id="st-flip" class="st-btn st-btn-primary">Flip</button></div>');
+
+  announce(`Card ${s.i + 1} of ${s.deck.length}. ${s.flipped ? t.title || t.name : t.name}`);
 
   const card = stage.querySelector("#st-card");
   const flip = () => { s.flipped = !s.flipped; stRenderCard(stage); };
@@ -2990,7 +3064,7 @@ function stRenderQuestion(stage) {
     `<div class="st-q-prompt"><span class="st-q-label">Which topic does this describe?</span>${esc(prompt)}</div>` +
     '<ul class="st-q-options">' + options.map(o =>
       `<li><button class="st-q-opt" data-id="${esc(o.id)}">${esc(o.name)}</button></li>`).join("") + '</ul>' +
-    '<div id="st-q-feedback" class="st-q-feedback"></div>';
+    '<div id="st-q-feedback" class="st-q-feedback" role="status" aria-live="polite" aria-atomic="true"></div>';
   s.answered = false;
   stage.querySelectorAll(".st-q-opt").forEach(btn => btn.addEventListener("click", () => {
     if (s.answered) return; s.answered = true;
@@ -3157,7 +3231,7 @@ function stRenderAcroQuestion(stage) {
     `<div class="st-q-prompt"><span class="st-q-label">${esc(q.area)}</span>${q.q}</div>` +
     '<ul class="st-q-options">' +
     q.options.map((o, n) => `<li><button class="st-q-opt" data-n="${n}">${esc(o)}</button></li>`).join("") +
-    '</ul><div id="st-q-feedback" class="st-q-feedback"></div>';
+    '</ul><div id="st-q-feedback" class="st-q-feedback" role="status" aria-live="polite" aria-atomic="true"></div>';
 
   s.answered = false;
   stage.querySelectorAll(".st-q-opt").forEach(btn => btn.addEventListener("click", () => {
@@ -3277,7 +3351,7 @@ function stStartExam(scope, count, timed, stage) {
   stExamStop();
   _examState = {
     scope, questions, i: 0, answers: new Array(questions.length).fill(null),
-    started: Date.now(), limit: timed ? questions.length * EXAM_SECONDS_PER_Q : 0,
+    started: Date.now(), limit: timed ? questions.length * EXAM_SECONDS_PER_Q : 0, warned: false,
     timer: null, stage,
   };
   if (_examState.limit) {
@@ -3286,7 +3360,11 @@ function stStartExam(scope, count, timed, stage) {
       const el = document.getElementById("st-ex-clock");
       if (el) {
         el.textContent = examClock(left);
-        el.classList.toggle("low", left <= 60);
+        const low = left <= 60;
+        // Announced once, at the crossing. A clock that speaks every second is
+        // a clock nobody can hear anything else over.
+        if (low && !_examState.warned) { _examState.warned = true; announce("One minute remaining"); }
+        el.classList.toggle("low", low);
       }
       // Running out is a submission, not an error: the paper is taken away and
       // whatever is on it is marked.
@@ -3365,6 +3443,8 @@ function stExamFinish() {
   stExamStop();
   const r = examResult();
   const pct = Math.round((r.score / r.total) * 100);
+  announce(`Exam finished. Score ${r.score} of ${r.total}, ${pct} per cent. `
+    + `${r.missed.length} missed.`);
   s.stage.innerHTML =
     '<div class="st-result"><div class="st-result-big">' +
       (pct >= 80 ? "🏆" : pct >= 50 ? "👍" : "📚") + '</div>' +
@@ -3855,7 +3935,7 @@ function stOpenProgress() {
     body.querySelectorAll(".st-pg-dom").forEach(b => b.addEventListener("click", () => {
       stClose();
       const section = domainSection(b.dataset.id);
-      section?.scrollIntoView({ behavior: "smooth", block: "start" });
+      section?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
       openDomain(section);
     }));
   });
