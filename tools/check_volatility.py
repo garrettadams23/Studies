@@ -31,7 +31,9 @@ What this checks, and what it only reports:
   * **Candidates** — topics that name a vendor console and carry no dated span.
     Reported, never failed: plenty of them mention a console in passing without
     making a claim about it, and a gate would only teach people to add a span
-    they do not mean.
+    they do not mean. Each row carries the sentence it matched, because a list
+    whose entries can only be dismissed by grepping for them is a list nobody
+    dismisses — see `context()`.
 
 Usage:
   python3 tools/check_volatility.py
@@ -94,6 +96,27 @@ CONSOLE_RE = re.compile(
     re.I)
 
 
+def context(block, match, width=62):
+    """The words either side of a console hit, as a reader would see them.
+
+    The row above names the topic and the phrase that matched; it never names
+    what the sentence was doing, so dismissing a false positive costs a grep.
+    Measured on this site's own output: all three candidates reported today are
+    false positives, and the newest is a shape the fixtures below do not cover —
+    *every Exchange admin meets* is a job title, not a console. The regex cannot
+    separate those two senses without evidence it does not have, so the report
+    shows the sentence and lets a person do it in a second instead.
+    """
+    window = block[max(0, match.start() - 400):match.end() + 400]
+    plain = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", window)).strip()
+    at = plain.lower().find(match.group(0).lower())
+    if at == -1:                       # the hit was inside an attribute
+        return plain[:width * 2]
+    start, end = max(0, at - width), min(len(plain), at + len(match.group(0)) + width)
+    return (("…" if start else "") + plain[start:end]
+            + ("…" if end < len(plain) else ""))
+
+
 def topics(text):
     starts = [m.start() for m in TOPIC_RE.finditer(text)]
     for n, start in enumerate(starts):
@@ -148,9 +171,11 @@ def main():
                 else:
                     facts.append((fields["checked"], domain, claim))
 
-            if not block_spans and CONSOLE_RE.search(block):
-                hit = CONSOLE_RE.search(block).group(0)
-                candidates.append((domain, label, hit))
+            if not block_spans:
+                hit = CONSOLE_RE.search(block)
+                if hit:
+                    candidates.append((domain, label, hit.group(0),
+                                       context(block, hit)))
 
     if "--candidates" not in sys.argv:
         for e in errors:
@@ -166,8 +191,9 @@ def main():
                 print(f"    {when}  {domain:12} {label[:56]}")
 
     print(f"\n{len(candidates)} topic(s) name a vendor console with no dated span:")
-    for domain, label, hit in candidates[:20]:
+    for domain, label, hit, ctx in candidates[:20]:
         print(f"  {domain:12} {label[:52]:54} — {hit}")
+        print(f"    {ctx}")
     if len(candidates) > 20:
         print(f"  …and {len(candidates) - 20} more")
 
@@ -196,6 +222,9 @@ CONSOLE_FIXTURES = [
      "'cloud console' is a noun phrase, not a product"),
     ("finding the forgotten old-admin.example.com", False,
      "an example hostname in a subdomain-enumeration card"),
+    ("Two on-prem mechanics every Exchange admin meets", True,
+     "a job title, not a console — indistinguishable from 'in the Exchange "
+     "admin' without evidence, so the report shows the sentence instead"),
 ]
 
 
