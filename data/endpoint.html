@@ -4034,3 +4034,240 @@ Remove-PSSession $s
           </div>
 
 <!-- /domain-body endpoint -->
+
+<!-- ── TOPIC: CERTIFICATE DELIVERY ─────────────────────────────── -->
+<div class="topic" data-reviewed="2026-09">
+  <div class="topic-header">
+    <span class="topic-icon">📜</span>
+    <span class="topic-name">Certificate Delivery — SCEP <span class="acro-exp">(Simple Certificate Enrollment Protocol)</span>, PKCS <span class="acro-exp">(Public Key Cryptography Standards)</span> &amp; Why Wi-Fi Fails Silently</span>
+    <span class="topic-badge">Intune • Certificates</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">The Profile That Fails Is Never the One That Reports the Error</div>
+      <div class="concept-desc">
+        Wi-Fi and VPN <span class="acro-exp">(Virtual Private Network)</span> profiles that authenticate with a certificate have a dependency the console does
+        not draw: the certificate profile must land <strong>first</strong>, and it must land on the same
+        device, for the same user, from a template the issuing authority will actually sign. When any of
+        that fails, the certificate profile is what errors — but nobody is looking at it, because the
+        symptom the user reports is <strong class="c-amber">&ldquo;wi-fi does not connect&rdquo;</strong>
+        and the Wi-Fi profile says it deployed successfully.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>What the reader sees</th><th>What is actually true</th></tr>
+          <tr><td>Wi-Fi profile: Succeeded</td><td>The profile arrived. It was never claimed the certificate did</td></tr>
+          <tr><td>Device is compliant</td><td>Compliance does not evaluate whether a certificate was issued</td></tr>
+          <tr><td>It works for the admin who tested it</td><td>The admin was in the group that had already received a certificate</td></tr>
+          <tr><td>It worked last year</td><td>Certificates expire. Renewal is a separate flow with its own failures</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Debug in dependency order, not in complaint order.</strong> Check
+          that the certificate exists on the device before touching the Wi-Fi profile at all — on
+          Windows the personal certificate store, on iOS the profile's payload. Every hour spent
+          re-reading a Wi-Fi profile that deployed correctly is an hour spent on the wrong object.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">SCEP, PKCS and Cloud PKI <span class="acro-exp">(Public Key Infrastructure)</span> — Three Ways to Get a Key onto a Device</div>
+      <div class="concept-desc">
+        The difference that matters is <strong>where the private key is generated</strong>. That single
+        property decides what infrastructure you must run, what happens when a device is lost, and
+        whether the credential can be exported.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Method</th><th>Key generated</th><th>Infrastructure</th><th>Suits</th></tr>
+          <tr><td>SCEP</td><td>On the device — the key never moves</td><td>Certificate authority plus a connector endpoint the device can reach</td><td>Device and user authentication at scale; the default choice</td></tr>
+          <tr><td>PKCS</td><td>On the certificate authority, then delivered</td><td>Certificate authority plus a connector service</td><td>Cases where the key must be escrowed or reused, such as S/MIME</td></tr>
+          <tr><td>Imported PKCS</td><td>Elsewhere entirely, uploaded in advance</td><td>A store of pre-generated certificates</td><td>Email encryption where old keys must be recoverable</td></tr>
+          <tr><td>Cloud PKI</td><td>On the device, against a hosted authority</td><td>None of your own — the service is the authority</td><td>Estates with no existing certificate infrastructure to keep</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Prefer SCEP unless something specific forbids it.</strong> A private key that never
+          leaves the device is the stronger posture, and a lost device becomes a revocation rather than
+          a key-compromise investigation. PKCS exists for the genuine exception — chiefly encrypted
+          mail, where a key that cannot be recovered means mail that cannot be read — and that exception
+          should be a decision somebody wrote down, not the option that happened to be picked first.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The Chain, and Every Link That Breaks It</div>
+      <div class="concept-desc">
+        A certificate reaching a device is a chain of six things, each owned by someone different.
+        The console reports on the last one. Working backwards from a failure is faster than reading
+        forwards from the profile.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Link</th><th>Fails when</th><th>Fingerprint</th></tr>
+          <tr><td>Trusted root profile</td><td>The root was never deployed, or was deployed after the leaf</td><td>Certificate present but untrusted; the chain shows an unknown issuer</td></tr>
+          <tr><td>Certificate template</td><td>Permissions, key usage or subject format do not match what the profile asks for</td><td>The authority denies the request; the connector log names the template</td></tr>
+          <tr><td>Connector service</td><td>Its own certificate expired, or the service account's password changed</td><td>Every request fails at once, across all devices, from a single moment in time</td></tr>
+          <tr><td>Reachability</td><td>The device cannot reach the endpoint from where it actually is</td><td>Works on the corporate network, fails at home — or the reverse</td></tr>
+          <tr><td>Subject and SAN <span class="acro-exp">(Subject Alternative Name)</span> construction</td><td>A variable resolves empty for some users</td><td>Fails for a subset that share an attribute nobody populated</td></tr>
+          <tr><td>Renewal threshold</td><td>The device is off, or out of contact, during the renewal window</td><td>A wave of failures that tracks a cohort's enrolment date, a year later</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Row five is the one that produces the ticket nobody can reproduce.</strong>
+          A subject or subject-alternative-name built from a directory attribute — an email address, an
+          employee identifier — succeeds for everybody who has it and fails silently for the handful who
+          do not, so the failure correlates with nothing an administrator would think to check.
+          Before rolling a certificate profile out, query the directory for the attribute the template
+          uses and count the empties.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Habit</div>
+      <div class="concept-title">Renewal Is the Deployment You Are Not Watching</div>
+      <div class="concept-desc">
+        A certificate rollout gets attention because somebody is running it. The renewal a year later
+        gets none, and it runs against a fleet that has drifted: devices retired without revocation,
+        users who moved between groups, a connector nobody patched. The failure arrives as a slow
+        trickle of authentication problems rather than an incident, which is why it is usually
+        diagnosed late.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Practice</th><th>Why it earns its place</th></tr>
+          <tr><td>Set the renewal threshold generously</td><td>A device that is off for a fortnight still gets several attempts before expiry</td></tr>
+          <tr><td>Alert on the connector, not the profile</td><td>Connector failure is the one that affects everybody at once and shows up nowhere useful</td></tr>
+          <tr><td>Report on issued certificates against enrolled devices</td><td>The gap between the two is the population that will fail, listed before it does</td></tr>
+          <tr><td>Revoke on retirement, deliberately</td><td>Wiping a device does not invalidate what it was issued</td></tr>
+          <tr><td>Diary the authority's own expiry</td><td>An issuing authority certificate expiring takes the whole estate down and is rarely monitored</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the one worth putting in a calendar today.</strong> Every certificate
+          this system issues is bounded by the life of the authority above it, that life is measured in
+          years, and nothing in the endpoint tooling will warn you. It is the single highest-impact,
+          lowest-frequency failure in the estate — and the only defence is somebody having written the
+          date down.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOPIC: INTUNE RBAC & SCOPE TAGS ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-09">
+  <div class="topic-header">
+    <span class="topic-icon">🔑</span>
+    <span class="topic-name">Intune RBAC <span class="acro-exp">(Role-Based Access Control)</span> &amp; Scope Tags — Delegating Without Handing Over the Fleet</span>
+    <span class="topic-badge">Intune • Delegation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Two Permission Systems, and the One People Reach for Is the Wrong One</div>
+      <div class="concept-desc">
+        Intune permissions come from two places that look interchangeable and are not. Directory roles
+        are tenant-wide and coarse; Intune's own roles are scoped and fine-grained. The common failure
+        is granting a directory role because it is the one visible from the identity console, which
+        hands somebody the entire fleet in order to let them wipe one laptop.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Mechanism</th><th>Granularity</th><th>Use it for</th></tr>
+          <tr><td>Directory role — Intune Administrator</td><td>Everything in the service, every device, every policy</td><td>The two or three people who own the service. Not a helpdesk tier</td></tr>
+          <tr><td>Intune role — built-in</td><td>A named set of actions: Help Desk Operator, Policy and Profile Manager, Read Only</td><td>Almost every delegation. Start from these before writing one</td></tr>
+          <tr><td>Intune role — custom</td><td>Individual permissions, chosen action by action</td><td>The genuine exception the built-ins do not fit</td></tr>
+          <tr><td>Scope tag on a role assignment</td><td>Which <em>objects</em> the assignment can see</td><td>Regional or business-unit separation inside one tenant</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Reach for a built-in Intune role first, and treat the directory role
+          as the break-glass tier.</strong> A custom role written on day one usually encodes a
+          misunderstanding of what the built-ins already do — and every custom role is a thing somebody
+          must re-review the next time the product adds a permission.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">A Role Assignment Is Three Answers, Not One</div>
+      <div class="concept-desc">
+        This is where the model stops resembling ordinary permissions. An assignment names
+        <strong>who</strong> holds the role, <strong>which admins' objects</strong> they may act on, and
+        <strong>which users or devices</strong> they may act against. Those last two are separate lists,
+        and conflating them is the reason a delegation either does nothing or does far too much.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Part of the assignment</th><th>Answers</th><th>Getting it wrong looks like</th></tr>
+          <tr><td>Members</td><td>Who is being given the role</td><td>Nothing subtle — it simply does not apply</td></tr>
+          <tr><td>Scope (groups)</td><td>Which users and devices they may act <em>on</em></td><td>The operator sees a device and cannot wipe it, with no useful error</td></tr>
+          <tr><td>Scope (tags)</td><td>Which objects — policies, apps, profiles — they may even see</td><td>An empty console for an admin who has permissions, because nothing carries their tag</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The empty console is the signature of this model, and it is not a bug.</strong> An
+          administrator with a correct role and no matching scope tag sees a working portal with
+          nothing in it. Anybody debugging a delegation should check tags before checking permissions —
+          the permission is usually right and the object simply is not visible.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">What Scope Tags Do Not Do</div>
+      <div class="concept-desc">
+        Scope tags are a visibility filter over objects. They are widely assumed to be a security
+        boundary, and treating them as one produces a delegation that is weaker than the diagram
+        suggests.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Assumption</th><th>Reality</th></tr>
+          <tr><td>&ldquo;Regional admins cannot affect other regions&rdquo;</td><td>True for tagged objects. A policy with the default tag is visible to everybody</td></tr>
+          <tr><td>&ldquo;Untagged means private&rdquo;</td><td>The opposite — the default tag is the broadest one, and it is what new objects get</td></tr>
+          <tr><td>&ldquo;It limits which devices they can see&rdquo;</td><td>Devices are limited by the scope <em>groups</em>, not by tags</td></tr>
+          <tr><td>&ldquo;It stops them creating things&rdquo;</td><td>Creation is a permission. A tag decides what the new object inherits, not whether it may exist</td></tr>
+          <tr><td>&ldquo;It is an audit boundary&rdquo;</td><td>Audit logs are tenant-wide; the tag does not partition them</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Row two is the one that quietly undoes a design.</strong> Every object
+          created before the tagging scheme existed carries the default tag, and so does every object
+          created by somebody who forgot to set one. A tagging model is only as good as the audit that
+          finds untagged objects — and that audit has to run more than once, because the population
+          grows every time somebody clicks Create.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Habit</div>
+      <div class="concept-title">Design the Delegation From the Tickets, Not the Org Chart</div>
+      <div class="concept-desc">
+        Delegation models drawn from the organisation chart produce a role per team and a permission
+        set nobody can justify. Drawn from the work, they produce two or three roles that cover most
+        tickets and an escalation path for the rest.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <tr><th>Tier</th><th>Can do</th><th>Cannot</th></tr>
+          <tr><td>Service desk</td><td>Read devices, sync, restart, retrieve a recovery key, assign a user</td><td>Change policy, wipe, alter compliance</td></tr>
+          <tr><td>Endpoint engineer</td><td>Author and assign policy and apps within their scope tag</td><td>Change RBAC, edit tenant-wide baselines</td></tr>
+          <tr><td>Service owner</td><td>Everything, including role assignments</td><td>Nothing — which is why it is two or three people with privileged access management around it</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Put the recovery-key read in tier one deliberately, and audit it.</strong> It is the
+          single most-requested action, so withholding it guarantees the escalation path becomes a
+          standing exception — and standing exceptions are how a service desk ends up holding an
+          administrator role. Grant it, log it, and review the log; that is a smaller risk than the
+          workaround it prevents.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

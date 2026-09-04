@@ -21652,3 +21652,44 @@ cloud 74 -> 76 topics · 1,534 -> 1,536 · raw 7.7 MB of 12.0
 - **GPO to Intune migration** — one clause inside the ADMX topic.
 - **Intune Suite** — Remote Help, Tunnel, Advanced Analytics and Enterprise App
   Management are absent from the corpus entirely.
+
+## Session — Intune: the two things the corpus named and never explained
+
+Both topics in this wave were chosen the same way: the site already told me they
+mattered and then stopped.
+
+**Certificate Delivery** (4 cards). SCEP and PKCS appeared once each, in a single
+row of the *iOS & Android Enterprise* table — a row whose own prose reads *"the
+certificate row is the one that fails silently and takes a day to find"*. The
+inversion is that **the profile that fails is never the one that reports the
+error**: Wi-Fi reports success because the profile did arrive, and nobody looks
+at the certificate object that actually failed. Then SCEP versus PKCS versus
+Imported PKCS versus Cloud PKI decided on the one property that drives
+everything else — where the private key is generated — the six-link chain with a
+fingerprint per link, and renewal as the deployment nobody is watching.
+
+The chain card's fifth row is the one worth the page: a subject or SAN built from
+a directory attribute succeeds for everyone who has it and fails silently for the
+handful who do not, so the failure correlates with nothing an admin would check.
+
+**Intune RBAC & Scope Tags** (4 cards). `scope tag` appeared in exactly one
+clause. The inversion is that two permission systems look interchangeable and the
+visible one is wrong — people grant a tenant-wide directory role to let somebody
+wipe one laptop. Then the part that makes this model unlike ordinary
+permissions: an assignment is *three* answers (members, scope groups, scope
+tags), and the empty console is its signature failure — correct role, no matching
+tag, a working portal with nothing in it. Then what scope tags are not, and
+designing tiers from tickets rather than the org chart.
+
+### A gate earned its keep
+
+`acronym_drift` failed the build: SAN is ambiguous, `endpoint` had no `byDomain`
+decision, so it annotated as *Storage Area Network* inside a certificate table.
+The right expansion there is Subject Alternative Name. Fixed in
+`data/acronyms.json` rather than in the prose, so the decision holds for
+everything written in that domain afterwards.
+
+```
+endpoint +2 topics · 1,536 -> 1,538 · raw 7.7 MB of 12.0
+31 gates green · 296 browser checks green
+```
