@@ -3077,6 +3077,225 @@ az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScrip
             </div>
           </div>
 
+          <!-- ── TOPIC: AZURE DATABASES ──────────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🗄️</span>
+              <span class="topic-name">Azure Databases — SQL <span class="acro-exp">(Structured Query Language)</span> Database, Managed Instance &amp; Cosmos DB</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Four Doors to a Relational Database, and They Are Not Interchangeable</div>
+                <div class="concept-desc">
+                  Azure sells several things that all answer to &ldquo;we need SQL&rdquo;, and the
+                  difference between them is not performance — it is
+                  <strong class="c-cyan">how much of the server you still own</strong>. Pick by what
+                  the application needs from the instance, because that is what cannot be changed
+                  later without a migration.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Service</th><th>What you get</th><th>Pick it when</th></tr>
+                    <tr><td>SQL Database (single)</td><td>One database, no instance surface at all</td><td>A new application that never needed cross-database queries</td></tr>
+                    <tr><td>SQL Database (elastic pool)</td><td>Many databases sharing one budget of compute</td><td>Dozens of small databases with peaks that do not coincide</td></tr>
+                    <tr><td>SQL Managed Instance</td><td>Near-full instance: SQL Agent, cross-database queries, CLR <span class="acro-exp">(Common Language Runtime)</span>, linked servers</td><td>Lifting an existing estate that uses instance-level features</td></tr>
+                    <tr><td>SQL Server on a VM <span class="acro-exp">(Virtual Machine)</span></td><td>The whole server, and the whole job of running it</td><td>You need a version, a patch level or a feature the managed tiers do not offer</td></tr>
+                    <tr><td>PostgreSQL / MySQL Flexible Server</td><td>Managed open-source engines with a maintenance window you choose</td><td>The application already speaks Postgres or MySQL</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">The migration question is the only one that matters at the
+                    start:</strong> Managed Instance exists because SQL Agent jobs, linked servers and
+                    cross-database joins are extremely common in estates nobody designed for cloud, and
+                    rewriting them costs more than the price difference. Going straight to single
+                    database is right for something new and a rewrite disguised as a migration for
+                    something old.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">DTU and vCore Are Not Two Prices for One Thing</div>
+                <div class="concept-desc">
+                  The purchasing model looks like a billing detail and is closer to a capacity model.
+                  <strong>DTU</strong> is a blended unit — processor, memory and I/O <span class="acro-exp">(Input/Output)</span> bundled at a fixed
+                  ratio — so you cannot buy more of one without buying more of all three. <strong>vCore</strong>
+                  separates them, which is what makes the two things people actually want possible:
+                  paying for the cores your licence already covers, and scaling storage without scaling
+                  compute.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Question</th><th>DTU answer</th><th>vCore answer</th></tr>
+                    <tr><td>Need more I/O only</td><td>Buy a bigger bundle of everything</td><td>Raise storage or change tier</td></tr>
+                    <tr><td>Already own SQL Server licences</td><td>No mechanism to use them</td><td>Azure Hybrid Benefit applies</td></tr>
+                    <tr><td>Sizing from an on-prem server</td><td>Guesswork — the unit has no on-prem equivalent</td><td>Cores map to cores</td></tr>
+                    <tr><td>Predicting the bill</td><td>Simple, one number</td><td>More lines, more control</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Start on vCore unless the database is small and the estate has no
+                    licences.</strong> DTU is not wrong — it is genuinely simpler for a small
+                    workload — but it is a one-way simplification, and the moment somebody asks
+                    &ldquo;why are we paying for cores we own?&rdquo; the answer is a purchasing-model
+                    change rather than a setting.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Cosmos DB — Where the Consistency Slider Really Costs</div>
+                <div class="concept-desc">
+                  Cosmos is billed in <strong>request units</strong>: a synthetic measure of the work a
+                  query costs, provisioned per second. Two things follow, and both surprise people.
+                  A badly-shaped query is not slow, it is <em>expensive</em>; and throughput is
+                  provisioned per container or shared per database, so an idle container with a floor
+                  still bills.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Decision</th><th>What it actually controls</th><th>The cost of getting it wrong</th></tr>
+                    <tr><td>Partition key</td><td>How data and throughput are distributed</td><td>A hot partition throttles while the rest of the container idles — and it cannot be changed in place</td></tr>
+                    <tr><td>Consistency level</td><td>How stale a read may be</td><td>Strong costs roughly double the request units of eventual, and forbids multi-region writes</td></tr>
+                    <tr><td>Provisioned vs serverless</td><td>Whether you pay for a floor or per request</td><td>Serverless is cheaper when idle and has a lower ceiling; provisioned wastes money on spiky work</td></tr>
+                    <tr><td>Autoscale</td><td>A band, not elasticity</td><td>Bills at a higher rate per unit; worth it only if the peak-to-floor ratio is real</td></tr>
+                    <tr><td>Indexing policy</td><td>Which paths are indexed on write</td><td>The default indexes everything, and writes pay for it on every property nobody queries</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The partition key is the decision that has no undo.</strong>
+                    Consistency, throughput mode and indexing can all be changed later; the partition
+                    key means recreating the container and migrating the data. Choose it from the query
+                    the application runs most, not from the field that happens to look like an
+                    identifier &mdash; the classic mistake is a tenant identifier in an estate where one
+                    tenant is a hundred times the size of the others.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Fingerprints</div>
+                <div class="concept-title">Failures That Look Like the Database and Are Not</div>
+                <div class="concept-desc">
+                  Managed database incidents are mostly connectivity and quota, dressed as query
+                  problems. These four cover most tickets, and each has a symptom that names it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Symptom</th><th>Usually is</th><th>Where to look</th></tr>
+                    <tr><td>Intermittent timeouts under load, fine when quiet</td><td>Hitting the tier's ceiling, not a slow query</td><td>Resource utilisation against the tier limit; raise the tier to test the theory</td></tr>
+                    <tr><td>Works from a VM, fails from the office</td><td>Firewall rules or the public-endpoint switch</td><td>Server firewall, private endpoint, and whether public access is disabled outright</td></tr>
+                    <tr><td>&ldquo;Login failed&rdquo; for a working account</td><td>Connecting to the wrong database or a contained user</td><td>The database name in the connection string; contained users exist per database, not per server</td></tr>
+                    <tr><td>Sudden failover, no change deployed</td><td>Planned maintenance on the service</td><td>Expected: the client must retry. A managed database reboots without asking</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Retry logic is not optional on a managed database.</strong>
+                    The platform patches and fails over on its own schedule, so a connection will be
+                    dropped at some point that correlates with nothing in your change log. An
+                    application without transient-fault handling will report that as an outage, and the
+                    investigation will look for a cause that does not exist.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ── TOPIC: AZURE-NATIVE IAC ─────────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🧾</span>
+              <span class="topic-name">Azure-Native IaC <span class="acro-exp">(Infrastructure as Code)</span> — Bicep, ARM <span class="acro-exp">(Azure Resource Manager)</span> &amp; What Terraform Still Does Better</span>
+              <span class="topic-badge">Azure</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Bicep Is Not a Language, It Is a Compiler</div>
+                <div class="concept-desc">
+                  Bicep looks like a competitor to ARM templates and is not one. It compiles
+                  <strong>to</strong> ARM JSON <span class="acro-exp">(JavaScript Object Notation)</span>, and Azure Resource Manager is the only thing that ever
+                  executes. Everything that follows comes from that one fact: the deployment errors are
+                  ARM errors, the resource properties are ARM properties, and a feature Resource Manager
+                  cannot express is not going to appear in Bicep either.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Consequence</th><th>What it means in practice</th></tr>
+                    <tr><td>No state file</td><td>Azure itself is the state. Nothing to lock, nothing to corrupt, nothing to import</td></tr>
+                    <tr><td>Errors arrive in ARM's vocabulary</td><td>An error naming a property you never typed is the compiled template talking</td></tr>
+                    <tr><td>Day-one support for new services</td><td>Resource Manager gets the API <span class="acro-exp">(Application Programming Interface)</span> first, so Bicep can use it before third-party providers do</td></tr>
+                    <tr><td>Azure only</td><td>There is no story here for anything outside the platform</td></tr>
+                    <tr><td>Decompilation is one way in practice</td><td>Existing JSON converts to Bicep, but the output needs a human before it is readable</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Learn Bicep, read ARM.</strong> Nobody should be writing
+                    ARM JSON by hand any more, and everybody deploying Azure will eventually have to
+                    <em>read</em> it — in an error message, in a Microsoft quickstart, in a policy's
+                    deploy-if-not-exists block. Treating Bicep as the source and ARM as the assembly
+                    language is the accurate mental model.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Choosing</div>
+                <div class="concept-title">Bicep or Terraform, Decided on Something Other Than Taste</div>
+                <div class="concept-desc">
+                  This argument is usually had on syntax, which is the least important difference.
+                  The two tools disagree about <strong>where the truth lives</strong>, and that is what
+                  determines which problems each one hands you.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Question</th><th>Bicep</th><th>Terraform</th></tr>
+                    <tr><td>Where is desired state recorded?</td><td>In Azure — the deployment is compared to reality</td><td>In a state file you must store, lock and protect</td></tr>
+                    <tr><td>Someone changed a resource in the portal</td><td>The next deployment corrects it, quietly</td><td>The plan shows drift explicitly, then corrects it</td></tr>
+                    <tr><td>Deleting a resource from the code</td><td>Nothing happens unless the deployment is in <em>complete</em> mode, which is dangerous at scale</td><td>The plan proposes the destroy; it is visible before it runs</td></tr>
+                    <tr><td>Multi-cloud, or Azure plus a SaaS <span class="acro-exp">(Software as a Service)</span> provider</td><td>Not addressed</td><td>The whole point of the provider model</td></tr>
+                    <tr><td>A service shipped last week</td><td>Usually available immediately</td><td>Waits for the provider to add it</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Rows three and four decide it for most teams.</strong> If the estate is
+                    Azure-only and the operational worry is &ldquo;did somebody change it in the
+                    portal&rdquo;, Bicep is simpler and has less to go wrong. If the code must also
+                    create a DNS <span class="acro-exp">(Domain Name System)</span> record at a registrar, a repository, or anything outside Azure — or if
+                    you need to see a destroy before it happens — Terraform earns its state file. This
+                    site's <span class="xref">Terraform on AWS &amp; GCP</span> covers the state model
+                    that argument turns on.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Deployment Scope and Mode — The Two Settings That Delete Things</div>
+                <div class="concept-desc">
+                  A Bicep file is written against a <strong>scope</strong>, and deployed in a
+                  <strong>mode</strong>. Neither is obvious from reading the file, and getting either
+                  wrong produces a result that is technically what you asked for.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Setting</th><th>Options</th><th>What goes wrong</th></tr>
+                    <tr><td>Target scope</td><td>Resource group, subscription, management group, tenant</td><td>A subscription-scope file deployed at resource-group scope fails on resources it cannot see</td></tr>
+                    <tr><td>Mode</td><td>Incremental (default) or complete</td><td><strong>Complete deletes anything in the resource group that is not in the template.</strong> It is the standard way people lose a resource somebody else created</td></tr>
+                    <tr><td>Module scope</td><td>A module can target a different scope than its parent</td><td>The usual way to deploy a resource group and its contents from one file</td></tr>
+                    <tr><td>What-if</td><td>A dry run against live Azure</td><td>Not perfect — some properties always report as changing — but it is the only preview there is</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Run what-if in the pipeline and read it, and treat complete
+                    mode as a deliberate act.</strong> Complete mode is genuinely useful for an
+                    environment the template fully owns, and catastrophic for a shared resource group.
+                    The safe default is incremental plus a resource lock on anything that must survive a
+                    bad deployment — the lock is the backstop that does not depend on anybody reading
+                    the plan.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- ── TOPIC: ENTRA ID SIGN-IN TROUBLESHOOTING ──────────────────── -->
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">

@@ -21584,3 +21584,71 @@ honest if it still bites: re-introducing `role="button"` fails it with
 ```
 a11y suite   22 -> 24 checks    (6 -> 24 across the whole pass)
 ```
+
+---
+
+## Session record — Azure was a partial set beside two complete ones
+
+A request to go deep on Intune and Azure, into a corpus that already holds 168
+topics across `endpoint` (52), `cloud` (74) and `m365` (42). The first job was
+not writing — it was finding out what is genuinely absent.
+
+### The measurement, and the two times it was wrong
+
+Built a provider × service-area matrix from the `cloud` topic titles:
+
+```
+service area               AWS   GCP  Azure
+Databases                  yes   yes    —
+Load balancing             yes   yes    —
+Serverless/containers      yes   yes    —
+Native IaC                 yes   yes    —
+```
+
+**Two of those four were false.** Load balancing is covered — inside *Azure
+Networking — VNet, NSG & the Load-Balancer Family*, which the matcher missed
+because the title hyphenates it. Azure Policy, another candidate, is covered
+inside *Azure Hierarchy, RBAC Scopes & Policy*. A title-keyed census finds
+topics, not coverage, and this one over-claimed twice in thirteen rows.
+
+The corrective step is the one worth keeping: **grep the service names at
+content level, then read where they land.** `Azure SQL`, `Cosmos`, `Bicep`,
+`App Service` and `Azure Functions` all appear — once or twice each, in the
+Rosetta Stone comparison row or a SKU-picking table. Named, never treated.
+
+### What shipped
+
+**Azure Databases** (4 cards) — the four doors to a relational database and why
+the choice is a migration question rather than a performance one; DTU versus
+vCore as a capacity model rather than a price; Cosmos priced in request units,
+where the partition key is the one decision with no undo; and four failures that
+look like the database and are not.
+
+**Azure-Native IaC** (3 cards) — the inversion is that **Bicep is a compiler,
+not a language**: it emits ARM JSON, Resource Manager is the only thing that
+executes, and every consequence follows from that (no state file, errors in
+ARM's vocabulary, day-one service support, Azure only). Then Bicep versus
+Terraform decided on where the truth lives rather than on syntax, and the two
+settings that delete things — target scope, and complete mode.
+
+The corpus had already said this one was worth knowing. *Azure Core* carries the
+line **"Bicep is worth knowing — a clean DSL"** and then stops, which is the same
+shape as the certificate row in `endpoint`: the site naming the thing that
+matters and not covering it.
+
+```
+cloud 74 -> 76 topics · 1,534 -> 1,536 · raw 7.7 MB of 12.0
+```
+
+### Still open, and why each is a real gap rather than a wish
+
+- **Azure PaaS compute** — App Service, Functions and Container Apps are one row
+  each in a SKU table. AWS and GCP both have full *Serverless & Containers*
+  topics.
+- **Intune certificates** — SCEP and PKCS appear once, in a table row whose own
+  prose says *"the certificate row is the one that fails silently and takes a day
+  to find"*. The site names it as the silent killer and never explains it.
+- **Intune RBAC and scope tags** — one clause inside the Intune overview.
+- **GPO to Intune migration** — one clause inside the ADMX topic.
+- **Intune Suite** — Remote Help, Tunnel, Advanced Analytics and Enterprise App
+  Management are absent from the corpus entirely.
