@@ -22236,3 +22236,74 @@ Proved against a faithful revert of four files: 30 findings, exit 1.
 39 comments joined + 6 code blocks reflowed by hand · 5 files
 lint fixtures 16 -> 22 · 31 gates green · 301 browser checks green
 ```
+
+## Session — the symmetry test, run backwards
+
+The Azure waves used a test that worked twice: build the provider × service-area
+matrix from topic titles, then check it at content level. Now that Azure is
+complete, the same test run in the other direction has something to say.
+
+Fifteen areas across three providers. Fourteen rows are complete. One is not:
+
+```
+                        AWS   GCP   Azure
+  getting started        ✓     ✓      ✓
+  IAM / workload id      ✓✓    ✓✓     ✓✓
+  networking, LB & DNS   ✓     ✓      ✓
+  compute, serverless    ✓✓    ✓✓     ✓✓
+  storage, databases     ✓✓    ✓✓     ✓✓
+  security, secrets      ✓✓    ✓✓     ✓✓
+  native IaC             ✓     ✓      ✓
+  observability          ✓     ✓      ✓
+  troubleshooting        ✗     ✗      ✓
+```
+
+The corpus holds eleven troubleshooting playbooks — network, hardware, GPO,
+MECM, virtualisation, M365, Azure — so this is not a case of the form being
+unusual. Two of three providers simply never got one.
+
+### Written as counterparts, not copies
+
+The three-card shape is shared (method, toolkit, error reference) because the
+reader benefits from the shape being the same. What goes in it is not, because
+the platforms fail differently, and that is the whole content of the topics.
+
+**AWS** puts *"am I in the account and region I think I am"* first, because the
+credential chain resolves in an order few people can recite and every later step
+is wasted if the identity is wrong. Its policy question is the hard one — a deny
+in any of five policy types wins — so the verdict argues for the simulator over
+reading five documents by eye. The error table carries the S3 404-where-you-
+expected-403 (no `ListBucket`, so S3 will not confirm the object exists) and the
+NACL asymmetry that lets a request out and blocks the reply. It closes on service
+control policies: something that worked yesterday, broken by a grant made above
+the account, leaving no trace in the account's own IAM.
+
+**GCP** inverts the order, because two things are off by default that engineers
+assume are on: the API, and billing. Both produce errors that read like
+permission problems, so the natural response — widen a role — does not help and
+leaves a broader grant behind. Hence its verdict: *a permission error on this
+platform is a hypothesis, not a diagnosis*. Three causes wear the same denial and
+only one is fixed by granting anything.
+
+### Reachability, this time in the same commit
+
+The last wave's lesson applied without being re-learned: both topics went into
+their provider's end-to-end path (ending on the playbook, exactly as *Running
+Azure* does) and into `related.json` in both directions, before the wave was
+committed rather than a day later.
+
+```
+cloud 78 -> 80 topics · 1,542 -> 1,544 · paths 1,579 -> 1,581 steps
+related 4,678 -> 4,696 links, still 0 one-way · deep dead ends: 0
+31 gates green · 301 browser checks green
+```
+
+### A third heuristic that did not converge, recorded rather than pursued
+
+Looking for code-block damage in languages the two decidable signals cannot see,
+I tried "a continuation line indented by exactly two spaces where the block uses
+no other two-space indentation". 343 hits, and the first ten were all legitimate
+— pretty-printed JSON, a Suricata rule with a backslash continuation. Two
+heuristics have now failed the same way (635 hits, then 343), and both failed by
+being *plausible*. The rule that keeps working is narrower: only signals a
+language's grammar makes impossible are worth acting on.

@@ -2350,6 +2350,106 @@ gcloud compute instances list --project my-prod-project</pre>
                 </div>
               </div>
             </div>
+          </div>          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🧰</span>
+              <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Troubleshooting Playbook</span>
+              <span class="topic-badge">AWS · Ops</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Method</div>
+                <div class="concept-title">Five Questions, In This Order</div>
+                <div class="concept-desc">
+                  The order matters more here than on other providers, because the first two
+                  questions are the ones that waste whole afternoons. An engineer debugging a
+                  permission problem in the wrong account is not going to find it, however good
+                  the rest of the method is.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>#</th><th>Question</th><th>Where to look</th></tr>
+                    <tr><td>1</td><td>Am I in the account and region I think I am?</td><td><code>sts get-caller-identity</code>, and the region the CLI <span class="acro-exp">(Command Line Interface)</span> resolved — not the one in the console</td></tr>
+                    <tr><td>2</td><td>Which identity actually made the call?</td><td>The credential chain resolves in a fixed order; CloudTrail records who it landed as</td></tr>
+                    <tr><td>3</td><td>Is it allowed by <em>every</em> policy type?</td><td>Identity policy, resource policy, SCP <span class="acro-exp">(Service Control Policy)</span>, permission boundary, session policy — a deny in any one wins</td></tr>
+                    <tr><td>4</td><td>Can the packets get there and back?</td><td>Reachability Analyzer; security groups are stateful, network ACLs <span class="acro-exp">(Access Control List)</span> are not</td></tr>
+                    <tr><td>5</td><td>Is the service throttling or degraded?</td><td>Health Dashboard for the region, and the error code for <code>Throttling</code></td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Run <code>sts get-caller-identity</code> before
+                    forming any theory.</strong> It costs a second and answers question one and
+                    half of question two. The credential chain — environment variables, then the
+                    shared config file, then container credentials, then the instance profile —
+                    means the identity you are using is often not the one you configured, and
+                    every later step is wasted if that is wrong.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Toolkit</div>
+                <div class="concept-title">The Commands That Answer Each Question</div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># 1 — who am I, and where. The answer is frequently the whole bug</span>
+aws sts get-caller-identity
+aws configure list          <span class="com"># shows which source each value came from</span>
+
+<span class="com"># 2 — the call as AWS saw it: identity, error code, request ID</span>
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=RunInstances \
+  --max-results 5 --query <span class="str">'Events[].{time:EventTime,user:Username,src:EventSource}'</span> --output table
+
+<span class="com"># 3 — decode the message an AccessDenied hands you but nobody reads</span>
+aws sts decode-authorization-message --encoded-message <span class="str">"&lt;blob from the error&gt;"</span>
+
+<span class="com"># 3 — ask IAM the question directly instead of reading policies by eye</span>
+aws iam simulate-principal-policy --policy-source-arn arn:aws:iam::111122223333:role/app \
+  --action-names s3:GetObject --resource-arns arn:aws:s3:::my-bucket/key
+
+<span class="com"># 4 — does a path exist, through every SG, NACL and route in between</span>
+aws ec2 create-network-insights-path --source i-0abc --destination i-0def \
+  --protocol tcp --destination-port 443
+aws ec2 start-network-insights-analysis --network-insights-path-id nip-0123
+
+<span class="com"># 5 — the instance is unreachable: get a shell without SSH, or read the screen</span>
+aws ssm start-session --target i-0abc
+aws ec2 get-console-output --instance-id i-0abc --output text</pre>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The policy simulator is the tool people skip and
+                    should not.</strong> Reading five policy documents and holding the evaluation
+                    order in your head is exactly the task humans are worst at, and it is the one
+                    AWS will answer for you in a single call.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Error Reference</div>
+                <div class="concept-title">What the Message Actually Means</div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Error</th><th>Real cause</th><th>First move</th></tr>
+                    <tr><td><code>AccessDenied</code></td><td>Either no policy allows it, or one explicitly denies it — the message does not say which</td><td>Simulate the action; an explicit deny usually means an SCP or a permission boundary</td></tr>
+                    <tr><td><code>UnauthorizedOperation</code></td><td>The EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> flavour of the same thing, with the reason encoded</td><td><code>sts decode-authorization-message</code> on the blob</td></tr>
+                    <tr><td>S3 <span class="acro-exp">(Simple Storage Service)</span> returns <code>404</code> where you expected <code>403</code></td><td>You lack <code>ListBucket</code>, so S3 will not confirm the object exists</td><td>Fix the list permission before concluding the object is missing</td></tr>
+                    <tr><td><code>InvalidClientTokenId</code></td><td>Credentials from another account or partition, or a deleted key</td><td>Check the caller identity, not the key value</td></tr>
+                    <tr><td><code>RequestTimeTooSkewed</code></td><td>The client's clock has drifted beyond the signature window</td><td>Fix time sync; it is never the credentials</td></tr>
+                    <tr><td><code>ThrottlingException</code> / <code>RequestLimitExceeded</code></td><td>An API <span class="acro-exp">(Application Programming Interface)</span> rate limit, often from a loop that describes before every action</td><td>Back off exponentially with jitter, and cache what does not change</td></tr>
+                    <tr><td>&ldquo;Could not connect to the endpoint URL <span class="acro-exp">(Uniform Resource Locator)</span>&rdquo;</td><td>A region that has no such service, a typo, or a VPC <span class="acro-exp">(Virtual Private Cloud)</span> with no route out and no interface endpoint</td><td>Confirm the region first; then look for the missing endpoint</td></tr>
+                    <tr><td>Connection opens, replies never arrive</td><td>The network ACL allowed the request and blocked the ephemeral return port</td><td>NACLs <span class="acro-exp">(Network Access Control List)</span> are stateless — the return range must be allowed explicitly</td></tr>
+                    <tr><td><code>ExpiredToken</code> mid-run</td><td>An assumed-role session that outlived its duration</td><td>Refresh inside the loop rather than once at the start</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>The pattern worth internalising: when something that worked yesterday
+                    fails today and nothing in the account changed, look above the
+                    account.</strong> A service control policy applied at the organisational unit
+                    denies actions no account-level administrator can grant back, and it leaves no
+                    trace in the account's own IAM <span class="acro-exp">(Identity and Access Management)</span>. That is the AWS version of being broken by
+                    somebody who never touched your resources.
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
@@ -2408,6 +2508,109 @@ gcloud compute instances list --project my-prod-project</pre>
                   nobody queries, then set retention, then sink anything with a compliance requirement to
                   storage</strong> &mdash; and note the same structure applies on the other providers, with
                   different product names.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🧰</span>
+              <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Troubleshooting Playbook</span>
+              <span class="topic-badge">GCP · Ops</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Method</div>
+                <div class="concept-title">Five Questions, In This Order</div>
+                <div class="concept-desc">
+                  Google Cloud's first two questions are unlike the other providers', because two
+                  things here are off by default that engineers assume are on: the API <span class="acro-exp">(Application Programming Interface)</span> for the
+                  service you are calling, and billing on the project you are calling it from.
+                  Between them they account for most first-day failures, and both produce errors
+                  that read like permission problems.
+                </div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>#</th><th>Question</th><th>Where to look</th></tr>
+                    <tr><td>1</td><td>Is the API enabled on <em>this</em> project?</td><td>Services list. Enabling is per project and per service, and nothing is on by default</td></tr>
+                    <tr><td>2</td><td>Which project, and is billing attached?</td><td>The active configuration, not the console tab you have open</td></tr>
+                    <tr><td>3</td><td>Is the principal allowed, at whatever level it inherits from?</td><td>Policy Troubleshooter, remembering that organisation and folder grants flow down</td></tr>
+                    <tr><td>4</td><td>Can the packets get there?</td><td>Connectivity Tests; VPC <span class="acro-exp">(Virtual Private Cloud)</span> firewall is default-deny inbound and rules are priority-ordered</td></tr>
+                    <tr><td>5</td><td>Am I against a quota rather than a bug?</td><td>Quotas page — many are per-project, per-region and small until raised</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-green">Check the enabled-API list before reading a single
+                    policy.</strong> A disabled service returns a permission-shaped error, so the
+                    natural response is to widen a role — which does not help, and leaves a
+                    broader grant behind once somebody finds the real cause. It is the single most
+                    common wasted hour on this platform.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Toolkit</div>
+                <div class="concept-title">The Commands That Answer Each Question</div>
+                <div class="dw">
+<pre class="code-block"><span class="com"># 1 — is the service even switched on here</span>
+gcloud services list --enabled --project my-proj
+gcloud services enable compute.googleapis.com --project my-proj
+
+<span class="com"># 2 — which project and which identity is this shell actually using</span>
+gcloud config list
+gcloud auth list          <span class="com"># the active account is marked with *</span>
+
+<span class="com"># 3 — ask IAM why, instead of reading inherited policy by eye</span>
+gcloud policy-troubleshoot iam //cloudresourcemanager.googleapis.com/projects/my-proj \
+  --principal-email=app@my-proj.iam.gserviceaccount.com --permission=storage.objects.get
+
+<span class="com"># 3 — every grant that reaches this project, including inherited ones</span>
+gcloud projects get-iam-policy my-proj --flatten=<span class="str">"bindings[].members"</span> \
+  --format=<span class="str">"table(bindings.role,bindings.members)"</span>
+
+<span class="com"># 4 — does a path exist, evaluating firewall rules and routes</span>
+gcloud network-management connectivity-tests create t1 \
+  --source-instance=web01 --destination-instance=db01 --destination-port=5432 --protocol=TCP
+gcloud compute firewall-rules list --sort-by=priority \
+  --format=<span class="str">"table(name,priority,direction,allowed[],sourceRanges[])"</span>
+
+<span class="com"># 5 — the denial was a quota, and the log says so</span>
+gcloud logging read <span class="str">'severity&gt;=ERROR AND protoPayload.status.code!=0'</span> --limit 20 \
+  --format=<span class="str">"table(timestamp,protoPayload.authenticationInfo.principalEmail,protoPayload.status.message)"</span></pre>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Policy Troubleshooter is the tool that ends the
+                    argument.</strong> Inheritance from organisation to folder to project means
+                    the grant that matters is often nowhere near the project you are looking at,
+                    and reading three levels of policy by hand is how people conclude a
+                    permission exists when it does not.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Error Reference</div>
+                <div class="concept-title">What the Message Actually Means</div>
+                <div class="dw">
+                  <table class="ref-table mb-14">
+                    <tr><th>Error</th><th>Real cause</th><th>First move</th></tr>
+                    <tr><td><code>SERVICE_DISABLED</code></td><td>The API is not enabled on this project</td><td>Enable it; the message names the service to enable</td></tr>
+                    <tr><td><code>PERMISSION_DENIED</code> with a service name in it</td><td>Usually the same thing wearing a permission error's clothes</td><td>Check the enabled list before touching any role</td></tr>
+                    <tr><td><code>403</code> that mentions billing</td><td>Billing is not attached, or the account is closed</td><td>A project without billing cannot call most APIs at all</td></tr>
+                    <tr><td><code>RESOURCE_EXHAUSTED</code></td><td>A quota, not a capacity problem</td><td>Read which quota; many are per-region and default low</td></tr>
+                    <tr><td>&ldquo;The user does not have permission to act as&hellip;&rdquo;</td><td>Missing <code>iam.serviceAccountUser</code> on the service account being attached</td><td>Grant it on the service account, not on the project</td></tr>
+                    <tr><td>Connections time out with no reply</td><td>VPC firewall is default-deny inbound; a higher-priority deny can also shadow your allow</td><td>List rules sorted by priority, lowest number wins</td></tr>
+                    <tr><td><code>ALREADY_EXISTS</code> for a name you deleted</td><td>Some resource names are reserved for a period after deletion</td><td>Wait, or pick a different name</td></tr>
+                    <tr><td>Works locally, fails on the instance</td><td>Local runs used your user credentials; the instance uses its attached service account</td><td>Compare <code>gcloud auth list</code> in both places</td></tr>
+                    <tr><td><code>Precondition check failed</code> on delete</td><td>Something still references the resource, or a lien is set</td><td>Find the dependant; liens exist to stop exactly this</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>The pattern worth internalising: on this platform a permission error
+                    is a hypothesis, not a diagnosis.</strong> Three different causes — a disabled
+                    API, absent billing, and a genuinely missing role — all surface as the same
+                    shape of denial, and only one of them is fixed by granting anything. Ruling
+                    the first two out takes two commands, and doing it in that order stops the
+                    estate accumulating roles nobody needed.
                   </div>
                 </div>
               </div>
