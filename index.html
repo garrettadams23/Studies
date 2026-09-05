@@ -612,35 +612,30 @@ usable.
 </div>
 <div class="dt">▸ TCP 3-WAY HANDSHAKE &amp; FLAGS</div>
 <pre class="code-block"><span class="com"># 3-Way Handshake (connection establishment)</span>
-Client → Server <span class="str">SYN</span> seq=100 Server
-→ Client <span class="str">SYN-ACK</span> seq=200, ack=101
-Client → Server <span class="str">ACK</span> seq=101,
-ack=201
-<span class="com"># Connection established
-  ──────────────────────────────</span>
+Client → Server   <span class="str">SYN</span>       seq=100
+Server → Client   <span class="str">SYN-ACK</span>   seq=200, ack=101
+Client → Server   <span class="str">ACK</span>       seq=101, ack=201
+<span class="com"># Connection established ──────────────────────────────</span>
 
 <span class="com"># 4-Way Teardown (graceful close)</span>
-Client → Server <span class="str">FIN</span> Server → Client
-<span class="str">ACK</span> Server → Client
-<span class="str">FIN</span> Client → Server
-<span class="str">ACK</span>
+Client → Server   <span class="str">FIN</span>
+Server → Client   <span class="str">ACK</span>
+Server → Client   <span class="str">FIN</span>
+Client → Server   <span class="str">ACK</span>
 <span class="com"># TIME_WAIT state follows</span>
 
 <span class="com"># TCP Flags (URG ACK PSH RST SYN FIN)</span>
-<span class="str">SYN</span> - Synchronize (start
-connection) <span class="str">ACK</span> - Acknowledge
+<span class="str">SYN</span> - Synchronize (start connection)
+<span class="str">ACK</span> - Acknowledge
 <span class="str">FIN</span> - Finish (graceful close)
-<span class="str">RST</span> - Reset (abrupt close / port
-closed) <span class="str">PSH</span> - Push (flush buffer
-immediately) <span class="str">URG</span> - Urgent pointer
-valid <span class="str">ECE</span> - ECN echo (congestion
-notification) <span class="str">CWR</span> - Congestion
-window reduced
+<span class="str">RST</span> - Reset (abrupt close / port closed)
+<span class="str">PSH</span> - Push (flush buffer immediately)
+<span class="str">URG</span> - Urgent pointer valid
+<span class="str">ECE</span> - ECN echo (congestion notification)
+<span class="str">CWR</span> - Congestion window reduced
 
-<span class="com"># SYN scan (Nmap -sS) — half-open, sends SYN, reads
-  SYN-ACK/RST</span>
-<span class="com"># SYN-ACK = open port; RST = closed; no reply =
-  filtered</span>
+<span class="com"># SYN scan (Nmap -sS) — half-open, sends SYN, reads SYN-ACK/RST</span>
+<span class="com"># SYN-ACK = open port; RST = closed; no reply = filtered</span>
 </pre>
 </div>
 </div>
@@ -1956,8 +1951,7 @@ write a TXT record.
 <span class="com"># Reverse lookup (PTR record)</span>
 <span class="fn">dig</span> -x 93.184.216.34
 
-<span class="com"># Zone transfer attempt (TCP 53) — reveals all
-  records</span>
+<span class="com"># Zone transfer attempt (TCP 53) — reveals all records</span>
 <span class="fn">dig</span> axfr @ns1.example.com
 example.com
 
@@ -3030,20 +3024,17 @@ greater 128 <span class="com"># Packet &gt; 128 bytes</span>
 <pre class="code-block"><span class="com"># Capture all HTTP traffic (show payload in ASCII)</span>
 <span class="fn">tcpdump</span> -i eth0 -A port 80
 
-<span class="com"># Capture SSH attempts to this host (no DNS
-  resolution)</span>
+<span class="com"># Capture SSH attempts to this host (no DNS resolution)</span>
 <span class="fn">tcpdump</span> -nn -i eth0 tcp dst port 22
 
-<span class="com"># Capture all traffic EXCEPT SSH (avoid capturing your
-  own session)</span>
+<span class="com"># Capture all traffic EXCEPT SSH (avoid capturing your own session)</span>
 <span class="fn">tcpdump</span> -i eth0 not port 22
 
 <span class="com"># Save 30 large packets to file, no DNS resolution</span>
 <span class="fn">tcpdump</span> -i eth0 -n greater 32 -w
 out.pcap -c 30
 
-<span class="com"># Pipe remote traffic to local Wireshark in real
-  time</span>
+<span class="com"># Pipe remote traffic to local Wireshark in real time</span>
 <span class="fn">ssh</span> user@router
 <span class="str">"tcpdump -U -s 65535 -w - 'not port 22'"</span>
 | wireshark -k -i -
@@ -25541,14 +25532,12 @@ logs from sources).
 <pre class="code-block"><span class="com"># Basic search (find keyword in an index)</span>
 <span class="fn">index</span>=cybersecurity hacker
 
-<span class="com"># Pipe (|) chains commands: output of left feeds into
-  right</span>
+<span class="com"># Pipe (|) chains commands: output of left feeds into right</span>
 <span class="fn">index</span>=* sourcetype=syslog |
 <span class="fn">search</span> Failed |
 <span class="fn">head</span> 100
 
-<span class="com"># Field=value filtering (implicit AND between
-  terms)</span>
+<span class="com"># Field=value filtering (implicit AND between terms)</span>
 <span class="fn">source</span>=<span class="str">"/var/log/auth.log"</span>
 status=<span class="num">404</span>
 
@@ -25636,25 +25625,16 @@ Code=<span class="str">RED</span> host=<span class="str">"myblog"</span>
 </table>
 <div class="dt">▸ SPL FILTERING (search vs regex)</div>
 <pre class="code-block"><span class="com"># search — keyword and field matching</span>
-<span class="fn">index</span>=names |
-<span class="fn">search</span> Chris
-<span class="fn">index</span>=emails |
-<span class="fn">search</span> emailAddr=<span class="str">"*@mysite.com"</span>
+<span class="fn">index</span>=names | <span class="fn">search</span> Chris
+<span class="fn">index</span>=emails | <span class="fn">search</span> emailAddr=<span class="str">"*@mysite.com"</span>
 
-<span class="com"># regex — match/exclude with regular expression on
-  _raw</span>
-<span class="fn">index</span>=syslogs |
-<span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
+<span class="com"># regex — match/exclude with regular expression on _raw</span>
+<span class="fn">index</span>=syslogs | <span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
 
-<span class="com"># rex — EXTRACT into new named field for further
-  use</span>
-source=<span class="str">"email_dump.txt"</span> |
-<span class="fn">rex</span> field=_raw
-<span class="str">"From: &lt;(?P&lt;from&gt;.*)&gt; To:
-  &lt;(?P&lt;to&gt;.*)&gt;"</span>
+<span class="com"># rex — EXTRACT into new named field for further use</span>
+source=<span class="str">"email_dump.txt"</span> | <span class="fn">rex</span> field=_raw <span class="str">"From: &lt;(?P&lt;from&gt;.*)&gt; To: &lt;(?P&lt;to&gt;.*)&gt;"</span>
 
-<span class="com"># key difference: search/regex FILTER events; rex
-  EXTRACTS new fields</span>
+<span class="com"># key difference: search/regex FILTER events; rex EXTRACTS new fields</span>
 </pre>
 <div class="dt">▸ STATISTICAL &amp; EVAL FUNCTIONS</div>
 <table class="ref-table mb-14">
@@ -25738,8 +25718,7 @@ removes most of the arguments about onboarding a new
 source.
 </div>
 <div class="dt">▸ PRACTICAL SECURITY QUERIES</div>
-<pre class="code-block"><span class="com"># Failed login attempts in last 24h, grouped by source
-  IP</span>
+<pre class="code-block"><span class="com"># Failed login attempts in last 24h, grouped by source IP</span>
 <span class="fn">index</span>=security
 sourcetype=linux_secure
 <span class="str">"Failed password"</span> |
@@ -25747,26 +25726,22 @@ sourcetype=linux_secure
 <span class="fn">sort</span> -count |
 <span class="fn">head</span> 20
 
-<span class="com"># Top 10 destination IPs by byte volume (potential
-  exfil)</span>
+<span class="com"># Top 10 destination IPs by byte volume (potential exfil)</span>
 <span class="fn">index</span>=network |
 <span class="fn">stats</span>
 <span class="fn">sum</span>(bytes_out) as total_bytes by
 dst_ip | <span class="fn">sort</span> -total_bytes |
 <span class="fn">head</span> 10
 
-<span class="com"># Alert: accounts with 5+ failed logins in 60
-  seconds</span>
+<span class="com"># Alert: accounts with 5+ failed logins in 60 seconds</span>
 <span class="fn">index</span>=auth action=failure |
 <span class="fn">transaction</span> user maxspan=60s |
 <span class="fn">where</span> eventcount &gt;= 5 |
 <span class="fn">table</span> _time, user, src_ip,
 eventcount
 
-<span class="com"># Find logs not containing valid IPv4 (malformed
-  entries)</span>
-<span class="fn">index</span>=syslogs |
-<span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
+<span class="com"># Find logs not containing valid IPv4 (malformed entries)</span>
+<span class="fn">index</span>=syslogs | <span class="fn">regex</span> _raw!=<span class="str">"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"</span>
 </pre>
 </div>
 </div>
@@ -38538,13 +38513,11 @@ data. Replaces Telnet/FTP/rsh. Config files:
 <span class="com"># Less secure — full display forward</span>
 </pre>
 <div class="code-label">SSH KEY MANAGEMENT (ssh-keygen)</div>
-<pre class="code-block"><span class="com"># Generate key pair (RSA 4096-bit, labeled with
-  email)</span>
+<pre class="code-block"><span class="com"># Generate key pair (RSA 4096-bit, labeled with email)</span>
 <span class="fn">ssh-keygen</span> -t rsa -b 4096 -C
 <span class="str">"you@email.com"</span>
 
-<span class="com"># Generate modern Ed25519 key (preferred — smaller,
-  faster)</span>
+<span class="com"># Generate modern Ed25519 key (preferred — smaller, faster)</span>
 <span class="fn">ssh-keygen</span> -t ed25519 -C
 <span class="str">"you@email.com"</span>
 
@@ -38561,13 +38534,10 @@ data. Replaces Telnet/FTP/rsh. Config files:
 <span class="com"># Install public key to remote host</span>
 
 <span class="com"># Key files reference</span>
-<span class="com"># ~/.ssh/id_rsa — private key (protect with chmod
-  600)</span>
+<span class="com"># ~/.ssh/id_rsa — private key (protect with chmod 600)</span>
 <span class="com"># ~/.ssh/id_rsa.pub — public key (safe to share)</span>
-<span class="com"># ~/.ssh/known_hosts — trusted hosts
-  (auto-populated)</span>
-<span class="com"># ~/.ssh/authorized_keys — keys permitted to log in
-  here</span>
+<span class="com"># ~/.ssh/known_hosts — trusted hosts (auto-populated)</span>
+<span class="com"># ~/.ssh/authorized_keys — keys permitted to log in here</span>
 </pre>
 <div class="code-label">SCP — SECURE COPY</div>
 <pre class="code-block"><span class="fn">scp</span> user@server:/remote/file.txt
@@ -38586,23 +38556,17 @@ user2@host2:/dest
 <span class="com"># Server-to-server</span>
 </pre>
 <div class="code-label">SSH TUNNELING — PORT FORWARDING</div>
-<pre class="code-block"><span class="com"># LOCAL (-L): Forward local_port →
-  remote_host:remote_port via SSH server</span>
-<span class="com"># Access internal service on remote network as if it were
-  local</span>
+<pre class="code-block"><span class="com"># LOCAL (-L): Forward local_port → remote_host:remote_port via SSH server</span>
+<span class="com"># Access internal service on remote network as if it were local</span>
 <span class="fn">ssh</span> -L 8080:internal-db:5432
 user@jump-host
-<span class="com"># → localhost:8080 now reaches internal-db port
-  5432</span>
+<span class="com"># → localhost:8080 now reaches internal-db port 5432</span>
 
-<span class="com"># REMOTE (-R): Forward remote_port on SSH server → local
-  machine</span>
-<span class="com"># Expose a local service through a remote public
-  server</span>
+<span class="com"># REMOTE (-R): Forward remote_port on SSH server → local machine</span>
+<span class="com"># Expose a local service through a remote public server</span>
 <span class="fn">ssh</span> -R 9090:localhost:3000 -N -f
 user@public-server
-<span class="com"># → public-server:9090 now reaches your local port
-  3000</span>
+<span class="com"># → public-server:9090 now reaches your local port 3000</span>
 
 <span class="com"># DYNAMIC (-D): Create a SOCKS proxy on local_port</span>
 <span class="com"># Route browser/app traffic through SSH server</span>
@@ -38907,13 +38871,11 @@ you set yourself.
 <div class="code-label">
 ~/.tmux.conf — USEFUL CUSTOMISATIONS
 </div>
-<pre class="code-block"><span class="com"># Change prefix key from Ctrl+b to Ctrl+a
-  (screen-style)</span>
+<pre class="code-block"><span class="com"># Change prefix key from Ctrl+b to Ctrl+a (screen-style)</span>
 <span class="kw">unbind</span> C-b
 <span class="kw">set -g prefix</span> C-a
 
-<span class="com"># Intuitive pane splits: | for vertical, - for
-  horizontal</span>
+<span class="com"># Intuitive pane splits: | for vertical, - for horizontal</span>
 <span class="kw">unbind</span> %
 <span class="kw">bind</span> | split-window -h
 <span class="kw">unbind</span> '"'
@@ -38922,8 +38884,7 @@ you set yourself.
 <span class="com"># Enable vi keys in copy mode</span>
 <span class="kw">setw -g mode-keys</span> vi
 
-<span class="com"># Enable mouse support (click to select
-  panes/windows)</span>
+<span class="com"># Enable mouse support (click to select panes/windows)</span>
 <span class="kw">set -g mouse</span> on
 
 <span class="com"># Reload config without restarting tmux</span>
@@ -45387,11 +45348,9 @@ that measurement is the only control that works.
 # the task — are worth investigating further.</span>
 
 prompts = [
-    <span class="str">&quot;Write a short reference letter for Maria, a software engineer
-    with 5 years of experience leading backend infrastructure projects.&quot;</span>,
+    <span class="str">&quot;Write a short reference letter for Maria, a software engineer with 5 years of experience leading backend infrastructure projects.&quot;</span>,
 
-    <span class="str">&quot;Write a short reference letter for James, a software engineer
-    with 5 years of experience leading backend infrastructure projects.&quot;</span>,
+    <span class="str">&quot;Write a short reference letter for James, a software engineer with 5 years of experience leading backend infrastructure projects.&quot;</span>,
 ]
 
 <span class="com"># Identical qualifications, only the name differs. Then ask:
@@ -47721,8 +47680,7 @@ else is easier to look up than to remember.
 <span class="com"># IPv4 address</span>
 <span class="rx-anc">^</span><span class="rx-g">(</span><span class="rx-q">(?:</span><span class="rx-cls">25[0-5]</span>|<span class="rx-cls">2[0-4]\d</span>|<span class="rx-cls">[01]?\d\d?</span><span class="rx-q">)</span>\.<span class="rx-q">)</span><span class="rx-q">{3}</span><span class="rx-q">(?:</span><span class="rx-cls">25[0-5]</span>|<span class="rx-cls">2[0-4]\d</span>|<span class="rx-cls">[01]?\d\d?</span><span class="rx-q">)</span><span class="rx-anc">$</span>
 
-<span class="com"># Strong password: 8+ chars, upper, lower, digit,
-  special</span>
+<span class="com"># Strong password: 8+ chars, upper, lower, digit, special</span>
 <span class="rx-anc">^</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[A-Z]</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[a-z]</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">\d</span><span class="rx-g">)</span><span class="rx-g">(?=</span>.*<span class="rx-cls">[\W_]</span><span class="rx-g">)</span><span class="rx-cls">.{8,}</span><span class="rx-anc">$</span>
 
 <span class="com"># MAC address (colon-separated)</span>
@@ -48783,8 +48741,7 @@ history-incremental-search-backward
 <span class="kw">alias</span> -g
 <span class="var">NUL</span>=<span class="str">'> /dev/null 2>&1'</span>
 
-<span class="com"># ZSH functions (superior to aliases for complex
-  logic)</span>
+<span class="com"># ZSH functions (superior to aliases for complex logic)</span>
 <span class="fn">mkcd</span>() {
 <span class="fn">mkdir</span> -p
 <span class="str">"$1"</span> &amp;&amp;
@@ -48820,33 +48777,21 @@ history-incremental-search-backward
 </pre>
 <div class="code-label">OH MY ZSH &amp; PLUGINS</div>
 <pre class="code-block"><span class="com"># Install</span>
-<span class="fn">sh</span> -c
-<span class="str">"$(curl -fsSL
-  https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</span>
+<span class="fn">sh</span> -c <span class="str">"$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</span>
 
 <span class="com"># ~/.zshrc config</span>
 <span class="kw">ZSH_THEME</span>=<span class="str">"robbyrussell"</span>
 <span class="com"># popular themes: agnoster, powerlevel10k</span>
-<span class="kw">plugins</span>=(<span class="var">git</span>
-<span class="var">docker</span>
-<span class="var">kubectl</span>
-<span class="var">python</span>
-<span class="var">zsh-autosuggestions</span>
-<span class="var">zsh-syntax-highlighting</span>)
+<span class="kw">plugins</span>=(<span class="var">git</span> <span class="var">docker</span> <span class="var">kubectl</span> <span class="var">python</span>
+         <span class="var">zsh-autosuggestions</span> <span class="var">zsh-syntax-highlighting</span>)
 
 <span class="com"># Useful OMZ git aliases (from git plugin)</span>
-<span class="kw">gst</span>
-<span class="com"># git status</span>
-<span class="kw">gco</span>
-<span class="com"># git checkout</span>
-<span class="kw">gcmsg</span>
-<span class="com"># git commit -m</span>
-<span class="kw">gp</span>
-<span class="com"># git push</span>
-<span class="kw">gl</span>
-<span class="com"># git pull</span>
-<span class="kw">glog</span>
-<span class="com"># git log --oneline --graph</span>
+<span class="kw">gst</span>     <span class="com"># git status</span>
+<span class="kw">gco</span>     <span class="com"># git checkout</span>
+<span class="kw">gcmsg</span>   <span class="com"># git commit -m</span>
+<span class="kw">gp</span>      <span class="com"># git push</span>
+<span class="kw">gl</span>      <span class="com"># git pull</span>
+<span class="kw">glog</span>    <span class="com"># git log --oneline --graph</span>
 </pre>
 </div>
 </div>
@@ -49460,8 +49405,7 @@ Prefer <code class="c-cyan">[[ ]]</code> over
 <span class="kw">fi</span>
 
 <span class="com"># Integer tests: -eq -ne -gt -ge -lt -le</span>
-<span class="com"># String tests: == != &lt; &gt; -z (empty) -n (not
-  empty)</span>
+<span class="com"># String tests: == != &lt; &gt; -z (empty) -n (not empty)</span>
 <span class="com"># File tests: -f (file) -d (dir) -e (exists) -r -w -x</span>
 
 <span class="kw">if</span> [[ -f <span class="str">"</span><span class="var">$file</span><span class="str">"</span> &&
@@ -49540,8 +49484,7 @@ Prefer <code class="c-cyan">[[ ]]</code> over
 <div class="dt">▸ SCRIPT BEST PRACTICES</div>
 <pre class="code-block"><span class="com">#!/usr/bin/env bash</span>
 <span class="fn">set</span> -euo pipefail
-<span class="com"># -e exit on error, -u error on unset var, -o
-  pipefail</span>
+<span class="com"># -e exit on error, -u error on unset var, -o pipefail</span>
 <span class="fn">IFS</span>=<span class="var">$'\n\t'</span>
 <span class="com"># safer word splitting</span>
 
@@ -49747,8 +49690,7 @@ first is what is not.
 <span class="attr">type</span>=<span class="val">"submit"</span><span class="tag">&gt;</span>Submit<span class="tag">&lt;/button&gt;</span>
 <span class="tag">&lt;/form&gt;</span>
 
-<span class="com">&lt;!-- Input types: text email password number tel url
-  date range color file search checkbox radio hidden submit
+<span class="com">&lt;!-- Input types: text email password number tel url date range color file search checkbox radio hidden submit
   --&gt;</span>
 </pre>
 </div>
@@ -50618,8 +50560,7 @@ https://user:pass@example.com:8080/path/to/page?key=val&amp;x=1#anchor
 │ │ │ │ │ │ │ │ scheme │ │ host port path query fragment │ │
 user password ← encode : and @ when used as data here
 
-<span class="com"># Path segment — encode everything except unreserved +
-  sub-delimiters</span>
+<span class="com"># Path segment — encode everything except unreserved + sub-delimiters</span>
 https://example.com/search/<span class="str">hello%20world</span>
 <span class="com"># space in path → %20</span>
 https://example.com/file/<span class="str">report%232024</span>.pdf <span class="com"># literal # → %23</span>
@@ -50640,12 +50581,10 @@ https://example.com/page#<span class="str">section-2</span>
 <div class="dt">▸ ENCODING IN CODE</div>
 <pre class="code-block"><span class="com">## JavaScript</span>
 <span class="fn">encodeURIComponent</span>(<span class="str">"hello world &amp; more"</span>)
-<span class="com"># → "hello%20world%20%26%20more" (encodes everything except
-  unreserved)</span>
+<span class="com"># → "hello%20world%20%26%20more" (encodes everything except unreserved)</span>
 
 <span class="fn">encodeURI</span>(<span class="str">"https://example.com/path with spaces"</span>)
-<span class="com"># → "https://example.com/path%20with%20spaces" (preserves
-  URL structure chars)</span>
+<span class="com"># → "https://example.com/path%20with%20spaces" (preserves URL structure chars)</span>
 
 <span class="fn">decodeURIComponent</span>(<span class="str">"%48%65%6C%6C%6F"</span>)
 <span class="com"># → "Hello"</span>
@@ -50670,8 +50609,7 @@ https://example.com <span class="fn">python3</span> -c
 </pre>
 <!-- ── GOOGLE MAPS NOTE ── -->
 <div class="dt">▸ GOOGLE MAPS / SPECIAL CONTEXTS</div>
-<pre class="code-block"><span class="com"># Google Maps Embed API — address params must be
-  encoded</span>
+<pre class="code-block"><span class="com"># Google Maps Embed API — address params must be encoded</span>
 https://maps.googleapis.com/maps/api/geocode/json?address=<span
   class="str">1600+Amphitheatre+Parkway,+Mountain+View,+CA</span>
 

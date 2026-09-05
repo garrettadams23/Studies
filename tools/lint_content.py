@@ -426,6 +426,35 @@ _LOOKS_PYTHON = re.compile(r'^\s*(def |class |import |from \w+ import|print\()',
 _DANGLING_EQ = re.compile(r'(?<![=!<>+\-*/%&|^:])=\s*$')
 
 
+_COMMENT_SPAN = re.compile(
+    r'<span class="com">((?:(?!<span|</span>).)*?)</span>', re.S)
+_COMMENT_MARK = re.compile(r"^\s*(#|//|--|;|REM\b|\*)")
+
+
+def wrapped_comments(text):
+    """(line, first, continuation) for comment spans broken across lines where the
+    continuation carries no comment marker.
+
+    A comment span may legitimately hold several lines — the corpus writes
+    multi-line commentary that way — but each of those lines opens with its own
+    `#` or `//`. A continuation without one is the HTML source's wrap showing
+    through, and it renders as a line that reads like code and is not.
+
+    Nested comment spans are skipped rather than guessed at: `grc.html` has a few
+    that open one inside another, which renders correctly because the class is the
+    same, and unpicking them is churn with no reader on the other end.
+    """
+    out = []
+    for m in _PRE_BLOCK.finditer(text):
+        start = text.count("\n", 0, m.start()) + 1
+        for c in _COMMENT_SPAN.finditer(m.group(1)):
+            lines = c.group(1).split("\n")
+            for cont in lines[1:]:
+                if cont.strip() and not _COMMENT_MARK.match(cont):
+                    out.append((start, lines[0].strip()[:60], cont.strip()[:40]))
+    return out
+
+
 def dangling_assignments(text):
     """(line, code) for Python code lines that end in a bare '=' — a break that
     Python's grammar cannot express, so the newline is in the wrong place."""
@@ -708,6 +737,12 @@ def main():
                 f"({code!r}) — the newline is mid-statement, so the block renders "
                 f"broken. Join it with the line below.")
 
+        for line, first, cont in wrapped_comments(text):
+            errors.append(
+                f"{name}:{line}: a comment in a code block is wrapped mid-sentence "
+                f"({first!r} + {cont!r}) — the continuation has no comment marker, "
+                f"so it renders as a line of code. Join it.")
+
         for line_no, block in topic_blocks(text):
             label, has_name = topic_label(block)
             # The expand chevron is the affordance CSS rotates on open
@@ -919,6 +954,21 @@ RENDERED_FIXTURES = [
 
 # The dangling-assignment check, on the two shapes that decide it: the real
 # corruption, and the config syntax a looser rule would have failed the build over.
+WRAPPED_COMMENT_FIXTURES = [
+    ('<pre class="code-block"><span class="com"># keys permitted to log in\nhere</span></pre>',
+     1, "the corruption: a continuation with no marker"),
+    ('<pre class="code-block"><span class="com"># keys permitted to log in here</span></pre>',
+     0, "the same comment, joined"),
+    ('<pre class="code-block"><span class="com"># line one\n# line two</span></pre>',
+     0, "a real multi-line comment — every line carries its own marker"),
+    ('<pre class="code-block"><span class="com">// line one\n// line two</span></pre>',
+     0, "and in the other comment syntaxes"),
+    ('<pre class="code-block"><span class="com">-- one\n   -- two</span></pre>',
+     0, "an indented marker still counts as a marker"),
+    ('<pre class="code-block"><span class="com"># a\nb\n# c\nd</span></pre>',
+     2, "each unmarked continuation is reported"),
+]
+
 DANGLING_FIXTURES = [
     ('<pre class="code-block">import os\nname =\n"Alice"</pre>',
      1, "the corruption: a Python line ending in a bare '='"),
@@ -939,6 +989,11 @@ DANGLING_FIXTURES = [
 
 def self_test():
     failures = 0
+    for text, want, why in WRAPPED_COMMENT_FIXTURES:
+        got = len(wrapped_comments(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     for text, want, why in DANGLING_FIXTURES:
         got = len(dangling_assignments(text))
         if got != want:
@@ -952,7 +1007,8 @@ def self_test():
             failures += 1
             print(f"FAIL  {why}: {acronym!r} — specification={spec}, "
                   f"index={fast}, expected={want}")
-    n = len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
+    n = (len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
+         + len(WRAPPED_COMMENT_FIXTURES))
     print(f"self-test: {n} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 

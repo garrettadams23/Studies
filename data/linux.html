@@ -448,13 +448,11 @@
 </pre>
 
                   <div class="code-label">SSH KEY MANAGEMENT (ssh-keygen)</div>
-                  <pre class="code-block"><span class="com"># Generate key pair (RSA 4096-bit, labeled with
-  email)</span>
+                  <pre class="code-block"><span class="com"># Generate key pair (RSA 4096-bit, labeled with email)</span>
 <span class="fn">ssh-keygen</span> -t rsa -b 4096 -C
 <span class="str">"you@email.com"</span>
 
-<span class="com"># Generate modern Ed25519 key (preferred — smaller,
-  faster)</span>
+<span class="com"># Generate modern Ed25519 key (preferred — smaller, faster)</span>
 <span class="fn">ssh-keygen</span> -t ed25519 -C
 <span class="str">"you@email.com"</span>
 
@@ -471,13 +469,10 @@
 <span class="com"># Install public key to remote host</span>
 
 <span class="com"># Key files reference</span>
-<span class="com"># ~/.ssh/id_rsa — private key (protect with chmod
-  600)</span>
+<span class="com"># ~/.ssh/id_rsa — private key (protect with chmod 600)</span>
 <span class="com"># ~/.ssh/id_rsa.pub — public key (safe to share)</span>
-<span class="com"># ~/.ssh/known_hosts — trusted hosts
-  (auto-populated)</span>
-<span class="com"># ~/.ssh/authorized_keys — keys permitted to log in
-  here</span>
+<span class="com"># ~/.ssh/known_hosts — trusted hosts (auto-populated)</span>
+<span class="com"># ~/.ssh/authorized_keys — keys permitted to log in here</span>
 </pre>
 
                   <div class="code-label">SCP — SECURE COPY</div>
@@ -498,23 +493,17 @@ user2@host2:/dest
 </pre>
 
                   <div class="code-label">SSH TUNNELING — PORT FORWARDING</div>
-                  <pre class="code-block"><span class="com"># LOCAL (-L): Forward local_port →
-  remote_host:remote_port via SSH server</span>
-<span class="com"># Access internal service on remote network as if it were
-  local</span>
+                  <pre class="code-block"><span class="com"># LOCAL (-L): Forward local_port → remote_host:remote_port via SSH server</span>
+<span class="com"># Access internal service on remote network as if it were local</span>
 <span class="fn">ssh</span> -L 8080:internal-db:5432
 user@jump-host
-<span class="com"># → localhost:8080 now reaches internal-db port
-  5432</span>
+<span class="com"># → localhost:8080 now reaches internal-db port 5432</span>
 
-<span class="com"># REMOTE (-R): Forward remote_port on SSH server → local
-  machine</span>
-<span class="com"># Expose a local service through a remote public
-  server</span>
+<span class="com"># REMOTE (-R): Forward remote_port on SSH server → local machine</span>
+<span class="com"># Expose a local service through a remote public server</span>
 <span class="fn">ssh</span> -R 9090:localhost:3000 -N -f
 user@public-server
-<span class="com"># → public-server:9090 now reaches your local port
-  3000</span>
+<span class="com"># → public-server:9090 now reaches your local port 3000</span>
 
 <span class="com"># DYNAMIC (-D): Create a SOCKS proxy on local_port</span>
 <span class="com"># Route browser/app traffic through SSH server</span>
@@ -821,13 +810,11 @@ user@hop1:port1,user@hop2:port2 user@target
                   <div class="code-label">
                     ~/.tmux.conf — USEFUL CUSTOMISATIONS
                   </div>
-                  <pre class="code-block"><span class="com"># Change prefix key from Ctrl+b to Ctrl+a
-  (screen-style)</span>
+                  <pre class="code-block"><span class="com"># Change prefix key from Ctrl+b to Ctrl+a (screen-style)</span>
 <span class="kw">unbind</span> C-b
 <span class="kw">set -g prefix</span> C-a
 
-<span class="com"># Intuitive pane splits: | for vertical, - for
-  horizontal</span>
+<span class="com"># Intuitive pane splits: | for vertical, - for horizontal</span>
 <span class="kw">unbind</span> %
 <span class="kw">bind</span> | split-window -h
 <span class="kw">unbind</span> '"'
@@ -836,8 +823,7 @@ user@hop1:port1,user@hop2:port2 user@target
 <span class="com"># Enable vi keys in copy mode</span>
 <span class="kw">setw -g mode-keys</span> vi
 
-<span class="com"># Enable mouse support (click to select
-  panes/windows)</span>
+<span class="com"># Enable mouse support (click to select panes/windows)</span>
 <span class="kw">set -g mouse</span> on
 
 <span class="com"># Reload config without restarting tmux</span>

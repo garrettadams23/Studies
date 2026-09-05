@@ -391,35 +391,30 @@
                   </div>
                   <div class="dt">▸ TCP 3-WAY HANDSHAKE &amp; FLAGS</div>
                   <pre class="code-block"><span class="com"># 3-Way Handshake (connection establishment)</span>
-Client → Server <span class="str">SYN</span> seq=100 Server
-→ Client <span class="str">SYN-ACK</span> seq=200, ack=101
-Client → Server <span class="str">ACK</span> seq=101,
-ack=201
-<span class="com"># Connection established
-  ──────────────────────────────</span>
+Client → Server   <span class="str">SYN</span>       seq=100
+Server → Client   <span class="str">SYN-ACK</span>   seq=200, ack=101
+Client → Server   <span class="str">ACK</span>       seq=101, ack=201
+<span class="com"># Connection established ──────────────────────────────</span>
 
 <span class="com"># 4-Way Teardown (graceful close)</span>
-Client → Server <span class="str">FIN</span> Server → Client
-<span class="str">ACK</span> Server → Client
-<span class="str">FIN</span> Client → Server
-<span class="str">ACK</span>
+Client → Server   <span class="str">FIN</span>
+Server → Client   <span class="str">ACK</span>
+Server → Client   <span class="str">FIN</span>
+Client → Server   <span class="str">ACK</span>
 <span class="com"># TIME_WAIT state follows</span>
 
 <span class="com"># TCP Flags (URG ACK PSH RST SYN FIN)</span>
-<span class="str">SYN</span> - Synchronize (start
-connection) <span class="str">ACK</span> - Acknowledge
+<span class="str">SYN</span> - Synchronize (start connection)
+<span class="str">ACK</span> - Acknowledge
 <span class="str">FIN</span> - Finish (graceful close)
-<span class="str">RST</span> - Reset (abrupt close / port
-closed) <span class="str">PSH</span> - Push (flush buffer
-immediately) <span class="str">URG</span> - Urgent pointer
-valid <span class="str">ECE</span> - ECN echo (congestion
-notification) <span class="str">CWR</span> - Congestion
-window reduced
+<span class="str">RST</span> - Reset (abrupt close / port closed)
+<span class="str">PSH</span> - Push (flush buffer immediately)
+<span class="str">URG</span> - Urgent pointer valid
+<span class="str">ECE</span> - ECN echo (congestion notification)
+<span class="str">CWR</span> - Congestion window reduced
 
-<span class="com"># SYN scan (Nmap -sS) — half-open, sends SYN, reads
-  SYN-ACK/RST</span>
-<span class="com"># SYN-ACK = open port; RST = closed; no reply =
-  filtered</span>
+<span class="com"># SYN scan (Nmap -sS) — half-open, sends SYN, reads SYN-ACK/RST</span>
+<span class="com"># SYN-ACK = open port; RST = closed; no reply = filtered</span>
 </pre>
                 </div>
               </div>
@@ -1735,8 +1730,7 @@ VLAN 99 = Native VLAN (untagged traffic on trunk)
 <span class="com"># Reverse lookup (PTR record)</span>
 <span class="fn">dig</span> -x 93.184.216.34
 
-<span class="com"># Zone transfer attempt (TCP 53) — reveals all
-  records</span>
+<span class="com"># Zone transfer attempt (TCP 53) — reveals all records</span>
 <span class="fn">dig</span> axfr @ns1.example.com
 example.com
 
@@ -2812,20 +2806,17 @@ greater 128 <span class="com"># Packet &gt; 128 bytes</span>
                   <pre class="code-block"><span class="com"># Capture all HTTP traffic (show payload in ASCII)</span>
 <span class="fn">tcpdump</span> -i eth0 -A port 80
 
-<span class="com"># Capture SSH attempts to this host (no DNS
-  resolution)</span>
+<span class="com"># Capture SSH attempts to this host (no DNS resolution)</span>
 <span class="fn">tcpdump</span> -nn -i eth0 tcp dst port 22
 
-<span class="com"># Capture all traffic EXCEPT SSH (avoid capturing your
-  own session)</span>
+<span class="com"># Capture all traffic EXCEPT SSH (avoid capturing your own session)</span>
 <span class="fn">tcpdump</span> -i eth0 not port 22
 
 <span class="com"># Save 30 large packets to file, no DNS resolution</span>
 <span class="fn">tcpdump</span> -i eth0 -n greater 32 -w
 out.pcap -c 30
 
-<span class="com"># Pipe remote traffic to local Wireshark in real
-  time</span>
+<span class="com"># Pipe remote traffic to local Wireshark in real time</span>
 <span class="fn">ssh</span> user@router
 <span class="str">"tcpdump -U -s 65535 -w - 'not port 22'"</span>
 | wireshark -k -i -

@@ -22168,3 +22168,71 @@ ERRORS (18):
 21 blocks reflowed in script.01-references.html + 2 in net.html
 lint fixtures 9 -> 16 · 31 gates green · 301 browser checks green
 ```
+
+## Session — the same corruption, in the languages the first test could not see
+
+The Python check that found 18 broken lines could only see Python. Blocks in
+shell, Splunk and Go were damaged the same way and passed it silently. Two more
+decidable signals found them.
+
+**Broken string literals.** A code line with an odd number of double quotes has
+opened a string it never closed. 51 hits — and most were *legitimate*: quoted
+dialogue in scenario blocks, a triple-quoted SQL string my counter read as three
+quotes, a regex character class `[^\s"'<>]+`, a tmux `unbind '"'`. Three were
+real, and the same defect:
+
+```
+sh -c
+"$(curl -fsSL
+  https://raw.githubusercontent.com/.../install.sh)"
+```
+
+**Wrapped comments.** The stronger signal, and the one that generalises: a
+comment span may hold several lines, but each carries its own `#`. A continuation
+*without* a marker is the source's wrap showing through, and it renders as a line
+that reads like code and is not. 42 hits in 18 blocks across five files.
+
+My first version of that check counted 146 and was wrong: `ai.html` writes real
+multi-line commentary where every line has a `#`. Requiring the marker on the
+continuation is what makes the signal decisive.
+
+### Where automation stopped being safe
+
+Joining wrapped comments is mechanical, so I automated it under the same
+whitespace invariant, and it was right 38 times out of 39. The one it got wrong:
+
+```
+# Connection established
+  ──────────────────────────────
+```
+
+A horizontal rule, not a wrapped sentence. Joining it is defensible and reads
+fine, so it stayed joined — but the block it sits in needed hand work anyway, and
+that is the point. The auto-join found the block; it could not fix it:
+
+```
+Client → Server SYN seq=100 Server        Client → Server   SYN       seq=100
+→ Client SYN-ACK seq=200, ack=101    →    Server → Client   SYN-ACK   seq=200, ack=101
+Client → Server ACK seq=101,              Client → Server   ACK       seq=101, ack=201
+ack=201
+```
+
+The eight TCP flags had run into one paragraph the same way. Reviewing all twelve
+blocks the automation touched, rendered before against rendered after, is what
+turned "the invariant held" into "and every change is an improvement" — those are
+different claims and only the second one matters to a reader.
+
+### The second gate
+
+Beside the first, with six fixtures: the corruption, the joined form, a real
+multi-line comment in `#` and `//`, an indented marker, and a block with two
+offences. Nested comment spans are skipped rather than guessed at — `grc.html`
+opens a few one inside another, which renders correctly because the class is the
+same, and unpicking them is churn with no reader on the other end.
+
+Proved against a faithful revert of four files: 30 findings, exit 1.
+
+```
+39 comments joined + 6 code blocks reflowed by hand · 5 files
+lint fixtures 16 -> 22 · 31 gates green · 301 browser checks green
+```
