@@ -21954,3 +21954,69 @@ in a comment above the line so the next person to bump them knows to run
 This is the same failure shape the site itself keeps documenting, turned on the
 repository: something reported success (a green local run) that was never
 evidence for the thing it was taken to prove.
+
+## Session — the toggle buttons that never said they were on
+
+The last accessibility pass closed this one out as *"a genuine gap, but it
+belongs with a wider pass over per-topic state; note it in plan.md rather than
+half-doing it."* This is that pass.
+
+The star and the tick in every topic header are toggles. Their state lived
+entirely as a class on the parent `.topic` — `bookmarked`, `reviewed` — which
+paints CSS and nothing else. A screen reader announced *"Save topic to study
+list, button"* whether the topic was already saved or not, and pressing it
+produced nothing audible at all. The state existed purely as a colour. axe
+cannot see this: a button with no `aria-pressed` is a perfectly valid button.
+
+### Why the fix is a helper and not five `setAttribute` calls
+
+Five places move these flags, and only two are anywhere near the button:
+
+```
+639,660  hydration, restoring from localStorage
+1367     the tool handler — star
+1377     the tool handler — tick
+3536     the exam's "star everything I missed"
+4134     removing an entry from the study list
+```
+
+A fix applied where the button lives would have left the last two stale, and
+the button would go on claiming pressed after the star had gone. So the class
+stays the single source of truth and `syncTopicFlag(topic, flag)` mirrors it
+onto the button; every site that moves a class calls it after. The sync in the
+hydration pass sits **outside** the creation guard on purpose — a section can be
+hydrated again after its flags have moved.
+
+Both toggles also now announce, because `aria-pressed` states the new value and
+does not say a press landed: *"Saved to study list"*, *"Marked as reviewed"*, and
+their inverses.
+
+### What was deliberately left alone
+
+The note button is not a toggle. `toggleTopicNote` only ever opens, and the panel
+is removed when the note is emptied — so `aria-expanded` there would go `true`
+and never come back, which is worse than absent. It is an action button that
+reveals an editor, and it is already correctly labelled as one.
+
+### The revert test
+
+Five new assertions, each checked against a faithful revert of `script.js`
+rather than only against the fix:
+
+```
+FAIL : the star button carries its own pressed state    aria-pressed went null -> null -> null
+FAIL : starring a topic says so                         announcer said ""
+FAIL : the tick button carries its own pressed state    aria-pressed went null -> null -> null
+FAIL : marking a topic reviewed says so                 announcer said ""
+FAIL : un-starring from the study list clears the button too   aria-pressed was null after removal
+```
+
+The last one is the one worth having. It drives the study list, not the header
+button, so it fails for a fix that only covers the obvious call site — and it
+returned a value rather than throwing on the pre-fix code, which is how I know
+the probe actually reached the removal path instead of erroring somewhere
+harmless.
+
+```
+a11y suite 24 -> 29 checks · browser 296 -> 301 · 31 gates green
+```

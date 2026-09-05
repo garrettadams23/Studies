@@ -452,6 +452,86 @@ for (const theme of ["dark", "light"]) {
   await kb.close();
 }
 
+// ── do the toggle buttons say they are on? ──────────────────────────────────
+// The star and tick are toggles, and their state lived only as a class on the
+// parent .topic, which paints CSS. A screen reader read "Save topic to study
+// list, button" whether the topic was already saved or not, and pressing it
+// produced nothing audible — the state existed purely as a colour. axe cannot
+// see this: a button with no aria-pressed is a perfectly valid button.
+//
+// Four places move these flags. Three of them are nowhere near the tool
+// handler, so this drives the two that are reachable from the keyboard and the
+// one that is easiest to forget: removing an entry from the study list.
+{
+  const kb = await browser.newPage();
+  await kb.goto(PAGE, { waitUntil: "load" });
+  const bad = (id, help) => [{ id, impact: "serious", nodes: [], help }];
+
+  await kb.evaluate(() => openDomain(document.querySelector(".domain-section")));
+  await kb.waitForTimeout(400);
+
+  const pressed = sel => kb.evaluate(s => {
+    const t = document.querySelector(".domain-body.open .topic");
+    return t?.querySelector(`:scope > .topic-header ${s}`)?.getAttribute("aria-pressed");
+  }, sel);
+  const press = sel => kb.evaluate(async s => {
+    const t = document.querySelector(".domain-body.open .topic");
+    t.querySelector(`:scope > .topic-header ${s}`).click();
+  }, sel);
+  const announced = () => kb.evaluate(() =>
+    (document.getElementById("a11y-announcer")?.textContent || "").trim());
+
+  const b0 = await pressed(".topic-bookmark");
+  await press(".topic-bookmark");
+  await kb.waitForTimeout(120);
+  const b1 = await pressed(".topic-bookmark");
+  const bSaid = await announced();
+  await press(".topic-bookmark");
+  await kb.waitForTimeout(120);
+  const b2 = await pressed(".topic-bookmark");
+
+  record("the star button carries its own pressed state",
+         b0 === "false" && b1 === "true" && b2 === "false" ? []
+           : bad("bookmark-pressed", `aria-pressed went ${b0} -> ${b1} -> ${b2}`));
+  record("starring a topic says so",
+         /study list/i.test(bSaid) ? [] : bad("bookmark-announce", `announcer said "${bSaid}"`));
+
+  const r0 = await pressed(".topic-review");
+  await press(".topic-review");
+  await kb.waitForTimeout(120);
+  const r1 = await pressed(".topic-review");
+  const rSaid = await announced();
+  await press(".topic-review");
+  await kb.waitForTimeout(120);
+  const r2 = await pressed(".topic-review");
+
+  record("the tick button carries its own pressed state",
+         r0 === "false" && r1 === "true" && r2 === "false" ? []
+           : bad("review-pressed", `aria-pressed went ${r0} -> ${r1} -> ${r2}`));
+  record("marking a topic reviewed says so",
+         /review/i.test(rSaid) ? [] : bad("review-announce", `announcer said "${rSaid}"`));
+
+  // The study list un-stars a topic without going through the tool handler.
+  // A fix applied only where the button lives would leave this one stale, and
+  // the button would keep claiming pressed after the star had gone.
+  await press(".topic-bookmark");
+  await kb.waitForTimeout(120);
+  const viaList = await kb.evaluate(async () => {
+    const t = document.querySelector(".domain-body.open .topic");
+    stOpenStudyList();
+    await new Promise(r => setTimeout(r, 300));
+    document.querySelector(`.st-list-remove[data-id="${t.id}"]`)?.click();
+    await new Promise(r => setTimeout(r, 200));
+    return t.querySelector(":scope > .topic-header .topic-bookmark")
+            ?.getAttribute("aria-pressed");
+  }).catch(e => `threw: ${String(e.message || e).split("\n")[0]}`);
+
+  record("un-starring from the study list clears the button too",
+         viaList === "false" ? []
+           : bad("bookmark-list-sync", `aria-pressed was ${viaList} after removal`));
+  await kb.close();
+}
+
 await browser.close();
 
 const failed = results.filter(r => r.violations.length);

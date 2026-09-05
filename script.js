@@ -428,6 +428,26 @@ function renderTopicNote(topic, { open = false } = {}) {
 }
 
 /** The 📝 button: open the topic if it is closed, then focus the editor. */
+/** Mirror a topic's toggle-flag state onto the button that toggles it.
+ *
+ * `.topic.bookmarked` and `.topic.reviewed` are paints. `aria-pressed` on the
+ * button is the fact: without it a screen reader announces "Save topic to study
+ * list, button" whether the topic is already saved or not, and pressing it
+ * changes nothing audible — the state exists only as a colour.
+ *
+ * The class stays the single source of truth and this reads from it, so the
+ * four places that move these flags — hydration, the tool handler, the exam's
+ * star-the-missed button, and removing an entry from the study list — cannot
+ * disagree with what is announced. Anything that sets the class calls this
+ * after; nothing needs to know how the flag is stored. */
+const TOPIC_FLAG_BTN = { bookmarked: ".topic-bookmark", reviewed: ".topic-review" };
+function syncTopicFlag(topic, flag) {
+  const sel = TOPIC_FLAG_BTN[flag];
+  if (!topic || !sel) return;
+  topic.querySelector(`:scope > .topic-header ${sel}`)
+    ?.setAttribute("aria-pressed", topic.classList.contains(flag) ? "true" : "false");
+}
+
 function toggleTopicNote(topic) {
   const header = topic.querySelector(":scope > .topic-header");
   const body = topic.querySelector(":scope > .topic-body");
@@ -676,6 +696,13 @@ function enhanceDomain(section) {
       const chev = header.querySelector(":scope > .topic-chev");
       chev ? header.insertBefore(tools, chev) : header.appendChild(tools);
     }
+
+    // Outside the creation guard on purpose. A section can be hydrated again
+    // after its topics' flags have moved — the study list un-stars a topic
+    // without touching this code path — so the attribute is mirrored from the
+    // class every time, not only on the pass that built the buttons.
+    syncTopicFlag(topic, "bookmarked");
+    syncTopicFlag(topic, "reviewed");
   });
 
   // Widgets that live inside a topic and used to be wired at load. The codec's
@@ -1338,15 +1365,21 @@ function handleTopicTool(btn) {
   if (!topic) return;
   if (btn.classList.contains("topic-bookmark")) {
     const on = topic.classList.toggle("bookmarked");
+    syncTopicFlag(topic, "bookmarked");
     const key = BOOKMARK_PREFIX + topic.id;
     on ? safeLS.set(key, "1") : safeLS.remove(key);
     if (on) streakTouch();
+    // aria-pressed states the new value; it does not say a press landed. The
+    // announcement is what tells somebody the button did anything at all.
+    announce(on ? "Saved to study list" : "Removed from study list");
     if (typeof stRefreshStudyList === "function") stRefreshStudyList();
   } else if (btn.classList.contains("topic-review")) {
     const on = topic.classList.toggle("reviewed");
+    syncTopicFlag(topic, "reviewed");
     const key = REVIEWED_PREFIX + topic.id;
     on ? safeLS.set(key, "1") : safeLS.remove(key);
     if (on) streakTouch();
+    announce(on ? "Marked as reviewed" : "Marked as not reviewed");
     updateDomainProgress(topic.closest(".domain-section"));
   } else if (btn.classList.contains("topic-note-btn")) {
     toggleTopicNote(topic);
@@ -3499,7 +3532,10 @@ function stExamFinish() {
   s.stage.querySelector("#st-ex-star")?.addEventListener("click", e => {
     r.missed.forEach(m => safeLS.set(BOOKMARK_PREFIX + m.id, "1"));
     document.querySelectorAll(".topic").forEach(t => {
-      if (safeLS.get(BOOKMARK_PREFIX + t.id) === "1") t.classList.add("bookmarked");
+      if (safeLS.get(BOOKMARK_PREFIX + t.id) === "1") {
+        t.classList.add("bookmarked");
+        syncTopicFlag(t, "bookmarked");
+      }
     });
     e.target.textContent = `★ ${r.missed.length} starred`;
     e.target.disabled = true;
@@ -4094,7 +4130,9 @@ function stRenderStudyList(host) {
   host.querySelectorAll(".st-list-remove").forEach(b => b.addEventListener("click", () => {
     const id = b.dataset.id;
     safeLS.remove(BOOKMARK_PREFIX + id);
-    document.getElementById(id)?.classList.remove("bookmarked");
+    const el = document.getElementById(id);
+    el?.classList.remove("bookmarked");
+    syncTopicFlag(el, "bookmarked");
     stRenderStudyList(host);
   }));
 }
