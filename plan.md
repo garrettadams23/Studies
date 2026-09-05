@@ -22020,3 +22020,62 @@ harmless.
 ```
 a11y suite 24 -> 29 checks · browser 296 -> 301 · 31 gates green
 ```
+
+## Session — closing "unreachable quality", the third open accumulation risk
+
+The risk register's four measured risks, re-measured today rather than assumed:
+
+| Risk | Recorded state | Measured today |
+|---|---|---|
+| Silent style drift | 330 topics (23%) thin | **11 of 1,542 (1%)**, and those eleven were already judged deliberate |
+| Blind duplication | 36 title pairs ≥50% overlap | **92 near-duplicate pairs, 0 disagreements** |
+| Unreachable quality | 902 unlinked, **159 of them deep** | 68 unlinked, **8 deep** — and all eight were mine |
+| Unfalsifiable freshness | accepted, not mitigable | unchanged |
+
+The first two closed themselves through later work. The third had not, and its
+entire remaining population was the eight topics written yesterday. I fixed the
+*paths* half of reachability and left the *links* half — the same "half a job"
+I had named in that very commit message.
+
+### Two mechanisms, both needed
+
+An inline `<span class="xref">` is a writer saying these two belong together, and
+it earns its place only if the sentence around it was worth writing anyway. All
+eight had an obvious home, because each topic exists precisely where an older one
+named the thing and stopped:
+
+```
+certificate delivery ← "the certificate row is the one that fails silently"
+GPO to Intune        ← "the leftovers are the project"
+Azure-native IaC     ← "Bicep is worth knowing — a clean DSL"
+scope tags           ← "RBAC roles + scope tags (limit which admins see what)"
+the Intune Suite     ← the EPM verdict, EPM being one component of it
+PaaS compute         ← the SKU table's three PaaS rows
+Azure databases      ← the storage card, drawing the storage/database line
+workload identity    ← the RBAC verdict, which governs people only
+```
+
+`related.json` is the other half — the "See also" strip — and 1,474 of 1,542
+topics had one, so the eight were the exception rather than a design choice.
+
+### Two things the file taught me by being edited badly
+
+**It is not sorted.** My first write used `sorted()` and moved several thousand
+entries; the diff was 7,610 lines for eight additions. Key order is the file's
+own, and preserving it makes the same change a 110-line diff.
+
+**Every edge is reciprocal.** The baseline is *0 one-way links across 4,612* —
+an invariant nothing states in prose and no gate enforces, visible only because
+`--check` reports the count. Eight one-directional entries would have introduced
+32 one-way edges and nothing would have failed. Each new link is now added in
+both directions; 36 entries touched, still 0 one-way.
+
+The suggester was almost no help here and says so in its own docstring: ranked by
+term overlap it offered *DORA Metrics* and *USB-C Power Delivery* for a topic
+about certificate delivery, and internet-scale port scanning for one about
+porting Group Policy. One genuine hit in twelve. Curation by hand was the job.
+
+```
+deep dead ends 8 -> 0 · related.json 1,474 -> 1,482 entries · 4,612 -> 4,678 links
+31 gates green · 301 browser checks green
+```

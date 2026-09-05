@@ -2578,7 +2578,9 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                   <div class="concept-desc verdict">
                     <strong class="c-green">Bicep</strong> is worth knowing — a clean DSL <span class="acro-exp">(Domain-Specific Language)</span> that
                     compiles to ARM templates, Azure's answer to Terraform/CloudFormation for
-                    declarative infra.
+                    declarative infra. Why it is better understood as a compiler than a
+                    language, and where Terraform still wins, is in
+                    <span class="xref">Azure-Native IaC — Bicep, ARM &amp; What Terraform Still Does Better</span>.
                   </div>
                 </div>
               </div>
@@ -2762,7 +2764,9 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                     Administrator handed out only through PIM <span class="acro-exp">(Privileged Identity Management)</span> with approval and a time limit.
                     <strong>Resource locks</strong> (CanNotDelete / ReadOnly) are a separate,
                     dumber safety net — they stop even an Owner, which is exactly why prod
-                    deployments sometimes fail mysteriously.
+                    deployments sometimes fail mysteriously. All of this governs people; the
+                    identities that machines authenticate with are in
+                    <span class="xref">Azure Workload Identity — Managed Identities, Service Principals &amp; Federated Credentials</span>.
                   </div>
                 </div>
               </div>
@@ -2994,6 +2998,9 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                     VMs across fault and update domains inside one datacenter; availability
                     <em>zones</em> spread them across physically separate datacenters in the region.
                     Zones are the stronger guarantee, and not every region or SKU offers them.
+                    The three PaaS <span class="acro-exp">(Platform as a Service)</span> rows in the table above each carry decisions a one-line
+                    summary cannot hold; those are in
+                    <span class="xref">Azure PaaS Compute — App Service, Functions &amp; Container Apps</span>.
                   </div>
                 </div>
               </div>
@@ -3017,7 +3024,9 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                     active data, <strong>Cool</strong> (30-day minimum), <strong>Cold</strong>
                     (90-day) and <strong>Archive</strong> (180-day, and it must be rehydrated before
                     you can read it). Lifecycle management rules move blobs between them
-                    automatically.
+                    automatically. Storing bytes and running a database are different
+                    questions with different failure modes; the second is in
+                    <span class="xref">Azure Databases — SQL Database, Managed Instance &amp; Cosmos DB</span>.
                   </div>
 <pre class="code-block"><span class="com"># Prefer Entra ID over account keys — keys are shared secrets nobody rotates</span>
 az storage blob list --account-name stprod01 --container-name backups --auth-mode login -o table
