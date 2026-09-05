@@ -22079,3 +22079,92 @@ porting Group Policy. One genuine hit in twelve. Curation by hand was the job.
 deep dead ends 8 -> 0 · related.json 1,474 -> 1,482 entries · 4,612 -> 4,678 links
 31 gates green · 301 browser checks green
 ```
+
+## Session — the sequel to the div → pre fix, which nobody had measured
+
+Taking this file's own advice — *once a phase, measure something nobody has
+measured* — I extracted all 805 `<pre class="code-block">` bodies and tried to
+compile the Python ones. 110 of 132 compiled. The 22 that did not were mostly my
+crude language guess catching Go, JavaScript and a pdb session, but five were
+real, and reading them found something larger.
+
+### What broke, and why the previous fix caused it
+
+Commit `a968164` converted 318 `<div class="code-block">` to `<pre>`, correctly:
+a `div` collapses newlines, so those blocks rendered as one run-on line. But a
+`<pre>` *renders* its newlines — which means the conversion made the source
+newlines meaningful for the first time. They had never been meaningful before, so
+nothing had ever put them in the right places. In 21 blocks they sat
+mid-statement, and the language quick-reference — the part of a study site people
+copy from — rendered like this:
+
+```
+name =
+"Alice"
+active =
+True
+# bool (capital T/F)
+print(f"Hello {name}, age
+  {age}") print(f"PI = {pi:.2f}") # format spec
+```
+
+`[int]$n =` / `10 [string]$s =` in PowerShell; `func main()` with its whole body
+flush left in Go; a `match`/`case` statement with every token on its own line.
+
+### Two hypotheses discarded before the right one
+
+**Fixed-width wrapping** — the obvious cause. Wrong: source lines inside blocks
+run to 477 characters, so nothing wrapped them at a column.
+
+**A generic "suspect line ending" heuristic** — 635 hits across 25 files, and
+almost all false. `client.messages.create(` followed by `model=...,` is correct
+multi-line Python; wrapped comments end in `or` and `and` legitimately. A number
+that large was evidence the detector was wrong, not that the corpus was.
+
+The decidable test is narrower and holds: **Python has no line continuation at a
+bare `=`**, so a Python line ending in one cannot be what anyone wrote. That
+returned 18 hits, all in one file, all real.
+
+### The repair, and the invariant that made it safe
+
+Every block was rewritten by hand — indentation restored, statements separated,
+trailing comments put back on their lines. What made that safe rather than risky
+is a property checked on each one before it was applied:
+
+```python
+re.sub(r'\s+', '', old_html) == re.sub(r'\s+', '', new_html)
+```
+
+Strip all whitespace and the markup must be *identical*. That permits exactly the
+edit intended — moving newlines and adding indentation — and forbids everything
+else, including a dropped span or a silently reworded comment. It caught two
+mistakes: an `&&` I had escaped to `&amp;&amp;`, and a verification bug of my own
+where `<[^>]+>` ate `< <span` in `n < 2` and made a correct block look broken.
+
+Two `net.html` blocks had the same corruption in reference text rather than code
+— a subnet calculation and a VLAN plan run together into paragraphs. Reflowed the
+same way, one fact per line.
+
+`linux.html:3978` is left alone deliberately: `smtpd_relay_restrictions =`
+followed by an indented value is correct Postfix syntax, which is exactly why the
+gate is restricted to blocks that are unmistakably Python.
+
+### The gate
+
+`lint_content.py` already bans `<div class="code-block">`. The new check sits
+directly beneath it, because it is the same defect one step later, and carries
+seven fixtures: the corruption, the corrected form, the Postfix case a looser
+rule would have failed the build over, `==`, `+=`, a comment, and a block with
+two offences to prove it reports all of them.
+
+Proved against a faithful revert of the file, not only against the fix:
+
+```
+ERRORS (18):
+  script.01-references.html:1002: a Python line in a code block ends in a bare '=' ('name =') …
+```
+
+```
+21 blocks reflowed in script.01-references.html + 2 in net.html
+lint fixtures 9 -> 16 · 31 gates green · 301 browser checks green
+```

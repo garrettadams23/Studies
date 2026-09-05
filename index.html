@@ -1277,23 +1277,21 @@ addresses).
 </tr>
 </table>
 <div class="dt">▸ SUBNET MATH</div>
-<pre class="code-block"><span class="com"># Given: 192.168.10.200/26 — find network, broadcast,
-  range</span>
+<pre class="code-block"><span class="com"># Given: 192.168.10.200/26 — find network, broadcast, range</span>
 
-Prefix = /26 → 26 network bits, 6 host bits Hosts = 2^6 − 2
-= <span class="num">62</span> Block size = 2^6 =
-<span class="num">64</span> (256 − 192 = 64) Subnets = 2^2 =
-<span class="num">4</span> (26 − 24 borrowed bits)
+Prefix = /26 → 26 network bits, 6 host bits
+Hosts = 2^6 − 2 = <span class="num">62</span>
+Block size = 2^6 = <span class="num">64</span> (256 − 192 = 64)
+Subnets = 2^2 = <span class="num">4</span> (26 − 24 borrowed bits)
 
 <span class="com"># Blocks: .0, .64, .128, .192</span>
 <span class="com"># .200 falls in block .192</span>
-Network = <span class="str">192.168.10.192</span> Broadcast
-= <span class="str">192.168.10.255</span> Host range =
-<span class="str">192.168.10.193 – 192.168.10.254</span>
+Network    = <span class="str">192.168.10.192</span>
+Broadcast  = <span class="str">192.168.10.255</span>
+Host range = <span class="str">192.168.10.193 – 192.168.10.254</span>
 
 <span class="com"># Subnet mask from CIDR</span>
-/26 = 11111111.11111111.11111111.<span class="str">11000000</span>
-= <span class="str">255.255.255.192</span>
+/26 = 11111111.11111111.11111111.<span class="str">11000000</span> = <span class="str">255.255.255.192</span>
 </pre>
 <div class="dt">▸ IPv6 ESSENTIALS</div>
 <table class="ref-table">
@@ -1443,24 +1441,20 @@ Dijkstra SPF; fast convergence; enterprise standard
 <div class="dt">▸ VLANS &amp; TRUNKING</div>
 <pre class="code-block"><span class="com"># VLAN — logical L2 segmentation on a switch</span>
 <span class="com"># Access port — carries 1 VLAN (end devices)</span>
-<span class="com"># Trunk port — carries multiple VLANs (switch-to-switch,
-  switch-to-router)</span>
-<span class="com"># 802.1Q tag — 4-byte VLAN tag added to Ethernet frame on
-  trunk links</span>
+<span class="com"># Trunk port — carries multiple VLANs (switch-to-switch, switch-to-router)</span>
+<span class="com"># 802.1Q tag — 4-byte VLAN tag added to Ethernet frame on trunk links</span>
 
 <span class="com"># Common VLAN design</span>
-VLAN 1 = Default (avoid using for production) VLAN 10 = Data
-/ Users VLAN 20 = Voice (VoIP — QoS priority) VLAN 30 =
-Management (network devices) VLAN 40 = DMZ / Guest VLAN 99 =
-Native VLAN (untagged traffic on trunk)
+VLAN 1  = Default (avoid using for production)
+VLAN 10 = Data / Users
+VLAN 20 = Voice (VoIP — QoS priority)
+VLAN 30 = Management (network devices)
+VLAN 40 = DMZ / Guest
+VLAN 99 = Native VLAN (untagged traffic on trunk)
 
-<span class="com"># Inter-VLAN routing: "router-on-a-stick" OR L3 switch
-  SVIs</span>
-<span class="com"># Spanning Tree Protocol (STP 802.1D) — prevents L2
-  loops</span>
-<span class="com"># RSTP (802.1w) — rapid convergence (&lt;1s vs 30-50s
-  STP)</span>
-</pre>
+<span class="com"># Inter-VLAN routing: "router-on-a-stick" OR L3 switch SVIs</span>
+<span class="com"># Spanning Tree Protocol (STP 802.1D) — prevents L2 loops</span>
+<span class="com"># RSTP (802.1w) — rapid convergence (&lt;1s vs 30-50s STP)</span></pre>
 <div class="dt">▸ NETWORK DEVICE COMPARISON</div>
 <table class="ref-table">
 <tr>
@@ -48121,204 +48115,110 @@ arrow functions, classes, modules, Promises.
 </div>
 <div class="dw">
 <div class="code-label">VARIABLES &amp; TYPES</div>
-<pre class="code-block"><span class="com">// Declarations — always prefer const, use let when
-  reassigning</span>
-<span class="kw">const</span> <span class="var">PI</span> =
-<span class="num">3.14</span>; <span class="kw">let</span>
-<span class="var">count</span> = <span class="num">0</span>;
-<span class="com">// var — function-scoped, hoisted — avoid in modern
-  code</span>
+<pre class="code-block"><span class="com">// Declarations — always prefer const, use let when reassigning</span>
+<span class="kw">const</span> <span class="var">PI</span> = <span class="num">3.14</span>;
+<span class="kw">let</span> <span class="var">count</span> = <span class="num">0</span>;
+<span class="com">// var — function-scoped, hoisted — avoid in modern code</span>
 
 <span class="com">// Primitives</span>
-<span class="kw">typeof</span>
-<span class="str">"hello"</span>
-<span class="com">// "string"</span>
-<span class="kw">typeof</span> <span class="num">42</span>
-<span class="com">// "number"</span>
-<span class="kw">typeof</span> <span class="kw">true</span>
-<span class="com">// "boolean"</span>
-<span class="kw">typeof</span>
-<span class="kw">undefined</span>
-<span class="com">// "undefined"</span>
-<span class="kw">typeof</span> <span class="kw">null</span>
-<span class="com">// "object" ← famous JS quirk</span>
-<span class="kw">typeof</span> Symbol()
-<span class="com">// "symbol"</span>
-<span class="kw">typeof</span> <span class="num">42n</span>
-<span class="com">// "bigint"</span>
+<span class="kw">typeof</span> <span class="str">"hello"</span>     <span class="com">// "string"</span>
+<span class="kw">typeof</span> <span class="num">42</span>          <span class="com">// "number"</span>
+<span class="kw">typeof</span> <span class="kw">true</span>        <span class="com">// "boolean"</span>
+<span class="kw">typeof</span> <span class="kw">undefined</span>   <span class="com">// "undefined"</span>
+<span class="kw">typeof</span> <span class="kw">null</span>        <span class="com">// "object" ← famous JS quirk</span>
+<span class="kw">typeof</span> Symbol()    <span class="com">// "symbol"</span>
+<span class="kw">typeof</span> <span class="num">42n</span>         <span class="com">// "bigint"</span>
 
 <span class="com">// Destructuring</span>
-<span class="kw">const</span> [<span class="var">a</span>,
-<span class="var">b</span>, ...<span class="var">rest</span>] = [<span class="num">1</span>,
-<span class="num">2</span>, <span class="num">3</span>,
-<span class="num">4</span>]; <span class="kw">const</span> {
-<span class="var">name</span>,
-<span class="var">age</span> = <span class="num">25</span> }
-= person; <span class="kw">const</span> {
-<span class="var">x</span>: <span class="var">lat</span>,
-<span class="var">y</span>: <span class="var">lng</span> } =
-coords; <span class="com">// rename</span>
-<span class="kw">const</span> { <span class="var">a</span>:
-{ <span class="var">b</span> } } = nested;
-<span class="com">// deep</span>
-</pre>
+<span class="kw">const</span> [<span class="var">a</span>, <span class="var">b</span>, ...<span class="var">rest</span>] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>];
+<span class="kw">const</span> { <span class="var">name</span>, <span class="var">age</span> = <span class="num">25</span> } = person;
+<span class="kw">const</span> { <span class="var">x</span>: <span class="var">lat</span>, <span class="var">y</span>: <span class="var">lng</span> } = coords; <span class="com">// rename</span>
+<span class="kw">const</span> { <span class="var">a</span>: { <span class="var">b</span> } } = nested;  <span class="com">// deep</span></pre>
 <div class="code-label">FUNCTIONS</div>
 <pre class="code-block"><span class="com">// Arrow functions (no own this/arguments)</span>
-<span class="kw">const</span> <span class="fn">add</span> =
-(<span class="var">a</span>, <span class="var">b</span>) =>
-<span class="var">a</span> + <span class="var">b</span>;
-<span class="kw">const</span>
-<span class="fn">greet</span> =
-<span class="var">name</span> =>
-<span class="str">`Hello <span class="var">${name}</span>`</span>; <span class="kw">const</span>
-<span class="fn">noop</span> = () => {};
+<span class="kw">const</span> <span class="fn">add</span> = (<span class="var">a</span>, <span class="var">b</span>) => <span class="var">a</span> + <span class="var">b</span>;
+<span class="kw">const</span> <span class="fn">greet</span> = <span class="var">name</span> => <span class="str">`Hello <span class="var">${name}</span>`</span>;
+<span class="kw">const</span> <span class="fn">noop</span> = () => {};
 
 <span class="com">// Default, rest, spread</span>
-<span class="kw">function</span>
-<span class="fn">log</span>(<span class="var">msg</span> =
-<span class="str">"default"</span>, ...<span class="var">args</span>) {} <span class="fn">Math.max</span>(...[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]);
-<span class="com">// spread</span>
+<span class="kw">function</span> <span class="fn">log</span>(<span class="var">msg</span> = <span class="str">"default"</span>, ...<span class="var">args</span>) {}
+<span class="fn">Math.max</span>(...[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]);   <span class="com">// spread</span>
 
 <span class="com">// Higher-order functions</span>
-[<span class="num">1</span>,<span class="num">2</span>,<span
-  class="num">3</span>].<span class="fn">map</span>(<span class="var">x</span> =>
-<span class="var">x</span> * <span class="num">2</span>)
-<span class="com">// [2,4,6]</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">filter</span>(<span class="var">x</span>
-=> <span class="var">x</span> > <span class="num">1</span>)
-<span class="com">// [2,3]</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">reduce</span>((<span class="var">acc</span>,<span class="var">x</span>) =>
-<span class="var">acc</span>+<span class="var">x</span>,
-<span class="num">0</span>)
-<span class="com">// 6</span> [<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>].<span class="fn">sort</span>((<span class="var">a</span>,<span class="var">b</span>) =>
-<span class="var">a</span> - <span class="var">b</span>)
-<span class="com">// [1,2,3]</span> arr.<span class="fn">flatMap</span>(<span class="var">x</span> => [<span class="var">x</span>,
-<span class="var">x</span>*<span class="num">2</span>])
-<span class="com">// ES2019</span>
-</pre>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">map</span>(<span class="var">x</span> => <span class="var">x</span> * <span class="num">2</span>)          <span class="com">// [2,4,6]</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">filter</span>(<span class="var">x</span> => <span class="var">x</span> > <span class="num">1</span>)       <span class="com">// [2,3]</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">reduce</span>((<span class="var">acc</span>,<span class="var">x</span>) => <span class="var">acc</span>+<span class="var">x</span>, <span class="num">0</span>) <span class="com">// 6</span>
+[<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>].<span class="fn">sort</span>((<span class="var">a</span>,<span class="var">b</span>) => <span class="var">a</span> - <span class="var">b</span>)      <span class="com">// [1,2,3]</span>
+arr.<span class="fn">flatMap</span>(<span class="var">x</span> => [<span class="var">x</span>, <span class="var">x</span>*<span class="num">2</span>])           <span class="com">// ES2019</span></pre>
 <div class="code-label">OBJECTS &amp; CLASSES</div>
 <pre class="code-block"><span class="com">// Object methods (ES6+)</span>
-<span class="kw">const</span> <span class="var">obj</span> =
-{ <span class="var">x</span>, <span class="var">y</span>,
-<span class="fn">greet</span>() {
-<span class="kw">return</span>
-<span class="kw">this</span>.<span class="var">x</span>; }
-}; <span class="fn">Object.assign</span>({}, defaults,
-overrides); <span class="kw">const</span>
-<span class="var">clone</span> = { ...<span class="var">original</span>, <span class="var">extra</span>:
-<span class="num">1</span> };
-<span class="fn">Object.keys</span>(<span class="var">obj</span>) / <span class="fn">Object.values</span>(<span class="var">obj</span>) / <span class="fn">Object.entries</span>(<span
-  class="var">obj</span>) <span class="fn">Object.fromEntries</span>([[<span
-  class="str">"a"</span>,<span class="num">1</span>],[<span class="str">"b"</span>,<span class="num">2</span>]])
-<span class="com">// ES2019</span>
+<span class="kw">const</span> <span class="var">obj</span> = { <span class="var">x</span>, <span class="var">y</span>, <span class="fn">greet</span>() { <span class="kw">return</span> <span class="kw">this</span>.<span class="var">x</span>; } };
+<span class="fn">Object.assign</span>({}, defaults, overrides);
+<span class="kw">const</span> <span class="var">clone</span> = { ...<span class="var">original</span>, <span class="var">extra</span>: <span class="num">1</span> };
+<span class="fn">Object.keys</span>(<span class="var">obj</span>) / <span class="fn">Object.values</span>(<span class="var">obj</span>) / <span class="fn">Object.entries</span>(<span class="var">obj</span>)
+<span class="fn">Object.fromEntries</span>([[<span class="str">"a"</span>,<span class="num">1</span>],[<span class="str">"b"</span>,<span class="num">2</span>]])   <span class="com">// ES2019</span>
 <span class="fn">Object.freeze</span>(<span class="var">obj</span>) <span class="com">// immutable</span>
 
 <span class="com">// Classes (syntactic sugar over prototypes)</span>
-<span class="kw">class</span>
-<span class="type">Animal</span> { #sound =
-<span class="str">"..."</span>;
-<span class="com">// private field (ES2022)</span>
-<span class="kw">constructor</span>(<span class="kw">public</span>
-name) {} <span class="com">// TypeScript-style</span>
-<span class="kw">get</span> <span class="fn">label</span>()
-{ <span class="kw">return</span>
-<span class="kw">this</span>.name; }
-<span class="kw">set</span>
-<span class="fn">label</span>(<span class="var">v</span>) {
-<span class="kw">this</span>.name =
-<span class="var">v</span>; }
-<span class="fn">speak</span>() {
-<span class="kw">return</span>
-<span class="kw">this</span>.#sound; }
-<span class="kw">static</span>
-<span class="fn">create</span>(<span class="var">n</span>) {
-<span class="kw">return</span> <span class="kw">new</span>
-<span class="type">Animal</span>(<span class="var">n</span>); } } <span class="kw">class</span>
-<span class="type">Dog</span>
-<span class="kw">extends</span>
-<span class="type">Animal</span> {
-<span class="fn">speak</span>() {
-<span class="kw">return</span>
-<span class="str">`<span class="var">${<span class="kw">super</span>.speak()}</span>
-  Woof!`</span>; } }
-</pre>
+<span class="kw">class</span> <span class="type">Animal</span> {
+  #sound = <span class="str">"..."</span>;                <span class="com">// private field (ES2022)</span>
+  <span class="kw">constructor</span>(<span class="kw">public</span> name) {}        <span class="com">// TypeScript-style</span>
+  <span class="kw">get</span> <span class="fn">label</span>() { <span class="kw">return</span> <span class="kw">this</span>.name; }
+  <span class="kw">set</span> <span class="fn">label</span>(<span class="var">v</span>) { <span class="kw">this</span>.name = <span class="var">v</span>; }
+  <span class="fn">speak</span>() { <span class="kw">return</span> <span class="kw">this</span>.#sound; }
+  <span class="kw">static</span> <span class="fn">create</span>(<span class="var">n</span>) { <span class="kw">return</span> <span class="kw">new</span> <span class="type">Animal</span>(<span class="var">n</span>); }
+}
+<span class="kw">class</span> <span class="type">Dog</span> <span class="kw">extends</span> <span class="type">Animal</span> {
+  <span class="fn">speak</span>() { <span class="kw">return</span> <span class="str">`<span class="var">${<span class="kw">super</span>.speak()}</span> Woof!`</span>; }
+}</pre>
 <div class="code-label">ASYNC &amp; PROMISES</div>
 <pre class="code-block"><span class="com">// Promise chain → async/await (preferred)</span>
-<span class="kw">async function</span>
-<span class="fn">fetchUser</span>(<span class="var">id</span>) { <span class="kw">try</span> {
-<span class="kw">const</span> <span class="var">res</span> =
-<span class="kw">await</span>
-<span class="fn">fetch</span>(<span class="str">`/api/users/<span class="var">${id}</span>`</span>); <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span>
-<span class="type">Error</span>(<span class="var">res</span>.statusText); <span class="kw">return</span>
-<span class="kw">await</span>
-<span class="var">res</span>.<span class="fn">json</span>();
-} <span class="kw">catch</span> (<span class="var">err</span>) { <span class="fn">console.error</span>(<span class="var">err</span>); } }
+<span class="kw">async function</span> <span class="fn">fetchUser</span>(<span class="var">id</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/users/<span class="var">${id}</span>`</span>);
+    <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span> <span class="type">Error</span>(<span class="var">res</span>.statusText);
+    <span class="kw">return</span> <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+  } <span class="kw">catch</span> (<span class="var">err</span>) { <span class="fn">console.error</span>(<span class="var">err</span>); }
+}
 
 <span class="com">// Parallel execution</span>
-<span class="kw">const</span> [<span class="var">u</span>,
-<span class="var">p</span>] = <span class="kw">await</span>
-<span class="fn">Promise.all</span>([<span class="fn">fetchUser</span>(), <span class="fn">fetchPosts</span>()]);
-<span class="kw">const</span>
-<span class="var">first</span> =
-<span class="kw">await</span>
-<span class="fn">Promise.race</span>([p1, p2]);
-<span class="kw">const</span>
-<span class="var">results</span> =
-<span class="kw">await</span>
-<span class="fn">Promise.allSettled</span>([p1, p2]);
-<span class="kw">const</span> <span class="var">any</span> =
-<span class="kw">await</span>
-<span class="fn">Promise.any</span>([p1, p2]);
-<span class="com">// first resolved</span>
+<span class="kw">const</span> [<span class="var">u</span>, <span class="var">p</span>] = <span class="kw">await</span> <span class="fn">Promise.all</span>([<span class="fn">fetchUser</span>(), <span class="fn">fetchPosts</span>()]);
+<span class="kw">const</span> <span class="var">first</span> = <span class="kw">await</span> <span class="fn">Promise.race</span>([p1, p2]);
+<span class="kw">const</span> <span class="var">results</span> = <span class="kw">await</span> <span class="fn">Promise.allSettled</span>([p1, p2]);
+<span class="kw">const</span> <span class="var">any</span> = <span class="kw">await</span> <span class="fn">Promise.any</span>([p1, p2]);  <span class="com">// first resolved</span>
 
-<span class="com">// Optional chaining &amp; nullish coalescing
-  (ES2020)</span>
-<span class="kw">const</span> <span class="var">zip</span> =
-user?.<span class="var">address</span>?.<span class="var">zip</span>
-?? <span class="str">"unknown"</span>; user?.<span
-  class="fn">save</span>?.();
-<span class="com">// call only if method exists</span>
-</pre>
+<span class="com">// Optional chaining &amp; nullish coalescing (ES2020)</span>
+<span class="kw">const</span> <span class="var">zip</span> = user?.<span class="var">address</span>?.<span class="var">zip</span> ?? <span class="str">"unknown"</span>;
+user?.<span class="fn">save</span>?.();                <span class="com">// call only if method exists</span></pre>
 <div class="code-label">DOM &amp; EVENTS</div>
 <pre class="code-block"><span class="com">// Query</span>
-<span class="fn">document.querySelector</span>(<span
-  class="str">".card"</span>) <span class="fn">document.querySelectorAll</span>(<span
-  class="str">"li"</span>) <span class="com">// NodeList</span>
-<span class="fn">document.getElementById</span>(<span
-  class="str">"main"</span>)
+<span class="fn">document.querySelector</span>(<span class="str">".card"</span>)
+<span class="fn">document.querySelectorAll</span>(<span class="str">"li"</span>)   <span class="com">// NodeList</span>
+<span class="fn">document.getElementById</span>(<span class="str">"main"</span>)
 
 <span class="com">// Manipulate</span>
-<span class="var">el</span>.textContent =
-<span class="str">"safe text"</span>;
-<span class="var">el</span>.innerHTML =
-<span class="str">"&lt;b&gt;unsafe&lt;/b&gt;"</span>;
+<span class="var">el</span>.textContent = <span class="str">"safe text"</span>;
+<span class="var">el</span>.innerHTML = <span class="str">"&lt;b&gt;unsafe&lt;/b&gt;"</span>;
 <span class="var">el</span>.classList.<span class="fn">toggle</span>(<span class="str">"active"</span>);
-<span class="var">el</span>.<span class="fn">setAttribute</span>(<span class="str">"data-id"</span>,
-<span class="num">42</span>);
-<span class="var">el</span>.style.color =
-<span class="str">"cyan"</span>;
+<span class="var">el</span>.<span class="fn">setAttribute</span>(<span class="str">"data-id"</span>, <span class="num">42</span>);
+<span class="var">el</span>.style.color = <span class="str">"cyan"</span>;
 
 <span class="com">// Create / insert</span>
-<span class="kw">const</span> <span class="var">div</span> =
-<span class="fn">document.createElement</span>(<span
-  class="str">"div"</span>); <span class="var">parent</span>.<span class="fn">append</span>(<span class="var">div</span>);
-<span class="com">// at end</span>
-<span class="var">parent</span>.<span class="fn">prepend</span>(<span class="var">div</span>);
-<span class="com">// at start</span>
+<span class="kw">const</span> <span class="var">div</span> = <span class="fn">document.createElement</span>(<span class="str">"div"</span>);
+<span class="var">parent</span>.<span class="fn">append</span>(<span class="var">div</span>);    <span class="com">// at end</span>
+<span class="var">parent</span>.<span class="fn">prepend</span>(<span class="var">div</span>);   <span class="com">// at start</span>
 <span class="var">el</span>.<span class="fn">insertAdjacentHTML</span>(<span class="str">"beforeend"</span>, html);
 <span class="var">el</span>.<span class="fn">remove</span>();
 
 <span class="com">// Events</span>
-<span class="var">btn</span>.<span class="fn">addEventListener</span>(<span class="str">"click"</span>,
-<span class="var">e</span> => {
-<span class="var">e</span>.<span class="fn">preventDefault</span>(); <span class="var">e</span>.<span class="fn">stopPropagation</span>(); }, { once: <span class="kw">true</span>, passive:
-<span class="kw">true</span> });
+<span class="var">btn</span>.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="var">e</span> => {
+  <span class="var">e</span>.<span class="fn">preventDefault</span>(); <span class="var">e</span>.<span class="fn">stopPropagation</span>();
+}, { once: <span class="kw">true</span>, passive: <span class="kw">true</span> });
 
 <span class="com">// Storage / History / Location</span>
-<span class="fn">localStorage.setItem</span>(<span
-  class="str">"k"</span>, <span class="fn">JSON.stringify</span>(<span class="var">val</span>)); <span class="fn">JSON.parse</span>(<span class="fn">localStorage.getItem</span>(<span class="str">"k"</span>));
-<span class="fn">history.pushState</span>({},
-<span class="str">""</span>,
-<span class="str">"/new-path"</span>);
-</pre>
+<span class="fn">localStorage.setItem</span>(<span class="str">"k"</span>, <span class="fn">JSON.stringify</span>(<span class="var">val</span>));
+<span class="fn">JSON.parse</span>(<span class="fn">localStorage.getItem</span>(<span class="str">"k"</span>));
+<span class="fn">history.pushState</span>({}, <span class="str">""</span>, <span class="str">"/new-path"</span>);</pre>
 </div>
 </div>
 </div>
@@ -48378,55 +48278,33 @@ undefined/functions. MIME <span class="acro-exp">(Multipurpose Internet Mail Ext
 </pre>
 <div class="code-label">JAVASCRIPT PARSE / STRINGIFY</div>
 <pre class="code-block"><span class="com">// Parse JSON string → JS value</span>
-<span class="kw">const</span> <span class="var">obj</span> =
-<span class="fn">JSON.parse</span>(<span class="str">'{"name":"Alice","age":30}'</span>);
+<span class="kw">const</span> <span class="var">obj</span> = <span class="fn">JSON.parse</span>(<span class="str">'{"name":"Alice","age":30}'</span>);
 <span class="com">// → { name: "Alice", age: 30 }</span>
 
 <span class="com">// Stringify JS value → JSON string</span>
-<span class="kw">const</span>
-<span class="var">json</span> =
-<span class="fn">JSON.stringify</span>({
-<span class="var">name</span>:
-<span class="str">"Alice"</span>,
-<span class="var">age</span>:
-<span class="num">30</span> });
+<span class="kw">const</span> <span class="var">json</span> = <span class="fn">JSON.stringify</span>({ <span class="var">name</span>: <span class="str">"Alice"</span>, <span class="var">age</span>: <span class="num">30</span> });
 <span class="com">// → '{"name":"Alice","age":30}'</span>
 
 <span class="com">// Pretty-print with indentation</span>
-<span class="fn">JSON.stringify</span>(<span class="var">obj</span>, <span class="kw">null</span>,
-<span class="num">2</span>);
+<span class="fn">JSON.stringify</span>(<span class="var">obj</span>, <span class="kw">null</span>, <span class="num">2</span>);
 
 <span class="com">// Replacer function — filter/transform values</span>
-<span class="fn">JSON.stringify</span>(<span class="var">obj</span>, (<span class="var">key</span>,
-<span class="var">val</span>) => {
-<span class="kw">if</span> (<span class="var">key</span> ===
-<span class="str">"password"</span>)
-<span class="kw">return</span>
-<span class="kw">undefined</span>;
-<span class="com">// omit</span>
-<span class="kw">return</span> <span class="var">val</span>;
+<span class="fn">JSON.stringify</span>(<span class="var">obj</span>, (<span class="var">key</span>, <span class="var">val</span>) => {
+  <span class="kw">if</span> (<span class="var">key</span> === <span class="str">"password"</span>) <span class="kw">return</span> <span class="kw">undefined</span>;   <span class="com">// omit</span>
+  <span class="kw">return</span> <span class="var">val</span>;
 });
 
 <span class="com">// Reviver function — parse Date strings etc.</span>
-<span class="fn">JSON.parse</span>(<span class="var">str</span>, (<span class="var">key</span>,
-<span class="var">val</span>) =>
-<span class="kw">typeof</span>
-<span class="var">val</span> ===
-<span class="str">"string"</span> &&
-<span class="var">val</span>.<span class="fn">match</span>(<span class="str">/^\d{4}-\d{2}-\d{2}/</span>) ?
-<span class="kw">new</span>
-<span class="type">Date</span>(<span class="var">val</span>)
-: <span class="var">val</span>
+<span class="fn">JSON.parse</span>(<span class="var">str</span>, (<span class="var">key</span>, <span class="var">val</span>) =>
+  <span class="kw">typeof</span> <span class="var">val</span> === <span class="str">"string"</span> && <span class="var">val</span>.<span class="fn">match</span>(<span class="str">/^\d{4}-\d{2}-\d{2}/</span>)
+    ? <span class="kw">new</span> <span class="type">Date</span>(<span class="var">val</span>)
+    : <span class="var">val</span>
 );
 
 <span class="com">// Deep clone (simple objects only)</span>
-<span class="kw">const</span>
-<span class="var">clone</span> =
-<span class="fn">JSON.parse</span>(<span class="fn">JSON.stringify</span>(<span class="var">original</span>));
-<span class="com">// Note: loses undefined, functions, Dates, Map, Set,
-  etc.</span>
-<span class="com">// Prefer structuredClone() for modern environments</span>
-</pre>
+<span class="kw">const</span> <span class="var">clone</span> = <span class="fn">JSON.parse</span>(<span class="fn">JSON.stringify</span>(<span class="var">original</span>));
+<span class="com">// Note: loses undefined, functions, Dates, Map, Set, etc.</span>
+<span class="com">// Prefer structuredClone() for modern environments</span></pre>
 <div class="code-label">COMMAND-LINE — JQ</div>
 <pre class="code-block"><span class="fn">cat</span> data.json |
 <span class="fn">jq</span> <span class="str">'.'</span>
@@ -48459,12 +48337,12 @@ undefined/functions. MIME <span class="acro-exp">(Multipurpose Internet Mail Ext
 </div>
 </div>
 </div>
-<div class="topic" id="python-scripting-automation" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="python-scripting-automation" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🐍</span>
 <span class="topic-name">Python — Scripting &amp; Automation</span>
 <span class="topic-badge">GENERAL PURPOSE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -48482,71 +48360,41 @@ CPython 3.10+ for match/case, 3.12 for f-string improvements.
 <div class="dw">
 <div class="code-label">CORE SYNTAX</div>
 <pre class="code-block"><span class="com"># Variables — duck-typed, no declaration needed</span>
-<span class="var">name</span> =
-<span class="str">"Alice"</span>
+<span class="var">name</span> = <span class="str">"Alice"</span>
 <span class="var">age</span> = <span class="num">30</span>
 <span class="var">pi</span> = <span class="num">3.14</span>
-<span class="var">active</span> =
-<span class="kw">True</span>
-<span class="com"># bool (capital T/F)</span>
-<span class="var">empty</span> =
-<span class="kw">None</span>
-<span class="com"># null equivalent</span>
+<span class="var">active</span> = <span class="kw">True</span>          <span class="com"># bool (capital T/F)</span>
+<span class="var">empty</span> = <span class="kw">None</span>          <span class="com"># null equivalent</span>
 
 <span class="com"># F-strings (3.6+) — preferred string formatting</span>
-<span class="fn">print</span>(<span class="str">f"Hello <span class="var">{name}</span>, age
-  <span class="var">{age}</span>"</span>) <span class="fn">print</span>(<span class="str">f"PI = <span class="var">{pi:.2f}</span>"</span>) <span class="com"># format spec</span>
+<span class="fn">print</span>(<span class="str">f"Hello <span class="var">{name}</span>, age <span class="var">{age}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"PI = <span class="var">{pi:.2f}</span>"</span>) <span class="com"># format spec</span>
 <span class="fn">print</span>(<span class="str">f"Debug: <span class="var">{age = }</span>"</span>) <span class="com"># 3.8+ self-doc</span>
 
 <span class="com"># Multiple assignment / unpacking</span>
-<span class="var">a</span>, <span class="var">b</span>,
-*<span class="var">rest</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>,
-<span class="num">4</span>] <span class="var">a</span>,
-<span class="var">b</span> = <span class="var">b</span>,
-<span class="var">a</span> <span class="com"># swap</span>
-<span class="var">x</span> = <span class="var">y</span> =
-<span class="var">z</span> = <span class="num">0</span>
-<span class="com"># chain assign</span>
-</pre>
+<span class="var">a</span>, <span class="var">b</span>, *<span class="var">rest</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+<span class="var">a</span>, <span class="var">b</span> = <span class="var">b</span>, <span class="var">a</span> <span class="com"># swap</span>
+<span class="var">x</span> = <span class="var">y</span> = <span class="var">z</span> = <span class="num">0</span> <span class="com"># chain assign</span></pre>
 <div class="code-label">DATA STRUCTURES</div>
 <pre class="code-block"><span class="com"># List — ordered, mutable, O(1) append</span>
-<span class="var">lst</span> = [<span class="num">1</span>,
-<span class="num">2</span>, <span class="num">3</span>]
-<span class="var">lst</span>.<span class="fn">append</span>(<span class="num">4</span>);
-<span class="var">lst</span>.<span class="fn">extend</span>([<span class="num">5</span>,<span class="num">6</span>])
-<span class="var">lst</span>.<span class="fn">insert</span>(<span class="num">0</span>, <span class="num">99</span>);
-<span class="var">lst</span>.<span class="fn">pop</span>()
-<span class="var">lst</span>[<span class="num">1</span>:<span class="num">3</span>]
-<span class="com"># slice [2,3]</span>
-<span class="var">lst</span>[::<span class="num">-1</span>]
-<span class="com"># reversed</span>
+<span class="var">lst</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="var">lst</span>.<span class="fn">append</span>(<span class="num">4</span>); <span class="var">lst</span>.<span class="fn">extend</span>([<span class="num">5</span>,<span class="num">6</span>])
+<span class="var">lst</span>.<span class="fn">insert</span>(<span class="num">0</span>, <span class="num">99</span>); <span class="var">lst</span>.<span class="fn">pop</span>()
+<span class="var">lst</span>[<span class="num">1</span>:<span class="num">3</span>]              <span class="com"># slice [2,3]</span>
+<span class="var">lst</span>[::<span class="num">-1</span>]              <span class="com"># reversed</span>
 
 <span class="com"># Dict — ordered (3.7+), key→value</span>
-<span class="var">d</span> = {<span class="str">"a"</span>:
-<span class="num">1</span>, <span class="str">"b"</span>:
-<span class="num">2</span>} <span class="var">d</span>.<span
-  class="fn">get</span>(<span class="str">"c"</span>, <span class="num">0</span>)
-<span class="com"># safe get with default</span>
+<span class="var">d</span> = {<span class="str">"a"</span>: <span class="num">1</span>, <span class="str">"b"</span>: <span class="num">2</span>}
+<span class="var">d</span>.<span class="fn">get</span>(<span class="str">"c"</span>, <span class="num">0</span>)         <span class="com"># safe get with default</span>
 <span class="var">d</span>.<span class="fn">setdefault</span>(<span class="str">"c"</span>, []).<span class="fn">append</span>(<span class="num">1</span>)
-<span class="var">d</span>.<span class="fn">update</span>({<span class="str">"c"</span>:
-<span class="num">3</span>});
-<span class="var">merged</span> = {**<span class="var">d</span>, **<span class="var">e</span>} <span class="kw">for</span>
-<span class="var">k</span>, <span class="var">v</span>
-<span class="kw">in</span> <span class="var">d</span>.<span
-  class="fn">items</span>(): <span class="fn">print</span>(<span class="var">k</span>, <span class="var">v</span>)
+<span class="var">d</span>.<span class="fn">update</span>({<span class="str">"c"</span>: <span class="num">3</span>}); <span class="var">merged</span> = {**<span class="var">d</span>, **<span class="var">e</span>}
+<span class="kw">for</span> <span class="var">k</span>, <span class="var">v</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">items</span>(): <span class="fn">print</span>(<span class="var">k</span>, <span class="var">v</span>)
 
 <span class="com"># Set, Tuple, Named Tuple</span>
-<span class="var">s</span> = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>} |
-{<span class="num">3</span>,<span class="num">4</span>}
-<span class="com"># union {1,2,3,4}</span>
-<span class="var">t</span> = (<span class="num">1</span>,
-<span class="num">2</span>)
-<span class="com"># immutable</span>
-<span class="kw">from</span> collections
-<span class="kw">import</span> namedtuple
-<span class="type">Point</span> =
-<span class="fn">namedtuple</span>(<span class="str">"Point"</span>, [<span class="str">"x"</span>,<span class="str">"y"</span>])
-</pre>
+<span class="var">s</span> = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>} | {<span class="num">3</span>,<span class="num">4</span>}    <span class="com"># union {1,2,3,4}</span>
+<span class="var">t</span> = (<span class="num">1</span>, <span class="num">2</span>)            <span class="com"># immutable</span>
+<span class="kw">from</span> collections <span class="kw">import</span> namedtuple
+<span class="type">Point</span> = <span class="fn">namedtuple</span>(<span class="str">"Point"</span>, [<span class="str">"x"</span>,<span class="str">"y"</span>])</pre>
 <div class="code-label">
 CONTROL FLOW &amp; COMPREHENSIONS
 </div>
@@ -48594,133 +48442,80 @@ CONTROL FLOW &amp; COMPREHENSIONS
 <span class="com"># generator</span>
 </pre>
 <div class="code-label">FUNCTIONS, DECORATORS &amp; OOP</div>
-<pre class="code-block"><span class="kw">def</span>
-<span class="fn">greet</span>(<span class="var">name</span>:
-<span class="type">str</span>, *,
-<span class="var">loud</span>:
-<span class="type">bool</span> =
-<span class="kw">False</span>) ->
-<span class="type">str</span>:
-<span class="str">"""Greet a person. loud=True → UPPERCASE."""</span>
-<span class="var">msg</span> =
-<span class="str">f"Hello {name}"</span>
-<span class="kw">return</span>
-<span class="var">msg</span>.<span class="fn">upper</span>()
-<span class="kw">if</span> <span class="var">loud</span>
-<span class="kw">else</span> <span class="var">msg</span>
+<pre class="code-block"><span class="kw">def</span> <span class="fn">greet</span>(<span class="var">name</span>: <span class="type">str</span>, *, <span class="var">loud</span>: <span class="type">bool</span> = <span class="kw">False</span>) -> <span class="type">str</span>:
+    <span class="str">"""Greet a person. loud=True → UPPERCASE."""</span>
+    <span class="var">msg</span> = <span class="str">f"Hello {name}"</span>
+    <span class="kw">return</span> <span class="var">msg</span>.<span class="fn">upper</span>() <span class="kw">if</span> <span class="var">loud</span> <span class="kw">else</span> <span class="var">msg</span>
 
 <span class="com"># *args / **kwargs</span>
-<span class="kw">def</span>
-<span class="fn">variadic</span>(*<span class="var">args</span>, **<span class="var">kwargs</span>): ...
+<span class="kw">def</span> <span class="fn">variadic</span>(*<span class="var">args</span>, **<span class="var">kwargs</span>): ...
 
 <span class="com"># Decorators</span>
-<span class="kw">from</span> functools
-<span class="kw">import</span> wraps, lru_cache
-<span class="kw">def</span>
-<span class="fn">timer</span>(<span class="var">fn</span>):
-@<span class="fn">wraps</span>(<span class="var">fn</span>)
-<span class="kw">def</span>
-<span class="fn">wrapper</span>(*<span class="var">a</span>,
-**<span class="var">kw</span>):
-<span class="var">start</span> =
-<span class="fn">time.time</span>()
-<span class="var">res</span> =
-<span class="fn">fn</span>(*<span class="var">a</span>,
-**<span class="var">kw</span>)
-<span class="fn">print</span>(<span class="str">f"{fn.__name__}: {time.time()-start:.3f}s"</span>) <span class="kw">return</span>
-<span class="var">res</span> <span class="kw">return</span>
-<span class="var">wrapper</span> @<span class="fn">lru_cache</span>(maxsize=<span class="num">128</span>)
-<span class="com"># memoize</span>
-<span class="kw">def</span>
-<span class="fn">fib</span>(<span class="var">n</span>):
-<span class="kw">return</span> <span class="var">n</span>
-<span class="kw">if</span> <span class="var">n</span> <
-<span class="num">2</span> <span class="kw">else</span>
-<span class="fn">fib</span>(<span class="var">n</span>-<span
-  class="num">1</span>)+<span class="fn">fib</span>(<span class="var">n</span>-<span class="num">2</span>)
+<span class="kw">from</span> functools <span class="kw">import</span> wraps, lru_cache
+<span class="kw">def</span> <span class="fn">timer</span>(<span class="var">fn</span>):
+    @<span class="fn">wraps</span>(<span class="var">fn</span>)
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*<span class="var">a</span>, **<span class="var">kw</span>):
+        <span class="var">start</span> = <span class="fn">time.time</span>()
+        <span class="var">res</span> = <span class="fn">fn</span>(*<span class="var">a</span>, **<span class="var">kw</span>)
+        <span class="fn">print</span>(<span class="str">f"{fn.__name__}: {time.time()-start:.3f}s"</span>)
+        <span class="kw">return</span> <span class="var">res</span>
+    <span class="kw">return</span> <span class="var">wrapper</span>
 
-<span class="com"># Dataclass (3.7+) — concise class with
-  auto-methods</span>
-<span class="kw">from</span> dataclasses
-<span class="kw">import</span> dataclass, field
+@<span class="fn">lru_cache</span>(maxsize=<span class="num">128</span>)     <span class="com"># memoize</span>
+<span class="kw">def</span> <span class="fn">fib</span>(<span class="var">n</span>):
+    <span class="kw">return</span> <span class="var">n</span> <span class="kw">if</span> <span class="var">n</span> < <span class="num">2</span> <span class="kw">else</span> <span class="fn">fib</span>(<span class="var">n</span>-<span class="num">1</span>)+<span class="fn">fib</span>(<span class="var">n</span>-<span class="num">2</span>)
+
+<span class="com"># Dataclass (3.7+) — concise class with auto-methods</span>
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
 @dataclass(frozen=<span class="kw">True</span>)
-<span class="kw">class</span>
-<span class="type">User</span>:
-<span class="var">name</span>: <span class="type">str</span>
-<span class="var">age</span>:
-<span class="type">int</span> = <span class="num">0</span>
-<span class="var">tags</span>:
-<span class="type">list</span> =
-<span class="fn">field</span>(default_factory=list)
-</pre>
+<span class="kw">class</span> <span class="type">User</span>:
+    <span class="var">name</span>: <span class="type">str</span>
+    <span class="var">age</span>: <span class="type">int</span> = <span class="num">0</span>
+    <span class="var">tags</span>: <span class="type">list</span> = <span class="fn">field</span>(default_factory=list)</pre>
 <div class="code-label">FILE I/O &amp; COMMON STDLIB</div>
 <pre class="code-block"><span class="com"># File I/O — always use context manager</span>
-<span class="kw">with</span>
-<span class="fn">open</span>(<span class="str">"file.txt"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> <span class="var">f</span>:
-<span class="var">content</span> =
-<span class="var">f</span>.<span class="fn">read</span>()
-<span class="com"># whole file</span>
-<span class="var">lines</span> =
-<span class="var">f</span>.<span class="fn">readlines</span>() <span class="com"># list of lines</span>
-<span class="kw">with</span>
-<span class="fn">open</span>(<span class="str">"out.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span>
-<span class="var">f</span>: <span class="var">f</span>.<span
-  class="fn">write</span>(<span class="str">"hello "</span>)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"file.txt"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">content</span> = <span class="var">f</span>.<span class="fn">read</span>()      <span class="com"># whole file</span>
+    <span class="var">lines</span> = <span class="var">f</span>.<span class="fn">readlines</span>() <span class="com"># list of lines</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"out.txt"</span>, <span class="str">"w"</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">f</span>.<span class="fn">write</span>(<span class="str">"hello "</span>)
 
-<span class="com"># Path manipulation (pathlib — preferred over
-  os.path)</span>
-<span class="kw">from</span> pathlib
-<span class="kw">import</span> Path
-<span class="var">p</span> =
-<span class="type">Path</span>(<span class="str">"/etc/hosts"</span>) <span class="var">p</span>.parent /
-<span class="str">"other"</span>
-<span class="com"># /etc/other</span>
-<span class="var">p</span>.stem;
-<span class="var">p</span>.suffix;
-<span class="var">p</span>.name
-<span class="com"># hosts "" hosts</span>
-<span class="fn">list</span>(<span class="type">Path</span>(<span class="str">"."</span>).<span class="fn">glob</span>(<span class="str">"**/*.py"</span>))
-<span class="com"># recursive find</span>
+<span class="com"># Path manipulation (pathlib — preferred over os.path)</span>
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="var">p</span> = <span class="type">Path</span>(<span class="str">"/etc/hosts"</span>)
+<span class="var">p</span>.parent / <span class="str">"other"</span>          <span class="com"># /etc/other</span>
+<span class="var">p</span>.stem; <span class="var">p</span>.suffix; <span class="var">p</span>.name       <span class="com"># hosts "" hosts</span>
+<span class="fn">list</span>(<span class="type">Path</span>(<span class="str">"."</span>).<span class="fn">glob</span>(<span class="str">"**/*.py"</span>))  <span class="com"># recursive find</span>
 <span class="var">p</span>.<span class="fn">read_text</span>(); <span class="var">p</span>.<span class="fn">write_text</span>(<span class="str">"data"</span>)
 
 <span class="com"># Common imports</span>
-<span class="kw">import</span> os, sys, re, json, csv, time,
-datetime <span class="kw">from</span> collections
-<span class="kw">import</span> Counter, defaultdict, deque
-<span class="kw">from</span> itertools
-<span class="kw">import</span> chain, product, combinations
+<span class="kw">import</span> os, sys, re, json, csv, time, datetime
+<span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict, deque
+<span class="kw">from</span> itertools <span class="kw">import</span> chain, product, combinations
 <span class="kw">import</span> subprocess
-<span class="fn">subprocess.run</span>([<span class="str">"ls"</span>,<span class="str">"-la"</span>], capture_output=<span
-  class="kw">True</span>, text=<span class="kw">True</span>)
-</pre>
+<span class="fn">subprocess.run</span>([<span class="str">"ls"</span>,<span class="str">"-la"</span>], capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>)</pre>
 <div class="code-label">
 ERROR HANDLING &amp; CONTEXT MANAGERS
 </div>
 <pre class="code-block"><span class="kw">try</span>:
-<span class="var">result</span> =
-<span class="fn">int</span>(<span class="str">"bad"</span>)
-<span class="kw">except</span> (<span class="type">ValueError</span>, <span class="type">TypeError</span>)
-<span class="kw">as</span> <span class="var">e</span>:
-<span class="fn">print</span>(<span class="str">f"Error: {e}"</span>) <span class="kw">except</span>
-<span class="type">Exception</span>:
-<span class="com"># catch-all</span>
-<span class="kw">raise</span>
-<span class="com"># re-raise</span>
+    <span class="var">result</span> = <span class="fn">int</span>(<span class="str">"bad"</span>)
+<span class="kw">except</span> (<span class="type">ValueError</span>, <span class="type">TypeError</span>) <span class="kw">as</span> <span class="var">e</span>:
+    <span class="fn">print</span>(<span class="str">f"Error: {e}"</span>)
+<span class="kw">except</span> <span class="type">Exception</span>:      <span class="com"># catch-all</span>
+    <span class="kw">raise</span>                <span class="com"># re-raise</span>
 <span class="kw">else</span>:
-<span class="fn">print</span>(<span class="str">"success"</span>) <span class="com"># runs if no exception</span>
+    <span class="fn">print</span>(<span class="str">"success"</span>) <span class="com"># runs if no exception</span>
 <span class="kw">finally</span>:
-<span class="fn">print</span>(<span class="str">"always runs"</span>)
+    <span class="fn">print</span>(<span class="str">"always runs"</span>)
 
 <span class="com"># Custom context manager</span>
-<span class="kw">from</span> contextlib
-<span class="kw">import</span> contextmanager
-@contextmanager <span class="kw">def</span>
-<span class="fn">managed</span>():
-<span class="fn">print</span>(<span class="str">"enter"</span>); <span class="kw">yield</span>;
-<span class="fn">print</span>(<span class="str">"exit"</span>) <span class="kw">with</span>
-<span class="fn">managed</span>():
-<span class="fn">print</span>(<span class="str">"inside"</span>)
-</pre>
+<span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager
+@contextmanager
+<span class="kw">def</span> <span class="fn">managed</span>():
+    <span class="fn">print</span>(<span class="str">"enter"</span>); <span class="kw">yield</span>; <span class="fn">print</span>(<span class="str">"exit"</span>)
+
+<span class="kw">with</span> <span class="fn">managed</span>():
+    <span class="fn">print</span>(<span class="str">"inside"</span>)</pre>
 </div>
 </div>
 </div>
@@ -49082,42 +48877,31 @@ concurrency model (goroutines + channels). Toolchain:
 <pre class="code-block"><span class="kw">package</span> main
 
 <span class="kw">import</span> (
-<span class="str">"fmt"</span>
-<span class="str">"os"</span>
-<span class="str">"net/http"</span>
+    <span class="str">"fmt"</span>
+    <span class="str">"os"</span>
+    <span class="str">"net/http"</span>
 )
 
-<span class="kw">func</span> <span class="fn">main</span>()
-{
-<span class="com">// Short variable declaration (type inferred)</span>
-<span class="var">name</span> :=
-<span class="str">"Alice"</span>
-<span class="var">age</span> := <span class="num">30</span>
-<span class="var">pi</span> := <span class="num">3.14</span>
+<span class="kw">func</span> <span class="fn">main</span>() {
+    <span class="com">// Short variable declaration (type inferred)</span>
+    <span class="var">name</span> := <span class="str">"Alice"</span>
+    <span class="var">age</span> := <span class="num">30</span>
+    <span class="var">pi</span> := <span class="num">3.14</span>
 
-<span class="com">// Explicit declaration</span>
-<span class="kw">var</span> <span class="var">count</span>
-<span class="type">int</span> = <span class="num">0</span>
-<span class="kw">var</span> (<span class="var">x</span>,
-<span class="var">y</span>
-<span class="type">float64</span>)
+    <span class="com">// Explicit declaration</span>
+    <span class="kw">var</span> <span class="var">count</span> <span class="type">int</span> = <span class="num">0</span>
+    <span class="kw">var</span> (<span class="var">x</span>, <span class="var">y</span> <span class="type">float64</span>)
 
-<span class="com">// Constants</span>
-<span class="kw">const</span>
-<span class="var">MaxSize</span> =
-<span class="num">1024</span>
-<span class="kw">const</span> (
-<span class="var">StatusOK</span> =
-<span class="num">200</span>
-<span class="var">StatusErr</span> =
-<span class="num">500</span>
-)
+    <span class="com">// Constants</span>
+    <span class="kw">const</span> <span class="var">MaxSize</span> = <span class="num">1024</span>
+    <span class="kw">const</span> (
+        <span class="var">StatusOK</span> = <span class="num">200</span>
+        <span class="var">StatusErr</span> = <span class="num">500</span>
+    )
 
-<span class="fn">fmt.Printf</span>(<span class="str">"Hello %s, age %d "</span>, <span class="var">name</span>,
-<span class="var">age</span>)
-<span class="fn">fmt.Println</span>(<span class="var">count</span>, <span class="var">x</span>, <span class="var">y</span>,
-<span class="var">pi</span>) }
-</pre>
+    <span class="fn">fmt.Printf</span>(<span class="str">"Hello %s, age %d "</span>, <span class="var">name</span>, <span class="var">age</span>)
+    <span class="fn">fmt.Println</span>(<span class="var">count</span>, <span class="var">x</span>, <span class="var">y</span>, <span class="var">pi</span>)
+}</pre>
 <div class="code-label">FUNCTIONS &amp; ERROR HANDLING</div>
 <pre class="code-block"><span class="com">// Multiple return values — idiomatic Go</span>
 <span class="kw">func</span>
@@ -49280,38 +49064,26 @@ STRUCTS, INTERFACES &amp; METHODS
 </pre>
 <div class="code-label">SLICES, MAPS &amp; HTTP</div>
 <pre class="code-block"><span class="com">// Slices (dynamic arrays)</span>
-<span class="var">s</span> := []<span class="type">int</span>{<span class="num">1</span>, <span class="num">2</span>,
-<span class="num">3</span>} <span class="var">s</span> =
-<span class="fn">append</span>(<span class="var">s</span>,
-<span class="num">4</span>, <span class="num">5</span>)
-<span class="var">s2</span> :=
-<span class="fn">make</span>([]<span class="type">int</span>, <span class="num">0</span>, <span class="num">10</span>)
-<span class="com">// len=0, cap=10</span>
-<span class="fn">copy</span>(<span class="var">dst</span>,
-<span class="var">src</span>)
+<span class="var">s</span> := []<span class="type">int</span>{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}
+<span class="var">s</span> = <span class="fn">append</span>(<span class="var">s</span>, <span class="num">4</span>, <span class="num">5</span>)
+<span class="var">s2</span> := <span class="fn">make</span>([]<span class="type">int</span>, <span class="num">0</span>, <span class="num">10</span>)   <span class="com">// len=0, cap=10</span>
+<span class="fn">copy</span>(<span class="var">dst</span>, <span class="var">src</span>)
 
 <span class="com">// Maps</span>
-<span class="var">m</span> :=
-<span class="fn">map</span>[<span class="type">string</span>]<span class="type">int</span>{<span class="str">"a"</span>: <span class="num">1</span>}
-<span class="var">m</span>[<span class="str">"b"</span>] =
-<span class="num">2</span> <span class="kw">if</span>
-<span class="var">v</span>, <span class="var">ok</span> :=
-<span class="var">m</span>[<span class="str">"c"</span>];
-<span class="var">ok</span> {
-<span class="fn">fmt.Println</span>(<span class="var">v</span>) } <span class="kw">delete</span>(<span class="var">m</span>, <span class="str">"a"</span>)
+<span class="var">m</span> := <span class="fn">map</span>[<span class="type">string</span>]<span class="type">int</span>{<span class="str">"a"</span>: <span class="num">1</span>}
+<span class="var">m</span>[<span class="str">"b"</span>] = <span class="num">2</span>
+<span class="kw">if</span> <span class="var">v</span>, <span class="var">ok</span> := <span class="var">m</span>[<span class="str">"c"</span>]; <span class="var">ok</span> {
+    <span class="fn">fmt.Println</span>(<span class="var">v</span>)
+}
+<span class="kw">delete</span>(<span class="var">m</span>, <span class="str">"a"</span>)
 
 <span class="com">// HTTP server</span>
-<span class="fn">http.HandleFunc</span>(<span class="str">"/health"</span>, <span class="fn">func</span>(<span class="var">w</span>
-http.ResponseWriter,
-<span class="var">r</span> *http.Request) {
-<span class="fn">w.Header</span>().<span class="fn">Set</span>(<span class="str">"Content-Type"</span>,
-<span class="str">"application/json"</span>)
-<span class="fn">w.WriteHeader</span>(http.StatusOK)
-<span class="fn">json.NewEncoder</span>(<span class="var">w</span>).<span class="fn">Encode</span>(<span class="fn">map</span>[<span class="type">string</span>]<span class="type">any</span>{<span class="str">"status"</span>:
-<span class="str">"ok"</span>}) })
-<span class="fn">http.ListenAndServe</span>(<span
-  class="str">":8080"</span>, <span class="kw">nil</span>)
-</pre>
+<span class="fn">http.HandleFunc</span>(<span class="str">"/health"</span>, <span class="fn">func</span>(<span class="var">w</span> http.ResponseWriter, <span class="var">r</span> *http.Request) {
+    <span class="fn">w.Header</span>().<span class="fn">Set</span>(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>)
+    <span class="fn">w.WriteHeader</span>(http.StatusOK)
+    <span class="fn">json.NewEncoder</span>(<span class="var">w</span>).<span class="fn">Encode</span>(<span class="fn">map</span>[<span class="type">string</span>]<span class="type">any</span>{<span class="str">"status"</span>: <span class="str">"ok"</span>})
+})
+<span class="fn">http.ListenAndServe</span>(<span class="str">":8080"</span>, <span class="kw">nil</span>)</pre>
 </div>
 </div>
 </div>
@@ -49320,12 +49092,12 @@ http.ResponseWriter,
 <!-- ═══════════════════════════════════════════════
 TOPIC: PowerShell
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="powershell-scripting-reference" data-reviewed="2026-07" data-read="8" data-level="core">
+<div class="topic" id="powershell-scripting-reference" data-reviewed="2026-07" data-read="9" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💙</span>
 <span class="topic-name">PowerShell — Scripting Reference</span>
 <span class="topic-badge">WINDOWS / CROSS-PLATFORM</span>
-<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">9 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -49344,75 +49116,45 @@ text) between commands. Cross-platform: Windows, macOS, Linux
 <div class="dw">
 <div class="dt">▸ VARIABLES &amp; DATA TYPES</div>
 <pre class="code-block"><span class="com"># Variables always start with $</span>
-<span class="var">$name</span> =
-<span class="str">"Alice"</span>
+<span class="var">$name</span> = <span class="str">"Alice"</span>
 <span class="var">$count</span> = <span class="num">42</span>
 <span class="var">$pi</span> = <span class="num">3.14</span>
-<span class="var">$flag</span> =
-<span class="var">$true</span>
-<span class="com"># $true / $false / $null</span>
+<span class="var">$flag</span> = <span class="var">$true</span>          <span class="com"># $true / $false / $null</span>
 
 <span class="com"># Typed declaration</span>
-[<span class="type">int</span>]<span class="var">$n</span> =
-<span class="num">10</span> [<span class="type">string</span>]<span class="var">$s</span> =
-<span class="str">"hello"</span> [<span class="type">bool</span>]<span class="var">$b</span> =
-<span class="var">$false</span> [<span class="type">array</span>]<span class="var">$arr</span> =
-<span class="num">1</span>,<span class="num">2</span>,<span
-  class="num">3</span>
+[<span class="type">int</span>]<span class="var">$n</span> = <span class="num">10</span>
+[<span class="type">string</span>]<span class="var">$s</span> = <span class="str">"hello"</span>
+[<span class="type">bool</span>]<span class="var">$b</span> = <span class="var">$false</span>
+[<span class="type">array</span>]<span class="var">$arr</span> = <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>
 
 <span class="com"># Arrays</span>
-<span class="var">$fruits</span> = @(<span class="str">"apple"</span>, <span class="str">"banana"</span>,
-<span class="str">"cherry"</span>)
-<span class="var">$fruits</span>[<span class="num">0</span>]
-<span class="com"># → apple</span>
-<span class="var">$fruits</span>.Count
-<span class="com"># → 3</span>
-<span class="var">$fruits</span> +=
-<span class="str">"date"</span>
-<span class="com"># append</span>
+<span class="var">$fruits</span> = @(<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>)
+<span class="var">$fruits</span>[<span class="num">0</span>]              <span class="com"># → apple</span>
+<span class="var">$fruits</span>.Count             <span class="com"># → 3</span>
+<span class="var">$fruits</span> += <span class="str">"date"</span>       <span class="com"># append</span>
 
 <span class="com"># Hash tables (dictionaries)</span>
-<span class="var">$user</span> = @{ Name =
-<span class="str">"Bob"</span>; Age =
-<span class="num">30</span>; Admin =
-<span class="var">$false</span> }
-<span class="var">$user</span>.Name
-<span class="com"># → Bob</span>
-<span class="var">$user</span>[<span class="str">"Age"</span>]
-<span class="com"># → 30</span>
-<span class="var">$user</span>.Role =
-<span class="str">"Dev"</span>
-<span class="com"># add key</span>
-</pre>
+<span class="var">$user</span> = @{ Name = <span class="str">"Bob"</span>; Age = <span class="num">30</span>; Admin = <span class="var">$false</span> }
+<span class="var">$user</span>.Name               <span class="com"># → Bob</span>
+<span class="var">$user</span>[<span class="str">"Age"</span>]            <span class="com"># → 30</span>
+<span class="var">$user</span>.Role = <span class="str">"Dev"</span>      <span class="com"># add key</span></pre>
 <div class="dt">▸ STRING OPERATIONS</div>
 <pre class="code-block"><span class="com"># Interpolation (double quotes only)</span>
-<span class="var">$msg</span> =
-<span class="str">"Hello, </span><span class="var">$name</span><span class="str">!"</span> <span class="var">$msg</span> =
-<span class="str">"Count is </span><span class="var">$($arr.Count)</span><span class="str"> items"</span>
-<span class="com"># expression inside $()</span>
+<span class="var">$msg</span> = <span class="str">"Hello, </span><span class="var">$name</span><span class="str">!"</span>
+<span class="var">$msg</span> = <span class="str">"Count is </span><span class="var">$($arr.Count)</span><span class="str"> items"</span>   <span class="com"># expression inside $()</span>
 
 <span class="com"># Here-string (multiline)</span>
 <span class="var">$text</span> = @<span class="str">" Line one Line two — value is $name "</span>@
 
 <span class="com"># Common string methods</span>
-<span class="str">"hello world"</span>.ToUpper()
-<span class="com"># HELLO WORLD</span>
-<span class="str">" trim me "</span>.Trim()
-<span class="com"># "trim me"</span>
-<span class="str">"a,b,c"</span>.Split(<span class="str">","</span>) <span class="com"># @("a","b","c")</span>
-<span class="str">"hello"</span>.Replace(<span class="str">"l"</span>,<span class="str">"r"</span>)
-<span class="com"># herro</span>
-<span class="str">"hello world"</span> -<span class="fn">match</span>
-<span class="str">"w\w+"</span>
-<span class="com"># $true; $Matches[0] = "world"</span>
-<span class="str">"hello"</span> -<span class="fn">like</span>
-<span class="str">"hel*"</span>
-<span class="com"># $true (wildcard)</span>
-<span class="fn">-join</span> (<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>)
-<span class="com"># "abc"</span> (<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>)
--<span class="fn">join</span> <span class="str">"-"</span>
-<span class="com"># "a-b-c"</span>
-</pre>
+<span class="str">"hello world"</span>.ToUpper()          <span class="com"># HELLO WORLD</span>
+<span class="str">" trim me "</span>.Trim()               <span class="com"># "trim me"</span>
+<span class="str">"a,b,c"</span>.Split(<span class="str">","</span>)          <span class="com"># @("a","b","c")</span>
+<span class="str">"hello"</span>.Replace(<span class="str">"l"</span>,<span class="str">"r"</span>)       <span class="com"># herro</span>
+<span class="str">"hello world"</span> -<span class="fn">match</span> <span class="str">"w\w+"</span>     <span class="com"># $true; $Matches[0] = "world"</span>
+<span class="str">"hello"</span> -<span class="fn">like</span> <span class="str">"hel*"</span>         <span class="com"># $true (wildcard)</span>
+<span class="fn">-join</span> (<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>)              <span class="com"># "abc"</span>
+(<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>) -<span class="fn">join</span> <span class="str">"-"</span>         <span class="com"># "a-b-c"</span></pre>
 <div class="dt">▸ FLOW CONTROL</div>
 <pre class="code-block"><span class="com"># If / elseif / else</span>
 <span class="kw">if</span> (<span class="var">$x</span> -gt
@@ -49461,36 +49203,22 @@ text) between commands. Cross-platform: Windows, macOS, Linux
 </pre>
 <div class="dt">▸ FUNCTIONS &amp; PIPELINE</div>
 <pre class="code-block"><span class="com"># Function definition</span>
-<span class="kw">function</span>
-<span class="fn">Get-Greeting</span> {
-<span class="kw">param</span>( [<span class="type">string</span>]<span class="var">$Name</span> =
-<span class="str">"World"</span>, [<span class="type">switch</span>]<span class="var">$Loud</span>
-)
-<span class="var">$msg</span> =
-<span class="str">"Hello, </span><span class="var">$Name</span><span class="str">!"</span> <span class="kw">if</span> (<span
-  class="var">$Loud</span>) { <span class="var">$msg</span>.ToUpper() }
-<span class="kw">else</span> { <span class="var">$msg</span> }
-} <span class="fn">Get-Greeting</span> -Name
-<span class="str">"Alice"</span> -Loud
+<span class="kw">function</span> <span class="fn">Get-Greeting</span> {
+    <span class="kw">param</span>(
+        [<span class="type">string</span>]<span class="var">$Name</span> = <span class="str">"World"</span>,
+        [<span class="type">switch</span>]<span class="var">$Loud</span>
+    )
+    <span class="var">$msg</span> = <span class="str">"Hello, </span><span class="var">$Name</span><span class="str">!"</span>
+    <span class="kw">if</span> (<span class="var">$Loud</span>) { <span class="var">$msg</span>.ToUpper() } <span class="kw">else</span> { <span class="var">$msg</span> }
+}
+<span class="fn">Get-Greeting</span> -Name <span class="str">"Alice"</span> -Loud
 
 <span class="com"># Pipeline — pass objects between cmdlets</span>
-<span class="fn">Get-Process</span> |
-<span class="fn">Where-Object</span> CPU -gt
-<span class="num">10</span> |
-<span class="fn">Sort-Object</span> CPU -Descending |
-<span class="fn">Select-Object</span> -First
-<span class="num">5</span>
-<span class="fn">Get-ChildItem</span>
-<span class="str">"C:\logs"</span> -Filter
-<span class="str">"*.log"</span> |
-<span class="fn">ForEach-Object</span> {
-<span class="fn">Write-Host</span>
-<span class="var">$_</span>.Name }
-<span class="fn">Get-Content</span> log.txt |
-<span class="fn">Select-String</span>
-<span class="str">"ERROR"</span> |
-<span class="fn">Measure-Object</span> -Line
-</pre>
+<span class="fn">Get-Process</span> | <span class="fn">Where-Object</span> CPU -gt <span class="num">10</span> |
+    <span class="fn">Sort-Object</span> CPU -Descending | <span class="fn">Select-Object</span> -First <span class="num">5</span>
+<span class="fn">Get-ChildItem</span> <span class="str">"C:\logs"</span> -Filter <span class="str">"*.log"</span> |
+    <span class="fn">ForEach-Object</span> { <span class="fn">Write-Host</span> <span class="var">$_</span>.Name }
+<span class="fn">Get-Content</span> log.txt | <span class="fn">Select-String</span> <span class="str">"ERROR"</span> | <span class="fn">Measure-Object</span> -Line</pre>
 <div class="dt">
 ▸ FILE SYSTEM &amp; SECURITY COMMON CMDLETS
 </div>
@@ -50146,12 +49874,12 @@ for theming.
 <!-- ═══════════════════════════════════════════════
 TOPIC: JavaScript ES2022+
 ═══════════════════════════════════════════════ -->
-<div class="topic" id="javascript-es2022-reference" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="javascript-es2022-reference" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚡</span>
 <span class="topic-name">JavaScript — ES2022+ Reference</span>
 <span class="topic-badge">ES2022 · ES2023 · ES2025</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -50171,78 +49899,50 @@ Modules use
 </div>
 <div class="dw">
 <div class="dt">▸ VARIABLES &amp; DESTRUCTURING</div>
-<pre class="code-block"><span class="kw">const</span> <span class="var">name</span> =
-<span class="str">"Alice"</span> <span class="kw">let</span>
-<span class="var">count</span> = <span class="num">0</span>
+<pre class="code-block"><span class="kw">const</span> <span class="var">name</span> = <span class="str">"Alice"</span>
+<span class="kw">let</span> <span class="var">count</span> = <span class="num">0</span>
 
 <span class="com">// Array destructuring</span>
-<span class="kw">const</span> [<span class="var">first</span>,
-<span class="var">second</span>, ...<span class="var">rest</span>] = [<span class="num">1</span>, <span class="num">2</span>,
-<span class="num">3</span>, <span class="num">4</span>]
+<span class="kw">const</span> [<span class="var">first</span>, <span class="var">second</span>, ...<span class="var">rest</span>] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
 
 <span class="com">// Object destructuring</span>
-<span class="kw">const</span> { <span class="var">name</span>:
-<span class="var">n</span>, <span class="var">age</span> =
-<span class="num">25</span> } = user
-<span class="com">// rename + default</span>
+<span class="kw">const</span> { <span class="var">name</span>: <span class="var">n</span>, <span class="var">age</span> = <span class="num">25</span> } = user   <span class="com">// rename + default</span>
 
 <span class="com">// Optional chaining (?.) — ES2020</span>
-<span class="kw">const</span> <span class="var">city</span> =
-user<span class="oper">?.</span>address<span class="oper">?.</span>city <span class="com">// no throw if undefined</span>
-<span class="kw">const</span> <span class="var">n</span> =
-arr<span class="oper">?.[</span><span class="num">0</span><span class="oper">]</span>
-<span class="com">// optional index</span>
+<span class="kw">const</span> <span class="var">city</span> = user<span class="oper">?.</span>address<span class="oper">?.</span>city <span class="com">// no throw if undefined</span>
+<span class="kw">const</span> <span class="var">n</span> = arr<span class="oper">?.[</span><span class="num">0</span><span class="oper">]</span>       <span class="com">// optional index</span>
 
 <span class="com">// Nullish coalescing (??) — ES2020</span>
-<span class="kw">const</span> <span class="var">label</span> =
-value <span class="oper">??</span>
-<span class="str">"default"</span>
-<span class="com">// only falls back on null/undefined</span>
+<span class="kw">const</span> <span class="var">label</span> = value <span class="oper">??</span> <span class="str">"default"</span>   <span class="com">// only falls back on null/undefined</span>
 
 <span class="com">// Logical assignment — ES2021</span>
-<span class="var">a</span> <span class="oper">||=</span>
-<span class="str">"fallback"</span>
-<span class="com">// assign if falsy</span>
-<span class="var">a</span>
-<span class="oper">&&=</span> transform(<span class="var">a</span>) <span class="com">// assign if truthy</span>
-<span class="var">a</span> <span class="oper">??=</span>
-<span class="str">"default"</span>
-<span class="com">// assign if null/undefined</span>
-</pre>
+<span class="var">a</span> <span class="oper">||=</span> <span class="str">"fallback"</span>          <span class="com">// assign if falsy</span>
+<span class="var">a</span> <span class="oper">&&=</span> transform(<span class="var">a</span>) <span class="com">// assign if truthy</span>
+<span class="var">a</span> <span class="oper">??=</span> <span class="str">"default"</span>           <span class="com">// assign if null/undefined</span></pre>
 <div class="dt">▸ FUNCTIONS &amp; ARROWS</div>
 <pre class="code-block"><span class="com">// Arrow — implicit return when no braces</span>
-<span class="kw">const</span> <span class="fn">double</span> =
-<span class="var">x</span> => <span class="var">x</span> *
-<span class="num">2</span> <span class="kw">const</span>
-<span class="fn">add</span> = (<span class="var">a</span>,
-<span class="var">b</span>) => <span class="var">a</span> +
-<span class="var">b</span>
+<span class="kw">const</span> <span class="fn">double</span> = <span class="var">x</span> => <span class="var">x</span> * <span class="num">2</span>
+<span class="kw">const</span> <span class="fn">add</span> = (<span class="var">a</span>, <span class="var">b</span>) => <span class="var">a</span> + <span class="var">b</span>
 
 <span class="com">// Default params + rest</span>
-<span class="kw">function</span>
-<span class="fn">greet</span>(<span class="var">name</span> =
-<span class="str">"World"</span>, ...<span class="var">extras</span>) { <span class="kw">return</span>
-<span class="str">`Hello, <span class="var">${name}</span>! Extras:
-  <span class="var">${extras.join(", ")}</span>`</span>
+<span class="kw">function</span> <span class="fn">greet</span>(<span class="var">name</span> = <span class="str">"World"</span>, ...<span class="var">extras</span>) {
+  <span class="kw">return</span> <span class="str">`Hello, <span class="var">${name}</span>! Extras: <span class="var">${extras.join(", ")}</span>`</span>
 }
 
 <span class="com">// Spread</span>
-<span class="kw">const</span>
-<span class="var">merged</span> = { ...<span class="var">defaults</span>, ...<span class="var">overrides</span> }
-<span class="kw">const</span> <span class="var">copy</span> =
-[...<span class="var">arr</span>, newItem]
+<span class="kw">const</span> <span class="var">merged</span> = { ...<span class="var">defaults</span>, ...<span class="var">overrides</span> }
+<span class="kw">const</span> <span class="var">copy</span> = [...<span class="var">arr</span>, newItem]
 
 <span class="com">// Async / await — ES2017+</span>
-<span class="kw">async function</span>
-<span class="fn">fetchUser</span>(<span class="var">id</span>)
-{ <span class="kw">try</span> { <span class="kw">const</span>
-<span class="var">res</span> = <span class="kw">await</span>
-<span class="fn">fetch</span>(<span class="str">`/api/users/<span class="var">${id}</span>`</span>) <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span>
-<span class="fn">Error</span>(<span class="var">res</span>.status) <span class="kw">return await</span>
-<span class="var">res</span>.<span class="fn">json</span>() }
-<span class="kw">catch</span> (<span class="var">e</span>) {
-<span class="fn">console</span>.error(<span class="str">"Fetch failed:"</span>, <span class="var">e</span>) } }
-</pre>
+<span class="kw">async function</span> <span class="fn">fetchUser</span>(<span class="var">id</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/users/<span class="var">${id}</span>`</span>)
+    <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="var">res</span>.status)
+    <span class="kw">return await</span> <span class="var">res</span>.<span class="fn">json</span>()
+  } <span class="kw">catch</span> (<span class="var">e</span>) {
+    <span class="fn">console</span>.error(<span class="str">"Fetch failed:"</span>, <span class="var">e</span>)
+  }
+}</pre>
 <div class="dt">▸ ARRAY &amp; OBJECT METHODS</div>
 <pre class="code-block"><span class="com">// Array — non-mutating</span>
 arr.<span class="fn">map</span>(<span class="var">x</span> =>
@@ -50288,37 +49988,21 @@ arr.<span class="fn">at</span>(-<span class="num">1</span>)
 </pre>
 <div class="dt">▸ ES2023 – ES2025 HIGHLIGHTS</div>
 <pre class="code-block"><span class="com">// ES2023 — Array methods by copy (non-mutating)</span>
-arr.<span class="fn">toSorted</span>()
-<span class="com">// like sort() but returns new array</span>
-arr.<span class="fn">toReversed</span>()
-<span class="com">// like reverse() but returns new array</span>
-arr.<span class="fn">with</span>(<span class="num">2</span>,
-<span class="str">"x"</span>)
-<span class="com">// replace index 2, returns new array</span>
-arr.<span class="fn">findLast</span>(<span class="var">fn</span>) <span class="com">// find from end</span> arr.<span
-  class="fn">findLastIndex</span>(<span class="var">fn</span>)
-<span class="com">// findIndex from end</span>
+arr.<span class="fn">toSorted</span>()          <span class="com">// like sort() but returns new array</span>
+arr.<span class="fn">toReversed</span>()        <span class="com">// like reverse() but returns new array</span>
+arr.<span class="fn">with</span>(<span class="num">2</span>, <span class="str">"x"</span>)        <span class="com">// replace index 2, returns new array</span>
+arr.<span class="fn">findLast</span>(<span class="var">fn</span>) <span class="com">// find from end</span>
+arr.<span class="fn">findLastIndex</span>(<span class="var">fn</span>)    <span class="com">// findIndex from end</span>
 
 <span class="com">// ES2024</span>
-<span class="fn">Promise</span>.<span class="fn">withResolvers</span>()
-<span class="com">// {promise, resolve, reject} object</span>
-<span class="fn">Object</span>.<span class="fn">groupBy</span>(<span class="var">arr</span>, <span class="var">fn</span>)
-<span class="com">// group array into object by key</span>
-<span class="fn">Map</span>.<span class="fn">groupBy</span>(<span class="var">arr</span>, <span class="var">fn</span>)
-<span class="com">// group into Map</span>
+<span class="fn">Promise</span>.<span class="fn">withResolvers</span>()   <span class="com">// {promise, resolve, reject} object</span>
+<span class="fn">Object</span>.<span class="fn">groupBy</span>(<span class="var">arr</span>, <span class="var">fn</span>)  <span class="com">// group array into object by key</span>
+<span class="fn">Map</span>.<span class="fn">groupBy</span>(<span class="var">arr</span>, <span class="var">fn</span>)     <span class="com">// group into Map</span>
 
 <span class="com">// ES2025 (Stage 4)</span>
-<span class="kw">import</span> source
-<span class="kw">from</span>
-<span class="str">"./data.json"</span>
-<span class="kw">with</span> { type:
-<span class="str">"json"</span> }
-<span class="com">// import assertions</span>
-<span class="kw">const</span> <span class="var">it</span> =
-<span class="var">iter</span>[<span class="fn">Symbol.iterator</span>]() <span class="com">// explicit iterator protocol</span>
-<span class="fn">RegExp</span>.<span class="fn">escape</span>(<span class="var">str</span>)
-<span class="com">// escape special regex chars (Stage 4)</span>
-</pre>
+<span class="kw">import</span> source <span class="kw">from</span> <span class="str">"./data.json"</span> <span class="kw">with</span> { type: <span class="str">"json"</span> }   <span class="com">// import assertions</span>
+<span class="kw">const</span> <span class="var">it</span> = <span class="var">iter</span>[<span class="fn">Symbol.iterator</span>]() <span class="com">// explicit iterator protocol</span>
+<span class="fn">RegExp</span>.<span class="fn">escape</span>(<span class="var">str</span>)      <span class="com">// escape special regex chars (Stage 4)</span></pre>
 </div>
 </div>
 </div>
@@ -50528,8 +50212,7 @@ LIMIT</code>.
 <div class="dt">▸ DML — DATA MANIPULATION</div>
 <pre class="code-block"><span class="com">-- INSERT</span>
 <span class="kw">INSERT INTO</span> users (email, name, role)
-<span class="kw">VALUES</span> (<span class="str">'alice@example.com'</span>, <span class="str">'Alice'</span>,
-<span class="str">'admin'</span>);
+<span class="kw">VALUES</span> (<span class="str">'alice@example.com'</span>, <span class="str">'Alice'</span>, <span class="str">'admin'</span>);
 
 <span class="com">-- INSERT multiple rows</span>
 <span class="kw">INSERT INTO</span> tags (name)
@@ -50537,66 +50220,40 @@ LIMIT</code>.
 
 <span class="com">-- UPDATE</span>
 <span class="kw">UPDATE</span> users
-<span class="kw">SET</span> role =
-<span class="str">'admin'</span>
-<span class="kw">WHERE</span> email =
-<span class="str">'alice@example.com'</span>;
+<span class="kw">SET</span> role = <span class="str">'admin'</span>
+<span class="kw">WHERE</span> email = <span class="str">'alice@example.com'</span>;
 
 <span class="com">-- DELETE</span>
 <span class="kw">DELETE FROM</span> users
-<span class="kw">WHERE</span> created_at <
-<span class="fn">NOW</span>() -
-<span class="kw">INTERVAL</span>
-<span class="str">'90 days'</span>;
+<span class="kw">WHERE</span> created_at < <span class="fn">NOW</span>() - <span class="kw">INTERVAL</span> <span class="str">'90 days'</span>;
 
 <span class="com">-- UPSERT (PostgreSQL)</span>
 <span class="kw">INSERT INTO</span> users (email, name)
 <span class="kw">VALUES</span> (<span class="str">'bob@x.com'</span>, <span class="str">'Bob'</span>)
 <span class="kw">ON CONFLICT</span> (email)
-<span class="kw">DO UPDATE SET</span> name =
-<span class="fn">EXCLUDED</span>.name;
-</pre>
+<span class="kw">DO UPDATE SET</span> name = <span class="fn">EXCLUDED</span>.name;</pre>
 <div class="dt">▸ DQL — QUERYING</div>
 <pre class="code-block"><span class="com">-- Basic SELECT</span>
 <span class="kw">SELECT</span> id, name, email
 <span class="kw">FROM</span> users
-<span class="kw">WHERE</span> role =
-<span class="str">'admin'</span>
-<span class="kw">AND</span> created_at >
-<span class="str">'2024-01-01'</span>
-<span class="kw">ORDER BY</span> name
-<span class="kw">ASC</span> <span class="kw">LIMIT</span>
-<span class="num">25</span> <span class="kw">OFFSET</span>
-<span class="num">0</span>;
+<span class="kw">WHERE</span> role = <span class="str">'admin'</span>
+  <span class="kw">AND</span> created_at > <span class="str">'2024-01-01'</span>
+<span class="kw">ORDER BY</span> name <span class="kw">ASC</span>
+<span class="kw">LIMIT</span> <span class="num">25</span> <span class="kw">OFFSET</span> <span class="num">0</span>;
 
 <span class="com">-- Pattern matching</span>
-<span class="kw">SELECT</span> *
-<span class="kw">FROM</span> users
-<span class="kw">WHERE</span> name
-<span class="kw">LIKE</span> <span class="str">'A%'</span>;
-<span class="com">-- starts with A</span>
-<span class="kw">SELECT</span> *
-<span class="kw">FROM</span> users
-<span class="kw">WHERE</span> email ~*
-<span class="str">'@gmail'</span>;
-<span class="com">-- regex (PostgreSQL)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> name <span class="kw">LIKE</span> <span class="str">'A%'</span>;    <span class="com">-- starts with A</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> email ~* <span class="str">'@gmail'</span>;  <span class="com">-- regex (PostgreSQL)</span>
 
 <span class="com">-- Aggregate functions</span>
-<span class="kw">SELECT</span>
-role,
-<span class="fn">COUNT</span>(*)
-<span class="kw">AS</span> total,
-<span class="fn">AVG</span>(age)
-<span class="kw">AS</span> avg_age,
-<span class="fn">MAX</span>(age)
-<span class="kw">AS</span> oldest
+<span class="kw">SELECT</span> role,
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total,
+       <span class="fn">AVG</span>(age) <span class="kw">AS</span> avg_age,
+       <span class="fn">MAX</span>(age) <span class="kw">AS</span> oldest
 <span class="kw">FROM</span> users
 <span class="kw">GROUP BY</span> role
-<span class="kw">HAVING</span>
-<span class="fn">COUNT</span>(*) > <span class="num">5</span>
-<span class="kw">ORDER BY</span> total
-<span class="kw">DESC</span>;
-</pre>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) > <span class="num">5</span>
+<span class="kw">ORDER BY</span> total <span class="kw">DESC</span>;</pre>
 <div class="dt">▸ JOINS</div>
 <pre class="code-block"><span class="com">-- INNER JOIN — only matching rows</span>
 <span class="kw">SELECT</span> u.name, o.total

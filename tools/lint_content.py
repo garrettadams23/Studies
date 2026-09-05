@@ -409,6 +409,41 @@ def tables_without_verdict(text):
             yield text[: m.start()].count("\n") + 1
 
 
+# A <pre> renders its newlines, so where a newline sits *is* the rendering. The
+# div → pre conversion above made that true for 318 blocks whose source newlines
+# had never mattered — a <div> collapsed them — and in 21 blocks they landed
+# mid-statement, so the Python quick-reference rendered as `name =` on one line
+# and `"Alice"` on the next.
+#
+# The signature is decidable rather than stylistic: Python has no line
+# continuation at a bare `=`, so a Python line ending in one cannot be what the
+# author wrote. Restricting the check to blocks that are unmistakably Python is
+# what keeps it honest — `smtpd_relay_restrictions =` followed by an indented
+# value is correct Postfix, and a looser rule would fail the build over it.
+_PRE_BLOCK = re.compile(r'<pre class="code-block">(.*?)</pre>', re.S)
+_CODE_TAG = re.compile(r'</?[a-zA-Z][^>]*>')       # a tag needs a name; `a < b` is code
+_LOOKS_PYTHON = re.compile(r'^\s*(def |class |import |from \w+ import|print\()', re.M)
+_DANGLING_EQ = re.compile(r'(?<![=!<>+\-*/%&|^:])=\s*$')
+
+
+def dangling_assignments(text):
+    """(line, code) for Python code lines that end in a bare '=' — a break that
+    Python's grammar cannot express, so the newline is in the wrong place."""
+    out = []
+    for m in _PRE_BLOCK.finditer(text):
+        body = unescape(_CODE_TAG.sub("", m.group(1)))
+        if not _LOOKS_PYTHON.search(body):
+            continue
+        start = text.count("\n", 0, m.start()) + 1
+        for i, raw in enumerate(body.splitlines()):
+            code = raw.rstrip()
+            if code.lstrip().startswith("#"):
+                continue
+            if _DANGLING_EQ.search(code):
+                out.append((start, code.strip()))
+    return out
+
+
 def volatile_problems(text, today):
     """(line_number, message) for malformed volatile-claim markup."""
     for m in VOLATILE_RE.finditer(text):
@@ -667,6 +702,12 @@ def main():
                 f"{name}:{line}: <div class=\"code-block\"> collapses whitespace — "
                 f"use <pre class=\"code-block\"> so newlines and indentation survive")
 
+        for line, code in dangling_assignments(text):
+            errors.append(
+                f"{name}:{line}: a Python line in a code block ends in a bare '=' "
+                f"({code!r}) — the newline is mid-statement, so the block renders "
+                f"broken. Join it with the line below.")
+
         for line_no, block in topic_blocks(text):
             label, has_name = topic_label(block)
             # The expand chevron is the affordance CSS rotates on open
@@ -876,8 +917,33 @@ RENDERED_FIXTURES = [
 ]
 
 
+# The dangling-assignment check, on the two shapes that decide it: the real
+# corruption, and the config syntax a looser rule would have failed the build over.
+DANGLING_FIXTURES = [
+    ('<pre class="code-block">import os\nname =\n"Alice"</pre>',
+     1, "the corruption: a Python line ending in a bare '='"),
+    ('<pre class="code-block">import os\nname = "Alice"</pre>',
+     0, "the same code, correctly joined"),
+    ('<pre class="code-block">smtpd_relay_restrictions =\n    permit_mynetworks</pre>',
+     0, "Postfix continuation — not Python, so not this check's business"),
+    ('<pre class="code-block">import os\nif a == b:\n    pass</pre>',
+     0, "'==' is not an assignment; the lookbehind must not fire"),
+    ('<pre class="code-block">import os\ntotal +=\n1</pre>',
+     0, "augmented assignment is excluded too — same lookbehind"),
+    ('<pre class="code-block">import os\n# name =\n"Alice"</pre>',
+     0, "a comment can end however it likes"),
+    ('<pre class="code-block">print(a)\nx =\ny =\n0</pre>',
+     2, "every offending line is reported, not just the first"),
+]
+
+
 def self_test():
     failures = 0
+    for text, want, why in DANGLING_FIXTURES:
+        got = len(dangling_assignments(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     longest = max(len(a) for _, a, _, _ in RENDERED_FIXTURES)
     for text, acronym, want, why in RENDERED_FIXTURES:
         spec = bool(_rendered_re(acronym).search(text))
@@ -886,7 +952,8 @@ def self_test():
             failures += 1
             print(f"FAIL  {why}: {acronym!r} — specification={spec}, "
                   f"index={fast}, expected={want}")
-    print(f"self-test: {len(RENDERED_FIXTURES)} fixtures, {failures} failure(s).")
+    n = len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
+    print(f"self-test: {n} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 
 
