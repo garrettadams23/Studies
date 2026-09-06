@@ -22365,3 +22365,49 @@ Three clean results in one session is not wasted effort, and recording them
 matters more than it looks: the next person to wonder whether the tables are
 malformed now has an answer and the reason the obvious check misleads. The cost
 of re-deriving a negative is the same as deriving it the first time.
+
+## Session — the freshness stamp I forgot, and what running the tool revealed
+
+The failback card went into a topic stamped `2026-08` and I did not re-stamp it.
+`data-reviewed` is derived from git history rather than remembered, so the fix is
+to run `stamp_freshness.py` — and doing that turned a small omission into a
+finding about the tool.
+
+`--check` over the whole tree proposed updating **all 34 files**, which is the
+hazard its own docstring names. So `--only infra`, as the docstring advises. That
+moved **twelve** topics from `2026-08` to `2026-09`:
+
+```
+Windows Server Editions & Licensing        Storage Fundamentals
+Server Manager, RSAT                       RAID
+AD                                         Storage Performance — IOPS
+Hyper-V, vSphere & the Open-Source Stack   Thin Provisioning, Dedup & Tiering
+Snapshots Are Not Backups                  P2V & V2V
+Backup Strategy — 3-2-1-1-0
+Restore Testing & DR Design   ← the only one I touched
+```
+
+The commit that prompted the stamp was `32 insertions, 0 deletions` — one card,
+in one topic. Eleven of those twelve moves have no edit behind them.
+
+**So `--only` narrows the blast radius to a file and does not eliminate it.** The
+docstring warns that a whole-tree write invents freshness across the site; this is
+the same failure at file scope, and it is worth writing down because the advice
+"prefer `--only`" reads as though it solves the problem rather than shrinking it.
+Ten commits in that file's history are classified mechanical and ignored, so the
+blame that remains is real-commit blame, and a real commit that adds lines is
+enough to pull neighbouring topics forward.
+
+The stamp was therefore set by hand, on the one topic whose content changed:
+
+```
+data/infra.html | 2 +-
+1484 topics carry a valid freshness stamp (newest allowed: 2026-09)
+```
+
+A one-line diff instead of a twelve-line one, and eleven topics keep the date of
+the month somebody actually reviewed them. The rule this leaves behind: **run the
+stamper to find out what it would say, then write the stamp you can defend.** Its
+output is a proposal, not an answer — which is exactly how the tool's author
+already treats the whole-tree mode, and now also how the single-file mode should
+be treated.
