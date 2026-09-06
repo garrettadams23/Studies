@@ -2576,6 +2576,38 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           write it before you need it.
         </div>
       </div>
+    </div>    <div class="concept-card">
+      <div class="concept-label">The Forgotten Half</div>
+      <div class="concept-title">Failback Is a Second Migration, and It Is the One That Loses Data</div>
+      <div class="concept-desc">
+        A runbook that ends at &ldquo;we are running on DR&rdquo; has documented half a procedure.
+        The other half runs days later, under no incident pressure and therefore no incident
+        discipline, executed by people who have not slept properly since Tuesday — and it moves
+        data in the harder direction, because now the <strong>DR site holds the newest copy</strong>
+        and primary holds the stale one. That inversion is why failback, not failover, is where
+        organisations most often lose work.
+      </div>
+      <div class="dw">
+        <table class="ref-table mb-14">
+          <thead><tr><th>What changed while you ran on DR</th><th>Why it bites on the way back</th></tr></thead>
+          <tbody>
+            <tr><td>Everything written since the cutover</td><td>It exists only on DR. Failing back without bringing it home is a restore from a stale backup, performed deliberately</td></tr>
+            <tr><td>Replication direction</td><td>It still points primary → DR. Until it is reversed and caught up, the two sites disagree and the primary is the one that is wrong</td></tr>
+            <tr><td>The primary itself</td><td>It failed for a reason. Returning to hardware or a configuration nobody re-verified is how you take a second outage in the same week</td></tr>
+            <tr><td>DNS <span class="acro-exp">(Domain Name System)</span> and client caches</td><td>The short TTL <span class="acro-exp">(Time To Live)</span> that made failover quick is often raised back too early, or was never lowered and is now the delay</td></tr>
+            <tr><td>Licences and activation</td><td>Anything bound to a host ID, MAC <span class="acro-exp">(Media Access Control)</span> address or hardware key may need re-issuing in both directions</td></tr>
+            <tr><td>Objects created only on DR</td><td>New accounts, certificates, scheduled jobs and firewall rules made during the outage do not migrate themselves</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-green">Treat failback as a planned migration with its own change
+          window, its own RPO and its own rollback — never as the tail end of the incident.</strong>
+          The cheapest tell that a DR plan has never been exercised end to end: it states an RTO
+          for failover and none for failback. The second number is the one that decides whether
+          you go back this weekend or run on DR for a month, and a plan that does not have it will
+          make that decision by accident, at two in the morning, in favour of whoever is loudest.
+        </div>
+      </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">Reality Check</div>

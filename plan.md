@@ -22307,3 +22307,61 @@ no other two-space indentation". 343 hits, and the first ten were all legitimate
 heuristics have now failed the same way (635 hits, then 343), and both failed by
 being *plausible*. The rule that keeps working is narrower: only signals a
 language's grammar makes impossible are worth acting on.
+
+## Session — three measurements that came back clean, and one that did not
+
+Following this file's own habit, four things nobody had measured. Three returned
+nothing, which is worth recording as carefully as a finding:
+
+**Table row widths.** A `<tr>` whose cell count differs from its header renders
+short or overflowing — decidable, no judgement. 14 hits, and after honouring
+`colspan` and `rowspan`, **zero**. The tables are correct; the checker was naive.
+A section divider using `colspan` and a four-row `rowspan` in the SQL-injection
+table produced every false positive.
+
+**Path reachability by depth.** 59 topics are in no learning path, and **none of
+them is deep** — no 3-card, 3,000-character topic is unreachable from a path.
+
+**Prose that defers.** Searching for the phrasings that admit a gap — *"beyond
+the scope"*, *"deserves its own"*, *"a topic in itself"* — returned 13 hits, of
+which twelve were rhetorical (*"row two deserves its own emphasis"*). One was
+real.
+
+### The one that was real
+
+`infra`'s DR topic ends a verdict with:
+
+> **Failback is the forgotten half.** Runbooks lovingly document the failover and
+> stop there; getting production back to primary afterward, without losing the
+> data written while you ran on the DR site, is its own procedure — write it
+> before you need it.
+
+Counted across the corpus: `failover` appears 65 times in 11 files. `failback`
+appears **once** — in that sentence. The site says the word for the only time in
+order to say it is not covering it.
+
+One card, placed directly after the verdict that defers it rather than at the end
+of the topic, because that verdict is now a promise the next card keeps. The
+inversion is that failback moves data in the *harder* direction: the DR site
+holds the newest copy and primary holds the stale one, which is why failback and
+not failover is where work is usually lost. Then what changed while you were on
+DR and why each thing bites on the way home — data written since cutover,
+replication still pointing the wrong way, a primary nobody re-verified, TTLs,
+hardware-bound licences, and the accounts and certificates created only on DR.
+
+The verdict gives a test rather than a procedure: **a DR plan that states an RTO
+for failover and none for failback has never been exercised end to end.** The
+second number decides whether you go back this weekend or run on DR for a month,
+and a plan without it makes that call at two in the morning, in favour of whoever
+is loudest.
+
+```
+infra: the DR topic 3 -> 4 cards · 31 gates green · 301 browser checks green
+```
+
+### On measurements that return nothing
+
+Three clean results in one session is not wasted effort, and recording them
+matters more than it looks: the next person to wonder whether the tables are
+malformed now has an answer and the reason the obvious check misleads. The cost
+of re-deriving a negative is the same as deriving it the first time.
