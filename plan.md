@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,544** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **11**, 1% — ten deepening waves below the old floor | `depth_report.py` |
-| Mean chars per concept card | **1,377**, or **1,113 excluding verdicts** — the second is the padding counter-metric: it rose 4 while the first rose 8, so the growth is not all verdict | `depth_report.py` |
+| Mean chars per concept card | **1,377**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 5 while the first rose 8, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
