@@ -2828,7 +2828,17 @@ function stClose() {
   _examState = null;
 }
 
-function esc(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+// `'` is in the set although nothing needs it today: every attribute this feeds
+// is double-quoted, checked across all 45 innerHTML sites, so an apostrophe
+// cannot currently break out of one. It is here so that fact does not have to
+// stay true — the next single-quoted attribute somebody writes is safe by
+// default rather than by a property nobody restated. `&#39;` renders as an
+// apostrophe in both text and attribute contexts, so nothing on screen moves.
+function esc(s) {
+  return (s || "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
 
 // ── Scope selector (All / a domain / Bookmarks) ─────────────────────────────
 // The acronym dictionary's "topics" are A–Z index sections, not concepts. As a

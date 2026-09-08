@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **27**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **28**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **152** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **27** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **28** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2986,4 +2986,61 @@ PNGs.
 
 ```
 PRECACHE 13 -> 15 · check_precache fixtures 5 -> 9 · 37 gates green
+```
+
+## Session — a security pass over the two places a reader's own data is rendered
+
+Every other session here measures content. This one measures `script.js`, because
+the site takes input in two places and nothing had been written down about
+either: **notes** the reader types, and a **progress export** they import back.
+
+Four paths, checked rather than assumed. All four hold.
+
+**Search highlighting** builds `<mark>` with `createElement` and `textContent`
+and splices text nodes with `createTextNode`. A query is never parsed as markup,
+so `<img onerror=…>` in the search box is 32 characters that match nothing.
+
+**Notes** render through a static `innerHTML` skeleton with the text going in via
+`.textContent`, and the file already says why: *"Build the static skeleton with
+textContent-safe DOM (no innerHTML of data)."*
+
+**Every `innerHTML` interpolation.** Scanned all 45 assignment sites for a `${…}`
+not wrapped in `esc()`: **13 hits, all safe.** Eleven are counts and clock
+values. `areas` is built as `esc(a)` per `<option>`. `q.q` is a pre-rendered
+quiz prompt whose data parts were escaped at construction — `esc(e[0])`,
+`esc(e[1][0])` — which is the one case where reading the assignment alone is not
+enough.
+
+**The import.** An allowlist with per-type shape checks, not a merge: a key that
+does not match a known prefix is refused and counted; SRS numbers are coerced,
+bounded and rounded; flags are whitelisted down to the literal `"1"`; a note must
+be a string and is truncated to `NOTE_MAX`. Nothing an imported file says can
+create a key the site does not own.
+
+### The one change: a character `esc()` did not escape
+
+It covered `& < > "` and not `'`. That is **safe today** — grepping every
+attribute it feeds found `0` built with single quotes, so an apostrophe cannot
+break out of one. It is safe by a property of the surrounding code rather than
+by the function, and the next single-quoted attribute somebody writes would be
+the exception.
+
+`'` is now in the set. `&#39;` renders as an apostrophe in text and in
+attributes, so nothing on screen moves — confirmed across the full browser
+suite: **152 smoke · 44 search · 29 axe · 63 resilience · 9 mobile · 2 visual ·
+3 backup**.
+
+### Recording a clean result, deliberately
+
+Three other measurements this stretch also came back clean and are worth the
+lines so nobody re-derives them: reading times span 210–1,426 chars per stated
+minute, which is rounding on a label that says *rough*, not a bug; cross-domain
+xrefs are 42% of 506 with every domain both emitting and receiving; and the only
+duplicated flashcard titles are the three cloud playbooks and the three quote
+collections, both deliberate shared shapes, with topic **names** — what the quiz
+actually asks — unique across all 1,545.
+
+```
+esc() covers 5 characters · 0 unescaped interpolations · 0 unowned import keys
+37 gates green · 301 browser checks green
 ```
