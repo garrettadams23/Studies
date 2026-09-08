@@ -35,6 +35,7 @@ Usage:
   python3 tools/check_precache.py --self-test   # the parsers, on fixtures
 """
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -77,6 +78,28 @@ def references(text, base="/", css=False):
     return sorted(set(out))
 
 
+def manifest_icons(text, base):
+    """Icon paths a web app manifest names, rooted at the site root.
+
+    The manifest is precached; its icons were not, and nothing noticed because
+    the first version of this check followed stylesheets and stopped. A PWA
+    installed with no network gets no icon — the one asset whose absence the
+    reader sees on their home screen.
+    """
+    try:
+        data = json.loads(text)
+    except ValueError:
+        return []
+    out = []
+    for icon in data.get("icons") or []:
+        src = icon.get("src") or ""
+        if not src or src.startswith(_SKIP_PREFIX):
+            continue
+        out.append(src if src.startswith("/")
+                   else base.rstrip("/") + "/" + src.lstrip("./"))
+    return sorted(set(out))
+
+
 def scan():
     """-> (missing_on_disk, referenced_but_uncached, cached, needed)"""
     cache = precached(SW.read_text(encoding="utf-8"))
@@ -90,6 +113,13 @@ def scan():
         if path.exists():
             base = "/" + str(path.relative_to(ROOT).parent).replace("\\", "/")
             needed += references(path.read_text(encoding="utf-8"), base=base, css=True)
+
+    # …and so do web app manifests, whose icons are what an install shows.
+    for man in [p for p in cache if p.endswith(".webmanifest")]:
+        path = ROOT / man.lstrip("/")
+        if path.exists():
+            base = "/" + str(path.relative_to(ROOT).parent).replace("\\", "/")
+            needed += manifest_icons(path.read_text(encoding="utf-8"), base)
 
     needed = sorted(set(needed))
     uncached = [p for p in needed
@@ -110,11 +140,25 @@ FIXTURES = [
      "a stylesheet's url is relative to the stylesheet"),
 ]
 
+MANIFEST_FIXTURES = [
+    ('{"icons":[{"src":"a-192.png"},{"src":"a-512.png"}]}', "/Img/favicon",
+     ["/Img/favicon/a-192.png", "/Img/favicon/a-512.png"],
+     "icons are relative to the manifest, like a stylesheet's urls"),
+    ('{"icons":[{"src":"https://cdn.example/x.png"}]}', "/Img/favicon", [],
+     "an off-site icon is not ours to cache"),
+    ('{"name":"no icons here"}', "/Img/favicon", [], "a manifest with no icons"),
+    ("not json at all", "/Img/favicon", [], "a manifest that does not parse"),
+]
+
 
 def self_test():
     failures = []
     for text, base, css, want, why in FIXTURES:
         got = references(text, base=base, css=css)
+        if got != want:
+            failures.append(f"  {why}: got {got}, expected {want}")
+    for text, base, want, why in MANIFEST_FIXTURES:
+        got = manifest_icons(text, base)
         if got != want:
             failures.append(f"  {why}: got {got}, expected {want}")
     try:
@@ -127,7 +171,8 @@ def self_test():
         print("check_precache self-test FAILED:")
         print("\n".join(failures))
         return 1
-    print(f"check_precache self-test passed ({len(FIXTURES)} fixtures + the array guard).")
+    print(f"check_precache self-test passed "
+          f"({len(FIXTURES) + len(MANIFEST_FIXTURES)} fixtures + the array guard).")
     return 0
 
 

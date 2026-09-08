@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **26**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **27**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **152** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **26** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **27** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2931,4 +2931,59 @@ cannot quietly become a check that passes because it stopped looking.
 
 ```
 gates 35 -> 37 · 13 precached paths verified both ways
+```
+
+## Session — the checker I wrote yesterday had the defect one file away
+
+The precache check shipped clean: *13 precached · 10 referenced · 0 missing · 0
+uncached*. Then I opened `site.webmanifest`, which is one of the files it
+precaches, and read it:
+
+```json
+"icons": [
+  { "src": "web-app-manifest-192x192.png", "sizes": "192x192" },
+  { "src": "web-app-manifest-512x512.png", "sizes": "512x512" }
+]
+```
+
+**Both exist on disk. Neither was precached.** The site declares
+`"display": "standalone"` and offers itself for installation, and the icons an
+install shows came from the network — so a PWA installed offline, or on a
+connection that dropped at the wrong second, gets no icon. It is the one missing
+asset a reader sees on **their own home screen**.
+
+### Why the check missed it, which is the actual finding
+
+It followed stylesheets into their `url()` references — because that is where the
+fonts were, and the fonts were the case I was thinking about. A manifest is
+exactly the same shape of problem: a precached file naming further files, with
+paths relative to itself. The check knew about one nested reference type and not
+the other.
+
+**A checker's scope is where the next defect hides.** Not its logic — its logic
+was right, and it correctly reported zero for everything it looked at. It simply
+was not looking at a file it had itself listed as needing to be cached.
+
+The widened version found both immediately, before `PRECACHE` was touched:
+
+```
+13 precached · 12 referenced · 0 missing on disk · 2 needed but uncached   exit 1
+15 precached · 12 referenced · 0 missing on disk · 0 needed but uncached   exit 0
+```
+
+Four more fixtures — icons relative to the manifest, an off-site icon, a manifest
+with no icons, and a manifest that does not parse — because a manifest that fails
+to parse must yield *nothing* rather than crash a build gate.
+
+### One thing deliberately not changed
+
+`CACHE_VERSION` is hashed from `index.html`, `style.css` and `script.js`, so
+editing `PRECACHE` does not move it. That is correct rather than a bug: the
+browser byte-compares `sw.js` itself, installs the new worker because the file
+changed, and `addAll` tops up the *same* named cache with the two icons.
+Invalidating the cache would throw away 8 MB of correctly cached page to add two
+PNGs.
+
+```
+PRECACHE 13 -> 15 · check_precache fixtures 5 -> 9 · 37 gates green
 ```
