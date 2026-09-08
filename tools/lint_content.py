@@ -473,6 +473,48 @@ def dangling_assignments(text):
     return out
 
 
+# The third code-block check, and the general one the first two were reaching for.
+#
+# The div -> pre conversion made source newlines meaningful. Where a language's
+# grammar could prove a break impossible, the checks above catch it: a Python
+# line ending in a bare `=`, a comment continuation with no marker. Everything in
+# a language without such a signal survived both, and two attempts at a general
+# heuristic failed by being merely plausible — 635 hits for "looks like it ends
+# mid-statement", 343 for "a two-space continuation".
+#
+# Indentation is the signal those attempts were after, because it is a property
+# of the *cause* rather than of the symptom. A <div> collapses leading
+# whitespace, so a block authored inside one never carried any, and converting it
+# to <pre> could not restore what was never there. Nested code with not one
+# indented line is not a style; it is that block.
+#
+# Measured before it was written: 18 hits across 706 multi-line blocks, all in
+# script.01-references.html, and every one real — CSS, Go, Bash, PowerShell and
+# JSON, the languages the first two checks cannot see.
+_OPENS_BLOCK = re.compile(r'[\{\[\(]\s*$')
+
+
+def unindented_nesting(text):
+    """(line, opens, lines) for code blocks that nest and never indent.
+
+    Two opened brackets are required rather than one: a single trailing `{` is
+    how a one-line body or a shell heredoc opener is written, and neither says
+    anything about indentation.
+    """
+    out = []
+    for m in _PRE_BLOCK.finditer(text):
+        body = unescape(_CODE_TAG.sub("", m.group(1)))
+        lines = [l for l in body.split("\n") if l.strip()]
+        if len(lines) < 5:
+            continue
+        if any(l[:1] in (" ", "\t") for l in lines):
+            continue
+        opens = sum(1 for l in lines if _OPENS_BLOCK.search(l.rstrip()))
+        if opens >= 2:
+            out.append((text.count("\n", 0, m.start()) + 1, opens, len(lines)))
+    return out
+
+
 def volatile_problems(text, today):
     """(line_number, message) for malformed volatile-claim markup."""
     for m in VOLATILE_RE.finditer(text):
@@ -737,6 +779,12 @@ def main():
                 f"({code!r}) — the newline is mid-statement, so the block renders "
                 f"broken. Join it with the line below.")
 
+        for line, opens, count in unindented_nesting(text):
+            errors.append(
+                f"{name}:{line}: a {count}-line code block opens {opens} brackets "
+                f"and has no indented line at all — the source newlines are the "
+                f"wrap of a <div>, not the author's. Reflow it.")
+
         for line, first, cont in wrapped_comments(text):
             errors.append(
                 f"{name}:{line}: a comment in a code block is wrapped mid-sentence "
@@ -987,6 +1035,24 @@ DANGLING_FIXTURES = [
 ]
 
 
+# Five lines, two opens, nothing indented: the corruption. The negatives are the
+# shapes a looser rule would fail the build over.
+NESTING_FIXTURES = [
+    ('<pre class="code-block">.a {\ncolor:\nred; }\n.b {\npadding: 0; }</pre>',
+     1, "the corruption: nesting with no indentation anywhere"),
+    ('<pre class="code-block">.a {\n  color: red;\n}\n.b {\n  padding: 0;\n}</pre>',
+     0, "the same block, correctly indented"),
+    ('<pre class="code-block">one\ntwo\nthree\nfour</pre>',
+     0, "under five lines — too short to judge"),
+    ('<pre class="code-block">$ cat &lt;&lt;EOF {\nnot really nesting\njust text\nand more\nEOF</pre>',
+     0, "one opener only — a single trailing brace says nothing"),
+    ('<pre class="code-block">SELECT a\nFROM t\nWHERE x IN (1, 2)\nAND y = 3\nORDER BY a</pre>',
+     0, "flat prose-shaped code that never nests"),
+    ('<pre class="code-block">func f() {\nif x {\ny()\n}\n}\nfunc g() {\nz()\n}</pre>',
+     1, "Go, which the Python and comment checks cannot see"),
+]
+
+
 def self_test():
     failures = 0
     for text, want, why in WRAPPED_COMMENT_FIXTURES:
@@ -999,6 +1065,11 @@ def self_test():
         if got != want:
             failures += 1
             print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in NESTING_FIXTURES:
+        got = len(unindented_nesting(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     longest = max(len(a) for _, a, _, _ in RENDERED_FIXTURES)
     for text, acronym, want, why in RENDERED_FIXTURES:
         spec = bool(_rendered_re(acronym).search(text))
@@ -1008,7 +1079,7 @@ def self_test():
             print(f"FAIL  {why}: {acronym!r} — specification={spec}, "
                   f"index={fast}, expected={want}")
     n = (len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
-         + len(WRAPPED_COMMENT_FIXTURES))
+         + len(WRAPPED_COMMENT_FIXTURES) + len(NESTING_FIXTURES))
     print(f"self-test: {n} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 

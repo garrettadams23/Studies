@@ -22638,3 +22638,108 @@ but it is the difference between a check that runs and a check that works.
 plan.md: 9 rows corrected · gates 33 -> 35
 check_plan_numbers fixtures 8 + table parsing · 301 browser checks green
 ```
+
+## Session — the corruption in the languages a grammar could not prove
+
+Three checks now catch the div → pre newline damage, and the first two share a
+blind spot. Both are grammar arguments: Python has no continuation at a bare
+`=`; a comment continuation carries its own marker. They are decisive *because*
+a language's rules make the shape impossible — and that is exactly why they see
+nothing in CSS, Go, Bash, PowerShell or JSON, where every one of those shapes is
+legal.
+
+Two attempts at a general rule are already recorded as failures, and both failed
+the same way — by being plausible. 635 hits for "a line that looks like it ends
+mid-statement". 343 for "a continuation indented by exactly two spaces". Reading
+the first ten of each found them legitimate.
+
+### The signal is the cause, not the symptom
+
+A `<div>` collapses leading whitespace. So a block authored inside one **never
+carried indentation at all** — there was nothing for the `<pre>` conversion to
+restore. Both earlier heuristics were looking at where the newlines landed. The
+newlines are the symptom. The missing indentation is the defect itself.
+
+> a block of 5+ lines that opens a bracket **twice or more** and has **not one
+> indented line anywhere**
+
+**18 hits across 706 multi-line blocks. All in `script.01-references.html`, and
+every one real.** The first heuristic in this file's history at 100% precision,
+and it got there by describing what the damage *is* rather than what it looks
+like.
+
+Two openers are required rather than one, because a single trailing `{` is how a
+one-line body or a heredoc opener is written and says nothing about indentation.
+That is a fixture, along with flat SQL that never nests.
+
+### What was in them
+
+The language quick reference — the part of a study site people copy from:
+
+```
+.flex-container {          {                     func
+display: flex;             "string":            divide(a,
+flex-direction: row;       "hello world",       b
+/* row|column|row-reverse */  "number":         float64) (float64, error) {
+```
+
+Eight CSS blocks, three Go, two Bash, one ZSH, one PowerShell, two JSON. The
+JSON pair is the one worth pausing on: it is the card that **teaches the JSON
+format**, and it had been rendering every key on one line and its value on the
+next since the conversion.
+
+### JSON's grammar is too permissive to see its own corruption
+
+The obvious check — parse every JSON block — was written first and finds
+nothing, because **JSON is whitespace-insensitive**: a newline between a key and
+its value is valid JSON. Stripping `//` comments (string-aware, so a URL
+survives) and parsing all twelve JSON-shaped blocks leaves two failures, and
+both are deliberate **JSON Lines** — a chat transcript and a JSON-RPC exchange.
+
+So the parser is silent on the two blocks that are actually broken and speaks
+only about the two that are fine. Worth recording as a negative: the permissive
+grammar is not a weaker version of the signal, it is the wrong instrument.
+
+### The repair could not break the markup even if the target were wrong
+
+Both mechanisms are whitespace-only **by construction** rather than by checking
+afterwards:
+
+- **the CSS reflow** tokenises markup into tags, text and whitespace runs, copies
+  tags and text byte for byte, and recomputes only the whitespace;
+- **`retarget`** takes a hand-written plain-text layout and re-emits the original
+  markup with that layout's whitespace, after comparing both **character by
+  character with all whitespace removed**. A target that drops, adds or reorders
+  one character cannot be applied at all — it raises, naming the character and
+  its context.
+
+`retarget` round-trips all 81 blocks in the file unchanged before being used on
+any of them, which is the test that it preserves what it claims to preserve.
+
+### Three things the automation got wrong, all worth keeping
+
+1. **`&gt;` ends in a semicolon.** A declaration-ends-here rule split `div > p`
+   across two lines. Entities have to be unescaped before any punctuation rule
+   reads them.
+2. **An empty rule body.** `div p { }` with a trailing comment is how the
+   combinator table is written; a naive rule put the braces on three lines.
+3. **Whether a comment belongs to the rule above or below is judgement.** The
+   original line structure is the very thing that was corrupted, so it cannot
+   answer. Section headers are therefore named explicitly rather than guessed.
+
+### Proved against the file, not only against fixtures
+
+```
+before the wave      18 findings, exit 1
+after the CSS commit 10 findings, exit 1
+after this commit     0 findings, exit 0
+```
+
+Six new fixtures: the corruption, the same block correctly indented, a block too
+short to judge, a single-opener heredoc, flat SQL, and Go — the language the two
+existing checks cannot see.
+
+```
+18 blocks reflowed · lint fixtures 22 -> 28 · 35 gates green
+301 browser checks green
+```
