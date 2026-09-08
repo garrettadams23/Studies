@@ -63,11 +63,28 @@
  *     its causes. Kind 3 is when they are there and only the reader's word is
  *     missing. Kind 2 is when the count comes back zero.
  *
- * `laptop won't turn on` passes that test honestly and stays kind 3: `hw` has
- * *The Order That Resolves Most No-Boot Machines*, which is the answer written
- * out, and the only thing absent is the reader's phrasing. `git detached head`
- * and `terraform state locked` were not re-checked at fault level and should be
- * before either is reclassified.
+ * Every remaining zero has now been through it, and the results split three ways:
+ *
+ *   * **kind 3, confirmed** — `laptop won't turn on` (`hw` has *The Order That
+ *     Resolves Most No-Boot Machines*), `outlook won't connect` (the M365
+ *     playbook's *Symptom → Layer* card routes it), `docker image too big`
+ *     (multi-stage builds, `.dockerignore`, layer caching and image size are all
+ *     in `devops`). The answer is written out; only the phrasing is absent.
+ *   * **kind 2** — `wifi keeps dropping` and `vpn keeps disconnecting`, above.
+ *   * **kind 1** — `git detached head` and `terraform state locked`. The site
+ *     *described* both states and named neither: the reflog card tells you to
+ *     run `git checkout HEAD@{1}` without saying it detaches HEAD, and then goes
+ *     looking for the "dangling" commits that causes. Fixed in prose, which the
+ *     rules above call the right answer for kind 1 and better writing anyway.
+ *
+ * `git detached head` now answers. `terraform state locked` still does not: the
+ * matcher wants its three words near each other, and the prose says "a lock held
+ * by nothing" and `force-unlock`. **It is left that way on purpose.** The edit
+ * was worth making because a lock outliving a killed run was missing from the
+ * corpus — `force-unlock` appeared zero times in it — and rewording a sentence
+ * to sit better with this matcher is the keyword stuffing the rules above
+ * forbid. A zero that stays zero after a justified fix is a better record than a
+ * sentence bent to close it.
  *
  * The correction matters more than the two cards did. A kind-3 call is a
  * decision not to write something, and it was being made from a topic list.
@@ -126,15 +143,15 @@ const READERS = [
     ["writing a ticket"],
     ["angry user on the phone"],
     ["explaining to a non technical manager"],
-    ["wifi keeps dropping", "kind 3 — the site has the wireless cards; none phrases a symptom"],
-    ["vpn keeps disconnecting", "kind 3 — same shape as the wireless one"],
-    ["laptop won't turn on", "kind 3 — hw covers POST and beep codes, not the symptom"],
-    ["outlook won't connect", "kind 3"],
+    ["wifi keeps dropping"],
+    ["vpn keeps disconnecting"],
+    ["laptop won't turn on", "kind 3, checked at fault level — hw's 'The Order That Resolves Most No-Boot Machines' is the answer written out; only the phrasing is absent"],
+    ["outlook won't connect", "kind 3, checked — the M365 playbook's Symptom -> Layer card routes it: one device, one app -> Client"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported"],
     ["ransomware first hour"],
-    ["someone clicked the link", "kind 3 — the response card exists and does not use these words"],
+    ["someone clicked the link", "kind 3 — the response card exists and does not use these words; password reset and session revocation are covered in threat and sec"],
     ["password sprayed"],
     ["usb found in car park"],
     ["log4j"],
@@ -170,9 +187,9 @@ const READERS = [
     ["certificate expired"],
     ["kubernetes pod crashloop"],
     ["s3 bucket public"],
-    ["git detached head", "kind 3 — the Git cards do not phrase this state"],
-    ["terraform state locked", "kind 3"],
-    ["docker image too big", "kind 3"],
+        ["git detached head"],
+    ["terraform state locked", "kind 1, fixed in prose and still zero — the state card now covers a lock outliving a killed run and force-unlock. The matcher wants the three words adjacent; tuning prose to that is the keyword stuffing this file forbids"],
+    ["docker image too big", "kind 3, checked at fault level — devops covers multi-stage builds, .dockerignore, layer caching and image size"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv"],

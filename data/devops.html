@@ -736,7 +736,7 @@ jobs:
   </div>
 </div>
 
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
               <span class="topic-icon">🌍</span>
               <span class="topic-name">Terraform — Infrastructure as Code in Practice</span>
@@ -834,7 +834,14 @@ jobs:
                     first thing to configure. Read every plan before
                     applying; the diff is the only place a destructive
                     change announces itself, and "apply" run from habit is
-                    how a database gets replaced instead of updated.
+                    how a database gets replaced instead of updated. The lock has
+                    its own failure: a run that is killed — a cancelled pipeline,
+                    a dropped connection — never releases it, and every later
+                    apply stops on a lock held by nothing. <code>terraform
+                    force-unlock &lt;lock-id&gt;</code> clears it, and the only
+                    dangerous thing about that command is running it while
+                    somebody really is applying, so confirm that first rather
+                    than reaching for it as the standard fix.
                   </div>
                 </div>
               </div>

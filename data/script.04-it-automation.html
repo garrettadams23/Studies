@@ -436,7 +436,7 @@ asyncio.run(<span class="fn">main</span>())
 
 <!-- BEGINNER35-SCRIPT v1 -->
 <!-- ── TOPIC: Regular Expressions Deep Dive ──────────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🔤</span>
     <span class="topic-badge">Beginner</span>
@@ -683,7 +683,13 @@ drop   3456789 Remove debug prints
         <code>git reflog</code> is how you save them.<br><br>
         Git keeps a log of <em>every</em> place HEAD has pointed —
         commits, resets, rebases, checkouts — for about 90 days, even
-        ones that seem to have "vanished."
+        ones that seem to have "vanished."<br><br>
+        Checking one out puts you in a <strong>detached HEAD</strong> — HEAD
+        pointing straight at a commit instead of at a branch. That is the normal
+        state for looking around, and the trap is committing while you are in it:
+        those commits belong to no branch, so the next checkout leaves them
+        unreferenced and they are exactly the "dangling" commits the last command
+        here goes looking for. Make a branch before you work, not after.
       </div>
       <pre class="code-block">
 <span class="com"># Show every recent HEAD movement (even "lost" commits)</span>
@@ -696,7 +702,9 @@ git reflog
 <span class="com"># ...</span>
 
 <span class="com"># Recover "lost" commits by checking out the reflog entry</span>
+<span class="com"># (this detaches HEAD — branch before you commit anything)</span>
 git checkout HEAD@{1}
+git switch -c recovered-work
 
 <span class="com"># Or restore your branch to before the bad reset</span>
 git reset --hard HEAD@{1}

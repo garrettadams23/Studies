@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **15**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **16**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,7 +43,7 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,378**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 5 while the first rose 9, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **59 of 66**, 7 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
+| Reader questions answered | **60 of 66**, 6 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
 | Learning paths | **101 paths, 1,581 steps, 1,484 of 1,544 topics** | `check_paths.py` |
 | Related links | **1,484 topics, 4,696 links, 0 one-way** | `suggest_related.py --check` |
 | Page budget | **35% raw** headroom — room for ~838 more topics | `page_budget.py` |
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **15** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **16** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2177,4 +2177,74 @@ feeding it was not.
 ```
 query_probe.mjs docstring: kind 2 vs kind 3 now has a test · 0 cards written
 the symptom wave stops at net · 35 gates green
+```
+
+## Session — running the test on the six zeros it was written for
+
+The correction above added a test for telling a real gap from a phrasing gap:
+*name the fault the question implies, then grep the domain for its causes.* This
+is that test, run on every remaining zero, and it splits them three ways rather
+than the two the census had.
+
+| Query | Fault-level grep | Kind |
+|---|---|---|
+| `laptop won't turn on` | `hw` has *The Order That Resolves Most No-Boot Machines* | **3** — answer written out |
+| `outlook won't connect` | the M365 playbook's *Symptom → Layer* card routes it: one device, one app → Client | **3** |
+| `docker image too big` | multi-stage 8, `.dockerignore`, layer caching, image size — all in `devops` | **3** |
+| `someone clicked the link` | password reset and session revocation across `threat` and `sec` | **3** |
+| `git detached head` | `detached` **0**, and the reflog card sends you into the state without naming it | **1** |
+| `terraform state locked` | `force-unlock` **0** corpus-wide; locking covered as a practice, never as a failure | **1** |
+
+Four confirmed kind 3 and left alone. The two that moved did not move to kind 2
+— they moved to **kind 1**, *the site says it in the other word*, whose remedy
+the rules already call better writing anyway.
+
+### The reflog card sends the reader into the state it is protecting them from
+
+*git reflog — Your Undo Button for Almost Anything* says to run:
+
+```
+git checkout HEAD@{1}
+```
+
+That detaches HEAD. The card does not say so — and three commands later it goes
+looking for *"dangling commits not referenced by any branch"*, which is precisely
+what you create by committing in the state the earlier line just put you in. The
+card describes both ends of the hazard and never names the middle.
+
+So it names it now, and the code block creates a branch instead of leaving the
+reader on a commit that belongs to nothing. **That is not a symptom phrase bolted
+on; it is a missing warning in a recovery procedure.**
+
+The Terraform state card had the same shape: *lock it to prevent concurrent
+applies*, and nothing about the lock outliving the run that took it. A cancelled
+pipeline leaves it held by nothing and every later apply stops on it.
+`force-unlock` appeared **zero** times in the corpus.
+
+### One of them is still a zero, deliberately
+
+`git detached head` now answers. **`terraform state locked` does not.** The
+matcher wants its three words near each other; the prose says *"a lock held by
+nothing"* and `force-unlock`.
+
+It is left that way. The edit was worth making because the failure mode was
+absent from the corpus, not because a probe wanted it, and rewording a sentence
+so it sits better with this particular matcher is exactly the keyword stuffing
+the census forbids. **A zero that stays zero after a justified fix is a better
+record than a sentence bent to close it.**
+
+### The standing list is a regression corpus, and I nearly shrank it
+
+Having closed three queries, my first edit **deleted them** from the query list —
+which took the total from 66 to 63 and would have removed the only thing that
+would notice if a future edit broke them again. They are back, without a `kept`
+note, so a regression shows up as `ZERO` rather than as a dismissal somebody
+already blessed.
+
+Every remaining zero now carries the evidence of its own dismissal in the list
+itself, so the next session inherits the greps instead of repeating them.
+
+```
+2 cards edited — the docstring's own budget · reader questions 59 -> 60 of 66
+zeros 7 -> 6 · 35 gates green · 301 browser checks green
 ```
