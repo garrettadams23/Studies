@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **22**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **23**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -45,7 +45,7 @@ run rather than letting them pass as verified:
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **60 of 66**, 6 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
 | Learning paths | **101 paths, 1,571 steps, 1,485 of 1,545 topics** | `check_paths.py` |
-| Related links | **1,485 topics, 4,704 links, 0 one-way** | `suggest_related.py --check` |
+| Related links | **1,485 topics, 4,736 links, 0 one-way** — one mainland of 1,459, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **35% raw** headroom — room for ~836 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **22** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **23** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2677,4 +2677,77 @@ Checked either side: **core 1,415 · beginner 121 · advanced 9**, unmoved.
 
 ```
 8 badges normalised · lint fixtures 32 -> 36 · 35 gates green
+```
+
+## Session — eleven islands the orphan census could not see
+
+An orphan is a topic nothing points at, and the site has 60, all generated. An
+**island** is subtler and no census had asked for it: a group of topics that link
+to each other — so *not one of them is an orphan* — and to nothing else. The
+"See also" strip never leads out. A reader who arrives can circle indefinitely
+without being offered the rest of the site.
+
+Connected components of `related.json`:
+
+```
+1,485 linked topics · 12 components · mainland 1,432 (96%)
+   53 topics across eleven islands
+```
+
+### The composition was the finding, not the count
+
+```
+16  math      the entire calculus track
+ 7  script    API design · GraphQL · gRPC · WebSockets · webhooks · sockets · REST
+ 7  shortcut  the OS keyboard tables
+ 5  script    JSON ×3 · serialisation · URL encoding
+ 4  script    Kafka · Spark · pandas · OLTP vs OLAP
+ 3  quotes
+ 3  sec/threat  Security Basics in Plain English · Threats Explained Simply ·
+                Everyday Security Hygiene
+ 2  script    HTML ×2       2  script  CSS ×2
+ 2  shortcut  browser       2  shortcut  DoD ×2
+```
+
+**Five of the eleven are `script`'s language-reference layer**, and every one of
+them has a twin on the mainland it was never linked to: *GraphQL — Ask For
+Exactly What You Need* sat in an island while *GraphQL on the Backend* sat in the
+mainland; the same for WebSockets, for API design against *API-First &
+Contract-Driven Design*, and for `OLTP vs OLAP`, which is a **recorded
+near-duplicate pair** in `duplicate-verdicts.json` whose two halves had no link
+between them. The layer was linked internally when it was written and never
+connected outward.
+
+**The one that matters most for a reader is the three-topic one.** The beginner
+security layer offered a beginner *only the other two beginner cards*. Finish
+*Security Basics in Plain English* and the site's entire core security layer is
+one click away and is never mentioned.
+
+### Sixteen bridges, each a pair that already belonged together
+
+Not link-padding to move a metric: every bridge is a topic and its twin, or a
+beginner card and the core card it introduces — `Security Basics` → *CIA Triad*,
+`Threats Explained Simply` → *How Attacks Actually Work*, `Everyday Security
+Hygiene` → *MFA* and *Passkeys*, `Serialization` → *SSRF, XXE & Deserialization*,
+`Kafka` → *Message Queues* and *Streaming Pipelines*, `DoD` → the military staff
+system.
+
+```
+components 12 -> 4 · mainland 1,432 -> 1,459 (96% -> 98%) · links 4,704 -> 4,736
+```
+
+### The three that remain, and why a gate would be wrong
+
+`math` (16), the `shortcut` OS tables (7), `quotes` (3). Each is a whole
+reference domain whose neighbours genuinely are its own kind, and each is
+reachable by a learning path — *Calculus, Start to Finish* and *How to Think*.
+Requiring every component to connect would mean **inventing** a "See also" out of
+the calculus track, and an invented link is worse than a short strip.
+
+So `orphan_report.py --islands` is a census and says so in its own output. It
+sits beside the orphan count because they are the same question at two scales:
+*can a reader get here*, and *can a reader get out*.
+
+```
+16 bridges · related 4,704 -> 4,736 links, still 0 one-way · 35 gates green
 ```
