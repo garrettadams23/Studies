@@ -12,7 +12,8 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs 404 elements at rest instead of 92,330 and loads in a third of the time.
+  costs **475 elements at rest instead of 140,926** — measured at 1,545 topics,
+  and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
 - **Interactive Filtering** — Sticky chip nav bar filters by domain instantly,

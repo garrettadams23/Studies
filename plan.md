@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **30**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **31**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **155** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **30** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **31** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3158,4 +3158,57 @@ broken one.
 
 ```
 smoke 153 -> 155 checks · 37 gates green
+```
+
+## Session — the README understated the site's own best number
+
+The README's headline design claim:
+
+> Opening another releases the last, so the page costs **404 elements at rest
+> instead of 92,330** and loads in a third of the time.
+
+`page_budget.py` measures both: **475** and **140,926**. `page_budget.py`'s own
+docstring says where the README's pair came from — *"92,330 → 404 measured at
+1,080 topics"* — and the site has 1,545.
+
+So this is the eighth stale number found this run, and the first that makes the
+project look **worse than it is**. The ratio it sells is 228×. The real one is
+296×, and it widens with every card added, because that is exactly what the
+architecture is for.
+
+### Not gated, and that is the decision worth recording
+
+`content_elements` moves on **every content wave**. Gating an exact figure in the
+README would mean a README edit in every content commit — which is not
+discipline, it is the friction that produces stale numbers in the first place.
+`dom_elements` is different (it grows per *domain*, not per topic, and the
+domains-table check already fires when a domain is added), but the two live in
+one sentence.
+
+So the sentence adopts the convention this run already established for tool
+docstrings, four sessions ago:
+
+> The rest are dated on purpose — *"At 1,534 topics there were 1,549
+> attributes"*, *"288 of 1,432 (20%) when this was written"* — and that phrasing
+> is the reason they cannot rot. A snapshot says when it was taken; a bare number
+> claims to be now.
+
+It now reads *"475 elements at rest instead of 140,926 — measured at 1,545
+topics, and the gap widens with every card added"*. That is true today, true in a
+year, and needs no gate to stay true.
+
+### Where the line actually falls
+
+| Claim | Mechanism |
+|---|---|
+| Domains table, acronym count | **Gated** — they change when something is *added*, which is rare and deliberate |
+| Topic and domain counts in `<meta>` | **Generated** — `build.py` substitutes `<!-- TOPIC_COUNT -->` |
+| Element counts, timings | **Dated** — they move continuously, so the honest form is a snapshot |
+
+Three mechanisms, and the choice between them is *how often the number moves*,
+not how important it is. That is the rule the previous seven instances were each
+missing.
+
+```
+README: 404 -> 475, 92,330 -> 140,926, both dated · 37 gates green
 ```
