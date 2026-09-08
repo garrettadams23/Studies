@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **28**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **29**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,097 chars**, median 3,696 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **152** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **153** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **28** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **29** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3043,4 +3043,67 @@ actually asks — unique across all 1,545.
 ```
 esc() covers 5 characters · 0 unescaped interpolations · 0 unowned import keys
 37 gates green · 301 browser checks green
+```
+
+## Session — the button that printed on every handout
+
+`README.md` claims the site *"prints cleanly"*. Like the service worker two
+sessions ago, nothing tested it: seven browser gates and not one of them
+emulates print media.
+
+Emulating it and asking what still renders:
+
+```
+on screen   #study-fab ✓   .filter-bar ✓   #search-input ✓   #back-to-top ✓
+in print    #study-fab ✓   .filter-bar ✗   #search-input ✗   #back-to-top ✗
+```
+
+**`#study-fab-wrap` is `position: fixed`**, so it does not merely appear — it
+pins itself to the first printed page, over the content, on every handout anyone
+has ever printed. A sweep for anything else found nothing: it is the only fixed
+or sticky element that survives, and the only interactive control besides the
+topic headers, which print as headings and should.
+
+### The codebase had already written down why this would happen
+
+`style.css` hides print chrome by naming each thing — `.filter-bar`,
+`.notepad-tab`, `#back-to-top`, `.topic-tools`, `.topic-chev`, `#snap-quote`.
+The study FAB was added later and never joined the list.
+
+Four hundred lines below, the print-pack block says exactly this, about itself:
+
+> Hiding by child selector, not by naming each thing, **so a new header or panel
+> added later does not silently start printing.**
+
+That comment is a prediction. The block it is written in is immune; the block
+that needed it is the one that failed.
+
+### So the gate asserts the rule, not the list
+
+`smoke_test.mjs` now emulates print and asserts **nothing fixed or sticky
+renders**. That catches the next floating control without anybody remembering to
+add a selector — which is the whole argument the other block already made.
+
+Proved against the old stylesheet:
+
+```
+FAIL : nothing floats over the page in print — DIV#study-fab-wrap
+152/153 checks passed
+```
+
+### A storage question, raised rather than decided
+
+Auditing what the site stores, five keys are outside the progress export:
+`theme`, `acro-density`, `seen-through`, `recent-topics` and two internal
+migration flags. The last two are correctly excluded. Whether a **preference**
+belongs in a file whose dialog says *"Export a file to move it to another
+browser"* is a product decision, not a defect, and it is the owner's to make —
+so it is written here rather than changed.
+
+One thing did turn up along the way: `"theme"` is the only storage key written as
+a bare string literal instead of a named constant, which is why an audit that
+enumerated the constants did not see it at all.
+
+```
+smoke 152 -> 153 checks · 1 print rule · 37 gates green
 ```

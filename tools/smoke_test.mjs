@@ -1669,6 +1669,33 @@ await step("what's new stays quiet on a first visit and records the month", asyn
 });
 
 // ── hygiene ─────────────────────────────────────────────────────────────────
+// ── print ───────────────────────────────────────────────────────────────────
+// The README says the site prints cleanly and nothing tested it. style.css hides
+// the chrome by naming each thing, and the study FAB — added later — was never
+// added to the list, so it printed on the first page of every handout. It is
+// position:fixed, which is the general shape of the bug: a floating control
+// pins itself to the first printed page.
+//
+// So this asserts the rule rather than the list, which is what the print-pack
+// block in style.css already argues for in its own comment: "Hiding by child
+// selector, not by naming each thing, so a new header or panel added later does
+// not silently start printing."
+await page.emulateMedia({ media: "print" });
+await page.waitForTimeout(200);
+const printFixed = await page.evaluate(() =>
+  [...document.querySelectorAll("body *")]
+    .filter(e => {
+      const r = e.getBoundingClientRect();
+      if (r.width <= 0 || r.height <= 0) return false;
+      const pos = getComputedStyle(e).position;
+      return pos === "fixed" || pos === "sticky";
+    })
+    .map(e => e.tagName + (e.id ? "#" + e.id : "." + String(e.className).split(" ")[0]))
+);
+check("nothing floats over the page in print", printFixed.length === 0,
+  [...new Set(printFixed)].slice(0, 4).join(", "));
+await page.emulateMedia({ media: "screen" });
+
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
 
