@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **18**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **19**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **18** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **19** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2399,4 +2399,67 @@ not matter.
 ```
 6 tables wrapped · 1 verdict moved · 1 verdict written · 1 contradiction removed
 lint fixtures 28 -> 32 · annotator fixtures 2 -> 6 · 35 gates green
+```
+
+## Session — the front door described a site nine domains smaller than it is
+
+Four places have now been caught quoting a number about this repository that had
+drifted: the measured-state table, the risk register, a tool's own docstring, and
+the query probe's classification. The fifth is the one a visitor reads first.
+
+**`README.md`'s Domains table listed 21 domains. The site has 30.**
+
+```
+♾️  DevOps, Platform & Delivery          50 topics
+🏢  Windows Server & Infrastructure      52
+🧮  Computer Science Fundamentals        66
+🔧  Hardware, Electronics & Embedded     28
+🚀  IT Career & Craft                    45
+⏱️  Productivity & Learning Systems      22
+🧠  Mind & Wellbeing                     20
+📐  Mathematics — Calculus               16
+❝   Quotes — Sourced & Corrected          6
+```
+
+**305 topics, a fifth of the site, missing from its own front page** — and four
+of those nine are the Phase 5 tracks whose completion the archive celebrates at
+length. The table was written when the site had 21 domains and nine were added
+without it. It also advertised *"980+ acronyms"* against a dictionary of
+**1,101**: not false, which is how it survived.
+
+### Written from the domains, not from memory
+
+Each new row's key topics come from that domain's actual topic titles, read out
+of `data/*.html` rather than recalled — the manual's failure #2 is five invented
+cross-references produced exactly that way, and a README is the one file where
+nobody would check.
+
+### Counted, not title-matched
+
+The check is on **count**, plus every domain's icon appearing somewhere in the
+table. Titles deliberately differ: the README says *Sec Operations* where
+`domains.json` says *IT & Security Operations*, and *Security Core* for *Security
+Core Concepts*. Forcing those to match would mean a worse README for a tidier
+check. Icons cannot be the key either — two pairs of domains share one (🌐 for
+`net` and `web`, 🏛️ for `eng` and `grc`).
+
+Count is enough, because it catches the failure that actually happened: **a
+domain is added to the site and the README is not.** Proved against the pre-fix
+file — *"the Domains table lists 21 domains, data/domains.json has 30"*, plus
+nine named icons, exit 1.
+
+### The pattern, now that there are five
+
+Every one of them is prose *about* the repository, kept by hand, in a document
+whose readers cannot tell it has drifted. None of them was ever wrong when
+written. The counter-measure that keeps working is not care — it is that the
+number has to be derived somewhere a build can compare it.
+
+`check_plan_numbers.py` has therefore stopped being about `plan.md` and is about
+the repository's own prose. Its name stays, because renaming it means touching
+the Makefile, the workflow, and `check_gates.py`'s two lists, for nothing a
+reader gains.
+
+```
+README domains 21 -> 30 · acronym claim 980+ -> 1,101 · 35 gates green
 ```

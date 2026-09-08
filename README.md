@@ -32,7 +32,7 @@ Open `index.html` in any modern web browser — no server or build step required
   across your open tabs. No dependencies.
 - **Acronym Expansions Everywhere** — The first use of an acronym in any topic
   carries what it stands for right beside it, e.g. `ACL (Access Control List)`.
-- **Acronym Dictionary** — A dedicated domain with 980+ IT acronyms, browsable
+- **Acronym Dictionary** — A dedicated domain with 1,101 IT acronyms, browsable
   A–Z or by subject area, searchable by acronym *or* by what it expands to.
 - **Rotating Snap Quotes** — Philosophical quotes on a fade cycle.
 - **URL Encode / Decode Widget** — Interactive tool in the Scripting domain.
@@ -64,7 +64,16 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🌐 Web | WEB, JS | Browser, CSS, JS, Frameworks, Performance, A11y |
 | 📧 Microsoft 365 | M365, MS-102 | Tenant anatomy, licensing, admin roles, **Exchange Online** (mail flow, connectors, EOP/Defender, message trace), **SharePoint & OneDrive** (architecture, sharing sprawl, KFM), **Teams** (architecture, governance, policies, voice, call quality), **Purview** (retention, holds, labels, DLP, eDiscovery, insider risk), admin PowerShell, usage reporting, backup, tenant-to-tenant migration, troubleshooting playbook |
 | 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Co-management |
-| 🔤 Acronym Dictionary | REF | 980+ IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
+| ♾️ DevOps, Platform & Delivery | DevOps, CKA | CI/CD, Terraform & IaC, containers, Kubernetes, GitOps, secrets, supply chain, serverless, caching, queues |
+| 🏢 Windows Server & Infrastructure | AZ-800, Server | Editions & licensing, Server Core, AD DS boundaries, FSMO, replication, trusts, Group Policy, storage, RAID, backup & DR |
+| 🧮 Computer Science Fundamentals | Theory | Big-O in practice, amortized analysis, recursion, P vs NP, cache locality, hash tables, trees, graphs, probabilistic structures |
+| 🔧 Hardware, Electronics & Embedded | A+, Hands-On | Ohm's law, power & thermals, motherboards, CPU & cooling, memory & ECC, storage interfaces, test gear, firmware, systematic troubleshooting |
+| 🚀 IT Career & Craft | Career | Career paths, CVs and the ATS, interviews, certifications, home labs, mentorship, technical writing, money, remote work |
+| ⏱️ Productivity & Learning Systems | Study | Learning how to learn, spaced repetition, the memory palace, sleep, attention & task-switching, note-taking, habits, the Japanese mastery loop |
+| 🧠 Mind & Wellbeing | Inner Game | Imposter syndrome, burnout, resilience, dealing with failure, surviving on-call, communication |
+| 📐 Mathematics — Calculus | Calculus | Limits, derivatives, integrals, series, differential equations, the unit circle, and a one-page cheat sheet |
+| ❝ Quotes — Sourced & Corrected | Sourced | Stoic, Eastern and existentialist quotes with the work cited — plus the famous lines nobody can source |
+| 🔤 Acronym Dictionary | REF | 1,101 IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
 
 ## Project Structure
 

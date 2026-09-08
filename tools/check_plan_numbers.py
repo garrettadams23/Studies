@@ -75,6 +75,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PLAN = ROOT / "plan.md"
 ARCHIVE = ROOT / "plan-archive.md"
+README = ROOT / "README.md"
 HEADER = "| Measure | Value | Tool |"
 
 # Rows that need Chromium or a stopwatch. Named so a run says what it did not do.
@@ -110,6 +111,51 @@ def grab(pattern, text, source, count=1):
     if len(vals) != count:
         raise SystemExit(f"{source}: expected {count} numbers, parsed {len(vals)}")
     return vals
+
+
+def readme_problems():
+    """The README's Domains table, checked against data/domains.json.
+
+    The fifth place this repository has found the same defect: prose quoting a
+    number about the repo, maintained by hand, drifting. The README's table
+    listed **21 domains over a site with 30** — DevOps, Windows Server, computer
+    science, hardware, career, productivity, mind, maths and quotes were all
+    absent from the front door, several of them whole programmes the plan
+    celebrates finishing. It also advertised "980+ acronyms" against a
+    dictionary of 1,101.
+
+    Checked by count rather than by title: the README uses shorter display names
+    on purpose — *Sec Operations* for *IT & Security Operations* — and forcing
+    those to match would be a worse README for a tidier check. Icons are checked
+    too but cannot be the key, because two pairs of domains share one.
+
+    The failure mode this actually catches is the one that happened: a domain is
+    added to the site and the README is not.
+    """
+    out = []
+    domains = json.loads((ROOT / "data" / "domains.json").read_text(encoding="utf-8"))
+    text = README.read_text(encoding="utf-8")
+    try:
+        table = text[text.index("## Domains"):text.index("## Project Structure")]
+    except ValueError:
+        return ["README.md: the Domains table is no longer between the headings "
+                "'## Domains' and '## Project Structure'"]
+
+    rows = [l for l in table.splitlines() if l.startswith("| ") and "---" not in l]
+    listed = len(rows) - 1                       # minus the header row
+    if listed != len(domains):
+        out.append(f"README.md: the Domains table lists {listed} domains, "
+                   f"data/domains.json has {len(domains)}")
+    for d in domains:
+        if f"| {d['icon']} " not in table:
+            out.append(f"README.md: no Domains row starts with {d['icon']} "
+                       f"({d['id']})")
+
+    acronyms = len(json.loads(
+        (ROOT / "data" / "acronyms.json").read_text(encoding="utf-8"))["entries"])
+    if not present(acronyms, text):
+        out.append(f"README.md: does not state the dictionary's size, {acronyms:,}")
+    return out
 
 
 def session_records(path):
@@ -285,6 +331,7 @@ def main():
 
     rows = table_rows(PLAN.read_text(encoding="utf-8"))
     missing, unknown = check(rows, derived)
+    readme = readme_problems()
 
     for measure, gone, cell in missing:
         print(f"{measure}: the row does not carry {', '.join(f'{v:,}' for v in gone)}")
@@ -293,13 +340,17 @@ def main():
     for measure in unknown:
         print(f"{measure}: derived, but no such row in plan.md's table")
 
+    for problem in readme:
+        print(problem)
+
     print(
-        f"\n{len(derived)} derivable row(s) · {len(missing) + len(unknown)} drifted.\n"
+        f"\n{len(derived)} derivable row(s) · {len(missing) + len(unknown)} drifted · "
+        f"README: {len(readme)} problem(s).\n"
         f"{len(UNCHECKED)} row(s) not checked here — they need a browser or a stopwatch:"
     )
     for measure, why in UNCHECKED.items():
         print(f"  {measure:<38} {why}")
-    return 1 if (missing or unknown) else 0
+    return 1 if (missing or unknown or readme) else 0
 
 
 if __name__ == "__main__":
