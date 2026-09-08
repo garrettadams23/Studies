@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **14**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **15**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **14** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **15** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2102,4 +2102,79 @@ rediscover that they are one thing.
 ```
 net: 2 cards · reader questions 57 -> 59 of 66 · zeros 9 -> 7
 1,544 topics · 35 gates green · 301 browser checks green
+```
+
+## Session — a correction: the last wave overrode a standing instruction without reading it
+
+The previous record treats nine probe zeros as one gap and writes two cards.
+The cards stand, and the reasoning for them was wrong in a way worth recording.
+
+`query_probe.mjs` does not merely report zeros. Its docstring carries a
+**standing instruction** about them, in three kinds, and kind 3 says:
+
+> `wifi keeps dropping`, `git detached head`, `terraform state locked`. The site
+> has the technology card for each and phrases none of them as a symptom.
+> **Leave these alone.** Seeding symptom phrases into cards is keyword stuffing
+> with a rationalisation attached.
+
+`wifi keeps dropping` is named there explicitly. I wrote a card for it. The
+operating manual's own start-of-session list says to read *the docstring of
+whichever census last reported something*, and the census had reported this, and
+I read the output and not the docstring.
+
+### The cards survive the check, on evidence gathered afterwards
+
+The right question is not whether I was allowed to, but whether the zero was
+really kind 3. Kind 3 means the answer exists and only the reader's word is
+missing. Grepping `net.html` **before** the wave for the causes of a stationary
+drop:
+
+```
+radar (DFS events)              0
+Protected Management Frames     0
+Session-Timeout (802.1X reauth) 0
+MOBIKE                          0
+rekey                           0
+band steering                   1   — one cell of the roaming card's fix column
+```
+
+The existing card's only drop row is *drops during a call while walking*, which
+is a roaming failure. Five of the six causes of a stationary drop appeared
+nowhere in the domain. That is kind 2 — *the question is real and the card was
+not there* — and the cards would have earned their place with no probe at all.
+`near_duplicates.py --title` returns only the topic itself, and card titles are
+still 7 reused across 3,842, unchanged by the wave.
+
+### What was actually wrong, and the test that replaces it
+
+The kind-3 call had been made from a **topic list**. Five wireless topics exist,
+so "the site has the technology card" read as true. It was true one level up
+from where the question lives. A reader's symptom implies a specific *fault*, and
+the topic that owns the subject can be missing it entirely.
+
+So the docstring now carries the test rather than the verdict:
+
+> name the specific fault the question implies, then grep the domain for its
+> causes. Kind 3 is when they are there and only the reader's word is missing.
+> Kind 2 is when the count comes back zero.
+
+Applied to the rest: **`laptop won't turn on` is genuinely kind 3 and stays.**
+`hw` has *The Order That Resolves Most No-Boot Machines* — the answer written
+out, missing only the reader's phrasing — so the symptom wave stops there rather
+than continuing through five domains as the last record proposed. `git detached
+head` and `terraform state locked` have not been re-checked at fault level and
+are not reclassified until they are.
+
+### The part that generalises
+
+A kind-3 call is **a decision not to write something**, and it was being made
+from a topic list. Dismissals get less evidence than actions do, because nothing
+is produced to review. The previous record found that nine individually
+justified dismissals hid one gap; this one is the same lesson turned on the
+instruction that produced them — the rule was right and the classification
+feeding it was not.
+
+```
+query_probe.mjs docstring: kind 2 vs kind 3 now has a test · 0 cards written
+the symptom wave stops at net · 35 gates green
 ```

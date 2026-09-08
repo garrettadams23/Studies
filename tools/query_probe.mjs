@@ -37,7 +37,7 @@
  *      was "somebody just told me, what now". **Write the card** — but verify
  *      with `near_duplicates.py --title` first.
  *   3. **The question is real and the answer is a phrase, not a card.**
- *      `wifi keeps dropping`, `git detached head`, `terraform state locked`.
+ *      `laptop won't turn on`, `git detached head`, `terraform state locked`.
  *      The site has the technology card for each and phrases none of them as a
  *      symptom. **Leave these alone.** Seeding symptom phrases into cards is
  *      keyword stuffing with a rationalisation attached; a symptom index is a
@@ -46,6 +46,31 @@
  * Kind three is the majority and it is the one that tempts. If a pass over this
  * report produces edits to more than two or three cards, it has stopped being
  * an audit.
+ *
+ * ## Telling kind 2 from kind 3, because the first version of this got one wrong
+ *
+ * `wifi keeps dropping` was listed above as kind 3 — *the site has the
+ * technology card*. It had five wireless topics, so that was true at the level
+ * it was checked. It was false one level down: the troubleshooting card covered
+ * roaming and "it's slow", and its table's one drop row is *drops during a call
+ * while walking*. A client that drops while **stationary** is a different fault,
+ * and grepping the domain for its causes returned **zero** for radar events,
+ * Protected Management Frames, RADIUS `Session-Timeout` and rekeying.
+ *
+ * So the test is not *does a card on this technology exist*. It is:
+ *
+ *     name the specific fault the question implies, then grep the domain for
+ *     its causes. Kind 3 is when they are there and only the reader's word is
+ *     missing. Kind 2 is when the count comes back zero.
+ *
+ * `laptop won't turn on` passes that test honestly and stays kind 3: `hw` has
+ * *The Order That Resolves Most No-Boot Machines*, which is the answer written
+ * out, and the only thing absent is the reader's phrasing. `git detached head`
+ * and `terraform state locked` were not re-checked at fault level and should be
+ * before either is reclassified.
+ *
+ * The correction matters more than the two cards did. A kind-3 call is a
+ * decision not to write something, and it was being made from a topic list.
  *
  * Usage:
  *   node tools/query_probe.mjs              # every query, grouped by reader
