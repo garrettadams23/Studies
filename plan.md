@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **20**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **21**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **20** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **21** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2556,4 +2556,57 @@ anything that formats for a terminal.
 ```
 devops 50 -> 51 topics · 1,544 -> 1,545 · paths 1,570 -> 1,571 steps
 related 4,696 -> 4,704 links, 0 one-way · deep orphans 0 · 35 gates green
+```
+
+## Session — the one reader that cannot tell it is being lied to
+
+`sitemap.xml` said `lastmod 2026-07-31` through months of daily edits. It is the
+seventh thing in this repository found quoting a fact about itself that was true
+once, and it is the only one whose reader is a **crawler** — a person notices a
+stale README eventually; a crawler adjusts its recrawl interval and says nothing.
+
+Nothing derived it, so it could only ever be right by accident.
+
+### Three sources, and two of them are wrong for reasons this repo already knows
+
+| Source | Why not |
+|---|---|
+| A build timestamp | Every build would differ from the last, which `check_determinism.py` exists to forbid: two runs over unchanged sources must produce identical bytes |
+| The last commit date | Circular — the commit that writes the date changes the date, so the file is dirty the moment it is committed |
+| **The newest `data-reviewed` stamp** | Content-derived, stable across rebuilds, and it moves exactly when the site's own claim about its freshness moves |
+
+The third is what `lastmod` is supposed to *mean*, and the site already maintains
+it: `stamp_freshness.py` puts a month on every topic and `--verify` gates it.
+
+Written as **`YYYY-MM`**, a complete W3C Datetime and the precision the content
+actually has. `2026-07-31` implied a day; nobody reviewed the site on the 31st.
+Padding a month to a day is inventing evidence, which is the thing this file
+keeps catching.
+
+### Gated three ways, because a generated file that nobody checks is where this started
+
+- `check_determinism.py` now watches it — **3 outputs reproducible**, not 2.
+- The workflow fails if it is stale, the same shape as the `index.html` and
+  `sw.js` steps.
+- `build.py` raises rather than shrugs if the `<lastmod>` element is gone.
+
+Proved by putting the old value back and rebuilding: `+ sitemap lastmod ->
+2026-09`, a one-line diff, and `make check` green either side.
+
+### The deployment surface, read once, since nothing else reads it
+
+The rest holds up and is worth recording so the next session does not re-derive
+it. `netlify.toml`'s CSP is `default-src 'none'` with no `unsafe-inline` on
+scripts — which is only possible because every handler is wired in `script.js`
+via `addEventListener`, and the smoke test's *no off-site requests* check is what
+keeps it true. `_redirects` sends unknown paths to the themed 404 and does no
+path rewriting, correct for a site whose deep links are `#hash` fragments
+resolved client-side. `robots.txt` points at the sitemap. The single `<url>` is
+right for the same reason the redirects are: hash fragments are not separate URLs
+to a crawler, so a sitemap listing 1,545 of them would be listing one page 1,545
+times.
+
+```
+sitemap lastmod: hand-written 2026-07-31 -> derived 2026-09
+determinism watches 2 -> 3 outputs · 35 gates green
 ```

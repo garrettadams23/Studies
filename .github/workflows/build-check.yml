@@ -172,6 +172,17 @@ jobs:
             exit 1
           fi
 
+      # sitemap.xml's lastmod is derived from the newest data-reviewed stamp,
+      # so it moves when the content's own freshness claim moves and not on
+      # every build. It said 2026-07-31 through months of daily edits, and a
+      # crawler is the one reader that cannot tell.
+      - name: Fail if sitemap.xml is stale
+        run: |
+          if ! git diff --exit-code -- sitemap.xml; then
+            echo "::error::sitemap.xml lastmod is out of date. Run 'python build.py' and commit the result."
+            exit 1
+          fi
+
       - name: Fail if index.html is stale
         run: |
           if ! git diff --exit-code -- index.html; then
