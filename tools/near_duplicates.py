@@ -19,6 +19,7 @@ concept card, and the same subject from an attacker's and a defender's side are
 all deliberate. So it is a census, and the mode that matters is `--title`:
 
     python3 tools/near_duplicates.py --title "Spanning Tree — Why a Loop …"
+    python3 tools/near_duplicates.py --paths     # the same question about learning paths
 
 run *before* writing, because by review time the cost is already sunk.
 
@@ -408,8 +409,57 @@ def contained(a_head, b_head, a_plain, b_plain):
     return covered(short, long_) >= 0.999
 
 
+# ── Paths ────────────────────────────────────────────────────────────────────
+#
+# The census above compares topic titles. Nothing had ever compared *paths*, and
+# a path is the other thing a reader chooses between — 101 of them on one screen,
+# picked from a name and a blurb.
+#
+# Containment rather than Jaccard, for the same reason as §3: a 12-step path
+# wholly inside a 25-step one scores 0.42 by Jaccard and is invisible, while the
+# reader who picks the short one gets the long one's first half and no way to
+# know it. Measured the first time it was run: **one pair at 92%** — "Thinking
+# Clearly" (12 steps) inside "How to Think" (25), sharing an identical first nine
+# steps in an identical order, with two `for` lines describing the same audience
+# in different words.
+#
+# Overlap between paths is not itself a defect. A step belongs in every path it
+# genuinely belongs in, and the highest remaining pair — 56%, five steps shared
+# between "AI Safety, Security & Governance" and "AI at Work" — is two different
+# subjects that meet. What the threshold catches is a path with no job of its own.
+
+def path_overlap(threshold=0.60):
+    """-> [(containment, shared, name_a, name_b)] for path pairs above threshold."""
+    paths = json.loads((DATA / "paths.json").read_text(encoding="utf-8"))
+    sets = {p["name"]: set(p["steps"]) for p in paths}
+    out = []
+    for a, b in itertools.combinations(sets, 2):
+        A, B = sets[a], sets[b]
+        if not A or not B:
+            continue
+        shared = len(A & B)
+        if shared and shared / min(len(A), len(B)) >= threshold:
+            out.append((shared / min(len(A), len(B)), shared, a, b))
+    return sorted(out, reverse=True), len(paths)
+
+
+def report_paths():
+    rows, total = path_overlap()
+    for contain, shared, a, b in rows:
+        print(f"  {contain:.0%} contained · {shared} shared steps")
+        print(f"      {a}")
+        print(f"      {b}")
+    print()
+    print(f"{total} paths · {len(rows)} pair(s) where one path's steps are "
+          f"60% or more inside another's.")
+    print("A census, not a gate — a step belongs in every path it belongs in.")
+    return 0
+
+
 def main():
     args = sys.argv[1:]
+    if "--paths" in args:
+        return report_paths()
     floor = float(args[args.index("--floor") + 1]) if "--floor" in args else FLOOR
     only_unexplained = "--unexplained" in args
     rows = [(r, tokens(r["title"]), tokens(head(r["title"]), expand=True),

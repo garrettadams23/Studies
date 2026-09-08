@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **16**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **17**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -44,7 +44,7 @@ run rather than letting them pass as verified:
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **60 of 66**, 6 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,581 steps, 1,484 of 1,544 topics** | `check_paths.py` |
+| Learning paths | **101 paths, 1,570 steps, 1,484 of 1,544 topics** | `check_paths.py` |
 | Related links | **1,484 topics, 4,696 links, 0 one-way** | `suggest_related.py --check` |
 | Page budget | **35% raw** headroom — room for ~838 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **16** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **17** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2247,4 +2247,71 @@ itself, so the next session inherits the greps instead of repeating them.
 ```
 2 cards edited — the docstring's own budget · reader questions 59 -> 60 of 66
 zeros 7 -> 6 · 35 gates green · 301 browser checks green
+```
+
+## Session — 101 paths, and nobody had ever compared two of them
+
+The duplication programme compared **topic titles**. The navigation programme
+checked that every path step **resolves**. Neither asks the question a reader
+asks, which is *these two paths have different names — are they different?*
+
+Three path measurements. Two came back clean and are worth the line they take:
+**0 paths with a repeated step**, **0 paths under 4 steps**, no duplicate path
+names, median 15 steps. The third did not.
+
+### One pair, at 92%
+
+```
+92% contained (Jaccard 0.42) · 11 of 12 steps shared
+    Thinking Clearly  [12 steps]
+    How to Think      [25 steps]
+```
+
+Their first **nine steps are identical, in the same order.** And the audience is
+declared twice in different words:
+
+> *for:* Anyone who has to decide something with incomplete information
+> *for:* Anyone making decisions on incomplete information, which is the job.
+
+A reader browsing 101 paths sees two names and two blurbs and has nothing to
+choose on. Whichever they pick, they get the same nine cards first.
+
+**Containment, not Jaccard** — and this pair is the argument for it. By Jaccard
+it scores **0.42** and never appears in any top-of-list. The short path is
+invisible inside the long one precisely because the long one is long.
+
+### The fix is a boundary, not a deletion
+
+Each path had a real job and was doing the other's as well:
+
+- **Thinking Clearly** is now the **reasoning kit** — argument, evidence, biases,
+  models, deciding, ethics on a real decision, and arguing against your own plan
+  before reality does. Eight steps, all instrumental.
+- **How to Think** is now the **traditions** — the Greek schools, the Eastern
+  ones, the pagan revivals, the realists, and (because half of what they are
+  quoted as saying they never said) how to source a quotation. Eighteen steps.
+
+Each blurb now names the other, which is how a reader tells them apart on the
+screen where they choose. Deleting one would have left a 25-step sprawl with no
+entry point for somebody who only wants to decide something today.
+
+**Shared steps after: zero.** No topic lost path coverage — the check that
+matters is that *distinct topics reachable from a path* held at **1,484 of
+1,544** while total steps fell 1,581 → 1,570. Eleven steps removed, none of them
+the last route to anything.
+
+### What the threshold is not for
+
+The highest remaining pair is **56%** — five steps shared between *AI Safety,
+Security & Governance* and *AI at Work*. That is two subjects that genuinely
+meet, and a step belongs in every path it belongs in. The census is looking for
+a path with **no job of its own**, not for overlap.
+
+Committed as `near_duplicates.py --paths` rather than written down as a number,
+for the reason this file gives every time: the figure goes stale and the script
+does not.
+
+```
+paths 1,581 -> 1,570 steps · 1,484 of 1,544 topics still reachable
+path pairs at 60%+ containment: 1 -> 0 · 35 gates green
 ```
