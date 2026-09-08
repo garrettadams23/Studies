@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **13**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **14**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -40,20 +40,20 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,544** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **11**, 1% — ten deepening waves below the old floor | `depth_report.py` |
-| Mean chars per concept card | **1,377**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 5 while the first rose 8, so the growth is not all verdict | `depth_report.py` |
+| Mean chars per concept card | **1,378**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 5 while the first rose 9, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
+| Reader questions answered | **59 of 66**, 7 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
 | Learning paths | **101 paths, 1,581 steps, 1,484 of 1,544 topics** | `check_paths.py` |
 | Related links | **1,484 topics, 4,696 links, 0 one-way** | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~840 more topics | `page_budget.py` |
+| Page budget | **35% raw** headroom — room for ~838 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,097 chars**, median 3,690 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,097 chars**, median 3,693 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **13** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **14** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2014,4 +2014,92 @@ currently none, not the 17 that differ on nothing and have all been read.
 ```
 4 register rows re-measured and given reopen conditions · 1 stale docstring
 35 gates green
+```
+
+## Session — nine deliberate zeros that were one gap
+
+`query_probe.mjs` asks 66 questions a reader might actually type and reports which
+return nothing. Nine returned nothing, and all nine had been read and marked
+**deliberate** — each with a note, each defensible:
+
+```
+wifi keeps dropping         kind 3 — the site has the wireless cards; none phrases a symptom
+vpn keeps disconnecting     kind 3 — same shape as the wireless one
+laptop won't turn on        kind 3 — hw covers POST and beep codes, not the symptom
+outlook won't connect       kind 3
+someone clicked the link    kind 3 — the response card exists and does not use these words
+git detached head           kind 3 — the Git cards do not phrase this state
+```
+
+Read one at a time, every one of those is a fair call. Read as a list, they are
+**not nine decisions. They are one.** Every single zero is a *symptom* phrasing,
+and every note says some version of *the subject is covered, the symptom is not*.
+
+The site is organised the way somebody who understands a subject would organise
+it. A reader in trouble arrives the other way round — with what is happening to
+them, not with the name of the thing that is broken.
+
+### Why the "deliberate" marking hid it
+
+The verdict field is per query. Nine separate rows each got a reason, and the
+reason was correct nine times. Nothing in the census asks *do these nine
+dismissals rhyme*, and nobody was going to notice by reading one row a session.
+
+That is a general shape worth naming: **a list of individually justified
+exceptions is where a systematic gap hides.** The near-duplicate census has the
+same structure — 78 pairs "differ on something §3 calls deliberate" — and it has
+never been asked whether those 78 rhyme either.
+
+### The first wave: `net`
+
+The manual's rule is one wave, one domain, so this is two cards in `net`, and
+both are real content rather than a symptom phrase bolted onto an existing card.
+
+**Wireless Troubleshooting** already had a strong roaming card whose table has a
+row for *drops during a call while walking*. A client that drops **while
+stationary** is a different fault, and the card that was missing is the one that
+says the diagnosis is not in the signal strength — it is in *who* drops and
+*when*. Everyone on one AP at once is a DFS radar event; everyone at a fixed
+interval on an 802.1X SSID is a session timeout hitting a slow RADIUS server; one
+device model is a driver; and *stays connected, loses the network* is a DHCP
+scope with no free leases and not wireless at all. Coverage is the last
+hypothesis on that list and the only one that costs a site visit.
+
+**VPNs** had five conceptual cards — what a tunnel is, protocols, proxies, SSH
+forwarding, ZTNA — and nothing about operating one. A tunnel is a long-lived flow
+across equipment that reaps idle sessions and rewrites addresses, none of which
+knows it is carrying a tunnel, so the clock is the diagnostic: a constant interval
+is a rekey, an idle period is a timeout on the path, a change of network is
+mobility. Two of that card's six rows are not the VPN failing and one of them is
+not a disconnection.
+
+### Checked by the probe, not by assertion
+
+```
+before   66 queries · 57 answered · 9 found nothing
+after    66 queries · 59 answered · 7 found nothing
+```
+
+The two questions that closed are exactly the two aimed at. That is the whole
+argument for a probe that phrases questions the way a reader would rather than
+the way the site does — the same wave without it would have ended in "this should
+help".
+
+`check_plan_numbers.py` also caught three rows moving from two cards: mean chars
+per card 1,377 → 1,378, the median 3,690 → 3,693, and the page budget's room from
+~840 topics to ~838. The non-verdict mean did not move, which is the counter-metric
+saying the growth is body text and not verdict.
+
+### The remaining seven
+
+`laptop won't turn on` and `outlook won't connect` (`hw`, `m365`), `someone
+clicked the link` (`blueteam`), `difference between a hub and a switch` (`net`,
+and a comparison rather than a symptom), `git detached head`, `terraform state
+locked`, `docker image too big` (`devops`). Five more domains, five more waves —
+and the point of writing the shape down is that the next session does not have to
+rediscover that they are one thing.
+
+```
+net: 2 cards · reader questions 57 -> 59 of 66 · zeros 9 -> 7
+1,544 topics · 35 gates green · 301 browser checks green
 ```
