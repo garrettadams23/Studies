@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **17**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **18**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **17** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **18** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2314,4 +2314,89 @@ does not.
 ```
 paths 1,581 -> 1,570 steps · 1,484 of 1,544 topics still reachable
 path pairs at 60%+ containment: 1 -> 0 · 35 gates green
+```
+
+## Session — a topic with no concept cards, and the three defects behind it
+
+The depth report's bottom row is `military — Common Codes Decoded`, **0 cards**,
+317 characters. Every other topic on the site has concept cards. Counting them
+found **six** topics that do not: the four `shortcut` OS tables, `military`'s
+code list and `ai`'s glossary — the site's oldest flat lookup tables, while the
+other 32 `shortcut` topics have used `.concept-card` for years.
+
+That is a structural oddity, not a defect. Pulling on it found three defects.
+
+### 1. Search opens the topic and highlights nothing
+
+`script.js` highlights hits inside a fixed list — `.topic-name, .concept-title,
+.concept-label, .concept-desc, .dw, .dt, .code-block`. A table sitting straight
+in a `.topic-body` is in none of them.
+
+Proved in a browser rather than argued, and the evidence is as clean as this
+gets — one query, one page, two topics:
+
+```
+"Joint Comms"   Sub-Designators — The Third Digit    5 highlights
+                Common Codes Decoded                 0 highlights
+"Emoji picker"  Windows                              0 highlights   (1 topic matched)
+"Kill Chain"    control                             13 highlights across 7 topics
+```
+
+The reader is handed an opened lookup table and left to find by eye the word the
+page had already located. Wrapping each table in `.dw` — one element, no content
+invented — takes all three probes from 0 highlights to 1.
+
+`lint_content.py` now fails on a table that is a direct child of `.topic-body`,
+with four fixtures and proved against the pre-fix files: **6 findings, exit 1.**
+
+### 2. A verdict describing a table two topics away
+
+`ai`'s glossary — AGI, Embedding, Token, Hallucination — ended with this:
+
+> **Only one of these rows can fine you, and it is the one with dates attached.**
+> …the regulation is, and its obligations depend on which risk tier a system
+> falls into…
+
+None of those rows can fine anybody. It belongs to *AI Governance & Frameworks*,
+the topic immediately before it, whose table ends **`EU AI Act · Risk-tier
+regulation`** — and which the linter had been reporting for months as one of the
+twelve tables with no verdict. The census knew a table was missing its verdict
+and the verdict was one topic away.
+
+Moved, and the glossary got one of its own — about the collision the next defect
+is made of.
+
+### 3. `ANN (Approximate Nearest Neighbour) · Artificial Neural Network`
+
+One row, contradicting itself across two cells. The dictionary holds both
+meanings and `byDomain.ai` picks the vector-search one, which is right almost
+everywhere in `ai` and wrong in the one row whose next cell spells out the other.
+
+The annotator's existing guard skips a term when **its own** expansion is
+already nearby. The failure is what it does when a **different listed meaning**
+is spelled out beside the match and its own is not: that is the text
+disambiguating itself, in the other direction, and inserting the domain default
+there can only produce a contradiction on one line.
+
+Measured across the corpus for other instances: **1**, the one found by reading.
+A high-precision signal — and my first two attempts to measure it returned 0
+because the window `already_expanded` builds *includes the injected span's own
+text*, so every annotation looked self-confirming. Third detector of mine this
+session to be wrong before it was right.
+
+Guarded in `annotate_acronyms.py` with four fixtures, and they check both
+directions: the row is left alone, the domain's own sense is still annotated,
+its own nearby expansion still suppresses it, and a single-meaning acronym is
+unaffected. Re-running the annotator removed the span.
+
+### What the three have in common
+
+None was on any list. They were reached by asking why one topic had zero cards —
+a question with no defect in it at all. The depth report has printed that row
+every session for months as a length, which is the one thing about it that does
+not matter.
+
+```
+6 tables wrapped · 1 verdict moved · 1 verdict written · 1 contradiction removed
+lint fixtures 28 -> 32 · annotator fixtures 2 -> 6 · 35 gates green
 ```

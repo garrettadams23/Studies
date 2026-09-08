@@ -515,6 +515,31 @@ def unindented_nesting(text):
     return out
 
 
+# A table sitting straight in a .topic-body, with no .dw around it.
+#
+# Not a style rule. `script.js` highlights search hits inside a fixed list of
+# elements — `.topic-name, .concept-title, .concept-label, .concept-desc, .dw,
+# .dt, .code-block` — and a bare table is in none of them. So the topic opens on
+# a match and highlights nothing, and the reader is left to scan a lookup table
+# by eye for a word the page has already found.
+#
+# Proved in a browser before this was written, and the cleanest possible
+# evidence: searching "Joint Comms" opened two `military` topics on one page,
+# and the one whose table sat in a `.dw` got five highlights while the one whose
+# table did not got zero. Same query, same page, one difference.
+#
+# Six existed, all of them the site's oldest flat lookup tables — the four
+# `shortcut` OS tables, `military`'s code list and `ai`'s glossary — while the
+# other 32 `shortcut` topics had used a `.concept-card` for years.
+_BARE_TABLE = re.compile(r'<div class="topic-body">\s*<table')
+
+
+def bare_tables(text):
+    """(line,) for tables that are a direct child of .topic-body."""
+    return [(text.count("\n", 0, m.start()) + 1,)
+            for m in _BARE_TABLE.finditer(text)]
+
+
 def volatile_problems(text, today):
     """(line_number, message) for malformed volatile-claim markup."""
     for m in VOLATILE_RE.finditer(text):
@@ -778,6 +803,12 @@ def main():
                 f"{name}:{line}: a Python line in a code block ends in a bare '=' "
                 f"({code!r}) — the newline is mid-statement, so the block renders "
                 f"broken. Join it with the line below.")
+
+        for (line,) in bare_tables(text):
+            errors.append(
+                f"{name}:{line}: a table sits directly in .topic-body with no "
+                f".dw around it — search highlights inside .dw and not inside a "
+                f"bare table, so a hit here opens the topic and marks nothing")
 
         for line, opens, count in unindented_nesting(text):
             errors.append(
@@ -1053,6 +1084,18 @@ NESTING_FIXTURES = [
 ]
 
 
+BARE_TABLE_FIXTURES = [
+    ('<div class="topic-body"><table class="ai-table"><tr><td>x</td></tr></table></div>',
+     1, "the defect: a lookup table with nothing search can highlight in"),
+    ('<div class="topic-body"><div class="dw"><table class="ai-table"><tr><td>x</td></tr></table></div></div>',
+     0, "wrapped in .dw — the fix"),
+    ('<div class="topic-body">\n  <table class="ref-table"><tr><td>x</td></tr></table></div>',
+     1, "whitespace between them does not make it a different shape"),
+    ('<div class="topic-body"><div class="concept-card"><div class="dw"><table></table></div></div></div>',
+     0, "the house structure"),
+]
+
+
 def self_test():
     failures = 0
     for text, want, why in WRAPPED_COMMENT_FIXTURES:
@@ -1070,6 +1113,11 @@ def self_test():
         if got != want:
             failures += 1
             print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in BARE_TABLE_FIXTURES:
+        got = len(bare_tables(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     longest = max(len(a) for _, a, _, _ in RENDERED_FIXTURES)
     for text, acronym, want, why in RENDERED_FIXTURES:
         spec = bool(_rendered_re(acronym).search(text))
@@ -1079,7 +1127,8 @@ def self_test():
             print(f"FAIL  {why}: {acronym!r} — specification={spec}, "
                   f"index={fast}, expected={want}")
     n = (len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
-         + len(WRAPPED_COMMENT_FIXTURES) + len(NESTING_FIXTURES))
+         + len(WRAPPED_COMMENT_FIXTURES) + len(NESTING_FIXTURES)
+         + len(BARE_TABLE_FIXTURES))
     print(f"self-test: {n} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 
