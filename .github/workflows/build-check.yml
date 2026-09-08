@@ -145,6 +145,15 @@ jobs:
       - name: Check the page performance budget
         run: python tools/page_budget.py
 
+      # plan.md's headline table says every number in it comes from a tool. It
+      # did once; then it was maintained by hand, and nine of its eleven
+      # derivable rows were wrong — the page budget by a factor of twelve,
+      # claiming room for 66 more topics over a site with room for 840.
+      - name: Check plan.md's measured-state table
+        run: |
+          python tools/check_plan_numbers.py --self-test
+          python tools/check_plan_numbers.py
+
       # Every id in data/related.json resolves, and no topic points at itself.
       - name: Check the related-topics map
         run: python tools/suggest_related.py --check

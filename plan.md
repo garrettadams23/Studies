@@ -44,24 +44,28 @@ for the reasoning rather than the tasks.
 | The risk register, revisited | ~11,624 | Four accumulation risks that only a measurement could find | 📘 living |
 
 **The measured state, as of the last session record.** Every number below is produced by a
-tool in `tools/`, not by anybody's recollection, and `make census` prints the first four:
+tool in `tools/`, not by anybody's recollection, and `make census` prints the first four.
+Eleven of the fifteen rows are now *checked* by `check_plan_numbers.py` in `make check` —
+when it was first run, **nine of those eleven were wrong**, the page budget by a factor of
+twelve. The four it cannot derive need a browser or a stopwatch, and it names them on every
+run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,534** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **13**, 1% — ten deepening waves below the old floor | `depth_report.py` |
-| Mean chars per concept card | **1,369**, or **1,109 excluding verdicts** — the second is the padding counter-metric, and it moved by one character across eight deepening waves | `depth_report.py` |
+| Topics | **1,544** across 30 domains | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **11**, 1% — ten deepening waves below the old floor | `depth_report.py` |
+| Mean chars per concept card | **1,377**, or **1,113 excluding verdicts** — the second is the padding counter-metric: it rose 4 while the first rose 8, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
-| Near-duplicate pairs | **92** (38 by overlap, 54 by containment) — 75 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
+| Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **57 of 66**, 9 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,570 steps, 1,474 of 1,534 topics** | `check_paths.py` |
-| Related links | **1,472 topics, 4,592 links, 0 one-way** | `suggest_related.py --check` |
-| Page budget | **4% raw** headroom — room for ~66 more topics | `page_budget.py` |
+| Learning paths | **101 paths, 1,581 steps, 1,484 of 1,544 topics** | `check_paths.py` |
+| Related links | **1,484 topics, 4,696 links, 0 one-way** | `suggest_related.py --check` |
+| Page budget | **35% raw** headroom — room for ~840 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,090 chars**, median 3,658 — the number a deepening wave has to move | `depth_report.py` |
-| Gates | **30**, and the same 30 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **151** · search **44** · resilience **32** · axe 6/6 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Depth tail | **10th percentile 2,097 chars**, median 3,690 — the number a deepening wave has to move | `depth_report.py` |
+| Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
+| Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
@@ -22539,4 +22543,98 @@ knows the table is the authority and that the authority holds.
 acronyms.json: 27 meanings explain their letters · 1 expansion corrected
 gates 31 -> 33 · check_acronyms fixtures 12 + both directions
 301 browser checks green
+```
+
+## Session — the table that said its numbers came from tools, and did not
+
+The headline table at the top of this file opens by claiming something about
+itself:
+
+> **The measured state, as of the last session record.** Every number below is
+> produced by a tool in `tools/`, not by anybody's recollection.
+
+It was, once. After that it was maintained by hand. Re-derived all fifteen rows:
+**nine of the eleven derivable ones were wrong.**
+
+| Row | The table said | The tools say |
+|---|---|---|
+| Topics | 1,534 | **1,544** |
+| Thin | 13 | **11** |
+| Mean chars per card | 1,369 / 1,109 | **1,377 / 1,113** |
+| Depth tail | p10 2,090, median 3,658 | **2,097 / 3,690** |
+| Near-duplicate pairs | 92 (38 overlap) | **95 (41 overlap)** |
+| Learning paths | 1,570 steps, 1,474 of 1,534 | **1,581 steps, 1,484 of 1,544** |
+| Related links | 1,472 topics, 4,592 links | **1,484 / 4,696** |
+| **Page budget** | **4% raw — room for ~66 more topics** | **35% — room for ~840** |
+| Gates | 30 | **33** |
+
+Most of those are a wave or two of drift and cost a reader nothing. One is not.
+
+### The row that mattered
+
+*Page budget: 4% raw headroom — room for ~66 more topics.*
+
+The budget was raised in *"the budget was raised, and the number is not the one
+on offer"*, two dozen records above, and this row never moved. So the file's
+headline constraint **understated its own headroom by a factor of twelve** —
+66 topics against 840. A reader deciding whether there was room to keep writing
+would have concluded there was not, and the whole "where new work comes from
+now" paragraph sits directly beneath it.
+
+That is the same defect this repository has now shipped three times, and every
+time in something that **reports rather than gates**:
+
+- the social card telling everyone the site had 1,519 topics when it had 1,534;
+- four generated artefacts checked only on the server, three of them stale;
+- and now the plan's own census, in the paragraph that says it is not.
+
+The pattern is not carelessness. It is that a number with no check on it has a
+half-life, and prose is where numbers go to be unchecked.
+
+### What the gate does, and the two rows it will not touch
+
+`check_plan_numbers.py` re-derives every row a script can produce today and
+requires those numbers to appear in the row, matched on digit boundaries so that
+`6` does not satisfy a row reading `60` — a fixture, because that is exactly the
+false pass a naive substring check would give on the orphans row.
+
+Rows are found by their **Measure** cell rather than by position, so inserting a
+row cannot silently shift the checks onto their neighbours.
+
+Four rows are **not** checked and are named as unchecked on every run:
+
+```
+Reader questions answered   query_probe.mjs drives a real browser
+Throttled load              a timing run — the row itself says "this container only"
+Search & heap at 3x         a synthetic timing run
+Gate results                the per-suite counts come from a full `make all`
+```
+
+Deriving the timing rows here would either make a static gate need Chromium or,
+worse, make it quietly assert whatever hardware CI happened to allocate that
+morning. Printing them as unchecked is the honest option: their status is
+visible rather than assumed. Two of them were re-measured by hand this session
+anyway — `resilience` had grown 32 → 63 checks and `axe` 6 → 29 while the table
+recorded the old counts.
+
+### A parse that stops matching must fail, not pass
+
+Every derivation asserts it found what it was looking for and exits with the
+pattern that stopped matching. Without that, a tool rewording one line would
+turn this into a gate that reports "0 drifted" forever — and a validator
+reporting zero because it stopped looking is indistinguishable from one that
+found nothing wrong. That distinction is the reason half the tools here carry a
+self-test, and it is the one failure mode a checker of checkers can actually
+have.
+
+### Its first catch was itself
+
+Adding the gate added two commands to `make check`, so `check_gates.py` went
+33 → 35, so the Gates row it had just corrected was wrong again — and it said
+so on the next run. A gate that catches its own installation is a small thing,
+but it is the difference between a check that runs and a check that works.
+
+```
+plan.md: 9 rows corrected · gates 33 -> 35
+check_plan_numbers fixtures 8 + table parsing · 301 browser checks green
 ```

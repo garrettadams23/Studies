@@ -64,6 +64,8 @@ check:
 	$(PY) tools/stamp_freshness.py --verify
 	$(PY) tools/check_determinism.py
 	$(PY) tools/page_budget.py
+	$(PY) tools/check_plan_numbers.py --self-test
+	$(PY) tools/check_plan_numbers.py
 
 ## census: the four reports that measure content rather than gate it
 census:
