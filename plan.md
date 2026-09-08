@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **24**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **25**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **152** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **24** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **25** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2817,4 +2817,64 @@ catch the implementation being satisfied for the wrong reason.**
 
 ```
 thin 11 -> 10 · smoke 151 -> 152 checks · 35 gates green
+```
+
+## Session — five places that said "see" and then made the reader go and look
+
+`<span class="xref">` is the site's cross-reference: `build.py` resolves it to
+the target's id and `.xref[data-xref]` renders a dotted-underline link. There are
+501 of them and `lint_content.py` proves every one resolves.
+
+Nothing had ever asked the other question: **is there prose that names a topic
+exactly and is not one?**
+
+Scanning all 35 domain files for any of the 1,353 topic titles of 28+ characters,
+outside an existing xref, found **5** — and every one is a sentence that says
+*see* and then names the topic:
+
+```
+endpoint      … see MECM Deployment & Content Troubleshooting in this domain
+grc           … see Web Accessibility (a11y) — WCAG & ARIA in the Web domain
+grc           … and Web Accessibility (a11y) — Building for Everyone in Scripting
+math          … See Trigonometry — The Unit Circle, Identities & Inverses for the circle side
+productivity  … Fold the cue answers into the Hansei prompts — see Hansei — The 15 Minutes…
+```
+
+Four were wrapped in `<strong>`. **Emphasis is not navigation**: the reader was
+handed a title in bold and left to scroll a domain looking for it, while the
+mechanism that would have made it a link was one span away. All five now resolve
+— checked in the built page, not assumed: `506 of 506` content xrefs carry a
+`data-xref`.
+
+### The narrow version is 3× faster and finds the same five
+
+The first check scanned every title against all prose: **2.6 s**, and it answers
+a slightly different question, because a title can appear in a sentence without
+the writer meaning to link it. Restricting it to the 240 characters after the
+word *see* — the writer's own signal — takes **0.8 s** and finds the identical
+five.
+
+It had to stop reporting only the first title per *see*, though: `grc` names two
+in one sentence, and the first version quietly found four.
+
+The 28-character floor is the other half. Short titles — *Beginner*, *RAID* —
+are ordinary English and would fire on every page.
+
+### Two things this cost, both of which are the system working
+
+Converting the `math` one changed a generated artefact: `gen_cheatsheet.py
+--check` failed the build with *"CALCULUS-CHEAT-SHEET.md is out of date"*. The
+cheat sheet is built from `math` content and I had edited it — exactly the gate
+that exists because three generated artefacts once went stale unnoticed.
+
+And my first conversion in `productivity` matched `<strong>Hansei</strong>`
+somewhere earlier in the file rather than the full title, producing a
+cross-reference to *"Hansei"*. The linter named it in the next run with the
+correction: *did you mean 'The Japanese Mastery Loop — Kata, Poka-Yoke, Hansei,
+Kaizen, Shokunin'?* Failure #2 in the operating manual is inventing a
+cross-reference from memory; this is the same defect from the other direction —
+a regex too eager — and the same tool caught it.
+
+```
+xrefs 501 -> 506 · lint fixtures 36 -> 41 · 35 gates green · 152 smoke checks
 ```

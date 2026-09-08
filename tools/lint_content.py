@@ -573,6 +573,43 @@ def badge_spellings(text):
     return [(k, v) for k, v in groups.items() if len(v) > 1]
 
 
+# "see <Exact Topic Title>", written as prose instead of as a cross-reference.
+#
+# `<span class="xref">` is the mechanism: build.py resolves it to the target's
+# id, `.xref[data-xref]` renders it as a link, and the reader clicks instead of
+# scrolling a domain looking for a title. Five places said *see* and then named a
+# topic exactly — four in `<strong>`, which is emphasis, not navigation — so the
+# reader was handed a title and told to go and find it.
+#
+# Two decisions keep this narrow rather than plausible:
+#
+#   * **Only after the word "see".** Scanning all prose for every title is 3x
+#     slower and answers a different question: a title can appear in a sentence
+#     without the writer meaning to link it. *see* is the writer's own signal.
+#   * **Only titles of 28+ characters.** Short titles — *Beginner*, *RAID* —
+#     occur as ordinary English and would fire constantly.
+#
+# The xref's own text is excluded, along with topic names and acronym
+# expansions, so a correct cross-reference does not report itself.
+_SEE_RE = re.compile(r"\bsee\b", re.I)
+_XREF_STRIP_RE = re.compile(
+    r'<span class="(?:xref|topic-name|acro-exp)"[^>]*>.*?</span>', re.S)
+SEE_TITLE_MIN = 28
+
+
+def unlinked_see(text, titles):
+    """(title,) for `see <Exact Topic Title>` that is not a cross-reference."""
+    stripped = _XREF_STRIP_RE.sub("", text)
+    prose = unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", stripped)))
+    found = []
+    for m in _SEE_RE.finditer(prose):
+        window = prose[m.end():m.end() + 240]
+        for title in titles:
+            if title in window and title not in found:
+                found.append(title)
+    return [(t,) for t in found]
+
+
 def volatile_problems(text, today):
     """(line_number, message) for malformed volatile-claim markup."""
     for m in VOLATILE_RE.finditer(text):
@@ -788,7 +825,7 @@ def main():
     errors, warns = [], collections.Counter()
     seen_slugs = {}
     today = datetime.now(timezone.utc).strftime("%Y-%m")
-    all_titles, xrefs = set(), []
+    all_titles, xrefs, texts = set(), [], {}
     ai_tables = 0
     first_cell_styles = 0
 
@@ -964,8 +1001,18 @@ def main():
         warns["inline style attribute"] += avoidable
         first_cell_styles += unavoidable
         ai_tables += text.count('class="ai-table"')
+        texts[name] = text
 
     # Cross-references, once every title is known.
+    see_titles = [t for t in all_titles if len(t) >= SEE_TITLE_MIN]
+    for name, text in texts.items():
+        for (title,) in unlinked_see(text, see_titles):
+            errors.append(
+                f"{name}: prose says 'see {title}' without making it a "
+                f"cross-reference — wrap it in <span class=\"xref\"> so build.py "
+                f"resolves it and the reader gets a link instead of a title to "
+                f"go and find")
+
     lowered = {t.lower() for t in all_titles}
     for name, line_no, title in xrefs:
         if title.lower() not in lowered:
@@ -1151,6 +1198,22 @@ BADGE_FIXTURES = [
 ]
 
 
+_SEE_TITLES = ["Trigonometry — The Unit Circle, Identities & Inverses",
+               "MECM Deployment & Content Troubleshooting"]
+SEE_FIXTURES = [
+    ('<p>See <strong>Trigonometry — The Unit Circle, Identities &amp; Inverses</strong> '
+     'for the circle side.</p>', 1, "the defect: emphasis where a link belongs"),
+    ('<p>See <span class="xref">Trigonometry — The Unit Circle, Identities &amp; Inverses</span> '
+     'for the circle side.</p>', 0, "already a cross-reference — must not report itself"),
+    ('<p>Trigonometry — The Unit Circle, Identities &amp; Inverses is a topic here.</p>',
+     0, "named without 'see' — not the writer signalling a link"),
+    ('<p>See the table above, and see the console.</p>', 0, "'see' with no title after it"),
+    ('<p>See <strong>Trigonometry — The Unit Circle, Identities &amp; Inverses</strong> and '
+     '<strong>MECM Deployment &amp; Content Troubleshooting</strong>.</p>',
+     2, "both titles after one 'see' are reported, not just the first"),
+]
+
+
 def self_test():
     failures = 0
     for text, want, why in WRAPPED_COMMENT_FIXTURES:
@@ -1178,6 +1241,11 @@ def self_test():
         if got != want:
             failures += 1
             print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in SEE_FIXTURES:
+        got = len(unlinked_see(text, _SEE_TITLES))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     longest = max(len(a) for _, a, _, _ in RENDERED_FIXTURES)
     for text, acronym, want, why in RENDERED_FIXTURES:
         spec = bool(_rendered_re(acronym).search(text))
@@ -1189,7 +1257,8 @@ def self_test():
     n = (len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
          + len(WRAPPED_COMMENT_FIXTURES) + len(NESTING_FIXTURES)
          + len(BARE_TABLE_FIXTURES)
-         + len(BADGE_FIXTURES))
+         + len(BADGE_FIXTURES)
+         + len(SEE_FIXTURES))
     print(f"self-test: {n} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 
