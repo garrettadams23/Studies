@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **31**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **32**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,097 chars**, median 3,696 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **155** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **156** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **31** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **32** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3211,4 +3211,66 @@ missing.
 
 ```
 README: 404 -> 475, 92,330 -> 140,926, both dated · 37 gates green
+```
+
+## Session — the notepad is tested three ways, and never the one it advertises
+
+`README.md`: *"Notepad — Slide-out scratchpad backed by `localStorage`, **synced
+live across your open tabs**."*
+
+Three suites touch the notepad. `storage_denied_test.mjs` exercises it with
+storage blocked — 15 references, the largest notepad coverage on the site.
+`backup_test.mjs` round-trips it through an export. `a11y_test.mjs` scans the
+open dialog. **Not one of them opens a second tab**, which is the only thing that
+sentence claims.
+
+Nothing had ever opened two.
+
+### It works over `file://`, which is the part worth writing down
+
+The obvious objection is that cross-tab sync needs a web server, and every gate
+here runs against `file:///…/index.html`. It does not: Chromium treats `file:`
+pages as one storage origin **and** still fires `storage` between them. Measured
+before anything was built on the assumption:
+
+```
+localStorage shared across pages   "hello"
+storage event key seen by the other  "__probe2"
+```
+
+So the test needed no server, no new fixture, and no change to how the suite
+runs — just a second page in the context that already exists.
+
+### My first probe said the feature was broken
+
+```
+storage event key seen by the other page: "timeout"
+```
+
+Because I `await`ed the listener promise in tab B *before* writing from tab A, so
+the write happened four seconds after the wait had already given up. The feature
+was fine; the harness was serialised wrong. **Seventh detector this run to be
+wrong before it was right**, and the first whose fault was ordering rather than
+the signal.
+
+### The check, and proof it can fail
+
+Driven through the UI rather than through `localStorage` — post a note in tab A
+with the real compose box and the real POST button, then read tab B's rendered
+list — because writing the key directly would test the listener and skip
+everything that makes the note appear.
+
+```
+storage listener renamed → FAIL : the other tab's list did not contain it;
+                                  its count reads "0 notes"     155/156
+restored                 → ok                                   156/156
+```
+
+One thing the first version got wrong and is worth keeping in mind for any check
+here: the failure detail printed on **success** too, so a passing run read
+*"ok : … — list did not contain it"*. A detail string is for the failing case;
+on a pass it should be empty or a fact.
+
+```
+smoke 155 -> 156 checks · 37 gates green
 ```

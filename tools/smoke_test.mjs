@@ -1669,6 +1669,41 @@ await step("what's new stays quiet on a first visit and records the month", asyn
 });
 
 // ── hygiene ─────────────────────────────────────────────────────────────────
+// ── the notepad, across two tabs ────────────────────────────────────────────
+// "Slide-out scratchpad backed by localStorage, synced live across your open
+// tabs" is a README feature, and the only suites that touch the notepad test it
+// with storage denied, through a backup round-trip, and for axe violations.
+// Nothing had ever opened two tabs, which is the one thing the sentence claims.
+//
+// It works over file:// because Chromium treats file: pages as one storage
+// origin and still fires `storage` between them — worth stating, because the
+// obvious assumption is that this needs a web server and it does not.
+const otherTab = await context.newPage();
+await otherTab.goto(PAGE, { waitUntil: "load" });
+await otherTab.waitForFunction(() => document.querySelectorAll(".domain-section").length > 0);
+const synced = await step("a note posted in one tab appears in the other", async () => {
+  for (const p of [page, otherTab]) {
+    await p.click("#notepad-tab", { timeout: 5000 });
+    await p.waitForTimeout(250);
+  }
+  const text = `cross-tab ${Date.now()}`;
+  await page.fill("#notepad-panel .np-input", text);
+  await page.waitForTimeout(150);
+  await page.click("#notepad-panel .np-post");
+  await otherTab.waitForTimeout(700);
+  return otherTab.evaluate(t => ({
+    seen: (document.querySelector("#notepad-panel .np-list")?.innerText || "").includes(t),
+    count: (document.querySelector("#notepad-panel .np-count")?.textContent || "").trim(),
+  }), text);
+});
+check("a note posted in one tab appears in the other", !!synced?.seen,
+  synced?.seen ? "" : synced
+    ? `the other tab's list did not contain it; its count reads "${synced.count}"`
+    : "the step itself failed");
+await otherTab.close();
+await page.click("#notepad-tab").catch(() => {});
+await page.waitForTimeout(200);
+
 // ── print ───────────────────────────────────────────────────────────────────
 // The README says the site prints cleanly and nothing tested it. style.css hides
 // the chrome by naming each thing, and the study FAB — added later — was never
