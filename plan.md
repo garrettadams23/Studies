@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **32**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **33**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,22 +38,22 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,545** across 30 domains | `depth_report.py` |
+| Topics | **1,546** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **10**, 1% — ten deepening waves below the old floor | `depth_report.py` |
-| Mean chars per concept card | **1,378**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 5 while the first rose 9, so the growth is not all verdict | `depth_report.py` |
+| Mean chars per concept card | **1,379**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **60 of 66**, 6 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,571 steps, 1,485 of 1,545 topics** | `check_paths.py` |
-| Related links | **1,485 topics, 4,736 links, 0 one-way** — one mainland of 1,459, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~836 more topics | `page_budget.py` |
+| Learning paths | **101 paths, 1,572 steps, 1,486 of 1,546 topics** | `check_paths.py` |
+| Related links | **1,486 topics, 4,746 links, 0 one-way** — one mainland of 1,460, three reference-domain islands | `suggest_related.py --check` |
+| Page budget | **35% raw** headroom — room for ~834 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,097 chars**, median 3,696 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,111 chars**, median 3,698 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **156** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **32** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **33** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3273,4 +3273,101 @@ on a pass it should be empty or a fact.
 
 ```
 smoke 155 -> 156 checks · 37 gates green
+```
+
+---
+
+## Session — the site had thirty domains and nothing on how software is actually run
+
+A reader asked for Agile. The right first move was not to write, it was to check
+whether the corpus already had it under another name, and the check needed to be
+run carefully enough to be believed.
+
+### The audit, and the two terms that lied
+
+```
+grep -ic 'agile\|scrum\|SAFe\|XP' data/*.html   → hundreds of hits
+```
+
+Both false. `SAFe` matched **safe**, and `XP` matched **experience** and **expert**
+— case-insensitive substring matching on a two-letter acronym is not a search, it
+is a coincidence generator. Re-run with word boundaries in Python:
+
+```
+(?<![A-Za-z])term(?![A-Za-z])
+
+Agile                 0        story point           0
+Scrum                 0        SAFe                  0
+user stor             0        extreme programming   0
+epic                  0        planning poker        0
+backlog refinement    0
+```
+
+Genuinely absent. Thirty domains, 1,545 topics, sixteen cards on being a manager
+— and nothing on the working agreement the manager's team runs under.
+
+### What the neighbours already owned
+
+The gap was real but not empty around the edges, and writing without reading
+first would have produced a duplicate with a different title. **Planning Without
+Theatre — Roadmaps, Velocity & Honest Estimates** already carries *"Velocity Is a
+Capacity Signal, and It Dies When Aimed At"*. So velocity-as-target is taken, and
+the Agile card must not re-argue it. `near_duplicates.py --title` cleared all
+three planned titles before a word was written.
+
+### The acronym that could not be used
+
+`data/acronyms.json` has exactly one meaning for `DoD` — **Department of
+Defense** — and the annotator expands it everywhere. Writing *"DoD"* for
+Definition of Done would have shipped a card reading *"DoD (Department of
+Defense)"* in a paragraph about a checklist. The constraint was cheap to obey
+once known: **write it out, never abbreviate it**, and the wave was planned
+around that rather than around adding a second meaning nobody outside this topic
+would want.
+
+### The card
+
+Three cards, and the shape came from the manifesto itself rather than from a
+summary of it. The load-bearing observation is that each of the four values names
+**two goods and ranks them**, and that the sentence saying the right-hand side
+still has value is the sentence that gets dropped in every retelling. Read
+without it, *"working software over comprehensive documentation"* becomes *"we do
+not write things down"* — which is how an adoption arrives at no written
+decisions, no plan finance can budget against, and a contract nobody may vary.
+
+The third card is the one that earns the topic: what gets adopted (the events,
+the iterations, the estimate, the team structure, the retrospective) against what
+gets left behind (the decisions, the release, the conversation, the authority to
+change scope, the mandate to change anything). It ends on the one question that
+settles it — **can the team change what is being built?** — and on the position
+that plan-driven is a legitimate way to run a project. The dishonest part is
+keeping ceremonies that imply otherwise.
+
+### The orphan the risk register predicted
+
+```
+orphan_report.py  →  1 deep orphan   [eng] agile-the-four-trade-offs-…
+```
+
+Exactly the failure the register names: a deep new topic lands unreachable
+because the two navigation layers are hand-maintained. Five bidirectional
+`related.json` links and one step in the *From Engineer to Manager* path, placed
+before **Planning Without Theatre** because that is the order the ideas build in.
+
+```
+deep orphans  1 -> 0 · related 1,485 -> 1,486 topics · paths 1,571 -> 1,572 steps
+mainland 1,459 -> 1,460 of 1,486 (98%)
+```
+
+### One thing worth copying
+
+`related.json` round-trips exactly through `json.dumps(indent=2,
+ensure_ascii=False)` but its keys are **not sorted**. Re-serialising with
+`sorted()` produced a 3,926-line diff for a five-line change. Sorting a file
+whose order carries no meaning still destroys the reviewability of every future
+diff against it — preserve the order you found, and insert next to the neighbour
+the new entry belongs beside.
+
+```
+1,545 -> 1,546 topics · 37 gates green · smoke 156 · search 44 · resilience 63
 ```
