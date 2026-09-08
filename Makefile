@@ -40,6 +40,8 @@ stamp:
 check:
 	$(PY) tools/check_gates.py
 	$(PY) tools/gen_acronym_domain.py --check
+	$(PY) tools/check_acronyms.py --self-test
+	$(PY) tools/check_acronyms.py
 	$(PY) tools/gen_cheatsheet.py --check
 	$(NODE) tools/gen_og_image.mjs --check
 	$(PY) tools/ti84_trainer.py --verify

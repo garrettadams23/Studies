@@ -22411,3 +22411,132 @@ stamper to find out what it would say, then write the stamp you can defend.** It
 output is a proposal, not an answer — which is exactly how the tool's author
 already treats the whole-tree mode, and now also how the single-file mode should
 be treated.
+
+## Session — the one failure whose guard column said "nothing catches this"
+
+The session operating manual lists ten failures and a guard for each. Nine name
+a tool. Failure #10 does not:
+
+> Two wrong acronym expansions shipped in earlier sessions and were found by
+> **reading**, not by any check — `IR` in a compiler card's title, `SMB` in "a
+> home-lab / SMB choice". *The breadth census now surfaces the candidates. It
+> cannot decide them.*
+
+A dictionary of 1,101 acronyms and 1,172 meanings, and nothing had ever checked
+that an expansion is an expansion of the acronym beside it.
+
+### Two detectors that were wrong before one was right
+
+**Matching initials.** The obvious rule: the capital letters of the expansion
+should spell the acronym. It fires on **247 of 1,172 meanings — 21%** — and
+reading the first fifty, essentially all are legitimate. `Antivirus` yields AV
+from inside one word; `Demilitarized Zone` yields DMZ the same way. This is the
+third heuristic in this repository to fail by being *plausible*, after the 635
+"line ends mid-statement" hits and the 343 two-space continuations.
+
+**A number-word substitution of my own.** The second attempt mapped spelled
+cardinals to digits so `B2B` would read. I included `one` and `second`, which
+broke `OTP` (*One-Time Password* → "1timepassword") and `QPS` (*Queries Per
+Second* → "queriesper2"). Four of the 39 findings were my detector, not the
+data. The substitution list is now short, documented, and deliberately excludes
+ordinals — because `EXT4` is a version suffix rather than a spelled-out
+"fourth", and letting the reading swallow that would hide the distinction.
+
+**The rule that holds** is not about initials at all:
+
+> the acronym's letters must appear, **in order**, somewhere in its expansion
+
+An acronym is by construction a compression of a phrase. If its letters are not
+even a subsequence of that phrase's letters, the pairing cannot be a compression
+of it. That is a property of the words rather than a guess about house style,
+and it fires on **28 meanings — 2.4%**, a list short enough to read.
+
+### The dictionary already had the mechanism, applied to five entries
+
+Of the 28, nineteen carried a note. Five of those notes explain the letters:
+
+```
+K8s   "Numeronym: K, eight letters, s"
+UTC   "The letters match neither the English nor the French word order, by agreement"
+```
+
+The other fourteen are descriptive — `EC2` says "AWS virtual machines", which is
+true and answers a different question. So the convention existed and had been
+applied to five entries out of twenty-eight, which is the shape of every
+accumulation risk this file has found: a good habit, never collected.
+
+### Why a new field and not the note
+
+A gate that accepts any note teaches people to write any note. `check_volatility.py`
+names that failure in its own docstring — *"a gate would only teach people to add
+a span they do not mean"* — and it is the reason its console list reports and
+never fails. So the requirement is a dedicated `l` field: the only thing it can
+say is how the letters are formed, and a vacuous one is visible as such.
+
+It earns its place by being **content, not metadata**. `gen_acronym_domain.py`
+renders it in the dictionary beside the expansion, so the reader who stopped to
+wonder why accessibility is spelled with an 11 in it gets an answer:
+
+```
+a11y   Accessibility
+       Letters: Numeronym: a, eleven letters, y
+```
+
+Twenty-seven meanings now carry one, on both the A–Z and the by-subject topics.
+
+### The one that was a real error
+
+**`NBT-NS` — "NetBIOS Name Service".** NBT is *NetBIOS over TCP/IP*, RFC 1001
+and 1002. Dropping "over TCP/IP" leaves the **T with no source**, which is
+exactly what the check reports and why the check is a subsequence test rather
+than a spellcheck. Corrected to *NetBIOS over TCP/IP Name Service*, which
+propagated to the one card that uses it, in `redteam`.
+
+Three others were read and kept, and the reading is the deliverable:
+
+- **`ADMX` — "Administrative Template".** The X is the file's XML format, and
+  Microsoft's own documentation expands it exactly this way. Inventing "XML" as
+  a fourth word would be *less* accurate than the gap. Recorded, not fixed.
+- **`CCM` — "Configuration Manager Client".** The letters run C-C-M from the
+  SMS-era *Client Configuration Manager*; the product now says "the Configuration
+  Manager client". The expansion is the modern order and stays.
+- **`MSIX`.** Not an initialism at all — MSI, the installer it succeeds, plus X.
+
+### The check runs in both directions
+
+An `l` on a meaning that *derives cleanly* is also an error. That is the failure
+mode a file like this actually has: the expansion gets corrected and the
+explanation of the old one is left behind, still rendering to readers, now
+false. Injecting one on `SSH` exits 1 and names it.
+
+Proved against the pre-fix dictionary rather than only against fixtures:
+
+```
+pre-fix dictionary          → exit=1, 28 unexplained
+stale-explanation injection → exit=1, "SSH: 'Secure Shell' derives cleanly"
+current dictionary          → exit=0
+```
+
+Twelve fixtures, and the true ones matter more than the false ones — `AV`,
+`DMZ`, `OTP`, `QPS` are the shapes an initials-matching check would have failed,
+and they are in the suite so nobody re-derives that rule.
+
+### A second measurement, which came back clean
+
+The site's own *Common Ports — Protocol Reference* table makes port claims
+internally decidable: it is the authority, and every other mention in 35 files
+can be checked against it without an external list. Built the service → port map
+from the table and scanned the corpus for five claim shapes — `NAME (N)`,
+`NAME … port N`, `NAME on N`, `NAME/N`, `port N (NAME)`.
+
+**Two hits, both false positives**, and both the same shape: two adjacent
+`tcpdump` commands read as one claim. No port anywhere on the site contradicts
+the site's own table. Recorded because the cost of re-deriving a negative is the
+same as deriving it the first time — and because the next person to wonder now
+knows the table is the authority and that the authority holds.
+
+```
+acronyms.json: 27 meanings explain their letters · 1 expansion corrected
+gates 31 -> 33 · check_acronyms fixtures 12 + both directions
+301 browser checks green
+```

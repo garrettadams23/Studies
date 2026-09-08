@@ -34,6 +34,15 @@ jobs:
       - name: Check the acronym domain is not stale
         run: python tools/gen_acronym_domain.py --check
 
+      # An acronym whose letters are not even a subsequence of its expansion
+      # cannot be a compression of it. The session operating manual's failure
+      # #10 — two wrong expansions, found by reading — is the only one whose
+      # guard column said "nothing catches this". This is that guard.
+      - name: Check acronym letters come from their expansions
+        run: |
+          python tools/check_acronyms.py --self-test
+          python tools/check_acronyms.py
+
       # No browser needed: the card carries its inputs in a PNG tEXt chunk, so
       # this is a string comparison. It used to compare rendered bytes, which is
       # a gate on the rasteriser, and it was red long enough that the card
