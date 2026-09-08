@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **29**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **30**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,097 chars**, median 3,696 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **153** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **155** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **29** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **30** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3106,4 +3106,56 @@ enumerated the constants did not see it at all.
 
 ```
 smoke 152 -> 153 checks · 1 print rule · 37 gates green
+```
+
+## Session — the accessibility promise that was kept, and the detector that said otherwise
+
+`README.md` makes two media-query promises. The last session found the print one
+broken. This is the other: *"Respects `prefers-reduced-motion`."*
+
+The first measurement said it was **worse than broken**:
+
+```
+no-preference   19 elements with a non-zero duration
+reduce          82
+```
+
+Emulating the preference *tripled* the number of animated elements. That is not
+a bug in the site. `style.css` carries the standard universal reset, which is
+written as `animation-duration: 0.01ms !important` rather than `0` — because a
+true zero can cancel an `animationend` event that page logic may be waiting on.
+So under `reduce` **every element on the page** acquires a tiny non-zero
+duration, and a detector asking *"does anything still have a duration"* answers
+*more, everywhere.*
+
+The question had to be whether anything still **moves**. Above 20 ms:
+
+```
+no-preference   25 perceptible · scroll-behavior: smooth
+reduce           0 perceptible · scroll-behavior: auto
+```
+
+The promise is kept exactly. **This is the sixth detector this run to be wrong
+before it was right**, and the fifth to be wrong by measuring a property that
+merely correlates with the thing.
+
+### Gated anyway, because a kept promise is the easy one to break
+
+Two assertions in `smoke_test.mjs`: nothing animates for 20 ms or longer under
+`reduce`, and smooth scrolling is off. Proved by changing the reset's `0.01ms` to
+`999s`:
+
+```
+FAIL : reduced motion stops everything that moves — HEADER., DIV.header-inner, …
+154/155 checks passed
+```
+
+The threshold is the interesting part of the check and the reason it is written
+down: a future maintainer who "tidies" `0.01ms` to `0`, or who adds a transition
+that beats the universal selector on specificity, gets told. A check for
+`duration === 0` would have failed on the correct stylesheet and passed on a
+broken one.
+
+```
+smoke 153 -> 155 checks · 37 gates green
 ```

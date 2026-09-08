@@ -1696,6 +1696,36 @@ check("nothing floats over the page in print", printFixed.length === 0,
   [...new Set(printFixed)].slice(0, 4).join(", "));
 await page.emulateMedia({ media: "screen" });
 
+// ── reduced motion ──────────────────────────────────────────────────────────
+// The other media query the README promises to honour, and the other one nothing
+// tested. style.css carries the standard universal reset, which sets 0.01ms
+// rather than 0 — so "does anything still have a duration" answers *more* under
+// reduce than without it, and the question has to be whether anything still
+// *moves*. 20ms is the threshold: below it there is nothing to perceive.
+await page.emulateMedia({ reducedMotion: "reduce" });
+await page.waitForTimeout(200);
+const motion = await page.evaluate(() => {
+  const secs = v => Math.max(...String(v).split(",").map(x => {
+    x = x.trim();
+    const n = parseFloat(x) || 0;
+    return x.endsWith("ms") ? n / 1000 : n;
+  }), 0);
+  const moving = [];
+  document.querySelectorAll("body *").forEach(e => {
+    const c = getComputedStyle(e);
+    if (Math.max(secs(c.animationDuration), secs(c.transitionDuration)) >= 0.02) {
+      moving.push(e.tagName + (e.id ? "#" + e.id : "." + String(e.className).split(" ")[0]));
+    }
+  });
+  return { moving: [...new Set(moving)],
+           scroll: getComputedStyle(document.documentElement).scrollBehavior };
+});
+check("reduced motion stops everything that moves", motion.moving.length === 0,
+  motion.moving.slice(0, 4).join(", "));
+check("reduced motion turns off smooth scrolling", motion.scroll !== "smooth",
+  `scroll-behavior: ${motion.scroll}`);
+await page.emulateMedia({ reducedMotion: "no-preference" });
+
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
 
