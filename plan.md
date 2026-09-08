@@ -2460,6 +2460,21 @@ the repository's own prose. Its name stays, because renaming it means touching
 the Makefile, the workflow, and `check_gates.py`'s two lists, for nothing a
 reader gains.
 
+### And a sixth, found by grepping for the shape rather than the number
+
+`CONTRIBUTING.md`: *"…which is why they still cover all **29** domains while one
+is rendered."* Thirty. It has been thirty for a while, and the sentence is a good
+one about a real design property — the deferred-domain architecture — which is
+exactly why nobody re-read it.
+
+Found by grepping the two present-tense documents for `\d+ domains`, which is
+now the check: any such claim in `README.md` or `CONTRIBUTING.md` must equal
+`data/domains.json`. **Deliberately not applied to `plan.md` or the archive** —
+those are full of counts that were true when written and are the *record* rather
+than a claim, and a gate that could not tell the difference would force history
+to be rewritten every time the site grew.
+
 ```
-README domains 21 -> 30 · acronym claim 980+ -> 1,101 · 35 gates green
+README domains 21 -> 30 · acronym claim 980+ -> 1,101
+CONTRIBUTING 29 -> 30 domains · 35 gates green
 ```

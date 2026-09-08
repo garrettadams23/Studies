@@ -155,6 +155,18 @@ def readme_problems():
         (ROOT / "data" / "acronyms.json").read_text(encoding="utf-8"))["entries"])
     if not present(acronyms, text):
         out.append(f"README.md: does not state the dictionary's size, {acronyms:,}")
+
+    # Any bare "N domains" in a present-tense document. Restricted to these two
+    # files on purpose: plan.md and its archive are full of counts that were
+    # true when written and are the record, not a claim. CONTRIBUTING.md said
+    # "all 29 domains" for as long as the site has had thirty.
+    for name in ("README.md", "CONTRIBUTING.md"):
+        body = (ROOT / name).read_text(encoding="utf-8")
+        for m in re.finditer(r"\b([\d,]+) domains\b", body):
+            if int(m.group(1).replace(",", "")) != len(domains):
+                line = body.count("\n", 0, m.start()) + 1
+                out.append(f"{name}:{line}: says '{m.group(0)}', "
+                           f"data/domains.json has {len(domains)}")
     return out
 
 

@@ -85,7 +85,7 @@ Two accessors exist instead, both in `script.js`:
 
 Search, the flashcard and quiz decks, quick jump, the study list, the progress
 badges and the random pick all go through those, which is why they still cover
-all 29 domains while one is rendered. `tools/smoke_test.mjs` checks exactly that:
+all 30 domains while one is rendered. `tools/smoke_test.mjs` checks exactly that:
 if it starts failing "search still reaches unopened domains", something started
 reading the DOM again.
 
