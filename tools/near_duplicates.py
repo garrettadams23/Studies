@@ -23,16 +23,19 @@ all deliberate. So it is a census, and the mode that matters is `--title`:
 run *before* writing, because by review time the cost is already sunk.
 
 Every pair also carries what it **differs on**, in §3's terms — see
-`differences()` for why that was missing and what it changes. Of 95 pairs, 76
-differ on something §3 calls deliberate and 19 differ on nothing; those 19 are
-§3's last row, "the real population", and `--unexplained` lists them alone.
+`differences()` for why that was missing and what it changes. Of 95 pairs, 78
+differ on something §3 calls deliberate and 17 differ on nothing; those 17 are
+§3's last row, "the real population", and each has since been read with its
+verdict recorded in `data/duplicate-verdicts.json`. `--unexplained` lists the
+ones with **no** verdict, which is currently none — it is the reopen condition
+for the register's *blind duplication* risk, not a synonym for that 17.
 
 ## What this census could not see, and now can
 
 Reading the eight pairs it once called unexplained turned up three blind spots,
 each with an instance rather than a theory. The count of unexplained pairs went
-31 -> 23 -> 19 as they were closed, and the report gained one shape it had been
-structurally unable to report at all.
+31 -> 23 -> 19 -> 17 as they were closed, and the report gained one shape it had
+been structurally unable to report at all.
 
 **1. Jaccard cannot see a title inside another title.** `Machine Learning
 Pipeline` and `ML Pipeline – From Raw Data to a Serving Model` are the same

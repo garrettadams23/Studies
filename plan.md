@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **12**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **13**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **12** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **13** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -396,12 +396,24 @@ every risk on it is one somebody could think of without looking at the repositor
 Phases 8–11 looked. These four were invisible until something was counted, and none of them
 appears on the original list.
 
-| Risk | Likelihood | Impact | Evidence | State |
+| Risk | Evidence when it was written | Where the number lives now | Reopens when | State |
 |---|---|---|---|---|
-| **Silent style drift** — the house form improves and earlier content is never revisited, so the site becomes two sites wearing one theme | **Certain — it already happened** | High | 330 topics (23%) are single-concept and under 1,800 characters, concentrated entirely in domains written early. `data` is 93% thin; `cs` and `infra` are 0% | **Open.** Phase 8 |
-| **Blind duplication** — the audit method governs new cards and has never looked backwards, so two sessions months apart both cover a subject and both cards ship | **Certain — it already happened** | Medium | 36 title pairs at ≥50% token overlap. Two `script` cards on regular expressions, three Kubernetes cards across two domains, three wireless cards in one. Several pairs differ only in em dash versus en dash | **Open.** Phase 9 |
-| **Unreachable quality** — good cards exist and nothing links to them, so the reader who would benefit never arrives | High | Medium | 902 topics have no related-topic link, and **159 of those have 3+ concept cards and 3,000+ characters**. The `productivity` domain is among the best written and almost entirely unlinked | **Open.** Phase 10 T4 |
-| **Unfalsifiable freshness** — the site can state what it has dated and cannot state what it has not | Certain | Medium | 51 dated claims. Three attempts to count the denominator failed on IP addresses, Wi-Fi standards and shell variables. There is no textual property that distinguishes a claim that ages | **Accepted, not mitigable.** Phase 11 §3 |
+| **Silent style drift** — the house form improves and earlier content is never revisited, so the site becomes two sites wearing one theme | 330 topics (23%) single-concept and under 1,800 chars, concentrated in domains written early. `data` was 93% thin | the **Thin** row of the measured state | `depth_report.py` puts thin above **2%**, or any one domain above 10% | ✅ **closed** |
+| **Blind duplication** — the audit method governs new cards and has never looked backwards, so two sessions months apart both cover a subject and both cards ship | 36 title pairs at ≥50% token overlap. Two `script` cards on regular expressions, three Kubernetes cards across two domains | the **Near-duplicate pairs** row | `near_duplicates.py --unexplained` returns anything at all | ✅ **closed** |
+| **Unreachable quality** — good cards exist and nothing links to them, so the reader who would benefit never arrives | 902 topics with no related-topic link, **159 of them with 3+ cards and 3,000+ chars** | the **Orphans** row | `orphan_report.py` reports a single **deep** orphan | ✅ **closed** |
+| **Unfalsifiable freshness** — the site can state what it has dated and cannot state what it has not | 51 dated claims. Three attempts to count the denominator failed on IP addresses, Wi-Fi standards and shell variables | nowhere — that is the risk | never; there is no condition to watch, which is the finding | **Accepted, not mitigable.** Phase 11 §3 |
+
+**Three of these were closed by a session that did not close them here.** The record
+*"closing 'unreachable quality', the third open accumulation risk"* re-measured all four and
+found the first three had fallen to 1%, 0 disagreements and 0 deep dead ends. It wrote that
+down as a session record and left this table saying **Open**, so the register a session reads
+to decide what to work on went on advertising three solved problems for weeks. Exactly the
+defect the measured-state table above had, in the tool for deciding what to do about it.
+
+**No number is repeated here.** Each row points at the row of the measured-state table that
+carries its figure, because that table is checked by `check_plan_numbers.py` and a second
+copy would only be a second thing to go stale — which is how this table got wrong in the
+first place.
 
 ## What these four have in common
 
@@ -414,6 +426,24 @@ That suggests a habit rather than a mitigation: **once a phase, measure somethin
 measured.** All four of these came from a single afternoon of counting things the repository
 already contained, and every one of them was cheaper to find than it would have been to
 predict.
+
+### And a second habit, which the fifth risk demonstrated by accident
+
+An accumulation risk has no moment attached, so it never becomes today's problem. The habit
+above finds them. It does not say when to act on one, and "act when it gets bad" fails
+precisely because *bad* has no threshold — the plan sat at 22,745 lines, nearly double the
+length that made it acute, and no session ever decided that was the day.
+
+The fifth risk was the only one that carried a **trigger**: *option 1 when the live queue
+next empties.* That is a condition a session can evaluate by running the censuses it runs
+anyway, and the session that found it true is the session that acted. It is the only risk in
+this register that the file closed by its own instruction rather than by a person noticing.
+
+So each row above now carries a **reopens when** column: not a target, a *condition*, phrased
+so that a tool already in `make check` or `make census` decides it. A closed risk with no
+reopen condition is a risk that will come back unannounced, which is how three of these came
+to be advertised as open long after they were fixed — and how the fourth, which genuinely
+cannot be measured, is honestly marked as having no condition at all.
 
 ## The fifth, which is about this file
 
@@ -1911,4 +1941,77 @@ everything else, and the fifth risk is closed:
 ```
 plan.md 22,745 -> 1,833 lines · plan-archive.md 20,972 · 253 records preserved
 23 cross-references repointed · derivable rows 11 -> 12 · 35 gates green
+```
+
+## Session — the register said Open about three problems that were solved
+
+The measured-state table was wrong because it was hand-maintained. That fix is
+two commits old. This is the same defect one level up: **the risk register**, the
+table a session reads to decide what to work on, still scored three of its four
+risks **Open**.
+
+They had been closed weeks earlier. The record *"closing 'unreachable quality',
+the third open accumulation risk"* re-measured all four and found:
+
+| Risk | Register said | Had actually been |
+|---|---|---|
+| Silent style drift | 330 topics (23%) thin | **11 of 1,544 — 1%** |
+| Blind duplication | 36 pairs at ≥50% overlap | **95 pairs, 0 unread** |
+| Unreachable quality | 902 unlinked, 159 deep | **60 unlinked, 0 deep** |
+
+That session wrote the re-measurement into a **session record** and left the
+register alone. The finding was recorded where findings go and not where
+decisions get made, so the register went on advertising three solved problems.
+
+### The fifth risk was the only one with a trigger, and the only one that closed itself
+
+That is not a coincidence and it is the reusable part.
+
+An accumulation risk has no moment attached — nothing goes wrong on a particular
+day. *"Act when it gets bad"* fails because **bad has no threshold**: this file
+sat at 22,745 lines, nearly double the length at which its own register called it
+*acute*, and no session ever decided that was the day. The fifth risk carried
+*option 1 when the live queue next empties* — a condition evaluated by running
+the censuses a session runs anyway — and the session that found it true is the
+session that acted.
+
+So every row now carries a **reopens when** column. Not a target; a condition,
+phrased so a tool already in `make check` or `make census` decides it:
+
+```
+Silent style drift      depth_report.py puts thin above 2%, or a domain above 10%
+Blind duplication       near_duplicates.py --unexplained returns anything at all
+Unreachable quality     orphan_report.py reports a single deep orphan
+Unfalsifiable freshness never — there is no condition, which is the finding
+```
+
+The fourth row is the honest one. It is *accepted, not mitigable*, and giving it
+a fake trigger to make the column look complete would be the worse error.
+
+### No number appears twice
+
+Each row points at the row of the measured-state table that carries its figure
+instead of repeating it. A second copy is a second thing to go stale, which is
+precisely how this table got wrong — and the measured-state table is the one
+`check_plan_numbers.py` already checks.
+
+### The same defect, a third time, in a tool's own docstring
+
+`near_duplicates.py` opens with *"Of 95 pairs, 76 differ on something §3 calls
+deliberate and 19 differ on nothing"*. The live run says **78 and 17**. Somebody
+had updated the 95 and not the two numbers beside it.
+
+Scanning every tool docstring for embedded figures found this to be the only
+present-tense claim that had drifted. The rest are dated on purpose — *"At 1,534
+topics there were 1,549 attributes"*, *"288 of 1,432 (20%) when this was
+written"* — and that phrasing is the reason they cannot rot. A snapshot says when
+it was taken; a bare number claims to be now.
+
+The docstring also conflated two different things, which the register's new
+column made visible: `--unexplained` lists pairs with **no recorded verdict**,
+currently none, not the 17 that differ on nothing and have all been read.
+
+```
+4 register rows re-measured and given reopen conditions · 1 stale docstring
+35 gates green
 ```
