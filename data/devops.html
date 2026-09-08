@@ -3054,6 +3054,105 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
 
 
           <!-- ── TOPIC: WHY PLATFORM ENGINEERING EXISTS ────────────────── -->
+
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🚦</span>
+              <span class="topic-name">Pods That Will Not Run — Reading the Status Before the Logs</span>
+              <span class="topic-badge">DevOps · CKA</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Diagnosis</div>
+                <div class="concept-title">The Status Field Is a Diagnosis, Not an Error Message</div>
+                <div class="concept-desc">
+                  The instinct on a pod that is not working is <code>kubectl logs</code>. Half the
+                  time there are no logs, because the container never started — and which half you
+                  are in is already written in the status. Each value rules out most of the system
+                  before you look at anything, so read it first and let it choose the next command.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Status</th><th>What it means</th><th>Where to look</th></tr></thead>
+                    <tbody>
+                      <tr><td>Pending</td><td>The scheduler could not place it. Your image and your code are not involved</td><td><code>kubectl describe pod</code> — the Events say insufficient cpu/memory, no node matching the selector, an untolerated taint, or a PVC that never bound</td></tr>
+                      <tr><td>ImagePullBackOff / ErrImagePull</td><td>The kubelet cannot fetch the image. Also not your code</td><td>The tag, the registry, a missing imagePullSecret, or a pull rate limit</td></tr>
+                      <tr><td>CrashLoopBackOff</td><td>The container started and exited, repeatedly — so the image is fine and the app ran</td><td><code>kubectl logs --previous</code>: the current container has no logs yet, the dead one does</td></tr>
+                      <tr><td>OOMKilled</td><td>The container passed its memory limit and was killed. Exit code 137</td><td>Last State in <code>describe</code>; then the limit, not the app, until you know which is wrong</td></tr>
+                      <tr><td>Running, not Ready</td><td>Nothing has failed. The readiness probe is failing and traffic is being withheld on purpose</td><td>The probe's path, port and timeout — and whether it depends on something else</td></tr>
+                      <tr><td>Terminating, stuck</td><td>Deletion is blocked</td><td>A finalizer still on the object, or a process ignoring SIGTERM until the grace period expires</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Three of those six are not your application, and one of them is not a
+                    fault at all.</strong> Pending and ImagePullBackOff are the cluster and the
+                    registry; Running-but-not-Ready is the system working exactly as configured.
+                    Reaching for logs first fails on precisely the cases where there are none, which
+                    is why the status is the diagnosis and the logs are the confirmation.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Probes</div>
+                <div class="concept-title">The Two Probes Do Opposite Things, and Swapping Them Takes the App Down</div>
+                <div class="concept-desc">
+                  They look alike in the manifest and they are wired to opposite outcomes. This is
+                  the single most common self-inflicted Kubernetes outage.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Probe</th><th>On failure</th><th>So it should test</th></tr></thead>
+                    <tbody>
+                      <tr><td>Liveness</td><td>The kubelet <strong>restarts the container</strong></td><td>Only whether this process is wedged — a deadlock it cannot recover from</td></tr>
+                      <tr><td>Readiness</td><td>The pod is <strong>removed from the Service endpoints</strong>. No restart</td><td>Whether this replica can serve a request right now, dependencies included</td></tr>
+                      <tr><td>Startup</td><td>The container is restarted, and until it passes the other two are suspended</td><td>Slow boots — so a long startup does not have to be paid for by loosening liveness forever</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Point a liveness probe at a dependency and a slow database becomes a
+                    cluster-wide restart storm.</strong> Every replica fails the check at once, every
+                    replica restarts, the cold pods hit the struggling dependency harder, and the
+                    outage is now yours rather than the database's. Liveness tests the process;
+                    readiness tests the dependencies. If a probe's failure should stop traffic
+                    rather than kill the process, it is a readiness probe — and a liveness probe
+                    with no timeout margin is a scheduled outage waiting for a slow morning.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Resources</div>
+                <div class="concept-title">Requests and Limits Decide Different Things, and Memory Is Not CPU <span class="acro-exp">(Central Processing Unit)</span></div>
+                <div class="concept-desc">
+                  Two numbers, two entirely separate jobs. <strong>Requests</strong> are what the
+                  scheduler reserves — they decide whether the pod is placed at all. <strong>Limits</strong>
+                  are what the runtime enforces once it is running. Setting them equal is a choice
+                  with consequences, not a default.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Set it wrong</th><th>What happens</th></tr></thead>
+                    <tbody>
+                      <tr><td>Request too high</td><td>Pending forever, on a cluster with plenty of free capacity — nothing is broken and nothing will fix itself</td></tr>
+                      <tr><td>Request too low</td><td>Scheduled onto a node that cannot really carry it; noisy-neighbour behaviour that looks like an application bug</td></tr>
+                      <tr><td>Memory limit too low</td><td>OOMKilled, immediately and without warning — memory cannot be throttled, only refused</td></tr>
+                      <tr><td>CPU limit too low</td><td>Throttled, not killed. Latency doubles, nothing restarts, and nothing in the logs mentions it</td></tr>
+                      <tr><td>No requests or limits</td><td>QoS <span class="acro-exp">(Quality of Service)</span> class BestEffort — first in the queue to be evicted when a node runs out</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Memory is incompressible and CPU is compressible, and that one asymmetry
+                    explains the whole table.</strong> You cannot give a process slightly less memory
+                    than it asked for, so the only enforcement available is killing it; you can give
+                    it less CPU, so the enforcement is slowing it down. That is why a memory limit
+                    produces a dramatic, obvious failure and a CPU limit produces a quiet one that
+                    gets misdiagnosed for weeks — and why the CPU limit is the one worth questioning
+                    before the memory limit.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧭</span>

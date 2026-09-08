@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **19**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **20**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,22 +38,22 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,544** across 30 domains | `depth_report.py` |
+| Topics | **1,545** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **11**, 1% — ten deepening waves below the old floor | `depth_report.py` |
 | Mean chars per concept card | **1,378**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 5 while the first rose 9, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **60 of 66**, 6 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,570 steps, 1,484 of 1,544 topics** | `check_paths.py` |
-| Related links | **1,484 topics, 4,696 links, 0 one-way** | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~838 more topics | `page_budget.py` |
+| Learning paths | **101 paths, 1,571 steps, 1,485 of 1,545 topics** | `check_paths.py` |
+| Related links | **1,485 topics, 4,704 links, 0 one-way** | `suggest_related.py --check` |
+| Page budget | **35% raw** headroom — room for ~836 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,097 chars**, median 3,693 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,097 chars**, median 3,696 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **19** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **20** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2477,4 +2477,83 @@ to be rewritten every time the site grew.
 ```
 README domains 21 -> 30 · acronym claim 980+ -> 1,101
 CONTRIBUTING 29 -> 30 domains · 35 gates green
+```
+
+## Session — fourteen Kubernetes topics and none about a pod that will not start
+
+The playbook symmetry test, run across all 30 domains: which have a
+troubleshooting-shaped topic and which do not. `cloud` has four, `ops` six, `hw`
+five, `net` four, `endpoint` four. **`devops` has none** — 50 topics, and the
+cert tag on the domain is **CKA**.
+
+Checked at content level before believing it, which is the rule the Azure waves
+left behind:
+
+```
+CrashLoopBackOff   0    ImagePullBackOff  0    OOMKilled       0
+pending pod        0    readiness probe   0 (devops)           1 (cloud)
+```
+
+Fourteen Kubernetes topics across `devops`, `cloud` and `redteam` — objects,
+networking, storage, RBAC, secrets, multi-tenancy, the threat model, incident
+response, container escape — and **not one about a pod that will not run.** The
+architecture is covered and the first hour of operating it is not.
+
+`near_duplicates.py --title` first this time, rather than after: nothing at or
+above 0.50, closest 0.40. Clear to write.
+
+### Three cards, and each one is a distinction rather than a list
+
+**The status field is a diagnosis, not an error message.** The instinct is
+`kubectl logs`, and half the time there are none because the container never
+started — which half you are in is already in the status. `Pending` is the
+scheduler and rules out your image and your code entirely; `ImagePullBackOff` is
+the registry; `CrashLoopBackOff` means the image is *fine* and the app ran, so
+the logs exist but only under `--previous`; `Running, not Ready` is nothing
+failing at all, it is a readiness probe withholding traffic on purpose. Three of
+six rows are not your application and one is not a fault.
+
+**The two probes do opposite things.** Liveness restarts the container; readiness
+removes it from the Service endpoints and restarts nothing. Point a liveness
+probe at a dependency and a slow database becomes a cluster-wide restart storm —
+every replica fails at once, every replica restarts cold, and the outage is now
+yours rather than the database's.
+
+**Requests and limits decide different things, and memory is not CPU.** One
+asymmetry explains the whole table: memory is incompressible, so the only
+enforcement available is killing the process; CPU is compressible, so the
+enforcement is slowing it down. That is why a memory limit fails loudly and
+correctly-diagnosed, and a CPU limit fails quietly and gets misdiagnosed for
+weeks.
+
+### The reopen condition fired on my own content, two sessions after I wrote it
+
+The risk register's *unreachable quality* row says it reopens when
+**`orphan_report.py` reports a single deep orphan.** Building the topic did
+exactly that:
+
+```
+orphans 60 -> 61, of which deep 0 -> 1
+```
+
+A three-card, 4,591-character topic that nothing linked to — the same "half a
+job" the archive names, caught this time by a condition rather than by somebody
+remembering. Four reciprocal `related.json` links and a step in *Kubernetes, End
+to End*, placed after *Kubernetes Objects* because that card ends on **"The Field
+That Decides Which Pod Dies at 3am"** and this is what happens next. Deep
+orphans back to **0**.
+
+### And failure #7, exactly as written
+
+The manual's seventh failure is *"wrote a related-map target from memory; slugs
+truncate at 60 characters"*. I took the slug from `orphan_report.py`'s output —
+which **truncates its display column** — and wrote
+`…before-the-log` for a topic whose id ends `…before-the-logs`. Four one-way
+edges and five "no such topic" errors, named by `suggest_related.py --check` in
+one run. The lesson survives with one word changed: do not take an id from
+anything that formats for a terminal.
+
+```
+devops 50 -> 51 topics · 1,544 -> 1,545 · paths 1,570 -> 1,571 steps
+related 4,696 -> 4,704 links, 0 one-way · deep orphans 0 · 35 gates green
 ```
