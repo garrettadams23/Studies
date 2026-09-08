@@ -540,6 +540,39 @@ def bare_tables(text):
             for m in _BARE_TABLE.finditer(text)]
 
 
+# One badge, spelled two ways, in one domain.
+#
+# Badges are free-form on purpose — 608 distinct strings over 1,485 topics, and
+# a controlled vocabulary would flatten a deliberate device (`5-STEP CYCLE`,
+# `OS CORE`: reference topics shout). So this does not police style. It checks
+# the one thing that is decidably wrong: the *same* badge written two ways
+# inside a single domain, which a reader sees side by side in one open list.
+#
+# Eight existed. `linux` had `LINUX • Ops` twice and `Linux • Ops` once;
+# `endpoint`, which is otherwise entirely title case, had one `ENDPOINT •
+# Operations`; `ai` had `LLM Ops` beside two `LLMOps`.
+#
+# Deliberately scoped to one domain. `grc`'s single `ARCHITECTURE` and `eng`'s
+# ten `Architecture` normalise alike and are never on screen together, and
+# forcing those to agree would be a style rule wearing a correctness rule's
+# clothes.
+_BADGE_RE = re.compile(r'<span class="topic-badge">(.*?)</span>', re.S)
+
+
+def badge_spellings(text):
+    """(normalised, {spelling: count}) for badges written two ways in one file."""
+    groups = {}
+    for _, block in topic_blocks(text):
+        for m in _BADGE_RE.finditer(block):
+            raw = unescape(re.sub(r"<[^>]+>", "", m.group(1)))
+            badge = re.sub(r"\s+", " ", raw).strip()
+            key = re.sub(r"[^a-z0-9]", "", badge.lower())
+            if key:
+                groups.setdefault(key, {})
+                groups[key][badge] = groups[key].get(badge, 0) + 1
+    return [(k, v) for k, v in groups.items() if len(v) > 1]
+
+
 def volatile_problems(text, today):
     """(line_number, message) for malformed volatile-claim markup."""
     for m in VOLATILE_RE.finditer(text):
@@ -803,6 +836,12 @@ def main():
                 f"{name}:{line}: a Python line in a code block ends in a bare '=' "
                 f"({code!r}) — the newline is mid-statement, so the block renders "
                 f"broken. Join it with the line below.")
+
+        for key, spellings in badge_spellings(text):
+            shown = ", ".join(f"{b!r}×{n}" for b, n in sorted(spellings.items()))
+            errors.append(
+                f"{name}: one badge spelled several ways in one domain — {shown}. "
+                f"A reader sees these side by side; pick the domain's own form")
 
         for (line,) in bare_tables(text):
             errors.append(
@@ -1096,6 +1135,22 @@ BARE_TABLE_FIXTURES = [
 ]
 
 
+BADGE_FIXTURES = [
+    ('<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>'
+     '<div class="topic"><span class="topic-badge">Linux • Ops</span></div>',
+     1, "the defect: one badge, two spellings, one domain"),
+    ('<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>'
+     '<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>',
+     0, "the same badge twice is not a clash"),
+    ('<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>'
+     '<div class="topic"><span class="topic-badge">LINUX • Security</span></div>',
+     0, "different badges are not a clash"),
+    ('<div class="topic"><span class="topic-badge">Sec+ • Start Here</span></div>'
+     '<div class="topic"><span class="topic-badge">SEC • Start Here</span></div>',
+     1, "punctuation counts: Sec+ and SEC normalise alike"),
+]
+
+
 def self_test():
     failures = 0
     for text, want, why in WRAPPED_COMMENT_FIXTURES:
@@ -1118,6 +1173,11 @@ def self_test():
         if got != want:
             failures += 1
             print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in BADGE_FIXTURES:
+        got = len(badge_spellings(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     longest = max(len(a) for _, a, _, _ in RENDERED_FIXTURES)
     for text, acronym, want, why in RENDERED_FIXTURES:
         spec = bool(_rendered_re(acronym).search(text))
@@ -1128,7 +1188,8 @@ def self_test():
                   f"index={fast}, expected={want}")
     n = (len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
          + len(WRAPPED_COMMENT_FIXTURES) + len(NESTING_FIXTURES)
-         + len(BARE_TABLE_FIXTURES))
+         + len(BARE_TABLE_FIXTURES)
+         + len(BADGE_FIXTURES))
     print(f"self-test: {n} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 

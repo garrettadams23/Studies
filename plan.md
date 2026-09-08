@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **21**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **22**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **21** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **22** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2609,4 +2609,72 @@ times.
 ```
 sitemap lastmod: hand-written 2026-07-31 -> derived 2026-09
 determinism watches 2 -> 3 outputs · 35 gates green
+```
+
+## Session — one badge, spelled two ways, in one domain
+
+A structural question with no defect in it: **is the badge vocabulary a
+vocabulary?** It is not, and that is the right answer — 608 distinct badges over
+1,485 topics, 391 used exactly once, and 1,359 distinct concept labels over
+3,857 cards. Both are free-form kickers written per topic, and a controlled
+vocabulary would flatten a deliberate device: reference topics *shout*
+(`5-STEP CYCLE`, `OS CORE`, `COMPLETE REFERENCE`).
+
+So the census gives nothing. Normalising it does. Strip case and punctuation, and
+**nine badge strings appear with more than one spelling.**
+
+### Four are one domain disagreeing with itself
+
+```
+linux      LINUX • Ops ×2          vs  Linux • Ops ×1
+linux      LINUX • Security ×1     vs  Linux+ • Security ×1
+endpoint   Endpoint • Operations   vs  ENDPOINT • Operations   (0% of endpoint is uppercase)
+ai         LLMOps ×2               vs  LLM Ops ×1
+```
+
+Each resolved to the domain's own form, established by counting rather than by
+taste: `linux` writes `LINUX •` for topic areas eight times and reserves
+`Linux+` for its beginner layer; `endpoint` has **no** fully-uppercase badge
+among 56; `LLMOps` is the industry spelling and the majority.
+
+### Two are different domains, and are left alone
+
+`grc` has one `ARCHITECTURE`; `eng` has ten `Architecture`. They normalise alike
+and are **never on screen together** — the page renders one domain at a time.
+Forcing them to agree would be a style rule wearing a correctness rule's
+clothes, so the check is scoped to a single domain and says so.
+
+### The other three were a series quietly breaking its own rule
+
+Of 28 `Start Here` badges — the beginner layer — fifteen name a certification
+and thirteen shout a domain code. That split is not arbitrary: `GRC`, `MIL`,
+`QUOTES`, `SCRIPT` and `General` have **no CompTIA certification to name**.
+
+Four did:
+
+```
+net        NET • Start Here        beside two  Net+ • Start Here
+sec        SEC • Start Here        beside two  Sec+ • Start Here
+pentest    PENTEST • Start Here    beside two  PenTest+ • Start Here
+threat     THREAT • Start Here     beside two  Sec+ • Start Here
+```
+
+Three of those are spelling clashes and the gate catches them. **The `threat`
+one is not** — `THREAT` and `Sec+` do not normalise alike, so no mechanical rule
+sees it. It was found by reading the series, fixed by reading the series, and it
+is recorded here because the gate cannot claim it.
+
+### What the check is careful not to be
+
+`lint_content.py` now fails on one badge spelled several ways **within one
+domain**, with four fixtures — including `Sec+` versus `SEC`, because dropping a
+`+` is a punctuation difference that renames a certification. Proved against the
+pre-fix files: seven findings, exit 1.
+
+Badges drive `data-level` (`\bbeginner\b` → beginner, `advanced|expert|deep` →
+advanced), so a badge edit can silently move a topic between teaching levels.
+Checked either side: **core 1,415 · beginner 121 · advanced 9**, unmoved.
+
+```
+8 badges normalised · lint fixtures 32 -> 36 · 35 gates green
 ```
