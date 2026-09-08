@@ -139,6 +139,15 @@ jobs:
       # Two identical builds must produce identical bytes. Without this, a
       # timestamp or a set iteration turns every commit's diff into noise, and
       # noise is where a real change hides.
+      # The service worker's offline promise. cache.addAll() is atomic, so one
+      # 404 in PRECACHE means nothing is cached at all — offline mode fails
+      # entirely, silently, on a site that still works perfectly online. Seven
+      # browser gates run here and none of them loads the service worker.
+      - name: Check the service worker precaches what the page needs
+        run: |
+          python tools/check_precache.py --self-test
+          python tools/check_precache.py
+
       - name: Check the build is reproducible
         run: python tools/check_determinism.py
 

@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **25**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **26**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -50,10 +50,10 @@ run rather than letting them pass as verified:
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,097 chars**, median 3,696 — the number a deepening wave has to move | `depth_report.py` |
-| Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
+| Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **152** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **25** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **26** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2877,4 +2877,58 @@ a regex too eager — and the same tool caught it.
 
 ```
 xrefs 501 -> 506 · lint fixtures 36 -> 41 · 35 gates green · 152 smoke checks
+```
+
+## Session — the one claim on the front page that nothing tested
+
+Seven browser gates run against this repository — smoke, search, axe, visual,
+resilience, mobile, backup — and **not one of them loads the service worker.**
+`sw.js` is what makes the README's *"Offline-first"* true, and it was the only
+user-facing claim on the front page with nothing behind it.
+
+Two ways it breaks, and the first is worse than it looks.
+
+**`cache.addAll()` is atomic.** One 404 in `PRECACHE` rejects the whole promise,
+the install fails, and *nothing* is cached. A single mistyped filename does not
+cost a font — it costs the entire offline mode, silently, on a site that still
+works perfectly online. Nothing would ever look wrong to anyone with a network.
+
+**An asset the page needs but does not precache** resolves from the network, so
+it passes every test anyone runs and fails only for the reader who is offline.
+
+Both are decidable from the files, so this needs no browser at all.
+
+### The measurement came back clean, twice over
+
+```
+13 precached · 10 referenced · 0 missing on disk · 0 needed but uncached
+```
+
+Every precached path exists, and every asset the page or its stylesheets pull is
+precached — including the three self-hosted `woff2` faces, whose URLs live in
+`Img/fonts.css` and are relative to *the stylesheet*, not to the page.
+
+### The false positive that shaped the rule
+
+A first pass reported `/sha256(code_verifier` as an uncached asset. It came from
+`url(` matching inside a card explaining **OAuth PKCE**. So a reference is
+believed only if it also *looks like a file* — a path ending in an extension —
+which is the same lesson as the two failed code-block heuristics: a pattern that
+merely resembles the thing will find the prose that resembles it too.
+
+### Proved by breaking it, in both directions
+
+```
+mistype one path      → 1 missing on disk, 1 needed-but-uncached, exit 1
+drop /style.css       → 1 needed but uncached, exit 1
+restore               → exit 0
+```
+
+Five fixtures cover the parsers — an off-site asset, a `data:` payload, a
+fragment, prose that looks like a `url()`, and a stylesheet-relative font — plus
+a guard that raises if the `PRECACHE` array itself stops being findable, so this
+cannot quietly become a check that passes because it stopped looking.
+
+```
+gates 35 -> 37 · 13 precached paths verified both ways
 ```

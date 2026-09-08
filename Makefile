@@ -62,6 +62,8 @@ check:
 	$(PY) tools/suggest_related.py --check
 	$(PY) tools/check_paths.py
 	$(PY) tools/stamp_freshness.py --verify
+	$(PY) tools/check_precache.py --self-test
+	$(PY) tools/check_precache.py
 	$(PY) tools/check_determinism.py
 	$(PY) tools/page_budget.py
 	$(PY) tools/check_plan_numbers.py --self-test
