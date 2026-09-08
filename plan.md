@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **33**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **34**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,22 +38,22 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,546** across 30 domains | `depth_report.py` |
+| Topics | **1,548** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **10**, 1% — ten deepening waves below the old floor | `depth_report.py` |
-| Mean chars per concept card | **1,379**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
+| Mean chars per concept card | **1,380**, or **1,115 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **60 of 66**, 6 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
-| Learning paths | **101 paths, 1,572 steps, 1,486 of 1,546 topics** | `check_paths.py` |
-| Related links | **1,486 topics, 4,746 links, 0 one-way** — one mainland of 1,460, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~834 more topics | `page_budget.py` |
+| Learning paths | **102 paths, 1,584 steps, 1,488 of 1,548 topics** | `check_paths.py` |
+| Related links | **1,488 topics, 4,766 links, 0 one-way** — one mainland of 1,462, three reference-domain islands | `suggest_related.py --check` |
+| Page budget | **35% raw** headroom — room for ~831 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,111 chars**, median 3,698 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,111 chars**, median 3,700 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **156** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **33** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **34** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3370,4 +3370,88 @@ the new entry belongs beside.
 
 ```
 1,545 -> 1,546 topics · 37 gates green · smoke 156 · search 44 · resilience 63
+```
+
+---
+
+## Session — the two frameworks, and reading the neighbours before writing a word
+
+Agile was one topic; the request was for the concept, and the concept is three:
+the manifesto, the framework most teams are handed, and the method that is not a
+framework. Written as three commits because each is a separate claim that can be
+wrong on its own.
+
+### Scrum, written as decisions rather than as a glossary
+
+The temptation with Scrum is a list — three roles, five events, three artifacts —
+which is what every summary already is and what no reader needs a fourth of. The
+card is built on a different spine: **every event is a container for exactly one
+decision**, and the failure is legible from the outside because you can name the
+missing decision by what the meeting turned into.
+
+```
+Sprint Planning   why is this Sprint valuable?   → capacity arithmetic
+Daily Scrum       do we change today's plan?     → status, read to the senior person
+Sprint Review     what should the backlog be?    → a demo, applauded, changing nothing
+Retrospective     which one thing changes?       → a grievance list, re-filed
+```
+
+The third card sorts six failure modes into **fatal** and **degrading**, because
+the useful thing to know before spending political capital is which three
+actually remove the feedback loop. All three fatal ones turn out to have the same
+shape as the question the Agile card ends on — they remove the ability to change
+what is being built while leaving the ceremony that implies it can.
+
+### Kanban had to be written around what the site already knew
+
+Three separate topics were already standing in this space, and none of them was
+findable from a search for Agile:
+
+```
+[cs]      Little's Law & Queueing — Why the Wait Explodes Before the Server Is Full
+[devops]  Value Stream Mapping — Find the Bottleneck
+[devops]  DORA Metrics — Measuring Delivery Performance
+```
+
+The first draft of the flow card re-derived queueing and re-stated value stream
+mapping's best line — *"waiting dwarfs working, and the fix is not typing
+faster"* — in slightly different words. That is not a duplicate the near-duplicate
+census would have caught: **the titles are unrelated, so only reading the
+neighbours finds it.** The verdict was rewritten to name the actual distinction
+instead:
+
+> Value Stream Mapping answers this for a whole pipeline and finds the one
+> constraint; a work-in-progress limit answers it inside a single team and needs
+> no map — the limit *refuses* the work rather than measuring it afterwards. One
+> is an exercise you run, the other is a policy that holds while nobody is
+> running exercises.
+
+Three cross-references out of one card, all to topics in other domains, is the
+right density for a topic sitting on top of work the site had already done.
+
+### The path was the point
+
+Three topics that only link to each other are three topics. The wave ends with a
+**Ways of Working** path that puts them in front of the material that decides
+whether any of it survives a schedule — the queueing law under the limit, the
+bottleneck map, then estimation, planning, goals and the two delivery-measurement
+topics.
+
+```
+102 paths (+1) · 1,584 steps (+12) · 1,488 of 1,548 topics reachable
+```
+
+### What this wave is evidence for
+
+The audit that opens a content wave has two halves and only one of them is
+mechanical. **Does the term appear** is a grep, and a careless one lies — `SAFe`
+matches *safe*, `XP` matches *experience*. **Does the idea appear under another
+name** is not a grep at all; it is reading the topics a reader would land on
+instead, and it is the half that changes what gets written. Both halves ran here;
+the second one rewrote a verdict, moved a card's claim, and turned what would
+have been a restatement into three cross-references.
+
+```
+1,546 -> 1,548 topics · 511 cross-references · 37 gates green
+smoke 156 · search 44 · resilience 63 · axe 29 · mobile 9 · visual 2 · backup 3
 ```
