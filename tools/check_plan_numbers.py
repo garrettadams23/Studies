@@ -25,6 +25,16 @@ server; and now the plan's own census. The fix is always the same shape — the
 number gets re-derived and compared, and the comparison runs where somebody
 looks.
 
+## The split, and why the record counts are in here
+
+`plan.md` was 22,745 lines and its own risk register scored that **open, and now
+acute**. The closed programmes moved to `plan-archive.md` when the live queue
+emptied, which is the trigger that register named. The two files' session-record
+counts are derived here for the same reason as every other row: the first thing
+written about the split — *"241 records moved, the last twelve kept"* — was
+wrong in both halves, and was written by the same session that was mid-way
+through fixing nine other hand-maintained numbers in the table above it.
+
 ## What it checks
 
 Every row whose value a script can derive today, without a browser and without a
@@ -64,6 +74,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PLAN = ROOT / "plan.md"
+ARCHIVE = ROOT / "plan-archive.md"
 HEADER = "| Measure | Value | Tool |"
 
 # Rows that need Chromium or a stopwatch. Named so a run says what it did not do.
@@ -99,6 +110,25 @@ def grab(pattern, text, source, count=1):
     if len(vals) != count:
         raise SystemExit(f"{source}: expected {count} numbers, parsed {len(vals)}")
     return vals
+
+
+def session_records(path):
+    """How many session records a plan file holds, ignoring fenced code.
+
+    The fence tracking is defensive rather than a fix for anything observed:
+    both counts agree today (11 and 242), because no record heading currently
+    sits inside a fence. These files paste whole commit messages into fences and
+    a commit message can open with `## Session`, so it is one edit away from
+    mattering, and a count that is right by luck reads exactly like one that is
+    right by construction.
+    """
+    n, fenced = 0, False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("```"):
+            fenced = not fenced
+        elif not fenced and line.startswith("## Session"):
+            n += 1
+    return n
 
 
 def derive():
@@ -157,6 +187,8 @@ def derive():
     gates = run("check_gates.py")
     n_gates, = grab(r"([\d,]+) in both", gates, "check_gates.py")
     out["Gates"] = [n_gates]
+
+    out["Session records"] = [session_records(PLAN), session_records(ARCHIVE)]
 
     lint = run("lint_content.py")
     verdictless, = grab(r"TREND .*?table=([\d,]+)", lint, "lint_content.py")

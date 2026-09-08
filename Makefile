@@ -95,7 +95,7 @@ equiv:
 test:
 	$(NODE) tools/smoke_test.mjs
 
-## search: does searching for a thing find it (plan.md Phase 10 T5)
+## search: does searching for a thing find it (plan-archive.md Phase 10 T5)
 search:
 	$(NODE) tools/search_test.mjs
 

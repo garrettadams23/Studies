@@ -2,7 +2,7 @@
 """
 orphan_report.py — good cards that nothing links to.
 
-plan.md Phase 10 T4. 902 of 1,432 topics carried no related-topic link when this
+plan-archive.md Phase 10 T4. 902 of 1,432 topics carried no related-topic link when this
 was written. That is not automatically wrong: `data/related.json` is hand-built
 and hand-built things are partial. The interesting subset is narrower and much
 more actionable.

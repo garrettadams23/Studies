@@ -2,7 +2,7 @@
 /**
  * search_test.mjs — does searching for a thing find it?
  *
- * plan.md Phase 10 T5. The site has search, acronym-aware search and a quiz
+ * plan-archive.md Phase 10 T5. The site has search, acronym-aware search and a quiz
  * built on the same index, and until this file nothing checked whether a query
  * a reader would actually type reaches the card that answers it. Every other
  * user-facing behaviour has a smoke test.

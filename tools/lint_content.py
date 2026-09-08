@@ -116,7 +116,7 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # saying which bind you or in what order, which is the same shape of gap.
 #
 # 589 -> 535: all 54 in `net`. Five domains clear; 211 verdicts written. The
-# byte cost is tracked in plan.md — roughly one topic of page budget per nine
+# byte cost is tracked in plan-archive.md — roughly one topic of page budget per nine
 # verdicts, which is the trade being made deliberately.
 #
 # 535 -> 469: all 66 in `sec`. Six domains, 277 verdicts, and the backlog is

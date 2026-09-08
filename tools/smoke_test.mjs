@@ -2,7 +2,7 @@
 /**
  * smoke_test.mjs — Drives the built index.html in a real browser.
  *
- * plan.md has claimed "verified headless (Chromium)" since the first review, and
+ * plan-archive.md has claimed "verified headless (Chromium)" since the first review, and
  * every session that changed structure re-derived a throwaway script to justify
  * it. That is the same shape as the cheat sheet's "Generated from the Math
  * domain" header: a capability asserted in prose with nothing checking it. This
@@ -1614,7 +1614,7 @@ await step("the alias map migrates progress onto the current id", async () => {
 });
 
 // ── what's new since your last visit ────────────────────────────────────────
-// plan.md Phase 10 T8. Four behaviours, and the first is the one most likely to
+// plan-archive.md Phase 10 T8. Four behaviours, and the first is the one most likely to
 // be got wrong: a reader with nothing stored must be told nothing at all.
 await step("what's new stays quiet on a first visit and records the month", async () => {
   const first = await page.evaluate(() => {

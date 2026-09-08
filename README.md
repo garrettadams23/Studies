@@ -97,7 +97,8 @@ tools/
   annotate_acronyms.py    Adds/refreshes the inline `(expansion)` spans in data/*.html
 patches/              Historical one-time content-injection scripts (already applied)
 CONTRIBUTING.md       Canonical topic markup conventions for new content
-plan.md               Improvement plan / review log
+plan.md               The live plan: operating manual, rubric, what is measured
+plan-archive.md       The closed programmes and 241 session records
 .github/workflows/    CI: rebuilds index.html and fails if it is stale
 ```
 

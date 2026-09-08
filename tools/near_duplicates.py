@@ -2,7 +2,7 @@
 """
 near_duplicates.py — topics that may already exist, before you write another one.
 
-plan.md Phase 9. The audit method that governs new content — probe titles, verify
+plan-archive.md Phase 9. The audit method that governs new content — probe titles, verify
 the zeros — has only ever been applied to the card being written *now*. Nothing
 has looked backwards, so a session that covered a subject an earlier session had
 already covered added a second card and the site kept both.
@@ -13,7 +13,7 @@ across two domains, three wireless cards in one. Several pairs differ only in
 whether the title uses an em dash or an en dash, which dates them to different
 sessions that could not see each other.
 
-**This cannot be a gate.** Legitimate duplication exists and plan.md Phase 9 §3
+**This cannot be a gate.** Legitimate duplication exists and plan-archive.md Phase 9 §3
 enumerates it: a beginner card beside a deep one, a reference table beside a
 concept card, and the same subject from an attacker's and a defender's side are
 all deliberate. So it is a census, and the mode that matters is `--title`:
@@ -167,7 +167,7 @@ def tokens(title, expand=False):
     return out
 
 
-# plan.md Phase 9 §3 enumerates the duplication that is deliberate. Nothing has
+# plan-archive.md Phase 9 §3 enumerates the duplication that is deliberate. Nothing has
 # ever *shown* that enumeration next to the pairs, so the pairs §3 has already
 # settled sit permanently at the top of this census and every session that runs
 # it re-derives which ones are which.
@@ -422,7 +422,7 @@ def main():
             print(f"  {score:.2f}  [{d}] {t[:66]}")
         if near:
             print(f"\n{len(near)} existing topic(s) at or above {floor:.2f}. "
-                  f"Read them before writing — plan.md Phase 9 §3 lists the "
+                  f"Read them before writing — plan-archive.md Phase 9 §3 lists the "
                   f"duplication that is deliberate.")
             return 1
         print(f"\nNothing at or above {floor:.2f}; closest shown. Clear to write.")

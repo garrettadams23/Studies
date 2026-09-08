@@ -166,7 +166,7 @@ _CHEV_RE = re.compile(r'(\s*)<span class="topic-chev">')
 def stamp_reading_time(body):
     """Stamp `data-read` on every topic and render it beside the badge.
 
-    plan.md Phase 10 T6. Cards on this site run from 900 to 15,000 characters
+    plan-archive.md Phase 10 T6. Cards on this site run from 900 to 15,000 characters
     with no outward sign of which is which, so a reader deciding whether to
     open one is guessing. Derived at build time from the plain-text length,
     because the length is already known here and nothing about it needs to be
@@ -217,7 +217,7 @@ _ADVANCED_RE = re.compile(r"\b(advanced|expert|deep)\b", re.I)
 def stamp_level(body):
     """Stamp `data-level` on every topic, read from its badge.
 
-    plan.md Phase 10 T7. The site teaches at two levels and the only outward
+    plan-archive.md Phase 10 T7. The site teaches at two levels and the only outward
     sign is a badge that sometimes reads *Beginner*, so the beginner layer is
     discoverable by accident rather than filterable.
 

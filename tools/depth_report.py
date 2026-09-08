@@ -2,14 +2,14 @@
 """
 depth_report.py — how deep the cards are, and whether a deepening pass is real.
 
-plan.md Phase 8 rests entirely on one measurement that previously existed only
+plan-archive.md Phase 8 rests entirely on one measurement that previously existed only
 inside that document. A number stated in a plan and not produced by a committed
 script is a claim with a shelf life, so this is the script.
 
 Two numbers, and the second one is the point:
 
   * **thin count** — topics with a single `.concept-card` and under 1,800 plain
-    characters. **288 of 1,432 (20%)** when this was written — plan.md Phase 8
+    characters. **288 of 1,432 (20%)** when this was written — plan-archive.md Phase 8
     quotes 330, which is the same population before the two reference domains
     below are excluded. Concentrated entirely in domains authored before the
     current card form settled: `data` 93% thin, `web` 85%, `redteam` 77%, while
@@ -22,7 +22,7 @@ Two numbers, and the second one is the point:
 
 Reference domains are excluded from the thin count, not from the totals:
 `shortcut` is scannable by design and `acronym` is generated, so a short card in
-either is correct rather than debt. See plan.md Phase 8 §4.
+either is correct rather than debt. See plan-archive.md Phase 8 §4.
 
 Usage:
   python3 tools/depth_report.py                 # the census
