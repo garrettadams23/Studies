@@ -381,6 +381,20 @@ const backs = await page.evaluate(() =>
            .map(t => `${t.domainId}/${t.id}`));
 check("every studyable topic has something on the back of its card",
   backs.length === 0, backs.slice(0, 5).join(", "));
+
+// And the stronger half, which the check above cannot see. The back renders
+// `t.title || t.name` as its heading, so a topic with a description but no
+// concept title turns over to a heading that repeats the front word for word.
+// That is how the AI glossary came back into the deck: it had no concept card
+// at all, a verdict was added to its table, and `title || desc` was satisfied by
+// the verdict alone. The card passed the check above and revealed nothing but
+// its own name.
+const headings = await page.evaluate(() =>
+  stIndex().filter(stIsStudyable)
+           .filter(t => !(t.title || "").trim())
+           .map(t => `${t.domainId}/${t.id}`));
+check("no card turns over to a heading that repeats its front",
+  headings.length === 0, headings.slice(0, 5).join(", "));
 await page.keyboard.press("Escape");
 await page.waitForTimeout(200);
 

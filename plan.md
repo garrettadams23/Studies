@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **23**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **24**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -39,7 +39,7 @@ run rather than letting them pass as verified:
 | Measure | Value | Tool |
 |---|---|---|
 | Topics | **1,545** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **11**, 1% — ten deepening waves below the old floor | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **10**, 1% — ten deepening waves below the old floor | `depth_report.py` |
 | Mean chars per concept card | **1,378**, or **1,114 excluding verdicts** — the second is the padding counter-metric: it rose 5 while the first rose 9, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,097 chars**, median 3,696 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **35**, and the same 35 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **151** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **152** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **23** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **24** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -2750,4 +2750,71 @@ sits beside the orphan count because they are the same question at two scales:
 
 ```
 16 bridges · related 4,704 -> 4,736 links, still 0 one-way · 35 gates green
+```
+
+## Session — a change I made three waves ago put a hollow card back in the deck
+
+Chasing a content×code interaction: the flashcard deck is built from parsed
+topics, so a content edit can change what the study tools do without touching a
+line of `script.js`. `script.js` already knows this and says so:
+
+> Six topics outside `acronym` build a flashcard whose back is **completely
+> empty** — `shortcut`'s *Windows*, *macOS*, *Terminal / Bash* and *VS Code*, the
+> AI glossary, and the military code list. … There is no question a table of
+> keystrokes answers, and turning one over reveals nothing.
+
+`stIsStudyable` therefore excludes a topic with no `title` and no `desc`. Those
+six were excluded by **shape**, which is the right unit — the next lookup table
+somebody writes is excluded without anyone remembering.
+
+**Then I gave the AI glossary a verdict.** Three waves ago, moving the EU AI Act
+verdict off it and writing it one of its own. `desc` is parsed from the topic's
+first `.concept-desc`, and a verdict carries that class — so the glossary
+satisfied `title || desc` on the verdict alone and walked straight back into the
+deck.
+
+Confirmed in a browser rather than reasoned about:
+
+```
+ai-glossary-quick-reference   title: ""   desc: "A glossary exists to stop…"   studyable: true
+common-codes-decoded          title: ""   desc: ""                            studyable: false
+windows · macos · terminal-bash · vs-code                                     studyable: false
+```
+
+### The card it produced
+
+The front is always `t.name`. The back's heading is `t.title || t.name`. With no
+concept title, **both sides read "AI Glossary (Quick Reference)"** and the body
+was a verdict about acronym collisions. A reader flipped it and was shown the
+words they had just read.
+
+The existing smoke check — *every studyable topic has something on the back of
+its card* — passed, because there **was** something on the back. It asserts
+`title || desc`, which is what `stIsStudyable` asserts, so it can only fail on a
+whitespace-only field.
+
+### Two fixes, and the second is the one that lasts
+
+**The structure.** The glossary is now a proper `.concept-card` — label, title,
+an introduction, the table in its `.dw`, then the verdict — like every other
+topic on the site. That was the half of the earlier wave I left undone: I wrapped
+its bare table in a `.dw` so search could highlight in it and stopped there.
+The card now reads *"The Words You Will Meet in Every AI Conversation"* on the
+back, which is an answer to the front rather than an echo of it.
+
+**The assertion.** A new smoke check: **no card turns over to a heading that
+repeats its front** — no studyable topic without a concept title. Currently 0 of
+1,480. Proved by stashing the fix: `FAIL : ai/ai-glossary-quick-reference`,
+151/152.
+
+### What this is really about
+
+Three waves ago's commit message claimed the verdict move was a clean fix, and
+it was — for the reader of that topic. The cost landed in a subsystem the diff
+never mentioned, and nothing failed, because the guard that existed asserted the
+same thing the code asserted. **A check that restates the implementation cannot
+catch the implementation being satisfied for the wrong reason.**
+
+```
+thin 11 -> 10 · smoke 151 -> 152 checks · 35 gates green
 ```
