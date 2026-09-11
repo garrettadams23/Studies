@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **34**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **35**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,22 +38,22 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,548** across 30 domains | `depth_report.py` |
+| Topics | **1,549** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **10**, 1% — ten deepening waves below the old floor | `depth_report.py` |
-| Mean chars per concept card | **1,380**, or **1,115 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
+| Mean chars per concept card | **1,381**, or **1,116 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **60 of 66**, 6 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,584 steps, 1,488 of 1,548 topics** | `check_paths.py` |
-| Related links | **1,488 topics, 4,766 links, 0 one-way** — one mainland of 1,462, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~831 more topics | `page_budget.py` |
+| Learning paths | **102 paths, 1,585 steps, 1,489 of 1,549 topics** | `check_paths.py` |
+| Related links | **1,489 topics, 4,776 links, 0 one-way** — one mainland of 1,463, three reference-domain islands | `suggest_related.py --check` |
+| Page budget | **35% raw** headroom — room for ~829 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,111 chars**, median 3,700 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,111 chars**, median 3,701 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **156** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **34** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **35** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3454,4 +3454,109 @@ have been a restatement into three cross-references.
 ```
 1,546 -> 1,548 topics · 511 cross-references · 37 gates green
 smoke 156 · search 44 · resilience 63 · axe 29 · mobile 9 · visual 2 · backup 3
+```
+
+---
+
+## Session — asking the reader's question found the fourth topic and two wrong words
+
+Three Agile topics were committed and the wave looked finished. It was not, and
+what finished it was not a report — it was typing eighteen queries a real person
+would type into the site's own search box.
+
+```
+user stories        1  ops/escalation-functional-vs-hierarchical…   ← wrong card
+daily standup       1  career/remote-work-working-well-from-anywhere ← wrong card
+standup             2  career/remote-work · eng/one-to-ones          ← not Scrum
+our standups are useless   0
+```
+
+Three of the site's `query_probe.mjs` kinds, in one run, on a topic committed an
+hour earlier.
+
+### Kind 1 — the site said it in the other word
+
+The Scrum card is the site's answer to *"our standup is useless"* and could not
+be reached by the word **standup**, because the card only ever said *Daily
+Scrum*. Fixed in prose, which the probe's rules call the right answer and better
+writing anyway: the events table now reads *Daily Scrum (the daily standup)* and
+the verdict opens *"the standup, or stand-up, in every team that has never read
+the guide"*.
+
+```
+standup        2 -> 3   (now reaches Scrum)
+stand-up       1 -> 2   (now reaches Scrum)
+daily standup  1 -> 2   (now reaches Scrum)
+```
+
+The line between this and keyword stuffing is worth stating, because the same
+edit could be either. **Naming the thing the way readers name it is writing;
+rewording a sentence so a matcher's proximity window closes is stuffing.** *Daily
+Scrum (the daily standup)* is what the meeting is actually called in every team
+that has one. `terraform state locked` is still deliberately zero for the other
+reason.
+
+### Kind 2 — the question was real and the card was not there
+
+`user stories` returned one hit and it was about escalation handovers. The
+word-bounded audit confirmed it:
+
+```
+user story  0 · vertical slice  0 · INVEST  0 · three amigos  0
+Gherkin     0 · walking skeleton 0 · grooming 0 · acceptance criteria 5 (grc, career)
+```
+
+So the wave had covered the manifesto, the framework and the method, and skipped
+**the unit of work all three operate on**. The fourth topic is the splitting
+skill: what a story is (a promise to have a conversation, with acceptance
+criteria as the actual contract), how to cut one (vertically, six patterns), and
+the payoff — that a team whose items are all roughly the same size can forecast
+by counting and stop needing the estimate at all.
+
+That last claim is the one worth the card. Getting better at estimating is a
+decade of work with a known ceiling; getting better at cutting is visible in a
+quarter and improves the forecast as a side effect.
+
+### The gate caught a real defect in the new card
+
+```
+FAIL : an exported table cell cannot be swallowed as raw HTML
+       eng: The template — _As a <role>, I want <capability>, so that <r
+```
+
+The story template is written with angle brackets, so the Markdown export emitted
+`<role>` as bare markup — a renderer would eat it and the reader would get *"As
+a , I want , so that "*. The check exempts backticked spans, and the site's
+exporter maps `<code>` to backticks, so wrapping the template fixed it properly
+rather than by rephrasing around the gate.
+
+**This is what the smoke suite is for.** The card looked right in the browser,
+read right in the print pack, and was broken in exactly one of the five output
+paths — the one nobody looks at while writing.
+
+### INVEST, added to the dictionary rather than spelled out
+
+`INVEST` was absent from a 1,101-entry acronym dictionary. Added, which
+`check_acronyms.py` accepts because the letters are a subsequence of
+*Independent, Negotiable, Valuable, Estimable, Small, Testable*.
+
+One thing this changed about the prose: the first draft read *"the six INVEST
+properties"*, and the annotator turned that into *"the six INVEST (Independent,
+Negotiable, …) properties"* — an expansion wedged mid-phrase. Reworded to *"the
+six properties named by INVEST"*, so the injected span lands at the end of the
+sentence where a parenthesis belongs. **An annotated corpus rewards writing
+acronyms in positions where a parenthetical can follow them**, and that is not a
+constraint you notice until you read the built page rather than the source.
+
+### What the wave is evidence for
+
+The content audit that opens a wave asks *does the term appear*. This one asked
+*what does a reader get when they type it*, and that question found a missing
+topic, two unreachable cards and a broken export — after three commits that all
+passed every gate.
+
+```
+1,548 -> 1,549 topics · 1,101 -> 1,102 acronyms · 513 cross-references
+102 paths, 1,585 steps · related 1,489 topics, 4,776 links · 0 deep orphans
+37 gates green · smoke 156 · search 44 · resilience 63 · axe 29 · mobile 9
 ```

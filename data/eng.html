@@ -6517,16 +6517,17 @@ cosign verify $IMAGE \
                     <tr><th>Event</th><th>The decision</th><th>What it decays into</th></tr>
                     <tr><td><strong>The Sprint</strong> (the container)</td><td>What we will not change our minds about for the next few weeks</td><td>A time box that new work is injected into anyway</td></tr>
                     <tr><td><strong>Sprint Planning</strong></td><td><em>Why</em> this Sprint is valuable, what can be done, and how</td><td>Capacity arithmetic — filling hours rather than choosing a goal</td></tr>
-                    <tr><td><strong>Daily Scrum</strong></td><td>Do we change today's plan to still hit the Sprint Goal?</td><td>A round of status read out to whoever is most senior in the room</td></tr>
+                    <tr><td><strong>Daily Scrum</strong> (the daily standup)</td><td>Do we change today's plan to still hit the Sprint Goal?</td><td>A round of status read out to whoever is most senior in the room</td></tr>
                     <tr><td><strong>Sprint Review</strong></td><td>Given what we now see, what should the backlog become?</td><td>A demo, applauded, changing nothing</td></tr>
                     <tr><td><strong>Sprint Retrospective</strong></td><td>Which one thing about how we work changes next Sprint?</td><td>A grievance list, re-read and re-filed</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    The Daily Scrum is the one most often described wrongly, and the description is the damage:
+                    The Daily Scrum — the standup, or stand-up, in every team that has never read the guide —
+                    is the one most often described wrongly, and the description is the damage:
                     <strong>it is a planning meeting for the Developers, not a report to a manager</strong>. The
                     three-questions script is not in the guide and never was mandatory; the test is whether the
-                    plan for the day is different at the end than it was at the start. If nothing ever changes,
-                    the meeting is a standing status call and the fifteen minutes are a tax.
+                    plan for the day is different at the end than it was at the start. A standup where nothing
+                    ever changes is a standing status call, and the fifteen minutes are a tax.
                   </div>
                 </div>
               </div>
@@ -6653,6 +6654,105 @@ cosign verify $IMAGE \
                     productivity metrics, and the distinction matters:
                     <span class="xref">DORA Metrics — Measuring Delivery Performance</span> makes the same move
                     for deployment, and both break the moment a number becomes a target rather than a signal.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">✂️</span>
+              <span class="topic-name">User Stories &amp; Refinement — Splitting Work Until the Estimate Stops Mattering</span>
+              <span class="topic-badge">Ways of Working</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">A Story Is a Promise to Have a Conversation, Not a Compressed Specification</div>
+                <div class="concept-desc">
+                  The template — <code>As a &lt;role&gt;, I want &lt;capability&gt;, so that &lt;reason&gt;</code> —
+                  is the least important part and the only part most teams adopt. Its job is to keep the
+                  <em>so that</em> attached to the request, because that clause is the only one that lets a
+                  developer propose a cheaper way to get the same outcome. Everything else about the story is
+                  decided by whether it has the six properties named by INVEST <span class="acro-exp">(Independent, Negotiable, Valuable, Estimable, Small, Testable)</span>.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Property</th><th>The test</th><th>What it prevents</th></tr>
+                    <tr><td><strong>Independent</strong></td><td>Could it be built this week without waiting on another story?</td><td>A board full of items that are all blocked on each other</td></tr>
+                    <tr><td>Negotiable</td><td>Does it say what and why, leaving how open?</td><td>A ticket that is a design document nobody reviewed</td></tr>
+                    <tr><td><strong>Valuable</strong></td><td>Can you name who is better off when it ships?</td><td>&ldquo;Build the database layer&rdquo; — real work, no recipient</td></tr>
+                    <tr><td>Estimable</td><td>Does the team know enough to say roughly how big?</td><td>An unknown wearing a number</td></tr>
+                    <tr><td><strong>Small</strong></td><td>Comfortably inside one iteration, ideally a few days</td><td>The item that rolls over three times and is never discussed</td></tr>
+                    <tr><td>Testable</td><td>Is there an agreed way to tell it is finished?</td><td>An argument at the end about whether it counts</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Acceptance criteria — not the sentence — are the actual contract, and the bolded three are
+                    the ones a team can check in ten seconds. <strong>The single highest-value habit is writing
+                    the acceptance criteria before the estimate, not after</strong>: half of every estimation
+                    disagreement turns out to be two people estimating different scopes, and the criteria surface
+                    that in the room rather than in the demo.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Practice</div>
+                <div class="concept-title">Split Down the Value, Never Across the Layers</div>
+                <div class="concept-desc">
+                  &ldquo;Too big&rdquo; is the most common finding in refinement and the splitting is where teams
+                  go wrong, because the obvious cut is by component — database story, backend story, frontend
+                  story — and that cut produces three items none of which can be shown to anyone. A useful split
+                  is <strong>vertical</strong>: a thinner slice through every layer that still does something end
+                  to end.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Pattern</th><th>The cut</th></tr>
+                    <tr><td><strong>Workflow steps</strong></td><td>Ship the path a user takes on a good day; the cancel, the retry and the amend follow as their own stories</td></tr>
+                    <tr><td><strong>Happy path first</strong></td><td>One story for the case that works, separate ones for each family of error handling — error handling is usually most of the effort and none of the estimate</td></tr>
+                    <tr><td>Variations on input</td><td>Support one file format, one currency, one region. Add the others as stories with a known shape</td></tr>
+                    <tr><td>Rules that can wait</td><td>The flat rate now, the discount tiers later — most business rules have a defensible simplest case</td></tr>
+                    <tr><td>Defer the quality attribute</td><td>Correct before fast, single-user before concurrent — but only when writing down what &ldquo;later&rdquo; means</td></tr>
+                    <tr><td>Spike, then split</td><td>When it cannot be estimated at all, the story is a time-boxed investigation whose output is other stories</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The last pattern is the honest answer to an unestimable item and it is routinely misused:
+                    <strong>a spike has a time box and produces information, not software</strong>. Without the
+                    box it is an open-ended research project on the board; without the requirement that it end in
+                    written stories it is a week nobody can point at. And the deferral row carries the same
+                    warning — &ldquo;make it fast later&rdquo; is a legitimate split only when the later story
+                    exists on the backlog with a number attached to it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Payoff</div>
+                <div class="concept-title">Small and Similar Beats Estimated and Accurate</div>
+                <div class="concept-desc">
+                  Refinement — the older word is grooming — is the standing session where the next few items get
+                  small enough to start. It is the only agile meeting that is not a formal event in any
+                  framework, and the only one whose absence is guaranteed to show up somewhere else.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>Without it</th><th>What actually happens</th></tr>
+                    <tr><td>Refinement skipped</td><td>Planning becomes refinement, runs three hours, and everyone blames the framework</td></tr>
+                    <tr><td>Stories arrive unready</td><td>The first two days of every iteration are spent discovering what was meant</td></tr>
+                    <tr><td>Items of wildly different size</td><td>Any forecast needs an accurate estimate for each, which is the thing nobody can produce</td></tr>
+                    <tr><td><strong>Items of similar size</strong></td><td>Forecast by counting how many finish per week — no estimate required, see <span class="xref">Kanban &amp; Flow — Why Limiting Work in Progress Is the Whole Idea</span></td></tr>
+                    <tr><td>Refinement as a status meeting</td><td>The backlog is read out rather than changed, and nothing gets smaller</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The fourth row is the reason to care about splitting at all, and it inverts the usual effort:
+                    <strong>a team whose stories are all roughly the same size can forecast by counting, and the
+                    estimate stops carrying weight</strong>. Getting better at estimating is a decade of work with
+                    a known ceiling; getting better at cutting work into similar-sized pieces is a skill a team
+                    can visibly improve in a quarter, and it makes the forecast better as a side effect. That is
+                    the practical reading of the <span class="xref">Agile — The Four Trade-offs, and What Gets
+                    Sold as Agile</span> value about responding to change — small items are what make changing
+                    your mind cheap.
                   </div>
                 </div>
               </div>

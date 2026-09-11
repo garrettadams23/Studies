@@ -33,7 +33,7 @@ Open `index.html` in any modern web browser — no server or build step required
   across your open tabs. No dependencies.
 - **Acronym Expansions Everywhere** — The first use of an acronym in any topic
   carries what it stands for right beside it, e.g. `ACL (Access Control List)`.
-- **Acronym Dictionary** — A dedicated domain with 1,101 IT acronyms, browsable
+- **Acronym Dictionary** — A dedicated domain with 1,102 IT acronyms, browsable
   A–Z or by subject area, searchable by acronym *or* by what it expands to.
 - **Rotating Snap Quotes** — Philosophical quotes on a fade cycle.
 - **URL Encode / Decode Widget** — Interactive tool in the Scripting domain.
@@ -74,7 +74,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🧠 Mind & Wellbeing | Inner Game | Imposter syndrome, burnout, resilience, dealing with failure, surviving on-call, communication |
 | 📐 Mathematics — Calculus | Calculus | Limits, derivatives, integrals, series, differential equations, the unit circle, and a one-page cheat sheet |
 | ❝ Quotes — Sourced & Corrected | Sourced | Stoic, Eastern and existentialist quotes with the work cited — plus the famous lines nobody can source |
-| 🔤 Acronym Dictionary | REF | 1,101 IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
+| 🔤 Acronym Dictionary | REF | 1,102 IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
 
 ## Project Structure
 
