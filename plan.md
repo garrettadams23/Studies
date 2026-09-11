@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **42**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **43**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,117 chars**, median 3,705 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **39**, and the same 39 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **51** · resilience **63** · axe 31/31 · mobile 14/14 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 14/14 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **42** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **43** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4251,4 +4251,73 @@ is a different object from a refactor.**
 ```
 gates 37 -> 39 · axe 29 -> 31 scans · lint 46 fixtures · css-vars 7 fixtures
 smoke 163 · search 51 · resilience 63 · mobile 14 · visual 2 · backup 3
+```
+
+---
+
+## Session — the last two gates, and a probe that only asserted it did not throw
+
+Finishing the sweep. The question — *which of the reader's states does this
+check never enter?* — has now been asked of all six browser gates.
+
+### visual_test.mjs: correctly narrow, nothing to add
+
+It shoots the filter bar and deliberately nothing else, and its docstring argues
+the case better than a new state would: a visual suite that screenshots content
+fails on every content wave, and a check that fails constantly is one people
+learn to ignore. **A gate that has thought about its own scope and written the
+reasoning down does not need the question asked of it twice.** Left alone.
+
+### storage_denied_test.mjs: it searched, but did not check the result
+
+It opens a domain and a study dialog under a `localStorage` that throws. It did
+search — and this is the part worth recording:
+
+```js
+await probe("search runs without throwing", async () => {
+  searchContent("network");
+  await new Promise(r => setTimeout(r, 250));
+  return true; // it ran without throwing; a throw would reject and be caught above
+});
+```
+
+The reasoning in that comment is correct and the assertion is still too weak.
+Search is not a read-only filter on this page: every matched topic gets
+`renderSeeAlso` and `renderTopicNote`, the second of which **reads the notepad
+out of storage**, and revealing a topic calls `recordVisit`, which writes to it.
+Any of those swallowing an error and leaving the page blank passes *"it did not
+throw"* and fails the reader — who is in a private window and has just typed
+into the box the whole page sits behind.
+
+Rewritten to assert an outcome: topics survived the filter, and the counter says
+so. Proved by making the search hide everything it matched —
+
+```
+old probe   ok    (it still did not throw)
+new probe   FAIL : searching finds and shows topics with storage denied
+```
+
+No bug this time; search genuinely survives storage denial. The check is worth
+more than the finding.
+
+### The distinction this leaves
+
+Three shapes of assertion, in increasing order of what they are worth, and the
+run has now produced one of each:
+
+| Asserts | Passes when | Example found this run |
+|---|---|---|
+| **It did not throw** | The feature is silently broken | the old storage-denied search probe |
+| **It returned something** | The something is wrong | `standups` → one card about remote work |
+| **It returned the right thing** | — | the wanted-topic field, and this rewrite |
+
+The middle row is the one that looks like a real test and is not, and it is the
+easiest to write by accident: counting results feels like measuring an outcome.
+**The question to ask of any green check is what a broken version of the feature
+would have to do to still pass it.** If the answer is "not much", the check is
+measuring the code path rather than the promise.
+
+```
+resilience 63 -> 64 checks · 39 gates green · smoke 163 · search 51
+axe 31 · mobile 14 · visual 2 · backup 3
 ```
