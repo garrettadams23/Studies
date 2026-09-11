@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **38**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **39**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -39,21 +39,21 @@ run rather than letting them pass as verified:
 | Measure | Value | Tool |
 |---|---|---|
 | Topics | **1,549** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **10**, 1% — ten deepening waves below the old floor | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
 | Mean chars per concept card | **1,381**, or **1,116 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **72 of 78**, 5 zeros and 1 wrong-card miss, all 6 recorded, 0 unexplained | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,549 topics** | `check_paths.py` |
 | Related links | **1,489 topics, 4,776 links, 0 one-way** — one mainland of 1,463, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~829 more topics | `page_budget.py` |
+| Page budget | **35% raw** headroom — room for ~826 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,111 chars**, median 3,701 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,117 chars**, median 3,705 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **159** · search **51** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **38** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **39** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3888,4 +3888,86 @@ holds.
 ```
 smoke 156 -> 159 checks · 80 topics now highlight their tables
 37 gates green · search 51 · resilience 63 · axe 29 · mobile 9
+```
+
+---
+
+## Session — the thin list was seven-eighths short on purpose
+
+Having found the census's blind spot from the outside last time, this session
+read all ten thin topics rather than deepening the first one. Two got cards. The
+other eight are the finding.
+
+### What the ten actually were
+
+| | Topic | Why it is short |
+|---|---|---|
+| ✓ | `script` Building a REST API | **Genuinely under-served** — a FastAPI hello world and nothing on what to return |
+| ✓ | `endpoint` Update Compliance Reporting | **A card missing** — the four-source map with no reconciliation step |
+| | `military` Common Codes Decoded | Beginner reference card, one of a series |
+| | `military` Staff Functions 1–9 | Same series |
+| | `linux` Package Management | Member of an eight-topic Linux+ quick-reference run, mid-range for it |
+| | `redteam` Rules of Engagement | The domain's authorised-use preamble. A wall of text is a disclaimer nobody reads |
+| | `data` The Data Interview | Lookup table |
+| | `eng` Cert Roadmaps | Lookup table |
+| | `web` The Full-Stack Picture | A deliberate zoom-out at the end of a domain |
+| | `devops` Software Supply Chain Security | An overview whose job is to route into `eng`'s eight-topic supply-chain series — and it already carries the cross-reference that does it |
+
+Two of ten. **The thin count is not a queue**, and no session should treat it as
+one without reading the rows.
+
+### The two that were real
+
+*Building a REST API* taught how to start a FastAPI server and stopped. The
+consuming side of the same subject is three topics deep — auth, pagination,
+retries, 429 — while the serving side had no status codes, no error shape and no
+operational traps. Two cards, and the first one gets to correct the topic's own
+example: it returns `200 {"created": …}` from a POST, which works and is wrong.
+
+The trap card's second row is the one worth having written down: **`async def`
+is a promise that nothing inside the function blocks**, and one ordinary
+synchronous database driver breaks that promise for every concurrent request on
+the process rather than just its own.
+
+*Update Compliance Reporting* had the four-source map and not the thing anyone
+actually does with it — reconciling two dashboards that disagree. Denominator,
+then clock, then definition, in that order, because every later comparison is a
+ratio against the first. And the row that resolves most arguments: a device that
+has installed a patch and not rebooted is running the vulnerable code, so Intune
+reporting success and the scanner reporting a hole are both correct.
+
+### What the census learned
+
+Not a threshold change — the threshold is right, and eight of the eight
+remaining are correctly *short*. What was missing is that the report gave a
+length and a title, so classifying the list cost nine file reads. It now prints
+three facts the block already carries:
+
+```
+ chars  domain         #  xref  badge                  title
+   317  military       8     0  Military • Reference   Common Codes Decoded
+  1134  redteam        0     0  Ethics                 Rules of Engagement — Read This First
+  1769  devops        32     1  Supply Chain           Software Supply Chain Security — SBOM …
+```
+
+`#0` reads as a preamble at a glance. `xref 1` reads as an overview that routes
+onward. A run of short topics sharing a badge prefix reads as a series. None of
+the three decides anything, and the footer says so — *the columns are context,
+not a verdict.*
+
+That restraint is the point and it is the opposite of the last two sessions'
+fixes. The query probe and the search harness both got a field that **changes
+the verdict**, because in both cases the tool could know the right answer and was
+not being told it. Here the tool cannot know: whether a 475-character card is a
+lapse or a deliberate reference row is an editorial judgement, and a classifier
+that guessed would be a plausible detector firing broadly — the thing this file
+has warned about since the beginning.
+
+**Give the instrument a verdict field when it can be right. Give it context
+columns when only a person can be.** Deciding which of the two a case is, is the
+whole skill.
+
+```
+1,549 topics · thin 10 -> 8 · 515 cross-references · 37 gates green
+smoke 159 · search 51 · resilience 63 · axe 29 · mobile 9 · visual 2 · backup 3
 ```

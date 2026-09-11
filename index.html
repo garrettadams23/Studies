@@ -47607,8 +47607,8 @@ separated by design rather than by filtering.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Regex · PowerShell · Bash · HTML · CSS · JavaScript · JSON · SQL</span>
-<span class="domain-meta" aria-label="149 topics, about 4h 50m to read"
->149 topics · ~4h 50m</span>
+<span class="domain-meta" aria-label="149 topics, about 4h 55m to read"
+>149 topics · ~4h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -53820,12 +53820,12 @@ MOUNTS = [<span class="str">"/"</span>, <span class="str">"/var"</span>, <span c
 </div>
 </div>
 <!-- ── TOPIC: BUILDING A REST API ────────────────────────── -->
-<div class="topic" id="building-a-rest-api-from-zero-to-running-endpoint" data-reviewed="2026-07" data-read="1" data-level="core">
+<div class="topic" id="building-a-rest-api-from-zero-to-running-endpoint" data-reviewed="2026-07" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌐</span>
 <span class="topic-name">Building a REST <span class="acro-exp">(Representational State Transfer)</span> API <span class="acro-exp">(Application Programming Interface)</span> — From Zero to Running Endpoint</span>
 <span class="topic-badge">SCRIPT • Practical</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -53869,6 +53869,67 @@ servers = {}
 
 <span class="com"># Run it:  uvicorn main:app --reload</span>
 <span class="com"># Auto docs at: http://localhost:8000/docs</span></pre>
+</div>
+<div class="concept-card">
+<div class="concept-label">Reference</div>
+<div class="concept-title">What to Return, and When — the Codes That Actually Carry Information</div>
+<div class="concept-desc">
+The example above returns <code>200 {"created": …}</code> from a POST, which works and is wrong,
+and it is the single most common thing in a hand-written API. A status code is the only part of
+the response a caller can act on without parsing anything &mdash; a retry loop, a cache and a
+load balancer all read it and none of them read your JSON <span class="acro-exp">(JavaScript Object Notation)</span>.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Situation</th><th>Code</th><th>What the caller does with it</th></tr>
+<tr><td>Created something new</td><td><strong>201</strong> + <code>Location</code> header</td><td>Knows where it went. <code>200</code> makes the caller guess the URL <span class="acro-exp">(Uniform Resource Locator)</span> it just created</td></tr>
+<tr><td>Did it, nothing to say</td><td><strong>204</strong></td><td>Stops parsing. A <code>200</code> with an empty body is a body that has to be checked</td></tr>
+<tr><td>The request is malformed</td><td><strong>400</strong></td><td>Never retries &mdash; the same bytes will fail again</td></tr>
+<tr><td>Well-formed, fails a rule</td><td><strong>422</strong></td><td>Same, but the caller can show the user which field. This is what pydantic raises for you</td></tr>
+<tr><td>Not allowed vs not there</td><td><strong>403</strong> / <strong>404</strong></td><td>Return <code>404</code> for a resource the caller may not even know exists &mdash; <code>403</code> confirms it does</td></tr>
+<tr><td>Conflicts with current state</td><td><strong>409</strong></td><td>Duplicate hostname, edit against a stale version. Not a <code>400</code>: the request was fine, the world moved</td></tr>
+<tr><td>Too many requests</td><td><strong>429</strong> + <code>Retry-After</code></td><td>Backs off by the number you gave rather than by guessing</td></tr>
+<tr><td>You broke</td><td><strong>500</strong></td><td>Retries. Which is why a validation bug returned as <code>500</code> becomes a retry storm</td></tr>
+</table>
+<div class="concept-desc verdict">
+The row that costs the most when it is wrong is the last one, and the mistake runs the other
+way too: <strong>returning <code>200</code> with <code>{"error": …}</code> in the body means every
+caller must parse a success to find out it failed</strong>, and none of the machinery between you
+and them &mdash; retries, circuit breakers, dashboards, alerts &mdash; will ever notice. Pick the
+code first and the body second. One error shape for the whole API, every time:
+<code>{"error": {"code": "…", "message": "…", "field": "…"}}</code> &mdash; a machine-readable
+<code>code</code> the caller can branch on, and a <code>message</code> for a human reading a log.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Traps</div>
+<div class="concept-title">Five Things That Turn a Working Endpoint Into an Outage</div>
+<div class="concept-desc">
+Everything above is visible in a browser tab. These are the ones that pass every manual test,
+survive the demo, and surface under real traffic &mdash; and four of the five are one line each
+to prevent.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Trap</th><th>What happens</th><th>The line that prevents it</th></tr>
+<tr><td><strong>No timeout on a downstream call</strong></td><td>One slow dependency holds every worker; the API stops answering requests that never touched it</td><td><code>httpx.get(url, timeout=5)</code> &mdash; the default is no timeout</td></tr>
+<tr><td><strong>Blocking work in an async route</strong></td><td><code>async def</code> plus a synchronous database driver blocks the whole event loop. Slower than the framework you replaced</td><td>Use <code>def</code>, not <code>async def</code>, unless everything inside is awaited</td></tr>
+<tr><td><strong>Returning the database object</strong></td><td>A column added next month appears in the public response. Password hashes have shipped this way</td><td>A separate <code>response_model</code> &mdash; the schema you return is not the schema you store</td></tr>
+<tr><td><strong>Unbounded list endpoint</strong></td><td>Fine at 200 rows, 40 seconds at 2 million. The failure arrives with success</td><td><code>limit: int = 50</code> with a maximum, from the first commit</td></tr>
+<tr><td>The exception handler that catches everything</td><td>A bug becomes a clean <code>500</code> with no stack trace anywhere</td><td>Log the exception before you convert it</td></tr>
+</table>
+<div class="concept-desc verdict">
+The second row is the one that surprises people, because it is the framework's headline feature
+doing the damage: <strong><code>async def</code> is a promise that nothing inside the function
+blocks</strong>, and one ordinary database driver breaks that promise for every concurrent request
+on the process rather than just its own. A plain <code>def</code> route is run in a thread pool
+and is the right default until the whole path is genuinely async. The fourth row is the one that
+arrives latest and hurts most &mdash; see
+<span class="xref" data-xref="consuming-apis-robustly-beyond-requestsget" role="link" tabindex="0">Consuming APIs Robustly — Beyond requests.get()</span>
+for the other side of it, where a caller has to page through what a server should have limited.
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -109476,12 +109537,12 @@ the stories are the workload and Autopatch does not take them.
 </div>
 </div>
 <!-- ── TOPIC: UPDATE COMPLIANCE REPORTING ────────────────────── -->
-<div class="topic" id="update-compliance-reporting-where-the-truth-lives" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="update-compliance-reporting-where-the-truth-lives" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📊</span>
 <span class="topic-name">Update Compliance Reporting — Where the Truth Lives</span>
 <span class="topic-badge">Intune • Servicing</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -109514,6 +109575,36 @@ not-applicable (the update never targeted this device), and unknown (nobody has
 heard from it). Report them separately or the figure you give leadership is
 higher than the truth — and the unknown bucket is exactly where the compromised
 machine lives.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Practice</div>
+<div class="concept-title">Two Dashboards, Two Numbers — Reconciling Them Without Guessing</div>
+<div class="concept-desc">
+Someone will ask why Intune says 94% and Defender says 71%. Both are usually right, and
+arguing about which tool is broken wastes the meeting. They disagree for three reasons and
+the reasons resolve in a fixed order &mdash; get the denominator right before you look at
+anything else, because every later comparison is a ratio against it.
+</div>
+<div class="dw">
+<table class="ref-table">
+<tr><th>Order</th><th>What differs</th><th>How to settle it</th></tr>
+<tr><td><strong>1. The denominator</strong></td><td>All enrolled devices, versus devices seen in 30 days, versus devices sending diagnostic data. Three populations, never equal</td><td>Pick one and state it on the report. <strong>The gap between the largest and smallest is your real unknown bucket</strong></td></tr>
+<tr><td><strong>2. The clock</strong></td><td>Device check-in is roughly eight-hourly; fleet reports lag further; a vulnerability scan runs on its own cadence</td><td>Compare snapshots from the same evening, not two dashboards open at once</td></tr>
+<tr><td><strong>3. The definition</strong></td><td>&ldquo;Installed&rdquo; is not &ldquo;effective&rdquo;. A patch staged and awaiting reboot is done to Intune and open to Defender</td><td>Report pending-reboot as its own state. It is the honest answer and the actionable one</td></tr>
+<tr><td>The build revision</td><td>Two machines on the same Windows version can be months apart on revision</td><td>Compare <code>OsBuildNumber</code> plus revision, never the version name</td></tr>
+<tr><td>Not-applicable</td><td>An update that never targeted this hardware counts as green in most views</td><td>Split it out &mdash; see the four-source map above</td></tr>
+</table>
+<div class="concept-desc verdict">
+Row three is where the disagreement usually lives and it is the one worth internalising:
+<strong>a device that has installed a patch and not rebooted is running the vulnerable
+code</strong>. Intune has done its job and reports success; the vulnerability scanner reads
+the running system and reports the hole; nobody is wrong. That is also the number to take to
+leadership, because it converts a reporting argument into a reboot-enforcement decision,
+which is a thing somebody can actually approve &mdash; the grace periods in
+<span class="xref" data-xref="compliance-policies-deep-settings-grace-periods-what-non-com" role="link" tabindex="0">Compliance Policies Deep — Settings, Grace Periods &amp; What Non-Compliant Costs</span>
+are where that decision gets implemented.
 </div>
 </div>
 </div>
