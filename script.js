@@ -2135,6 +2135,7 @@ function runSearch(raw) {
   if (!_searchTerm) {
     _searchTermList = [];
     if (countEl) countEl.textContent = "";
+    renderNamedTopic(null);
     return;
   }
 
@@ -2338,12 +2339,93 @@ function runSearch(raw) {
       : widened === "fold" ? " · matched ignoring hyphens" : "";
     if (widened === "broad") {
       countEl.textContent = `no exact match${scope} · too broad to widen — try a more specific word`;
+      renderNamedTopic(null);
       return;
     }
     countEl.textContent = matchCount
       ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${widened ? "" : via}${wide}`
       : `no matches${scope}`;
+    renderNamedTopic(namedTopic(q.text, domainCount));
   }
+}
+
+/**
+ * Draw (or remove) the named-topic line under the search bar.
+ *
+ * Built on demand and removed when it has nothing to say, so it costs zero
+ * elements at rest — the same discipline as the see-also strip and the note
+ * composer, and the reason a 1,549-topic page renders 475 elements. It cannot
+ * live inside `.search-count`: that is a 60px nowrap counter pinned to the
+ * right of the input, and a topic title in it would push the search box off a
+ * phone.
+ */
+function renderNamedTopic(named) {
+  const bar = document.getElementById("search-bar");
+  const existing = document.getElementById("search-named");
+  if (!named || !bar) { existing?.remove(); return; }
+  const row = existing || document.createElement("div");
+  if (!existing) {
+    row.id = "search-named";
+    row.className = "search-named";
+    bar.appendChild(row);
+  }
+  row.textContent = "";
+  const a = document.createElement("a");
+  a.href = `#${encodeURIComponent(named.id)}`;
+  a.textContent = named.title;
+  row.append(document.createTextNode("The site has a topic called "), a);
+}
+
+/**
+ * The one hit whose *title* is what the reader typed, when the results are
+ * spread too wide to find it by eye.
+ *
+ * This site shows one domain at a time, so a query answered in twelve domains
+ * leaves the reader picking a chip and hoping. Measured over the 85 standing
+ * queries in `query_probe.mjs`: five are that shape, and in all five the topic
+ * named after the query is the one they wanted — `agile` returns 24 cards
+ * across 12 domains and *Agile — The Four Trade-offs* is one of them,
+ * `chain of custody` returns 9 across 8, `third party risk` 5 across 3.
+ *
+ * Deliberately not a ranking engine. The test is exact and cheap: **every
+ * content word of the query appears in the topic's slug**, which is built from
+ * its title. Either the site has a topic named this or it does not, and 61 of
+ * the 85 queries have no such topic and get no line at all. A relevance score
+ * would have an opinion about all 61, and this file's oldest rule is that a
+ * plausible signal firing broadly is the instrument being wrong.
+ *
+ * Silent below three domains, because one or two chips is not a haystack, and
+ * silent when several topics qualify — two equally-named topics is exactly the
+ * case where picking one for the reader is a guess wearing an answer's clothes.
+ *
+ * That last rule was tested against the obvious loosening and kept. Breaking a
+ * tie by preferring the slug that *starts* with the query reads as principled
+ * and buys two more of the 85:
+ *
+ *   what is idempotency   3 candidates → idempotency-exactly-once-safe-retries   ✓
+ *   what is an embedding  2 candidates → embeddings-rag-giving-ai-access-to-…    ✗
+ *
+ * The second is wrong. A reader asking what an embedding *is* wants the vectors
+ * and cosine-distance card, and the tiebreak picked the retrieval one because
+ * its title happens to begin with the word. **A pointer that is right half the
+ * time is worse than no pointer**, because the reader cannot tell which half
+ * they are in and stops using it. `what is technical debt` stays tied between
+ * the craft card and the financial-argument card, and declining to choose there
+ * is the rule working, not failing.
+ */
+function namedTopic(text, domainCount) {
+  if (domainCount < 3) return null;
+  const words = String(text || "").toLowerCase().split(/\s+/)
+    .map(w => w.replace(/[^a-z0-9]/g, ""))
+    .filter(w => w.length > 2 && !WIDE_STOP.has(w));
+  if (!words.length) return null;
+  const found = [];
+  _searchHits.forEach(set => set.forEach(id => {
+    if (words.every(w => id.includes(w))) found.push(id);
+  }));
+  if (found.length !== 1) return null;
+  const title = topicName(found[0]);
+  return title ? { id: found[0], title } : null;
 }
 
 /** Debounced entry point wired to the search box's oninput. */

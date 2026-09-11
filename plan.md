@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **39**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **40**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,117 chars**, median 3,705 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **159** · search **51** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **163** · search **51** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **39** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **40** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3970,4 +3970,90 @@ whole skill.
 ```
 1,549 topics · thin 10 -> 8 · 515 cross-references · 37 gates green
 smoke 159 · search 51 · resilience 63 · axe 29 · mobile 9 · visual 2 · backup 3
+```
+
+---
+
+## Session — twenty-four matches in twelve domains, and no way to tell which one
+
+This site renders one domain at a time. That is its architectural bet and it is
+the right one — 475 elements at rest instead of 140,926. The cost lands on
+search: a query answered in twelve domains gives the reader twelve badged chips
+and no reason to prefer any of them. Typing `agile` returns 24 cards across 12
+domains, and the topic actually called *Agile* is one of them, unmarked.
+
+### The measurement that shaped the feature
+
+Over the 85 standing queries in `query_probe.mjs`:
+
+```
+85 queries
+  15 have a topic whose slug carries every content word
+   5 of those spread across 3+ domains — the reader has to guess which
+  61 have hits but no slug match — nothing to point at
+```
+
+Five of 85 is six percent, which sounds like nothing until you look at which
+five: `agile` (24 hits, 12 domains), `chain of custody` (9 in 8), `what is an
+embedding` (16 in 6), `third party risk` (5 in 3), `how do adults learn` (6 in
+4). **They are precisely the queries where the reader is most lost**, and in all
+five the topic named after the query is the one they wanted.
+
+So the feature is one line under the search bar — *The site has a topic called
+…* — linking to it. `openHashTarget()` already opens the domain, reveals the
+topic, scrolls and moves focus, so the whole thing is an anchor with the right
+`href`.
+
+### The loosening that looked principled and was wrong
+
+The strict rule is: every content word of the query appears in the topic's slug,
+and **exactly one** topic qualifies. That declines `kerberos`, `subnetting` and
+`what is technical debt`, where several topics carry the word.
+
+Breaking ties by preferring the slug that *starts* with the query is the obvious
+next step, reads as principled, and buys two more:
+
+```
+what is idempotency   3 candidates → idempotency-exactly-once-safe-retries   ✓
+what is an embedding  2 candidates → embeddings-rag-giving-ai-access-to-…    ✗
+```
+
+The second is wrong. A reader asking what an embedding *is* wants the vectors
+and cosine-distance card; the tiebreak picked the retrieval one because its title
+happens to begin with the word. **A pointer that is right half the time is worse
+than no pointer**, because the reader cannot tell which half they are in and
+stops reading the line. Kept strict. `what is technical debt` staying silent
+between the craft card and the financial-argument card is the rule working.
+
+### Where it lives, and why not in the counter
+
+`.search-count` is a 60-pixel `nowrap` counter pinned to the right of the input.
+A topic title in it pushes the search box off a phone. The line is its own row
+under the bar, **built on demand and removed when it has nothing to say**, so the
+at-rest DOM is unchanged — still 475 elements, which is the number the README
+sells the architecture on.
+
+### What it turned up on the way out
+
+Checking the new row at 375px found something that is not the row's fault and is
+worth more than the row:
+
+```
+no search                    0px past 375
+search "kerberos"            0
+search "subnetting"          0
+search "third party risk"   98   ← SPAN.chevron
+search "raid"              238   ← a TBODY
+```
+
+Two of five searches scroll a phone sideways, identically with the new row
+removed. `mobile_test.mjs` passes 9/9 because **it opens domains and never
+searches**, and searching is a different layout: topics that were collapsed are
+forced open, so tables that never rendered on a phone suddenly do.
+
+A gate that tests the state nobody is in is the running theme of this whole run,
+and this is the fourth instance. Next wave.
+
+```
+smoke 159 -> 163 checks · 37 gates green · search 51 · dom at rest 475
 ```

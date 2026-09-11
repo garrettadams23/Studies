@@ -319,6 +319,45 @@ check("highlighting a table twice does not nest the marks",
 check("clearing a search removes every mark it made",
   tableHl.left === 0, `${tableHl.left} left behind`);
 
+// The named-topic pointer. This site shows one domain at a time, so `agile`
+// answering in twelve domains leaves the reader picking a chip and hoping; the
+// line under the search bar names the one topic titled after the query and
+// links to it. Three properties are worth holding: it costs nothing at rest, it
+// stays silent when the answer would be a guess, and the link actually lands.
+const named = await page.evaluate(async () => {
+  const atRest = !!document.getElementById("search-named");
+  runSearch("agile");
+  await new Promise(r => setTimeout(r, 200));
+  const row = document.getElementById("search-named");
+  const href = row?.querySelector("a")?.getAttribute("href") || "";
+  runSearch("what is technical debt");           // two topics qualify — decline
+  await new Promise(r => setTimeout(r, 200));
+  const tied = !!document.getElementById("search-named");
+  runSearch("");
+  await new Promise(r => setTimeout(r, 200));
+  return { atRest, href, tied, cleared: !!document.getElementById("search-named") };
+});
+check("a query spread over many domains is pointed at the topic named after it",
+  named.href === "#agile-the-four-trade-offs-and-what-gets-sold-as-agile", named.href || "no link");
+check("the pointer says nothing when two topics could be the one meant",
+  named.tied === false);
+check("the pointer costs nothing at rest and nothing after clearing",
+  named.atRest === false && named.cleared === false,
+  `atRest=${named.atRest} cleared=${named.cleared}`);
+
+const namedGoes = await page.evaluate(async () => {
+  runSearch("agile");
+  await new Promise(r => setTimeout(r, 200));
+  document.querySelector("#search-named a")?.click();
+  await new Promise(r => setTimeout(r, 600));
+  const t = document.getElementById("agile-the-four-trade-offs-and-what-gets-sold-as-agile");
+  return { visible: t ? t.offsetParent !== null : false,
+           live: document.querySelector('.domain-section[data-hydrated="1"]')?.dataset.domain };
+});
+check("following the pointer opens the topic in its own domain",
+  namedGoes.visible && namedGoes.live === "eng",
+  `visible=${namedGoes.visible} live=${namedGoes.live}`);
+
 // ── search operators ────────────────────────────────────────────────────────
 // `domain:` and quoted phrases narrow a 1,300-topic site to something a reader
 // can use. The cases worth protecting are the ones that fail quietly: an
