@@ -65,11 +65,22 @@
  *
  * Every remaining zero has now been through it, and the results split three ways:
  *
- *   * **kind 3, confirmed** — `laptop won't turn on` (`hw` has *The Order That
- *     Resolves Most No-Boot Machines*), `outlook won't connect` (the M365
- *     playbook's *Symptom → Layer* card routes it), `docker image too big`
- *     (multi-stage builds, `.dockerignore`, layer caching and image size are all
- *     in `devops`). The answer is written out; only the phrasing is absent.
+ *   * **kind 3, confirmed** — `docker image too big` (multi-stage builds,
+ *     `.dockerignore`, layer caching and image size are all in `devops`). The
+ *     answer is written out; only the phrasing is absent.
+ *   * **kind 3, and wrong.** `laptop won't turn on` and `outlook won't connect`
+ *     were recorded here as kind 3 and were nothing of the kind. Their zeros
+ *     were the *matcher*: `won't` is not the string `will`, so it survived into
+ *     the all-your-words conjunction as a hard requirement almost no card can
+ *     satisfy. `laptop will not turn on` returned twenty-five cards the whole
+ *     time. Both answer now, and neither needed a word of prose changed — see
+ *     the contraction note on `WIDE_STOP` in `script.js`.
+ *
+ *     The lesson is a rule, and it belongs beside the three kinds above:
+ *     **a kind-3 call is a decision not to write something, and it is only sound
+ *     once the matcher has been ruled out.** Retype the query with its
+ *     contractions expanded, and with its rarest word alone, before concluding
+ *     the corpus is at fault.
  *   * **kind 2** — `wifi keeps dropping` and `vpn keeps disconnecting`, above.
  *   * **kind 1** — `git detached head` and `terraform state locked`. The site
  *     *described* both states and named neither: the reflog card tells you to
@@ -127,6 +138,14 @@ const READER = args.includes("--reader") ? args[args.indexOf("--reader") + 1] : 
 // Grouped by who is asking, because that is how the gaps cluster. A query that
 // has been investigated and left alone deliberately carries `keep`, naming which
 // kind of zero it is — otherwise every future session re-derives it.
+//
+// A third field, `want`, names the topic the query should reach. It is optional
+// and filled in as queries are revisited, but where it is present it changes the
+// verdict: a query that comes back with cards, none of them the one it was
+// asking for, is a miss wearing a result count. `standups` returned one card
+// about remote work and was scored as answered for as long as counting was the
+// only test — the same failure `search_test.mjs` fixed in its known-miss list,
+// arriving here later for the same reason.
 const READERS = [
   ["a service desk engineer", [
     ["my computer is slow"],
@@ -145,8 +164,8 @@ const READERS = [
     ["explaining to a non technical manager"],
     ["wifi keeps dropping"],
     ["vpn keeps disconnecting"],
-    ["laptop won't turn on", "kind 3, checked at fault level — hw's 'The Order That Resolves Most No-Boot Machines' is the answer written out; only the phrasing is absent"],
-    ["outlook won't connect", "kind 3, checked — the M365 playbook's Symptom -> Layer card routes it: one device, one app -> Client"],
+    ["laptop won't turn on"],
+    ["outlook won't connect"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported"],
@@ -191,6 +210,24 @@ const READERS = [
     ["terraform state locked", "kind 1, fixed in prose and still zero — the state card now covers a lock outliving a killed run and force-unlock. The matcher wants the three words adjacent; tuning prose to that is the keyword stuffing this file forbids"],
     ["docker image too big", "kind 3, checked at fault level — devops covers multi-stage builds, .dockerignore, layer caching and image size"],
   ]],
+  ["somebody handed a process nobody chose", [
+    ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
+    ["scrum",              "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    ["kanban",             "", "eng/kanban-flow-why-limiting-work-in-progress-is-the-whole-idea"],
+    ["sprint planning",    "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    ["daily standup",      "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    ["user stories",       "", "eng/user-stories-refinement-splitting-work-until-the-estimate-st"],
+    ["splitting stories",  "", "eng/user-stories-refinement-splitting-work-until-the-estimate-st"],
+    ["definition of done", "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    ["product backlog",    "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    ["agile isn't working", "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
+    ["standups",
+     "kind 3, and the reason this file grew a third field. The singular reaches the Scrum card; the plural does not, because the matcher stops at the first stage that finds anything and one incidental literal hit in an unrelated card blocks the widening that would fold the s. A matcher limit, recorded rather than papered over — writing 'standups' into the prose to close it is the keyword stuffing this file forbids",
+     "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    ["our standups are useless",
+     "kind 3, same cause — 'standups' carries the query and misses for the reason above; 'our standup is useless' reaches the Daily Scrum row that answers it",
+     "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+  ]],
   ["somebody looking for a job", [
     ["writing a cv"],
     ["asking for a raise"],
@@ -219,42 +256,57 @@ const hitsFor = q => page.evaluate(query => {
   return { hits: out, note: document.getElementById("search-count")?.textContent || "" };
 }, q);
 
-let total = 0, zeros = 0, explained = 0, wide = 0;
+let total = 0, zeros = 0, explained = 0, wide = 0, wrong = 0;
 const unexplained = [];
 
 for (const [reader, queries] of READERS) {
   if (READER && !reader.toLowerCase().includes(READER.toLowerCase())) continue;
   const rows = [];
-  for (const [q, keep] of queries) {
+  for (const [q, keep, want] of queries) {
     const { hits } = await hitsFor(q);
     total++;
+    // A query that comes back with cards, none of them the one it was asking
+    // for, is a miss wearing a result count. Only a query carrying `want` can
+    // be judged that way; the rest are reported by count alone, as before.
+    const missed = Boolean(want) && hits.length > 0 && !hits.includes(want);
     if (!hits.length) {
       zeros++;
-      if (keep) explained++; else unexplained.push([reader, q]);
+      if (keep) explained++; else unexplained.push([reader, q, ""]);
+    } else if (missed) {
+      wrong++;
+      if (!keep) unexplained.push([reader, q, want]);
+      else explained++;
     }
     // Wide is not wrong — the widened stage is labelled where it runs — but a
     // query returning a tenth of the site is a query nobody can use.
     if (hits.length > 60) wide++;
-    rows.push([q, hits, keep]);
+    rows.push([q, hits, keep, missed, want]);
   }
-  const show = ONLY_ZERO ? rows.filter(r => !r[1].length) : rows;
+  const show = ONLY_ZERO ? rows.filter(r => !r[1].length || r[3]) : rows;
   if (!show.length) continue;
   console.log(`\n${reader}\n`);
-  for (const [q, hits, keep] of show) {
-    const mark = !hits.length ? (keep ? "kept" : "ZERO") : hits.length > 60 ? "wide" : "ok  ";
-    const tail = hits.length ? hits[0] : (keep || "nothing — investigate");
+  for (const [q, hits, keep, missed, want] of show) {
+    const mark = !hits.length ? (keep ? "kept" : "ZERO")
+               : missed       ? (keep ? "kept" : "MISS")
+               : hits.length > 60 ? "wide" : "ok  ";
+    const tail = missed ? (keep || `wanted ${want}`)
+               : hits.length ? hits[0]
+               : (keep || "nothing — investigate");
     console.log(`  ${mark}  ${JSON.stringify(q).padEnd(40)} ${String(hits.length).padStart(3)}  ${tail.slice(0, 72)}`);
   }
 }
 
 await browser.close();
 
-console.log(`\n${total} quer(ies) · ${total - zeros} answered · ` +
-            `${zeros} found nothing, of which ${explained} are recorded as deliberate` +
+console.log(`\n${total} quer(ies) · ${total - zeros - wrong} answered · ` +
+            `${zeros} found nothing` +
+            (wrong ? ` · ${wrong} found the wrong card` : "") +
+            `, of which ${explained} are recorded as deliberate` +
             (wide ? ` · ${wide} returned more than 60` : "") + ".");
 if (unexplained.length) {
-  console.log(`\n${unexplained.length} unexplained zero(s) — read this file's docstring before ` +
+  console.log(`\n${unexplained.length} unexplained miss(es) — read this file's docstring before ` +
               `acting, then either fix the prose, write the card, or record which kind it is:`);
-  unexplained.forEach(([r, q]) => console.log(`  ${JSON.stringify(q)}  (${r})`));
+  unexplained.forEach(([r, q, want]) =>
+    console.log(`  ${JSON.stringify(q)}  (${r})${want ? `  — wanted ${want}` : ""}`));
 }
 console.log("\nA census, not a gate — see this file's docstring.");

@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **35**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **36**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,7 +43,7 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,381**, or **1,116 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **60 of 66**, 6 deliberate zeros, 0 unexplained, 0 over-broad | `query_probe.mjs` |
+| Reader questions answered | **72 of 78**, 5 zeros and 1 wrong-card miss, all 6 recorded, 0 unexplained | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,549 topics** | `check_paths.py` |
 | Related links | **1,489 topics, 4,776 links, 0 one-way** — one mainland of 1,463, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **35% raw** headroom — room for ~829 more topics | `page_budget.py` |
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,111 chars**, median 3,701 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **156** · search **44** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **156** · search **51** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **35** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **36** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3559,4 +3559,117 @@ passed every gate.
 1,548 -> 1,549 topics · 1,101 -> 1,102 acronyms · 513 cross-references
 102 paths, 1,585 steps · related 1,489 topics, 4,776 links · 0 deep orphans
 37 gates green · smoke 156 · search 44 · resilience 63 · axe 29 · mobile 9
+```
+
+---
+
+## Session — the matcher was eating contractions, and two verdicts were wrong because of it
+
+The Agile wave ended by typing reader queries into the search box. One of them,
+`agile isn't working`, returned a single card about on-call pager duty while
+`agile not working` returned eight including the right one. That gap is not about
+Agile at all.
+
+### The defect
+
+`WIDE_STOP` is the short list of function words the all-your-words fallback must
+not insist on — every word in that stage is a hard requirement, so a question's
+`we`, `the` and `is` would otherwise narrow the result to nothing. The list had
+`is`, `not`, `will`, `did` and `can`. It did not have `isn't`, `won't`, `didn't`
+or `can't`, because those are different strings.
+
+So a reader typing the way readers type got their contraction promoted to a
+content word:
+
+```
+laptop won't turn on        0     laptop will not turn on     25
+certificate didn't renew    0     certificate did not renew   15
+why won't my vpn connect    0     why will not my vpn connect 22
+dns isn't resolving         0     dns not resolving            3
+```
+
+Four of seven realistic contraction queries returned **nothing**, and their
+spelled-out twins returned fifteen to twenty-five cards. The corpus was fine
+every time.
+
+### Two recorded verdicts were wrong
+
+`laptop won't turn on` and `outlook won't connect` were both sitting in
+`query_probe.mjs` with a `keep` note reading *kind 3 — the answer is written out,
+only the phrasing is absent*. They were nothing of the kind. Removing four
+characters from either query returns twenty-five cards and two cards
+respectively; the phrasing was never the problem.
+
+That is the second time this file's kind-3 category has been used to close a
+question that deserved a fix, and the correction is now written into it as a
+rule:
+
+> **A kind-3 call is a decision not to write something, and it is only sound once
+> the matcher has been ruled out.** Retype the query with its contractions
+> expanded, and with its rarest word alone, before concluding the corpus is at
+> fault.
+
+### The fix, and why it is a list rather than a rule
+
+Membership is now tested against the *folded* word, so `won't`, `won’t` and
+`wont` all arrive as `wont` and one entry covers the straight apostrophe, the
+typographic one a phone substitutes, and the reader who omitted it. `’` was
+added to `RE_INTRAWORD` for the same reason.
+
+The entries are hand-picked, and that is the interesting part. A mechanical rule
+— strip the contraction, check the base — looks obviously right and is wrong on
+this site:
+
+```
+I'd  -> id      and the site is full of Entra ID, user IDs, IDs
+I'm  -> im      instant messaging
+I'll -> ill
+we'd -> wed
+```
+
+Silently dropping `id` from `entra id` would be a worse bug than the one being
+fixed. The list keeps only the folded forms that are *never* anything but
+function words, and `entra id` is now a gate fixture standing guard over exactly
+that.
+
+`vs` and `versus` joined them separately. The site titles a dozen topics *X vs
+Y*, so the as-typed pass answers those before the fallback runs — but `agile vs
+waterfall`, which no single card contains verbatim, was requiring the literal
+word `vs` and returning nothing. Both directions are now fixtures, because the
+change is only safe if the second one keeps passing.
+
+### The census had the same blind spot the gate had already fixed
+
+`standups` returned one card about remote work and `query_probe.mjs` scored it
+**answered**. Counting results is not a test of whether the reader got what they
+asked for — which is exactly what `search_test.mjs` learned when *three way
+handshake* "started working" by returning three loosely-related cards and not the
+TCP one. It grew a third field naming the wanted topic; the census had not.
+
+It has one now. `want` is optional and filled in as queries are revisited, and
+where present it flips the verdict:
+
+```
+before   ok    "standups"   1  career/remote-work-working-well-from-anywhere
+after    kept  "standups"   1  kind 3 — the singular reaches the Scrum card…
+
+78 queries · 72 answered · 5 found nothing · 1 found the wrong card
+```
+
+Both new paths were proved by breaking them: a bogus `want` on `scrum` produced
+`MISS … wanted eng/nonexistent-topic-that-proves-the-check` and an unexplained-miss
+report, and removing `wont` from the stop list dropped the search gate to 47/49.
+
+### The rule this run adds
+
+Three sessions in a row have now found the same shape: **an instrument that
+scores by counting will call a wrong answer a right one.** The duplicate census
+counts pairs, the orphan report counts links, the query probe counted hits. Two
+of the three have since learned to name the thing they expected. The third —
+`near_duplicates.py` — is the one left, and it is worth knowing that before the
+next session trusts it.
+
+```
+search 44 -> 51 checks · probe 66 -> 78 queries · 37 gates green
+smoke 156 · resilience 63 · axe 29 · mobile 9 · visual 2 · backup 3
 ```

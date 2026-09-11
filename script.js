@@ -1856,7 +1856,7 @@ const SHORT_TERM = 4;
  * for matcher()'s short-term guard to stand on. Keeping spaces keeps every
  * boundary that guard depends on.
  */
-const RE_INTRAWORD = /(?<=[a-z0-9])[-.'&/](?=[a-z0-9])/g;
+const RE_INTRAWORD = /(?<=[a-z0-9])[-.'\u2019&/](?=[a-z0-9])/g;
 function foldSeparators(lowered) {
   return lowered.replace(RE_INTRAWORD, "");
 }
@@ -1873,6 +1873,38 @@ function foldSeparators(lowered) {
  * Deliberately tiny, and only used by the fallback. A long stop list starts
  * discarding real content words, and this one never sees a query that had an
  * answer as typed.
+ *
+ * ## The contracted half, which was missing for a year
+ *
+ * A reader typing a question types contractions, and a contraction of a
+ * function word is still a function word — but `won't` is not the string
+ * `will`, so it was surviving into the conjunction as a hard requirement that
+ * almost no card can satisfy. Four of seven realistic contraction queries
+ * returned **nothing** while their spelled-out twins returned fifteen to
+ * twenty-five cards:
+ *
+ *   laptop won't turn on        0     laptop will not turn on     25
+ *   certificate didn't renew    0     certificate did not renew   15
+ *   why won't my vpn connect    0     why will not my vpn connect 22
+ *   dns isn't resolving         0     dns not resolving            3
+ *
+ * Two of those zeros were already recorded in `query_probe.mjs` as *kind 3* —
+ * "the answer is there, only the phrasing is absent". They were nothing of the
+ * kind. The phrasing was fine and the matcher was dropping the query on the
+ * floor, which is worth remembering the next time a zero gets a verdict: **a
+ * kind-3 call is a decision not to write something, and it is only sound if the
+ * matcher has been ruled out first.**
+ *
+ * Membership is tested against the *folded* word, so the entries below are
+ * written folded — `won't`, `won’t` and `wont` all arrive here as `wont`, and
+ * one entry covers the straight apostrophe, the typographic one a phone
+ * substitutes, and the reader who omitted it.
+ *
+ * Chosen one at a time rather than by rule, because the folded form of a
+ * contraction is sometimes a term this site is about: `I'd` folds to **id**,
+ * `I'm` to **im**, `I'll` to **ill**, `we'd` to **wed**. Those are left out —
+ * silently discarding `id` from `entra id` would be a worse bug than the one
+ * being fixed. The ones kept are the ones that are only ever function words.
  */
 /**
  * A term and its crudest singular/plural, for the widened stage only.
@@ -1918,7 +1950,18 @@ function plurals(term) {
 const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
   + "were be been do does did can could should would will shall may might must "
   + "i we you they it he she this that these those my our your their its "
-  + "how what why when where which who does not no yes if then than so").split(" "));
+  + "how what why when where which who does not no yes if then than so "
+  // `vs` and `versus` join them for the same reason `or` is here. The site
+  // titles a dozen topics "X vs Y", so the as-typed pass answers those before
+  // the fallback ever runs — but `agile vs waterfall`, which no single card
+  // contains verbatim, was requiring the literal word `vs` in a card and
+  // returning nothing. This list only ever sees a query that already failed.
+  + "vs versus "
+  // Contractions, written folded — see the note above on why these are listed
+  // rather than derived, and why id/im/ill/wed are deliberately absent.
+  + "isnt arent wasnt werent dont doesnt didnt cant cannot wont couldnt "
+  + "wouldnt shouldnt mustnt aint youre youve youll theyre theyve theyll "
+  + "thats theres heres whats whos hows wheres whens lets").split(" "));
 
 function matcher(lowered) {
   if (lowered.length > SHORT_TERM) return text => text.includes(lowered);
@@ -2107,7 +2150,10 @@ function runSearch(raw) {
   // empty, it is just short, and reinstating them is far worse: "the 5 whys"
   // keeps only *whys*, falls back to *the* ∧ *whys*, and returns 584 cards
   // because almost every card on the site contains both.
-  const words = allWords.filter(w => w.length >= 2 && !WIDE_STOP.has(w.toLowerCase()));
+  // Folded before the stop test, so a contraction is recognised however the
+  // reader's keyboard spelled its apostrophe — or whether they typed one.
+  const words = allWords.filter(w =>
+    w.length >= 2 && !WIDE_STOP.has(foldSeparators(w.toLowerCase())));
   // Stage one of the fallback: the query in order, against folded text, with
   // the gaps between its words allowed to be a space, a hyphen, or nothing.
   //
