@@ -1759,6 +1759,12 @@ function highlightIn(el, term) {
   const termLower = term.toLowerCase();
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
     acceptNode(node) {
+      // Text already inside a mark this function put there is skipped, which
+      // makes the call idempotent. Without it, highlighting a container and
+      // then something nested inside it wraps the same words twice and builds
+      // `<mark><mark>term</mark></mark>` — invisible in one theme, doubled in
+      // the other, and impossible for clearHighlights() to unwind cleanly.
+      if (node.parentElement?.closest("mark.sh")) return NodeFilter.FILTER_REJECT;
       return node.nodeValue.toLowerCase().includes(termLower)
         ? NodeFilter.FILTER_ACCEPT
         : NodeFilter.FILTER_REJECT;
@@ -2058,8 +2064,21 @@ function applySearchToDomain(section) {
       setTopicOpen(topic.querySelector(":scope > .topic-header"), true);
       renderSeeAlso(topic);
       renderTopicNote(topic);
+      // `table` is in this list for a defect a browser found: 80 topics hold a
+      // lookup table that is not inside a `.dw`, and a search hit in one of
+      // them opened the topic and highlighted nothing. Searching `pacman`
+      // reached linux's *Package Management*, whose only occurrence of the word
+      // is a table cell, and marked zero words on the page.
+      //
+      // Wrapping all 80 was the other option and is the wrong one. `.dw` is
+      // eighteen pixels of padding — the highlight list was the only thing
+      // making it structural, and coupling "can be highlighted" to "has a
+      // padding wrapper" is the actual bug. Highlighting should follow the
+      // content. A table nested in a `.dw` is now visited twice; the
+      // idempotence guard in highlightIn() is what makes that safe.
       topic.querySelectorAll(
-        ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
+        ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, "
+        + ".code-block, table"
       ).forEach(n => _searchTermList.forEach(t => highlightIn(n, t)));
     } else {
       topic.classList.add("search-hidden");

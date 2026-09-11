@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **37**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **38**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,111 chars**, median 3,701 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **156** · search **51** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **159** · search **51** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **37** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **38** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3785,4 +3785,107 @@ something — is the difference between a census and a horoscope.
 
 ```
 lint 41 -> 46 fixtures · 37 gates green · smoke 156 · search 51 · resilience 63
+```
+
+---
+
+## Session — eighty topics highlighted nothing, and the wrapper was never the point
+
+The depth census flags ten thin topics. Chasing the first one did not produce a
+deepening wave; it produced a reader-facing search defect that had been shipping
+for as long as the highlighter has existed.
+
+### The thin topic was not thin
+
+`linux` *Package Management*, 933 chars, one concept card. Reading its seven
+siblings settled it in a minute:
+
+```
+1090  cards=2  [Linux+ • FHS]       Filesystem & Navigation
+ 444  cards=2  [Linux+ • CLI]       File Ops & Text Processing
+1188  cards=2  [LINUX • Security]   Permissions & Ownership
+1023  cards=2  [Linux+ • IAM]       Users, Groups & Privilege
+1100  cards=2  [Linux+ • A+]        Processes & Services
+ 933  cards=1  [Linux+ • Distros]   Package Management   ← "thin"
+ 514  cards=2  [Linux+ • Net]       Networking (CLI)
+1246  cards=3  [Linux+ • SecOps]    Shell, Cron & Hardening
+```
+
+A deliberately short Linux+ quick-reference series, and the flagged member is
+mid-range for it. The thin rule is *one card AND under 1,800 chars*, and this
+one trips it only because its second block is a table rather than a card.
+Nothing to deepen. **A census row is a question, not an instruction**, and the
+answer here was "the series is the unit, not the topic".
+
+### But the shape it had was a real bug
+
+That table sits directly in the `.topic-body`, which `lint_content.py` has a
+check for — and the check did not fire, because its regex only matches a table
+*immediately* after `<div class="topic-body">`. This one follows a closed
+`.concept-card`. Same defect, invisible shape.
+
+Balancing divs across the whole corpus:
+
+```
+1,549 topics · 80 with a table outside every highlightable wrapper
+```
+
+The first version of that analyser said **0**, because its wrapper stack popped
+on the wrong condition. Worth noting only because the correct answer and the
+comfortable answer were one buggy loop apart, and 0 is the answer that ends the
+investigation.
+
+Then the browser, because a static count is not evidence about a reader:
+
+```
+search "pacman"   →  topic opens · 0 marks · 0 in the table
+search "flatpak"  →  topic opens · 1 mark  · 0 in the table
+```
+
+`pacman` occurs exactly once in that topic, in a table cell. The page found it,
+opened the topic, and marked nothing.
+
+### The wrapper was never the point
+
+The obvious fix is to wrap all 80 in `.dw`. The reason not to is one line of CSS:
+
+```css
+.dw { padding: 0 18px 18px; }
+```
+
+That is the whole of `.dw`. The highlight list was the only thing making it
+structural, and **coupling "can be highlighted" to "has a padding wrapper" is
+the bug**, not the 80 topics that failed to observe it. `table` went into the
+highlight list. All 80 fixed, and every future one, with no content edited.
+
+That has a hazard: a table nested inside a `.dw` is now visited twice, and the
+second pass would wrap already-marked words again. `highlightIn()` is now
+idempotent — text inside a `mark.sh` is rejected by the tree walker — which is
+worth having on its own terms, and the failure it prevents is not theoretical:
+
+```
+guard removed →  FAIL : 48 marks, 15 nested
+table removed →  FAIL : 0 mark(s) in the table
+both restored →  159/159
+```
+
+### What the check becomes
+
+`bare_tables` was introduced with the words *"Not a style rule"*. After this it
+is one — the highlight argument now lives in `script.js` and is gated from the
+reader's side in `smoke_test.mjs`, and what remains is eighteen pixels of
+padding. Its docstring says so, in place of the old argument, and the check is
+deliberately **not** widened to the 80: failing a build over padding is exactly
+the style-rule-in-correctness-clothing this file warns about two sections up.
+
+There is a general shape here worth keeping. **When a check's real justification
+is fixed at the source, the check does not automatically become worthless — but
+it does become a different check, and leaving the old reasoning in the docstring
+is how a style rule keeps borrowing a correctness rule's authority.** Rewrite the
+reason or retire the check; do not leave it quoting an argument that no longer
+holds.
+
+```
+smoke 156 -> 159 checks · 80 topics now highlight their tables
+37 gates green · search 51 · resilience 63 · axe 29 · mobile 9
 ```

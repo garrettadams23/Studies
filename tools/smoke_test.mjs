@@ -285,6 +285,40 @@ if (otherDomain) {
     crossed.shown === crossed.promised && crossed.promised > 0 && crossed.marks > 0,
     `${otherDomain}: ${crossed.shown} shown of ${crossed.promised} promised, ${crossed.marks} highlights`);
 }
+// A word whose only occurrence in its topic is a table cell. `.dw` is eighteen
+// pixels of padding, so for years the highlight list was the only thing making
+// it structural — and the 80 topics whose lookup table sits outside one opened
+// on a hit and marked nothing. `pacman` appears in linux's *Package Management*
+// exactly once, in a table row, which makes it the cleanest possible probe.
+//
+// The second half is the guard the first half needs: adding `table` to the
+// list means a table nested in a `.dw` is visited twice, and a highlighter that
+// is not idempotent answers that with `<mark><mark>term</mark></mark>`.
+const tableHl = await page.evaluate(async () => {
+  runSearch("pacman");
+  await new Promise(r => setTimeout(r, 300));
+  const topic = [...document.querySelectorAll(".topic")]
+    .find(t => t.querySelector(".topic-name")?.textContent.trim() === "Package Management");
+  const inTable = topic
+    ? [...topic.querySelectorAll("table")]
+        .reduce((n, tb) => n + tb.querySelectorAll("mark.sh").length, 0)
+    : -1;
+  runSearch("raid");
+  await new Promise(r => setTimeout(r, 300));
+  const nested = document.querySelectorAll("mark.sh mark.sh").length;
+  const marks = document.querySelectorAll("mark.sh").length;
+  runSearch("");
+  await new Promise(r => setTimeout(r, 200));
+  return { inTable, nested, marks, left: document.querySelectorAll("mark.sh").length };
+});
+check("a search hit inside a lookup table is highlighted",
+  tableHl.inTable > 0, `${tableHl.inTable} mark(s) in the table`);
+check("highlighting a table twice does not nest the marks",
+  tableHl.nested === 0 && tableHl.marks > 0,
+  `${tableHl.marks} marks, ${tableHl.nested} nested`);
+check("clearing a search removes every mark it made",
+  tableHl.left === 0, `${tableHl.left} left behind`);
+
 // ── search operators ────────────────────────────────────────────────────────
 // `domain:` and quoted phrases narrow a 1,300-topic site to something a reader
 // can use. The cases worth protecting are the ones that fail quietly: an

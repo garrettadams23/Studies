@@ -517,20 +517,31 @@ def unindented_nesting(text):
 
 # A table sitting straight in a .topic-body, with no .dw around it.
 #
-# Not a style rule. `script.js` highlights search hits inside a fixed list of
-# elements — `.topic-name, .concept-title, .concept-label, .concept-desc, .dw,
-# .dt, .code-block` — and a bare table is in none of them. So the topic opens on
-# a match and highlights nothing, and the reader is left to scan a lookup table
-# by eye for a word the page has already found.
+# **This check no longer means what it was written to mean, and the honest
+# thing is to say so rather than keep quoting the old argument.**
 #
-# Proved in a browser before this was written, and the cleanest possible
-# evidence: searching "Joint Comms" opened two `military` topics on one page,
-# and the one whose table sat in a `.dw` got five highlights while the one whose
-# table did not got zero. Same query, same page, one difference.
+# It was written because `script.js` highlighted search hits inside a fixed list
+# of elements that did not include `table`, so a bare table opened on a match
+# and marked nothing. That was proved in a browser — searching "Joint Comms"
+# opened two `military` topics, and the one whose table sat in a `.dw` got five
+# highlights while the one whose table did not got zero — and six topics were
+# fixed by wrapping.
 #
-# Six existed, all of them the site's oldest flat lookup tables — the four
-# `shortcut` OS tables, `military`'s code list and `ai`'s glossary — while the
-# other 32 `shortcut` topics had used a `.concept-card` for years.
+# Wrapping six was the wrong generalisation. A later count found **80** topics
+# with the same defect in a shape this regex cannot see: a table that follows a
+# *closed* `.concept-card` is just as bare as one that opens the body, and
+# `pacman` reached linux's *Package Management* and highlighted nothing. `.dw`
+# turns out to be eighteen pixels of padding; the highlight list was the only
+# thing making it structural. So `table` went into the highlight list, which
+# fixed all 80 at once and every future one, and `smoke_test.mjs` now gates it
+# from the reader's side where it belongs.
+#
+# What is left here is a layout rule: a table with no `.dw` loses the padding
+# every other table on the site has. Kept at its original narrow shape — a table
+# as the literal first child of `.topic-body`, which is also where the missing
+# padding looks worst — and deliberately *not* widened to the 80, because
+# failing a build over 18px of padding is the style rule wearing a correctness
+# rule's clothes that this file warns about elsewhere.
 _BARE_TABLE = re.compile(r'<div class="topic-body">\s*<table')
 
 
