@@ -74,6 +74,16 @@ jobs:
       - name: Self-test the markup checker
         run: python tools/check_markup.py --self-test
 
+      # `var(--bg1)` is not an error anywhere: the declaration is silently
+      # dropped and the element inherits, so a wrong colour looks deliberate.
+      # One such typo shipped the search-result badge with failing contrast on
+      # ten domains for as long as the badge existed.
+      - name: Self-test the CSS custom-property checker
+        run: python tools/check_css_vars.py --self-test
+
+      - name: Check every CSS custom property read is declared
+        run: python tools/check_css_vars.py
+
       # The acronym censuses ask "does this domain render X" for every entry in
       # the dictionary. Asking it per acronym was 184 of this gate's 201
       # seconds, so it is asked once per domain and answered from an index —

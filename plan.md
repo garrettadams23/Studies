@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **41**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **42**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -50,10 +50,10 @@ run rather than letting them pass as verified:
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,117 chars**, median 3,705 — the number a deepening wave has to move | `depth_report.py` |
-| Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **51** · resilience **63** · axe 29/29 · mobile 14/14 · visual 2/2 · backup 3/3 | `make all` |
+| Gates | **39**, and the same 39 in `make all` and in CI | `check_gates.py` |
+| Gate results | check · smoke **163** · search **51** · resilience **63** · axe 31/31 · mobile 14/14 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **41** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **42** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4142,4 +4142,113 @@ the corpus while the branches that write to that element do not.
 ```
 mobile 9/9 -> 14/14 · 52 overflowing queries -> 0 · 37 gates green
 smoke 163 · search 51 · resilience 63 · axe 29 · visual 2 · backup 3
+```
+
+---
+
+## Session — the question found three more, and one of them was a typo
+
+The last record turned an accident into a question: **which of the reader's
+states does this check never enter?** Asked of the four remaining gates, it
+answered immediately for `a11y_test.mjs`, whose docstring is admirably precise
+about its coverage — the shell, an open domain with an expanded topic, a study
+dialog, in both themes. Not a page mid-search.
+
+Searching builds elements that exist in no other state: `mark.sh` highlights
+inside prose, code and tables; the see-also strips and note composers that open
+with each matched topic; the per-domain match badges; and, as of two records
+ago, the named-topic link. None of it had ever been scanned.
+
+Adding one line — `runSearch("agile")` before a scan — turned up **three real
+contrast failures**, in three layers.
+
+### One: the code-comment colour was already failing
+
+```
+.code-block .com   #4a6080 on #070c18   3.05:1     — under AA for normal text
+```
+
+Not a search bug at all. It has been failing since the colour was chosen, and
+the a11y gate never saw it because the topic it expands happens to contain no
+code comments. Searching opens topics that do.
+
+One value cannot serve both grounds — `#4a6080` is a comfortable 6.13:1 on the
+light code block — so it is two now, `#6b83a8` in dark at 5.06:1.
+
+### Two: the highlighter made what it found harder to read
+
+```
+mark.sh { color: inherit }   dim comment on the mark's tint   1.80:1
+```
+
+`inherit` hands a highlight the contrast of whatever text it wrapped, so
+marking the dimmest thing on the page produced the least legible thing on the
+page. **A search that makes its own hit harder to read is worse than one that
+misses it.** Stated explicitly now: 9.8:1 dark, 14.3:1 light, whatever it wraps.
+The cost is a marked word losing its accent colour for the seconds it is marked,
+which is the right trade.
+
+### Three: a variable that does not exist
+
+```css
+.domain-matches { color: var(--bg1); background: var(--accent); }
+```
+
+**There is no `--bg1` on this site.** The three are `--bg`, `--bg2`, `--bg3`.
+
+This is the one worth internalising, because CSS handles it in the worst
+possible way: an undefined custom property with no fallback makes the
+declaration *invalid at computed-value time*, which does not fall back to the
+property's initial value — it **inherits**. So the badge quietly took the domain
+header's light text and drew it on a bright accent, failing contrast on ten of
+the thirty domains, and looked entirely deliberate while doing it. No console
+warning, no missing colour, no visual "something is broken" — just a plausible
+wrong answer, in a state nothing scanned.
+
+Fixing the name left exactly one accent of thirty still short: `.domain-eng` at
+`#6366f1` gives 4.46:1, four hundredths under. Three steps lighter to `#7173f4`
+clears it at 5.18 — and lifts the same accent's contrast *as text* on `--bg2`
+from 4.20 to 4.88, a second reading that was also under AA and that nothing had
+asked about.
+
+### The gate, and why static is the right shape
+
+`a11y_test.mjs` now finds this class of bug in the states it visits.
+`check_css_vars.py` finds it in every rule in the file, whether or not anything
+renders it today, and it is the sharp kind of signal rather than the plausible
+kind: **a name is declared somewhere in the file or it is not.** No threshold,
+no score, nothing for a reader to overrule. A `var(--x, fallback)` is exempt —
+naming a fallback is how you deliberately read a maybe-unset property, which
+`var(--accent, var(--cyan))` does thirty times over.
+
+Scoped to `style.css`, because `data/*.html` contains `var(--gap)` and
+`var(--spacing-md)` inside code samples that *teach* custom properties, and
+flagging a teaching example would be the instrument being wrong about what it is
+reading.
+
+One fixture was written expecting 0 and corrected to 1 when the check disagreed,
+because the check was right: in `var(--b, var(--c))` the innermost name is the
+one with nowhere left to fall back to, and if neither is declared the
+declaration can never resolve.
+
+### And a dead block, deleted with proof
+
+The same sweep found `var(--text-muted)` inside a `[data-domain="mental-disorders"]`
+block — a domain that does not exist, under a `body.light` selector this site has
+never used. Dead twice over, 23 lines. `style_equiv.mjs` compared 153,187
+elements across all thirty domains against the previous commit and found exactly
+two changes, both intended:
+
+```
+650 × rgb(74,96,128) -> rgb(107,131,168)     the comment colour
+  9 × rgb(99,102,241) -> rgb(113,115,244)    the eng accent
+```
+
+Nothing from the deletion. That is the tool doing precisely what it was built
+for, and it is worth remembering it exists: **a refactor with a proof attached
+is a different object from a refactor.**
+
+```
+gates 37 -> 39 · axe 29 -> 31 scans · lint 46 fixtures · css-vars 7 fixtures
+smoke 163 · search 51 · resilience 63 · mobile 14 · visual 2 · backup 3
 ```

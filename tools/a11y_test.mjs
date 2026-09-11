@@ -124,6 +124,19 @@ for (const theme of ["dark", "light"]) {
   await page.evaluate(() => stOpenProgress());
   await page.waitForTimeout(300);
   record(`a study dialog (${theme})`, await scan());
+
+  // The searching state, which nothing here entered until a phone-width bug
+  // was found in it. Searching is not a filtered version of the browsing
+  // page — it builds elements that exist in no other state: `mark.sh`
+  // highlights inside prose, code and tables, the see-also strips and note
+  // composers that open with each matched topic, and the named-topic link
+  // under the search bar. A query wide enough to open several domains is the
+  // one that renders the most of them at once.
+  await page.evaluate(() => { if (typeof stClose === "function") stClose(); });
+  await page.evaluate(() => runSearch("agile"));
+  await page.waitForTimeout(400);
+  record(`a page mid-search (${theme})`, await scan());
+  await page.evaluate(() => runSearch(""));
 }
 
 // ── the dialog's focus contract, which axe cannot see ───────────────────────
