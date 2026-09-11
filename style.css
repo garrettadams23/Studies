@@ -2332,6 +2332,21 @@ mark.sh {
 
 @media (max-width: 600px) {
   .search-bar { top: 40px; padding: 8px 12px; }
+  /* The counter is `nowrap` so a short count never wraps mid-phrase beside the
+     input. On a phone its longer messages — "no exact match, so these contain
+     all your words" is 345px of unbreakable text — pushed the whole page
+     sideways: 52 of the 85 standing reader queries scrolled a 375px viewport,
+     every one of them by exactly the counter's overshoot. `mobile_test.mjs`
+     never saw it because it opens domains and never types.
+
+     Below the breakpoint the row wraps instead: the counter drops under the
+     input and reads left-to-right, which is also where there is room for it. */
+  .search-inner { flex-wrap: wrap; row-gap: 2px; padding-bottom: 6px; }
+  .search-count {
+    white-space: normal; text-align: left; min-width: 0;
+    flex-basis: 100%; order: 3;
+  }
+  .search-input { flex: 1 1 60%; }
 }
 
 /* ── NOTEPAD SLIDE TAB ──────────────────────────────────────────────────── */

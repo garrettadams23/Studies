@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **40**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **41**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,117 chars**, median 3,705 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **51** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **163** · search **51** · resilience **63** · axe 29/29 · mobile 14/14 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **40** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **41** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4056,4 +4056,90 @@ and this is the fourth instance. Next wave.
 
 ```
 smoke 159 -> 163 checks · 37 gates green · search 51 · dom at rest 475
+```
+
+---
+
+## Session — fifty-two of eighty-five searches scrolled a phone sideways
+
+The last record ended by noticing this and calling it the next wave. It took one
+measurement to find and one media query to fix, and the interesting part is
+neither.
+
+### The measurement
+
+```
+85 standing reader queries, rendered at 375px
+  52 scroll the page sideways
+  overshoot clusters at 198–223px, almost never anything else
+```
+
+A number that constant is one element, not a content problem. Ruling out the
+obvious first: opening every topic in five domains **by hand** overflows by 0px.
+So it is not tables, not code blocks, not the deferred content — it is something
+search does that browsing does not.
+
+### Two false leads, both my own instrument
+
+The first probe named `DIV.filter-inner` at 3,890px wide. That is the domain chip
+strip, which lives inside an `overflow-x: auto` parent and scrolls correctly —
+my "widest element" search had simply not asked whether anything contained it.
+
+The second, with containment checked, named `DIV.notepad-panel` at right=750.
+Also wrong: the off-canvas panel is parked past the right edge and clipped, and
+it is there identically when nothing is being searched and the overflow is zero.
+
+The answer was the third row, and the arithmetic gives it away:
+
+```
+search "wifi keeps dropping"   over=198   SPAN.search-count  right=573   573-375 = 198
+search "raid"                  over=238   SPAN.search-count  right=613   613-375 = 238
+```
+
+**Exactly the overshoot, every time.** When a number matches to the pixel, stop
+looking for a second cause.
+
+### The bug
+
+`.search-count` is `white-space: nowrap`, which is right for what it usually
+holds — *"9 matches in 3 domains"* should not wrap mid-phrase beside the input.
+But the same element also carries the long branches:
+
+> `no exact match, so these contain all your words`
+> `also matching "Transmission Control Protocol"`
+
+345 pixels of unbreakable text in a 375-pixel viewport, inside a flex row that
+was not allowed to wrap. Below 600px the row wraps now and the counter takes its
+own line, left-aligned, where there is room for it. 52 → 0.
+
+### The part worth keeping
+
+`mobile_test.mjs` has passed 9/9 for as long as it has existed, and its docstring
+is precise about what it does: opens a spread of table-heavy domains, expands
+every topic, measures. **It never types.** Browsing and searching are different
+layouts and it only ever tested the first.
+
+That is the fourth instrument this run to be measuring the state nobody is in:
+
+```
+query_probe    counted hits, so one wrong card scored as answered
+search_test    fixed that years ago with a wanted-topic field — the census had not
+lint_content   the bare-table check saw one shape of a defect that had two
+mobile_test    tested browsing, on a page whose other half is searching
+```
+
+None of the four was wrong about what it measured. Each was wrong about what a
+reader does. **The generalisable question is not "does this check pass" but
+"which of the reader's states does it never enter"** — and it is answerable in
+about a minute per tool, which is much cheaper than it sounds and has now found
+four real defects.
+
+The new pass picks its queries by the *shape of the message* rather than the
+subject — one that widens, one that lists acronym alternates, one with an
+operator scope, one that finds nothing — because a subject-based list drifts with
+the corpus while the branches that write to that element do not.
+
+```
+mobile 9/9 -> 14/14 · 52 overflowing queries -> 0 · 37 gates green
+smoke 163 · search 51 · resilience 63 · axe 29 · visual 2 · backup 3
 ```
