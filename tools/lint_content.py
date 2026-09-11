@@ -880,6 +880,13 @@ def main():
                 f"{name}: one badge spelled several ways in one domain — {shown}. "
                 f"A reader sees these side by side; pick the domain's own form")
 
+        for line, snippet in gt_in_comment(text):
+            errors.append(
+                f"{name}:{line}: an HTML comment inside a .topic contains '>' — "
+                f"{snippet!r}. Every tool here strips markup with <[^>]+>, which "
+                f"stops at that '>' and reads the rest as card content. Write "
+                f"'at least' or '&gt;'")
+
         for (line,) in bare_tables(text):
             errors.append(
                 f"{name}:{line}: a table sits directly in .topic-body with no "
@@ -1182,6 +1189,82 @@ BARE_TABLE_FIXTURES = [
 ]
 
 
+# An HTML comment that contains a ">" survives a naive tag strip.
+#
+# Sixteen tools in this repo strip markup with `re.sub(r"<[^>]+>", "", ...)`,
+# and that regex stops at the first ">" it meets. A comment reading
+# `<!-- did not clear the >=15-card bar -->` is therefore not one tag but two
+# fragments with `=15-card bar` as plain text between them, and every one of
+# those tools reads that text as content: depth_report counts its characters,
+# near_duplicates folds it into an overlap score, the acronym annotator would
+# happily expand inside it.
+#
+# Three such comments exist. All three sit *between* topics, so nothing
+# measures them and no number on this site is currently wrong. That is the
+# whole reason for this check: **the invariant holds by luck rather than by
+# construction**, and one comment written inside a card body with a ">" in it
+# would silently move numbers that appear in plan.md's measured-state table
+# with nothing to say it had happened.
+#
+# Gating the condition is cheaper and more complete than hardening sixteen
+# regexes, because a comment that cannot contain ">" cannot break any of them.
+# The fix is always trivial — write "at least 15" or "&gt;=15".
+#
+# Scoped to comments inside a .topic block, which are the only ones any tool
+# reads. The file-level ones outside a topic are left alone: they are where
+# the domain's own bookkeeping lives, and no measurement ever reaches them.
+_COMMENT_RE = re.compile(r"<!--(.*?)-->", re.S)
+
+
+def _topic_extent(block):
+    """Offsets of the .topic element inside its line-range block.
+
+    `topic_blocks` runs from one topic's line to the next one's, so its tail
+    holds whatever sits *between* two topics — and on this site that is exactly
+    where the domain bookkeeping comments live. Balancing the divs from the
+    opening tag gives the element itself, which is the only region any tool
+    measures. `check_markup.py` already gates the balance this relies on.
+    """
+    m = TOPIC_START_RE.search(block)
+    if not m:
+        return None
+    depth, i = 0, m.start()
+    for tag in re.finditer(r"<div\b|</div>", block[m.start():]):
+        depth += 1 if tag.group(0) == "<div" else -1
+        if depth == 0:
+            return m.start(), m.start() + tag.end()
+    return m.start(), len(block)
+
+
+def gt_in_comment(text):
+    """(line, snippet) for a comment inside a .topic that contains a ">"."""
+    out = []
+    for start, block in topic_blocks(text):
+        extent = _topic_extent(block)
+        if not extent:
+            continue
+        lo, hi = extent
+        for m in _COMMENT_RE.finditer(block, lo, hi):
+            if ">" in m.group(1):
+                line = start + block.count("\n", 0, m.start())
+                out.append((line, re.sub(r"\s+", " ", m.group(1)).strip()[:60]))
+    return out
+
+
+GT_COMMENT_FIXTURES = [
+    ('<div class="topic"><!-- cards under the >=15 bar --><div class="concept-card"></div></div>',
+     1, "the defect: a comment inside a topic whose text leaks past <[^>]+>"),
+    ('<div class="topic"><!-- cards under the 15 bar --><div class="concept-card"></div></div>',
+     0, "the same comment without the > is inert"),
+    ('<!-- cards under the >=15 bar --><div class="topic"><div class="concept-card"></div></div>',
+     0, "outside a topic, where nothing measures it"),
+    ('<div class="topic"><!-- a -> b, then\n     c >= d --></div>',
+     1, "a multi-line comment is still one comment"),
+    ('<div class="topic"><div class="topic-body"></div></div>\n<!-- the >=15 note -->',
+     0, "the tail of a block is between two topics, not inside one"),
+]
+
+
 BADGE_FIXTURES = [
     ('<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>'
      '<div class="topic"><span class="topic-badge">Linux • Ops</span></div>',
@@ -1231,6 +1314,11 @@ def self_test():
         if got != want:
             failures += 1
             print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in GT_COMMENT_FIXTURES:
+        got = len(gt_in_comment(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     for text, want, why in BARE_TABLE_FIXTURES:
         got = len(bare_tables(text))
         if got != want:
@@ -1256,7 +1344,7 @@ def self_test():
                   f"index={fast}, expected={want}")
     n = (len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
          + len(WRAPPED_COMMENT_FIXTURES) + len(NESTING_FIXTURES)
-         + len(BARE_TABLE_FIXTURES)
+         + len(BARE_TABLE_FIXTURES) + len(GT_COMMENT_FIXTURES)
          + len(BADGE_FIXTURES)
          + len(SEE_FIXTURES))
     print(f"self-test: {n} fixtures, {failures} failure(s).")

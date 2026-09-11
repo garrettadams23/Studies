@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **36**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **37**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **37**, and the same 37 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **156** · search **51** · resilience **63** · axe 29/29 · mobile 9/9 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **36** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **37** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -3672,4 +3672,117 @@ next session trusts it.
 ```
 search 44 -> 51 checks · probe 66 -> 78 queries · 37 gates green
 smoke 156 · resilience 63 · axe 29 · mobile 9 · visual 2 · backup 3
+```
+
+---
+
+## Session — I built the detector the last session asked for, and it should not ship
+
+The record above ended on a rule: *an instrument that scores by counting will
+call a wrong answer a right one*, and it named `near_duplicates.py` as the last
+one that still does. Acting on my own finding meant building something. Most of
+this session's value is in why the thing I built is not in the repo.
+
+### What a sharp signal would have to look like
+
+Body-similarity scoring is the obvious idea and the obvious trap: over 1,549
+topics, shared vocabulary fires everywhere, and this file's oldest rule says a
+plausible detector that fires broadly is the instrument being wrong. The version
+worth testing is the one whose signal a language's grammar makes near-impossible:
+**a long verbatim phrase in two topics.** Two independently written cards do not
+produce the same fourteen-word sequence by accident.
+
+```
+N=8   prose+code   1,625 shared grams · 3,136 pairs     ← unusable
+N=10  prose only     346 shared grams · 1,089 pairs
+N=12  prose only     130 shared grams ·   701 pairs
+N=14  prose only      49 shared grams ·    24 topic-sets
+```
+
+Forty-nine phrases is a list a person can read. So I read it.
+
+### The two loudest findings were both the instrument
+
+**First:** one 14-gram appears in **34 topics** —
+
+> *"You can't make someone make the right choice — but you can pick up the
+> pieces"*
+
+That is a house maxim, deliberately threaded through the site, and three of the
+34 write it *"yet you can"* instead. Not duplication. The detector's strongest
+signal was the corpus working as designed.
+
+**Second:** a phrase shared by a career negotiation topic and a Druidism topic —
+
+> *"15 card bar they split three ways rather than folding to one home which"*
+
+Which is not prose at all. It is an **HTML comment**:
+
+```html
+<!-- Four cards did not clear the >=15-card bar. They split three ways
+     rather than folding to one home, which is why this took a decision. -->
+```
+
+`re.sub(r"<[^>]+>", "", …)` stops at the first `>` it meets, so the `>` in
+`>=15` ends the tag early and the rest of the comment becomes plain text. My
+extractor read a bookkeeping note as card content in two domains.
+
+### The real question that opened
+
+Sixteen tools in this repo strip markup with that exact regex. So: **is any
+shipped number wrong?**
+
+Three comments in the corpus contain a `>`. All three sit *between* topics —
+`career.html:1397`, `philosophy.html:1272`, `philosophy.html:1808`. Nothing
+measures them, nothing indexes them, and `folded in from the former` and
+`did not clear the` both return zero results in the live search. No number on
+this site is wrong.
+
+But it is wrong **by luck**. One comment written inside a card body with a `>`
+in it would move `depth_report`'s character counts and `near_duplicates`'
+overlap scores — two numbers that appear in the measured-state table at the top
+of this file — with nothing anywhere to say it had happened.
+
+### One gate instead of sixteen hardenings
+
+The fix is not to teach sixteen regexes about comments. It is to make the
+condition that breaks them impossible: `lint_content.py` now fails on a comment
+inside a `.topic` containing `>`. A comment that cannot contain `>` cannot break
+any stripper, present or future, and the correction is always trivial — write
+*at least 15* or `&gt;=15`.
+
+Getting the scope right took a fixture failure. `topic_blocks()` runs from one
+topic's line to the *next* topic's line, so its tail holds precisely the
+between-topic comments that are fine — the first version flagged all three real
+ones. The check now balances divs from the opening tag to find the element
+itself, which `check_markup.py` already guarantees is balanced.
+
+```
+fixture "outside a topic, where nothing measures it"  found 1, expected 0
+after balancing                                       46 fixtures, 0 failures
+in-card comment planted in eng.html                   eng.html:6388  exit 1
+removed                                               clean
+```
+
+### Why the detector itself is not checked in
+
+Strip the house maxim and the comment artifact and the residual is about three
+pairs of genuinely reused sentences — two BCP/DR cards sharing an
+RTO/RPO definition, a printers card and a media-sanitisation card sharing a line
+about leased drives. Real, minor, and already inside `near_duplicates.py`'s
+existing reach by title.
+
+So the honest answer to the last session's rule is: **the sharp version of a
+body detector finds one deliberate device, one bug in itself, and three pairs
+worth a shrug.** A tool checked in for that yield teaches the next session to
+skim its output, which is worse than not having it. What survives is the
+measurement, written down here so nobody spends another session deriving it, and
+one gate on the defect the measurement actually found.
+
+The lesson generalises past this repo. *An instrument that finds nothing is a
+result.* Reporting it as one — rather than lowering the threshold until it finds
+something — is the difference between a census and a horoscope.
+
+```
+lint 41 -> 46 fixtures · 37 gates green · smoke 156 · search 51 · resilience 63
 ```
