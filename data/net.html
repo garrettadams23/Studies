@@ -2859,7 +2859,7 @@ out.pcap -c 30
   <div class="topic-header">
     <span class="topic-icon">📖</span>
     <span class="topic-name">DNS <span class="acro-exp">(Domain Name System)</span> — The Internet's Phone Book</span>
-    <span class="topic-badge">NET • Start Here</span>
+    <span class="topic-badge">Net+ • Start Here</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
@@ -3559,7 +3559,7 @@ curl -6 https://ipv6.google.com</pre>
 
 <!-- BEGINNER15-NET v1 -->
 <!-- ── TOPIC: VPNs AND TUNNELING ─────────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🔐</span>
     <span class="topic-name">VPNs <span class="acro-exp">(Virtual Private Network)</span> &amp; Tunneling — Secure Connections Over Untrusted Networks</span>
@@ -3650,6 +3650,37 @@ ssh -J bastion.example.com user@internal-host</pre>
       <div class="concept-label">ZERO TRUST NETWORK ACCESS</div>
       <div class="concept-title">The VPN Replacement</div>
       <div class="concept-desc">Traditional VPNs give you access to the whole network once connected (overly trusting). Zero Trust Network Access (ZTNA) flips this: <em>"never trust, always verify."</em> Every request is authenticated and authorized individually, granting access only to specific applications — not the whole network. Tools like Cloudflare Access, Tailscale, and Zscaler implement this. Increasingly replacing legacy VPNs.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Symptom</div>
+      <div class="concept-title">Why the Tunnel Keeps Dropping</div>
+      <div class="concept-desc">
+        A VPN is a long-lived flow crossing equipment that reaps idle sessions and rewrites
+        addresses, none of which knows it is carrying a tunnel. So most "it keeps disconnecting"
+        tickets are not the VPN failing — they are something in the middle timing it out, or the
+        path changing underneath it. As with any intermittent fault, <strong>when it drops is
+        worth more than what it is</strong>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause</th><th>What the user sees</th><th>What fixes it</th></tr></thead>
+          <tbody>
+            <tr><td>NAT <span class="acro-exp">(Network Address Translation)</span> or firewall idle timeout on the path</td><td>Drops after a consistent quiet period, never while busy</td><td>Keepalives inside the tunnel, set shorter than the shortest timeout on the path</td></tr>
+            <tr><td>The client's network changed</td><td>Drops moving between Wi-Fi and cellular, or between access points</td><td>IKEv2 with MOBIKE, or WireGuard, which identifies a peer by key rather than by address</td></tr>
+            <tr><td>MTU <span class="acro-exp">(Maximum Transmission Unit)</span> and fragmentation</td><td>Connects, then hangs on anything large — a file, a page of images — and gets reported as a drop</td><td>Lower the tunnel MTU or clamp the TCP <span class="acro-exp">(Transmission Control Protocol)</span> MSS; test with growing pings, do-not-fragment set</td></tr>
+            <tr><td>Rekey or session lifetime</td><td>Drops at an exact interval — every eight hours, every sixty minutes</td><td>Mismatched lifetimes at the two ends; align them</td></tr>
+            <tr><td>UDP <span class="acro-exp">(User Datagram Protocol)</span> blocked on that network</td><td>Never connects from one place, fine everywhere else</td><td>Fall back to TCP 443 where the client supports it</td></tr>
+            <tr><td>DNS <span class="acro-exp">(Domain Name System)</span> resolving outside the tunnel</td><td>Connected, but internal names do not resolve</td><td>Split-DNS configuration — the tunnel is up and is not the problem</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Ask when it drops before asking what it is.</strong> A constant interval is a
+          rekey or a session lifetime; an idle period is a timeout on the path; a change of network
+          is a mobility problem. Two of these six rows are not the VPN failing and one of them is
+          not a disconnection at all — which is why "the VPN keeps dropping" is a symptom to
+          reproduce with a clock, not a diagnosis to act on.
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -7059,7 +7090,7 @@ Nobody hears anything, so media did not.</pre>
 </div>
 
 <!-- ── TOPIC: WIRELESS TROUBLESHOOTING ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">📶</span>
     <span class="topic-name">Wireless Troubleshooting — Roaming, Sticky Clients &amp; "It's Slow"</span>
@@ -7120,6 +7151,37 @@ Nobody hears anything, so media did not.</pre>
         <div class="concept-desc verdict">
           Record which test answered it in the ticket. Wireless complaints recur, and a note saying
           "wired was equally slow — it was the VPN <span class="acro-exp">(Virtual Private Network)</span>" saves the next engineer the whole investigation.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Symptom</div>
+      <div class="concept-title">Dropping Is Not Slow — Reading a Client That Disconnects</div>
+      <div class="concept-desc">
+        Everything above is about a client that stays associated and performs badly. A client
+        that <em>disconnects</em> is a different fault with different causes, and the instinct —
+        survey the coverage — is usually wrong, because most drops on an otherwise healthy
+        network are not about signal at all. What names the cause is not the RSSI <span class="acro-exp">(Received Signal Strength Indicator)</span> reading. It is
+        <strong>who drops and when</strong>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Pattern</th><th>What it points at</th><th>First check</th></tr></thead>
+          <tbody>
+            <tr><td>Everyone on one AP at once, 5 GHz only</td><td>A DFS <span class="acro-exp">(Dynamic Frequency Selection)</span> radar event — the AP must leave the channel within seconds, and clients that ignore the channel-switch announcement fall off</td><td>The controller's DFS event log; park that AP on a non-DFS channel to confirm</td></tr>
+            <tr><td>Everyone, at the same interval, on an 802.1X SSID <span class="acro-exp">(Service Set Identifier)</span></td><td>Session timeout forcing reauthentication against a RADIUS <span class="acro-exp">(Remote Authentication Dial-In User Service)</span> server that is slow or unreachable</td><td>RADIUS latency and the Session-Timeout attribute — not the radio</td></tr>
+            <tr><td>One user, one device model, repeatedly</td><td>Power saving or driver behaviour: the client sleeps and misses beacons</td><td>Update the driver and relax aggressive power saving before touching the AP</td></tr>
+            <tr><td>Stays connected, loses the network</td><td>Not RF at all — a DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> scope with no free leases, or leases too short for the population</td><td>Free-lease count in that scope at the time of the complaint</td></tr>
+            <tr><td>Only at range, only on newer clients</td><td>Band steering withholding 2.4 GHz responses, leaving a distant client no path back</td><td>Steering thresholds; the fix is almost always to relax them</td></tr>
+            <tr><td>Started after a config change, one SSID only</td><td>Protected Management Frames (802.11w) set to required where a client cannot do it</td><td>That SSID's setting against the oldest client that has to work</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The population and the clock name the cause before any survey tool does.</strong>
+          Everyone at once is infrastructure; one device model is a driver; a fixed interval is
+          authentication; and keeping the association while losing the network is not wireless at
+          all. Decide which of those four you have first — coverage is the last hypothesis on this
+          list, not the first, and it is the only one that costs a site visit to test.
         </div>
       </div>
     </div>

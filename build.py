@@ -166,7 +166,7 @@ _CHEV_RE = re.compile(r'(\s*)<span class="topic-chev">')
 def stamp_reading_time(body):
     """Stamp `data-read` on every topic and render it beside the badge.
 
-    plan.md Phase 10 T6. Cards on this site run from 900 to 15,000 characters
+    plan-archive.md Phase 10 T6. Cards on this site run from 900 to 15,000 characters
     with no outward sign of which is which, so a reader deciding whether to
     open one is guessing. Derived at build time from the plain-text length,
     because the length is already known here and nothing about it needs to be
@@ -217,7 +217,7 @@ _ADVANCED_RE = re.compile(r"\b(advanced|expert|deep)\b", re.I)
 def stamp_level(body):
     """Stamp `data-level` on every topic, read from its badge.
 
-    plan.md Phase 10 T7. The site teaches at two levels and the only outward
+    plan-archive.md Phase 10 T7. The site teaches at two levels and the only outward
     sign is a badge that sometimes reads *Beginner*, so the beginner layer is
     discoverable by accident rather than filterable.
 
@@ -513,6 +513,44 @@ def build_paths():
 _SW_VERSION_RE = re.compile(r'(const CACHE_VERSION = ")[^"]*(";)')
 
 
+_SITEMAP_LASTMOD_RE = re.compile(r"(<lastmod>)[^<]*(</lastmod>)")
+
+
+def stamp_sitemap(reviewed_months):
+    """Set sitemap.xml's <lastmod> from the newest freshness stamp in the content.
+
+    It said `2026-07-31` for months of daily edits, because nothing derived it —
+    the seventh thing in this repository found quoting a number about itself that
+    was true once. A crawler is the one reader who cannot tell.
+
+    Three sources were possible and two are wrong:
+
+      * **A build timestamp** makes every build differ from the last, which
+        `tools/check_determinism.py` exists to forbid — two runs over unchanged
+        sources must produce identical bytes.
+      * **The last commit date** is circular: the commit that writes the date
+        changes the date, so the file is dirty the moment it is committed.
+      * **The newest `data-reviewed` month** is content-derived, changes exactly
+        when the content's own claim about its freshness changes, and is stable
+        across rebuilds. That is what `lastmod` is supposed to mean.
+
+    Written as `YYYY-MM`, which is a complete W3C Datetime and is the precision
+    the site actually has. Padding it to a day would be inventing one.
+    """
+    sitemap = ROOT / "sitemap.xml"
+    if not sitemap.exists() or not reviewed_months:
+        return None
+    newest = max(reviewed_months)
+    text = sitemap.read_text(encoding="utf-8")
+    if not _SITEMAP_LASTMOD_RE.search(text):
+        raise SystemExit("error: sitemap.xml has no <lastmod> to stamp.")
+    updated = _SITEMAP_LASTMOD_RE.sub(rf"\g<1>{newest}\g<2>", text)
+    if updated != text:
+        sitemap.write_text(updated, encoding="utf-8")
+        print(f"  + sitemap lastmod -> {newest}")
+    return newest
+
+
 def stamp_sw_version(page_bytes):
     """Derive the service worker's cache version from what it precaches.
 
@@ -640,6 +678,9 @@ def main():
     out_path = ROOT / "index.html"
     out_path.write_text(output, encoding="utf-8")
     stamp_sw_version(output.encode("utf-8"))
+    stamp_sitemap(_REVIEWED_RE.findall("".join(
+        (DATA / f"{p.name}").read_text(encoding="utf-8")
+        for p in sorted(DATA.glob("*.html")))))
     print(f"Built {out_path} ({len(output):,} chars, {len(output.encode()):,} bytes)")
 
 

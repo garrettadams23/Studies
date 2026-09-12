@@ -1099,10 +1099,16 @@ header p {
   border-color: #cbd5e1;
   color: #1e293b;
 }
+/* Two values because one cannot pass both grounds. #4a6080 is 6.13:1 on the
+   light code-block and 3.05:1 on the dark one — under AA for normal text, and
+   invisible to the a11y gate for years because that gate expanded a topic that
+   happened to contain no code comments. Searching opens topics that do, which
+   is how it surfaced. #6b83a8 is 5.06:1 on #070c18 and keeps the hue. */
 .code-block .com {
-  color: #4a6080;
+  color: #6b83a8;
   font-style: italic;
 }
+[data-theme="light"] .code-block .com { color: #4a6080; }
 .code-block .kw {
   color: var(--cyan);
 }
@@ -2235,29 +2241,6 @@ header p {
 .cloud-cell-c2 { background: rgba(  0, 212, 255, 0.08); color: #00d4ff; border: 1px solid rgba(  0, 212, 255, 0.08); }
 .cloud-cell-c3 { background: rgba(  0, 255, 153, 0.08); color: #00ff99; border: 1px solid rgba(  0, 255, 153, 0.08); }
 
-/* mental-disorders-domain */
-
-/* === Mental Disorders Domain === */
-[data-domain="mental-disorders"] .topic-desc {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  margin: 0 0 1rem;
-  line-height: 1.5;
-}
-[data-domain="mental-disorders"] .concept-desc strong {
-  color: var(--cyan);
-}
-body.light [data-domain="mental-disorders"] .topic-desc { color: #444; }
-body.light [data-domain="mental-disorders"] .concept-title { color: #111; }
-body.light [data-domain="mental-disorders"] .concept-label { color: #fff; }
-
-/* mental-disorders-p2 */
-
-/* === Mental Disorders P2 — Conditions for Further Study label === */
-[data-domain="mental-disorders"] .topic-name span[style] {
-  font-weight: 400;
-}
-
 /* === AI-DOMAIN v1 === */
 /* Self-contained table; inherits dark/light automatically via your vars. */
 .ai-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem}
@@ -2304,12 +2287,33 @@ body.light [data-domain="mental-disorders"] .concept-label { color: #fff; }
   white-space: nowrap; flex-shrink: 0; min-width: 60px; text-align: right;
 }
 
+/* The named-topic pointer: one line under the search bar, drawn only when the
+   results are spread over three or more domains and exactly one topic is named
+   after what the reader typed. Full width and wrapping, unlike .search-count
+   beside the input, because it carries a title rather than a number. */
+.search-named {
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+  padding: 6px 4px 0; line-height: 1.5;
+}
+.search-named a {
+  color: var(--cyan); text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+}
+.search-named a:hover, .search-named a:focus-visible { text-decoration: none; opacity: .8; }
+
 /* Highlight matched text */
+/* An explicit foreground rather than `inherit`, because a highlight has to be
+   legible over whatever it lands on and `inherit` hands it the contrast of the
+   text it wrapped. Marking a dim code comment took it from 3.05:1 to 1.80:1 —
+   the search made the thing it found *harder* to read. Stating the colour puts
+   every highlight at 9.8:1 (dark) and 14.3:1 (light) whatever it wraps, at the
+   cost of a marked word losing its accent colour while it is marked, which is
+   the right trade for the two seconds it is on screen. */
 mark.sh {
-  background: rgba(0, 212, 255, 0.25); color: inherit;
+  background: rgba(0, 212, 255, 0.25); color: #e6edf7;
   border-radius: 2px; padding: 0 1px;
 }
-[data-theme="light"] mark.sh { background: rgba(0, 150, 200, 0.2); }
+[data-theme="light"] mark.sh { background: rgba(0, 150, 200, 0.2); color: #0b1220; }
 
 /* Dim non-matching topics during search */
 .topic.search-hidden { display: none; }
@@ -2318,6 +2322,21 @@ mark.sh {
 
 @media (max-width: 600px) {
   .search-bar { top: 40px; padding: 8px 12px; }
+  /* The counter is `nowrap` so a short count never wraps mid-phrase beside the
+     input. On a phone its longer messages — "no exact match, so these contain
+     all your words" is 345px of unbreakable text — pushed the whole page
+     sideways: 52 of the 85 standing reader queries scrolled a 375px viewport,
+     every one of them by exactly the counter's overshoot. `mobile_test.mjs`
+     never saw it because it opens domains and never types.
+
+     Below the breakpoint the row wraps instead: the counter drops under the
+     input and reads left-to-right, which is also where there is room for it. */
+  .search-inner { flex-wrap: wrap; row-gap: 2px; padding-bottom: 6px; }
+  .search-count {
+    white-space: normal; text-align: left; min-width: 0;
+    flex-basis: 100%; order: 3;
+  }
+  .search-input { flex: 1 1 60%; }
 }
 
 /* ── NOTEPAD SLIDE TAB ──────────────────────────────────────────────────── */
@@ -2557,10 +2576,17 @@ mark.sh {
    Only one domain's content is rendered at a time, so a search that reaches the
    whole page has to report the rest of its result somewhere: this pill is how a
    collapsed domain says "there are seven of them in here". */
+/* `--bg1` was never defined anywhere in this file — the variables are --bg,
+   --bg2 and --bg3 — so this declaration was invalid at computed-value time and
+   the badge inherited the header's text colour instead: light text on a bright
+   accent, failing contrast on ten of the thirty domains. It went unseen because
+   the badge only exists while a search is running, and nothing scanned that
+   state until the a11y gate learned to type. --bg is the darkest ground in both
+   themes, which is what a solid accent chip wants behind its text. */
 .domain-matches {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--bg1);
+  color: var(--bg);
   background: var(--accent, var(--cyan));
   border-radius: 2px;
   padding: 2px 8px;
@@ -2620,6 +2646,10 @@ mark.sh {
   .notepad-tab,
   .notepad-panel,
   #back-to-top,
+  /* Added late and missed by this list for as long as it existed — the exact
+     failure the print-pack block below predicts in its own comment. It is
+     position:fixed, so it printed on the first page of every handout. */
+  #study-fab-wrap,
   .topic-tools,
   .topic-read,
   .topic-chev,
@@ -2773,8 +2803,12 @@ mark.sh {
 .chip.c-eng:hover {
   background: rgba(165, 180, 252, 0.12);
 }
+/* #6366f1 was the one accent of thirty that could not carry --bg as text at
+   4.5:1 — 4.46, which the search-only match badge failed on. Nudged three
+   steps lighter, which keeps the indigo and also lifts the accent-as-text
+   ratio on --bg2 from 4.20 to 4.88, a second reading that was under AA. */
 .domain-eng {
-  --accent: #6366f1;
+  --accent: #7173f4;
 }
 
 /* domain: data (scaffolded) */

@@ -2187,7 +2187,7 @@ Restart-Service IntuneManagementExtension</pre>
           <strong class="c-amber">The one worth memorising, again:</strong> exit code 0 in
           the log with "not detected" in the console is <em>always</em> the detection rule
           and never the installer. It is the same failure as its MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> counterpart — see
-          <strong>MECM Deployment &amp; Content Troubleshooting</strong> in this domain,
+          <span class="xref">MECM Deployment &amp; Content Troubleshooting</span> in this domain,
           which describes the identical trap in the other console.
         </div>
       </div>
@@ -2578,6 +2578,36 @@ Get-ComputerInfo -Property OsName, OsVersion, OsBuildNumber, WindowsVersion</pre
           heard from it). Report them separately or the figure you give leadership is
           higher than the truth — and the unknown bucket is exactly where the compromised
           machine lives.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Practice</div>
+      <div class="concept-title">Two Dashboards, Two Numbers — Reconciling Them Without Guessing</div>
+      <div class="concept-desc">
+        Someone will ask why Intune says 94% and Defender says 71%. Both are usually right, and
+        arguing about which tool is broken wastes the meeting. They disagree for three reasons and
+        the reasons resolve in a fixed order &mdash; get the denominator right before you look at
+        anything else, because every later comparison is a ratio against it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <tr><th>Order</th><th>What differs</th><th>How to settle it</th></tr>
+          <tr><td><strong>1. The denominator</strong></td><td>All enrolled devices, versus devices seen in 30 days, versus devices sending diagnostic data. Three populations, never equal</td><td>Pick one and state it on the report. <strong>The gap between the largest and smallest is your real unknown bucket</strong></td></tr>
+          <tr><td><strong>2. The clock</strong></td><td>Device check-in is roughly eight-hourly; fleet reports lag further; a vulnerability scan runs on its own cadence</td><td>Compare snapshots from the same evening, not two dashboards open at once</td></tr>
+          <tr><td><strong>3. The definition</strong></td><td>&ldquo;Installed&rdquo; is not &ldquo;effective&rdquo;. A patch staged and awaiting reboot is done to Intune and open to Defender</td><td>Report pending-reboot as its own state. It is the honest answer and the actionable one</td></tr>
+          <tr><td>The build revision</td><td>Two machines on the same Windows version can be months apart on revision</td><td>Compare <code>OsBuildNumber</code> plus revision, never the version name</td></tr>
+          <tr><td>Not-applicable</td><td>An update that never targeted this hardware counts as green in most views</td><td>Split it out &mdash; see the four-source map above</td></tr>
+        </table>
+        <div class="concept-desc verdict">
+          Row three is where the disagreement usually lives and it is the one worth internalising:
+          <strong>a device that has installed a patch and not rebooted is running the vulnerable
+          code</strong>. Intune has done its job and reports success; the vulnerability scanner reads
+          the running system and reports the hole; nobody is wrong. That is also the number to take to
+          leadership, because it converts a reporting argument into a reboot-enforcement decision,
+          which is a thing somebody can actually approve &mdash; the grace periods in
+          <span class="xref">Compliance Policies Deep — Settings, Grace Periods &amp; What Non-Compliant Costs</span>
+          are where that decision gets implemented.
         </div>
       </div>
     </div>
@@ -4012,7 +4042,7 @@ Remove-PSSession $s
             <div class="topic-header">
               <span class="topic-icon">🔎</span>
               <span class="topic-name">Lost, Stolen &amp; Returning Devices</span>
-              <span class="topic-badge">ENDPOINT • Operations</span>
+              <span class="topic-badge">Endpoint • Operations</span>
               <span class="topic-chev">▶</span>
             </div>
             <div class="topic-body">

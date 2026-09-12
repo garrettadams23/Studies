@@ -2091,6 +2091,67 @@ servers = {}
 <span class="com"># Run it:  uvicorn main:app --reload</span>
 <span class="com"># Auto docs at: http://localhost:8000/docs</span></pre>
     </div>
+      <div class="concept-card">
+        <div class="concept-label">Reference</div>
+        <div class="concept-title">What to Return, and When — the Codes That Actually Carry Information</div>
+        <div class="concept-desc">
+          The example above returns <code>200 {"created": …}</code> from a POST, which works and is wrong,
+          and it is the single most common thing in a hand-written API. A status code is the only part of
+          the response a caller can act on without parsing anything &mdash; a retry loop, a cache and a
+          load balancer all read it and none of them read your JSON <span class="acro-exp">(JavaScript Object Notation)</span>.
+        </div>
+        <div class="dw">
+          <table class="ref-table">
+            <tr><th>Situation</th><th>Code</th><th>What the caller does with it</th></tr>
+            <tr><td>Created something new</td><td><strong>201</strong> + <code>Location</code> header</td><td>Knows where it went. <code>200</code> makes the caller guess the URL <span class="acro-exp">(Uniform Resource Locator)</span> it just created</td></tr>
+            <tr><td>Did it, nothing to say</td><td><strong>204</strong></td><td>Stops parsing. A <code>200</code> with an empty body is a body that has to be checked</td></tr>
+            <tr><td>The request is malformed</td><td><strong>400</strong></td><td>Never retries &mdash; the same bytes will fail again</td></tr>
+            <tr><td>Well-formed, fails a rule</td><td><strong>422</strong></td><td>Same, but the caller can show the user which field. This is what pydantic raises for you</td></tr>
+            <tr><td>Not allowed vs not there</td><td><strong>403</strong> / <strong>404</strong></td><td>Return <code>404</code> for a resource the caller may not even know exists &mdash; <code>403</code> confirms it does</td></tr>
+            <tr><td>Conflicts with current state</td><td><strong>409</strong></td><td>Duplicate hostname, edit against a stale version. Not a <code>400</code>: the request was fine, the world moved</td></tr>
+            <tr><td>Too many requests</td><td><strong>429</strong> + <code>Retry-After</code></td><td>Backs off by the number you gave rather than by guessing</td></tr>
+            <tr><td>You broke</td><td><strong>500</strong></td><td>Retries. Which is why a validation bug returned as <code>500</code> becomes a retry storm</td></tr>
+          </table>
+          <div class="concept-desc verdict">
+            The row that costs the most when it is wrong is the last one, and the mistake runs the other
+            way too: <strong>returning <code>200</code> with <code>{"error": …}</code> in the body means every
+            caller must parse a success to find out it failed</strong>, and none of the machinery between you
+            and them &mdash; retries, circuit breakers, dashboards, alerts &mdash; will ever notice. Pick the
+            code first and the body second. One error shape for the whole API, every time:
+            <code>{"error": {"code": "…", "message": "…", "field": "…"}}</code> &mdash; a machine-readable
+            <code>code</code> the caller can branch on, and a <code>message</code> for a human reading a log.
+          </div>
+        </div>
+      </div>
+      <div class="concept-card">
+        <div class="concept-label">Traps</div>
+        <div class="concept-title">Five Things That Turn a Working Endpoint Into an Outage</div>
+        <div class="concept-desc">
+          Everything above is visible in a browser tab. These are the ones that pass every manual test,
+          survive the demo, and surface under real traffic &mdash; and four of the five are one line each
+          to prevent.
+        </div>
+        <div class="dw">
+          <table class="ref-table">
+            <tr><th>Trap</th><th>What happens</th><th>The line that prevents it</th></tr>
+            <tr><td><strong>No timeout on a downstream call</strong></td><td>One slow dependency holds every worker; the API stops answering requests that never touched it</td><td><code>httpx.get(url, timeout=5)</code> &mdash; the default is no timeout</td></tr>
+            <tr><td><strong>Blocking work in an async route</strong></td><td><code>async def</code> plus a synchronous database driver blocks the whole event loop. Slower than the framework you replaced</td><td>Use <code>def</code>, not <code>async def</code>, unless everything inside is awaited</td></tr>
+            <tr><td><strong>Returning the database object</strong></td><td>A column added next month appears in the public response. Password hashes have shipped this way</td><td>A separate <code>response_model</code> &mdash; the schema you return is not the schema you store</td></tr>
+            <tr><td><strong>Unbounded list endpoint</strong></td><td>Fine at 200 rows, 40 seconds at 2 million. The failure arrives with success</td><td><code>limit: int = 50</code> with a maximum, from the first commit</td></tr>
+            <tr><td>The exception handler that catches everything</td><td>A bug becomes a clean <code>500</code> with no stack trace anywhere</td><td>Log the exception before you convert it</td></tr>
+          </table>
+          <div class="concept-desc verdict">
+            The second row is the one that surprises people, because it is the framework's headline feature
+            doing the damage: <strong><code>async def</code> is a promise that nothing inside the function
+            blocks</strong>, and one ordinary database driver breaks that promise for every concurrent request
+            on the process rather than just its own. A plain <code>def</code> route is run in a thread pool
+            and is the right default until the whole path is genuinely async. The fourth row is the one that
+            arrives latest and hurts most &mdash; see
+            <span class="xref">Consuming APIs Robustly — Beyond requests.get()</span>
+            for the other side of it, where a caller has to page through what a server should have limited.
+          </div>
+        </div>
+      </div>
   </div>
 </div>
 

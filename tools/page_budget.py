@@ -141,7 +141,7 @@ times the topics.
 **Search is not the constraint.** ~16 ms per additional 1,000 topics, and 86 ms
 at three times the current site — still inside the band where a filter feels
 immediate. The fear that full-text search would not survive growth, which §4b of
-plan.md spent a section on, is measurably unfounded at this scale.
+plan-archive.md spent a section on, is measurably unfounded at this scale.
 
 **Heap grows steadily** — about 20 MB per 1,000 topics, 93 MB at 3x. Worth
 knowing, not alarming.

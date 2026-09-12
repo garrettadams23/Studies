@@ -34,6 +34,15 @@ jobs:
       - name: Check the acronym domain is not stale
         run: python tools/gen_acronym_domain.py --check
 
+      # An acronym whose letters are not even a subsequence of its expansion
+      # cannot be a compression of it. The session operating manual's failure
+      # #10 — two wrong expansions, found by reading — is the only one whose
+      # guard column said "nothing catches this". This is that guard.
+      - name: Check acronym letters come from their expansions
+        run: |
+          python tools/check_acronyms.py --self-test
+          python tools/check_acronyms.py
+
       # No browser needed: the card carries its inputs in a PNG tEXt chunk, so
       # this is a string comparison. It used to compare rendered bytes, which is
       # a gate on the rasteriser, and it was red long enough that the card
@@ -64,6 +73,16 @@ jobs:
       # "0 errors" is indistinguishable from one that stopped looking.
       - name: Self-test the markup checker
         run: python tools/check_markup.py --self-test
+
+      # `var(--bg1)` is not an error anywhere: the declaration is silently
+      # dropped and the element inherits, so a wrong colour looks deliberate.
+      # One such typo shipped the search-result badge with failing contrast on
+      # ten domains for as long as the badge existed.
+      - name: Self-test the CSS custom-property checker
+        run: python tools/check_css_vars.py --self-test
+
+      - name: Check every CSS custom property read is declared
+        run: python tools/check_css_vars.py
 
       # The acronym censuses ask "does this domain render X" for every entry in
       # the dictionary. Asking it per acronym was 184 of this gate's 201
@@ -101,7 +120,7 @@ jobs:
       # The three content censuses. None of them gates — they measure what the
       # gates cannot: how deep the cards are, whether a subject exists twice, and
       # which good cards nothing links to. Printed in the log so a reviewer sees
-      # the numbers move. See plan.md Phases 8-10.
+      # the numbers move. See plan-archive.md Phases 8-10.
       - name: Content census (reports only)
         run: |
           python tools/depth_report.py
@@ -130,11 +149,29 @@ jobs:
       # Two identical builds must produce identical bytes. Without this, a
       # timestamp or a set iteration turns every commit's diff into noise, and
       # noise is where a real change hides.
+      # The service worker's offline promise. cache.addAll() is atomic, so one
+      # 404 in PRECACHE means nothing is cached at all — offline mode fails
+      # entirely, silently, on a site that still works perfectly online. Seven
+      # browser gates run here and none of them loads the service worker.
+      - name: Check the service worker precaches what the page needs
+        run: |
+          python tools/check_precache.py --self-test
+          python tools/check_precache.py
+
       - name: Check the build is reproducible
         run: python tools/check_determinism.py
 
       - name: Check the page performance budget
         run: python tools/page_budget.py
+
+      # plan.md's headline table says every number in it comes from a tool. It
+      # did once; then it was maintained by hand, and nine of its eleven
+      # derivable rows were wrong — the page budget by a factor of twelve,
+      # claiming room for 66 more topics over a site with room for 840.
+      - name: Check plan.md's measured-state table
+        run: |
+          python tools/check_plan_numbers.py --self-test
+          python tools/check_plan_numbers.py
 
       # Every id in data/related.json resolves, and no topic points at itself.
       - name: Check the related-topics map
@@ -151,6 +188,17 @@ jobs:
         run: |
           if ! git diff --exit-code -- sw.js; then
             echo "::error::sw.js CACHE_VERSION is out of date. Run 'python build.py' and commit the result."
+            exit 1
+          fi
+
+      # sitemap.xml's lastmod is derived from the newest data-reviewed stamp,
+      # so it moves when the content's own freshness claim moves and not on
+      # every build. It said 2026-07-31 through months of daily edits, and a
+      # crawler is the one reader that cannot tell.
+      - name: Fail if sitemap.xml is stale
+        run: |
+          if ! git diff --exit-code -- sitemap.xml; then
+            echo "::error::sitemap.xml lastmod is out of date. Run 'python build.py' and commit the result."
             exit 1
           fi
 
@@ -191,7 +239,7 @@ jobs:
         run: python build.py
 
       # Drives the real page: permalinks, per-domain study decks, progress
-      # persistence, theming and keyboard navigation. plan.md has claimed this
+      # persistence, theming and keyboard navigation. plan-archive.md has claimed this
       # verification since the first review; this is what makes the claim true.
       - name: Smoke-test the built page
         run: node tools/smoke_test.mjs

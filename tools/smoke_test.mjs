@@ -2,7 +2,7 @@
 /**
  * smoke_test.mjs — Drives the built index.html in a real browser.
  *
- * plan.md has claimed "verified headless (Chromium)" since the first review, and
+ * plan-archive.md has claimed "verified headless (Chromium)" since the first review, and
  * every session that changed structure re-derived a throwaway script to justify
  * it. That is the same shape as the cheat sheet's "Generated from the Math
  * domain" header: a capability asserted in prose with nothing checking it. This
@@ -285,6 +285,79 @@ if (otherDomain) {
     crossed.shown === crossed.promised && crossed.promised > 0 && crossed.marks > 0,
     `${otherDomain}: ${crossed.shown} shown of ${crossed.promised} promised, ${crossed.marks} highlights`);
 }
+// A word whose only occurrence in its topic is a table cell. `.dw` is eighteen
+// pixels of padding, so for years the highlight list was the only thing making
+// it structural — and the 80 topics whose lookup table sits outside one opened
+// on a hit and marked nothing. `pacman` appears in linux's *Package Management*
+// exactly once, in a table row, which makes it the cleanest possible probe.
+//
+// The second half is the guard the first half needs: adding `table` to the
+// list means a table nested in a `.dw` is visited twice, and a highlighter that
+// is not idempotent answers that with `<mark><mark>term</mark></mark>`.
+const tableHl = await page.evaluate(async () => {
+  runSearch("pacman");
+  await new Promise(r => setTimeout(r, 300));
+  const topic = [...document.querySelectorAll(".topic")]
+    .find(t => t.querySelector(".topic-name")?.textContent.trim() === "Package Management");
+  const inTable = topic
+    ? [...topic.querySelectorAll("table")]
+        .reduce((n, tb) => n + tb.querySelectorAll("mark.sh").length, 0)
+    : -1;
+  runSearch("raid");
+  await new Promise(r => setTimeout(r, 300));
+  const nested = document.querySelectorAll("mark.sh mark.sh").length;
+  const marks = document.querySelectorAll("mark.sh").length;
+  runSearch("");
+  await new Promise(r => setTimeout(r, 200));
+  return { inTable, nested, marks, left: document.querySelectorAll("mark.sh").length };
+});
+check("a search hit inside a lookup table is highlighted",
+  tableHl.inTable > 0, `${tableHl.inTable} mark(s) in the table`);
+check("highlighting a table twice does not nest the marks",
+  tableHl.nested === 0 && tableHl.marks > 0,
+  `${tableHl.marks} marks, ${tableHl.nested} nested`);
+check("clearing a search removes every mark it made",
+  tableHl.left === 0, `${tableHl.left} left behind`);
+
+// The named-topic pointer. This site shows one domain at a time, so `agile`
+// answering in twelve domains leaves the reader picking a chip and hoping; the
+// line under the search bar names the one topic titled after the query and
+// links to it. Three properties are worth holding: it costs nothing at rest, it
+// stays silent when the answer would be a guess, and the link actually lands.
+const named = await page.evaluate(async () => {
+  const atRest = !!document.getElementById("search-named");
+  runSearch("agile");
+  await new Promise(r => setTimeout(r, 200));
+  const row = document.getElementById("search-named");
+  const href = row?.querySelector("a")?.getAttribute("href") || "";
+  runSearch("what is technical debt");           // two topics qualify — decline
+  await new Promise(r => setTimeout(r, 200));
+  const tied = !!document.getElementById("search-named");
+  runSearch("");
+  await new Promise(r => setTimeout(r, 200));
+  return { atRest, href, tied, cleared: !!document.getElementById("search-named") };
+});
+check("a query spread over many domains is pointed at the topic named after it",
+  named.href === "#agile-the-four-trade-offs-and-what-gets-sold-as-agile", named.href || "no link");
+check("the pointer says nothing when two topics could be the one meant",
+  named.tied === false);
+check("the pointer costs nothing at rest and nothing after clearing",
+  named.atRest === false && named.cleared === false,
+  `atRest=${named.atRest} cleared=${named.cleared}`);
+
+const namedGoes = await page.evaluate(async () => {
+  runSearch("agile");
+  await new Promise(r => setTimeout(r, 200));
+  document.querySelector("#search-named a")?.click();
+  await new Promise(r => setTimeout(r, 600));
+  const t = document.getElementById("agile-the-four-trade-offs-and-what-gets-sold-as-agile");
+  return { visible: t ? t.offsetParent !== null : false,
+           live: document.querySelector('.domain-section[data-hydrated="1"]')?.dataset.domain };
+});
+check("following the pointer opens the topic in its own domain",
+  namedGoes.visible && namedGoes.live === "eng",
+  `visible=${namedGoes.visible} live=${namedGoes.live}`);
+
 // ── search operators ────────────────────────────────────────────────────────
 // `domain:` and quoted phrases narrow a 1,300-topic site to something a reader
 // can use. The cases worth protecting are the ones that fail quietly: an
@@ -381,6 +454,20 @@ const backs = await page.evaluate(() =>
            .map(t => `${t.domainId}/${t.id}`));
 check("every studyable topic has something on the back of its card",
   backs.length === 0, backs.slice(0, 5).join(", "));
+
+// And the stronger half, which the check above cannot see. The back renders
+// `t.title || t.name` as its heading, so a topic with a description but no
+// concept title turns over to a heading that repeats the front word for word.
+// That is how the AI glossary came back into the deck: it had no concept card
+// at all, a verdict was added to its table, and `title || desc` was satisfied by
+// the verdict alone. The card passed the check above and revealed nothing but
+// its own name.
+const headings = await page.evaluate(() =>
+  stIndex().filter(stIsStudyable)
+           .filter(t => !(t.title || "").trim())
+           .map(t => `${t.domainId}/${t.id}`));
+check("no card turns over to a heading that repeats its front",
+  headings.length === 0, headings.slice(0, 5).join(", "));
 await page.keyboard.press("Escape");
 await page.waitForTimeout(200);
 
@@ -1614,7 +1701,7 @@ await step("the alias map migrates progress onto the current id", async () => {
 });
 
 // ── what's new since your last visit ────────────────────────────────────────
-// plan.md Phase 10 T8. Four behaviours, and the first is the one most likely to
+// plan-archive.md Phase 10 T8. Four behaviours, and the first is the one most likely to
 // be got wrong: a reader with nothing stored must be told nothing at all.
 await step("what's new stays quiet on a first visit and records the month", async () => {
   const first = await page.evaluate(() => {
@@ -1655,6 +1742,98 @@ await step("what's new stays quiet on a first visit and records the month", asyn
 });
 
 // ── hygiene ─────────────────────────────────────────────────────────────────
+// ── the notepad, across two tabs ────────────────────────────────────────────
+// "Slide-out scratchpad backed by localStorage, synced live across your open
+// tabs" is a README feature, and the only suites that touch the notepad test it
+// with storage denied, through a backup round-trip, and for axe violations.
+// Nothing had ever opened two tabs, which is the one thing the sentence claims.
+//
+// It works over file:// because Chromium treats file: pages as one storage
+// origin and still fires `storage` between them — worth stating, because the
+// obvious assumption is that this needs a web server and it does not.
+const otherTab = await context.newPage();
+await otherTab.goto(PAGE, { waitUntil: "load" });
+await otherTab.waitForFunction(() => document.querySelectorAll(".domain-section").length > 0);
+const synced = await step("a note posted in one tab appears in the other", async () => {
+  for (const p of [page, otherTab]) {
+    await p.click("#notepad-tab", { timeout: 5000 });
+    await p.waitForTimeout(250);
+  }
+  const text = `cross-tab ${Date.now()}`;
+  await page.fill("#notepad-panel .np-input", text);
+  await page.waitForTimeout(150);
+  await page.click("#notepad-panel .np-post");
+  await otherTab.waitForTimeout(700);
+  return otherTab.evaluate(t => ({
+    seen: (document.querySelector("#notepad-panel .np-list")?.innerText || "").includes(t),
+    count: (document.querySelector("#notepad-panel .np-count")?.textContent || "").trim(),
+  }), text);
+});
+check("a note posted in one tab appears in the other", !!synced?.seen,
+  synced?.seen ? "" : synced
+    ? `the other tab's list did not contain it; its count reads "${synced.count}"`
+    : "the step itself failed");
+await otherTab.close();
+await page.click("#notepad-tab").catch(() => {});
+await page.waitForTimeout(200);
+
+// ── print ───────────────────────────────────────────────────────────────────
+// The README says the site prints cleanly and nothing tested it. style.css hides
+// the chrome by naming each thing, and the study FAB — added later — was never
+// added to the list, so it printed on the first page of every handout. It is
+// position:fixed, which is the general shape of the bug: a floating control
+// pins itself to the first printed page.
+//
+// So this asserts the rule rather than the list, which is what the print-pack
+// block in style.css already argues for in its own comment: "Hiding by child
+// selector, not by naming each thing, so a new header or panel added later does
+// not silently start printing."
+await page.emulateMedia({ media: "print" });
+await page.waitForTimeout(200);
+const printFixed = await page.evaluate(() =>
+  [...document.querySelectorAll("body *")]
+    .filter(e => {
+      const r = e.getBoundingClientRect();
+      if (r.width <= 0 || r.height <= 0) return false;
+      const pos = getComputedStyle(e).position;
+      return pos === "fixed" || pos === "sticky";
+    })
+    .map(e => e.tagName + (e.id ? "#" + e.id : "." + String(e.className).split(" ")[0]))
+);
+check("nothing floats over the page in print", printFixed.length === 0,
+  [...new Set(printFixed)].slice(0, 4).join(", "));
+await page.emulateMedia({ media: "screen" });
+
+// ── reduced motion ──────────────────────────────────────────────────────────
+// The other media query the README promises to honour, and the other one nothing
+// tested. style.css carries the standard universal reset, which sets 0.01ms
+// rather than 0 — so "does anything still have a duration" answers *more* under
+// reduce than without it, and the question has to be whether anything still
+// *moves*. 20ms is the threshold: below it there is nothing to perceive.
+await page.emulateMedia({ reducedMotion: "reduce" });
+await page.waitForTimeout(200);
+const motion = await page.evaluate(() => {
+  const secs = v => Math.max(...String(v).split(",").map(x => {
+    x = x.trim();
+    const n = parseFloat(x) || 0;
+    return x.endsWith("ms") ? n / 1000 : n;
+  }), 0);
+  const moving = [];
+  document.querySelectorAll("body *").forEach(e => {
+    const c = getComputedStyle(e);
+    if (Math.max(secs(c.animationDuration), secs(c.transitionDuration)) >= 0.02) {
+      moving.push(e.tagName + (e.id ? "#" + e.id : "." + String(e.className).split(" ")[0]));
+    }
+  });
+  return { moving: [...new Set(moving)],
+           scroll: getComputedStyle(document.documentElement).scrollBehavior };
+});
+check("reduced motion stops everything that moves", motion.moving.length === 0,
+  motion.moving.slice(0, 4).join(", "));
+check("reduced motion turns off smooth scrolling", motion.scroll !== "smooth",
+  `scroll-behavior: ${motion.scroll}`);
+await page.emulateMedia({ reducedMotion: "no-preference" });
+
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
 

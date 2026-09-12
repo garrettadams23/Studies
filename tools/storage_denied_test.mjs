@@ -148,13 +148,29 @@ await probe("theme toggles without throwing", () => {
   return before !== after;
 });
 
-// Search filters the page (the input handler is wired and runs).
-await probe("search runs without throwing", async () => {
-  if (typeof searchContent !== "function") return false;
-  searchContent("network");
-  await new Promise(r => setTimeout(r, 250));
-  return true; // it ran without throwing; a throw would reject and be caught above
+// Search finds and shows things — not merely "the call returned".
+//
+// This probe used to end `return true`, on the reasoning that a throw would
+// reject and be caught above. True, and too weak: search is not a read-only
+// filter here. Every matched topic gets `renderSeeAlso` and `renderTopicNote`,
+// the second of which reads the notepad out of storage, and revealing a topic
+// calls `recordVisit`, which writes to it. Any of those swallowing an error and
+// leaving the page blank passes "it did not throw" and fails the reader, who is
+// in a private window and has just typed into the box the whole page is behind.
+//
+// So it asserts an outcome: topics survived the filter, and the counter says so.
+await probe("searching finds and shows topics with storage denied", async () => {
+  if (typeof runSearch !== "function") return false;
+  runSearch("kerberos");
+  await new Promise(r => setTimeout(r, 400));
+  const shown = document.querySelectorAll(".topic:not(.search-hidden)").length;
+  const counted = /match/.test(document.getElementById("search-count")?.textContent || "");
+  runSearch("");
+  await new Promise(r => setTimeout(r, 150));
+  return shown > 0 && counted;
 });
+check("no uncaught error from searching with storage denied",
+      pageErrors.length === 0, pageErrors[0]);
 
 // The two features that read storage the moment they open — the progress
 // dialog (counts reviewed/known across the site) and the notepad (a session id

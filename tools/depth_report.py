@@ -2,14 +2,14 @@
 """
 depth_report.py — how deep the cards are, and whether a deepening pass is real.
 
-plan.md Phase 8 rests entirely on one measurement that previously existed only
+plan-archive.md Phase 8 rests entirely on one measurement that previously existed only
 inside that document. A number stated in a plan and not produced by a committed
 script is a claim with a shelf life, so this is the script.
 
 Two numbers, and the second one is the point:
 
   * **thin count** — topics with a single `.concept-card` and under 1,800 plain
-    characters. **288 of 1,432 (20%)** when this was written — plan.md Phase 8
+    characters. **288 of 1,432 (20%)** when this was written — plan-archive.md Phase 8
     quotes 330, which is the same population before the two reference domains
     below are excluded. Concentrated entirely in domains authored before the
     current card form settled: `data` 93% thin, `web` 85%, `redteam` 77%, while
@@ -22,7 +22,7 @@ Two numbers, and the second one is the point:
 
 Reference domains are excluded from the thin count, not from the totals:
 `shortcut` is scannable by design and `acronym` is generated, so a short card in
-either is correct rather than debt. See plan.md Phase 8 §4.
+either is correct rather than debt. See plan-archive.md Phase 8 §4.
 
 Usage:
   python3 tools/depth_report.py                 # the census
@@ -90,7 +90,7 @@ def _deliberate(badge):
     return any(b.startswith(d) or f" {d}" in b for d in DELIBERATE)
 
 
-def topics(domain, badges=False):
+def topics(domain, badges=False, extra=False):
     """(title, plain_chars, concept_cards) for every topic in one domain."""
     text = "".join(p.read_text(encoding="utf-8") for p in domain_files(domain))
     starts = [m.start() for m in TOPIC_RE.finditer(text)]
@@ -102,6 +102,11 @@ def topics(domain, badges=False):
         row = (title, len(TAG_RE.sub("", block)),
                len(re.findall(r'class="concept-card"', block)),
                len(TAG_RE.sub("", VERDICT_RE.sub("", block))))
+        if extra:
+            bg = BADGE_RE.search(block)
+            badge = re.sub(r"\s+", " ", TAG_RE.sub("", bg.group(1))).strip() if bg else "-"
+            yield row + (badge, len(re.findall(r'class="xref"', block)), n)
+            continue
         if not badges:
             yield row
             continue
@@ -122,7 +127,7 @@ def main():
         if only and did != only:
             continue
         n = t = 0
-        for title, length, cc, body in topics(did):
+        for title, length, cc, body, badge, xrefs, pos in topics(did, extra=True):
             total += 1
             n += 1
             chars += length
@@ -133,7 +138,7 @@ def main():
             if cc <= 1 and length < THIN_CHARS and did not in REFERENCE_DOMAINS:
                 thin += 1
                 t += 1
-                thin_rows.append((length, did, title))
+                thin_rows.append((length, did, title, badge, xrefs, pos))
         if n:
             rows.append((round(100 * t / n), t, n, did))
 
@@ -168,9 +173,29 @@ def main():
 
     if "--thin" in args:
         thin_rows.sort()
-        for length, did, title in thin_rows:
-            print(f"{length:>6}  {did:<12} {title[:62]}")
-        print(f"\n{len(thin_rows)} thin topic(s).")
+        # Three facts beside the length, because the list without them is nine
+        # topics a person has to open before learning that eight of them are
+        # short on purpose. Measured, once: of the nine standing on the day this
+        # was added, two were beginner reference cards in a `military` series,
+        # one was a member of an eight-topic Linux+ quick-reference run, one was
+        # `redteam`'s authorised-use preamble, three were lookup tables, and one
+        # was a `devops` overview whose whole job is to route into `eng`'s
+        # eight-topic supply-chain series. One was genuinely under-served.
+        #
+        #   badge     a run of short topics sharing a prefix is a series
+        #   xref      an overview that routes onward is finished, not thin
+        #   pos       #1 in a domain is usually a preamble, not a topic
+        #
+        # None of these decides anything. They are the three columns that make
+        # the decision take a glance instead of nine file reads, and they are
+        # facts the block already carries rather than a classifier's guess.
+        print(f"{'chars':>6}  {'domain':<12} {'#':>3}  {'xref':>4}  "
+              f"{'badge':<22} title")
+        for length, did, title, badge, xrefs, pos in thin_rows:
+            print(f"{length:>6}  {did:<12} {pos:>3}  {xrefs:>4}  "
+                  f"{badge[:22]:<22} {title[:52]}")
+        print(f"\n{len(thin_rows)} thin topic(s). The columns are context, not a "
+              f"verdict — read them before deepening anything.")
         return 0
 
     if only:

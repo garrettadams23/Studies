@@ -2,7 +2,7 @@
 /**
  * search_test.mjs — does searching for a thing find it?
  *
- * plan.md Phase 10 T5. The site has search, acronym-aware search and a quiz
+ * plan-archive.md Phase 10 T5. The site has search, acronym-aware search and a quiz
  * built on the same index, and until this file nothing checked whether a query
  * a reader would actually type reaches the card that answers it. Every other
  * user-facing behaviour has a smoke test.
@@ -131,6 +131,28 @@ const FIXTURES = [
   // digit; ten number-word pairs bridge that, and nothing larger is wanted.
   ["three way handshake",  "net/tcp-vs-udp-transport-layer", 12],
   ["the 5 whys",           "ops/writing-a-postmortem-people-actually-learn-from", 6],
+  // Contractions. A reader typing a question types them, and until WIDE_STOP
+  // learned the contracted forms each one survived into the all-your-words
+  // conjunction as a hard requirement almost no card could satisfy — so
+  // `laptop won't turn on` returned nothing while `laptop will not turn on`
+  // returned twenty-five. The apostrophe itself is folded, so all three
+  // spellings a keyboard can produce are one fixture apart.
+  ["laptop won't turn on", "hw/post-beep-codes-diagnostic-leds-reading-a-machine-that-will-", 40],
+  ["laptop won\u2019t turn on", "hw/post-beep-codes-diagnostic-leds-reading-a-machine-that-will-", 40],
+  ["certificate didn't renew", "sec/pki-certificate-lifecycle", 25],
+  ["agile isn't working", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile", 20],
+  // The counterweight, and the reason the list above is hand-picked rather
+  // than derived: `I'd` folds to **id**, which this site is full of. A rule
+  // that stripped contractions mechanically would drop it and answer a
+  // different question.
+  ["entra id",             "sec/identity-access-management-who-can-do-what", 40],
+  // `vs`, for the same reason and with the same shape: the site titles a dozen
+  // topics "X vs Y" and the as-typed pass answers those, so the two fixtures
+  // below have to hold together — the first only works if `vs` is dropped in
+  // the fallback, the second only if dropping it never reaches a query that
+  // already had an answer.
+  ["agile vs waterfall",   "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile", 6],
+  ["tcp vs udp",           "net/tcp-vs-udp-transport-layer", 40],
 ];
 
 // Queries a reader plausibly types that still find nothing. Not failures — the

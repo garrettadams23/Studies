@@ -93,6 +93,26 @@ def load_acronyms(domain):
     return table
 
 
+def load_alternates(domain):
+    """{acronym: [the meanings this domain did *not* choose]}.
+
+    An acronym with one meaning cannot be contradicted, so it is absent here.
+    The annotator uses this to notice when the text has already disambiguated
+    itself in favour of the other sense — see `annotate_text`.
+    """
+    entries = json.loads(SRC.read_text(encoding="utf-8"))["entries"]
+    out = {}
+    for e in entries:
+        if len(e["m"]) < 2:
+            continue
+        by_domain = e.get("byDomain") or {}
+        chosen = by_domain.get(domain) or e.get("annotate") or e["m"][0]["e"]
+        others = [html.escape(m["e"], quote=False) for m in e["m"] if m["e"] != chosen]
+        if others:
+            out[html.escape(e["a"], quote=False)] = others
+    return out
+
+
 def build_pattern(terms):
     """Longest-first alternation so ATT&CK wins over AT, IPsec over IP, etc."""
     ordered = sorted(terms, key=len, reverse=True)
@@ -158,7 +178,7 @@ def inside_parentheses(text, index):
     return depth > 0
 
 
-def annotate(source, terms, pattern):
+def annotate(source, terms, pattern, alternates=None):
     """Walk the file, annotating the first use of each acronym in each topic."""
     out = []
     pos = 0
@@ -174,7 +194,7 @@ def annotate(source, terms, pattern):
         text = source[pos:tag_match.start()]
         if text:
             if skip_depth == 0:
-                new_text, n = annotate_text(text, terms, pattern, seen, source, pos)
+                new_text, n = annotate_text(text, terms, pattern, seen, source, pos, alternates)
                 out.append(new_text)
                 added += n
             else:
@@ -219,7 +239,7 @@ def annotate(source, terms, pattern):
     tail = source[pos:]
     if tail:
         if skip_depth == 0:
-            new_text, n = annotate_text(tail, terms, pattern, seen, source, pos)
+            new_text, n = annotate_text(tail, terms, pattern, seen, source, pos, alternates)
             out.append(new_text)
             added += n
         else:
@@ -228,7 +248,7 @@ def annotate(source, terms, pattern):
     return "".join(out), added
 
 
-def annotate_text(text, terms, pattern, seen, source, offset):
+def annotate_text(text, terms, pattern, seen, source, offset, alternates=None):
     """Annotate one run of plain text (already known to be outside any tag)."""
     added = 0
     pieces = []
@@ -242,6 +262,18 @@ def annotate_text(text, terms, pattern, seen, source, offset):
         abs_end = offset + m.end()
         if already_expanded(source, abs_start, abs_end, expansion):
             seen.add(term)
+            continue
+        # The text has already disambiguated itself, the other way. When a
+        # *different* listed meaning of the same acronym is spelled out beside
+        # the match and this domain's choice is not, inserting this domain's
+        # choice can only produce a contradiction on one line — the shape that
+        # put "ANN (Approximate Nearest Neighbour)" in a glossary row whose next
+        # cell reads "Artificial Neural Network". Not added to `seen`: a later
+        # use in the same topic may well be this domain's sense.
+        if alternates and any(
+            already_expanded(source, abs_start, abs_end, other)
+            for other in alternates.get(term, ())
+        ):
             continue
         if inside_parentheses(text, m.start()):
             continue
@@ -278,9 +310,31 @@ DENSITY_FIXTURES = [
 ]
 
 
+# The other-meaning guard, reduced to the row that produced it. Each case is
+# (name, html, expected annotations) with ANN chosen as the vector-search sense.
+ALTERNATE_FIXTURES = [
+    ("a row that spells out the other meaning is left alone",
+     "<p><td>ANN</td><td>Artificial Neural Network</td></p>", 0),
+    ("the domain's own sense is still annotated",
+     "<p>ANN indexes trade exactness for speed.</p>", 1),
+    ("its own expansion nearby still suppresses it, as before",
+     "<p>ANN — Approximate Nearest Neighbour search.</p>", 0),
+    ("an acronym with one meaning is unaffected by the guard",
+     "<p><td>TGT</td><td>Something Else Entirely</td></p>", 1),
+]
+
+
 def self_test():
     """The window must not move when only the markup around it does."""
     failures = 0
+    terms = {"ANN": "Approximate Nearest Neighbour", "TGT": "Ticket Granting Ticket"}
+    alternates = {"ANN": ["Artificial Neural Network"]}
+    pattern = build_pattern(terms)
+    for name, html_in, want in ALTERNATE_FIXTURES:
+        _, got = annotate(html_in, terms, pattern, alternates)
+        ok = got == want
+        failures += not ok
+        print(f"  {'ok  ' if ok else 'FAIL'} {name}  (added={got}, expected={want})")
     for name, plain, dense in DENSITY_FIXTURES:
         got = []
         for src in (plain, dense):
@@ -289,7 +343,7 @@ def self_test():
         ok = got[0] == got[1]
         failures += not ok
         print(f"  {'ok  ' if ok else 'FAIL'} {name}  (plain={got[0]}, dense={got[1]})")
-    print(f"\nself-test: {len(DENSITY_FIXTURES)} fixtures, {failures} failure(s).")
+    print(f"\nself-test: {len(DENSITY_FIXTURES) + len(ALTERNATE_FIXTURES)} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 
 
@@ -305,11 +359,13 @@ def main():
             continue
         # `script.03-python.html` is still the `script` domain, so a byDomain
         # override has to resolve from the filename prefix, not the stem.
-        terms = load_acronyms(path.name.split(".", 1)[0])
+        domain_key = path.name.split(".", 1)[0]
+        terms = load_acronyms(domain_key)
+        alternates = load_alternates(domain_key)
         pattern = build_pattern(terms)
         original = path.read_text(encoding="utf-8")
         cleaned = EXP_SPAN_RE.sub("", original)
-        result, added = annotate(cleaned, terms, pattern)
+        result, added = annotate(cleaned, terms, pattern, alternates)
         total += added
         print(f"  {path.name:<16} {added:>5} expansions added")
         if result != original:

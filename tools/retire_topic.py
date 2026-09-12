@@ -2,7 +2,7 @@
 """
 retire_topic.py — merge one topic into another without losing anybody's progress.
 
-plan.md Phase 9's rule is **merge, never delete**, and §4 says why: a topic id is
+plan-archive.md Phase 9's rule is **merge, never delete**, and §4 says why: a topic id is
 a permalink somebody may have bookmarked, and five `localStorage` prefixes key on
 it — `reviewed:` `bookmark:` `known:` `srs:` `note:`. Deleting a block silently
 strands all of it. Recording an alias moves the lot.

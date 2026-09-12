@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-WATCHED = ["index.html", "sw.js"]
+WATCHED = ["index.html", "sw.js", "sitemap.xml"]
 
 
 def build():

@@ -116,7 +116,7 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # saying which bind you or in what order, which is the same shape of gap.
 #
 # 589 -> 535: all 54 in `net`. Five domains clear; 211 verdicts written. The
-# byte cost is tracked in plan.md — roughly one topic of page budget per nine
+# byte cost is tracked in plan-archive.md — roughly one topic of page budget per nine
 # verdicts, which is the trade being made deliberately.
 #
 # 535 -> 469: all 66 in `sec`. Six domains, 277 verdicts, and the backlog is
@@ -473,6 +473,154 @@ def dangling_assignments(text):
     return out
 
 
+# The third code-block check, and the general one the first two were reaching for.
+#
+# The div -> pre conversion made source newlines meaningful. Where a language's
+# grammar could prove a break impossible, the checks above catch it: a Python
+# line ending in a bare `=`, a comment continuation with no marker. Everything in
+# a language without such a signal survived both, and two attempts at a general
+# heuristic failed by being merely plausible — 635 hits for "looks like it ends
+# mid-statement", 343 for "a two-space continuation".
+#
+# Indentation is the signal those attempts were after, because it is a property
+# of the *cause* rather than of the symptom. A <div> collapses leading
+# whitespace, so a block authored inside one never carried any, and converting it
+# to <pre> could not restore what was never there. Nested code with not one
+# indented line is not a style; it is that block.
+#
+# Measured before it was written: 18 hits across 706 multi-line blocks, all in
+# script.01-references.html, and every one real — CSS, Go, Bash, PowerShell and
+# JSON, the languages the first two checks cannot see.
+_OPENS_BLOCK = re.compile(r'[\{\[\(]\s*$')
+
+
+def unindented_nesting(text):
+    """(line, opens, lines) for code blocks that nest and never indent.
+
+    Two opened brackets are required rather than one: a single trailing `{` is
+    how a one-line body or a shell heredoc opener is written, and neither says
+    anything about indentation.
+    """
+    out = []
+    for m in _PRE_BLOCK.finditer(text):
+        body = unescape(_CODE_TAG.sub("", m.group(1)))
+        lines = [l for l in body.split("\n") if l.strip()]
+        if len(lines) < 5:
+            continue
+        if any(l[:1] in (" ", "\t") for l in lines):
+            continue
+        opens = sum(1 for l in lines if _OPENS_BLOCK.search(l.rstrip()))
+        if opens >= 2:
+            out.append((text.count("\n", 0, m.start()) + 1, opens, len(lines)))
+    return out
+
+
+# A table sitting straight in a .topic-body, with no .dw around it.
+#
+# **This check no longer means what it was written to mean, and the honest
+# thing is to say so rather than keep quoting the old argument.**
+#
+# It was written because `script.js` highlighted search hits inside a fixed list
+# of elements that did not include `table`, so a bare table opened on a match
+# and marked nothing. That was proved in a browser — searching "Joint Comms"
+# opened two `military` topics, and the one whose table sat in a `.dw` got five
+# highlights while the one whose table did not got zero — and six topics were
+# fixed by wrapping.
+#
+# Wrapping six was the wrong generalisation. A later count found **80** topics
+# with the same defect in a shape this regex cannot see: a table that follows a
+# *closed* `.concept-card` is just as bare as one that opens the body, and
+# `pacman` reached linux's *Package Management* and highlighted nothing. `.dw`
+# turns out to be eighteen pixels of padding; the highlight list was the only
+# thing making it structural. So `table` went into the highlight list, which
+# fixed all 80 at once and every future one, and `smoke_test.mjs` now gates it
+# from the reader's side where it belongs.
+#
+# What is left here is a layout rule: a table with no `.dw` loses the padding
+# every other table on the site has. Kept at its original narrow shape — a table
+# as the literal first child of `.topic-body`, which is also where the missing
+# padding looks worst — and deliberately *not* widened to the 80, because
+# failing a build over 18px of padding is the style rule wearing a correctness
+# rule's clothes that this file warns about elsewhere.
+_BARE_TABLE = re.compile(r'<div class="topic-body">\s*<table')
+
+
+def bare_tables(text):
+    """(line,) for tables that are a direct child of .topic-body."""
+    return [(text.count("\n", 0, m.start()) + 1,)
+            for m in _BARE_TABLE.finditer(text)]
+
+
+# One badge, spelled two ways, in one domain.
+#
+# Badges are free-form on purpose — 608 distinct strings over 1,485 topics, and
+# a controlled vocabulary would flatten a deliberate device (`5-STEP CYCLE`,
+# `OS CORE`: reference topics shout). So this does not police style. It checks
+# the one thing that is decidably wrong: the *same* badge written two ways
+# inside a single domain, which a reader sees side by side in one open list.
+#
+# Eight existed. `linux` had `LINUX • Ops` twice and `Linux • Ops` once;
+# `endpoint`, which is otherwise entirely title case, had one `ENDPOINT •
+# Operations`; `ai` had `LLM Ops` beside two `LLMOps`.
+#
+# Deliberately scoped to one domain. `grc`'s single `ARCHITECTURE` and `eng`'s
+# ten `Architecture` normalise alike and are never on screen together, and
+# forcing those to agree would be a style rule wearing a correctness rule's
+# clothes.
+_BADGE_RE = re.compile(r'<span class="topic-badge">(.*?)</span>', re.S)
+
+
+def badge_spellings(text):
+    """(normalised, {spelling: count}) for badges written two ways in one file."""
+    groups = {}
+    for _, block in topic_blocks(text):
+        for m in _BADGE_RE.finditer(block):
+            raw = unescape(re.sub(r"<[^>]+>", "", m.group(1)))
+            badge = re.sub(r"\s+", " ", raw).strip()
+            key = re.sub(r"[^a-z0-9]", "", badge.lower())
+            if key:
+                groups.setdefault(key, {})
+                groups[key][badge] = groups[key].get(badge, 0) + 1
+    return [(k, v) for k, v in groups.items() if len(v) > 1]
+
+
+# "see <Exact Topic Title>", written as prose instead of as a cross-reference.
+#
+# `<span class="xref">` is the mechanism: build.py resolves it to the target's
+# id, `.xref[data-xref]` renders it as a link, and the reader clicks instead of
+# scrolling a domain looking for a title. Five places said *see* and then named a
+# topic exactly — four in `<strong>`, which is emphasis, not navigation — so the
+# reader was handed a title and told to go and find it.
+#
+# Two decisions keep this narrow rather than plausible:
+#
+#   * **Only after the word "see".** Scanning all prose for every title is 3x
+#     slower and answers a different question: a title can appear in a sentence
+#     without the writer meaning to link it. *see* is the writer's own signal.
+#   * **Only titles of 28+ characters.** Short titles — *Beginner*, *RAID* —
+#     occur as ordinary English and would fire constantly.
+#
+# The xref's own text is excluded, along with topic names and acronym
+# expansions, so a correct cross-reference does not report itself.
+_SEE_RE = re.compile(r"\bsee\b", re.I)
+_XREF_STRIP_RE = re.compile(
+    r'<span class="(?:xref|topic-name|acro-exp)"[^>]*>.*?</span>', re.S)
+SEE_TITLE_MIN = 28
+
+
+def unlinked_see(text, titles):
+    """(title,) for `see <Exact Topic Title>` that is not a cross-reference."""
+    stripped = _XREF_STRIP_RE.sub("", text)
+    prose = unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", stripped)))
+    found = []
+    for m in _SEE_RE.finditer(prose):
+        window = prose[m.end():m.end() + 240]
+        for title in titles:
+            if title in window and title not in found:
+                found.append(title)
+    return [(t,) for t in found]
+
+
 def volatile_problems(text, today):
     """(line_number, message) for malformed volatile-claim markup."""
     for m in VOLATILE_RE.finditer(text):
@@ -688,7 +836,7 @@ def main():
     errors, warns = [], collections.Counter()
     seen_slugs = {}
     today = datetime.now(timezone.utc).strftime("%Y-%m")
-    all_titles, xrefs = set(), []
+    all_titles, xrefs, texts = set(), [], {}
     ai_tables = 0
     first_cell_styles = 0
 
@@ -736,6 +884,31 @@ def main():
                 f"{name}:{line}: a Python line in a code block ends in a bare '=' "
                 f"({code!r}) — the newline is mid-statement, so the block renders "
                 f"broken. Join it with the line below.")
+
+        for key, spellings in badge_spellings(text):
+            shown = ", ".join(f"{b!r}×{n}" for b, n in sorted(spellings.items()))
+            errors.append(
+                f"{name}: one badge spelled several ways in one domain — {shown}. "
+                f"A reader sees these side by side; pick the domain's own form")
+
+        for line, snippet in gt_in_comment(text):
+            errors.append(
+                f"{name}:{line}: an HTML comment inside a .topic contains '>' — "
+                f"{snippet!r}. Every tool here strips markup with <[^>]+>, which "
+                f"stops at that '>' and reads the rest as card content. Write "
+                f"'at least' or '&gt;'")
+
+        for (line,) in bare_tables(text):
+            errors.append(
+                f"{name}:{line}: a table sits directly in .topic-body with no "
+                f".dw around it — search highlights inside .dw and not inside a "
+                f"bare table, so a hit here opens the topic and marks nothing")
+
+        for line, opens, count in unindented_nesting(text):
+            errors.append(
+                f"{name}:{line}: a {count}-line code block opens {opens} brackets "
+                f"and has no indented line at all — the source newlines are the "
+                f"wrap of a <div>, not the author's. Reflow it.")
 
         for line, first, cont in wrapped_comments(text):
             errors.append(
@@ -846,8 +1019,18 @@ def main():
         warns["inline style attribute"] += avoidable
         first_cell_styles += unavoidable
         ai_tables += text.count('class="ai-table"')
+        texts[name] = text
 
     # Cross-references, once every title is known.
+    see_titles = [t for t in all_titles if len(t) >= SEE_TITLE_MIN]
+    for name, text in texts.items():
+        for (title,) in unlinked_see(text, see_titles):
+            errors.append(
+                f"{name}: prose says 'see {title}' without making it a "
+                f"cross-reference — wrap it in <span class=\"xref\"> so build.py "
+                f"resolves it and the reader gets a link instead of a title to "
+                f"go and find")
+
     lowered = {t.lower() for t in all_titles}
     for name, line_no, title in xrefs:
         if title.lower() not in lowered:
@@ -987,6 +1170,144 @@ DANGLING_FIXTURES = [
 ]
 
 
+# Five lines, two opens, nothing indented: the corruption. The negatives are the
+# shapes a looser rule would fail the build over.
+NESTING_FIXTURES = [
+    ('<pre class="code-block">.a {\ncolor:\nred; }\n.b {\npadding: 0; }</pre>',
+     1, "the corruption: nesting with no indentation anywhere"),
+    ('<pre class="code-block">.a {\n  color: red;\n}\n.b {\n  padding: 0;\n}</pre>',
+     0, "the same block, correctly indented"),
+    ('<pre class="code-block">one\ntwo\nthree\nfour</pre>',
+     0, "under five lines — too short to judge"),
+    ('<pre class="code-block">$ cat &lt;&lt;EOF {\nnot really nesting\njust text\nand more\nEOF</pre>',
+     0, "one opener only — a single trailing brace says nothing"),
+    ('<pre class="code-block">SELECT a\nFROM t\nWHERE x IN (1, 2)\nAND y = 3\nORDER BY a</pre>',
+     0, "flat prose-shaped code that never nests"),
+    ('<pre class="code-block">func f() {\nif x {\ny()\n}\n}\nfunc g() {\nz()\n}</pre>',
+     1, "Go, which the Python and comment checks cannot see"),
+]
+
+
+BARE_TABLE_FIXTURES = [
+    ('<div class="topic-body"><table class="ai-table"><tr><td>x</td></tr></table></div>',
+     1, "the defect: a lookup table with nothing search can highlight in"),
+    ('<div class="topic-body"><div class="dw"><table class="ai-table"><tr><td>x</td></tr></table></div></div>',
+     0, "wrapped in .dw — the fix"),
+    ('<div class="topic-body">\n  <table class="ref-table"><tr><td>x</td></tr></table></div>',
+     1, "whitespace between them does not make it a different shape"),
+    ('<div class="topic-body"><div class="concept-card"><div class="dw"><table></table></div></div></div>',
+     0, "the house structure"),
+]
+
+
+# An HTML comment that contains a ">" survives a naive tag strip.
+#
+# Sixteen tools in this repo strip markup with `re.sub(r"<[^>]+>", "", ...)`,
+# and that regex stops at the first ">" it meets. A comment reading
+# `<!-- did not clear the >=15-card bar -->` is therefore not one tag but two
+# fragments with `=15-card bar` as plain text between them, and every one of
+# those tools reads that text as content: depth_report counts its characters,
+# near_duplicates folds it into an overlap score, the acronym annotator would
+# happily expand inside it.
+#
+# Three such comments exist. All three sit *between* topics, so nothing
+# measures them and no number on this site is currently wrong. That is the
+# whole reason for this check: **the invariant holds by luck rather than by
+# construction**, and one comment written inside a card body with a ">" in it
+# would silently move numbers that appear in plan.md's measured-state table
+# with nothing to say it had happened.
+#
+# Gating the condition is cheaper and more complete than hardening sixteen
+# regexes, because a comment that cannot contain ">" cannot break any of them.
+# The fix is always trivial — write "at least 15" or "&gt;=15".
+#
+# Scoped to comments inside a .topic block, which are the only ones any tool
+# reads. The file-level ones outside a topic are left alone: they are where
+# the domain's own bookkeeping lives, and no measurement ever reaches them.
+_COMMENT_RE = re.compile(r"<!--(.*?)-->", re.S)
+
+
+def _topic_extent(block):
+    """Offsets of the .topic element inside its line-range block.
+
+    `topic_blocks` runs from one topic's line to the next one's, so its tail
+    holds whatever sits *between* two topics — and on this site that is exactly
+    where the domain bookkeeping comments live. Balancing the divs from the
+    opening tag gives the element itself, which is the only region any tool
+    measures. `check_markup.py` already gates the balance this relies on.
+    """
+    m = TOPIC_START_RE.search(block)
+    if not m:
+        return None
+    depth, i = 0, m.start()
+    for tag in re.finditer(r"<div\b|</div>", block[m.start():]):
+        depth += 1 if tag.group(0) == "<div" else -1
+        if depth == 0:
+            return m.start(), m.start() + tag.end()
+    return m.start(), len(block)
+
+
+def gt_in_comment(text):
+    """(line, snippet) for a comment inside a .topic that contains a ">"."""
+    out = []
+    for start, block in topic_blocks(text):
+        extent = _topic_extent(block)
+        if not extent:
+            continue
+        lo, hi = extent
+        for m in _COMMENT_RE.finditer(block, lo, hi):
+            if ">" in m.group(1):
+                line = start + block.count("\n", 0, m.start())
+                out.append((line, re.sub(r"\s+", " ", m.group(1)).strip()[:60]))
+    return out
+
+
+GT_COMMENT_FIXTURES = [
+    ('<div class="topic"><!-- cards under the >=15 bar --><div class="concept-card"></div></div>',
+     1, "the defect: a comment inside a topic whose text leaks past <[^>]+>"),
+    ('<div class="topic"><!-- cards under the 15 bar --><div class="concept-card"></div></div>',
+     0, "the same comment without the > is inert"),
+    ('<!-- cards under the >=15 bar --><div class="topic"><div class="concept-card"></div></div>',
+     0, "outside a topic, where nothing measures it"),
+    ('<div class="topic"><!-- a -> b, then\n     c >= d --></div>',
+     1, "a multi-line comment is still one comment"),
+    ('<div class="topic"><div class="topic-body"></div></div>\n<!-- the >=15 note -->',
+     0, "the tail of a block is between two topics, not inside one"),
+]
+
+
+BADGE_FIXTURES = [
+    ('<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>'
+     '<div class="topic"><span class="topic-badge">Linux • Ops</span></div>',
+     1, "the defect: one badge, two spellings, one domain"),
+    ('<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>'
+     '<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>',
+     0, "the same badge twice is not a clash"),
+    ('<div class="topic"><span class="topic-badge">LINUX • Ops</span></div>'
+     '<div class="topic"><span class="topic-badge">LINUX • Security</span></div>',
+     0, "different badges are not a clash"),
+    ('<div class="topic"><span class="topic-badge">Sec+ • Start Here</span></div>'
+     '<div class="topic"><span class="topic-badge">SEC • Start Here</span></div>',
+     1, "punctuation counts: Sec+ and SEC normalise alike"),
+]
+
+
+_SEE_TITLES = ["Trigonometry — The Unit Circle, Identities & Inverses",
+               "MECM Deployment & Content Troubleshooting"]
+SEE_FIXTURES = [
+    ('<p>See <strong>Trigonometry — The Unit Circle, Identities &amp; Inverses</strong> '
+     'for the circle side.</p>', 1, "the defect: emphasis where a link belongs"),
+    ('<p>See <span class="xref">Trigonometry — The Unit Circle, Identities &amp; Inverses</span> '
+     'for the circle side.</p>', 0, "already a cross-reference — must not report itself"),
+    ('<p>Trigonometry — The Unit Circle, Identities &amp; Inverses is a topic here.</p>',
+     0, "named without 'see' — not the writer signalling a link"),
+    ('<p>See the table above, and see the console.</p>', 0, "'see' with no title after it"),
+    ('<p>See <strong>Trigonometry — The Unit Circle, Identities &amp; Inverses</strong> and '
+     '<strong>MECM Deployment &amp; Content Troubleshooting</strong>.</p>',
+     2, "both titles after one 'see' are reported, not just the first"),
+]
+
+
 def self_test():
     failures = 0
     for text, want, why in WRAPPED_COMMENT_FIXTURES:
@@ -999,6 +1320,31 @@ def self_test():
         if got != want:
             failures += 1
             print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in NESTING_FIXTURES:
+        got = len(unindented_nesting(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in GT_COMMENT_FIXTURES:
+        got = len(gt_in_comment(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in BARE_TABLE_FIXTURES:
+        got = len(bare_tables(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in BADGE_FIXTURES:
+        got = len(badge_spellings(text))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
+    for text, want, why in SEE_FIXTURES:
+        got = len(unlinked_see(text, _SEE_TITLES))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     longest = max(len(a) for _, a, _, _ in RENDERED_FIXTURES)
     for text, acronym, want, why in RENDERED_FIXTURES:
         spec = bool(_rendered_re(acronym).search(text))
@@ -1008,7 +1354,10 @@ def self_test():
             print(f"FAIL  {why}: {acronym!r} — specification={spec}, "
                   f"index={fast}, expected={want}")
     n = (len(RENDERED_FIXTURES) + len(DANGLING_FIXTURES)
-         + len(WRAPPED_COMMENT_FIXTURES))
+         + len(WRAPPED_COMMENT_FIXTURES) + len(NESTING_FIXTURES)
+         + len(BARE_TABLE_FIXTURES) + len(GT_COMMENT_FIXTURES)
+         + len(BADGE_FIXTURES)
+         + len(SEE_FIXTURES))
     print(f"self-test: {n} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 

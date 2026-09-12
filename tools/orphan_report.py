@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-orphan_report.py — good cards that nothing links to.
+orphan_report.py — good cards that nothing links to, and groups that lead nowhere.
 
-plan.md Phase 10 T4. 902 of 1,432 topics carried no related-topic link when this
+plan-archive.md Phase 10 T4. 902 of 1,432 topics carried no related-topic link when this
 was written. That is not automatically wrong: `data/related.json` is hand-built
 and hand-built things are partial. The interesting subset is narrower and much
 more actionable.
@@ -74,10 +74,85 @@ def linked_ids():
     return ids
 
 
+# ── Islands ─────────────────────────────────────────────────────────────────
+#
+# An orphan is a topic nothing points at. An **island** is subtler and this
+# census could not see it: a group of topics that link to each other, so none of
+# them is an orphan, and to nothing else — so the "See also" strip never leads
+# out. A reader who arrives can circle for ever without being offered the rest
+# of the site.
+#
+# Measured the first time it was run: **12 components over 1,485 linked topics** —
+# one mainland of 1,432 and eleven islands holding 53 topics. The composition was
+# the finding rather than the count. Five islands were `script`'s language
+# reference layer (API design, GraphQL, WebSockets, JSON, serialisation, Kafka,
+# OLTP/OLAP), every one of which has a twin on the mainland it was never linked
+# to. One was the **beginner security layer** — *Security Basics in Plain
+# English*, *Threats Explained Simply*, *Everyday Security Hygiene* — which only
+# ever offered a beginner the other two beginner cards.
+#
+# **This is a census and cannot be a gate.** The islands that remain are whole
+# reference domains whose neighbours are legitimately their own kind: the
+# calculus track, the keyboard-shortcut tables, the quotes collection. Requiring
+# every component to be connected would mean inventing a link out of `math`, and
+# an invented "See also" is worse than a short one.
+
+def components(links):
+    """Connected components of the related-topic graph, largest first."""
+    adjacency = {}
+    for a, bs in links.items():
+        for b in bs:
+            adjacency.setdefault(a, set()).add(b)
+            adjacency.setdefault(b, set()).add(a)
+    seen, out = set(), []
+    for node in adjacency:
+        if node in seen:
+            continue
+        stack, comp = [node], set()
+        while stack:
+            here = stack.pop()
+            if here in comp:
+                continue
+            comp.add(here)
+            stack.extend(adjacency[here] - comp)
+        seen |= comp
+        out.append(comp)
+    return sorted(out, key=len, reverse=True), len(adjacency)
+
+
+def report_islands(links, domain_of_id):
+    comps, linked = components(links)
+    if not comps:
+        print("no related-topic links at all")
+        return 0
+    main = comps[0]
+    print(f"{linked} linked topics · {len(comps)} component(s) · "
+          f"mainland {len(main)} ({len(main) * 100 // linked}%)")
+    for comp in comps[1:]:
+        doms = {}
+        for t in comp:
+            d = domain_of_id(t)
+            doms[d] = doms.get(d, 0) + 1
+        spread = " · ".join(f"{d} {n}" for d, n in sorted(doms.items()))
+        print(f"  island of {len(comp):>2}  [{spread}]")
+        for t in sorted(comp)[:4]:
+            print(f"      {t}")
+        if len(comp) > 4:
+            print(f"      … and {len(comp) - 4} more")
+    print()
+    print("A census, not a gate — a reference domain's neighbours are its own kind.")
+    return 0
+
+
 def main():
     args = sys.argv[1:]
     only = args[args.index("--domain") + 1] if "--domain" in args else None
     show_all = "--all" in args
+
+    if "--islands" in args:
+        rel = json.loads((DATA / "related.json").read_text(encoding="utf-8"))
+        where = {tid: did for tid, did, _, _ in built_topics()}
+        return report_islands(rel, lambda t: where.get(t, "?"))
 
     linked = linked_ids()
     rows, total, orphans = [], 0, 0

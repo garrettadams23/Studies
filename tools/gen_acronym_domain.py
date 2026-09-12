@@ -58,7 +58,7 @@ CATEGORY_ICONS = {
 ANATOMY_SVG = """\
 <svg class="acro-svg" viewBox="0 0 1120 470" role="img" aria-labelledby="acrosvg-t acrosvg-d" preserveAspectRatio="xMidYMid meet">
   <title id="acrosvg-t">How an acronym is recorded and shown</title>
-  <desc id="acrosvg-d">An acronym breaks into the words its letters stand for. On a topic page the expansion is added in brackets beside its first use. In this dictionary the same acronym is stored with its expansion, subject area, an optional note, and every other meaning it carries.</desc>
+  <desc id="acrosvg-d">An acronym breaks into the words its letters stand for. On a topic page the expansion is added in brackets beside its first use. In this dictionary the same acronym is stored with its expansion, subject area, an optional note, and every other meaning it carries. Where the letters cannot be read off the expansion — a11y, UTC, XSS — a Letters line says how they were formed instead.</desc>
 
   <!-- ── 1. the letters ────────────────────────────────────────────────── -->
   <g class="acs-panel">
@@ -149,6 +149,14 @@ def meanings_cell(meanings):
         chunk = f'<strong class="c-cyan">{esc(m["e"])}</strong>'
         if m.get("n"):
             chunk += f'<br /><span class="c-muted">{esc(m["n"])}</span>'
+        # `l` is only present where the letters cannot be read off the
+        # expansion, so the reader who stopped to wonder why is exactly the
+        # reader who sees it. tools/check_acronyms.py requires it there.
+        if m.get("l"):
+            chunk += (
+                '<br /><span class="c-muted"><em>Letters:</em> '
+                f'{esc(m["l"])}</span>'
+            )
         parts.append(chunk)
     return '<br /><span class="c-muted">— or —</span><br />'.join(parts)
 

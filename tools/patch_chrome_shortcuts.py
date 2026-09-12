@@ -196,7 +196,7 @@ index.html          Main application entry point
 style.css           All layout and theme styling
 script.js           Interactive logic and UI state
 Img/                Diagrams, study tips infographic, favicons
-plan.md             Development roadmap
+plan.md             Development roadmap (closed phases: plan-archive.md)
 patch_*.py          Idempotent injection scripts (run from project root)
 ```
 

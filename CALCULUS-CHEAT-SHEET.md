@@ -729,7 +729,7 @@ A right triangle only has acute angles, so the triangle definition cannot explai
 | cos θ | adj/hyp | The **x**-coordinate |
 | Best for | Solving actual triangles — surveying, ladders, ramps | Calculus, periodicity, anything with a sign |
 
-They agree wherever both apply, because on a unit circle the hypotenuse is 1 — so opp/hyp becomes just opp, which is the height, which is y. Same function, described from two directions. See **Trigonometry — The Unit Circle, Identities & Inverses** for the circle side.
+They agree wherever both apply, because on a unit circle the hypotenuse is 1 — so opp/hyp becomes just opp, which is the height, which is y. Same function, described from two directions. See Trigonometry — The Unit Circle, Identities & Inverses for the circle side.
 
 ### Where sec quietly matters, and where it all goes wrong — The trap
 

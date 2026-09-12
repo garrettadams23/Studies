@@ -40,12 +40,16 @@ stamp:
 check:
 	$(PY) tools/check_gates.py
 	$(PY) tools/gen_acronym_domain.py --check
+	$(PY) tools/check_acronyms.py --self-test
+	$(PY) tools/check_acronyms.py
 	$(PY) tools/gen_cheatsheet.py --check
 	$(NODE) tools/gen_og_image.mjs --check
 	$(PY) tools/ti84_trainer.py --verify
 	$(PY) tools/ti84_trainer.py --check-card
 	$(PY) tools/check_markup.py --self-test
 	$(PY) tools/check_markup.py
+	$(PY) tools/check_css_vars.py --self-test
+	$(PY) tools/check_css_vars.py
 	$(PY) tools/lint_content.py --self-test
 	$(PY) tools/lint_content.py
 	$(PY) tools/fix_topic_names.py --check
@@ -60,8 +64,12 @@ check:
 	$(PY) tools/suggest_related.py --check
 	$(PY) tools/check_paths.py
 	$(PY) tools/stamp_freshness.py --verify
+	$(PY) tools/check_precache.py --self-test
+	$(PY) tools/check_precache.py
 	$(PY) tools/check_determinism.py
 	$(PY) tools/page_budget.py
+	$(PY) tools/check_plan_numbers.py --self-test
+	$(PY) tools/check_plan_numbers.py
 
 ## census: the four reports that measure content rather than gate it
 census:
@@ -91,7 +99,7 @@ equiv:
 test:
 	$(NODE) tools/smoke_test.mjs
 
-## search: does searching for a thing find it (plan.md Phase 10 T5)
+## search: does searching for a thing find it (plan-archive.md Phase 10 T5)
 search:
 	$(NODE) tools/search_test.mjs
 

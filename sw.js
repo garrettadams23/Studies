@@ -9,7 +9,7 @@
 // Deriving it means a release can never ship with a stale cache because someone
 // forgot to bump a number, and an unchanged build never invalidates a cache for
 // no reason.
-const CACHE_VERSION = "techref-1fb826096ec8";
+const CACHE_VERSION = "techref-5e079cb03905";
 
 const PRECACHE = [
   "/",
@@ -25,6 +25,11 @@ const PRECACHE = [
   "/Img/favicon/favicon.ico",
   "/Img/favicon/apple-touch-icon.png",
   "/Img/favicon/site.webmanifest",
+  // The two icons the manifest names. The manifest was precached and these
+  // were not, so a PWA installed with no network had no icon — the one
+  // missing asset a reader sees on their own home screen.
+  "/Img/favicon/web-app-manifest-192x192.png",
+  "/Img/favicon/web-app-manifest-512x512.png",
 ];
 
 self.addEventListener("install", (event) => {

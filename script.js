@@ -1759,6 +1759,12 @@ function highlightIn(el, term) {
   const termLower = term.toLowerCase();
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
     acceptNode(node) {
+      // Text already inside a mark this function put there is skipped, which
+      // makes the call idempotent. Without it, highlighting a container and
+      // then something nested inside it wraps the same words twice and builds
+      // `<mark><mark>term</mark></mark>` — invisible in one theme, doubled in
+      // the other, and impossible for clearHighlights() to unwind cleanly.
+      if (node.parentElement?.closest("mark.sh")) return NodeFilter.FILTER_REJECT;
       return node.nodeValue.toLowerCase().includes(termLower)
         ? NodeFilter.FILTER_ACCEPT
         : NodeFilter.FILTER_REJECT;
@@ -1856,7 +1862,7 @@ const SHORT_TERM = 4;
  * for matcher()'s short-term guard to stand on. Keeping spaces keeps every
  * boundary that guard depends on.
  */
-const RE_INTRAWORD = /(?<=[a-z0-9])[-.'&/](?=[a-z0-9])/g;
+const RE_INTRAWORD = /(?<=[a-z0-9])[-.'\u2019&/](?=[a-z0-9])/g;
 function foldSeparators(lowered) {
   return lowered.replace(RE_INTRAWORD, "");
 }
@@ -1873,6 +1879,38 @@ function foldSeparators(lowered) {
  * Deliberately tiny, and only used by the fallback. A long stop list starts
  * discarding real content words, and this one never sees a query that had an
  * answer as typed.
+ *
+ * ## The contracted half, which was missing for a year
+ *
+ * A reader typing a question types contractions, and a contraction of a
+ * function word is still a function word — but `won't` is not the string
+ * `will`, so it was surviving into the conjunction as a hard requirement that
+ * almost no card can satisfy. Four of seven realistic contraction queries
+ * returned **nothing** while their spelled-out twins returned fifteen to
+ * twenty-five cards:
+ *
+ *   laptop won't turn on        0     laptop will not turn on     25
+ *   certificate didn't renew    0     certificate did not renew   15
+ *   why won't my vpn connect    0     why will not my vpn connect 22
+ *   dns isn't resolving         0     dns not resolving            3
+ *
+ * Two of those zeros were already recorded in `query_probe.mjs` as *kind 3* —
+ * "the answer is there, only the phrasing is absent". They were nothing of the
+ * kind. The phrasing was fine and the matcher was dropping the query on the
+ * floor, which is worth remembering the next time a zero gets a verdict: **a
+ * kind-3 call is a decision not to write something, and it is only sound if the
+ * matcher has been ruled out first.**
+ *
+ * Membership is tested against the *folded* word, so the entries below are
+ * written folded — `won't`, `won’t` and `wont` all arrive here as `wont`, and
+ * one entry covers the straight apostrophe, the typographic one a phone
+ * substitutes, and the reader who omitted it.
+ *
+ * Chosen one at a time rather than by rule, because the folded form of a
+ * contraction is sometimes a term this site is about: `I'd` folds to **id**,
+ * `I'm` to **im**, `I'll` to **ill**, `we'd` to **wed**. Those are left out —
+ * silently discarding `id` from `entra id` would be a worse bug than the one
+ * being fixed. The ones kept are the ones that are only ever function words.
  */
 /**
  * A term and its crudest singular/plural, for the widened stage only.
@@ -1918,7 +1956,18 @@ function plurals(term) {
 const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
   + "were be been do does did can could should would will shall may might must "
   + "i we you they it he she this that these those my our your their its "
-  + "how what why when where which who does not no yes if then than so").split(" "));
+  + "how what why when where which who does not no yes if then than so "
+  // `vs` and `versus` join them for the same reason `or` is here. The site
+  // titles a dozen topics "X vs Y", so the as-typed pass answers those before
+  // the fallback ever runs — but `agile vs waterfall`, which no single card
+  // contains verbatim, was requiring the literal word `vs` in a card and
+  // returning nothing. This list only ever sees a query that already failed.
+  + "vs versus "
+  // Contractions, written folded — see the note above on why these are listed
+  // rather than derived, and why id/im/ill/wed are deliberately absent.
+  + "isnt arent wasnt werent dont doesnt didnt cant cannot wont couldnt "
+  + "wouldnt shouldnt mustnt aint youre youve youll theyre theyve theyll "
+  + "thats theres heres whats whos hows wheres whens lets").split(" "));
 
 function matcher(lowered) {
   if (lowered.length > SHORT_TERM) return text => text.includes(lowered);
@@ -2015,8 +2064,21 @@ function applySearchToDomain(section) {
       setTopicOpen(topic.querySelector(":scope > .topic-header"), true);
       renderSeeAlso(topic);
       renderTopicNote(topic);
+      // `table` is in this list for a defect a browser found: 80 topics hold a
+      // lookup table that is not inside a `.dw`, and a search hit in one of
+      // them opened the topic and highlighted nothing. Searching `pacman`
+      // reached linux's *Package Management*, whose only occurrence of the word
+      // is a table cell, and marked zero words on the page.
+      //
+      // Wrapping all 80 was the other option and is the wrong one. `.dw` is
+      // eighteen pixels of padding — the highlight list was the only thing
+      // making it structural, and coupling "can be highlighted" to "has a
+      // padding wrapper" is the actual bug. Highlighting should follow the
+      // content. A table nested in a `.dw` is now visited twice; the
+      // idempotence guard in highlightIn() is what makes that safe.
       topic.querySelectorAll(
-        ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, .code-block"
+        ".topic-name, .concept-title, .concept-label, .concept-desc, .dw, .dt, "
+        + ".code-block, table"
       ).forEach(n => _searchTermList.forEach(t => highlightIn(n, t)));
     } else {
       topic.classList.add("search-hidden");
@@ -2073,6 +2135,7 @@ function runSearch(raw) {
   if (!_searchTerm) {
     _searchTermList = [];
     if (countEl) countEl.textContent = "";
+    renderNamedTopic(null);
     return;
   }
 
@@ -2107,7 +2170,10 @@ function runSearch(raw) {
   // empty, it is just short, and reinstating them is far worse: "the 5 whys"
   // keeps only *whys*, falls back to *the* ∧ *whys*, and returns 584 cards
   // because almost every card on the site contains both.
-  const words = allWords.filter(w => w.length >= 2 && !WIDE_STOP.has(w.toLowerCase()));
+  // Folded before the stop test, so a contraction is recognised however the
+  // reader's keyboard spelled its apostrophe — or whether they typed one.
+  const words = allWords.filter(w =>
+    w.length >= 2 && !WIDE_STOP.has(foldSeparators(w.toLowerCase())));
   // Stage one of the fallback: the query in order, against folded text, with
   // the gaps between its words allowed to be a space, a hyphen, or nothing.
   //
@@ -2273,12 +2339,93 @@ function runSearch(raw) {
       : widened === "fold" ? " · matched ignoring hyphens" : "";
     if (widened === "broad") {
       countEl.textContent = `no exact match${scope} · too broad to widen — try a more specific word`;
+      renderNamedTopic(null);
       return;
     }
     countEl.textContent = matchCount
       ? `${matchCount} match${matchCount !== 1 ? "es" : ""} in ${domainCount} domain${domainCount !== 1 ? "s" : ""}${widened ? "" : via}${wide}`
       : `no matches${scope}`;
+    renderNamedTopic(namedTopic(q.text, domainCount));
   }
+}
+
+/**
+ * Draw (or remove) the named-topic line under the search bar.
+ *
+ * Built on demand and removed when it has nothing to say, so it costs zero
+ * elements at rest — the same discipline as the see-also strip and the note
+ * composer, and the reason a 1,549-topic page renders 475 elements. It cannot
+ * live inside `.search-count`: that is a 60px nowrap counter pinned to the
+ * right of the input, and a topic title in it would push the search box off a
+ * phone.
+ */
+function renderNamedTopic(named) {
+  const bar = document.getElementById("search-bar");
+  const existing = document.getElementById("search-named");
+  if (!named || !bar) { existing?.remove(); return; }
+  const row = existing || document.createElement("div");
+  if (!existing) {
+    row.id = "search-named";
+    row.className = "search-named";
+    bar.appendChild(row);
+  }
+  row.textContent = "";
+  const a = document.createElement("a");
+  a.href = `#${encodeURIComponent(named.id)}`;
+  a.textContent = named.title;
+  row.append(document.createTextNode("The site has a topic called "), a);
+}
+
+/**
+ * The one hit whose *title* is what the reader typed, when the results are
+ * spread too wide to find it by eye.
+ *
+ * This site shows one domain at a time, so a query answered in twelve domains
+ * leaves the reader picking a chip and hoping. Measured over the 85 standing
+ * queries in `query_probe.mjs`: five are that shape, and in all five the topic
+ * named after the query is the one they wanted — `agile` returns 24 cards
+ * across 12 domains and *Agile — The Four Trade-offs* is one of them,
+ * `chain of custody` returns 9 across 8, `third party risk` 5 across 3.
+ *
+ * Deliberately not a ranking engine. The test is exact and cheap: **every
+ * content word of the query appears in the topic's slug**, which is built from
+ * its title. Either the site has a topic named this or it does not, and 61 of
+ * the 85 queries have no such topic and get no line at all. A relevance score
+ * would have an opinion about all 61, and this file's oldest rule is that a
+ * plausible signal firing broadly is the instrument being wrong.
+ *
+ * Silent below three domains, because one or two chips is not a haystack, and
+ * silent when several topics qualify — two equally-named topics is exactly the
+ * case where picking one for the reader is a guess wearing an answer's clothes.
+ *
+ * That last rule was tested against the obvious loosening and kept. Breaking a
+ * tie by preferring the slug that *starts* with the query reads as principled
+ * and buys two more of the 85:
+ *
+ *   what is idempotency   3 candidates → idempotency-exactly-once-safe-retries   ✓
+ *   what is an embedding  2 candidates → embeddings-rag-giving-ai-access-to-…    ✗
+ *
+ * The second is wrong. A reader asking what an embedding *is* wants the vectors
+ * and cosine-distance card, and the tiebreak picked the retrieval one because
+ * its title happens to begin with the word. **A pointer that is right half the
+ * time is worse than no pointer**, because the reader cannot tell which half
+ * they are in and stops using it. `what is technical debt` stays tied between
+ * the craft card and the financial-argument card, and declining to choose there
+ * is the rule working, not failing.
+ */
+function namedTopic(text, domainCount) {
+  if (domainCount < 3) return null;
+  const words = String(text || "").toLowerCase().split(/\s+/)
+    .map(w => w.replace(/[^a-z0-9]/g, ""))
+    .filter(w => w.length > 2 && !WIDE_STOP.has(w));
+  if (!words.length) return null;
+  const found = [];
+  _searchHits.forEach(set => set.forEach(id => {
+    if (words.every(w => id.includes(w))) found.push(id);
+  }));
+  if (found.length !== 1) return null;
+  const title = topicName(found[0]);
+  return title ? { id: found[0], title } : null;
 }
 
 /** Debounced entry point wired to the search box's oninput. */
@@ -2828,7 +2975,17 @@ function stClose() {
   _examState = null;
 }
 
-function esc(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+// `'` is in the set although nothing needs it today: every attribute this feeds
+// is double-quoted, checked across all 45 innerHTML sites, so an apostrophe
+// cannot currently break out of one. It is here so that fact does not have to
+// stay true — the next single-quoted attribute somebody writes is safe by
+// default rather than by a property nobody restated. `&#39;` renders as an
+// apostrophe in both text and attribute contexts, so nothing on screen moves.
+function esc(s) {
+  return (s || "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
 
 // ── Scope selector (All / a domain / Bookmarks) ─────────────────────────────
 // The acronym dictionary's "topics" are A–Z index sections, not concepts. As a

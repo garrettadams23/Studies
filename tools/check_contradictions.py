@@ -34,7 +34,7 @@ different things that happen to share a word. Inside a **near-duplicate pair**
 — two topics whose titles overlap by half or more, or whose subjects sit one
 inside the other, per `near_duplicates.py` — both cards are about the same
 subject by construction, so a disagreement
-between them is a bug in one of them rather than a coincidence. plan.md Phase
+between them is a bug in one of them rather than a coincidence. plan-archive.md Phase
 10 T9.
 
 Usage:

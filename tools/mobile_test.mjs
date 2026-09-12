@@ -16,6 +16,25 @@
  * spread that includes the historically-widest content tests the same CSS at a
  * fraction of the cost. A couple of pixels of slack absorbs sub-pixel rounding.
  *
+ * ## And then the searching pass, which this file was missing entirely
+ *
+ * Browsing and searching are different layouts, and for a long time this only
+ * tested the first. Searching writes a message into `.search-count`, which is
+ * `white-space: nowrap` so a short count never wraps mid-phrase beside the
+ * input — and *"no exact match, so these contain all your words"* is 345px of
+ * unbreakable text on a 375px screen.
+ *
+ * **52 of the 85 standing reader queries in `query_probe.mjs` scrolled a phone
+ * sideways**, every one of them by exactly the counter's overshoot, and this
+ * file passed 9/9 the whole time because it opens domains and never types. The
+ * fix is a wrap below the 600px breakpoint; the guard is the second pass below.
+ *
+ * The queries are chosen for the *shape of the message*, not the subject: one
+ * that widens ("no exact match…"), one that lists acronym alternates ("also
+ * matching…"), one that names an operator scope, and one that finds nothing.
+ * A subject-based list would drift with the corpus; these four exercise every
+ * branch that writes to the counter.
+ *
  * Usage:
  *   npm install playwright && node tools/mobile_test.mjs
  */
@@ -103,10 +122,57 @@ for (const dom of DOMAINS) {
   await page.waitForTimeout(80);
 }
 
+// ── the searching pass ──────────────────────────────────────────────────────
+// Every branch that writes to `.search-count`, at phone width, with a domain
+// open underneath so the measurement includes real content and not an empty
+// page. See the note at the top of this file for why these four.
+const QUERIES = [
+  ["kerberos", "a plain count"],
+  ["tcp", "acronym alternates in the message"],
+  ["domain:net subnetting", "an operator scope in the message"],
+  ["page loads halfway", "the widened-fallback message, the longest one"],
+  ["zzzznothing", "no matches"],
+];
+await page.evaluate(() => { const s = domainSection("net"); if (s) openDomain(s); });
+await page.waitForTimeout(300);
+for (const [q, why] of QUERIES) {
+  const over = await page.evaluate(async (query) => {
+    runSearch(query);
+    await new Promise((r) => setTimeout(r, 260));
+    const de = document.documentElement;
+    const px = de.scrollWidth - de.clientWidth;
+    let worst = null;
+    if (px > 2) {
+      const vw = window.innerWidth;
+      for (const el of document.querySelectorAll("body *")) {
+        const b = el.getBoundingClientRect();
+        if (b.width === 0 || b.right <= vw + 1) continue;
+        let a = el.parentElement, contained = false;
+        while (a && a !== document.body) {
+          const o = getComputedStyle(a).overflowX;
+          if (o === "auto" || o === "scroll" || o === "hidden") { contained = true; break; }
+          a = a.parentElement;
+        }
+        if (!contained) {
+          worst = el.tagName + (el.className ? "." + String(el.className).split(" ")[0] : "");
+          break;
+        }
+      }
+    }
+    return { px, worst };
+  }, q);
+  const ok = over.px <= SLACK;
+  results.push({ dom: `search ${JSON.stringify(q)}`, px: over.px, worst: over.worst, ok });
+  console.log(`${ok ? "ok  " : "FAIL"} : searching ${JSON.stringify(q)} — ${why}` +
+              `  (page ${over.px}px past ${WIDTH}px viewport)` +
+              (ok || !over.worst ? "" : `  — widest uncontained: ${over.worst}`));
+}
+await page.evaluate(() => runSearch(""));
+
 await browser.close();
 
 const failed = results.filter((r) => r.ok === false);
 const checked = results.filter((r) => !r.skipped).length;
-console.log(`\n${checked - failed.length}/${checked} domains fit the ${WIDTH}px viewport` +
+console.log(`\n${checked - failed.length}/${checked} checks fit the ${WIDTH}px viewport` +
             (failed.length ? `, ${failed.length} overflow` : "") + ".");
 process.exit(failed.length ? 1 : 0);

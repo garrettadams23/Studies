@@ -20,7 +20,7 @@ every one and is wired into CI.
     python tools/ti84_trainer.py --verify     CI gate: every compute evaluates,
                                               every drill is well-formed
 
-Drill bank: data/ti84_drills.json. Spec: plan.md, CALCULUS TRACK section 3.
+Drill bank: data/ti84_drills.json. Spec: plan-archive.md, CALCULUS TRACK section 3.
 """
 
 import argparse
