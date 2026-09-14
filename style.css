@@ -2709,6 +2709,29 @@ mark.sh {
   .xref[data-xref] { color: inherit; border-bottom: none; }
 }
 
+/* An outbound link in content. Styled as a resolved .xref is, so a link that
+   leaves the site reads the same as one that stays inside it and the arrow is
+   what says which — rather than the browser default, which keeps its blue in
+   both themes and turns purple once visited. In print the colour goes and the
+   href is spelled out, because a printed page cannot be clicked. */
+.extlink {
+  color: var(--accent, var(--cyan));
+  border-bottom: 1px dotted currentColor;
+  text-decoration: none;
+}
+.extlink:hover,
+.extlink:focus-visible {
+  border-bottom-style: solid;
+}
+.extlink::after {
+  content: " \2197";
+  font-size: 0.85em;
+}
+@media print {
+  .extlink { color: inherit; border-bottom: none; }
+  .extlink[href]::after { content: " (" attr(href) ")"; font-size: 0.85em; }
+}
+
 .volatile {
   border-bottom: 1px dotted var(--muted);
   cursor: help;
