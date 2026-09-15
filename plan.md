@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **44**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **45**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,7 +43,7 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,382**, or **1,117 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **72 of 78**, 5 zeros and 1 wrong-card miss, all 6 recorded, 0 unexplained | `query_probe.mjs` |
+| Reader questions answered | **60 of 78** — every query now carries the topic it should reach, which turned 72 into 60. 5 zeros and 13 wrong-card misses, 6 recorded, **12 unexplained and named** | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **35% raw** headroom — room for ~820 more topics | `page_budget.py` |
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,117 chars**, median 3,710 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **39**, and the same 39 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 14/14 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **44** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **45** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4420,4 +4420,126 @@ are ones a reader can verify faster than a maintainer can re-audit.
 45 volatile spans (unchanged) · fact anchors 9 -> 12 · 39 gates green
 check · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 14
 visual 2 · backup 3
+```
+
+---
+
+## Session — the census that was counting, and the word the reader threw in
+
+The last session's record ends on a table it wrote for `storage_denied_test.mjs`
+and did not apply anywhere else:
+
+| Asserts | Passes when |
+|---|---|
+| **It did not throw** | The feature is silently broken |
+| **It returned something** | The something is wrong |
+| **It returned the right thing** | — |
+
+`query_probe.mjs` has a field for the third row. It is called `want`, it names
+the topic a query should reach, its own comment says *"a query that comes back
+with cards, none of them the one it was asking for, is a miss wearing a result
+count"* — and it was filled in for **one of the seven reader groups**. The other
+66 queries were the middle row.
+
+### Filling it in cost twelve points of a headline number
+
+**72 of 78 answered became 57.** The first six queries of the first group
+contained four misses that had been scored as successes since the file was
+written:
+
+```
+printer offline        1 result   redteam/bettercap-the-mitm-framework
+user forgot password   2 results  script/iot-security · endpoint/browser-management
+shared drive not mapping  2       threat/the-cyber-kill-chain · pentest/pentest-reporting
+account keeps locking out 3       mind/survival-mindsets · blueteam/phishing-first-ten-minutes
+```
+
+And `how do adults learn` missed a topic **titled** *How Adults Actually Learn*.
+
+A `want` is only written where one card is the defensible answer; six queries
+have none and stay scored by count, because inventing a target to move a number
+is the same failure in the other direction.
+
+### The fifteen split three ways, and only four were the corpus
+
+Read one at a time against the wanted card's own text — which is the step that
+made this worth doing, because before it all fifteen looked alike:
+
+| Cause | n | What it looks like |
+|---|---|---|
+| **One word too many** | 9 | The subject word is in the card; the filler beside it is not. `do we need iso 27001` missed a card *titled* ISO 27001 over **need**; `cron not running` missed *Cron Jobs* over **running** |
+| **The strict stage stopped on a worse card** | 2 | `kill a process` is a literal phrase in the PowerShell reference, so the search never widens to *Process Management*. Recorded, not fixed — preferring a later stage needs ranking, and this matcher is a filter |
+| **The card does not use the reader's word** | 4 | The Git advanced-workflows card never says *merge conflict*. The adult-learning card says *spacing*. The JML card says *joiner*, never *new starter* |
+
+### The matcher stage, and the number that had to be measured
+
+A conjunction weights every term the same and a reader's question does not. The
+fix is a fourth stage that drops the words which cannot narrow anything — and
+**the rule for which those are cannot be a word list**:
+
+```
+check 39.8%   need 25.2%   break 21.3%   running 19.1%   keeps 12.1%
+disk   8.5%   iso   1.1%   caching 2.5%  cron    1.4%    dropping 1.7%
+```
+
+An absolute cut-off gets it wrong immediately: `policy` sits at 19.5% and is the
+*subject* of "group policy not applying", one row above `running` at 19.1% which
+is filler in "cron not running". **The ratio inside the query is what is
+stable** — a word four times commoner than the rarest word the reader typed
+cannot be what they were asking about, and requiring it can only remove cards
+the rare word already found.
+
+### Two guards, both put there by something going wrong first
+
+The first version closed 15 misses down to 10 and broke two gated fixtures.
+`agile isn't working` collapsed to *agile* and `page loads halfway` to
+*halfway*, each widening a query that had already found its topic. No frequency
+separates them: **`working` is 19.2% and `running` is 19.1%**, one is the
+subject and one is filler, and that is English rather than statistics. The guard
+is a floor of two terms — *relaxing to a single word is not a relaxation of the
+reader's question, it is a different question* — and it costs the two queries
+whose filler was everything but one word. Both belong in the card anyway.
+
+The second version manufactured wrong answers out of honest zeros:
+
+```
+difference between a hub and a switch   →  Docker — Containers, Images & Compose
+terraform state locked                 →  Policy as Code — OPA/Rego & Kyverno
+docker image too big                   →  VS Code — Remote Dev & Dev Containers
+someone clicked the link               →  Endpoint Security
+```
+
+All four are *recorded verdicts* in the probe — deliberate zeros a previous
+session reasoned about and kept. Turning them into confident wrong cards is the
+exact trade `script.js` settled long ago in its own stage-two comment: **a
+fallback that returns the wrong answer is worse than one that returns
+nothing.** So the stage runs only on a query the conjunction already answered.
+Relaxing an answer widens it; relaxing a zero invents one.
+
+### What it came to, honestly
+
+```
+                       answered   zeros   wrong card   unexplained
+counting only              72       5          1            0
+want filled in             57       5         16           15
++ relaxation stage         60       5         13           12
+```
+
+Three misses closed, **no zero manufactured and no gate ceiling moved** — the
+first version bought five more and paid for them in both currencies, and was
+thrown away for it. The remaining twelve are named in `query_probe.mjs` and are
+mostly kind 1: the card says it in the other word, which is a prose wave and
+better writing either way.
+
+The mobile gate gained a check on the way past. The relaxed message names the
+words it kept, so its length depends on the query, and `page loads halfway`
+had quietly started taking the new branch — which is not the same as testing
+it. The case worth pinning is the widest: a relaxed query across fifteen
+domains, where the count, the domain count and two quoted terms are long at
+once.
+
+```
+probe 78 queries · 60 answered · 12 unexplained, named · search 51/51 with no
+ceiling moved · mobile 14 -> 15 · 39 gates green · smoke 163 · a11y 31
+resilience 64 · visual 2 · backup 3
 ```

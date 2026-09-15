@@ -100,6 +100,59 @@
  * The correction matters more than the two cards did. A kind-3 call is a
  * decision not to write something, and it was being made from a topic list.
  *
+ * ## What the count was worth before every query carried a `want`
+ *
+ * The third field below existed for a year and was filled in for **one** of the
+ * seven reader groups. The other 66 queries were scored by result count alone —
+ * the middle row of the three-shapes table this project wrote down a session
+ * earlier and then did not apply here:
+ *
+ *   | Asserts                     | Passes when                 |
+ *   | it did not throw            | the feature is broken       |
+ *   | it returned something       | the something is wrong      |
+ *   | it returned the right thing | —                           |
+ *
+ * Filling `want` in for all of them moved the headline from **72 of 78
+ * answered** to **57**, and the fifteen it exposed are the whole value of the
+ * exercise. `printer offline` returned exactly one card — *Bettercap — The MITM
+ * Framework* — and had been scored as answered since the file was written. `how
+ * do adults learn` missed a topic **titled** *How Adults Actually Learn*.
+ *
+ * A `want` is only written where one card is the defensible answer. Six queries
+ * have none — `user forgot password`, `account keeps locking out`, `log4j`,
+ * `what is a symlink`, `memory leak in production`, `leaving a job well`,
+ * `evidence for an audit` — and those stay scored by count, because inventing a
+ * target to make the number move would be the measurement lying in the other
+ * direction. Two of them are content gaps worth a card and are named in
+ * plan.md rather than guessed at here.
+ *
+ * ## The fifteen split three ways, and only one way was the corpus
+ *
+ * Read one at a time against the wanted card's own text:
+ *
+ *   1. **One word too many** (9). The subject word is in the card and a filler
+ *      word beside it is not. `do we need iso 27001` missed a card titled ISO
+ *      27001 over *need*; `check disk space` missed *"The Disk Is Full"* over
+ *      *check*. Fixed in the matcher — see the relaxation stage in `script.js`,
+ *      which closed three of the nine and left the rest to prose because the
+ *      word it would have had to drop was the reader's subject.
+ *   2. **The strict stage stopped on a worse card** (2). `kill a process` and
+ *      `writing a detection` are in one card each as a literal phrase, so the
+ *      search never widens to the card actually about them. That is the
+ *      documented "stopped at the first stage that finds anything", meeting a
+ *      case where the first stage is right about the words and wrong about the
+ *      subject. Recorded, not fixed: preferring a later stage needs ranking,
+ *      and this matcher is a filter.
+ *   3. **The card does not use the reader's word** (4, and rising as the
+ *      matcher takes work off the pile). The Git advanced-workflows card never
+ *      says *merge conflict*; the adult-learning card says *spacing* and never
+ *      *spaced repetition*; the JML card says *joiner* and never *new starter*.
+ *      This is kind 1 above, and the rule for it has not changed: **fix in
+ *      prose, because it is better writing anyway.**
+ *
+ * The split is the finding. Before `want` was filled in, all fifteen looked
+ * like the same thing — and twelve of them looked like nothing at all.
+ *
  * Usage:
  *   node tools/query_probe.mjs              # every query, grouped by reader
  *   node tools/query_probe.mjs --zero       # only the ones that found nothing
@@ -148,67 +201,76 @@ const READER = args.includes("--reader") ? args[args.indexOf("--reader") + 1] : 
 // arriving here later for the same reason.
 const READERS = [
   ["a service desk engineer", [
-    ["my computer is slow"],
-    ["why is my laptop slow"],
-    ["printer offline"],
+    ["my computer is slow", "", "ops/why-is-my-laptop-slow-the-commonest-ticket-worked-properly"],
+    ["why is my laptop slow", "", "ops/why-is-my-laptop-slow-the-commonest-ticket-worked-properly"],
+    ["printer offline", "", "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
     ["user forgot password"],
-    ["shared drive not mapping"],
+    ["shared drive not mapping", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
     ["account keeps locking out"],
-    ["group policy not applying"],
-    ["mailbox full"],
-    ["onboarding a new starter"],
-    ["leaver checklist"],
-    ["asset tagging"],
-    ["writing a ticket"],
-    ["angry user on the phone"],
-    ["explaining to a non technical manager"],
-    ["wifi keeps dropping"],
-    ["vpn keeps disconnecting"],
-    ["laptop won't turn on"],
-    ["outlook won't connect"],
+    ["group policy not applying", "", "infra/processing-order-precedence-lsdou-enforcement-loopback"],
+    ["mailbox full", "", "m365/retention-litigation-hold-archiving-legals-requirements-in-m"],
+    ["onboarding a new starter", "", "m365/joiner-mover-leaver-in-m365-terms-the-process-that-prevents-"],
+    ["leaver checklist", "", "m365/joiner-mover-leaver-in-m365-terms-the-process-that-prevents-"],
+    ["asset tagging", "", "infra/labelling-asset-tagging-the-boring-discipline-that-pays-out-"],
+    ["writing a ticket", "", "ops/writing-a-ticket-someone-else-can-solve"],
+    ["angry user on the phone", "", "ops/difficult-conversations-angry-users-vip-pressure-saying-no"],
+    ["explaining to a non technical manager", "",
+     "ops/explaining-technical-things-to-non-technical-people-a-repeat"],
+    ["wifi keeps dropping", "", "net/wireless-troubleshooting-roaming-sticky-clients-its-slow"],
+    ["vpn keeps disconnecting", "", "net/vpns-tunneling-secure-connections-over-untrusted-networks"],
+    ["laptop won't turn on", "", "hw/post-beep-codes-diagnostic-leds-reading-a-machine-that-will-"],
+    ["outlook won't connect", "", "m365/the-m365-troubleshooting-playbook-tenant-identity-licence-po"],
   ]],
   ["a SOC analyst or defender", [
-    ["phishing email reported"],
-    ["ransomware first hour"],
+    ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
+    ["ransomware first hour", "",
+     "threat/ransomware-how-it-spreads-and-why-backups-arent-the-whole-st"],
     ["someone clicked the link", "kind 3 — the response card exists and does not use these words; password reset and session revocation are covered in threat and sec"],
-    ["password sprayed"],
-    ["usb found in car park"],
+    ["password sprayed", "", "blueteam/identity-threat-detection-response-itdr"],
+    ["usb found in car park", "", "sec/the-hardware-attack-surface-what-physical-access-to-a-device"],
     ["log4j"],
-    ["what does this alert mean"],
-    ["writing a detection"],
-    ["chain of custody"],
+    ["what does this alert mean", "", "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
+    ["writing a detection", "",
+     "blueteam/what-detection-engineering-is-and-why-it-split-off-from-soc-"],
+    ["chain of custody", "", "blueteam/chain-of-custody-evidence-handling"],
   ]],
   ["a learner meeting a subject", [
-    ["what is a subnet mask"],
-    ["what is a default gateway"],
-    ["why do we need nat"],
-    ["how does a vpn actually work"],
+    ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
+    ["what is a default gateway", "", "net/ip-addresses-subnets-gently"],
+    ["why do we need nat", "", "net/nat-port-forwarding-how-private-networks-reach-the-internet"],
+    ["how does a vpn actually work", "",
+     "net/vpns-tunneling-secure-connections-over-untrusted-networks"],
     ["difference between a hub and a switch", "kind 3 — both are covered; the comparison is not phrased"],
-    ["what is idempotency"],
-    ["what is technical debt"],
-    ["why do we use containers"],
-    ["why does caching break things"],
-    ["what is an embedding"],
-    ["should we fine tune or use rag"],
-    ["spaced repetition"],
-    ["how do adults learn"],
+    ["what is idempotency", "",
+     "script/scheduling-scripts-the-right-way-cron-timers-and-idempotency"],
+    ["what is technical debt", "", "eng/technical-debt-recognize-pay-it-down"],
+    ["why do we use containers", "", "linux/docker-containers-package-once-run-anywhere"],
+    ["why does caching break things", "", "devops/caching-strategies-from-app-to-cdn"],
+    ["what is an embedding", "", "ai/embeddings-rag-giving-ai-access-to-your-own-data"],
+    ["should we fine tune or use rag", "",
+     "ai/fine-tuning-vs-prompting-vs-rag-picking-the-right-tool"],
+    ["spaced repetition", "", "career/how-adults-actually-learn-relevance-practice-feedback-spacin"],
+    ["how do adults learn", "", "career/how-adults-actually-learn-relevance-practice-feedback-spacin"],
   ]],
   ["a Linux or platform engineer", [
-    ["permission denied"],
+    ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],
-    ["kill a process"],
-    ["cron not running"],
-    ["check disk space"],
-    ["why is my query slow"],
+    ["kill a process", "", "linux/process-management-finding-and-taming-runaway-processes"],
+    ["cron not running", "", "linux/cron-jobs-scheduling-tasks-in-linux"],
+    ["check disk space", "",
+     "linux/the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro"],
+    ["why is my query slow", "", "data/reading-query-plans-explain-analyze"],
     ["memory leak in production"],
-    ["flaky test"],
-    ["merge conflict"],
-    ["certificate expired"],
-    ["kubernetes pod crashloop"],
-    ["s3 bucket public"],
-        ["git detached head"],
+    ["flaky test", "", "devops/flaky-tests-a-reliability-problem-in-the-test-suite"],
+    ["merge conflict", "", "script/git-advanced-workflows-beyond-add-commit-push"],
+    ["certificate expired", "", "sec/tls-https-how-secure-connections-work"],
+    ["kubernetes pod crashloop", "",
+     "devops/pods-that-will-not-run-reading-the-status-before-the-logs"],
+    ["s3 bucket public", "", "devops/object-storage-s3-the-cloud-storage-model"],
+    ["git detached head", "", "script/git-advanced-workflows-beyond-add-commit-push"],
     ["terraform state locked", "kind 1, fixed in prose and still zero — the state card now covers a lock outliving a killed run and force-unlock. The matcher wants the three words adjacent; tuning prose to that is the keyword stuffing this file forbids"],
-    ["docker image too big", "kind 3, checked at fault level — devops covers multi-stage builds, .dockerignore, layer caching and image size"],
+    ["docker image too big", "kind 3, checked at fault level — devops covers multi-stage builds, .dockerignore, layer caching and image size",
+     "devops/docker-deep-multi-stage-builds-image-slimming"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -229,19 +291,23 @@ const READERS = [
      "eng/scrum-three-accountabilities-five-events-three-artifacts"],
   ]],
   ["somebody looking for a job", [
-    ["writing a cv"],
-    ["asking for a raise"],
-    ["impostor syndrome"],
-    ["first week as a manager"],
-    ["how to study for an exam"],
+    ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
+    ["asking for a raise", "", "career/asking-for-a-raise-the-case-not-the-conversation"],
+    ["impostor syndrome", "", "mind/imposter-syndrome-you-belong-here"],
+    ["first week as a manager", "",
+     "eng/the-first-90-days-leading-a-team-listen-map-stabilise-then-c"],
+    ["how to study for an exam", "",
+     "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
     ["leaving a job well"],
   ]],
   ["somebody answerable to an auditor", [
-    ["do we need iso 27001"],
-    ["what is a dpia"],
+    ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
+    ["what is a dpia", "", "grc/privacy-law-gdpr-ccpa-for-it-professionals"],
     ["evidence for an audit"],
-    ["third party risk"],
-    ["records retention schedule"],
+    ["third party risk", "",
+     "grc/third-party-risk-your-security-is-only-as-strong-as-your-ven"],
+    ["records retention schedule", "",
+     "grc/data-governance-retention-ediscovery-owning-data-on-purpose"],
   ]],
 ];
 

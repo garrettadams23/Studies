@@ -2206,7 +2206,7 @@ function runSearch(raw) {
   // adjacent pairs costs one extra alternate per word and is exactly the shape
   // of the failure.
   const joined = i => words.slice(i, i + 2).map(w => foldSeparators(w.toLowerCase())).join("");
-  const wideMatchers = words.map((w, i) => {
+  const allMatchers = words.map((w, i) => {
     // An alternate that is itself a function word is dropped: `plurals("whys")`
     // offers "why", which as a conjunction term matches most of the site and
     // narrows nothing. The word the reader typed is always kept.
@@ -2218,6 +2218,9 @@ function runSearch(raw) {
     if (i > 0) alts.push(matcher(joined(i - 1)));
     return alts;
   });
+  // Reassigned by the relaxation stage below, which runs the same sweep over a
+  // shorter word list. Everything before that stage reads the full set.
+  let wideMatchers = allMatchers;
 
   let matchCount = 0, domainCount = 0, firstHit = null, widened = "";
 
@@ -2307,6 +2310,104 @@ function runSearch(raw) {
       if (widened === "words") _searchTermList = [...q.phrases, ...words];
     }
   }
+  // Stage four: the conjunction again, without the words that cannot narrow it.
+  //
+  // A conjunction weights every term the same, and a reader's question does
+  // not. `do we need iso 27001` returned three cards and **not** the one titled
+  // ISO 27001, because that card has no reason to contain the word "need".
+  // `cron not running` missed *Cron Jobs — Scheduling Tasks in Linux* over the
+  // word "running"; `check disk space` missed *"The Disk Is Full"* over
+  // "check"; `wifi keeps dropping` missed the wireless troubleshooting card
+  // over "keeps". In each one the subject word was present and the filler
+  // beside it was the whole reason the card was excluded.
+  //
+  // What separates the two is not a word list. It is measured, per query, over
+  // the same folded text the conjunction has already been reading:
+  //
+  //     check 39.8%   need 25.2%   break 21.3%   running 19.1%   keeps 12.1%
+  //     disk   8.5%   iso   1.1%   caching 2.5%  cron    1.4%    dropping 1.7%
+  //
+  // An absolute cut-off gets this wrong — `policy` sits at 19.5% and is the
+  // *subject* of "group policy not applying", one row above `running` at 19.1%
+  // which is filler. The ratio inside the query is what is stable: a word an
+  // order of magnitude commoner than the rarest word the reader typed cannot
+  // be what they were asking about, and requiring it can only remove cards the
+  // rare word already found.
+  //
+  // RELAX_RATIO is set at 4 from the two nearest counter-examples rather than
+  // by taste. `offline` is 2.7x `printer` and stays required — *printer
+  // offline* is a real miss and it is the printer card's for never discussing
+  // a printer showing offline, which no matcher should paper over. `check` is
+  // 4.7x `disk` and goes.
+  //
+  // The relaxed set always contains the strict one — dropping a conjunct only
+  // ever adds cards — so this cannot lose an answer the conjunction found. It
+  // can only widen, which is what the ceiling below is for.
+  //
+  // It runs **only on a query the conjunction already answered**, never on one
+  // that found nothing. Relaxing an answer widens it; relaxing a zero invents
+  // one, and this file's stage-two comment settled that trade years ago — *a
+  // fallback that returns the wrong answer is worse than one that returns
+  // nothing.* Measured, not assumed: an earlier version of this stage ran on
+  // the zeros too, and turned four honest "no matches" into confident wrong
+  // cards — `difference between a hub and a switch` answered with **Docker —
+  // Containers, Images & Compose**, `terraform state locked` with *Policy as
+  // Code*. Those four zeros are recorded verdicts in `query_probe.mjs`, and a
+  // recorded zero is worth more than a plausible wrong answer.
+  const RELAX_RATIO = 4;
+  let relaxedTo = null;
+  if (matchCount && (widened === "words" || widened === "broad") && words.length > 2) {
+    const corpus = [];
+    domainSections().forEach(section => domainTopics(section.dataset.domain).forEach(t => {
+      if (t.folded === undefined) t.folded = foldSeparators(t.text);
+      corpus.push(t.folded);
+    }));
+    const df = allMatchers.map(alts =>
+      corpus.reduce((n, text) => n + (alts.some(m => m(text)) ? 1 : 0), 0));
+    // A word no card contains is not filler, it is unanswerable: nothing that
+    // keeps it can ever match, so it goes first whatever its rank. Subject to
+    // the same floor of two — dropping down to one absent-word survivor is the
+    // "different question" case again.
+    const present = words.map((_, i) => i).filter(i => df[i] > 0);
+    let keep = present.length >= 2 ? present : words.map((_, i) => i);
+    // Never below two. Relaxing to a single word is not a relaxation of the
+    // reader's question, it is a different question — and it is where this rule
+    // goes wrong. `agile isn't working` collapses to *agile* and `page loads
+    // halfway` to *halfway*, both widening a gated fixture that already found
+    // its topic, because "working" is 19.2% and "running" is 19.1% and no
+    // frequency can tell the query's own subject from its filler at that
+    // distance. Keeping two terms costs the two queries whose filler was
+    // everything but one word, and those are better fixed in the card.
+    while (keep.length > 2) {
+      const rarest = keep.reduce((a, b) => (df[a] <= df[b] ? a : b));
+      const commonest = keep.reduce((a, b) => (df[a] >= df[b] ? a : b));
+      if (commonest === rarest || df[commonest] < RELAX_RATIO * df[rarest]) break;
+      keep = keep.filter(i => i !== commonest);
+    }
+    if (keep.length !== words.length) {
+      const before = { count: matchCount, domains: domainCount, widened };
+      wideMatchers = keep.map(i => allMatchers[i]);
+      reset();
+      sweep("words");
+      wideMatchers = allMatchers;
+      if (matchCount && !tooBroad()) {
+        widened = "relax";
+        relaxedTo = keep.map(i => words[i]);
+        _searchTermList = [...q.phrases, ...relaxedTo];
+      } else if (before.count && before.widened !== "broad") {
+        // Relaxing overshot the ceiling. The conjunction's own answer was
+        // usable, so put it back rather than reporting the reader too broad
+        // for a widening they did not ask for.
+        reset();
+        sweep("words");
+        widened = before.widened;
+      } else if (matchCount) {
+        // Too broad relaxed, and nothing usable to fall back to.
+        widened = "broad";
+      }
+    }
+  }
+
   // Nothing anywhere, at any width — or everything, which is the same amount of
   // information. Re-run the strict pass so the page ends in the state a
   // no-match search has always left it in: every domain hidden behind the
@@ -2334,8 +2435,13 @@ function runSearch(raw) {
     // Say so when the fallback ran. A reader who typed a phrase and got cards
     // that merely contain all of its words should be told that is what
     // happened, or the results look like the search misunderstood them.
+    // A relaxed answer says which words it kept, because "contains all your
+    // words" would be a lie and "no exact match" alone does not tell the reader
+    // that the word they care most about is still in play.
     const wide = widened === "words"
       ? " · no exact match, so these contain all your words"
+      : widened === "relax"
+        ? ` · no exact match, so these contain ${relaxedTo.map(w => `“${w}”`).join(" + ")}`
       : widened === "fold" ? " · matched ignoring hyphens" : "";
     if (widened === "broad") {
       countEl.textContent = `no exact match${scope} · too broad to widen — try a more specific word`;
