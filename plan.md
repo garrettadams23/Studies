@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **46**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **47**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -40,20 +40,20 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,551** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
-| Mean chars per concept card | **1,383**, or **1,117 excluding verdicts** — the second is the padding counter-metric, and three new concept cards moved the mean by 1 and left it where it was, which is what a card with a table and a code block in it does to an average | `depth_report.py` |
+| Mean chars per concept card | **1,384**, or **1,118 excluding verdicts** — the second is the padding counter-metric, and five new concept cards moved both by 2, which is what cards carrying a table and a code block do to an average and is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **63 of 78** — every query now carries the topic it should reach, which turned 72 into 60 before three cards took it to 63. 5 zeros and 10 wrong-card misses, 6 recorded, **9 unexplained and named** | `query_probe.mjs` |
+| Reader questions answered | **66 of 78** — every query now carries the topic it should reach, which turned 72 into 60 before six cards took it to 66. 4 zeros and 8 wrong-card misses, 7 recorded, **5 unexplained and named** | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~818 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~817 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,122 chars**, median 3,710 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,122 chars**, median 3,713 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **39**, and the same 39 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **46** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **47** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4607,6 +4607,75 @@ matcher limit recorded last session and not a content problem at all.
 ```
 probe 63 of 78 answered · 9 unexplained, named · 3 concept cards added
 depth mean 1,382 -> 1,383 · excluding verdicts 1,117, unmoved
+39 gates green · check · smoke 163 · search 51 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — two symptoms infra described without naming, and a stale verdict
+
+Four more of the probe's misses, and the most useful thing this wave produced
+was not a card. It was catching a `keep` note that had gone false.
+
+### The two infra cards
+
+Both had the mechanism and neither had the ticket.
+
+**Processing Order & Precedence** explains LSDOU, Enforced, Block Inheritance,
+the computer/user split and loopback — and never says what the reader types.
+The missing card is the one the rest of the topic implies: *"it is not applying"
+usually means something else won*, because **precedence working correctly looks
+exactly like a policy that did not arrive**. Five reports, five causes, and only
+one of them is a fault. The verdict is `gpresult /h` run as the affected user on
+the affected machine, with its limit stated in the same breath — it reports what
+*did* happen and has nothing to say about what *should* have, so it settles "did
+something else win" and never "is this policy right".
+
+**File Services** had share-versus-NTFS, DFS and quotas, and nothing about the
+drive letter. *A mapped drive is an intention, not a connection* — re-established
+at every sign-in, in whatever security context the process doing the asking
+holds, which is why one letter can be present, absent and unreachable on one
+machine at one moment. The red cross that is cosmetic, the map that loses a race
+with the network, the elevated process holding a different token, one credential
+set per server name, and the address that authenticates differently from the
+name. Five tickets that read as one.
+
+### The stale verdict, which is the part worth keeping
+
+`someone clicked the link` carried this note:
+
+> kind 3 — the response card exists and does not use these words
+
+It had been true. It was not true any more: the query stopped being a zero when
+the matcher gained its relaxation stage, and it was returning four cards — none
+of them the phishing-response card — while a note said it returned none. **A
+recorded verdict decays when the thing it describes changes underneath it**, and
+nothing checks a `keep` note the way `check_plan_numbers.py` checks a table row.
+
+Reading the card settled it, and the answer was smaller than the note: it says
+`clicked` three times, `someone` twice, `URL` twice and **`link` not once**. A
+phishing response card that never uses the word the person reporting it will use
+is not being precise, it is using the technical word where both belong. Two
+words changed.
+
+The general form, which is the thing to carry: **a verdict recorded against a
+zero is only valid while the query is still a zero.** Every `keep` note in that
+file asserts a state, and the ones asserting "returns nothing" are the ones a
+matcher change can silently falsify. The probe reports zeros and misses
+separately; it does not check that a note still describes the row it sits on.
+
+### And two recorded rather than fixed
+
+`kill a process` and `writing a detection` are the matcher limit from the
+previous session, now written into the file instead of reappearing as
+unexplained every run. Both have every word of the query in the wanted card; a
+literal phrase in a worse card answers first and stops the search. Preferring a
+later stage needs ranking, and this matcher is a filter.
+
+```
+probe 78 · 66 answered · 5 unexplained, named · zeros 5 -> 4
+5 concept cards this wave and last · mean 1,384 / 1,118 excluding verdicts, both +2
 39 gates green · check · smoke 163 · search 51 · a11y 31 · resilience 64
 mobile 15 · visual 2 · backup 3
 ```
