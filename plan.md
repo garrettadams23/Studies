@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **54**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **55**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -46,14 +46,14 @@ run rather than letting them pass as verified:
 | Reader questions answered | **101 of 105**, **0 unexplained and 0 wrong-card** — 29 fresh questions opened with 10 misses, the same third the original 78 did. The 4 remaining zeros are all recorded verdicts, and `--self-test` now checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~814 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~812 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,122 chars**, median 3,723 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **54** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **55** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5204,5 +5204,104 @@ the site names a custom property, the name is declared or it is not.*
 ```
 css-vars now covers style.css + 1,061 attribute reads + 10 in script.js
 self-test 7 -> 13 fixtures · 6 injections, 6 fired · 41 gates green
+smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the half of the acronym check that was written backwards
+
+The breadth census in `lint_content.py` has said the same thing for many
+sessions — *64 single-meaning acronyms rendered in 6+ domains; breadth is the
+only signal that a second meaning has been borrowed somewhere* — and the manual
+lists the matching failure: **two wrong acronym expansions shipped and were
+found by reading, not by any check.** So the queue was read.
+
+It found something one layer down from where it was looking.
+
+### The site writes definitions both ways round; the check reads one
+
+`check_contradictions.py` has `INLINE_EXP_RE`, which matches `ACRO
+(Expansion)`. The site also writes `Expansion (ACRO)` — *"Tech companies
+borrowed the **Incident Command System (ICS)** from emergency services"* — and
+there are **85 of those**, none of them ever in front of the check that exists
+to compare them with the dictionary.
+
+Reading the reversed form needed two normalisations, both mechanical:
+
+* **A leading article belongs to the sentence.** "…is An Architecture Decision
+  Record (ADR)" defines the same thing as "Architecture Decision Record".
+* **A trailing `s` is the sentence's, not the expansion's.** "Web Application
+  Firewalls (WAF)" is not a disagreement with "Web Application Firewall".
+
+Without those, five of the fifteen findings would have been the instrument being
+wrong about what it was reading, which is this file's oldest rule.
+
+### And a dictionary with two entries missing from it
+
+```python
+return {e["a"].upper(): [m["e"] for m in e["m"]] for e in entries}
+```
+
+The dictionary deliberately distinguishes **`SOC` from `SoC`** and **`IOC` from
+`IoC`**. Upper-casing collides them, and a dict comprehension lets the later one
+win — so this check had been reading a dictionary with *Security Operations
+Center* and *Indicator of Compromise* silently absent. Nothing noticed, because
+**the check's job is to find disagreements and a meaning it cannot see produces
+none.** Merged now, which is right rather than merely safe: the comparison is
+case-insensitive anyway.
+
+### What the ten real findings were
+
+Two were spellings — one card writing *Approximate Nearest Neighbor* two lines
+from an annotation saying *Neighbour*, and *Organisational Unit* against the
+dictionary's *Organizational*. Aligned to the dictionary, which is what a single
+source of truth is for.
+
+The other eight were **meanings the site uses and the dictionary does not
+carry**: Language Server Protocol, Internal Developer Platform, Top Secret, EFI
+System Partition, Tuition Assistance, Global Catalog, Incident Command System.
+Three of them were sitting in a `n` note reading *"Also: Incident Command
+System"* — recorded as a remark where the reader of the acronym page sees one
+meaning and the card means the other. They are meanings now.
+
+### The change immediately made another gate fire, correctly
+
+Giving ICS a second meaning turned it into an ambiguous acronym, and
+`lint_content.py` **failed the build** for `sec` and `threat`:
+
+> ICS renders in 'sec' with no byDomain decision, so it annotates as 'Industrial
+> Control System'. Add "sec" to that entry's byDomain.
+
+Which is the guard working: an implicit choice became an explicit one the moment
+a second meaning existed to choose between. `ops` is the Incident Command
+System; `sec` and `threat` are industrial control. **The ambiguous-acronym
+counter fell 4 → 3**, the first time it has moved.
+
+`check_plan_numbers.py` then caught the README, which states the dictionary's
+size and had not been told about the new entry. Both guards did in one run what
+this session has spent three waves discovering by hand.
+
+### And the dictionary disagreeing with itself
+
+Aligning *Organisational Unit* to the dictionary did not take in `infra`,
+because the annotator kept putting it back — from the dictionary. **`LSDOU`
+expands to "Local, Site, Domain, Organisational Unit" and `OU` expands to
+"Organizational Unit".** Two entries in the single source of truth, one term,
+two spellings, and no check looks *inside* the dictionary: `check_contradictions`
+compares the content against it and takes it as given.
+
+Fixed by hand rather than by a tool, because n is one and a check for "no two
+entries spell the same term differently" needs a notion of "same term" that this
+repository would have to invent. Worth knowing it is unguarded, though: the file
+every other acronym check treats as authoritative is the one file nothing
+checks. The remaining British spellings in `ops` are *Organisationally* and
+*Organisational Memory* — ordinary prose, not the product term, and correctly
+left alone.
+
+```
+reversed-form definitions now read: 85 · dictionary merge fixes 2 lost entries
+8 meanings added, 2 spellings aligned · ambiguous acronyms 4 -> 3
+dictionary 1,102 -> 1,103 · 41 gates green · probe 105 · 101 answered
 smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

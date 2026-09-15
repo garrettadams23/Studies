@@ -180,13 +180,53 @@ def prose(text):
 
 
 def dictionary():
+    """ACRONYM -> every expansion the dictionary carries for it.
+
+    Merged, not overwritten. The first version was a dict comprehension keyed on
+    `e["a"].upper()`, and the dictionary deliberately distinguishes two pairs by
+    case — `SOC` from `SoC`, `IOC` from `IoC`. Upper-casing collides them and a
+    comprehension lets the later one win, so this check has been reading a
+    dictionary with **Security Operations Center and Indicator of Compromise
+    silently missing from it**. Nothing noticed, because the check's job is to
+    find disagreements and a meaning it cannot see produces none.
+
+    Merging is the right answer rather than preserving the case distinction: the
+    comparison below is case-insensitive anyway, and a card writing "SOC" for
+    either sense is writing something the site defines somewhere.
+    """
     entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
-    return {e["a"].upper(): [m["e"] for m in e["m"]] for e in entries}
+    merged = collections.defaultdict(list)
+    for e in entries:
+        for m in e["m"]:
+            if m["e"] not in merged[e["a"].upper()]:
+                merged[e["a"].upper()].append(m["e"])
+    return dict(merged)
+
+
+# "Incident Command System (ICS)" — the definition written the other way round.
+# INLINE_EXP_RE reads `ACRO (Expansion)` and the site writes both, so half of
+# what it was built to check was never in front of it: **85 definitions in this
+# form against the acronym-first ones it does read.**
+REVERSED_EXP_RE = re.compile(
+    r"((?:\b[A-Z][A-Za-z0-9'-]+\s+){1,6}[A-Za-z0-9'-]+)\s*\(([A-Z][A-Z0-9]{1,7})\)")
+
+# A leading article belongs to the sentence, not to the expansion: "…is An
+# Architecture Decision Record (ADR)" defines the same thing as "Architecture
+# Decision Record".
+ARTICLE_RE = re.compile(r"^(?:a|an|the)\s+", re.I)
 
 
 def norm(s):
-    """Compare expansions on their words, not their punctuation or case."""
-    return re.sub(r"[^a-z0-9 ]", " ", s.lower()).split()
+    """Compare expansions on their words, not their punctuation or case.
+
+    Each word loses a trailing `s`, so "Web Application Firewalls" and "Web
+    Application Firewall" are the same claim written for different sentences.
+    That is a style difference in the prose around the acronym, and reporting it
+    would be this check being wrong about what it is reading.
+    """
+    words = re.sub(r"[^a-z0-9 ]", " ", ARTICLE_RE.sub("", s.strip()).lower()).split()
+    return [w[:-1] if len(w) > 3 and w.endswith("s") and not w.endswith("ss") else w
+            for w in words]
 
 
 def check_expansions(vocab):
@@ -196,8 +236,10 @@ def check_expansions(vocab):
         if path.stem == "acronym":
             continue
         text = prose(path.read_text(encoding="utf-8"))
-        for m in INLINE_EXP_RE.finditer(text):
-            acro, exp = m.group(1), re.sub(r"\s+", " ", m.group(2)).strip()
+        pairs = [(m.group(1), m.group(2)) for m in INLINE_EXP_RE.finditer(text)]
+        pairs += [(m.group(2), m.group(1)) for m in REVERSED_EXP_RE.finditer(text)]
+        for acro, raw in pairs:
+            acro, exp = acro, re.sub(r"\s+", " ", raw).strip()
             if acro in NOT_ACRONYM or acro.upper() not in vocab:
                 continue
             if not looks_like_expansion(acro, exp):
