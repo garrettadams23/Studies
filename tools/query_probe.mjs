@@ -252,7 +252,13 @@ const READERS = [
     ["what is an embedding", "", "ai/embeddings-rag-giving-ai-access-to-your-own-data"],
     ["should we fine tune or use rag", "",
      "ai/fine-tuning-vs-prompting-vs-rag-picking-the-right-tool"],
-    ["spaced repetition", "", "career/how-adults-actually-learn-relevance-practice-feedback-spacin"],
+    // The first `want` written for this was wrong, and the correction is the
+    // rule working: the card that *teaches* the technique — the forgetting
+    // curve, the interval ladder, why the software exists — is in productivity.
+    // The career card names Spacing in its title and covers it in one table row
+    // about teaching other people, which is a different subject with the same
+    // word in it.
+    ["spaced repetition", "", "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
     ["how do adults learn", "", "career/how-adults-actually-learn-relevance-practice-feedback-spacin"],
   ]],
   ["a Linux or platform engineer", [

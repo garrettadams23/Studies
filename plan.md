@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **48**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **49**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,17 +43,17 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,384**, or **1,118 excluding verdicts** — the second is the padding counter-metric, and five new concept cards moved both by 2, which is what cards carrying a table and a code block do to an average and is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **66 of 78** — every query now carries the topic it should reach, which turned 72 into 60 before six cards took it to 66. 4 zeros and 8 wrong-card misses, 7 recorded, **5 unexplained and named** | `query_probe.mjs` |
+| Reader questions answered | **71 of 78**, and **0 unexplained** — the 72 this row once claimed was measured by counting; every query now names the topic it should reach, which took it to 57 before the work took it to 71. 4 zeros and 3 wrong-card misses, all 7 recorded | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~817 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~816 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,122 chars**, median 3,713 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,122 chars**, median 3,714 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **40**, and the same 40 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **48** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **49** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4754,4 +4754,81 @@ site, and every count on the page is read through it.
 gates 39 -> 40 · probe self-test 8 fixtures · 78 queries · 66 answered
 0 stale verdicts · smoke 163 · search 51 · a11y 31 · resilience 64
 mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the queue emptied, and the number it emptied to is lower than the one it started at
+
+```
+72 of 78 answered   ← counting results
+57 of 78 answered   ← counting whether the right card came back
+71 of 78 answered   ← after the matcher stage and eleven cards
+ 0 unexplained
+```
+
+The middle number is the honest one and it is the reason the last is worth
+anything. A census that went **up** from 72 would have been the same lie in a
+better mood.
+
+### The last five, and what each turned out to be
+
+| Miss | Verdict |
+|---|---|
+| `outlook won't connect` | **A hole.** The M365 troubleshooting playbook is five abstract layers and a symptom table written in categories — it never names one product. A playbook whose examples are "one user, one feature" cannot be found by a ticket that says *Outlook won't connect*, and cannot be used by the person holding that ticket either |
+| `spaced repetition` | **A wrong `want`.** The card I pointed it at names Spacing in its *title* and covers it in one table row about teaching other people. The card that teaches the technique is in `productivity`, which then turned out not to name it in running text — it says "spaced-repetition software" in a verdict and nowhere else |
+| `why does caching break things` | Synonym, with something worth adding underneath it |
+| `first week as a manager` | Synonym, same |
+| `onboarding a new starter` | Synonym — the card says *joiner* three times and *onboarding* never |
+
+### The correction is the part to keep
+
+`spaced repetition` was pointed at the wrong card by me, in the same session
+that argued a `want` should only be written where one card is the defensible
+answer. Two cards had the word in scope and I picked the one whose **title**
+matched instead of the one whose **content** did. The probe caught it the only
+way it could — by continuing to report a miss after a change that should have
+closed it.
+
+**Title-matching is how a `want` goes wrong**, and it is worth writing down
+because it is the cheap, plausible move: the career card is called *How Adults
+Actually Learn — Relevance, Practice, Feedback & Spacing* and is about running
+training for other people. The reader typing "spaced repetition" wants to study,
+not to teach. Same word, different subject, and the slug is no help at all.
+
+### Three synonyms, and what they were covering
+
+None of the three was worth only a word, which has now happened often enough
+this session to be the rule rather than the exception:
+
+* **Caching breaks things in one direction only.** It never makes the source
+  wrong; it serves an answer that *used to be* correct — which is why a cache
+  bug reproduces perfectly for one person and is invisible to everybody else,
+  including whoever is trying to fix it.
+* **The first week as a manager is not phase one, it is the week that decides
+  whether you get one.** A new manager who spends it answering the technical
+  questions has told the team precisely what they intend to be for.
+* **Every M365 report arrives phrased as a client problem, because the client
+  is the only layer the user can see.** Four of the five layers are invisible
+  from a desk, so a tenant incident, an expired token, a disabled service plan
+  and a Conditional Access policy all surface as one sentence. Which is why the
+  instinct is to repair the thing the sentence names, and why that instinct is
+  wrong four times out of five.
+
+### Where the probe stands
+
+Every one of the 78 now carries the topic it should reach or a recorded reason
+why it cannot, and the seven recorded ones are: four zeros a previous session
+reasoned about and kept, and three misses that are matcher limits rather than
+corpus gaps. **The backlog is empty and the file says why for every row in it.**
+
+The next session should not read this as "the probe is finished". It is finished
+*against its own 78 questions*, and those were written by people who know the
+site. The measurement that would move now is more queries, not more fixes — and
+the honest expectation is that a fresh 78 would open at something like 57 again.
+
+```
+probe 78 · 71 answered · 0 unexplained · 11 concept cards and prose edits
+across 9 domains this session · 40 gates green · smoke 163 · search 51
+a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```
