@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **49**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **50**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -40,20 +40,20 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,551** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
-| Mean chars per concept card | **1,384**, or **1,118 excluding verdicts** — the second is the padding counter-metric, and five new concept cards moved both by 2, which is what cards carrying a table and a code block do to an average and is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,385**, or **1,119 excluding verdicts** — the second is the padding counter-metric, and it has tracked the first within one all session across eight new concept cards, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **71 of 78**, and **0 unexplained** — the 72 this row once claimed was measured by counting; every query now names the topic it should reach, which took it to 57 before the work took it to 71. 4 zeros and 3 wrong-card misses, all 7 recorded | `query_probe.mjs` |
+| Reader questions answered | **95 of 105** — 29 fresh questions were added after the first 78 were clean, and they opened with **10 misses**, which is the same third the original batch opened with. 5 zeros and 5 wrong-card misses, 7 recorded, **3 unexplained and named** | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~816 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~814 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,122 chars**, median 3,714 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,122 chars**, median 3,723 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **40**, and the same 40 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **49** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **50** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4830,5 +4830,80 @@ the honest expectation is that a fresh 78 would open at something like 57 again.
 ```
 probe 78 · 71 answered · 0 unexplained · 11 concept cards and prose edits
 across 9 domains this session · 40 gates green · smoke 163 · search 51
+a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the prediction, tested: a fresh 29 questions opened at the same third
+
+The last record made a claim and it was cheap to check:
+
+> The probe is finished *against its own 78 questions*, and those were written by
+> people who know the site. The honest expectation is that a fresh 78 would open
+> at something like 57 again.
+
+**Twenty-nine new questions opened with ten misses.** The original 78 opened
+with fifteen. Both are about a third, and the agreement is the useful part: the
+miss rate is a property of writing a reference, not of this particular batch or
+of the people who wrote it. A site that answers its own questions is not the
+same as a site that answers a reader's.
+
+### What the ten were
+
+Three of them were **holes**, and each hole sits directly under a heading that
+promised to cover it:
+
+* **`"The Disk Is Full"` never mentioned inodes.** Its step 1 is `df -h`, and
+  inode exhaustion is precisely the case where `df -h` tells you there is no
+  emergency while every write fails with the *"No space left on device"* the
+  card opens on. The shape underneath is worth the card on its own: the more
+  often a job fails, the faster it exhausts the thing that would let it report
+  the failure.
+* **The SSH card never quoted `Permission denied (publickey)`.** The most common
+  SSH error there is, and the message misleads in a specific direction — it
+  almost never means the key is wrong. The cause that outranks all the others is
+  a group-writable **home directory**, which the card's own `chmod` block does
+  not cover because it stops at `~/.ssh`.
+* **Subject Access Requests at Scale never said "GDPR" or "data subject".** The
+  card is about a right, and it named neither the right's holder nor the
+  regulation that creates it.
+
+Four were synonyms with something real underneath — *penetration test* against
+*pentest*, *screen sharing* against *Screen Shares*, *on call* against
+*on-call*, the leaver's *files* against *the OneDrive*. And three are the
+matcher.
+
+### Two `want` values that were wrong, both mine, both caught the same way
+
+`spaced repetition` last session, and `port already in use` this one. The second
+is the more instructive: I pointed it at Process Management because the phrase
+has "process" in it, and the commands that answer *what is holding this port*
+live in the performance-debugging card's `lsof`/`fuser` section. **The probe
+caught both by continuing to report a miss after a change that should have
+closed it** — which is the only way a wrong target can announce itself, and an
+argument for fixing the card *and* re-running rather than fixing and assuming.
+
+### The stage-stop class now has four members
+
+`kill a process`, `writing a detection`, `incident postmortem`, `penetration
+test report`. In every one of them **the wanted card contains every word of the
+query**, and a single other card containing the words *adjacent* answers first
+and stops the search:
+
+```
+penetration test report   1 match in 1 domain
+incident postmortem       1 match in 1 domain · matched ignoring hyphens
+kill a process            1 match in 1 domain
+writing a detection       1 match in 1 domain
+```
+
+All four return **exactly one result**, and that is a signal rather than a
+coincidence. Recorded here rather than acted on, because the fix is a change to
+the stage order and that deserves its own measurement.
+
+```
+probe 105 questions · 95 answered · 3 unexplained, named · 8 concept cards
+and prose edits across 7 domains · 40 gates green · smoke 163 · search 51
 a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

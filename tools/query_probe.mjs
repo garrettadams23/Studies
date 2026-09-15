@@ -221,6 +221,12 @@ const READERS = [
     ["vpn keeps disconnecting", "", "net/vpns-tunneling-secure-connections-over-untrusted-networks"],
     ["laptop won't turn on", "", "hw/post-beep-codes-diagnostic-leds-reading-a-machine-that-will-"],
     ["outlook won't connect", "", "m365/the-m365-troubleshooting-playbook-tenant-identity-licence-po"],
+    // ── batch two ──
+    ["bitlocker recovery key", "", "endpoint/bitlocker-at-scale-silent-enablement-key-escrow-recovery"],
+    ["reset a user's mfa"],
+    ["user left who gets their files", "", "m365/joiner-mover-leaver-in-m365-terms-the-process-that-prevents-"],
+    ["why is the wifi slow in one room", "", "net/wireless-troubleshooting-roaming-sticky-clients-its-slow"],
+    ["screen sharing with a user", "", "ops/remote-support-skills-screen-shares-phone-only-diagnosis-gui"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -236,6 +242,11 @@ const READERS = [
      "the same matcher limit as 'kill a process' — Documentation for Responders carries the literal phrase and stops the search there, while both words sit in the detection-engineering card the reader wanted",
      "blueteam/what-detection-engineering-is-and-why-it-split-off-from-soc-"],
     ["chain of custody", "", "blueteam/chain-of-custody-evidence-handling"],
+    // ── batch two ──
+    ["is this domain malicious"],
+    ["mfa prompt i did not request", "",
+     "threat/mfa-bypass-in-practice-adversary-in-the-middle-push-fatigue-"],
+    ["how long to keep logs", "", "blueteam/log-retention-as-a-design-decision"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -260,6 +271,11 @@ const READERS = [
     // word in it.
     ["spaced repetition", "", "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
     ["how do adults learn", "", "career/how-adults-actually-learn-relevance-practice-feedback-spacin"],
+    // ── batch two ──
+    ["what is a hash", "", "sec/passwords-hashing-how-logins-are-stored-safely"],
+    ["how does dns work", "", "net/dns-the-internets-phone-book"],
+    ["what is a load balancer", "", "net/load-balancers-explained-spreading-the-work-around"],
+    ["explain oauth", "", "sec/oauth-20-oidc-saml-federated-identity"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -282,6 +298,17 @@ const READERS = [
     ["terraform state locked", "kind 1, fixed in prose and still zero — the state card now covers a lock outliving a killed run and force-unlock. The matcher wants the three words adjacent; tuning prose to that is the keyword stuffing this file forbids"],
     ["docker image too big", "kind 3, checked at fault level — devops covers multi-stage builds, .dockerignore, layer caching and image size",
      "devops/docker-deep-multi-stage-builds-image-slimming"],
+    // ── batch two ──
+    ["ssh permission denied publickey", "", "linux/ssh-secure-remote-access-done-right"],
+    // Second `want` this session that was wrong before it was measured: the
+    // commands that answer "what is holding this port" live in the performance
+    // debugging card's lsof/fuser section, not in process management.
+    ["port already in use", "", "linux/performance-debugging-when-you-need-to-go-deeper"],
+    ["container exits immediately", "",
+     "devops/pods-that-will-not-run-reading-the-status-before-the-logs"],
+    ["rotate a secret", "", "sec/secrets-management-stop-hardcoding-passwords"],
+    ["out of disk inodes", "",
+     "linux/the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -300,6 +327,10 @@ const READERS = [
     ["our standups are useless",
      "kind 3, same cause — 'standups' carries the query and misses for the reason above; 'our standup is useless' reaches the Daily Scrum row that answers it",
      "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    // ── batch two ──
+    ["estimating", "", "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+    ["incident postmortem", "", "ops/writing-a-postmortem-people-actually-learn-from"],
+    ["on call", "", "ops/on-call-done-humanely"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -310,6 +341,11 @@ const READERS = [
     ["how to study for an exam", "",
      "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
     ["leaving a job well"],
+    // ── batch two ──
+    ["salary negotiation", "", "career/interview-preparation-getting-the-job"],
+    ["technical interview", "", "career/interview-preparation-getting-the-job"],
+    ["burnout", "", "mind/burnout-recognizing-it-before-it-breaks-you"],
+    ["career change into it", "", "career/breaking-into-it-from-zero-to-hired"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -319,6 +355,13 @@ const READERS = [
      "grc/third-party-risk-your-security-is-only-as-strong-as-your-ven"],
     ["records retention schedule", "",
      "grc/data-governance-retention-ediscovery-owning-data-on-purpose"],
+    // ── batch two ──
+    ["gdpr data subject request", "",
+     "grc/subject-access-requests-at-scale-building-a-process-that-doe"],
+    ["business continuity plan", "",
+     "grc/business-continuity-disaster-recovery-keeping-the-lights-on"],
+    ["penetration test report", "",
+     "pentest/pentest-reporting-the-skill-that-makes-or-breaks-your-career"],
   ]],
 ];
 
