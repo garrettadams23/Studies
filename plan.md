@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **50**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **51**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,7 +43,7 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,385**, or **1,119 excluding verdicts** — the second is the padding counter-metric, and it has tracked the first within one all session across eight new concept cards, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **95 of 105** — 29 fresh questions were added after the first 78 were clean, and they opened with **10 misses**, which is the same third the original batch opened with. 5 zeros and 5 wrong-card misses, 7 recorded, **3 unexplained and named** | `query_probe.mjs` |
+| Reader questions answered | **101 of 105**, **0 unexplained and 0 wrong-card** — 29 fresh questions opened with 10 misses, the same third the original 78 did. The 4 remaining zeros are all recorded verdicts, and `--self-test` now checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~814 more topics | `page_budget.py` |
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **40**, and the same 40 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **50** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **51** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4906,4 +4906,83 @@ the stage order and that deserves its own measurement.
 probe 105 questions · 95 answered · 3 unexplained, named · 8 concept cards
 and prose edits across 7 domains · 40 gates green · smoke 163 · search 51
 a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — a single result is a coincidence, except when it is the answer
+
+The previous record left four misses with one fingerprint and declined to act:
+
+```
+penetration test report   1 match in 1 domain
+incident postmortem       1 match in 1 domain · matched ignoring hyphens
+kill a process            1 match in 1 domain
+writing a detection       1 match in 1 domain
+```
+
+In all four the card the reader wanted contains **every word of the query**, and
+a single unrelated card containing those words *adjacent* answers first and
+stops the search. Being adjacent is the whole of its claim.
+
+So a single result escalates now. It is safe in the strict direction because
+each stage is a superset of the one before: a card containing the query as a
+phrase necessarily contains the query's words, so widening cannot lose the hit
+it started from.
+
+### The guard, and the three discriminators that did not work
+
+The first version broke two gated fixtures, both of which had exactly one result
+and the *right* one. `why is my laptop slow` returned the card called **"Why Is
+My Laptop Slow?"** and widening it to sixteen serves nobody.
+
+Three candidate rules were measured before one worked:
+
+| Rule | Why not |
+|---|---|
+| Result count after widening | The four good cases land at 12, 16, 22 and 30; the two bad ones at 10 and 16. No cap separates them |
+| Word rarity | `penetration` is in 1.0% of topics, `revoke` in 2.6%. The word that should have been protected is the *commoner* one |
+| **The lone hit's own slug carries a word of the query** | **This works**, and it is not a coincidence that it does — a slug is built from a title, and a title is a claim about the subject rather than a mention of it |
+
+That leaves one fixture genuinely worse: `revoke before reset` goes from one
+perfect hit to ten containing it, because the phrase is the card's *thesis* and
+not its title, and no rule reaches that. **Its ceiling moved 8 → 20 and the
+fixture table says in full that this is a cost paid rather than a stale number
+corrected** — the one exception to a rule that file states plainly, written down
+beside the number so nobody later reads 20 as generosity.
+
+### The staleness check earned its keep two waves after it was written
+
+It fired for the first time on this change, unprompted, naming three rows:
+
+```
+"writing a detection"   the note explains a miss that no longer misses
+"kill a process"        the note explains a miss that no longer misses
+"standups"              the note explains a miss that no longer misses
+```
+
+`standups` is the one worth pausing on. Its note is **the reason the probe grew
+a `want` field at all**, it had survived several sessions, and it ended with a
+refusal: *writing 'standups' into the prose to close it is the keyword stuffing
+this file forbids.* The escalation closed it without a word of prose being bent,
+which is exactly what that note was holding out for — and without the check,
+three verdicts describing a world that no longer exists would have sat there
+until somebody happened to re-read them.
+
+### And one word
+
+`explain oauth` returned **nothing** against a domain full of OAuth cards. The
+conjunction required a word the OAuth card has no reason to contain, and the
+query is two words long, so the relaxation stage's floor of two could not drop
+it. `explain` is an instruction to the site, never a subject, and it joins
+`how what why when where`. Only that one: **`show` is a Cisco command here**,
+and `define` and `describe` are ordinary content verbs in a reference.
+`explained` and `explains` are separate tokens and stay, which is what keeps
+*Load Balancers Explained* reachable by its own title.
+
+```
+probe 105 questions · 101 answered · 0 unexplained · 0 wrong-card · 0 stale
+4 zeros, all recorded · search 51/51 with one ceiling moved and the reason
+written beside it · 40 gates green · smoke 163 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
 ```

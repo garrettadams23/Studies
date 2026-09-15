@@ -86,7 +86,19 @@ const FIXTURES = [
   ["mtu",                  "net/mtu-fragmentation-the-half-loading-website", 12],
   ["one-way audio",        "net/voice-real-time-traffic-why-the-network-is-fine-and-the-call", 8],
   ["wi-fi 6",              "net/wireless-networking-80211-standards-security", 10],
-  ["revoke before reset",  "threat/infostealers-the-malware-that-runs-once-and-sells-the-result", 8],
+  // 8 -> 20, and this one is a **cost paid**, not a stale number corrected.
+  // The rule above — a fixture near its ceiling wants a better search, not a
+  // bigger number — is about a query creeping upward as content grows. This
+  // moved because script.js deliberately stopped treating a single result as an
+  // answer, which took four reader questions from the wrong card to the right
+  // one and took this query from one perfect hit to ten containing it. The card
+  // is still found; the reader now scans for it. No guard separated this case
+  // from the four it fixed: not result count (they land at 12-30, this at 10),
+  // not word rarity (`penetration` is rarer than `revoke`), and not the
+  // named-topic guard that saved `why is my laptop slow`, because the phrase is
+  // this card's thesis rather than its title. Recorded so the next person does
+  // not read 20 as generosity.
+  ["revoke before reset",  "threat/infostealers-the-malware-that-runs-once-and-sells-the-result", 20],
   ["kubernetes rbac",      "cloud/kubernetes-rbac-deep-the-escalation-paths-people-miss", 10],
   ["raid",                 "linux/raid-levels-reference", 25],
   ["systemd",              "linux/systemd-managing-linux-services", 55],

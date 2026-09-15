@@ -1957,6 +1957,18 @@ const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with 
   + "were be been do does did can could should would will shall may might must "
   + "i we you they it he she this that these those my our your their its "
   + "how what why when where which who does not no yes if then than so "
+  // `explain` joins the question words because that is what it is: an
+  // instruction to the site, never a subject. `explain oauth` returned
+  // **nothing** against a domain full of OAuth cards, because the conjunction
+  // required a word the OAuth card has no reason to contain and the query is
+  // two words long, so the relaxation stage's floor of two could not drop it.
+  //
+  // Only this one. `show` is a Cisco command here — *show running-config*, and
+  // a topic named after it — and `define` and `describe` are ordinary content
+  // verbs in a reference. `explained` and `explains` are separate tokens and
+  // stay, which is what keeps *Load Balancers Explained* and *Indexes
+  // Explained* reachable by their own titles.
+  + "explain "
   // `vs` and `versus` join them for the same reason `or` is here. The site
   // titles a dozen topics "X vs Y", so the as-typed pass answers those before
   // the fallback ever runs — but `agile vs waterfall`, which no single card
@@ -2292,22 +2304,71 @@ function runSearch(raw) {
   const wideCap = Math.max(150, Math.round(1534 * 0.12));
   const tooBroad = () => matchCount > wideCap;
 
+  // "Stopped at the first stage that finds anything" has one failure mode, and
+  // the reader-question probe found four instances of it with the same
+  // fingerprint: **exactly one result, and the card the reader wanted contains
+  // every word of the query.**
+  //
+  //   penetration test report   1 match   →  not the Pentest Reporting card
+  //   incident postmortem       1 match   →  not Writing a Postmortem
+  //   kill a process            1 match   →  not Process Management
+  //   writing a detection       1 match   →  not What Detection Engineering Is
+  //
+  // In each one, a single unrelated card happens to contain the reader's words
+  // *adjacent*, and being adjacent is the whole of its claim. With no ranking,
+  // one such card is not an answer — it is a coincidence, and it silences a
+  // looser stage that was never consulted.
+  //
+  // So a single result escalates. It is safe in the strict direction because
+  // each stage is a superset of the one before it: a card containing the query
+  // as a phrase necessarily contains the query's words, so widening cannot lose
+  // the hit it started from, only add to it. Two is left alone deliberately —
+  // the threshold is about a lone coincidence, not about thin results, and
+  // every number above one is at least a pattern.
+  //
+  // With one exception, and it is the whole reason this has a guard rather than
+  // a threshold: **a lone hit whose own slug carries a word of the query is not
+  // a coincidence — it is the card named after the question.** `why is my
+  // laptop slow` returns exactly one card, *"Why Is My Laptop Slow?"*, and
+  // widening that to sixteen serves nobody. Measured against all six affected
+  // queries, this separates them cleanly and nothing else does: the four
+  // stage-stop cases return 12, 16, 22 and 30 once widened and the two good
+  // single hits return 10 and 16, so no result-count cap tells them apart; and
+  // `penetration` at 1.0% of topics is rarer than `revoke` at 2.6%, so no
+  // rarity cut-off does either. The slug does, because it is built from the
+  // title, and a title is a claim about the subject rather than a mention of it.
+  const THIN = 1;
+  const namedByQuery = () => {
+    if (matchCount !== 1) return false;
+    let only = null;
+    _searchHits.forEach(set => set.forEach(id => { only = id; }));
+    if (!only) return false;
+    const parts = new Set(String(only).split(/[^a-z0-9]+/));
+    return words.some(w => parts.has(foldSeparators(w.toLowerCase())));
+  };
   sweep(false);
-  if (!matchCount && gapPhrase) {
+  const strictCount = matchCount;
+  if (matchCount <= THIN && !namedByQuery() && gapPhrase) {
     reset();
     sweep("fold");
-    if (matchCount) widened = tooBroad() ? "broad" : "fold";
+    if (matchCount > strictCount) widened = tooBroad() ? "broad" : "fold";
+    else if (!matchCount && strictCount) { reset(); sweep(false); }
   }
   // One content word is a legitimate conjunction — "what is idempotency" is a
   // question about idempotency — so this stage runs whenever any survived.
-  if ((!matchCount || widened === "broad") && wideMatchers.length) {
+  if ((matchCount <= THIN || widened === "broad") && !namedByQuery() && wideMatchers.length) {
+    const before = matchCount;
     reset();
     sweep("words");
-    if (matchCount) {
+    if (matchCount > before) {
       widened = tooBroad() ? "broad" : "words";
       // Highlight what actually matched, which is the words rather than the
       // string the reader typed.
       if (widened === "words") _searchTermList = [...q.phrases, ...words];
+    } else if (!matchCount && before) {
+      // The looser stage found less, which should not happen — restore.
+      reset();
+      sweep(before === strictCount ? false : "fold");
     }
   }
   // Stage four: the conjunction again, without the words that cannot narrow it.

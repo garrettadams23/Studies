@@ -238,8 +238,7 @@ const READERS = [
     ["usb found in car park", "", "sec/the-hardware-attack-surface-what-physical-access-to-a-device"],
     ["log4j"],
     ["what does this alert mean", "", "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
-    ["writing a detection",
-     "the same matcher limit as 'kill a process' — Documentation for Responders carries the literal phrase and stops the search there, while both words sit in the detection-engineering card the reader wanted",
+    ["writing a detection", "",
      "blueteam/what-detection-engineering-is-and-why-it-split-off-from-soc-"],
     ["chain of custody", "", "blueteam/chain-of-custody-evidence-handling"],
     // ── batch two ──
@@ -280,9 +279,7 @@ const READERS = [
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],
-    ["kill a process",
-     "a matcher limit, not a corpus gap — the PowerShell reference contains the literal phrase, so the strict stage answers with one card and the conjunction that would reach Process Management never runs. Both of its words are in the wanted card. Preferring a later stage needs ranking; this matcher is a filter",
-     "linux/process-management-finding-and-taming-runaway-processes"],
+    ["kill a process", "", "linux/process-management-finding-and-taming-runaway-processes"],
     ["cron not running", "", "linux/cron-jobs-scheduling-tasks-in-linux"],
     ["check disk space", "",
      "linux/the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro"],
@@ -321,9 +318,12 @@ const READERS = [
     ["definition of done", "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
     ["product backlog",    "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
     ["agile isn't working", "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
-    ["standups",
-     "kind 3, and the reason this file grew a third field. The singular reaches the Scrum card; the plural does not, because the matcher stops at the first stage that finds anything and one incidental literal hit in an unrelated card blocks the widening that would fold the s. A matcher limit, recorded rather than papered over — writing 'standups' into the prose to close it is the keyword stuffing this file forbids",
-     "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    // This row is why the third field exists, and it stayed a recorded miss for
+    // several sessions: one incidental literal hit in an unrelated card blocked
+    // the widening that would have folded the plural. The single-result
+    // escalation in script.js closed it without a word of prose being bent,
+    // which is what that note was holding out for.
+    ["standups", "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
     ["our standups are useless",
      "kind 3, same cause — 'standups' carries the query and misses for the reason above; 'our standup is useless' reaches the Daily Scrum row that answers it",
      "eng/scrum-three-accountabilities-five-events-three-artifacts"],
