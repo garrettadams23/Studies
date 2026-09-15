@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **53**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **54**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **53** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **54** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5137,5 +5137,72 @@ its job: it says *read this list, do not automate it*, and the list is readable.
 
 ```
 port table 15 -> 44 services · self-test 17 -> 18 fixtures · 41 gates green
+smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — do the gates actually fire, and the thousand reads nobody checked
+
+Two sessions of auditing guards by reading them. This one asked the cruder
+question instead: **break the file on purpose and see whether the check
+notices.** Six injections, each in a place awkward enough to be a plausible
+blind spot — a cross-reference inside a table cell, a hex literal in a `style`
+attribute on a `<td>`, an unclosed `div` mid-card, an undefined custom property,
+a `data-checked` in the future, an old product name in a table:
+
+```
+xref: a broken cross-reference inside a table cell          FIRED
+colour: a hex literal in a style attr on a table cell       FIRED
+markup: an unclosed div at the end of a concept card        FIRED
+css-vars: an undefined custom property                      FIRED
+volatility: a data-checked in the future                    FIRED
+renames: an old product name in a table cell                FIRED
+```
+
+Six for six, which is the answer you want and is worth the ten minutes it took
+to be sure of rather than confident about.
+
+### The gap was not in what a guard checked. It was in where it looked
+
+`check_css_vars.py` exists because of `var(--bg1)` — a name nothing declares,
+which CSS handles by discarding the declaration and **inheriting**, so the
+symptom is a plausible wrong colour rather than a missing one. Its docstring
+scopes it to `style.css` and gives a reason:
+
+> The `data/*.html` corpus mentions `var(--gap)` and `var(--spacing-md)` inside
+> code samples that *teach* custom properties, and flagging a teaching example
+> would be the instrument being wrong about what it is reading.
+
+That is right about the corpus and wrong about the scope. A `var()` inside a
+**style attribute** is not a teaching example — it is a live declaration with
+exactly that bug available to it. The counts settle it:
+
+| Where | Reads |
+|---|---|
+| `style.css` | 17 names, checked since the file was written |
+| `style="…"` in `data/*.html` | **1,061**, checked by nothing |
+| `script.js`, written into generated markup | **10**, checked by nothing |
+| `var()` anywhere else in `data/` | **4** — the teaching examples, and scoping to the attribute excludes them by construction rather than by exemption |
+
+All 1,071 are clean today. That is the point: the check now holds them there,
+and it needs no allow-list to do it.
+
+### The boundary was the shape of the bug, not the shape of the class
+
+Worth stating because it is the second time this session:
+`check_renames.py` matched case-sensitively because the rename that motivated it
+was written in lower case. `check_css_vars.py` read only the stylesheet because
+the `var()` that motivated it was in the stylesheet. **A guard written from one
+defect inherits that defect's accidents**, and the accidents are invisible
+afterwards because the check is green and the row in the table says what it is
+for.
+
+The rule this file should have had from the start, and now does: *every place
+the site names a custom property, the name is declared or it is not.*
+
+```
+css-vars now covers style.css + 1,061 attribute reads + 10 in script.js
+self-test 7 -> 13 fixtures · 6 injections, 6 fired · 41 gates green
 smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```
