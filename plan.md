@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **43**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **44**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -46,14 +46,14 @@ run rather than letting them pass as verified:
 | Reader questions answered | **72 of 78**, 5 zeros and 1 wrong-card miss, all 6 recorded, 0 unexplained | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~821 more topics | `page_budget.py` |
+| Page budget | **35% raw** headroom — room for ~820 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,117 chars**, median 3,705 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,117 chars**, median 3,710 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **39**, and the same 39 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 14/14 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **43** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **44** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4320,4 +4320,104 @@ measuring the code path rather than the promise.
 ```
 resilience 63 -> 64 checks · 39 gates green · smoke 163 · search 51
 axe 31 · mobile 14 · visual 2 · backup 3
+```
+
+---
+
+## Session — the two waves Phase 11 never read, and the number that was the floor
+
+Every census came back clean — `make check` green on a clean tree, 8 thin
+topics of which 7 are short by design, 0 unread duplicate pairs, 0 deep
+orphans, 72 of 78 reader questions answered with all 6 misses recorded. So
+the queue was not a census. It was §6 of Phase 11: **V1, V3 and V5 were
+audited after Phase 7 closed and V2 and V4 were not.** Those two are the
+waves this session ran.
+
+### The mechanical search over-matched exactly as §7 predicted
+
+V2 is "numbers followed by items, days, requests, GB". Run literally it
+returns most of the site: `max 15` hop counts in RIP, `Cat 5e 1 Gb/s 100m`,
+`max_workers=5`, `f″ &lt; 0 concave down`, Amdahl's table, a 401k deferral cap.
+Narrowing to numbers that sit next to *vendor-default language* —
+`by default`, `maximum of`, `limit of`, `quota`, `up to`, `capped at` — cut
+it to 66 hits across 22 domains, and reading those 66 left **six** that are
+a vendor's number rather than a teaching one:
+
+| Claim | Domain | Verdict |
+|---|---|---|
+| Inter-site AD replication "15 minutes by default" | `infra` | **Wrong.** Fixed, below |
+| Prefetch "capped at 1,024 entries on client editions" | `blueteam` | Right, and incomplete — anchored and extended |
+| Cloud Storage minimums "Nearline 30, Coldline 90, Archive 365" | `cloud` | Right, and designed around — anchored |
+| AD Connect deletion threshold "500 objects per run" | `infra` | Right, and the card already prints the cmdlet that reads it. Left alone |
+| DNS scavenging "both default to seven days" | `infra` | Right, unchanged since Windows 2000. Left alone |
+| journald "up to 10% of the filesystem" | `linux` | Right, a systemd default. Left alone |
+
+**Three of six needed nothing.** That is the §7 result a third time, and it
+is worth stating plainly rather than treating as a disappointment: a pass
+that reads sixty-six claims and changes three is a pass that found the site
+already disciplined, and the only way to learn that was to read them.
+
+### The one that was wrong, and the shape of the error
+
+```
+Between sites    15 minutes by default, and compressed
+```
+
+**15 minutes is the lowest interval a site link will accept. The default is
+180.** The two numbers are adjacent in every admin's memory and they mean
+opposite things, which is why this one is easy to write and hard to see.
+
+What makes it worth a record is not the number — it is that the card's own
+verdict *depended* on it:
+
+> Before troubleshooting, confirm enough time has passed for the path involved
+
+A reader who does exactly what the verdict says, waits the fifteen minutes
+the table gave them, and then opens `repadmin /replsummary` on a healthy
+forest has been sent to debug nothing by the card that was trying to stop
+them. **A wrong number in a table is a fact; a wrong number a verdict
+instructs the reader to act on is a bug.** That distinction is the one to
+carry: when auditing a class of claims, read what the card *does* with the
+number before deciding how much the number matters.
+
+Fixed to "up to 3 hours out of the box", with the trap promoted into the
+verdict — the figure everyone quotes is the floor, and for the first two and
+a half hours a healthy forest looks exactly like a broken one — and a fact
+anchor recording both numbers so the next reader re-verifies in a minute.
+
+### V4, and two 93s that are not a contradiction
+
+V4's method is "cross-check `m365`, `cloud` and `blueteam` against each
+other first". Reading the retention numbers in all three:
+
+| Number | Where | About |
+|---|---|---|
+| 93 days | `m365` | SharePoint recycle bin, both stages |
+| 93 days | `cloud` | Azure Monitor platform metrics |
+| 30 days | `m365`, twice | Group soft delete — dated in one card, fact-anchored in the other, and **they agree** |
+| 30 days | `m365` | Quarantine release window |
+| 30 / 90 days | `blueteam` | "keep 30 because 90 was expensive" — a budget anecdote, not a default |
+
+The two 93s are the finding. They are equal, they are in the cross-checked
+domains, and they are **about entirely different products** — a numeric
+contradiction checker would have flagged them on its first run and been
+wrong. `check_contradictions.py` already refuses this class in its
+docstring: *"a limit, a retention period, a version number — needs to know
+what the number is about, which no amount of regex supplies."* This is that
+sentence meeting its own example. V4 closes with no edits and the refusal
+vindicated.
+
+### What the two waves leave
+
+Phase 11 stays open as a standing discipline, and all five waves have now
+been read at least once. The counter-discipline held: **the volatile-span
+count did not move** (45 before, 45 after) and the fact anchors went 9 → 12,
+which is the right direction — an anchor records where a number came from
+without promising to re-check it, and all three of this session's numbers
+are ones a reader can verify faster than a maintainer can re-audit.
+
+```
+45 volatile spans (unchanged) · fact anchors 9 -> 12 · 39 gates green
+check · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 14
+visual 2 · backup 3
 ```

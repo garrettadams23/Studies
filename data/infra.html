@@ -747,17 +747,24 @@ dcdiag /test:ridmanager /v | Select-String "Available RID Pool"</pre>
             <tr><th>Where</th><th>Normal delay</th><th>Planned by</th></tr>
           </thead>
           <tbody>
+            <!-- fact: site link replication interval defaults to 180 minutes, with 15 minutes
+                 the lowest value a site link accepts | source: Active Directory site link
+                 replInterval default and minimum | checked: 2026-09 -->
             <tr><td>Within a site</td><td>Seconds — change notification, no schedule</td><td>The KCC <span class="acro-exp">(Knowledge Consistency Checker)</span>, automatically</td></tr>
-            <tr><td>Between sites</td><td>15 minutes by default, and compressed</td><td>Site links you configure</td></tr>
+            <tr><td>Between sites</td><td>Up to 3 hours out of the box — 180 minutes is the site-link default, and compressed</td><td>Site links you configure</td></tr>
             <tr><td>Urgent changes</td><td>Immediate, regardless of schedule</td><td>Account lockout, password changes to the PDC <span class="acro-exp">(Primary Domain Controller)</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> "the change has not appeared yet" is usually correct
-        behaviour rather than a fault. Before troubleshooting, confirm enough time has passed
-        for the path involved — and remember a user's password change reaches the PDC emulator
-        immediately even when everything else waits.
+        behaviour rather than a fault, so confirm enough time has passed for the path involved
+        before troubleshooting anything. The number to hold for that is <strong>three hours, not
+        fifteen minutes</strong> — 15 is the lowest interval a site link will accept, which is why
+        it is the figure everyone quotes, and it is not what an untouched site link does. For the
+        first two and a half hours a healthy forest looks exactly like a broken one. The exception
+        is a user's password change, which reaches the PDC emulator immediately even when
+        everything else waits.
       </div>
     </div>
 

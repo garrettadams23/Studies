@@ -1485,7 +1485,10 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Artefact</th><th>Why it may legitimately be empty</th></tr>
-                    <tr><td>Prefetch</td><td><strong>Disabled by default on Windows Server</strong>, and capped at 1,024 entries on client editions</td></tr>
+                    <!-- fact: prefetch holds 1,024 entries on Windows 8 and later, 128 on Windows 7
+                         and earlier | source: Windows prefetcher entry cap, raised with Windows 8 |
+                         checked: 2026-09 -->
+                    <tr><td>Prefetch</td><td><strong>Disabled by default on Windows Server</strong>, and capped on client editions &mdash; 1,024 entries since Windows 8, but 128 on Windows 7, which rolls over eight times faster</td></tr>
                     <tr><td>Shimcache / AppCompatCache</td><td>Only written on shutdown &mdash; a live-response capture may not include recent entries</td></tr>
                     <tr><td>Amcache</td><td>Populated by a maintenance task; timing is not reliable to the minute</td></tr>
                     <tr><td>USN <span class="acro-exp">(Update Sequence Number)</span> journal</td><td>Fixed size and wraps. Busy volumes can hold hours, not weeks</td></tr>
