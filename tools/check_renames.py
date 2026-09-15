@@ -31,6 +31,7 @@ Exit status is 1 on any unexplained use, so CI can gate on it.
 Usage:
   python3 tools/check_renames.py
   python3 tools/check_renames.py --domain endpoint
+  python3 tools/check_renames.py --self-test   # the matching rules, on fixtures
   python3 tools/check_renames.py --list        # the registry, oldest rename first
 """
 
@@ -64,9 +65,64 @@ def prose(text):
     return TAG_RE.sub(" ", text)
 
 
+# Endings a renamed *word* takes. Only words opt in, via `"inflect": true` in
+# the registry — a product name does not pluralise into a different product, and
+# `(?:s|d|ed|ing)?` hung on "Azure AD" would be noise looking for somewhere to
+# happen.
+INFLECTIONS = r"(?:s|d|ed|ing)?"
+
+
+def pattern_for(entry):
+    """The regex for one registry entry.
+
+    Matched case-insensitively, always. The first version was not, and it is the
+    reason this function exists: the registry has said "whitelist -> allowlist"
+    since 2020, `make check` was green the whole time, and the site contained
+    **Whitelist who can SSH in**, **Whitelist which executables are allowed to
+    run** and **Whitelists exactly where scripts may load from**. A rename is a
+    rename whatever the capitalisation, and a sentence-initial capital is the
+    single likeliest place for one to hide, because that is where prose puts the
+    word it is about.
+
+    The trailing `\b` did the rest of the hiding: `\bwhitelist\b` does not match
+    *whitelisting*, and the word most often appears as a gerund. Five of the six
+    misses were one or the other; four of them were both.
+    """
+    return r"\b" + re.escape(entry["old"]) + (INFLECTIONS if entry.get("inflect") else "") + r"\b"
+
+
 def explained(text, start, end, new):
     window = text[max(0, start - WINDOW): end + WINDOW]
     return bool(HISTORICAL.search(window)) or new.lower() in window.lower()
+
+
+def findings_in(text, registry, domain="-"):
+    """Every unexplained use of a renamed name in one already-prose string.
+
+    Split out of scan() so the self-test can hand it text instead of a file. The
+    logic below is the whole check; scan() is the file walk around it.
+    """
+    findings = []
+    if True:
+        for entry in registry:
+            old, new = entry["old"], entry["new"]
+            for m in re.finditer(pattern_for(entry), text, re.I):
+                s, e = m.start(), m.end()
+                # An allowed phrase means the old string is part of a name that
+                # is still correct — check the text actually there, not the
+                # registry's idea of it.
+                context = text[s: s + max(len(a) for a in entry["allow"]) + 4] if entry["allow"] else ""
+                lowered = context.lower()
+                near = text[max(0, s - 12): e + 12].lower()
+                if any(lowered.startswith(a.lower()) or a.lower() in near
+                       for a in entry["allow"]):
+                    continue
+                if explained(text, s, e, new):
+                    continue
+                line = text[: s].count("\n") + 1
+                snippet = re.sub(r"\s+", " ", text[max(0, s - 40): e + 40]).strip()
+                findings.append((domain, line, old, new, snippet))
+    return findings
 
 
 def scan(only_domain=None):
@@ -78,28 +134,50 @@ def scan(only_domain=None):
         # legitimately records old expansions.
         if domain == "acronym" or (only_domain and domain != only_domain):
             continue
-        text = prose(path.read_text(encoding="utf-8"))
-        for entry in registry:
-            old, new = entry["old"], entry["new"]
-            for m in re.finditer(r"\b" + re.escape(old) + r"\b", text):
-                s, e = m.start(), m.end()
-                # An allowed phrase means the old string is part of a name that
-                # is still correct — check the text actually there, not the
-                # registry's idea of it.
-                context = text[s: s + max(len(a) for a in entry["allow"]) + 4] if entry["allow"] else ""
-                if any(context.startswith(a) or a in text[max(0, s - 12): e + 12]
-                       for a in entry["allow"]):
-                    continue
-                if explained(text, s, e, new):
-                    continue
-                line = text[: s].count("\n") + 1
-                snippet = re.sub(r"\s+", " ", text[max(0, s - 40): e + 40]).strip()
-                findings.append((domain, line, old, new, snippet))
+        findings += findings_in(prose(path.read_text(encoding="utf-8")), registry, domain)
     return findings
+
+
+def self_test():
+    """The matching rules, on text with a known answer.
+
+    Written after the check was found to have been quietly half-working for as
+    long as it had existed: case-sensitive, and with a trailing word boundary
+    that a gerund cannot satisfy. Six real uses were sitting in the content with
+    the build green, and the registry had listed the rename since 2020.
+    """
+    reg = [
+        {"old": "whitelist", "new": "allowlist", "since": "2020-06", "allow": [], "inflect": True},
+        {"old": "Azure AD", "new": "Entra ID", "since": "2023-07", "allow": ["Azure AD Connect"]},
+    ]
+    cases = [
+        ("lowercase, as the registry writes it", "use a whitelist for this", 1),
+        ("sentence-initial capital — the miss that started this", "Whitelist who can SSH in", 1),
+        ("a gerund, which the trailing \\b used to refuse", "Application whitelisting, EDR", 1),
+        ("a plural", "Whitelists exactly where scripts load from", 1),
+        ("a past participle", "a whitelisted domain added to fix one", 1),
+        ("explicitly historical", "allowlists, formerly whitelists", 0),
+        ("the new name sitting beside it", "an allowlist (previously a whitelist)", 0),
+        ("an allowed phrase keeps its old string", "Azure AD Connect syncs the directory", 0),
+        ("the same product without the allowed suffix", "sign in with Azure AD", 1),
+        ("a product name in the wrong case is still that product", "sign in with azure ad", 1),
+        ("a non-inflecting entry does not inflect", "two Azure ADs walk into a bar", 0),
+        ("substring of a longer word is not a match", "the whitelistings", 0),
+    ]
+    bad = 0
+    for name, text, expect in cases:
+        got = len(findings_in(text, reg))
+        if got != expect:
+            bad += 1
+            print(f"FAIL : {name} — expected {expect}, got {got}")
+    print(f"check_renames self-test: {len(cases)} fixtures, {bad} failure(s).")
+    return bad
 
 
 def main():
     args = sys.argv[1:]
+    if "--self-test" in args:
+        return 1 if self_test() else 0
     if "--list" in args:
         registry = json.loads((DATA / "renames.json").read_text(encoding="utf-8"))["renames"]
         for e in sorted(registry, key=lambda x: x["since"]):

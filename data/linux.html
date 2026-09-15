@@ -2983,7 +2983,7 @@ Host internal-db
           <tr><td><code>PasswordAuthentication</code></td><td><code>no</code></td><td>Keys only — defeats password brute-forcing entirely</td></tr>
           <tr><td><code>PubkeyAuthentication</code></td><td><code>yes</code></td><td>Enable key-based auth</td></tr>
           <tr><td><code>Port</code></td><td><code>2222</code> (non-standard)</td><td>Reduces noise from automated bots (not real security, just quieter)</td></tr>
-          <tr><td><code>AllowUsers</code></td><td><code>alice bob</code></td><td>Whitelist who can SSH in</td></tr>
+          <tr><td><code>AllowUsers</code></td><td><code>alice bob</code></td><td>An explicit allowlist of who may SSH in; everyone else is refused before authentication</td></tr>
           <tr><td><code>MaxAuthTries</code></td><td><code>3</code></td><td>Limit guesses per connection</td></tr>
         </tbody>
       </table>
@@ -4092,7 +4092,7 @@ sudo tail -f /var/log/mail.log
         &bull; Require SASL authentication for any relay.<br>
         &bull; Set up SPF, DKIM <span class="acro-exp">(DomainKeys Identified Mail)</span>, DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span> (covered in the Social Engineering
           topic) — receivers use these to validate your mail.<br>
-        &bull; Check your IP against blacklists regularly:
+        &bull; Check your IP against the public blocklists regularly:
           <code>https://mxtoolbox.com/blacklists.aspx</code>
       </div>
       <pre class="code-block">

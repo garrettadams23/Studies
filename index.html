@@ -8719,12 +8719,12 @@ granted without re-entering password.
 <!-- ═══════════════════════════════════════════════════
 TOPIC: Active Directory
 ═══════════════════════════════════════════════════ -->
-<div class="topic" id="active-directory-structure-objects-attacks" data-reviewed="2026-09" data-read="9" data-level="core">
+<div class="topic" id="active-directory-structure-objects-attacks" data-reviewed="2026-09" data-read="10" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏢</span>
 <span class="topic-name">Active Directory — Structure, Objects &amp; Attacks</span>
 <span class="topic-badge">SEC+ · CySA+ · PenTest+</span>
-<span class="topic-read" title="Rough reading time, estimated from length">9 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">10 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -8821,7 +8821,7 @@ Applied order: <strong class="c-cyan">Local → Site → Domain → OU</strong>
 <tr><td style="color:var(--cyan)">Software Deployment</td><td>Push MSI <span class="acro-exp">(Microsoft Installer)</span> packages to all machines in an OU</td></tr>
 <tr><td style="color:var(--cyan)">Script Execution</td><td>Run logon/logoff scripts; restrict PowerShell</td></tr>
 <tr><td style="color:var(--cyan)">Security Settings</td><td>Disable guest, rename Administrator, firewall rules</td></tr>
-<tr><td style="color:var(--cyan)">AppLocker / WDAC <span class="acro-exp">(Windows Defender Application Control)</span></td><td>Whitelist which executables are allowed to run</td></tr>
+<tr><td style="color:var(--cyan)">AppLocker / WDAC <span class="acro-exp">(Windows Defender Application Control)</span></td><td>An allowlist of which executables may run — everything unlisted is blocked</td></tr>
 </table>
 <div class="concept-desc verdict">
 One row there is a trap and it is the oldest setting in the list. A
@@ -11218,7 +11218,7 @@ security.</p>
 <table class="ai-table">
 <tr><th>Header</th><th>What it does</th><th>What it protects against</th></tr>
 <tr><td><code>Strict-Transport-Security</code></td><td>Tells the browser "always use HTTPS for this site, never plain HTTP, even if a link points to http://"</td><td>Downgrade attacks that try to trick a browser into an unencrypted connection</td></tr>
-<tr><td><code>Content-Security-Policy</code></td><td>Whitelists exactly where scripts, styles, and other resources are allowed to load from</td><td>Cross-site scripting (XSS) — even if an attacker injects a script tag, the browser refuses to run it if its source isn't on the approved list</td></tr>
+<tr><td><code>Content-Security-Policy</code></td><td>Allowlists exactly where scripts, styles, and other resources may load from</td><td>Cross-site scripting (XSS) — even if an attacker injects a script tag, the browser refuses to run it if its source isn't on the approved list</td></tr>
 <tr><td><code>X-Frame-Options</code></td><td>Controls whether the page can be displayed inside a frame on another site</td><td>Clickjacking — tricking users into clicking something different from what they think they're clicking</td></tr>
 <tr><td><code>X-Content-Type-Options</code></td><td>Tells the browser "don't try to guess the file type — trust what I told you it is"</td><td>MIME-sniffing attacks that disguise malicious files as harmless ones</td></tr>
 <tr><td><code>Referrer-Policy</code></td><td>Controls how much of the originating URL <span class="acro-exp">(Uniform Resource Locator)</span> gets shared when a user clicks a link to another site</td><td>Accidentally leaking sensitive information (like search queries or internal URLs) to third-party sites</td></tr>
@@ -16973,7 +16973,7 @@ look. Monitor egress and DNS <span class="acro-exp">(Domain Name System)</span> 
 <tr><td>2</td><td>Weaponization</td><td>Build exploit + payload (malware, phishing doc)</td><td>Threat intelligence</td></tr>
 <tr><td>3</td><td>Delivery</td><td>Send the payload (email, USB, watering hole)</td><td>Email filtering, web proxy</td></tr>
 <tr><td>4</td><td>Exploitation</td><td>Trigger the vulnerability, execute code</td><td>Patching, endpoint protection</td></tr>
-<tr><td>5</td><td>Installation</td><td>Install backdoor / malware for persistence</td><td>Application whitelisting, EDR <span class="acro-exp">(Endpoint Detection and Response)</span></td></tr>
+<tr><td>5</td><td>Installation</td><td>Install backdoor / malware for persistence</td><td>Application allowlisting, EDR <span class="acro-exp">(Endpoint Detection and Response)</span></td></tr>
 <tr><td>6</td><td>C2 (Command &amp; Control)</td><td>Phone home; receive instructions from attacker</td><td>Network monitoring, DNS filtering</td></tr>
 <tr><td>7</td><td>Actions on Objectives</td><td>Steal data, encrypt for ransom, pivot laterally</td><td>DLP <span class="acro-exp">(Data Loss Prevention)</span>, data segmentation, SIEM <span class="acro-exp">(Security Information and Event Management)</span> alerts</td></tr>
 </tbody>
@@ -41084,12 +41084,12 @@ sudo aa-enforce /path/to/program    <span class="com"># enforce the profile</spa
 </div>
 <!-- BEGINNER18-LINUX v1 -->
 <!-- ── TOPIC: SSH DEEP DIVE & HARDENING ──────────────────── -->
-<div class="topic" id="ssh-secure-remote-access-done-right" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="ssh-secure-remote-access-done-right" data-reviewed="2026-07" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔑</span>
 <span class="topic-name">SSH — Secure Remote Access Done Right</span>
 <span class="topic-badge">LINUX • Essential</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -41213,7 +41213,7 @@ Host internal-db
 <tr><td><code>PasswordAuthentication</code></td><td><code>no</code></td><td>Keys only — defeats password brute-forcing entirely</td></tr>
 <tr><td><code>PubkeyAuthentication</code></td><td><code>yes</code></td><td>Enable key-based auth</td></tr>
 <tr><td><code>Port</code></td><td><code>2222</code> (non-standard)</td><td>Reduces noise from automated bots (not real security, just quieter)</td></tr>
-<tr><td><code>AllowUsers</code></td><td><code>alice bob</code></td><td>Whitelist who can SSH in</td></tr>
+<tr><td><code>AllowUsers</code></td><td><code>alice bob</code></td><td>An explicit allowlist of who may SSH in; everyone else is refused before authentication</td></tr>
 <tr><td><code>MaxAuthTries</code></td><td><code>3</code></td><td>Limit guesses per connection</td></tr>
 </tbody>
 </table>
@@ -42303,7 +42303,7 @@ server from outside; it must be rejected.<br>
 &bull; Require SASL authentication for any relay.<br>
 &bull; Set up SPF, DKIM <span class="acro-exp">(DomainKeys Identified Mail)</span>, DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span> (covered in the Social Engineering
 topic) — receivers use these to validate your mail.<br>
-&bull; Check your IP against blacklists regularly:
+&bull; Check your IP against the public blocklists regularly:
 <code>https://mxtoolbox.com/blacklists.aspx</code>
 </div>
 <pre class="code-block">
@@ -122547,7 +122547,7 @@ overrode the protection everyone assumed was in force.
 </table>
 <div class="concept-desc verdict">
 The two usual culprits: a policy with a <strong>higher priority number</strong> matched the
-recipient first and was weaker, or an <strong>allow-entry</strong> — a whitelisted domain added
+recipient first and was weaker, or an <strong>allow-entry</strong> — an allowlisted domain added
 to fix one false positive — turned off filtering for a whole sender. Both are configuration
 history, not a product failure, and both are invisible until you trace them.
 </div>

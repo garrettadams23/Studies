@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **51**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **52**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -50,10 +50,10 @@ run rather than letting them pass as verified:
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,122 chars**, median 3,723 — the number a deepening wave has to move | `depth_report.py` |
-| Gates | **40**, and the same 40 in `make all` and in CI | `check_gates.py` |
+| Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **51** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **52** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4985,4 +4985,77 @@ probe 105 questions · 101 answered · 0 unexplained · 0 wrong-card · 0 stale
 4 zeros, all recorded · search 51/51 with one ceiling moved and the reason
 written beside it · 40 gates green · smoke 163 · a11y 31 · resilience 64
 mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the guard this file credits with catching "whitelist" was not catching it
+
+Found by reading, not by a tool, and while doing something else entirely. The
+SSH card was open for a different reason and one of its rows said:
+
+```
+AllowUsers   alice bob   Whitelist who can SSH in
+```
+
+`data/renames.json` has listed **whitelist → allowlist since 2020-06**.
+`check_renames.py` runs in `make check` and in CI. The build had been green
+throughout. And the session operating manual at the top of this file names that
+exact rename as failure #3, with the guard column reading *"`check_renames.py`,
+already in `make check`. First time it caught same-session writing."*
+
+It caught that one. It could not have caught these:
+
+```
+whitelist   Whitelist who can SSH in                       linux
+whitelist   Whitelists exactly where scripts may load from sec
+whitelist   Whitelist which executables are allowed to run sec
+whitelist   Application whitelisting, EDR                  threat
+whitelist   a whitelisted domain added to fix one          m365
+blacklist   Check your IP against blacklists regularly     linux
+```
+
+### Two characters of regex, and both of them hid the same class
+
+```python
+re.finditer(r"\b" + re.escape(old) + r"\b", text)
+```
+
+**No `re.I`.** A rename is a rename whatever the capitalisation, and a
+sentence-initial capital is the single likeliest place for one to hide, because
+that is exactly where prose puts the word it is about. Four of the six were
+capitalised.
+
+**A trailing `\b`.** `\bwhitelist\b` does not match *whitelisting*, and the word
+most often appears as a gerund. Five of the six were inflected; four were both.
+
+Inflection is opt-in per entry — `"inflect": true` — because a product name does
+not pluralise into a different product, and `(?:s|d|ed|ing)?` hung on "Azure AD"
+is noise looking for somewhere to happen. Case-insensitivity is not opt-in,
+because there is no entry for which it is wrong.
+
+### What this is actually an instance of
+
+The register's fifth risk is *this file believing its own record*. This is the
+tooling version of it: **a guard's entry in a table says what it is for, not
+what it does**, and the table is the thing everyone reads. The manual's failure
+list has a column called "Guard", one row of which has been quietly wrong since
+it was written.
+
+Two cheap habits fall out of it, and the second is the one worth keeping:
+
+1. A check whose registry is *data* wants a self-test over that data's shapes,
+   not over the one case that motivated it. This one now has twelve fixtures —
+   lowercase, capitalised, gerund, plural, participle, historical, beside-the-
+   new-name, allow-listed suffix, wrong case on a product, and a non-inflecting
+   entry that must not inflect. **Gates 40 → 41.**
+2. **Grep for what a guard claims to cover before trusting the claim.** One
+   `grep -rin whitelist data/` would have found this at any point in five years.
+   Nobody ran it, because the check existed and the build was green — which is
+   the precise failure mode a green build creates.
+
+```
+renames 6 fixed across 4 domains · check_renames self-test 12 fixtures
+gates 40 -> 41 · probe 105 · 101 answered · smoke 163 · search 51 · a11y 31
+resilience 64 · mobile 15 · visual 2 · backup 3
 ```

@@ -996,7 +996,7 @@
           <tr><td style="color:var(--cyan)">Software Deployment</td><td>Push MSI <span class="acro-exp">(Microsoft Installer)</span> packages to all machines in an OU</td></tr>
           <tr><td style="color:var(--cyan)">Script Execution</td><td>Run logon/logoff scripts; restrict PowerShell</td></tr>
           <tr><td style="color:var(--cyan)">Security Settings</td><td>Disable guest, rename Administrator, firewall rules</td></tr>
-          <tr><td style="color:var(--cyan)">AppLocker / WDAC <span class="acro-exp">(Windows Defender Application Control)</span></td><td>Whitelist which executables are allowed to run</td></tr>
+          <tr><td style="color:var(--cyan)">AppLocker / WDAC <span class="acro-exp">(Windows Defender Application Control)</span></td><td>An allowlist of which executables may run — everything unlisted is blocked</td></tr>
         </table>
 
         <div class="concept-desc verdict">
@@ -3442,7 +3442,7 @@ ssh-keygen -t ed25519 -f my_key -C &quot;demo key&quot;
       <table class="ai-table">
         <tr><th>Header</th><th>What it does</th><th>What it protects against</th></tr>
         <tr><td><code>Strict-Transport-Security</code></td><td>Tells the browser "always use HTTPS for this site, never plain HTTP, even if a link points to http://"</td><td>Downgrade attacks that try to trick a browser into an unencrypted connection</td></tr>
-        <tr><td><code>Content-Security-Policy</code></td><td>Whitelists exactly where scripts, styles, and other resources are allowed to load from</td><td>Cross-site scripting (XSS) — even if an attacker injects a script tag, the browser refuses to run it if its source isn't on the approved list</td></tr>
+        <tr><td><code>Content-Security-Policy</code></td><td>Allowlists exactly where scripts, styles, and other resources may load from</td><td>Cross-site scripting (XSS) — even if an attacker injects a script tag, the browser refuses to run it if its source isn't on the approved list</td></tr>
         <tr><td><code>X-Frame-Options</code></td><td>Controls whether the page can be displayed inside a frame on another site</td><td>Clickjacking — tricking users into clicking something different from what they think they're clicking</td></tr>
         <tr><td><code>X-Content-Type-Options</code></td><td>Tells the browser "don't try to guess the file type — trust what I told you it is"</td><td>MIME-sniffing attacks that disguise malicious files as harmless ones</td></tr>
         <tr><td><code>Referrer-Policy</code></td><td>Controls how much of the originating URL <span class="acro-exp">(Uniform Resource Locator)</span> gets shared when a user clicks a link to another site</td><td>Accidentally leaking sensitive information (like search queries or internal URLs) to third-party sites</td></tr>
