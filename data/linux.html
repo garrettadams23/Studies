@@ -2056,11 +2056,36 @@ ls /etc/cron.monthly/</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">COMMON GOTCHAS</div>
-      <div class="concept-title">Why Cron Jobs Silently Fail</div>
-      <div class="concept-desc">• Cron uses a <strong>minimal environment</strong> — PATH is different from your login shell. Use absolute paths everywhere (<code>/usr/bin/python3</code> not just <code>python3</code>).<br>
-      • <strong>Redirect output</strong> or you'll never see errors: <code>command &gt;&gt; /var/log/myjob.log 2&gt;&amp;1</code><br>
-      • File permissions — the script must be executable: <code>chmod +x script.sh</code><br>
-      • Use <code>crontab.guru</code> (online) to build and verify expressions before deploying.</div>
+      <div class="concept-title">"It Runs When I Run It" — Why a Cron Job Is Not Running</div>
+      <div class="concept-desc">
+        Almost every report that a cron job <strong>did not run</strong> is a job that ran and
+        failed silently, and the fingerprint is the same every time: <strong>it works when you
+        type it and not when cron types it</strong>. Cron hands the command a minimal
+        environment — a short <code>PATH</code>, no login shell, none of your profile — so the
+        schedule is the last thing to suspect, not the first.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>What you see</th><th>Why</th><th>Fix</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Nothing happened, and there is no error anywhere</td><td>Output went to local mail nobody reads, or to nowhere</td><td>Redirect it: <code>cmd &gt;&gt; /var/log/myjob.log 2&gt;&amp;1</code></td></tr>
+            <tr><td>"command not found" for something that is on your PATH</td><td>Cron's PATH is not your PATH</td><td>Absolute paths everywhere — <code>/usr/bin/python3</code>, never bare <code>python3</code></td></tr>
+            <tr><td>The command stops part-way through</td><td>An unescaped <code>%</code>, which cron reads as a newline</td><td>Escape it as <code>\%</code>. This bites every inline <code>date +%Y-%m-%d</code></td></tr>
+            <tr><td>A file in <code>/etc/cron.daily</code> never runs</td><td><code>run-parts</code> skips filenames containing a dot</td><td>Name it <code>myjob</code>, not <code>myjob.sh</code></td></tr>
+            <tr><td>It runs and cannot read the thing it needs</td><td>It is running as a different user than you tested as</td><td>Check whose crontab it is; the script must also be executable</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Prove the command survives cron's environment before you touch the
+        expression.</strong> <code>env -i /bin/sh -c '/path/to/job'</code> reproduces the
+        stripped environment in one line and is right far more often than the schedule is
+        wrong; <code>crontab.guru</code> verifies the expression separately, once you have
+        ruled the environment out. And note that <code>crontab -r</code> deletes the whole
+        crontab without asking, one key away from <code>-e</code>.
+      </div>
     </div>
   </div>
 </div>

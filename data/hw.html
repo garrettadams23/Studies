@@ -1449,6 +1449,38 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       </div>
     </div>
     <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">"The Printer Is Offline" Is a Claim by the Client, Not a Report From the Device</div>
+      <div class="concept-desc">
+        The commonest printer ticket there is, and the word misleads everyone who reads it: a
+        queue showing <strong>offline</strong> is saying that <em>this computer</em> did not get
+        the answer it expected, which is a different statement from the printer being off. A
+        device printing its own configuration page for somebody standing beside it can be
+        showing offline on every desk in the building at the same time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>What is actually true</th><th>How it looks</th><th>What to do</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Windows set "Use Printer Offline" after one failed poll and never cleared it</td><td>Queue offline; the device answers on the network</td><td>Clear the flag in the queue itself. It is client-side state, not something the device asked for</td></tr>
+            <tr><td>The status channel is blocked, not the print path</td><td>Jobs print, and the queue reports offline or "status unknown" the whole time</td><td>Bidirectional support polls the device, usually over SNMP <span class="acro-exp">(Simple Network Management Protocol)</span>. A firewall rule or a disabled agent silences the reply, not the printing</td></tr>
+            <tr><td>The device took a different address</td><td>It answers on a new one; the queue still points at the old</td><td>Reserve the address, or point the port at a name instead of a number</td></tr>
+            <tr><td>The queue is paused rather than offline</td><td>Jobs pile up with no error at all</td><td>Somebody paused it to stop a runaway job and never resumed it</td></tr>
+            <tr><td>The device really is off, jammed or out of toner</td><td>The configuration page does not print either</td><td>Now it is a physical problem, and the triage below is the right order</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Ask for the configuration page before anyone touches a driver.</strong> It
+        separates a broken device from an estate that cannot talk to a working one, and the
+        second is far more common — which means the reflex of power-cycling the printer is
+        usually a reboot of the one component that was never at fault. A queue reporting
+        offline while the device prints is a status-channel problem and nothing else.
+      </div>
+    </div>
+    <div class="concept-card">
       <div class="concept-label">Troubleshooting</div>
       <div class="concept-title">Secure Release, and the Triage Order That Works</div>
       <div class="concept-desc">

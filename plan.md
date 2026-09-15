@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **45**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **46**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -40,20 +40,20 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,551** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
-| Mean chars per concept card | **1,382**, or **1,117 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
+| Mean chars per concept card | **1,383**, or **1,117 excluding verdicts** — the second is the padding counter-metric, and three new concept cards moved the mean by 1 and left it where it was, which is what a card with a table and a code block in it does to an average | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **60 of 78** — every query now carries the topic it should reach, which turned 72 into 60. 5 zeros and 13 wrong-card misses, 6 recorded, **12 unexplained and named** | `query_probe.mjs` |
+| Reader questions answered | **63 of 78** — every query now carries the topic it should reach, which turned 72 into 60 before three cards took it to 63. 5 zeros and 10 wrong-card misses, 6 recorded, **9 unexplained and named** | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~820 more topics | `page_budget.py` |
+| Page budget | **35% raw** headroom — room for ~818 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,117 chars**, median 3,710 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,122 chars**, median 3,710 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **39**, and the same 39 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **45** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **46** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4542,4 +4542,71 @@ once.
 probe 78 queries · 60 answered · 12 unexplained, named · search 51/51 with no
 ceiling moved · mobile 14 -> 15 · 39 gates green · smoke 163 · a11y 31
 resilience 64 · visual 2 · backup 3
+```
+
+---
+
+## Session — three cards the probe named, and none of them was a synonym
+
+The previous record left twelve named misses and called them "mostly kind 1:
+the card says it in the other word, which is a prose wave". That framing was
+half wrong, and reading the three best ones is what showed it.
+
+**Kind 1 says name both words. Two of these three had no word to name** — they
+had a hole where the reader's question goes, and the probe found the hole by
+looking for the word.
+
+| Miss | What the card already had | What was missing |
+|---|---|---|
+| `merge conflict` | `bisect`, `rebase -i`, `reflog`, `stash`, `cherry-pick`, `worktree`, `blame`, four kinds of undo | **Conflicts.** A card that teaches rebase and cherry-pick and never says what happens when they stop |
+| `cron not running` | PATH, redirect output, `chmod +x`, crontab.guru | The symptom. Four bullets of causes with no statement of what the reader is looking at |
+| `printer offline` | Technologies, deployment models, secure release, a six-step triage | The single commonest printer ticket there is |
+
+### The inversions each one turned out to have
+
+None of these were reachable by adding a word, and each has the shape the
+rubric asks for — the sentence that is true and contrary to instinct:
+
+* **A merge conflict is git declining to guess, and "ours" and "theirs" swap
+  meaning between a merge and a rebase.** A merge replays their commits into
+  your branch, so *ours* is yours. A rebase replays *your* commits onto their
+  branch, so while it runs *ours* is everyone else's work and *theirs* is your
+  own commit. Resolving a rebase by the reflex learned from merges deletes your
+  own change and leaves a clean-looking history that silently dropped it. Git
+  checks the markers are gone, not that the result makes sense.
+* **A cron job that "did not run" almost always ran.** The fingerprint is *it
+  works when you type it and not when cron types it*, which is one sentence
+  about the environment — and `env -i /bin/sh -c '/path/to/job'` reproduces it
+  in one line and is right far more often than the expression is wrong. The
+  `%` that cron reads as a newline and the dot that makes `run-parts` skip a
+  file are in the table now; both were missing and both are silent.
+* **"The printer is offline" is a claim by the client, not a report from the
+  device.** A device printing its configuration page for somebody standing
+  beside it can show offline on every desk in the building, because the queue
+  is reporting that *this computer* did not get an answer it expected. Which
+  makes power-cycling the printer a reboot of the one component that was never
+  at fault.
+
+### Why this is not keyword stuffing, and how to tell next time
+
+The probe's own rule is that seeding symptom phrases into cards is *"keyword
+stuffing with a rationalisation attached"*, and it is right. The test that
+separates the two is not whether the word appears afterwards — it is
+**whether the card was incomplete without the thing the word names**:
+
+> A card that teaches `git rebase -i` and never mentions conflicts is missing
+> content. A card that lists cron's PATH gotcha without naming the symptom is
+> missing a sentence. Adding "merge conflict" to a card that genuinely has no
+> conflict material would have been the stuffing.
+
+Three of nine remaining misses are still the synonym shape — *joiner* against
+*new starter*, *spacing* against *spaced repetition* — and they are a smaller,
+different edit. Two more, `kill a process` and `writing a detection`, are the
+matcher limit recorded last session and not a content problem at all.
+
+```
+probe 63 of 78 answered · 9 unexplained, named · 3 concept cards added
+depth mean 1,382 -> 1,383 · excluding verdicts 1,117, unmoved
+39 gates green · check · smoke 163 · search 51 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
 ```

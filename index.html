@@ -40210,12 +40210,12 @@ greet <span class="str">"Bob"</span>
 </div>
 </div>
 <!-- ── TOPIC: CRON JOBS — SCHEDULED TASKS ──────────────────── -->
-<div class="topic" id="cron-jobs-scheduling-tasks-in-linux" data-reviewed="2026-07" data-read="2" data-level="core">
+<div class="topic" id="cron-jobs-scheduling-tasks-in-linux" data-reviewed="2026-07" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⏰</span>
 <span class="topic-name">Cron Jobs — Scheduling Tasks in Linux</span>
 <span class="topic-badge">LINUX • Ops</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -40270,11 +40270,36 @@ ls /etc/cron.monthly/</pre>
 </div>
 <div class="concept-card">
 <div class="concept-label">COMMON GOTCHAS</div>
-<div class="concept-title">Why Cron Jobs Silently Fail</div>
-<div class="concept-desc">• Cron uses a <strong>minimal environment</strong> — PATH is different from your login shell. Use absolute paths everywhere (<code>/usr/bin/python3</code> not just <code>python3</code>).<br>
-• <strong>Redirect output</strong> or you'll never see errors: <code>command &gt;&gt; /var/log/myjob.log 2&gt;&amp;1</code><br>
-• File permissions — the script must be executable: <code>chmod +x script.sh</code><br>
-• Use <code>crontab.guru</code> (online) to build and verify expressions before deploying.</div>
+<div class="concept-title">"It Runs When I Run It" — Why a Cron Job Is Not Running</div>
+<div class="concept-desc">
+Almost every report that a cron job <strong>did not run</strong> is a job that ran and
+failed silently, and the fingerprint is the same every time: <strong>it works when you
+type it and not when cron types it</strong>. Cron hands the command a minimal
+environment — a short <code>PATH</code>, no login shell, none of your profile — so the
+schedule is the last thing to suspect, not the first.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th>What you see</th><th>Why</th><th>Fix</th></tr>
+</thead>
+<tbody>
+<tr><td>Nothing happened, and there is no error anywhere</td><td>Output went to local mail nobody reads, or to nowhere</td><td>Redirect it: <code>cmd &gt;&gt; /var/log/myjob.log 2&gt;&amp;1</code></td></tr>
+<tr><td>"command not found" for something that is on your PATH</td><td>Cron's PATH is not your PATH</td><td>Absolute paths everywhere — <code>/usr/bin/python3</code>, never bare <code>python3</code></td></tr>
+<tr><td>The command stops part-way through</td><td>An unescaped <code>%</code>, which cron reads as a newline</td><td>Escape it as <code>\%</code>. This bites every inline <code>date +%Y-%m-%d</code></td></tr>
+<tr><td>A file in <code>/etc/cron.daily</code> never runs</td><td><code>run-parts</code> skips filenames containing a dot</td><td>Name it <code>myjob</code>, not <code>myjob.sh</code></td></tr>
+<tr><td>It runs and cannot read the thing it needs</td><td>It is running as a different user than you tested as</td><td>Check whose crontab it is; the script must also be executable</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Prove the command survives cron's environment before you touch the
+expression.</strong> <code>env -i /bin/sh -c '/path/to/job'</code> reproduces the
+stripped environment in one line and is right far more often than the schedule is
+wrong; <code>crontab.guru</code> verifies the expression separately, once you have
+ruled the environment out. And note that <code>crontab -r</code> deletes the whole
+crontab without asking, one key away from <code>-e</code>.
+</div>
 </div>
 </div>
 </div>
@@ -56086,12 +56111,12 @@ m = pattern.search(log_line)
 </div>
 <!-- BEGINNER36-SCRIPT v1 -->
 <!-- ── TOPIC: Git Advanced Workflows ─────────────────────────── -->
-<div class="topic" id="git-advanced-workflows-beyond-add-commit-push" data-reviewed="2026-07" data-read="8" data-level="core">
+<div class="topic" id="git-advanced-workflows-beyond-add-commit-push" data-reviewed="2026-07" data-read="11" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌿</span>
 <span class="topic-badge">Intermediate</span>
 <span class="topic-name">Git Advanced Workflows – Beyond add, commit, push</span>
-<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">11 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -56259,6 +56284,59 @@ git worktree add ../hotfix-dir hotfix/critical-bug
 git worktree list
 git worktree remove ../hotfix-dir
       </pre>
+</div>
+<div class="concept-card">
+<div class="concept-label">Conflicts</div>
+<div class="concept-title">A Merge Conflict Is Git Declining to Guess</div>
+<div class="concept-desc">
+Every command above can stop with a <strong>merge conflict</strong>. Rebase and
+cherry-pick replay commits onto a base they were not written against, and replaying is
+exactly where two edits to the same lines finally meet. A conflict is
+<strong>not an error</strong> — it is the one case git refuses to decide for you, so
+the work in front of you is a decision, not a repair.
+</div>
+<div class="concept-desc">
+The trap is that <strong>"ours" and "theirs" swap meaning between a merge and a
+rebase</strong>, and nothing on screen says so. A merge replays their commits into your
+branch, so <em>ours</em> is your branch. A rebase replays <em>your</em> commits onto
+their branch, so while it is running <em>ours</em> is the branch you are rebasing onto
+— everyone else's work — and <em>theirs</em> is your own commit. Resolving a rebase by
+the reflex learned from merges deletes your own change and leaves a clean-looking
+history that silently dropped it.
+</div>
+<pre class="code-block">
+<span class="com"># Where am I, and what is actually still conflicted?</span>
+git status                       <span class="com"># "both modified" is the list that matters</span>
+git diff --diff-filter=U         <span class="com"># only the conflicted hunks</span>
+
+<span class="com"># Three inputs beat two. The common ancestor is what makes a</span>
+<span class="com"># conflict readable — without it you are guessing which side changed.</span>
+git checkout --conflict=diff3 -- path/to/file.py
+<span class="com">#   &lt;&lt;&lt;&lt;&lt;&lt;&lt; ours  |  ||||||| base  |  ======= theirs  |  &gt;&gt;&gt;&gt;&gt;&gt;&gt;</span>
+
+<span class="com"># Take one side wholesale, when you are certain which side it is</span>
+git checkout --ours   path/to/file.py   <span class="com"># in a REBASE: the upstream branch</span>
+git checkout --theirs path/to/file.py   <span class="com"># in a REBASE: your own commit</span>
+
+<span class="com"># Mark it resolved and carry on — the verb follows the operation</span>
+git add path/to/file.py
+git rebase --continue            <span class="com"># or merge --continue / cherry-pick --continue</span>
+
+<span class="com"># Walk the whole thing back, at any point, losing nothing</span>
+git rebase --abort
+git merge --abort
+
+<span class="com"># Stop resolving the same conflict on every retry of the same rebase</span>
+git config --global rerere.enabled true
+      </pre>
+<div class="concept-desc verdict">
+<strong>Git checks that the markers are gone, not that the result makes sense.</strong>
+A resolution that compiles is the minimum bar and a resolution whose tests pass is the
+real one — run them before <code>--continue</code>, not after the rebase finishes, or
+you will be bisecting your own conflict resolutions later. The saving grace is that
+<code>--abort</code> is available at every step and costs nothing, which makes a
+conflict the rare git situation you can always walk out of unchanged.
+</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">Reference</div>
@@ -116195,8 +116273,8 @@ different answer —
 <span class="ctag ctag-general">Hands-On</span>
 </div>
 <span class="domain-sub">Ohm's law · Power & thermals · Motherboards · CPU & memory · Storage interfaces · PSUs</span>
-<span class="domain-meta" aria-label="28 topics, about 2h 00m to read"
->28 topics · ~2h 00m</span>
+<span class="domain-meta" aria-label="28 topics, about 2h 05m to read"
+>28 topics · ~2h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -117588,12 +117666,12 @@ return.
 </div>
 </div>
 <!-- ── TOPIC: PRINTERS & MFPs ────────────────────────────────── -->
-<div class="topic" id="printers-mfps-technologies-drivers-print-servers-secure-rele" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="printers-mfps-technologies-drivers-print-servers-secure-rele" data-reviewed="2026-08" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖨️</span>
 <span class="topic-name">Printers &amp; MFPs <span class="acro-exp">(Multifunction Printer)</span> — Technologies, Drivers, Print Servers &amp; Secure Release</span>
 <span class="topic-badge">Peripherals</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -117650,6 +117728,38 @@ reliable privilege-escalation path. The mitigations restricted exactly that, whi
 long-standing print deployments broke and why "just let users install the driver" is no
 longer an acceptable answer.
 </div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">"The Printer Is Offline" Is a Claim by the Client, Not a Report From the Device</div>
+<div class="concept-desc">
+The commonest printer ticket there is, and the word misleads everyone who reads it: a
+queue showing <strong>offline</strong> is saying that <em>this computer</em> did not get
+the answer it expected, which is a different statement from the printer being off. A
+device printing its own configuration page for somebody standing beside it can be
+showing offline on every desk in the building at the same time.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th>What is actually true</th><th>How it looks</th><th>What to do</th></tr>
+</thead>
+<tbody>
+<tr><td>Windows set "Use Printer Offline" after one failed poll and never cleared it</td><td>Queue offline; the device answers on the network</td><td>Clear the flag in the queue itself. It is client-side state, not something the device asked for</td></tr>
+<tr><td>The status channel is blocked, not the print path</td><td>Jobs print, and the queue reports offline or "status unknown" the whole time</td><td>Bidirectional support polls the device, usually over SNMP <span class="acro-exp">(Simple Network Management Protocol)</span>. A firewall rule or a disabled agent silences the reply, not the printing</td></tr>
+<tr><td>The device took a different address</td><td>It answers on a new one; the queue still points at the old</td><td>Reserve the address, or point the port at a name instead of a number</td></tr>
+<tr><td>The queue is paused rather than offline</td><td>Jobs pile up with no error at all</td><td>Somebody paused it to stop a runaway job and never resumed it</td></tr>
+<tr><td>The device really is off, jammed or out of toner</td><td>The configuration page does not print either</td><td>Now it is a physical problem, and the triage below is the right order</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Ask for the configuration page before anyone touches a driver.</strong> It
+separates a broken device from an estate that cannot talk to a working one, and the
+second is far more common — which means the reflex of power-cycling the printer is
+usually a reboot of the one component that was never at fault. A queue reporting
+offline while the device prints is a status-channel problem and nothing else.
 </div>
 </div>
 <div class="concept-card">
