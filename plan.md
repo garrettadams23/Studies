@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **47**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **48**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -50,10 +50,10 @@ run rather than letting them pass as verified:
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,122 chars**, median 3,713 — the number a deepening wave has to move | `depth_report.py` |
-| Gates | **39**, and the same 39 in `make all` and in CI | `check_gates.py` |
+| Gates | **40**, and the same 40 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **47** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **48** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4677,5 +4677,81 @@ later stage needs ranking, and this matcher is a filter.
 probe 78 · 66 answered · 5 unexplained, named · zeros 5 -> 4
 5 concept cards this wave and last · mean 1,384 / 1,118 excluding verdicts, both +2
 39 gates green · check · smoke 163 · search 51 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the check that already existed, one file over
+
+The previous record ended on a general statement and did not act on it:
+
+> A verdict recorded against a zero is only valid while the query is still a
+> zero. The probe reports zeros and misses separately; it does not check that a
+> note still describes the row it sits on.
+
+It does now. And the first thing the work turned up is the part worth keeping:
+**`near_duplicates.py` has had exactly this check for as long as it has had
+verdicts.**
+
+```
+# A verdict whose pair no longer scores is a verdict about content that has
+```
+
+Its docstring even argues the case — *"a verdict whose pair no longer scores is
+reported as stale, so the queue is worked"*. Two files in the same `tools/`
+directory store a human's recorded judgement about a measurement. One checked
+that the judgement still had something to be about. The other did not, and the
+one that did not is where a note went false and stayed false.
+
+**The lesson is not "add staleness checks".** It is that a convention invented
+once for a good reason does not travel to the next file that needs it unless
+somebody carries it, and the thing that made this visible was a *defect*, not a
+review. Looking for the same shape elsewhere costs a grep: `search_test.mjs`
+also holds recorded misses, and it already handles the same decay in the same
+direction — *"a miss that starts working is reported too — it should be promoted
+into FIXTURES"*. Two of three had it. Nobody had noticed the third.
+
+### What is checkable, and what deliberately is not
+
+A `keep` note is prose, and most of what it says is an argument. Two assertions
+in it are not:
+
+| Claim | Check |
+|---|---|
+| The note says the query **returns nothing** | It either returns nothing or it does not. "zero", "found nothing", "returns nothing", "no results" |
+| The note explains why a query **misses its `want`** | It either still misses or it reaches the card, in which case the reason has been answered and the note is hiding finished work |
+
+No threshold, nothing for a reader to overrule — the sharp shape
+`check_css_vars.py` argues for. What it will not do is judge whether the prose
+is *right*: a note reading "the comparison is not phrased" could be wrong about
+the corpus and this cannot tell. It checks the one assertion a machine can
+evaluate and leaves the argument to a person, which is the division this file
+draws everywhere else.
+
+### It reports; its logic gates
+
+The probe is a census and stays one — gating it would make a content wave's
+findings break the build, which is the whole reason it exits 0. But the
+staleness decision is ordinary logic, so `--self-test` runs it against eight
+fixtures in `make check` and in CI, with no browser. **Gates 39 → 40**, the
+same 40 in both lists.
+
+Proved twice, because a check that has never fired is a check nobody has tested:
+the fixtures, and then the live path, by falsifying a real note on a copy of the
+file and watching it name the row.
+
+```
+  "printer offline"  (a service desk engineer)
+      the note says this returns nothing; it returns 1
+```
+
+The stale report prints **before** the findings and again after them, because a
+note that has gone false is a defect in the file rather than a fact about the
+site, and every count on the page is read through it.
+
+```
+gates 39 -> 40 · probe self-test 8 fixtures · 78 queries · 66 answered
+0 stale verdicts · smoke 163 · search 51 · a11y 31 · resilience 64
 mobile 15 · visual 2 · backup 3
 ```

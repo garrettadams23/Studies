@@ -70,6 +70,7 @@ check:
 	$(PY) tools/page_budget.py
 	$(PY) tools/check_plan_numbers.py --self-test
 	$(PY) tools/check_plan_numbers.py
+	$(NODE) tools/query_probe.mjs --self-test
 
 ## census: the four reports that measure content rather than gate it
 census:

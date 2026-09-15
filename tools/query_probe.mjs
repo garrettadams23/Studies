@@ -157,6 +157,7 @@
  *   node tools/query_probe.mjs              # every query, grouped by reader
  *   node tools/query_probe.mjs --zero       # only the ones that found nothing
  *   node tools/query_probe.mjs --reader "service desk"
+ *   node tools/query_probe.mjs --self-test   # the staleness check, on fixtures
  */
 
 import { existsSync } from "fs";
@@ -315,6 +316,75 @@ const READERS = [
   ]],
 ];
 
+/**
+ * A recorded verdict is only valid while the thing it describes still holds.
+ *
+ * `someone clicked the link` carried the note *"kind 3 — the response card
+ * exists and does not use these words"* long after it stopped being a zero. A
+ * matcher change had moved it to four cards, none of them the one it wanted,
+ * while a note in this file said it returned none. Nothing noticed, because
+ * nothing checks a `keep` note the way `check_plan_numbers.py` checks a table
+ * row — and a `keep` note is exactly a claim about a measured state, written in
+ * prose, sitting next to the measurement.
+ *
+ * Only the sharp half of that is checkable, and it is the half that decays:
+ *
+ *   * A note that **says the query returns nothing** sits on a query that
+ *     returns nothing, or it is false. "zero", "found nothing", "returns
+ *     nothing", "no results" — the note either makes the claim or it does not,
+ *     and the query either is a zero or it is not. No threshold and nothing for
+ *     a reader to overrule, which is the shape `check_css_vars.py` argues for.
+ *   * A note explaining why a query **misses its `want`** sits on a query that
+ *     misses it. One that now reaches the wanted card has had its reason
+ *     answered, and leaving the note there hides that the work is done.
+ *
+ * What it deliberately does not do is judge whether the prose is *right*. A
+ * note reading "the comparison is not phrased" could be wrong about the corpus
+ * and this cannot tell. It checks the one assertion a note makes that a machine
+ * can evaluate and leaves the argument to a reader, which is the division the
+ * rest of this file already draws.
+ *
+ * It reports rather than fails, because this file is a census and gating it
+ * would make a content wave's findings break the build. A stale note is worse
+ * than a finding, though, so it prints before them and again after.
+ */
+const CLAIMS_ZERO = /\bzeros?\b|found nothing|returns? nothing|no results|nothing back/i;
+
+function staleReason(keep, hits, want) {
+  if (!keep) return null;
+  if (hits.length && CLAIMS_ZERO.test(keep))
+    return `the note says this returns nothing; it returns ${hits.length}`;
+  if (want && hits.includes(want))
+    return "the note explains a miss that no longer misses — it reaches its topic";
+  return null;
+}
+
+const stale = [];
+
+// ── self-test ───────────────────────────────────────────────────────────────
+// The staleness check exists because a note went false and nothing noticed. A
+// check written for that reason had better be able to catch it, and the only
+// way to know is to hand it one. No browser: these are the decision's inputs.
+if (args.includes("--self-test")) {
+  const F = [
+    ["a note claiming a zero on a query that answers", "kind 3 — still zero", ["a/b"], "", true],
+    ["…even when the word is plural", "two zeros recorded here", ["a/b"], "", true],
+    ["…and when it is spelled out", "it found nothing and was kept", ["a/b", "c/d"], "", true],
+    ["a note claiming a zero on a query that is one", "kind 1, still zero", [], "", false],
+    ["a note explaining a miss that still misses", "the comparison is not phrased", ["a/b"], "x/y", false],
+    ["a note explaining a miss that now reaches", "matcher limit", ["x/y"], "x/y", true],
+    ["no note at all", "", ["a/b"], "x/y", false],
+    ["a note with no claim this can check", "kind 3, checked at fault level", ["a/b"], "", false],
+  ];
+  let bad = 0;
+  for (const [name, keep, hits, want, expect] of F) {
+    const got = Boolean(staleReason(keep, hits, want));
+    if (got !== expect) { bad++; console.log(`FAIL : ${name} — expected ${expect}, got ${got}`); }
+  }
+  console.log(`query_probe self-test: ${F.length} fixtures, ${bad} failure(s).`);
+  process.exit(bad ? 1 : 0);
+}
+
 const browser = await chromium.launch();
 const page = await browser.newPage();
 await page.goto(PAGE, { waitUntil: "load" });
@@ -347,6 +417,8 @@ for (const [reader, queries] of READERS) {
       if (!keep) unexplained.push([reader, q, want]);
       else explained++;
     }
+    const why = staleReason(keep, hits, want);
+    if (why) stale.push([reader, q, why]);
     // Wide is not wrong — the widened stage is labelled where it runs — but a
     // query returning a tenth of the site is a query nobody can use.
     if (hits.length > 60) wide++;
@@ -368,6 +440,14 @@ for (const [reader, queries] of READERS) {
 
 await browser.close();
 
+// Before any finding: a note that has gone false is a defect in this file, not
+// a fact about the site, and every number below is read through it.
+if (stale.length) {
+  console.log(`\n${stale.length} recorded verdict(s) no longer describe the row they sit on — ` +
+              `re-read the query, then correct or delete the note:`);
+  stale.forEach(([r, q, why]) => console.log(`  ${JSON.stringify(q)}  (${r})\n      ${why}`));
+}
+
 console.log(`\n${total} quer(ies) · ${total - zeros - wrong} answered · ` +
             `${zeros} found nothing` +
             (wrong ? ` · ${wrong} found the wrong card` : "") +
@@ -378,5 +458,9 @@ if (unexplained.length) {
               `acting, then either fix the prose, write the card, or record which kind it is:`);
   unexplained.forEach(([r, q, want]) =>
     console.log(`  ${JSON.stringify(q)}  (${r})${want ? `  — wanted ${want}` : ""}`));
+}
+if (stale.length) {
+  console.log(`\n${stale.length} of the recorded verdicts above are stale, and they are the ` +
+              `first thing to fix: the counts on this page are read through them.`);
 }
 console.log("\nA census, not a gate — see this file's docstring.");

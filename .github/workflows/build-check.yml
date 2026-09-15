@@ -173,6 +173,13 @@ jobs:
           python tools/check_plan_numbers.py --self-test
           python tools/check_plan_numbers.py
 
+      # query_probe.mjs is a census and does not gate, but the check inside it
+      # that says when one of its own recorded verdicts has gone false is
+      # ordinary logic and does. A note reading "still zero" survived months
+      # after a matcher change made the query return four cards.
+      - name: Check the reader-probe's staleness logic
+        run: node tools/query_probe.mjs --self-test
+
       # Every id in data/related.json resolves, and no topic points at itself.
       - name: Check the related-topics map
         run: python tools/suggest_related.py --check
