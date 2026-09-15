@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **52**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **53**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **52** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **53** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5058,4 +5058,84 @@ Two cheap habits fall out of it, and the second is the one worth keeping:
 renames 6 fixed across 4 domains · check_renames self-test 12 fixtures
 gates 40 -> 41 · probe 105 · 101 answered · smoke 163 · search 51 · a11y 31
 resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — applying the last finding to the next guard, and the port list nothing read
+
+The previous record ended on a habit rather than a fix:
+
+> **Grep for what a guard claims to cover before trusting the claim.**
+
+So it was applied to the other guards, and the interesting result is that
+**most of them survived it.** `lint_content.py` claims to find hard-coded
+colours; sweeping every hex literal in `data/` outside code blocks turns up
+exactly two, and both are the cases its own docstring says it deliberately
+excludes — *"deploy #4521"* and a card teaching hex notation. That check does
+what its row says.
+
+`check_contradictions.py` did not.
+
+### Fifteen services, fourteen of them from one domain
+
+Its port half reads prose — *"SSH on port 22"*, *"port 22 (SSH)"*, *"22/tcp"* —
+and prose is where a port gets **mentioned**. It is not where a reference
+**states** one. `net` carries *Common Ports — Protocol Reference*, a table whose
+header row reads `Port(s) | Protocol | Transport | Security Notes`, and the
+check could not read a table. A wrong number in that table is simultaneously
+the likeliest port error on this site and the least likely to be caught by eye.
+
+Reading by **header** rather than by shape — a table qualifies when one header
+cell names a port and another names a protocol or service, and no other table
+qualifies — took the count from **15 services to 44**.
+
+### The combined row, which is where a naive reader invents a finding
+
+The first prototype reported **IMAPS on 993 and 995**. The row is:
+
+```
+993 / 995   IMAPS / POP3S
+```
+
+The row is correct and the reader was wrong, which is the exact failure this
+file exists to avoid committing. Three shapes, and only one needs a rule:
+
+| Row | Reading |
+|---|---|
+| `20 / 21` · `FTP (data/control)` | one service, two ports — both are FTP |
+| `22` · `SSH / SFTP / SCP` | one port, three services — all three |
+| `993 / 995` · `IMAPS / POP3S` | two and two — paired positionally |
+| `80 / 443 / 8080` · `HTTP / HTTPS` | **skipped.** Which goes with which is not in the row, and guessing is how a check starts inventing findings |
+
+Parentheticals are stripped before splitting, so the slash inside *FTP
+(data/control)* is not read as a separator.
+
+### The second rule was found by the injection test, not by the fixtures
+
+The fixtures passed with only the first and third rules. Then a wrong port was
+injected into the real table — and **nothing happened**, because `22 | SSH /
+SFTP / SCP` is three names and one port, which the rule skipped as ambiguous.
+It is not ambiguous; it is how a reference writes a family, and skipping it lost
+the site's only tabular statement of the most quoted port on it.
+
+With the rule added, the same injection reads:
+
+```
+SSH: 22 in net; 2222 in net
+```
+
+and the multi-port count returns to eight on restore. **A fixture suite proves
+the rules you thought of.** Running the check against the real file, having
+deliberately broken it, is what finds the rule you did not — and this is the
+second time this session that the difference has produced the finding.
+
+The eight services now reported with more than one port are all legitimate
+pairs — DHCP 67/68, FTP 20/21, IPsec 500/1701/4500, NetBIOS 137/139, SIP
+5060/5061, SNMP 161/162, DNS 53/853, TLS 443/853 — which is the report doing
+its job: it says *read this list, do not automate it*, and the list is readable.
+
+```
+port table 15 -> 44 services · self-test 17 -> 18 fixtures · 41 gates green
+smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

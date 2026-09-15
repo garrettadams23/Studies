@@ -215,13 +215,108 @@ def check_expansions(vocab):
     return findings
 
 
+# ── the table half ──────────────────────────────────────────────────────────
+#
+# The site's canonical port list is a **table**, and this check could not read
+# one. The patterns above find where a port is *mentioned* in a sentence; they
+# do not find where a reference *states* one. `net`'s *Common Ports — Protocol
+# Reference* has a header row reading `Port(s) | Protocol | Transport | Security
+# Notes` and rows under it, and a wrong number there is at once the likeliest
+# port error on this site and the least likely to be caught by eye. The prose
+# scan saw none of it — fifteen services, fourteen keyed from a single domain,
+# against forty-five service/port pairs sitting in three labelled tables.
+#
+# Read by **header**, never by shape. A table qualifies when its header row has
+# one cell naming a port and another naming a protocol or service; anything
+# else is left alone. That is the same sharp test the rest of this toolchain
+# prefers: the header says what the column is, or the table is not one of these.
+TABLE_RE = re.compile(r"<table\b[^>]*>(.*?)</table>", re.S | re.I)
+ROW_RE = re.compile(r"<tr\b[^>]*>(.*?)</tr>", re.S | re.I)
+CELL_RE = re.compile(r"<t([hd])\b[^>]*>(.*?)</t\1>", re.S | re.I)
+PORT_HEADER_RE = re.compile(r"\bports?\b|\bport\(s\)", re.I)
+SERVICE_HEADER_RE = re.compile(r"\bprotocols?\b|\bservices?\b|\bapplications?\b", re.I)
+PARENS_RE = re.compile(r"\([^()]*\)")
+
+
+def cell_text(html):
+    return re.sub(r"\s+", " ", TAG_RE.sub(" ", ACRO_EXP_RE.sub("", html))).strip()
+
+
+def split_row(port_cell, service_cell):
+    """(service, port) pairs from one row, or nothing when the row is ambiguous.
+
+    A reference table combines related rows, and combining is where a naive
+    reader invents a contradiction. Three real shapes, and only the third needs
+    a rule:
+
+        20 / 21   FTP (data/control)    one service, two ports  -> both are FTP
+        22        SSH / SFTP / SCP      one port, three services -> all three
+        514       Syslog                the ordinary case
+        993 / 995 IMAPS / POP3S         two and two -> pair them, positionally
+
+    The first prototype of this read the third row as *IMAPS on 993 and 995* and
+    reported IMAPS as disagreeing with itself. The row was correct and the reader
+    was wrong, which is the failure this file exists to avoid committing itself.
+
+    Parentheticals are stripped before splitting, so the slash inside
+    "FTP (data/control)" is not mistaken for a service separator.
+    """
+    ports = [n for n in re.findall(r"\b(\d{1,5})\b", port_cell)
+             if 1 <= int(n) <= 65535]
+    names = [s.strip() for s in re.split(r"\s*/\s*", PARENS_RE.sub(" ", service_cell))
+             if re.match(r"^[A-Za-z][A-Za-z0-9+.-]{1,14}$", s.strip())]
+    if not ports or not names:
+        return []
+    if len(names) == 1:
+        return [(names[0], p) for p in ports]
+    if len(ports) == 1:
+        # The symmetric case, and the one the first version dropped: several
+        # services on one port is how a reference writes a family. `22 | SSH /
+        # SFTP / SCP` is three true claims, and skipping it lost the site's only
+        # tabular statement of the most quoted port on it. Found by injecting a
+        # wrong number into the real table and watching nothing happen.
+        return [(n, ports[0]) for n in names]
+    if len(names) == len(ports):
+        return list(zip(names, ports))
+    # Several services and a different number of ports: which goes with which is
+    # not recoverable from the row, and guessing is how a check starts inventing
+    # findings. Skipped on purpose.
+    return []
+
+
+def table_ports(src):
+    """(service, port) from every header-labelled port table in one file."""
+    out = []
+    for table in TABLE_RE.finditer(src):
+        rows = [[(kind, cell_text(html)) for kind, html in CELL_RE.findall(r)]
+                for r in ROW_RE.findall(table.group(1))]
+        header = next((r for r in rows if any(k == "h" for k, _ in r)), None)
+        if not header:
+            continue
+        labels = [v for _, v in header]
+        port_i = next((i for i, v in enumerate(labels) if PORT_HEADER_RE.search(v)), None)
+        svc_i = next((i for i, v in enumerate(labels) if SERVICE_HEADER_RE.search(v)), None)
+        if port_i is None or svc_i is None or port_i == svc_i:
+            continue
+        for row in rows:
+            if any(k == "h" for k, _ in row) or len(row) <= max(port_i, svc_i):
+                continue
+            out += split_row(row[port_i][1], row[svc_i][1])
+    return out
+
+
 def check_ports():
     """service -> the ports the site attaches to it, so disagreement is visible."""
     seen = collections.defaultdict(lambda: collections.defaultdict(set))
     for path in sorted(DATA.glob("*.html")):
         if path.stem == "acronym":
             continue
-        text = prose(path.read_text(encoding="utf-8"))
+        src = path.read_text(encoding="utf-8")
+        for service, port in table_ports(src):
+            if service.upper() in TRANSPORTS or service.upper() in NOT_SERVICE:
+                continue
+            seen[service.upper()][port].add(path.stem)
+        text = prose(src)
         for n, pattern in enumerate(PORT_PATTERNS):
             for m in pattern.finditer(text):
                 if n == 1:
@@ -360,8 +455,31 @@ PAIR_FIXTURES = [
 ]
 
 
+# One row of a port table, and what it is allowed to claim. The third and the
+# last are the reason this function exists at all: a combined row read naively
+# reports a protocol as disagreeing with itself, and a row whose two cells
+# cannot be lined up has to be skipped rather than guessed at.
+ROW_FIXTURES = [
+    ("the ordinary case", "514", "Syslog", [("Syslog", "514")]),
+    ("one service, two ports", "20 / 21", "FTP (data/control)",
+     [("FTP", "20"), ("FTP", "21")]),
+    ("two services, two ports, paired in order", "993 / 995", "IMAPS / POP3S",
+     [("IMAPS", "993"), ("POP3S", "995")]),
+    ("a slash inside a parenthetical is not a separator", "443", "HTTPS (HTTP/TLS)",
+     [("HTTPS", "443")]),
+    ("a range in the port cell", "137 / 139", "NetBIOS",
+     [("NetBIOS", "137"), ("NetBIOS", "139")]),
+    ("several services on one port is a family, not an ambiguity", "22",
+     "SSH / SFTP / SCP", [("SSH", "22"), ("SFTP", "22"), ("SCP", "22")]),
+    ("counts that do not line up are skipped, not guessed", "80 / 443 / 8080",
+     "HTTP / HTTPS", []),
+    ("a port out of range is not a port", "99999", "Nothing", []),
+    ("no service name to key on", "22", "—", []),
+]
+
+
 def self_test():
-    """The pair comparison, on text where the answer is known.
+    """The pair comparison and the table row reader, on known answers.
 
     This mode reported zero findings across every real pair on its first run,
     which is the right answer and is indistinguishable from a check that cannot
@@ -369,6 +487,14 @@ def self_test():
     """
     vocab = dictionary()
     failures = 0
+    for name, port_cell, service_cell, want in ROW_FIXTURES:
+        got = split_row(port_cell, service_cell)
+        status = "ok  " if got == want else "FAIL"
+        if got != want:
+            failures += 1
+            print(f"  {status} {name}: expected {want}, got {got}")
+        else:
+            print(f"  {status} {name}")
     for name, a, b, want in PAIR_FIXTURES:
         got = disagreements(claims(prose(a), vocab), claims(prose(b), vocab))
         status = "ok  " if len(got) == want else "FAIL"
@@ -377,7 +503,8 @@ def self_test():
             print(f"  {status} {name}: expected {want}, got {len(got)} — {got}")
         else:
             print(f"  {status} {name}")
-    print(f"\nself-test: {len(PAIR_FIXTURES)} fixtures, {failures} failure(s).")
+    print(f"\nself-test: {len(PAIR_FIXTURES) + len(ROW_FIXTURES)} fixtures, "
+          f"{failures} failure(s).")
     return 1 if failures else 0
 
 
