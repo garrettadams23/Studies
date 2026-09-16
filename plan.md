@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **61**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **62**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,17 +43,17 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,388**, or **1,121 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **138 of 143**, **0 unexplained and 0 wrong-card** — six batches. The two subject-shaped ones opened at a third missing; the four symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 5 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
+| Reader questions answered | **146 of 151**, **0 unexplained and 0 wrong-card** — seven batches. The two subject-shaped ones opened at a third missing; the five symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 5 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
 | Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~808 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,122 chars**, median 3,727 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,122 chars**, median 3,731 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **61** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **62** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5760,6 +5760,69 @@ applying it forwards to everything else.
 
 ```
 plan.md 4,323 -> 5,705 lines · reopen condition at 8,000, evaluated by make check
+41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — five zeros, four of them one word apart from their own card
+
+Batch seven, across `sec`, `grc`, `devops`, `productivity` and `eng`. Five
+queries returned **nothing at all**, and four of those had a card sitting right
+there:
+
+```
+i keep procrastinating          →  a card titled Procrastination
+my terraform destroyed something →  Terraform — Infrastructure as Code in Practice
+my code review comments ignored  →  Code Review — Doing It Well
+an employee is leaving and we
+  think they took data           →  Offboarding as a Security Control
+```
+
+Every one of them an **inflection**: `procrastinating` against
+*procrastination*, `destroyed` against *destroy*, `ignored` against *ignore*,
+and an offboarding card that never says *leaving* or *employee* — it says
+*departing person* and *leaver record* throughout, which is better prose and
+worse findability.
+
+All four now return **exactly one card**, and none of the edits was a word
+dropped in. Each turned out to have something to say:
+
+* **"I keep procrastinating" is said about one task while a great deal else gets
+  done that day**, and *keep* is the useful half — a recurring avoidance points
+  at a feeling attached to that task rather than at a character flaw.
+* **"Terraform destroyed something" is almost never `destroy` run by mistake.**
+  It is an `apply` whose plan contained a red line nobody read, because a
+  rename, a moved resource or a changed immutable attribute all replace rather
+  than update.
+* **A comment answered with a reason is not ignored**; one silently left
+  unaddressed reads as a judgement about the reviewer. That is what the
+  *respond to every comment* row is for, and it is the row that gets skipped.
+* **"They took data" is answerable only by telemetry collected before the
+  suspicion arose** — which is the real argument for offboarding being a control
+  rather than an errand.
+
+### The inflection class, recorded rather than solved
+
+Four instances in one batch, and this session has now seen ten: `sharing` against
+*Screen Shares*, `report` against *Reporting*, `spaced` against *spacing*,
+`models` against *model*, and these four. `plurals()` folds a trailing `s` and
+nothing else, deliberately — the file's own note says a real stemmer needs a
+tokenised index and this matcher reads raw text.
+
+A prefix rule would close most of them: `procrastinating` and `procrastination`
+share thirteen characters, `destroyed` and `destroy` seven. It would also match
+`string` to `str` unless the threshold is high, and a threshold is exactly the
+soft, arguable shape this toolchain keeps rejecting in favour of sharp ones.
+
+**So it is written down rather than built**, with its ten instances, because the
+next session to consider stemming should decide it with a list and not an
+intuition — and because every one of the ten was closable in prose, by a
+sentence the card was better for having.
+
+```
+probe 143 -> 151 questions · 146 answered · 0 unexplained · 5 recorded zeros
 41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
 ```

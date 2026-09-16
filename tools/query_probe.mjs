@@ -243,6 +243,12 @@ const READERS = [
     ["chain of custody", "", "blueteam/chain-of-custody-evidence-handling"],
     // ── batch five ──
     ["nmap shows filtered", "", "net/nmap-scan-types-reference"],
+    // ── batch seven ──
+    ["we failed a phishing test", "",
+     "grc/security-awareness-turning-people-into-a-defense-layer"],
+    ["an employee is leaving and we think they took data", "",
+     "sec/offboarding-as-a-security-control-the-checklist-and-its-fail"],
+    ["we have no idea what is on our network"],
     ["how do i escalate privileges on linux", "",
      "pentest/privilege-escalation-from-foothold-to-full-control"],
     ["my payload keeps getting caught"],
@@ -378,6 +384,12 @@ const READERS = [
     ["list index out of range", "",
      "script/exception-handling-writing-code-that-doesnt-crash"],
     ["my function returns none"],
+    // ── batch seven ──
+    ["my terraform destroyed something", "",
+     "devops/terraform-infrastructure-as-code-in-practice"],
+    ["the pipeline is too slow", "",
+     "devops/build-caches-incremental-builds-where-the-minutes-actually-g"],
+    ["my code review comments are ignored", "", "eng/code-review-doing-it-well"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -413,6 +425,10 @@ const READERS = [
     ["impostor syndrome", "", "mind/imposter-syndrome-you-belong-here"],
     ["first week as a manager", "",
      "eng/the-first-90-days-leading-a-team-listen-map-stabilise-then-c"],
+    ["i keep procrastinating", "",
+     "productivity/procrastination-what-it-actually-is-and-the-moves-that-work"],
+    ["which cert should i do first", "",
+     "career/certification-roadmap-charting-a-path-through-the-alphabet-s"],
     ["how to study for an exam", "",
      "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
     ["leaving a job well"],

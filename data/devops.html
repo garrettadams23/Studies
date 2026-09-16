@@ -807,7 +807,20 @@ jobs:
                     The golden habit: <strong>always read the <code>plan</code> before you
                     <code>apply</code></strong>. It shows adds (<span class="c-green">+</span>),
                     changes (<span class="c-amber">~</span>), and destroys
-                    (<span class="c-red">-</span>) so nothing surprises you.
+                    (<span class="c-red">-</span>) so nothing surprises you. The reason it is the
+                    golden habit and not merely a good one: <strong>"Terraform destroyed
+                    something"</strong> is almost never <code>destroy</code> run by mistake. It is
+                    an <code>apply</code> whose plan contained a red line nobody read, because a
+                    rename, a moved resource or a changed immutable attribute all replace rather
+                    than update. Put <code>prevent_destroy</code> on the stateful things, so the
+                    plan is not the only thing standing between a typo and a database. The reason it is the
+                    golden habit and not merely a good one: <strong>"Terraform destroyed
+                    something"</strong> is almost never <code>destroy</code> being run by mistake.
+                    It is an <code>apply</code> whose plan contained a red line nobody read,
+                    because a rename, a moved resource or a changed immutable attribute all
+                    replace rather than update. Put <code>prevent_destroy</code> on the stateful
+                    things and the plan stops being the only thing standing between a typo and a
+                    database.
                   </div>
                 </div>
               </div>
@@ -4279,7 +4292,9 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   Nobody looks at a build until it hurts, and by then the instinct is to buy a bigger runner. The
                   measurement almost always says something else: <strong class="c-amber">most of the minutes are
                   dependency installation, container image pulls and test setup</strong>, not compilation &mdash;
-                  and those respond to caching rather than to hardware.
+                  and those respond to caching rather than to hardware. So <strong>"the pipeline
+                  is too slow"</strong> is a measurement request before it is an optimisation
+                  request, and the step that dominates is almost never the one people name.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
