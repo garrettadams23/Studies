@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **66**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **67**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **71** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **72** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6743,4 +6743,93 @@ table, and it would have been particularly funny here.
 13 derivable rows (was 12) · 0 drifted · 6 stale prose numbers retired
 Phase 11 §1 §4, V5, and the register row now point at the checked row
 42 gates green · plan.md 6,670 lines, reopens at 8,000
+```
+
+## Session — the front door was the most-read file and the least-checked one
+
+### Pointing the lens at the two documents that are not this one
+
+Two waves ago the lens was *one navigation layer gated, the other asserted*. Last
+wave it found six stale numbers in Phase 11. This wave pointed it outward, at
+`README.md` and `CONTRIBUTING.md` — the files a **stranger** reads, where this
+file is what a returning session reads.
+
+`check_plan_numbers.py` already had a README check. It covered the Domains
+table, the icons, the dictionary size, and any bare *N domains*. Everything else
+on the page was unchecked, and three of those had drifted:
+
+| README said | Actually |
+|---|---|
+| measured at **1,545** topics | 1,553 |
+| 475 elements at rest instead of **140,926** | 142,790 |
+| the closed programmes and **241** session records | 242 |
+
+The existing check's own docstring calls this *"the fifth place this repository
+has found the same defect: prose quoting a number about the repo, maintained by
+hand, drifting."* It then fixed the one instance in front of it and left the rest
+of the page alone — which is the same shape as everything else this run has
+found, in the tool written to stop it.
+
+### The check is built so a rewrite is legal
+
+This is the part worth copying, because the obvious implementation is worse.
+
+Each figure is located **by the sentence that makes the claim** — *measured at N
+topics*, *instead of N\*\**, *and N session records* — not by scanning the page for
+integers. A figure the README no longer states returns `None` and is skipped.
+
+So deleting a sentence is a legal edit and only a **surviving, wrong** number
+fails. A check that forces a file to keep saying something has stopped checking
+the file and started writing it, and a front door should be free to stop quoting
+a number without a build going red.
+
+Both halves proved rather than asserted: 1,553 changed to 1,500 in the README
+produced *says 1,500 topics, the tools say 1,553* and one problem; deleting the
+clause entirely produced **zero**; restoring gave zero. The sequence matters more
+than either result, because the second property is the one an implementation
+silently loses.
+
+### And the claim that was better off with no number in it
+
+`CONTRIBUTING.md` said `.ai-table` was *used in 360 tables across 18 domains*. It
+is 358 across 16.
+
+The reflex, three waves deep into this, is to derive it and check it. That would
+be wrong, and Phase 11 §5 says why — written about freshness, and the argument
+was never about freshness:
+
+> **A claim that is rewritten to not depend on a fact does not need a date.**
+> Dating a claim promises to re-check it. Rewriting it removes the promise.
+
+Nothing on that page turns on 358 versus 360. The sentence exists to tell a
+contributor that `.ai-table` is a real alternative in wide use and not
+deprecated, and *"used across most of the site, and the linter reports the live
+count"* says that without promising anything. The count now lives in exactly one
+place — the tool that derives it — and the page points at the tool.
+
+So this wave added a check to one file and **removed the need for one** from the
+other, and the difference between the two cases is a single question: does a
+reader's decision turn on the number? The README's topic count is the site's
+headline claim about itself. The table count was trivia with a maintenance bill.
+
+### A third instance of one lesson, stated once
+
+Three waves, three files, one shape:
+
+| Where | The gated half | The asserted half |
+|---|---|---|
+| Navigation | orphans, by `orphan_report.py` | topics off a path |
+| Phase 11 | nothing | six numbers |
+| Front door | the Domains table | topics, elements, records |
+
+In every case the asserted half was wrong and the gated half was fine, and in
+every case a tool that covered part of the claim already existed. **The failure
+is never that nobody built the check. It is that the check was scoped to the
+instance that prompted it.**
+
+```
+README: 3 figures now checked, located by sentence so a rewrite stays legal
+CONTRIBUTING: one count removed rather than checked — Phase 11 §5, outside freshness
+verified both ways: wrong number fails, deleted sentence passes, restored passes
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 ```

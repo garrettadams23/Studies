@@ -115,8 +115,11 @@ class for the *first* description inside a `.dw` — it needs no margin, and the
 that set `margin-top:0` there were overriding nothing.
 
 `.ai-table` is not deprecated, whatever "prefer" suggests above. It is a genuinely
-different design — larger text, an amber first column — used in 360 tables across 18
-domains, and the linter reports it as a census line rather than a warning. Use
+different design — larger text, an amber first column — used across most of the site,
+and the linter reports the live count as a census line rather than a warning. Run
+`lint_content.py` if you want the figure; it was quoted here as *360 tables across 18
+domains* and was 358 across 16 by the time anyone checked, which is the second reason
+not to write it down. The first is that no decision on this page turns on it. Use
 `ref-table` for new content because it is the house style; do not convert existing
 tables, because that is a redesign.
 
