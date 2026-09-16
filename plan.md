@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **56**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **57**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -40,10 +40,10 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,551** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
-| Mean chars per concept card | **1,385**, or **1,119 excluding verdicts** — the second is the padding counter-metric, and it has tracked the first within one all session across eight new concept cards, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,386**, or **1,119 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two all session across nine new concept cards, which is the shape to want; this wave moved the first by one and the second by none, which is what adding sentences rather than cards does | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **101 of 105**, **0 unexplained and 0 wrong-card** — 29 fresh questions opened with 10 misses, the same third the original 78 did. The 4 remaining zeros are all recorded verdicts, and `--self-test` now checks that a verdict still describes its row | `query_probe.mjs` |
+| Reader questions answered | **112 of 116**, **0 unexplained and 0 wrong-card** — three batches now. The first two opened at a third missing; batch three, phrased as symptoms rather than subjects, opened at **two thirds**. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
 | Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~812 more topics | `page_budget.py` |
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **56** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **57** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5383,4 +5383,80 @@ class and not the instance.
 check_acronyms self-test 12 -> 24 fixtures · 7 inert fields removed
 2 duplicate meanings collapsed · 1,180 -> 1,178 meanings · 41 gates green
 smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — asking the question the reader asks, not the one the writer filed it under
+
+Three batches of reader questions now, and the third was written differently on
+purpose. Batches one and two asked about **subjects** — *what is a subnet mask*,
+*third party risk*, *incident postmortem* — and opened at about a third missing.
+Batch three asked about **symptoms**, aimed at the domains the first two barely
+touched:
+
+```
+my query returns duplicates          the load balancer says unhealthy
+my regex is too slow                 why is my cloud bill so high
+my tests pass individually but       my lambda times out
+  fail together
+```
+
+**Six of the nine missed.** Two thirds, against a third for the subject-shaped
+questions, and every one of the six was a card that covers its mechanism
+thoroughly and had never written down the sentence a reader would type.
+
+That is the pattern this session has been finding one instance at a time — cron,
+printers, SSH, inodes, Group Policy, mapped drives, the M365 playbook — arriving
+as a measured rate rather than an anecdote. **A reference is written from the
+subject outwards and read from the symptom inwards**, and nothing in a normal
+review notices the gap, because from inside the card the subject is obviously
+covered.
+
+### What each one turned out to be missing
+
+None of the six needed a word. All six needed the sentence the word belongs to:
+
+* **SQL Joins** explains fan-out and never says *duplicates* — which is what
+  people call it. The tell is that the row count is a clean multiple of what you
+  expected, and the fix is aggregating the many side, not `DISTINCT`, which
+  hides the fan-out and leaves `SUM()` just as inflated.
+* **Load Balancers** covers health checks well and never says *unhealthy*. So
+  the causes are ranked now, and three of the four are the check rather than the
+  server: unreachable from the balancer's own subnet, a `401` or a redirect
+  where `200` was expected, a timeout shorter than the endpoint's own dependency
+  call. Curl the health path from the balancer's side of the network first — if
+  it answers and the console still says unhealthy, the disagreement is the
+  finding.
+* **FinOps** is an answer to *"why is the bill so high?"* and never asks it.
+  A bill with no attribution is a single large number, and a single large number
+  can only be negotiated, not reduced.
+* **AWS Serverless** describes Lambda's scale-to-zero and never its ceiling.
+  *"My Lambda times out"* is usually the design saying it is not a function.
+* **Test Data** names order-dependent failures; *"they pass individually and
+  fail together"* is that sentence said out loud, and hearing it as a diagnosis
+  rules out timing and environment in one go.
+* **Catastrophic Backtracking** needed nothing at all — see below.
+
+### One of the six was the matcher, and it took two words to prove
+
+```
+regex slow       →  Catastrophic Backtracking — When a Regular Expression Is a
+                    Denial of Service
+regex too slow   →  nothing
+```
+
+The card is right there. `too` was a hard requirement, and a card about a regex
+that takes minutes has no reason to contain it — and the query is two content
+words, so the relaxation stage's floor of two cannot drop it. **A comparative
+intensifier is never a subject**, so it joins `explain` and the question words.
+
+`only` at 55.6% of topics and `just` at 22.1% were measured beside it and left
+alone: both are load-bearing here — *only the first hop*, *just enough* — and a
+stop list earns its entries one at a time.
+
+```
+probe 105 -> 116 questions · 112 answered · 0 unexplained · 5 cards given their
+symptom · 41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
 ```

@@ -1968,7 +1968,17 @@ const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with 
   // verbs in a reference. `explained` and `explains` are separate tokens and
   // stay, which is what keeps *Load Balancers Explained* and *Indexes
   // Explained* reachable by their own titles.
-  + "explain "
+  //
+  // `too` joins for the same reason and was found the same way. `regex slow`
+  // reaches *Catastrophic Backtracking — When a Regular Expression Is a Denial
+  // of Service*; **`regex too slow` reaches nothing**, because a card about a
+  // regex that takes minutes has no reason to contain the word "too" and a
+  // two-content-word query cannot be relaxed below the floor of two. A
+  // comparative intensifier is never a subject. `only` at 55.6% and `just` at
+  // 22.1% were measured beside it and left alone: both are load-bearing in this
+  // corpus — *only the first hop*, *just enough* — and a stop list earns its
+  // entries one at a time.
+  + "explain too "
   // `vs` and `versus` join them for the same reason `or` is here. The site
   // titles a dozen topics "X vs Y", so the as-typed pass answers those before
   // the fallback ever runs — but `agile vs waterfall`, which no single card

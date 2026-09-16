@@ -5108,6 +5108,14 @@ ip = ipaddress.ip_address(<span class="str">&quot;192.168.10.40&quot;</span>)
       It periodically polls each server — often hitting a dedicated <code>/healthz</code> endpoint — and silently stops
       sending traffic to any server that fails to respond correctly. This is the mechanism that turns "one server crashed"
       from a customer-facing outage into a non-event nobody outside the on-call team ever notices.</p>
+      <p class="concept-desc">Which is why <strong>"the load balancer says the target is unhealthy"</strong> is
+      so often a report about the check rather than about the server. Ranked by how often each turns out to be
+      the answer: the health path is not reachable from the load balancer's subnet or security group; the check
+      expects <code>200</code> and the endpoint redirects or answers <code>401</code>; the timeout is shorter
+      than the endpoint's own dependency call; the endpoint is honest and a dependency really is down. Only the
+      last of those is the server being unhealthy, and it is the one people check first. Curl the health path
+      <em>from the load balancer's side of the network</em> before touching the application — if that answers
+      and the console still says unhealthy, the disagreement is the finding.</p>
       <pre class="code-block"><span class="com"># A minimal health endpoint, the kind a load balancer polls every few seconds</span>
 <span class="kw">from</span> flask <span class="kw">import</span> Flask, jsonify
 app = Flask(__name__)

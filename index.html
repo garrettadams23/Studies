@@ -5253,12 +5253,12 @@ with a tool like the one above rather than eyeballing the addresses and assuming
 </div>
 </div>
 <!-- BEGINNER45-NET v1 -->
-<div class="topic" id="load-balancers-explained-spreading-the-work-around" data-reviewed="2026-07" data-read="4" data-level="beginner">
+<div class="topic" id="load-balancers-explained-spreading-the-work-around" data-reviewed="2026-07" data-read="5" data-level="beginner">
 <div class="topic-header">
 <span class="topic-icon">🔀</span>
 <span class="topic-badge">Beginner</span>
 <span class="topic-name">Load Balancers Explained – Spreading the Work Around</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -5297,6 +5297,14 @@ above works and you can scale down without logging anybody out.
 It periodically polls each server — often hitting a dedicated <code>/healthz</code> endpoint — and silently stops
 sending traffic to any server that fails to respond correctly. This is the mechanism that turns "one server crashed"
 from a customer-facing outage into a non-event nobody outside the on-call team ever notices.</p>
+<p class="concept-desc">Which is why <strong>"the load balancer says the target is unhealthy"</strong> is
+so often a report about the check rather than about the server. Ranked by how often each turns out to be
+the answer: the health path is not reachable from the load balancer's subnet or security group; the check
+expects <code>200</code> and the endpoint redirects or answers <code>401</code>; the timeout is shorter
+than the endpoint's own dependency call; the endpoint is honest and a dependency really is down. Only the
+last of those is the server being unhealthy, and it is the one people check first. Curl the health path
+<em>from the load balancer's side of the network</em> before touching the application — if that answers
+and the console still says unhealthy, the disagreement is the finding.</p>
 <pre class="code-block"><span class="com"># A minimal health endpoint, the kind a load balancer polls every few seconds</span>
 <span class="kw">from</span> flask <span class="kw">import</span> Flask, jsonify
 app = Flask(__name__)
@@ -33244,6 +33252,9 @@ cost. It's a culture, not just a dashboard.
 <tr><td>Operate</td><td>Make it continuous — budgets, alerts, and cost as a normal engineering metric.</td></tr>
 </table>
 <div class="concept-desc verdict">
+<strong>"Why is the cloud bill so high?" is not answerable without Inform</strong>, and
+it is the question that starts every one of these programmes. A bill with no attribution
+is a single large number, and a single large number can only be negotiated, not reduced.
 <strong>You cannot skip Inform, and almost everybody
 tries.</strong> Optimisation without attribution
 produces a saving nobody owns and a reappearance next
@@ -35586,12 +35597,12 @@ violate it &mdash; which is the same finding the frontend cards reach from the o
 </div>
 </div>
 </div>
-<div class="topic" id="test-data-the-constraint-that-shapes-every-environment" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="test-data-the-constraint-that-shapes-every-environment" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧪</span>
 <span class="topic-name">Test Data — The Constraint That Shapes Every Environment</span>
 <span class="topic-badge">Quality</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -35670,6 +35681,11 @@ The step most teams are missing is the first, and it is also the cheapest: <stro
 creates its own data is faster, more readable, and cannot be broken by another test</strong>.
 Shared fixtures feel efficient and are the single most common source of order-dependent
 failures &mdash; which is the flaky-test card's second row, arriving from the data side.
+<strong>"They pass individually and fail together" is that sentence said out
+loud</strong>, and it is worth hearing as a diagnosis rather than a complaint:
+it rules out timing and the environment in one go, and leaves shared state as
+very nearly the only candidate. Run the suite in a randomised order on purpose,
+so the day it starts mattering is a day you chose.
 </div>
 </div>
 </div>
@@ -84636,7 +84652,12 @@ services never leaves the network, removes a category of charge instead of shrin
 <div class="concept-desc verdict">
 <strong class="c-green">Decision:</strong> event-driven glue → Lambda; long-running
 services in containers → ECS/EKS on Fargate (no servers) or EC2 (cheaper at
-scale, more ops). Fargate is the "I don't want to manage nodes" answer for
+scale, more ops). A function also has a hard ceiling on how long one invocation may
+run, so <strong>"my Lambda times out"</strong> is usually the design telling you it is
+not a function: a long job belongs behind a queue, split into steps, or moved to a
+container. Raising the timeout buys minutes and bills for every one of them, including
+the ones spent waiting on something that was never going to answer.
+Fargate is the "I don't want to manage nodes" answer for
 containers.
 </div>
 </div>
@@ -101474,12 +101495,12 @@ it?</em> If no, it belongs on the transaction, not on the entity.
 </div>
 </div>
 </div>
-<div class="topic" id="sql-joins-every-type-and-the-null-traps" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="sql-joins-every-type-and-the-null-traps" data-reviewed="2026-08" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔗</span>
 <span class="topic-name">SQL <span class="acro-exp">(Structured Query Language)</span> Joins — Every Type, and the NULL Traps</span>
 <span class="topic-badge">SQL</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -101506,8 +101527,13 @@ rows that <em>don't</em> match — and that's where most bugs live.
 <strong class="c-amber">Traps:</strong> putting a filter on the outer table in
 <code>WHERE</code> silently turns a LEFT JOIN into an INNER JOIN (put it in the
 <code>ON</code> instead); and joining on a nullable column drops rows because
-<code>NULL = NULL</code> isn't true. Watch for <em>fan-out</em>: a one-to-many
-join multiplies rows and inflates <code>SUM()</code>.
+<code>NULL = NULL</code> isn't true. And watch for <em>fan-out</em>, which is
+what people mean when they say <strong>the query returns duplicates</strong>:
+a one-to-many join multiplies the left row once per match, so nothing is
+duplicated in the data and every total is wrong. The tell is that the row count
+is a clean multiple of what you expected, and the fix is to aggregate the many
+side before joining it, not to reach for <code>DISTINCT</code> — which hides
+the fan-out and leaves <code>SUM()</code> just as inflated.
 </div>
 </div>
 </div>

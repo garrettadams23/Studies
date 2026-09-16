@@ -1118,7 +1118,12 @@ gcloud compute instances list --project my-prod-project</pre>
                   <div class="concept-desc verdict">
                     <strong class="c-green">Decision:</strong> event-driven glue → Lambda; long-running
                     services in containers → ECS/EKS on Fargate (no servers) or EC2 (cheaper at
-                    scale, more ops). Fargate is the "I don't want to manage nodes" answer for
+                    scale, more ops). A function also has a hard ceiling on how long one invocation may
+                    run, so <strong>"my Lambda times out"</strong> is usually the design telling you it is
+                    not a function: a long job belongs behind a queue, split into steps, or moved to a
+                    container. Raising the timeout buys minutes and bills for every one of them, including
+                    the ones spent waiting on something that was never going to answer.
+                    Fargate is the "I don't want to manage nodes" answer for
                     containers.
                   </div>
                 </div>

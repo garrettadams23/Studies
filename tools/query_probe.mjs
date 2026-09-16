@@ -332,6 +332,30 @@ const READERS = [
     ["incident postmortem", "", "ops/writing-a-postmortem-people-actually-learn-from"],
     ["on call", "", "ops/on-call-done-humanely"],
   ]],
+  // ── batch three ──────────────────────────────────────────────────────────
+  // Aimed at the domains the first two batches barely touched — data, web, cs,
+  // cloud — and phrased as the symptom a reader arrives with rather than the
+  // subject a writer files it under. That phrasing is the point: five of these
+  // reached a card that covered the mechanism thoroughly and never named the
+  // sentence the reader would type.
+  ["somebody debugging their own code", [
+    ["my query returns duplicates", "", "data/sql-joins-every-type-and-the-null-traps"],
+    ["deadlock in the database", "", "data/locking-mvcc-concurrency-without-chaos"],
+    ["cors error", "", "web/fetch-rest-cors-in-practice"],
+    ["my regex is too slow", "",
+     "cs/catastrophic-backtracking-when-a-regular-expression-is-a-den"],
+    ["my tests pass individually but fail together", "",
+     "devops/test-data-the-constraint-that-shapes-every-environment"],
+    ["the build works locally but not in ci"],
+  ]],
+  ["somebody with a cloud bill and a pager", [
+    ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
+    ["why is my cloud bill so high", "", "devops/finops-cloud-cost-management"],
+    ["the load balancer says unhealthy", "",
+     "net/load-balancers-explained-spreading-the-work-around"],
+    ["iam permission denied", "", "cloud/aws-iam-deep-assumerole-sts-boundaries"],
+    ["i deleted something in production"],
+  ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
     ["asking for a raise", "", "career/asking-for-a-raise-the-case-not-the-conversation"],
