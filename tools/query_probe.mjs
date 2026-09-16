@@ -258,8 +258,14 @@ const READERS = [
     // ── batch six ──
     ["too many false positives", "",
      "blueteam/writing-a-good-rule-specificity-false-positive-analysis-the-"],
-    ["we got a vulnerability report from a stranger",
-     "kind 3 — the disclosure card covers the receiving side in its closing verdict and now names the moment. 'got' is a verb no reference card has reason to contain, and a zero cannot be relaxed: relaxing zeros manufactures wrong answers, which script.js settled with four measured examples"],
+    // Recorded as an unsolvable kind 3 for eight batches, with the diagnosis
+    // exactly right: "'got' is a verb no reference card has reason to contain,
+    // and a zero cannot be relaxed". The conclusion it drew — leave it — was
+    // the wrong one: the verb never being in a card is the argument for
+    // stopping it, not for accepting the zero. WIDE_STOP learned `got`, and
+    // this reaches its card. The staleness check is what said so.
+    ["we got a vulnerability report from a stranger", "",
+     "pentest/responsible-disclosure-bug-bounties-reporting-a-flaw-without"],
     // ── batch two ──
     ["is this domain malicious"],
     ["mfa prompt i did not request", "",
@@ -303,6 +309,8 @@ const READERS = [
     ["how does dns work", "", "net/dns-the-internets-phone-book"],
     ["what is a load balancer", "", "net/load-balancers-explained-spreading-the-work-around"],
     ["explain oauth", "", "sec/oauth-20-oidc-saml-federated-identity"],
+    // ── batch ten ──
+    ["ubermensch", "", "philosophy/philosophy-schools-of-thought"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -371,6 +379,9 @@ const READERS = [
     // ── batch nine ──
     ["nobody writes documentation", "",
      "ops/knowledge-management-kcs-in-practice-and-keeping-articles-fr"],
+    // ── batch ten ──
+    ["my manager wants an estimate", "",
+     "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -410,6 +421,8 @@ const READERS = [
     // ── batch nine ──
     ["my tests pass locally but fail in ci", "",
      "devops/flaky-tests-a-reliability-problem-in-the-test-suite"],
+    // ── batch ten ──
+    ["the database is slow", "", "data/query-optimization-sargability-n1"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -446,6 +459,8 @@ const READERS = [
     // ── batch nine ──
     ["kubernetes pod crashloopbackoff", "",
      "devops/pods-that-will-not-run-reading-the-status-before-the-logs"],
+    // ── batch ten ──
+    ["i got paged at 3am again", "", "ops/on-call-done-humanely"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -469,6 +484,9 @@ const READERS = [
     ["career change into it", "", "career/breaking-into-it-from-zero-to-hired"],
     // ── batch nine ──
     ["should i get a degree or certs", "", "career/breaking-into-it-from-zero-to-hired"],
+    // ── batch ten ──
+    ["what should i put on my resume", "",
+     "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -485,6 +503,9 @@ const READERS = [
      "grc/business-continuity-disaster-recovery-keeping-the-lights-on"],
     ["penetration test report", "",
      "pentest/pentest-reporting-the-skill-that-makes-or-breaks-your-career"],
+    // ── batch ten ──
+    ["our backups have never been tested", "",
+     "ops/backup-disaster-recovery-surviving-the-worst-case"],
   ]],
 ];
 

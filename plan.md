@@ -43,7 +43,7 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,389**, or **1,122 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **159 of 164**, **0 unexplained and 0 wrong-card** — nine batches. The two subject-shaped ones opened at a third missing; the seven symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 5 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
+| Reader questions answered | **166 of 170**, **0 unexplained and 0 wrong-card** — ten batches. The two subject-shaped ones opened at a third missing; the eight symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
 | Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~806 more topics | `page_budget.py` |
@@ -51,9 +51,9 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,122 chars**, median 3,731 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **53** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **64** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **65** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6035,5 +6035,116 @@ paragraph in the repository that now says something true.
 6 tools + build.py share one TAG_RE · 6 census outputs byte-identical
 0 threshold crossings, checked both ways across all 8 disputed spans
 41 gates green · smoke 163 · search 53 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the stop word that was rare, and the accents nobody could type
+
+Batch ten, and two matcher changes that both had to argue against the evidence
+that admitted the last ones.
+
+### `got`, which fails the frequency test and joins anyway
+
+`WIDE_STOP` has been grown one word at a time, each with a measured
+justification, and the measurement has always been frequency: `actually` at
+39.1% of topics is filler; `only` at 55.6% and `just` at 22.1% are load-bearing
+in this corpus and stayed out.
+
+`got` is at **3.5%**. By that test it is a rare word, and a rare word is
+normally precious — it narrows. It joins on the other half of the test, the one
+the note stated and never named as the test: **it is never a subject.** Nobody
+searches for `got`. It arrives attached to the thing that happened — `i got
+paged at 3am again`, `we got a vulnerability report from a stranger` — and a
+card describing that thing has no reason to narrate its arrival. Requiring it
+requires a word the corpus cannot supply, which is a guaranteed zero and not a
+narrow answer.
+
+The second of those queries had been sitting in `query_probe.mjs` for eight
+batches as a recorded, unsolvable kind-3 zero, **with the diagnosis already
+written out**:
+
+> `got` is a verb no reference card has reason to contain, and a zero cannot be
+> relaxed.
+
+Both clauses true, conclusion backwards. A verb no card has reason to contain is
+the argument for stopping it. And the thing that noticed was the staleness check
+added two sessions ago: the verdict said the query returns nothing, the query
+returned six, and the harness said so on the next run.
+
+### 17 accented words, and an English keyboard
+
+`ubermensch` returned nothing. The card names it in a table, spelled
+**Übermensch**, and no keyboard a reader is likely to have types that.
+
+A census of the whole corpus: **17 distinct accented words, 31 occurrences** —
+Niccolò, Übermensch, Schrödinger, ásatrú, façade, café. Three were unreachable
+(`ubermensch`, `schrodinger`, `niccolo machiavelli`); `machiavelli` alone worked,
+because the surname carries no accent.
+
+Folding diacritics is a rule and not a threshold, which is the only reason it is
+here: NFD splits a letter from its combining marks and the marks are dropped. It
+runs on **both sides** — the index at parse, the query where the query is
+lowercased. Folding one side would move the bug rather than fix it: the reader
+who *does* have the umlaut would become the one who finds nothing. Both
+spellings are gated fixtures for exactly that reason.
+
+It costs a highlight. The marker searches the live DOM, where the accent is
+still there, so a hit on one of those 31 occurrences opens its topic and marks
+nothing in it. A card a reader can reach and has to skim beats a card they
+cannot reach.
+
+### The experiment that was run and thrown away
+
+The last session recorded an **inflection class** — ten queries whose word was
+one suffix away from the card's — and declined to build a stemmer, asking that
+whoever next considered it decide "with a list and not an intuition".
+
+`i got paged at 3am again` was the eleventh, so the list was long enough.
+`check_renames.py` already folds `(?:s|d|ed|ing)?`, so the rule existed in this
+repository and had not been applied to its sibling — the shape this session has
+found five times.
+
+It was built, measured, and reverted:
+
+```
+search_test   51/53   "should we fine tune or use rag"  9 > ceiling 8
+                      "how do i find a file"          178 > ceiling 140
+probe         one more query over 60, and `i got paged at 3am again`
+              still returned nothing — "again" is the word that breaks it
+```
+
+**The change did not fix the case that motivated it and widened two gated
+queries by a third.** The recorded decision stands, now with a measurement
+underneath it instead of a prediction. That is worth more than the feature would
+have been: the next session to consider stemming has a number.
+
+What fixed the query was the card. *On-Call Done Humanely* said "pages at 3am
+for non-issues drive burnout"; it now says being **paged** at 3am for a
+non-issue, **and then again the next night**, is what drives it — the recurrence
+rather than any one night, which is both the reader's phrasing and the truer
+sentence.
+
+### Three more cards that already answered the question
+
+```
+what should i put on my resume  →  Your CV — the question is the wrong one,
+                                   and the card can say why
+my manager wants an estimate    →  Estimates People Can Trust
+the printer prints blank pages  →  (the card written last wave, now indexed)
+```
+
+*Your CV* opened on "the question is not what to include — it is what earns the
+top third". It now names the question first: **"what should I put on my CV" is
+the wrong question and a comforting one — the answer to it is "everything", and
+everything is what nobody reads.** *Estimates People Can Trust* now opens on who
+is asking: **when a manager wants an estimate, what they almost always want is a
+date to repeat to somebody else**, which is why the padding cycle starts.
+
+```
+probe 164 -> 170 questions · 166 answered · 0 unexplained · 4 recorded zeros
+WIDE_STOP +1 (measured against its own frequency rule, and against it)
+41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
 ```

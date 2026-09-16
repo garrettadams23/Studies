@@ -865,7 +865,7 @@ const RE_BLOCK_TAG =
   /<\/?(?:div|table|thead|tbody|tfoot|tr|td|th|caption|li|ul|ol|dl|dt|dd|p|h[1-6]|br|hr|section|article|header|footer|blockquote|pre|figure|figcaption)\b[^>]*>/gi;
 
 function indexText(html) {
-  return plainText(html.replace(RE_BLOCK_TAG, " ")).toLowerCase();
+  return foldCase(plainText(html.replace(RE_BLOCK_TAG, " ")));
 }
 
 const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
@@ -1932,6 +1932,31 @@ function foldSeparators(lowered) {
 }
 
 /**
+ * Lowercase, with diacritics folded — used on both sides of every comparison.
+ *
+ * A census of the corpus: **17 distinct accented words, 31 occurrences**, and
+ * most are proper nouns in the philosophy and history cards — Niccolò,
+ * Übermensch, Schrödinger, ásatrú. An English keyboard types none of them, so
+ * `ubermensch` returned nothing against a card that names it in a table.
+ *
+ * A rule rather than a threshold, which is why it is here at all: NFD splits a
+ * letter from its combining marks and the marks are dropped. It runs on the
+ * index once at parse and on the query wherever the query is lowercased, so the
+ * two sides agree. Folding only one of them would move the bug rather than fix
+ * it — the reader who *does* have the accented spelling would then be the one
+ * who finds nothing.
+ *
+ * What it costs is a highlight. The marker searches the live DOM, where the
+ * accent is still there, so a hit on one of those 31 occurrences opens its
+ * topic and marks nothing in it. A card a reader can reach and has to skim
+ * beats a card they cannot reach.
+ */
+const RE_COMBINING = /[\u0300-\u036f]/g;
+function foldCase(s) {
+  return s.toLowerCase().normalize("NFD").replace(RE_COMBINING, "");
+}
+
+/**
  * Function words the all-your-words fallback must not insist on.
  *
  * That stage is a conjunction: every word has to be somewhere in the card. A
@@ -2082,7 +2107,26 @@ const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with 
   // 22.1% were measured beside it and left alone: both are load-bearing in this
   // corpus — *only the first hop*, *just enough* — and a stop list earns its
   // entries one at a time.
-  + "explain too actually "
+  //
+  // `got` is the fourth, and it is the one that shows what the test actually
+  // is. It is **rare** — 3.5% of topics, against `actually` at 39.1% — so
+  // frequency, the evidence that admitted the other three, argues the opposite
+  // way here: a rare word is normally a *narrowing* word and precious. The
+  // reason it joins is the other half of the test, which the other three also
+  // pass: **it is never a subject.** Nobody searches for `got`. It arrives
+  // attached to the thing that happened — `i got paged at 3am again`, `we got
+  // a vulnerability report from a stranger` — and a card describing that thing
+  // has no reason to narrate its arrival. Requiring it is requiring a word the
+  // corpus cannot supply, which is a guaranteed zero rather than a narrow
+  // answer.
+  //
+  // The second of those queries had been recorded in `query_probe.mjs` as an
+  // unsolvable kind-3 zero for eight batches, with the diagnosis already
+  // written out: "'got' is a verb no reference card has reason to contain, and
+  // a zero cannot be relaxed". Both clauses true; the conclusion was wrong. A
+  // verb no card has reason to contain is the argument for stopping it.
+  // `get` and `gets` stay — *How Devices Get Their IP Address* is a title here.
+  + "explain too actually got "
   // `vs` and `versus` join them for the same reason `or` is here. The site
   // titles a dozen topics "X vs Y", so the as-typed pass answers those before
   // the fallback ever runs — but `agile vs waterfall`, which no single card
@@ -2271,8 +2315,8 @@ function runSearch(raw) {
   // content the reader was looking for.
   const textTerms = q.text ? searchTerms(q.text) : [];
   _searchTermList = [...q.phrases, ...textTerms];
-  const loweredText = textTerms.map(t => t.toLowerCase()).map(matcher);
-  const loweredPhrases = q.phrases.map(p => p.toLowerCase());
+  const loweredText = textTerms.map(foldCase).map(matcher);
+  const loweredPhrases = q.phrases.map(foldCase);
 
   // The widened pass, built now and used only if the query as typed finds
   // nothing. Each word of the free text becomes its own matcher — with its own
@@ -2299,7 +2343,7 @@ function runSearch(raw) {
   // Folded before the stop test, so a contraction is recognised however the
   // reader's keyboard spelled its apostrophe — or whether they typed one.
   const words = allWords.filter(w =>
-    w.length >= 2 && !WIDE_STOP.has(foldSeparators(w.toLowerCase())));
+    w.length >= 2 && !WIDE_STOP.has(foldSeparators(foldCase(w))));
   // Stage one of the fallback: the query in order, against folded text, with
   // the gaps between its words allowed to be a space, a hyphen, or nothing.
   //
@@ -2316,7 +2360,7 @@ function runSearch(raw) {
   const gapPhrase = allWords.length
     ? new RegExp((guard ? "(?<![a-z0-9])" : "")
         + allWords.map(w => {
-            const forms = numberForms(foldSeparators(w.toLowerCase())).map(escape);
+            const forms = numberForms(foldSeparators(foldCase(w))).map(escape);
             return forms.length > 1 ? `(?:${forms.join("|")})` : forms[0];
           }).join("[\\s-]*")
         + (guard ? "(?![a-z0-9])" : ""))
@@ -2331,12 +2375,12 @@ function runSearch(raw) {
   // query is not in the card) nor per-word matching could reach it. Joining
   // adjacent pairs costs one extra alternate per word and is exactly the shape
   // of the failure.
-  const joined = i => words.slice(i, i + 2).map(w => foldSeparators(w.toLowerCase())).join("");
+  const joined = i => words.slice(i, i + 2).map(w => foldSeparators(foldCase(w))).join("");
   const allMatchers = words.map((w, i) => {
     // An alternate that is itself a function word is dropped: `plurals("whys")`
     // offers "why", which as a conjunction term matches most of the site and
     // narrows nothing. The word the reader typed is always kept.
-    const alts = searchTerms(w).flatMap(t => numberForms(foldSeparators(t.toLowerCase())))
+    const alts = searchTerms(w).flatMap(t => numberForms(foldSeparators(foldCase(t))))
                                .flatMap(plurals)
                                .filter((t, i) => i === 0 || !WIDE_STOP.has(t))
                                .map(matcher);

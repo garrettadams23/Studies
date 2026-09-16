@@ -181,6 +181,19 @@ const FIXTURES = [
   // appears when every *other* word in the query has already matched.
   ["my tests pass locally but fail in ci",
    "devops/flaky-tests-a-reliability-problem-in-the-test-suite", 8],
+  // Diacritics, folded on both sides. The corpus has 17 accented words and an
+  // English keyboard types none of them. Both spellings are fixtures because
+  // folding only the index would move the bug rather than fix it — the reader
+  // who *does* have the umlaut would become the one who finds nothing.
+  ["ubermensch",           "philosophy/philosophy-schools-of-thought", 4],
+  ["übermensch",           "philosophy/philosophy-schools-of-thought", 4],
+  // `got` is rare — 3.5% of topics — so the frequency argument that admitted
+  // the other stop words runs the other way here. It joins on the other half
+  // of the test: it is never a subject, so requiring it requires a word the
+  // corpus cannot supply. This query was a recorded, diagnosed, unsolvable
+  // zero for eight batches of the reader census.
+  ["we got a vulnerability report from a stranger",
+   "pentest/responsible-disclosure-bug-bounties-reporting-a-flaw-without", 10],
 ];
 
 // Queries a reader plausibly types that still find nothing. Not failures — the
