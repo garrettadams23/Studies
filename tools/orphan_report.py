@@ -190,10 +190,18 @@ def main():
     # Where they are, because the headline number is meaningless without it.
     # Today all 60 are the generated acronym dictionary's A-Z and By-Area index
     # pages, where a see-also strip would point at nothing — and a reader of the
-    # bare count has to work that out by hand every time. The same 60 are the
-    # whole of the gap in `suggest_related.py --check` and in `check_paths.py`,
-    # so three reports were each re-deriving the same exclusion in the reader's
-    # head. One line here says it once.
+    # bare count has to work that out by hand every time.
+    #
+    # This comment used to add that the same 60 were "the whole of the gap in
+    # `suggest_related.py --check` and in `check_paths.py`", so that one line
+    # here saved three reports from re-deriving the exclusion. That was true
+    # when it was written and had gone false by the time anybody counted: the
+    # path gap was 63, because three hand-written topics had been linked into
+    # `related.json` — which this report gates — and given no path step, which
+    # nothing looked at. A shared exclusion asserted in one file's comment is a
+    # claim about two other files, and nothing was checking it. `check_paths.py`
+    # names its own strays now, so the claim is made where it can be seen to
+    # be true.
     if by_domain:
         print("  " + " · ".join(f"{d} {n}" for d, n in by_domain.most_common(8))
               + (" · …" if len(by_domain) > 8 else ""))

@@ -63,6 +63,7 @@ check:
 	$(PY) tools/check_volatility.py --self-test
 	$(PY) tools/check_volatility.py
 	$(PY) tools/suggest_related.py --check
+	$(PY) tools/check_paths.py --self-test
 	$(PY) tools/check_paths.py
 	$(PY) tools/stamp_freshness.py --verify
 	$(PY) tools/check_precache.py --self-test

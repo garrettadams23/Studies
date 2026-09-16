@@ -20,8 +20,8 @@ What is left here is what a session actually reads.
 | **The card rubric** | What the good cards have, measured from forty written in one session | 📘 reference |
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
-| Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **64**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
+| Session records | The last **65**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -44,16 +44,16 @@ run rather than letting them pass as verified:
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **193 of 202**, **0 unexplained** — twelve batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 8 remaining zeros and the 1 wrong-card are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,586 steps, 1,490 of 1,553 topics** | `check_paths.py` |
+| Learning paths | **102 paths, 1,590 steps, 1,493 of 1,553 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,493 topics, 4,808 links, 0 one-way** — one mainland of 1,467, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~802 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,135 chars**, median 3,735 — the number a deepening wave has to move | `depth_report.py` |
-| Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
+| Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **69** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **70** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6549,4 +6549,108 @@ probe 202 questions · 193 answered (was 190) · 0 unexplained · 8 zeros · 1 w
 1 topic added (m365, 1,552 -> 1,553) · 2 prose fixes · 5 related pairs · 1 path step
 41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3 · mean/card 1,390 -> 1,391, excluding verdicts 1,122 -> 1,123
+```
+
+## Session — one navigation layer was gated and the other was only asserted
+
+### Measuring something nobody had measured, which is the register's own habit
+
+The register says it plainly: *once a phase, measure something nobody has
+measured*, and all four accumulation risks came from an afternoon of counting
+things the repository already contained. The queue was clear again after the
+last two waves, so this wave counted.
+
+The claim chosen was the **domain-shape row**, because it is the only row in the
+opening table that makes two assertions in one sentence:
+
+> Both navigation layers complete — **0 hand-written orphans, 0 hand-written
+> topics off a path**
+
+The first half is measured. `orphan_report.py` names deep orphans, the register
+reopens the *unreachable quality* risk on a single one, and the previous wave
+watched it fire on a new topic within four minutes of the splice.
+
+The second half had never been checked by anything. **It was false.**
+
+| Topic | Added by | Related links | Path step |
+|---|---|---|---|
+| `mind` CBT and DBT — What Each One Trains | `6bec6c0` | ✅ | ❌ |
+| `philosophy` Qigong — The Three Regulations | `6bec6c0` | ✅ | ❌ |
+| `web` The Cascade & Specificity | `65b5c5b` | ✅ | ❌ |
+
+Two content waves, both of which linked their new topics into `related.json`
+and neither of which added a path step. That is not carelessness — it is
+**exactly what differential enforcement produces**. One layer has a gate that
+fails a build; the other has a sentence in a plan. Every session did the half
+that was checked.
+
+### Why the coverage line could not show it
+
+`check_paths.py` was already printing *1,490 distinct topics of 1,553*. The
+three were in that gap the whole time and invisible, because **60 generated
+acronym pages are off every path by design** and swamp them. A reader of the
+bare count has no way to tell three strays from the deliberate sixty, and would
+have had none at any site size.
+
+So the fix is the move `depth_report.py --thin` already makes for cards that are
+short on purpose: when the deliberate cases dominate a count, stop printing the
+count and print **the ones a person has to judge**. `check_paths.py` now names
+hand-written topics on no path, and says how many generated pages it excluded so
+the two numbers reconcile in the output rather than in the reader's head.
+
+### The comment that asserted a fact about two other files
+
+`orphan_report.py` carried this, and it is worth quoting because it is the
+mechanism:
+
+> *The same 60 are the whole of the gap in `suggest_related.py --check` and in
+> `check_paths.py`, so three reports were each re-deriving the same exclusion in
+> the reader's head. One line here says it once.*
+
+True when written. False by the time anybody counted — the path gap was 63. A
+comment in one file making a numeric claim about two others is a measurement
+written in the one place nothing can check it, and the sentence that makes it
+dangerous is the last one: it tells future readers **not to re-derive it**.
+
+Corrected there, and the claim now lives where it can be seen to be true.
+
+### What changed, and the row that makes it stick
+
+Four path steps: CBT/DBT after the anxiety card, qigong after taoism, and the
+cascade card in **two** paths — before grid and flexbox in *Frontend, From the
+Browser Up*, which jumped from the DOM straight to layout, and after the
+selectors card in *The Front of the Web*. Shared steps are established here;
+`surviving-on-call` has been in two paths for a long time.
+
+Then the part that matters more than the four steps: **the stranded count is now
+a checked row.** `check_plan_numbers.py` derives it, so the plan cannot say zero
+while three topics sit off a path, and `check_paths.py` gained a `--self-test`
+over the five set-arithmetic cases that decide the split. Gates 41 → 42, and
+`check_gates.py` made me add it to CI in the same commit, which is what it is
+for.
+
+**It reports and never fails.** A topic does not owe a path, and a gate here
+would teach people to pad a syllabus to clear a build — the same argument
+`check_volatility.py` makes for never failing its console candidates.
+
+### The general form, and it is not the one this file usually records
+
+The recurring lesson here has been *a rule written for a category tends not to be
+applied to the case that motivated it*. This is a different shape and worth
+naming separately:
+
+> **Where two obligations are stated in one sentence and only one is gated, the
+> ungated half is not half-enforced. It is unenforced, and it decays at full
+> speed while the sentence keeps claiming both.**
+
+Nobody skipped the path step on purpose. They did the half that would have
+stopped them, which is the only half that was ever going to happen.
+
+```
+3 stranded topics found, 4 path steps added, 0 off-path now
+check_paths: --self-test + 5 fixtures, names its own strays
+check_plan_numbers: Learning paths row now carries the stranded count
+gates 41 -> 42, Makefile and CI in the same commit
+41 -> 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3 · probe 193 of 202, 0 unexplained
 ```

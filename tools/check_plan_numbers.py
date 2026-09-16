@@ -229,7 +229,14 @@ def derive():
     n_paths, steps, reach, total = grab(
         r"([\d,]+) paths, ([\d,]+) steps, ([\d,]+) distinct topics of ([\d,]+) on the site",
         paths, "check_paths.py", 4)
-    out["Learning paths"] = [n_paths, steps, reach, total]
+    # The stranded count is here because the claim it settles — *0 hand-written
+    # topics off a path* — sat in the plan as prose for weeks while three topics
+    # were off one. The orphan half of the same sentence was checked all along.
+    # A navigation claim with one measured half and one asserted half is the
+    # shape this file keeps rediscovering, so both halves are derived now.
+    stranded, = grab(r"([\d,]+) hand-written topic\(s\) on no path",
+                     paths, "check_paths.py")
+    out["Learning paths"] = [n_paths, steps, reach, total, stranded]
 
     rel = run("suggest_related.py", "--check")
     linked, links, oneway = grab(

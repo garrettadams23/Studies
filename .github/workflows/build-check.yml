@@ -194,7 +194,9 @@ jobs:
       # Every step in every learning path points at a topic that exists. A path
       # drops what it cannot resolve, so a broken one renders as a shorter one.
       - name: Check the learning paths
-        run: python tools/check_paths.py
+        run: |
+          python tools/check_paths.py --self-test
+          python tools/check_paths.py
 
       # build.py derives sw.js's CACHE_VERSION from the built assets, so a
       # stale version here means the service worker would serve an old page.
