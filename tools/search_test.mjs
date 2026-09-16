@@ -86,7 +86,19 @@ const FIXTURES = [
   ["mtu",                  "net/mtu-fragmentation-the-half-loading-website", 12],
   ["one-way audio",        "net/voice-real-time-traffic-why-the-network-is-fine-and-the-call", 8],
   ["wi-fi 6",              "net/wireless-networking-80211-standards-security", 10],
-  ["revoke before reset",  "threat/infostealers-the-malware-that-runs-once-and-sells-the-result", 8],
+  // 8 -> 20, and this one is a **cost paid**, not a stale number corrected.
+  // The rule above — a fixture near its ceiling wants a better search, not a
+  // bigger number — is about a query creeping upward as content grows. This
+  // moved because script.js deliberately stopped treating a single result as an
+  // answer, which took four reader questions from the wrong card to the right
+  // one and took this query from one perfect hit to ten containing it. The card
+  // is still found; the reader now scans for it. No guard separated this case
+  // from the four it fixed: not result count (they land at 12-30, this at 10),
+  // not word rarity (`penetration` is rarer than `revoke`), and not the
+  // named-topic guard that saved `why is my laptop slow`, because the phrase is
+  // this card's thesis rather than its title. Recorded so the next person does
+  // not read 20 as generosity.
+  ["revoke before reset",  "threat/infostealers-the-malware-that-runs-once-and-sells-the-result", 20],
   ["kubernetes rbac",      "cloud/kubernetes-rbac-deep-the-escalation-paths-people-miss", 10],
   ["raid",                 "linux/raid-levels-reference", 25],
   ["systemd",              "linux/systemd-managing-linux-services", 55],
@@ -153,6 +165,35 @@ const FIXTURES = [
   // already had an answer.
   ["agile vs waterfall",   "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile", 6],
   ["tcp vs udp",           "net/tcp-vs-udp-transport-layer", 40],
+  // An element boundary is a word boundary. The index dropped tags rather than
+  // replacing them with a space, on the ground that the source carries a
+  // newline between anything that needs separating — true of inline markup,
+  // false of a topic authored on one line. `shortcut/vim` is, so its text read
+  // `…modal editingvim starts…` and `vim`, short enough to be boundary-matched
+  // rather than substring-matched, occurred nowhere in it. **Searching for
+  // `vim` did not return the topic named Vim.** The fixture is the short word,
+  // not the phrase, because only a short word can be lost this way.
+  ["vim",                  "shortcut/vim", 12],
+  // The plural fold, on the half of English it did not have. `tests`/`test` and
+  // `fail`/`fails` both fold on one character; `pass`/`passes` needs two, and one
+  // unfoldable word is all the conjunction needs to return nothing. The fixture
+  // is the whole sentence rather than the word pair, because the failure only
+  // appears when every *other* word in the query has already matched.
+  ["my tests pass locally but fail in ci",
+   "devops/flaky-tests-a-reliability-problem-in-the-test-suite", 8],
+  // Diacritics, folded on both sides. The corpus has 17 accented words and an
+  // English keyboard types none of them. Both spellings are fixtures because
+  // folding only the index would move the bug rather than fix it — the reader
+  // who *does* have the umlaut would become the one who finds nothing.
+  ["ubermensch",           "philosophy/philosophy-schools-of-thought", 4],
+  ["übermensch",           "philosophy/philosophy-schools-of-thought", 4],
+  // `got` is rare — 3.5% of topics — so the frequency argument that admitted
+  // the other stop words runs the other way here. It joins on the other half
+  // of the test: it is never a subject, so requiring it requires a word the
+  // corpus cannot supply. This query was a recorded, diagnosed, unsolvable
+  // zero for eight batches of the reader census.
+  ["we got a vulnerability report from a stranger",
+   "pentest/responsible-disclosure-bug-bounties-reporting-a-flaw-without", 10],
 ];
 
 // Queries a reader plausibly types that still find nothing. Not failures — the

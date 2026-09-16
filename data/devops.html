@@ -807,7 +807,20 @@ jobs:
                     The golden habit: <strong>always read the <code>plan</code> before you
                     <code>apply</code></strong>. It shows adds (<span class="c-green">+</span>),
                     changes (<span class="c-amber">~</span>), and destroys
-                    (<span class="c-red">-</span>) so nothing surprises you.
+                    (<span class="c-red">-</span>) so nothing surprises you. The reason it is the
+                    golden habit and not merely a good one: <strong>"Terraform destroyed
+                    something"</strong> is almost never <code>destroy</code> run by mistake. It is
+                    an <code>apply</code> whose plan contained a red line nobody read, because a
+                    rename, a moved resource or a changed immutable attribute all replace rather
+                    than update. Put <code>prevent_destroy</code> on the stateful things, so the
+                    plan is not the only thing standing between a typo and a database. The reason it is the
+                    golden habit and not merely a good one: <strong>"Terraform destroyed
+                    something"</strong> is almost never <code>destroy</code> being run by mistake.
+                    It is an <code>apply</code> whose plan contained a red line nobody read,
+                    because a rename, a moved resource or a changed immutable attribute all
+                    replace rather than update. Put <code>prevent_destroy</code> on the stateful
+                    things and the plan stops being the only thing standing between a typo and a
+                    database.
                   </div>
                 </div>
               </div>
@@ -973,6 +986,10 @@ jobs:
                   <em>"There are only two hard things in computer science — cache invalidation
                   and naming things."</em> A stale cache serves wrong data; the art is
                   knowing <strong>when to trust the copy and when to refresh it</strong>.
+                  Caching breaks things in one direction only — it never makes the source wrong,
+                  it serves an answer that <em>used to be</em> correct. Which is why a cache bug
+                  reproduces perfectly for one person and is invisible to everybody else,
+                  including whoever is trying to fix it.
                 </div>
               </div>
 
@@ -1647,6 +1664,9 @@ jobs:
                     <tr><td>Operate</td><td>Make it continuous — budgets, alerts, and cost as a normal engineering metric.</td></tr>
                   </table>
                   <div class="concept-desc verdict">
+                    <strong>"Why is the cloud bill so high?" is not answerable without Inform</strong>, and
+                    it is the question that starts every one of these programmes. A bill with no attribution
+                    is a single large number, and a single large number can only be negotiated, not reduced.
                     <strong>You cannot skip Inform, and almost everybody
                     tries.</strong> Optimisation without attribution
                     produces a saving nobody owns and a reappearance next
@@ -3977,7 +3997,8 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   <div class="concept-desc verdict">
                     The fastest reproduction technique is to <strong>make the machine worse</strong>: run the suite
                     under CPU <span class="acro-exp">(Central Processing Unit)</span> contention, with a slower disk, in parallel, in a different order. A flake that will
-                    not reproduce locally is usually a timing assumption, and the local machine is too fast to
+                    not reproduce locally &mdash; the test that passes on your machine and fails in CI &mdash;
+                    is usually a timing assumption, and the local machine is too fast to
                     violate it &mdash; which is the same finding the frontend cards reach from the other side.
                   </div>
                 </div>
@@ -4068,6 +4089,11 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                     creates its own data is faster, more readable, and cannot be broken by another test</strong>.
                     Shared fixtures feel efficient and are the single most common source of order-dependent
                     failures &mdash; which is the flaky-test card's second row, arriving from the data side.
+                    <strong>"They pass individually and fail together" is that sentence said out
+                    loud</strong>, and it is worth hearing as a diagnosis rather than a complaint:
+                    it rules out timing and the environment in one go, and leaves shared state as
+                    very nearly the only candidate. Run the suite in a randomised order on purpose,
+                    so the day it starts mattering is a day you chose.
                   </div>
                 </div>
               </div>
@@ -4267,7 +4293,9 @@ cosign verify myimage:1.0 <span class="var">--certificate-identity</span> ...</p
                   Nobody looks at a build until it hurts, and by then the instinct is to buy a bigger runner. The
                   measurement almost always says something else: <strong class="c-amber">most of the minutes are
                   dependency installation, container image pulls and test setup</strong>, not compilation &mdash;
-                  and those respond to caching rather than to hardware.
+                  and those respond to caching rather than to hardware. So <strong>"the pipeline
+                  is too slow"</strong> is a measurement request before it is an optimisation
+                  request, and the step that dominates is almost never the one people name.
                 </div>
                 <div class="dw">
                   <table class="ref-table">

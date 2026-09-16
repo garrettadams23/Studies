@@ -365,8 +365,13 @@
                     <strong class="c-amber">Traps:</strong> putting a filter on the outer table in
                     <code>WHERE</code> silently turns a LEFT JOIN into an INNER JOIN (put it in the
                     <code>ON</code> instead); and joining on a nullable column drops rows because
-                    <code>NULL = NULL</code> isn't true. Watch for <em>fan-out</em>: a one-to-many
-                    join multiplies rows and inflates <code>SUM()</code>.
+                    <code>NULL = NULL</code> isn't true. And watch for <em>fan-out</em>, which is
+                    what people mean when they say <strong>the query returns duplicates</strong>:
+                    a one-to-many join multiplies the left row once per match, so nothing is
+                    duplicated in the data and every total is wrong. The tell is that the row count
+                    is a clean multiple of what you expected, and the fix is to aggregate the many
+                    side before joining it, not to reach for <code>DISTINCT</code> — which hides
+                    the fan-out and leaves <code>SUM()</code> just as inflated.
                   </div>
                 </div>
               </div>

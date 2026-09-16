@@ -330,6 +330,25 @@ def self_test():
     return 0
 
 
+# The fifth risk — "the plan outgrows its own readability" — is the only entry in
+# the register that the file closed by its own instruction rather than by
+# somebody noticing. It was then marked Closed with **no reopen condition**,
+# which is the exact defect the section directly above it diagnoses for the
+# other four: *a closed risk with no reopen condition is a risk that will come
+# back unannounced.*
+#
+# So it has one, and this is where it lives, because the register's own rule is
+# that the condition must be evaluated by a tool a session already runs.
+#
+# The number is measured, not chosen. The risk was written at 11,600 lines and
+# acted on at 22,745, and the split left a live file of ~4,000. 8,000 is double
+# the post-split file and a third of the length that made it acute — far enough
+# away not to nag, close enough that the file is still splittable when it fires.
+# It reports; it does not fail. A long plan is not a broken build, and gating it
+# would mean a session that wrote a good record could not commit it.
+REOPEN_LINES = 8_000
+
+
 def main():
     args = sys.argv[1:]
     if "--self-test" in args:
@@ -362,6 +381,13 @@ def main():
     )
     for measure, why in UNCHECKED.items():
         print(f"  {measure:<38} {why}")
+
+    lines = len(PLAN.read_text(encoding="utf-8").splitlines())
+    print(f"\nplan.md is {lines:,} lines. The fifth risk reopens at {REOPEN_LINES:,}.")
+    if lines >= REOPEN_LINES:
+        print(f"::warning::plan.md has passed {REOPEN_LINES:,} lines — the fifth risk in the "
+              f"register has reopened. Read 'The fifth, which is about this file': the "
+              f"options are on record and so is the reason option 1 was chosen last time.")
     return 1 if (missing or unknown or readme) else 0
 
 

@@ -31,9 +31,19 @@
  *
  * The queries are chosen for the *shape of the message*, not the subject: one
  * that widens ("no exact match…"), one that lists acronym alternates ("also
- * matching…"), one that names an operator scope, and one that finds nothing.
- * A subject-based list would drift with the corpus; these four exercise every
- * branch that writes to the counter.
+ * matching…"), one that names an operator scope, one that finds nothing, and
+ * one that the matcher *relaxed* — which is the longest message the counter can
+ * write, because it names the words it kept rather than saying "all your
+ * words". A subject-based list would drift with the corpus; these five exercise
+ * every branch that writes to the counter.
+ *
+ * The relaxed branch was added to script.js with this file green, and the list
+ * above was already four-fifths of the way to covering it: `page loads halfway`
+ * started taking the new branch on its own. That is not the same as testing it.
+ * The branch's whole point is a message whose length depends on the query, so
+ * the case worth pinning is the *widest* one — a relaxed query matching many
+ * domains, where the count, the domain count and two quoted terms are all long
+ * at once.
  *
  * Usage:
  *   npm install playwright && node tools/mobile_test.mjs
@@ -125,12 +135,13 @@ for (const dom of DOMAINS) {
 // ── the searching pass ──────────────────────────────────────────────────────
 // Every branch that writes to `.search-count`, at phone width, with a domain
 // open underneath so the measurement includes real content and not an empty
-// page. See the note at the top of this file for why these four.
+// page. See the note at the top of this file for why these five.
 const QUERIES = [
   ["kerberos", "a plain count"],
   ["tcp", "acronym alternates in the message"],
   ["domain:net subnetting", "an operator scope in the message"],
-  ["page loads halfway", "the widened-fallback message, the longest one"],
+  ["page loads halfway", "the widened-fallback message"],
+  ["check disk space", "the relaxed message, which names the words it kept — the longest one"],
   ["zzzznothing", "no matches"],
 ];
 await page.evaluate(() => { const s = domainSection("net"); if (s) openDomain(s); });

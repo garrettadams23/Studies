@@ -469,7 +469,7 @@ index=auth <span class="str">"Failed password"</span>
                   <strong>endpoint agents</strong> with a SIEM <span class="acro-exp">(Security Information and Event Management)</span> backend (built on the Elastic stack).
                   Agents on each host do log collection, file-integrity monitoring (FIM), rootkit
                   detection, and vulnerability detection; the manager correlates with rules and maps
-                  findings to MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> and compliance frameworks (PCI, CIS).
+                  findings to MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> and compliance frameworks (PCI, CIS).
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -1053,7 +1053,7 @@ index=auth <span class="str">"Failed password"</span>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎯</span>
-              <span class="topic-name">MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> &amp; Navigator — Coverage-Driven Detection</span>
+              <span class="topic-name">MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> &amp; Navigator — Coverage-Driven Detection</span>
               <span class="topic-badge">Detection</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -1128,7 +1128,7 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="concept-desc">
                   A detection you've never triggered is a hope, not a control.
                   <strong class="c-cyan">Atomic Red Team</strong> is a library of small, precise
-                  tests — one per ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> technique — you run to see if your telemetry and alerts
+                  tests — one per ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> technique — you run to see if your telemetry and alerts
                   catch it. <strong class="c-cyan">Caldera</strong> (MITRE) automates full,
                   chained adversary emulations. This is the safe, authorized way to validate the
                   blue team.
@@ -1485,7 +1485,10 @@ index=auth <span class="str">"Failed password"</span>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Artefact</th><th>Why it may legitimately be empty</th></tr>
-                    <tr><td>Prefetch</td><td><strong>Disabled by default on Windows Server</strong>, and capped at 1,024 entries on client editions</td></tr>
+                    <!-- fact: prefetch holds 1,024 entries on Windows 8 and later, 128 on Windows 7
+                         and earlier | source: Windows prefetcher entry cap, raised with Windows 8 |
+                         checked: 2026-09 -->
+                    <tr><td>Prefetch</td><td><strong>Disabled by default on Windows Server</strong>, and capped on client editions &mdash; 1,024 entries since Windows 8, but 128 on Windows 7, which rolls over eight times faster</td></tr>
                     <tr><td>Shimcache / AppCompatCache</td><td>Only written on shutdown &mdash; a live-response capture may not include recent entries</td></tr>
                     <tr><td>Amcache</td><td>Populated by a maintenance task; timing is not reliable to the minute</td></tr>
                     <tr><td>USN <span class="acro-exp">(Update Sequence Number)</span> journal</td><td>Fixed size and wraps. Busy volumes can hold hours, not weeks</td></tr>
@@ -1779,7 +1782,7 @@ index=auth <span class="str">"Failed password"</span>
                     <tr><td>Operationalize</td><td>Turn a real finding into a standing detection</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    Good hunts are driven by ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> (hunt technique by technique) and threat
+                    Good hunts are driven by ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> (hunt technique by technique) and threat
                     intel (hunt for <em>your</em> actors' TTPs <span class="acro-exp">(Tactics, Techniques, and Procedures)</span>). Every hunt either finds evil or
                     finds a detection gap — both are wins.
                   </div>
@@ -2353,7 +2356,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Step</th><th>Detail</th></tr>
-                    <tr><td>Pick an ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> technique</td><td>e.g. T1003 credential dumping</td></tr>
+                    <tr><td>Pick an ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> technique</td><td>e.g. T1003 credential dumping</td></tr>
                     <tr><td>Red emulates it</td><td>Atomic Red Team / Caldera runs the procedure (ties to B4)</td></tr>
                     <tr><td>Blue verifies</td><td>Was it in the logs? Did an alert fire? Was it triaged?</td></tr>
                     <tr><td>Improve</td><td>Add telemetry, write/tune the detection, re-test</td></tr>
@@ -2849,7 +2852,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
           <thead><tr><th>Field</th><th>Answers</th></tr></thead>
           <tbody>
             <tr><td>Behaviour</td><td>What is the adversary doing, in plain language?</td></tr>
-            <tr><td>Technique</td><td>Which ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> technique, and which procedure of it?</td></tr>
+            <tr><td>Technique</td><td>Which ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> technique, and which procedure of it?</td></tr>
             <tr><td>Data source</td><td>Which log, from which sensor, with which fields — and do we have it?</td></tr>
             <tr><td>Logic sketch</td><td>Roughly what the query asserts</td></tr>
             <tr><td>Known benign</td><td>What legitimately looks like this here?</td></tr>
@@ -3113,7 +3116,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
             <tr><td>Test cases</td><td>Events that must match, and events that must not</td></tr>
             <tr><td>Tuning exclusions</td><td>With a reason and a date on every one</td></tr>
             <tr><td>The responder runbook</td><td>Shipped with the rule, versioned with it</td></tr>
-            <tr><td>Metadata</td><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> mapping, severity, owner, log sources depended on</td></tr>
+            <tr><td>Metadata</td><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> mapping, severity, owner, log sources depended on</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -3268,7 +3271,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
           <tbody>
             <tr><td>Number of rules deployed</td><td>Writing rules, not writing good ones or deleting bad ones</td></tr>
             <tr><td>Alerts triaged per analyst</td><td>Noise, and burning out the people absorbing it</td></tr>
-            <tr><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> techniques "covered"</td><td>Claiming coverage a rule cannot deliver without the telemetry</td></tr>
+            <tr><td>ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> techniques "covered"</td><td>Claiming coverage a rule cannot deliver without the telemetry</td></tr>
             <tr><td>Mean time to close an alert</td><td>Closing quickly, which is not the same as investigating</td></tr>
           </tbody>
         </table>
@@ -3286,7 +3289,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🗺️</span>
-    <span class="topic-name">ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> Coverage Mapping — Honest Heat Maps and the Lie of "100% Coverage"</span>
+    <span class="topic-name">ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> Coverage Mapping — Honest Heat Maps and the Lie of "100% Coverage"</span>
     <span class="topic-badge">Detection Engineering</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -3894,8 +3897,8 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
         </table>
         <div class="concept-desc verdict">
           <strong class="c-red">Ask "did you enter anything?" before you ask anything else</strong>,
-          and ask it in a way that makes the honest answer easy — the person who clicked and is
-          embarrassed is the person whose account matters most, and a desk that reacts badly to that
+          and ask it in a way that makes the honest answer easy — the person who clicked the link
+          and is embarrassed is the person whose account matters most, and a desk that reacts badly to that
           answer once will not be told the second time. That is the same argument as
           <span class="xref">Security Awareness — Turning People Into a Defense Layer</span>,
           arriving on a Tuesday afternoon instead of in a slide deck.
@@ -3915,7 +3918,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
         <table class="ref-table">
           <thead><tr><th>#</th><th>Do</th><th>It answers</th><th>Skipping it costs</th></tr></thead>
           <tbody>
-            <tr><td>1</td><td>Ask what the user did — clicked, entered credentials, opened the attachment, replied</td><td>Whether this is a nuisance or an incident</td><td>Everything after this branches on it</td></tr>
+            <tr><td>1</td><td>Ask what the user did — clicked the link, entered credentials, opened the attachment, replied</td><td>Whether this is a nuisance or an incident</td><td>Everything after this branches on it</td></tr>
             <tr><td>2</td><td>Get the original with headers intact</td><td>Sender infrastructure and authentication results</td><td>You investigate a screenshot</td></tr>
             <tr><td>3</td><td>Search the whole tenant for the sender, subject and URL</td><td>Who else received it, and who clicked</td><td>You contain one mailbox out of forty</td></tr>
             <tr><td>4</td><td>Purge from every mailbox that received it, not just the reporter's</td><td>—</td><td>The same message reported again tomorrow by someone slower</td></tr>
@@ -4008,7 +4011,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
       <div class="concept-label">Concept</div>
       <div class="concept-title">They Are Testing Judgement, Not Recall</div>
       <div class="concept-desc">
-        Candidates prepare for this role by memorising event IDs and ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> numbers, and the
+        Candidates prepare for this role by memorising event IDs and ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> numbers, and the
         interview rarely rewards it. The questions are open by design, because the job is a sequence
         of trade-offs — coverage against noise, specificity against durability, cost against
         retention — and what is being assessed is whether a candidate can see the trade and reason
@@ -4147,7 +4150,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     <tr><th>Do not report</th><th>Report instead</th></tr>
                     <tr><td>Alerts handled</td><td>Telemetry coverage, with the denominator named</td></tr>
                     <tr><td>MTTD as a single number</td><td>Dwell time distribution on confirmed incidents, with the worst case shown</td></tr>
-                    <tr><td>A green ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span> matrix</td><td>Techniques tested this quarter, and the pass rate</td></tr>
+                    <tr><td>A green ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> matrix</td><td>Techniques tested this quarter, and the pass rate</td></tr>
                     <tr><td>&ldquo;No incidents this quarter&rdquo;</td><td>What you would have detected if there had been. Absence of alerts is not evidence &mdash; the same argument as <span class="xref">Threat Hunting — Assume Breach, Go Looking</span></td></tr>
                     <tr><td>Tool count or spend</td><td>Analyst-hours per incident, trending</td></tr>
                   </table>

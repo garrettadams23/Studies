@@ -105,8 +105,15 @@ jobs:
 
       # Old vendor names used as though current. "Azure AD" is worse than a
       # broken link: it reads as current and quietly dates the whole card.
+      #
+      # The self-test guards the matching rules, which were quietly half-working
+      # for as long as this check existed: case-sensitive, with a trailing word
+      # boundary no gerund can satisfy. Six real uses sat in the content with the
+      # build green and the rename on record since 2020.
       - name: Check for renamed products
-        run: python tools/check_renames.py
+        run: |
+          python tools/check_renames.py --self-test
+          python tools/check_renames.py
 
       # A hand-written acronym expansion that disagrees with the dictionary is
       # a plain contradiction, and the annotator cannot see it — it only ever
@@ -172,6 +179,13 @@ jobs:
         run: |
           python tools/check_plan_numbers.py --self-test
           python tools/check_plan_numbers.py
+
+      # query_probe.mjs is a census and does not gate, but the check inside it
+      # that says when one of its own recorded verdicts has gone false is
+      # ordinary logic and does. A note reading "still zero" survived months
+      # after a matcher change made the query return four cards.
+      - name: Check the reader-probe's staleness logic
+        run: node tools/query_probe.mjs --self-test
 
       # Every id in data/related.json resolves, and no topic points at itself.
       - name: Check the related-topics map

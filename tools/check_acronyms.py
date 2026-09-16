@@ -62,6 +62,15 @@ import re
 import sys
 from pathlib import Path
 
+EXP_STOP = {"of", "and", "the", "for", "a", "an", "to", "in", "on", "over",
+            "with", "as", "by", "at", "or"}
+
+
+def initials(exp):
+    """The letters an expansion's significant words contribute."""
+    words = [w for w in re.split(r"[\s/&-]+", exp) if w and w.lower() not in EXP_STOP]
+    return "".join(w[0] for w in words).upper()
+
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "data" / "acronyms.json"
 
@@ -104,6 +113,86 @@ def derives(acronym, expansion):
     )
 
 
+# ── the fields that steer the annotator ─────────────────────────────────────
+#
+# `annotate` picks which meaning gets stamped into prose. `byDomain` overrides
+# it per file, and a null there drops the acronym from that domain. A typo in
+# either is the quietest possible defect: `annotate` falls through to `m[0]["e"]`
+# and a misspelled domain key is simply never consulted, so the wrong expansion
+# ships **site-wide** and the build stays green. That is failure #10's exact
+# shape, arriving through the configuration rather than through the prose.
+#
+# All of these pass on the dictionary today. They are here so they keep passing,
+# which is the same reason `check_css_vars.py` guards a count already at zero.
+def same_meaning(a, b):
+    """Are these two expansions the same claim written twice?
+
+    Two shapes, both decidable, and the dictionary had one of each:
+
+      * **Punctuation only.** ATT&CK carried *Adversarial Tactics, Techniques,
+        and Common Knowledge* and *Adversarial Tactics, Techniques and Common
+        Knowledge* as two meanings. An Oxford comma is not a second meaning, and
+        the dictionary page listed both.
+      * **One of them expands an acronym the other leaves short.** DPAPI carried
+        *Data Protection Application Programming Interface* and *Data Protection
+        API*. The differing tail's initials spell the short token, which is the
+        definition of it being the same phrase.
+
+    Anything subtler is a judgement and belongs to a reader, which is why this
+    stops at two rules rather than reaching for a similarity score.
+    """
+    wa, wb = a.replace(",", " ").lower().split(), b.replace(",", " ").lower().split()
+    if wa == wb:
+        return True
+    if len(wa) > len(wb):
+        wa, wb = wb, wa
+    # wa is the shorter. Walk the common head, then ask whether the rest of the
+    # longer one is the expansion of the next word in the shorter one.
+    i = 0
+    while i < len(wa) and i < len(wb) and wa[i] == wb[i]:
+        i += 1
+    rest_short, rest_long = wa[i:], wb[i:]
+    if len(rest_short) != 1 or len(rest_long) < 2:
+        return False
+    return initials(" ".join(rest_long)).lower() == rest_short[0].replace(".", "")
+
+
+def structure(entries, domain_ids):
+    """Problems in the fields that decide what the annotator writes."""
+    problems = []
+    seen = set()
+    for e in entries:
+        acro, meanings = e["a"], [m["e"] for m in e["m"]]
+        for i, one in enumerate(meanings):
+            for other in meanings[i + 1:]:
+                if same_meaning(one, other):
+                    problems.append(f"{acro}: {one!r} and {other!r} are the same "
+                                    f"expansion written twice, and the dictionary "
+                                    f"page lists both as meanings")
+        if acro in seen:
+            problems.append(f"{acro}: two entries with exactly this spelling. "
+                            f"SOC/SoC and IOC/IoC differ by case on purpose; an "
+                            f"exact duplicate is one entry too many")
+        seen.add(acro)
+        chosen = e.get("annotate")
+        if chosen and chosen not in meanings:
+            problems.append(f"{acro}: annotate is {chosen!r}, which is not one of this "
+                            f"entry's meanings ({', '.join(meanings)}). The annotator "
+                            f"falls through to {meanings[0]!r} and says nothing")
+        if chosen and e.get("noAnnotate"):
+            problems.append(f"{acro}: has both annotate={chosen!r} and noAnnotate. "
+                            f"noAnnotate wins, so the annotate value is a comment "
+                            f"wearing a setting's clothes")
+        for dom, val in (e.get("byDomain") or {}).items():
+            if dom not in domain_ids:
+                problems.append(f"{acro}: byDomain names {dom!r}, which is not a domain "
+                                f"on this site, so it is never consulted")
+            if val is not None and val not in meanings:
+                problems.append(f"{acro}: byDomain[{dom!r}] is {val!r}, which is not one "
+                                f"of this entry's meanings ({', '.join(meanings)})")
+    return problems
+
+
 def scan(entries):
     """-> (unexplained, stale) — violations with no `l`, and `l` with no violation."""
     unexplained, stale = [], []
@@ -139,6 +228,38 @@ FIXTURES = [
 ]
 
 
+STRUCTURE_FIXTURES = [
+    ("a clean entry",
+     [{"a": "X", "m": [{"e": "One"}, {"e": "Two"}], "annotate": "Two"}], 0),
+    ("annotate naming a meaning the entry does not have",
+     [{"a": "X", "m": [{"e": "One"}], "annotate": "Onee"}], 1),
+    ("annotate and noAnnotate together",
+     [{"a": "X", "m": [{"e": "One"}], "annotate": "One", "noAnnotate": True}], 1),
+    ("byDomain naming a domain that does not exist",
+     [{"a": "X", "m": [{"e": "One"}], "byDomain": {"nosuch": "One"}}], 1),
+    ("byDomain naming a meaning the entry does not have",
+     [{"a": "X", "m": [{"e": "One"}], "byDomain": {"net": "Other"}}], 1),
+    ("a null byDomain is a deliberate do-not-annotate, not an error",
+     [{"a": "X", "m": [{"e": "One"}], "byDomain": {"net": None}}], 0),
+    ("two entries spelled exactly the same",
+     [{"a": "X", "m": [{"e": "One"}]}, {"a": "X", "m": [{"e": "Two"}]}], 1),
+    ("two entries differing only by case are the SOC/SoC convention",
+     [{"a": "SOC", "m": [{"e": "One"}]}, {"a": "SoC", "m": [{"e": "Two"}]}], 0),
+    ("one meaning twice, differing by an Oxford comma",
+     [{"a": "X", "m": [{"e": "Tactics, Techniques, and Knowledge"},
+                       {"e": "Tactics, Techniques and Knowledge"}]}], 1),
+    ("one meaning twice, one of them leaving an acronym short",
+     [{"a": "X", "m": [{"e": "Data Protection Application Programming Interface"},
+                       {"e": "Data Protection API"}]}], 1),
+    ("two genuinely different meanings are not a duplicate",
+     [{"a": "X", "m": [{"e": "Auto Scaling Group"},
+                       {"e": "Application Security Group"}]}], 0),
+    ("a shared head does not make two meanings the same",
+     [{"a": "X", "m": [{"e": "Data Protection Officer"},
+                       {"e": "Data Protection Impact Assessment"}]}], 0),
+]
+
+
 def self_test():
     failures = []
     for acronym, expansion, expected in FIXTURES:
@@ -165,7 +286,13 @@ def self_test():
         print("check_acronyms self-test FAILED:")
         print("\n".join(failures))
         return 1
-    print(f"check_acronyms self-test passed ({len(FIXTURES)} fixtures + both directions).")
+    for name, entries, want in STRUCTURE_FIXTURES:
+        got = len(structure(entries, {"net", "sec"}))
+        if got != want:
+            print(f"check_acronyms self-test FAILED: {name} — expected {want}, got {got}")
+            return 1
+    print(f"check_acronyms self-test passed ({len(FIXTURES)} fixtures + both "
+          f"directions + {len(STRUCTURE_FIXTURES)} structure fixtures).")
     return 0
 
 
@@ -187,6 +314,12 @@ def main():
         print(f"\n{len(rows)} of {total} meanings explain their letters.")
         return 0
 
+    domain_ids = {d["id"] for d in json.loads(
+        (SRC.parent / "domains.json").read_text(encoding="utf-8"))}
+    problems = structure(entries, domain_ids)
+    for line in problems:
+        print(f"ERROR {line}")
+
     unexplained, stale = scan(entries)
     for acronym, expansion in unexplained:
         print(f"{acronym}: '{expansion}' — the letters are not drawn from the expansion,")
@@ -196,11 +329,14 @@ def main():
         print(f"{'':<{len(acronym) + 2}}{why!r}")
 
     explained = sum(1 for e in entries for m in e["m"] if m.get("l"))
+    steered = sum(1 for e in entries if e.get("annotate") or e.get("byDomain")
+                  or e.get("noAnnotate"))
     print(
         f"\n{total} meanings · {explained} explain their letters · "
-        f"{len(unexplained)} unexplained · {len(stale)} stale."
+        f"{len(unexplained)} unexplained · {len(stale)} stale · "
+        f"{steered} entries steer the annotator, {len(problems)} of them malformed."
     )
-    return 1 if (unexplained or stale) else 0
+    return 1 if (unexplained or stale or problems) else 0
 
 
 if __name__ == "__main__":

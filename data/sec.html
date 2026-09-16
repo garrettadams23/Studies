@@ -925,7 +925,7 @@
             <td>The state</td>
           </tr>
           <tr>
-            <td style="color:var(--cyan)">Organisational Unit (OU)</td>
+            <td style="color:var(--cyan)">Organizational Unit (OU)</td>
             <td>Container inside a domain. Groups objects for delegation and GPO <span class="acro-exp">(Group Policy Object)</span> application.</td>
             <td>The department</td>
           </tr>
@@ -996,7 +996,7 @@
           <tr><td style="color:var(--cyan)">Software Deployment</td><td>Push MSI <span class="acro-exp">(Microsoft Installer)</span> packages to all machines in an OU</td></tr>
           <tr><td style="color:var(--cyan)">Script Execution</td><td>Run logon/logoff scripts; restrict PowerShell</td></tr>
           <tr><td style="color:var(--cyan)">Security Settings</td><td>Disable guest, rename Administrator, firewall rules</td></tr>
-          <tr><td style="color:var(--cyan)">AppLocker / WDAC <span class="acro-exp">(Windows Defender Application Control)</span></td><td>Whitelist which executables are allowed to run</td></tr>
+          <tr><td style="color:var(--cyan)">AppLocker / WDAC <span class="acro-exp">(Windows Defender Application Control)</span></td><td>An allowlist of which executables may run — everything unlisted is blocked</td></tr>
         </table>
 
         <div class="concept-desc verdict">
@@ -2610,7 +2610,7 @@ curl -s --request GET   --url <span class="str">"https://www.virustotal.com/api/
           — persistence mechanism.<br>
         &bull; <em>Processes</em>: PowerShell spawned by Word/Excel
           (macro malware), cmd.exe spawned by browser.<br>
-        &bull; <em>MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques and Common Knowledge)</span></em>: sandbox reports map behaviours to
+        &bull; <em>MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span></em>: sandbox reports map behaviours to
           ATT&amp;CK tactics and techniques.
       </div>
     </div>
@@ -3442,7 +3442,7 @@ ssh-keygen -t ed25519 -f my_key -C &quot;demo key&quot;
       <table class="ai-table">
         <tr><th>Header</th><th>What it does</th><th>What it protects against</th></tr>
         <tr><td><code>Strict-Transport-Security</code></td><td>Tells the browser "always use HTTPS for this site, never plain HTTP, even if a link points to http://"</td><td>Downgrade attacks that try to trick a browser into an unencrypted connection</td></tr>
-        <tr><td><code>Content-Security-Policy</code></td><td>Whitelists exactly where scripts, styles, and other resources are allowed to load from</td><td>Cross-site scripting (XSS) — even if an attacker injects a script tag, the browser refuses to run it if its source isn't on the approved list</td></tr>
+        <tr><td><code>Content-Security-Policy</code></td><td>Allowlists exactly where scripts, styles, and other resources may load from</td><td>Cross-site scripting (XSS) — even if an attacker injects a script tag, the browser refuses to run it if its source isn't on the approved list</td></tr>
         <tr><td><code>X-Frame-Options</code></td><td>Controls whether the page can be displayed inside a frame on another site</td><td>Clickjacking — tricking users into clicking something different from what they think they're clicking</td></tr>
         <tr><td><code>X-Content-Type-Options</code></td><td>Tells the browser "don't try to guess the file type — trust what I told you it is"</td><td>MIME-sniffing attacks that disguise malicious files as harmless ones</td></tr>
         <tr><td><code>Referrer-Policy</code></td><td>Controls how much of the originating URL <span class="acro-exp">(Uniform Resource Locator)</span> gets shared when a user clicks a link to another site</td><td>Accidentally leaking sensitive information (like search queries or internal URLs) to third-party sites</td></tr>
@@ -5521,7 +5521,12 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
         ways a departing person retains access. The others survive because nothing links them to the
         leaver record: personal devices holding synced data, sessions and tokens that outlive a
         password change, service accounts they created, shared credentials they know, and access
-        granted by systems outside the identity provider.
+        granted by systems outside the identity provider. It is also where the uncomfortable
+        version of the question lives &mdash; <strong>an employee is leaving and somebody thinks
+        they took data</strong>. That suspicion is answerable only by telemetry that was collected
+        before it arose, which is the real argument for treating offboarding as a control rather
+        than an errand: the evidence either exists on the day it is asked for or it does not, and
+        nothing done afterwards creates it.
       </div>
       <div class="dw">
         <table class="ref-table">

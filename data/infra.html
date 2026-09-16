@@ -747,17 +747,24 @@ dcdiag /test:ridmanager /v | Select-String "Available RID Pool"</pre>
             <tr><th>Where</th><th>Normal delay</th><th>Planned by</th></tr>
           </thead>
           <tbody>
+            <!-- fact: site link replication interval defaults to 180 minutes, with 15 minutes
+                 the lowest value a site link accepts | source: Active Directory site link
+                 replInterval default and minimum | checked: 2026-09 -->
             <tr><td>Within a site</td><td>Seconds — change notification, no schedule</td><td>The KCC <span class="acro-exp">(Knowledge Consistency Checker)</span>, automatically</td></tr>
-            <tr><td>Between sites</td><td>15 minutes by default, and compressed</td><td>Site links you configure</td></tr>
+            <tr><td>Between sites</td><td>Up to 3 hours out of the box — 180 minutes is the site-link default, and compressed</td><td>Site links you configure</td></tr>
             <tr><td>Urgent changes</td><td>Immediate, regardless of schedule</td><td>Account lockout, password changes to the PDC <span class="acro-exp">(Primary Domain Controller)</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> "the change has not appeared yet" is usually correct
-        behaviour rather than a fault. Before troubleshooting, confirm enough time has passed
-        for the path involved — and remember a user's password change reaches the PDC emulator
-        immediately even when everything else waits.
+        behaviour rather than a fault, so confirm enough time has passed for the path involved
+        before troubleshooting anything. The number to hold for that is <strong>three hours, not
+        fifteen minutes</strong> — 15 is the lowest interval a site link will accept, which is why
+        it is the figure everyone quotes, and it is not what an untouched site link does. For the
+        first two and a half hours a healthy forest looks exactly like a broken one. The exception
+        is a user's password change, which reaches the PDC emulator immediately even when
+        everything else waits.
       </div>
     </div>
 
@@ -1047,7 +1054,7 @@ New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🔢</span>
-    <span class="topic-name">Processing Order &amp; Precedence — LSDOU <span class="acro-exp">(Local, Site, Domain, Organisational Unit)</span>, Enforcement &amp; Loopback</span>
+    <span class="topic-name">Processing Order &amp; Precedence — LSDOU <span class="acro-exp">(Local, Site, Domain, Organizational Unit)</span>, Enforcement &amp; Loopback</span>
     <span class="topic-badge">Group Policy • Precedence</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -1127,6 +1134,41 @@ New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class
         user's settings vanish on that one machine". If a user behaves differently on a
         particular device and nowhere else, check the device's OU for loopback before anything
         else.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">"It Is Not Applying" Usually Means Something Else Won</div>
+      <div class="concept-desc">
+        The ticket says a policy is <strong>not applying</strong>, and that is almost never what
+        happened. Far more often it applied and was overwritten by something more specific,
+        landed on the wrong half of the object, or was filtered away before it was ever
+        considered. Only one of those is a fault, and everything above this card is the reason
+        the first one is so common: <strong>precedence working correctly looks exactly like a
+        policy that did not arrive.</strong>
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>What is reported</th><th>What is usually true</th><th>Where to look</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>One setting is not what the GPO says</td><td>A GPO later in LSDOU set it, and won</td><td><code>gpresult /h report.html</code> names the winning GPO for every setting. This is the whole answer in one file</td></tr>
+            <tr><td>Nothing from this GPO applies to anybody</td><td>Security filtering, a disabled link, or Block Inheritance above it</td><td>The object needs both Read and Apply. Policy is fetched in the <em>computer's</em> security context, so a GPO whose Authenticated Users entry was replaced by a user group stops applying to everyone</td></tr>
+            <tr><td>It applies to some machines and not others</td><td>A WMI <span class="acro-exp">(Windows Management Instrumentation)</span> filter, or the object is not in the OU you remember</td><td>Read the object's real distinguished name rather than the console tree you navigated</td></tr>
+            <tr><td>It applies after a reboot and never after a refresh</td><td>Drive maps, folder redirection and software installation only run at the full startup or sign-in</td><td>Nothing is broken. The background refresh will never deliver these, however many times you run <code>gpupdate</code></td></tr>
+            <tr><td>It works for clients of one DC and not another</td><td>A GPO is two objects — a directory container and a SYSVOL <span class="acro-exp">(System Volume)</span> folder — and replication can move one without the other</td><td>Compare the version numbers on both halves before touching the policy</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Run <code>gpresult /h</code> before forming an opinion</strong>, as the affected
+        user on the affected machine — a report from your own session answers a different
+        question — and it turns an argument into a fact in about a minute. Its limit is worth
+        knowing in the same breath: it reports what <em>did</em> happen and has nothing to say
+        about what <em>should</em> have. It settles "did something else win"; it never settles
+        "is this policy right".
       </div>
     </div>
 
@@ -1872,6 +1914,41 @@ New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw"
         Start with soft quotas and reporting. A hard limit imposed without warning produces a
         support queue and a workaround culture — people start saving to their desktops, which is
         worse than the disk usage you were managing.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">A Mapped Drive Is an Intention, Not a Connection</div>
+      <div class="concept-desc">
+        "The shared drive is not mapping" is a daily ticket and it reads like one problem. It is
+        five, and they separate cleanly once you stop thinking of a drive letter as a link to a
+        server. <strong>It is a saved intention, re-established at every sign-in, in whatever
+        security context the process doing the asking happens to hold</strong> — which is why
+        the same letter can be present, absent and unreachable on one machine at one moment.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>What the user sees</th><th>What is happening</th><th>What to do</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A red cross on the drive, which opens normally when clicked</td><td>The idle file session was dropped; the map is an intention and the session is re-made on demand</td><td>Nothing. This is the server's idle timer working, and the cross is cosmetic</td></tr>
+            <tr><td>The map is missing at sign-in and appears after signing out and back in</td><td>The Group Policy drive map ran before the network was ready</td><td>Turn on waiting for the network at startup and sign-in, which is what that setting exists for</td></tr>
+            <tr><td>An elevated application cannot see a drive the user can</td><td>Elevation hands the process a different token, and a drive map belongs to a token</td><td>Map it inside the elevated session, or accept the linked-connections registry setting estate-wide with its trade-offs understood</td></tr>
+            <tr><td>"Multiple connections to a server by the same user are not allowed"</td><td>Windows keeps one credential set per server name, and a second share asked for different ones</td><td>Use one account for every share on that server. The short name and the fully qualified name count as two servers, which is a workaround and not a fix</td></tr>
+            <tr><td>It works by address and fails by name, or the reverse</td><td>Kerberos needs the name the service principal is registered against; an address forces a fallback</td><td>Fix the name resolution. Mapping the address makes the symptom go away and takes authentication with it</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Type the path before blaming the file server.</strong> Opening
+        <code>\\server\share</code> directly separates "the map is broken" from "the share is
+        unreachable", and it takes ten seconds. Most reported map failures are the first, which
+        means the fix lives on the client or in the policy that wrote the map — and a namespace
+        path, per the DFS card above,
+        removes the commonest reason the stored intention was pointing at the wrong place to
+        begin with.
       </div>
     </div>
   </div>

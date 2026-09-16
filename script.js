@@ -738,6 +738,8 @@ const RE_TOPIC_BADGE = classRe("topic-badge");
 const RE_CONCEPT_TITLE = classRe("concept-title");
 const RE_CONCEPT_DESC = classRe("concept-desc");
 const RE_ACRO_SPAN = /<span class="acro-exp">\([^<]*?\)<\/span\s*>/g;
+// Same, plus the space the annotator wrote in front of it — see plainLabel().
+const RE_ACRO_LABEL = /\s*<span class="acro-exp">\([^<]*?\)<\/span\s*>/g;
 
 /**
  * The contents of the first element matching `open`, counting nesting.
@@ -810,9 +812,60 @@ function plainText(html) {
   return decodeEntities(html.replace(RE_TAG, "").replace(RE_WS, " ")).trim();
 }
 
-/** Same, with the inline acronym expansions dropped — the title as written. */
+/**
+ * Same, with the inline acronym expansions dropped — the title as written.
+ *
+ * **The span owns the space in front of it.** The annotator writes
+ * ` <span class="acro-exp">(…)</span>`, so removing the span alone strands that
+ * space wherever punctuation followed the acronym: `POST , Beep Codes`,
+ * `SPF, DKIM , DMARC`, `MTU , Fragmentation`. Forty-seven topic names carried
+ * it, and it is not cosmetic — this text is the name the search index, the study
+ * list, the jump lists and the landing cards' "start here" resolution all
+ * compare against.
+ *
+ * `lint_content.py`, `gen_cheatsheet.py` and `stamp_freshness.py` have all had
+ * the `\s*` since they were written. This file was the odd one out, in the pair
+ * that is supposed to be byte-for-byte identical.
+ *
+ * The first attempt at the fix tidied every space-before-punctuation in the
+ * title instead, and moved a permalink: `Custom Properties, :has() & Layers` has
+ * such a space, nowhere near an acronym, and closing it merges `Properties` and
+ * `has` into one word. Three separate gates caught it in one run. Taking the
+ * space with the span has no such surface — it can only touch text that was
+ * adjacent to something removed.
+ */
 function plainLabel(html) {
-  return plainText(html.replace(RE_ACRO_SPAN, ""));
+  return plainText(html.replace(RE_ACRO_LABEL, ""));
+}
+
+/**
+ * The same text, prepared for the search index: element boundaries separated.
+ *
+ * `plainText` drops a tag rather than replacing it with a space, on the stated
+ * ground that the source already carries a newline between anything that needs
+ * separating. That is true of inline markup — the author writes the space if
+ * there is one, and it is what keeps `CIDR (Classless Inter-Domain Routing)`
+ * out of `CIDR ( Classless Inter-Domain Routing )`. It is **not** true across a
+ * block boundary, where the separating whitespace is a habit of the source file
+ * rather than a fact about the markup.
+ *
+ * `shortcut/vim` is authored on one line, so its indexed text read
+ * `…modal editingvim starts in normal mode…`, and `vim` — three characters, so
+ * boundary-matched rather than substring-matched (SHORT_TERM) — occurred
+ * nowhere in it with a boundary on both sides. **Searching for `vim` did not
+ * return the topic named Vim.** Every table cell in a generated acronym page
+ * fuses the same way, for the same reason: the generator writes one line.
+ *
+ * So block tags become a space and inline tags still become nothing, which is
+ * the distinction the original note was reaching for. It is the index's text
+ * only; the name, title, badge and description a reader sees are inner HTML of
+ * one inline element each and keep `plainText` unchanged.
+ */
+const RE_BLOCK_TAG =
+  /<\/?(?:div|table|thead|tbody|tfoot|tr|td|th|caption|li|ul|ol|dl|dt|dd|p|h[1-6]|br|hr|section|article|header|footer|blockquote|pre|figure|figcaption)\b[^>]*>/gi;
+
+function indexText(html) {
+  return foldCase(plainText(html.replace(RE_BLOCK_TAG, " ")));
 }
 
 const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
@@ -851,7 +904,7 @@ function domainTopics(domainId) {
       // It is chrome, not content: leaving it in made "min" match 1,337 of
       // 1,367 topics, which is the same failure the acronym-alternate bug
       // produced and would have been just as invisible.
-      text: plainText(chunk.replace(RE_TOPIC_READ, "")).toLowerCase(),
+      text: indexText(chunk.replace(RE_TOPIC_READ, "")),
     });
     start = next;
   }
@@ -1312,7 +1365,18 @@ function labelText(el) {
   let node = el;
   if (el.querySelector(".acro-exp")) {
     node = el.cloneNode(true);
-    node.querySelectorAll(".acro-exp").forEach(n => n.remove());
+    // Take the space in front of the span with it. In the DOM that space is a
+    // separate text node, so it survives `remove()` and strands itself before
+    // any punctuation that followed the acronym — see plainLabel() for what
+    // that cost. Trimming only the node immediately before each span keeps the
+    // rest of the title untouched.
+    node.querySelectorAll(".acro-exp").forEach(n => {
+      const before = n.previousSibling;
+      if (before && before.nodeType === 3) {
+        before.textContent = before.textContent.replace(/\s+$/, "");
+      }
+      n.remove();
+    });
   }
   return node.textContent.replace(/\s+/g, " ");
 }
@@ -1868,6 +1932,31 @@ function foldSeparators(lowered) {
 }
 
 /**
+ * Lowercase, with diacritics folded — used on both sides of every comparison.
+ *
+ * A census of the corpus: **17 distinct accented words, 31 occurrences**, and
+ * most are proper nouns in the philosophy and history cards — Niccolò,
+ * Übermensch, Schrödinger, ásatrú. An English keyboard types none of them, so
+ * `ubermensch` returned nothing against a card that names it in a table.
+ *
+ * A rule rather than a threshold, which is why it is here at all: NFD splits a
+ * letter from its combining marks and the marks are dropped. It runs on the
+ * index once at parse and on the query wherever the query is lowercased, so the
+ * two sides agree. Folding only one of them would move the bug rather than fix
+ * it — the reader who *does* have the accented spelling would then be the one
+ * who finds nothing.
+ *
+ * What it costs is a highlight. The marker searches the live DOM, where the
+ * accent is still there, so a hit on one of those 31 occurrences opens its
+ * topic and marks nothing in it. A card a reader can reach and has to skim
+ * beats a card they cannot reach.
+ */
+const RE_COMBINING = /[\u0300-\u036f]/g;
+function foldCase(s) {
+  return s.toLowerCase().normalize("NFD").replace(RE_COMBINING, "");
+}
+
+/**
  * Function words the all-your-words fallback must not insist on.
  *
  * That stage is a conjunction: every word has to be somewhere in the card. A
@@ -1920,9 +2009,29 @@ function foldSeparators(lowered) {
  * rule demands a word boundary, and "users" does not have one before the "s".
  *
  * The same one-character heuristic `near_duplicates._fold()` already uses, for
- * the same reason and with the same exception — "class" is not the plural of
- * "clas", so a "ss" ending is left alone. Crude on purpose: a real stemmer needs
- * a tokenised index, and this matcher works on raw text.
+ * the same reason. Crude on purpose: a real stemmer needs a tokenised index, and
+ * this matcher works on raw text.
+ *
+ * **The `-es` plural was the half of the rule that was missing**, and the `ss`
+ * exception hid it. A word ending in a sibilant takes `-es`, so one character was
+ * the wrong number in *both* directions: `switches` offered `switche` and
+ * `processes` offered `processe`, while `pass`, `switch` and `process` offered
+ * nothing at all — the exception was right about `class` and wrong about why. The
+ * plural of `class` is not `clas`; it is `classes`.
+ *
+ * The symptom was `my tests pass locally but fail in ci`, which missed the
+ * flaky-test card that says the tests *pass* on your machine. `tests`/`test` and
+ * `fail`/`fails` both folded; `pass`/`passes` was the only word in the query that
+ * could not, and one word is all a conjunction needs.
+ *
+ * Going the other way, `-es` is two plurals wearing one spelling: `cases` is
+ * `case` + s and `passes` is `pass` + es, and nothing in the string distinguishes
+ * them. Both singulars are offered instead of guessed at, because a wrong one is
+ * a regex that matches nothing while a wrong guess is a card the reader never
+ * sees. `-ies` is the one that *is* decidable (`policy`/`policies`) and is
+ * handled first. Nothing else joins: the irregulars — `indices`, `matrices`,
+ * `analyses` — are a dictionary, not a rule, and a dictionary here would be the
+ * tokenised index this deliberately is not.
  */
 /**
  * A number written both ways, because the site and the reader disagree.
@@ -1946,17 +2055,78 @@ function numberForms(term) {
   return other ? [term, other] : [term];
 }
 
+// `s` is deliberately absent: a term ending in one is handled by the branches
+// above this is used in, so it could only ever produce `passs`.
+const RE_SIBILANT = /(?:x|z|ch|sh)$/;
+const RE_Y_PLURAL = /[^aeiou]ies$/;
+const RE_Y_SINGULAR = /[^aeiou]y$/;
+
 function plurals(term) {
-  if (term.endsWith("s")) {
-    return term.endsWith("ss") || term.length <= 3 ? [term] : [term, term.slice(0, -1)];
+  if (RE_Y_PLURAL.test(term)) return [term, term.slice(0, -3) + "y"];
+  // `-es` is two plurals wearing one spelling — `case` + s and `pass` + es, and
+  // nothing in the string says which. Both singulars are offered rather than
+  // guessed at: the one that is not a word matches nothing, which costs a regex
+  // and is the same bargain the rest of this function already makes.
+  if (term.endsWith("es") && term.length > 4) {
+    return [term, term.slice(0, -1), term.slice(0, -2)];
   }
-  return [term, term + "s"];
+  if (term.endsWith("ss")) return [term, term + "es"];
+  if (term.endsWith("s")) return term.length <= 3 ? [term] : [term, term.slice(0, -1)];
+  if (RE_Y_SINGULAR.test(term)) return [term, term.slice(0, -1) + "ies"];
+  return [term, RE_SIBILANT.test(term) ? term + "es" : term + "s"];
 }
 
 const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
   + "were be been do does did can could should would will shall may might must "
   + "i we you they it he she this that these those my our your their its "
   + "how what why when where which who does not no yes if then than so "
+  // `explain` joins the question words because that is what it is: an
+  // instruction to the site, never a subject. `explain oauth` returned
+  // **nothing** against a domain full of OAuth cards, because the conjunction
+  // required a word the OAuth card has no reason to contain and the query is
+  // two words long, so the relaxation stage's floor of two could not drop it.
+  //
+  // Only this one. `show` is a Cisco command here — *show running-config*, and
+  // a topic named after it — and `define` and `describe` are ordinary content
+  // verbs in a reference. `explained` and `explains` are separate tokens and
+  // stay, which is what keeps *Load Balancers Explained* and *Indexes
+  // Explained* reachable by their own titles.
+  //
+  // `actually` joins them at 39.1% of topics — filler in a query, however often
+  // it appears in a *title* here (*What DevOps Actually Is*, *How Adults
+  // Actually Learn*). Stopping it cannot cost those cards a reader: it only
+  // removes a hard requirement, and the rare word beside it still carries the
+  // query. Nobody has ever searched for "actually".
+  //
+  // `too` joins for the same reason and was found the same way. `regex slow`
+  // reaches *Catastrophic Backtracking — When a Regular Expression Is a Denial
+  // of Service*; **`regex too slow` reaches nothing**, because a card about a
+  // regex that takes minutes has no reason to contain the word "too" and a
+  // two-content-word query cannot be relaxed below the floor of two. A
+  // comparative intensifier is never a subject. `only` at 55.6% and `just` at
+  // 22.1% were measured beside it and left alone: both are load-bearing in this
+  // corpus — *only the first hop*, *just enough* — and a stop list earns its
+  // entries one at a time.
+  //
+  // `got` is the fourth, and it is the one that shows what the test actually
+  // is. It is **rare** — 3.5% of topics, against `actually` at 39.1% — so
+  // frequency, the evidence that admitted the other three, argues the opposite
+  // way here: a rare word is normally a *narrowing* word and precious. The
+  // reason it joins is the other half of the test, which the other three also
+  // pass: **it is never a subject.** Nobody searches for `got`. It arrives
+  // attached to the thing that happened — `i got paged at 3am again`, `we got
+  // a vulnerability report from a stranger` — and a card describing that thing
+  // has no reason to narrate its arrival. Requiring it is requiring a word the
+  // corpus cannot supply, which is a guaranteed zero rather than a narrow
+  // answer.
+  //
+  // The second of those queries had been recorded in `query_probe.mjs` as an
+  // unsolvable kind-3 zero for eight batches, with the diagnosis already
+  // written out: "'got' is a verb no reference card has reason to contain, and
+  // a zero cannot be relaxed". Both clauses true; the conclusion was wrong. A
+  // verb no card has reason to contain is the argument for stopping it.
+  // `get` and `gets` stay — *How Devices Get Their IP Address* is a title here.
+  + "explain too actually got "
   // `vs` and `versus` join them for the same reason `or` is here. The site
   // titles a dozen topics "X vs Y", so the as-typed pass answers those before
   // the fallback ever runs — but `agile vs waterfall`, which no single card
@@ -2145,8 +2315,8 @@ function runSearch(raw) {
   // content the reader was looking for.
   const textTerms = q.text ? searchTerms(q.text) : [];
   _searchTermList = [...q.phrases, ...textTerms];
-  const loweredText = textTerms.map(t => t.toLowerCase()).map(matcher);
-  const loweredPhrases = q.phrases.map(p => p.toLowerCase());
+  const loweredText = textTerms.map(foldCase).map(matcher);
+  const loweredPhrases = q.phrases.map(foldCase);
 
   // The widened pass, built now and used only if the query as typed finds
   // nothing. Each word of the free text becomes its own matcher — with its own
@@ -2173,7 +2343,7 @@ function runSearch(raw) {
   // Folded before the stop test, so a contraction is recognised however the
   // reader's keyboard spelled its apostrophe — or whether they typed one.
   const words = allWords.filter(w =>
-    w.length >= 2 && !WIDE_STOP.has(foldSeparators(w.toLowerCase())));
+    w.length >= 2 && !WIDE_STOP.has(foldSeparators(foldCase(w))));
   // Stage one of the fallback: the query in order, against folded text, with
   // the gaps between its words allowed to be a space, a hyphen, or nothing.
   //
@@ -2190,7 +2360,7 @@ function runSearch(raw) {
   const gapPhrase = allWords.length
     ? new RegExp((guard ? "(?<![a-z0-9])" : "")
         + allWords.map(w => {
-            const forms = numberForms(foldSeparators(w.toLowerCase())).map(escape);
+            const forms = numberForms(foldSeparators(foldCase(w))).map(escape);
             return forms.length > 1 ? `(?:${forms.join("|")})` : forms[0];
           }).join("[\\s-]*")
         + (guard ? "(?![a-z0-9])" : ""))
@@ -2205,12 +2375,12 @@ function runSearch(raw) {
   // query is not in the card) nor per-word matching could reach it. Joining
   // adjacent pairs costs one extra alternate per word and is exactly the shape
   // of the failure.
-  const joined = i => words.slice(i, i + 2).map(w => foldSeparators(w.toLowerCase())).join("");
-  const wideMatchers = words.map((w, i) => {
+  const joined = i => words.slice(i, i + 2).map(w => foldSeparators(foldCase(w))).join("");
+  const allMatchers = words.map((w, i) => {
     // An alternate that is itself a function word is dropped: `plurals("whys")`
     // offers "why", which as a conjunction term matches most of the site and
     // narrows nothing. The word the reader typed is always kept.
-    const alts = searchTerms(w).flatMap(t => numberForms(foldSeparators(t.toLowerCase())))
+    const alts = searchTerms(w).flatMap(t => numberForms(foldSeparators(foldCase(t))))
                                .flatMap(plurals)
                                .filter((t, i) => i === 0 || !WIDE_STOP.has(t))
                                .map(matcher);
@@ -2218,6 +2388,9 @@ function runSearch(raw) {
     if (i > 0) alts.push(matcher(joined(i - 1)));
     return alts;
   });
+  // Reassigned by the relaxation stage below, which runs the same sweep over a
+  // shorter word list. Everything before that stage reads the full set.
+  let wideMatchers = allMatchers;
 
   let matchCount = 0, domainCount = 0, firstHit = null, widened = "";
 
@@ -2289,24 +2462,203 @@ function runSearch(raw) {
   const wideCap = Math.max(150, Math.round(1534 * 0.12));
   const tooBroad = () => matchCount > wideCap;
 
+  // "Stopped at the first stage that finds anything" has one failure mode, and
+  // the reader-question probe found four instances of it with the same
+  // fingerprint: **exactly one result, and the card the reader wanted contains
+  // every word of the query.**
+  //
+  //   penetration test report   1 match   →  not the Pentest Reporting card
+  //   incident postmortem       1 match   →  not Writing a Postmortem
+  //   kill a process            1 match   →  not Process Management
+  //   writing a detection       1 match   →  not What Detection Engineering Is
+  //
+  // In each one, a single unrelated card happens to contain the reader's words
+  // *adjacent*, and being adjacent is the whole of its claim. With no ranking,
+  // one such card is not an answer — it is a coincidence, and it silences a
+  // looser stage that was never consulted.
+  //
+  // So a single result escalates. It is safe in the strict direction because
+  // each stage is a superset of the one before it: a card containing the query
+  // as a phrase necessarily contains the query's words, so widening cannot lose
+  // the hit it started from, only add to it. Two is left alone deliberately —
+  // the threshold is about a lone coincidence, not about thin results, and
+  // every number above one is at least a pattern.
+  //
+  // With one exception, and it is the whole reason this has a guard rather than
+  // a threshold: **a lone hit whose own slug carries a word of the query is not
+  // a coincidence — it is the card named after the question.** `why is my
+  // laptop slow` returns exactly one card, *"Why Is My Laptop Slow?"*, and
+  // widening that to sixteen serves nobody. Measured against all six affected
+  // queries, this separates them cleanly and nothing else does: the four
+  // stage-stop cases return 12, 16, 22 and 30 once widened and the two good
+  // single hits return 10 and 16, so no result-count cap tells them apart; and
+  // `penetration` at 1.0% of topics is rarer than `revoke` at 2.6%, so no
+  // rarity cut-off does either. The slug does, because it is built from the
+  // title, and a title is a claim about the subject rather than a mention of it.
+  const THIN = 1;
+  const namedByQuery = () => {
+    if (matchCount !== 1) return false;
+    let only = null;
+    _searchHits.forEach(set => set.forEach(id => { only = id; }));
+    if (!only) return false;
+    const parts = new Set(String(only).split(/[^a-z0-9]+/));
+    // Through the same plural fold the conjunction uses, or the guard misses
+    // the case it exists for: `the model keeps making things up` has its exact
+    // phrase in one card, whose slug says *models*. Without this it escalated a
+    // perfect single hit into thirty.
+    return words.some(w => plurals(foldSeparators(w.toLowerCase())).some(f => parts.has(f)));
+  };
   sweep(false);
-  if (!matchCount && gapPhrase) {
+  const strictCount = matchCount;
+  if (matchCount <= THIN && !namedByQuery() && gapPhrase) {
     reset();
     sweep("fold");
-    if (matchCount) widened = tooBroad() ? "broad" : "fold";
+    if (matchCount > strictCount) widened = tooBroad() ? "broad" : "fold";
+    else if (!matchCount && strictCount) { reset(); sweep(false); }
   }
   // One content word is a legitimate conjunction — "what is idempotency" is a
   // question about idempotency — so this stage runs whenever any survived.
-  if ((!matchCount || widened === "broad") && wideMatchers.length) {
+  if ((matchCount <= THIN || widened === "broad") && !namedByQuery() && wideMatchers.length) {
+    const before = matchCount;
     reset();
     sweep("words");
-    if (matchCount) {
+    if (matchCount > before) {
       widened = tooBroad() ? "broad" : "words";
       // Highlight what actually matched, which is the words rather than the
       // string the reader typed.
       if (widened === "words") _searchTermList = [...q.phrases, ...words];
+    } else if (!matchCount && before) {
+      // The looser stage found less, which should not happen — restore.
+      reset();
+      sweep(before === strictCount ? false : "fold");
     }
   }
+  // Stage four: the conjunction again, without the words that cannot narrow it.
+  //
+  // A conjunction weights every term the same, and a reader's question does
+  // not. `do we need iso 27001` returned three cards and **not** the one titled
+  // ISO 27001, because that card has no reason to contain the word "need".
+  // `cron not running` missed *Cron Jobs — Scheduling Tasks in Linux* over the
+  // word "running"; `check disk space` missed *"The Disk Is Full"* over
+  // "check"; `wifi keeps dropping` missed the wireless troubleshooting card
+  // over "keeps". In each one the subject word was present and the filler
+  // beside it was the whole reason the card was excluded.
+  //
+  // What separates the two is not a word list. It is measured, per query, over
+  // the same folded text the conjunction has already been reading:
+  //
+  //     check 39.8%   need 25.2%   break 21.3%   running 19.1%   keeps 12.1%
+  //     disk   8.5%   iso   1.1%   caching 2.5%  cron    1.4%    dropping 1.7%
+  //
+  // An absolute cut-off gets this wrong — `policy` sits at 19.5% and is the
+  // *subject* of "group policy not applying", one row above `running` at 19.1%
+  // which is filler. The ratio inside the query is what is stable: a word an
+  // order of magnitude commoner than the rarest word the reader typed cannot
+  // be what they were asking about, and requiring it can only remove cards the
+  // rare word already found.
+  //
+  // RELAX_RATIO is set at 4 from the two nearest counter-examples rather than
+  // by taste. `offline` is 2.7x `printer` and stays required — *printer
+  // offline* is a real miss and it is the printer card's for never discussing
+  // a printer showing offline, which no matcher should paper over. `check` is
+  // 4.7x `disk` and goes.
+  //
+  // The relaxed set always contains the strict one — dropping a conjunct only
+  // ever adds cards — so this cannot lose an answer the conjunction found. It
+  // can only widen, which is what the ceiling below is for.
+  //
+  // It runs **only on a query the conjunction already answered**, never on one
+  // that found nothing. Relaxing an answer widens it; relaxing a zero invents
+  // one, and this file's stage-two comment settled that trade years ago — *a
+  // fallback that returns the wrong answer is worse than one that returns
+  // nothing.* Measured, not assumed: an earlier version of this stage ran on
+  // the zeros too, and turned four honest "no matches" into confident wrong
+  // cards — `difference between a hub and a switch` answered with **Docker —
+  // Containers, Images & Compose**, `terraform state locked` with *Policy as
+  // Code*. Those four zeros are recorded verdicts in `query_probe.mjs`, and a
+  // recorded zero is worth more than a plausible wrong answer.
+  const RELAX_RATIO = 4;
+  let relaxedTo = null;
+  if (matchCount && (widened === "words" || widened === "broad") && words.length > 1) {
+    const corpus = [];
+    domainSections().forEach(section => domainTopics(section.dataset.domain).forEach(t => {
+      if (t.folded === undefined) t.folded = foldSeparators(t.text);
+      corpus.push(t.folded);
+    }));
+    const df = allMatchers.map(alts =>
+      corpus.reduce((n, text) => n + (alts.some(m => m(text)) ? 1 : 0), 0));
+    // A word no card contains is not filler, it is unanswerable: nothing that
+    // keeps it can ever match, so it goes first whatever its rank. Subject to
+    // the same floor of two — dropping down to one absent-word survivor is the
+    // "different question" case again.
+    const present = words.map((_, i) => i).filter(i => df[i] > 0);
+    let keep = present.length >= 2 ? present : words.map((_, i) => i);
+    // Down to two by ratio alone. Going below two is allowed but conditional —
+    // see NARROW below — because the objection to a one-word relaxation was
+    // never that one word is too few. It was that it *widens*: `agile isn't
+    // working` collapses to *agile* and `page loads halfway` to *halfway*, and
+    // both widened a gated fixture that had already found its topic. No
+    // frequency separates those from the good cases — "working" is 19.2% and
+    // "running" is 19.1% — but the result size does, and directly, because it
+    // is the thing that was actually objected to.
+    while (keep.length > 2) {
+      const rarest = keep.reduce((a, b) => (df[a] <= df[b] ? a : b));
+      const commonest = keep.reduce((a, b) => (df[a] >= df[b] ? a : b));
+      if (commonest === rarest || df[commonest] < RELAX_RATIO * df[rarest]) break;
+      keep = keep.filter(i => i !== commonest);
+    }
+    // The last term standing, when dropping to it keeps the answer narrow.
+    // `how do i use vim` is [use, vim]: *use* is 36.1% of topics and *vim* is a
+    // handful, so the ratio is emphatic and the floor of two was the only thing
+    // stopping it. Relaxed to *vim* it returns a handful; relaxed to *agile* it
+    // returns 24 and breaks a ceiling. NARROW is the line between them, set at
+    // the widest result a single content word may produce and still be an
+    // answer rather than a subject listing.
+    const NARROW = 10;
+    let single = null;
+    if (keep.length === 2) {
+      const rarest = keep.reduce((a, b) => (df[a] <= df[b] ? a : b));
+      const other = keep.find(i => i !== rarest);
+      if (df[other] >= RELAX_RATIO * df[rarest] && df[rarest] > 0) single = [rarest];
+    }
+
+    if (keep.length !== words.length || single) {
+      const before = { count: matchCount, domains: domainCount, widened };
+      const sweepWith = idx => {
+        wideMatchers = idx.map(i => allMatchers[i]);
+        reset();
+        sweep("words");
+      };
+      // The ratio says the common term is filler, and for three words or more
+      // that is enough on its own. For the last pair it is enough *and* the
+      // result has to stay narrow, which is the only thing the objection to
+      // one-word relaxation was ever about.
+      if (single) {
+        sweepWith(single);
+        if (matchCount && matchCount <= NARROW) keep = single;
+        else sweepWith(keep);
+      } else {
+        sweepWith(keep);
+      }
+      wideMatchers = allMatchers;
+      if (matchCount && !tooBroad()) {
+        widened = "relax";
+        relaxedTo = keep.map(i => words[i]);
+        _searchTermList = [...q.phrases, ...relaxedTo];
+      } else if (before.count && before.widened !== "broad") {
+        // Relaxing overshot the ceiling. The conjunction's own answer was
+        // usable, so put it back rather than reporting the reader too broad
+        // for a widening they did not ask for.
+        reset();
+        sweep("words");
+        widened = before.widened;
+      } else if (matchCount) {
+        // Too broad relaxed, and nothing usable to fall back to.
+        widened = "broad";
+      }
+    }
+  }
+
   // Nothing anywhere, at any width — or everything, which is the same amount of
   // information. Re-run the strict pass so the page ends in the state a
   // no-match search has always left it in: every domain hidden behind the
@@ -2334,8 +2686,13 @@ function runSearch(raw) {
     // Say so when the fallback ran. A reader who typed a phrase and got cards
     // that merely contain all of its words should be told that is what
     // happened, or the results look like the search misunderstood them.
+    // A relaxed answer says which words it kept, because "contains all your
+    // words" would be a lie and "no exact match" alone does not tell the reader
+    // that the word they care most about is still in play.
     const wide = widened === "words"
       ? " · no exact match, so these contain all your words"
+      : widened === "relax"
+        ? ` · no exact match, so these contain ${relaxedTo.map(w => `“${w}”`).join(" + ")}`
       : widened === "fold" ? " · matched ignoring hyphens" : "";
     if (widened === "broad") {
       countEl.textContent = `no exact match${scope} · too broad to widen — try a more specific word`;

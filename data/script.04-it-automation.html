@@ -750,6 +750,60 @@ git worktree remove ../hotfix-dir
     </div>
 
     <div class="concept-card">
+      <div class="concept-label">Conflicts</div>
+      <div class="concept-title">A Merge Conflict Is Git Declining to Guess</div>
+      <div class="concept-desc">
+        Every command above can stop with a <strong>merge conflict</strong>. Rebase and
+        cherry-pick replay commits onto a base they were not written against, and replaying is
+        exactly where two edits to the same lines finally meet. A conflict is
+        <strong>not an error</strong> — it is the one case git refuses to decide for you, so
+        the work in front of you is a decision, not a repair.
+      </div>
+      <div class="concept-desc">
+        The trap is that <strong>"ours" and "theirs" swap meaning between a merge and a
+        rebase</strong>, and nothing on screen says so. A merge replays their commits into your
+        branch, so <em>ours</em> is your branch. A rebase replays <em>your</em> commits onto
+        their branch, so while it is running <em>ours</em> is the branch you are rebasing onto
+        — everyone else's work — and <em>theirs</em> is your own commit. Resolving a rebase by
+        the reflex learned from merges deletes your own change and leaves a clean-looking
+        history that silently dropped it.
+      </div>
+      <pre class="code-block">
+<span class="com"># Where am I, and what is actually still conflicted?</span>
+git status                       <span class="com"># "both modified" is the list that matters</span>
+git diff --diff-filter=U         <span class="com"># only the conflicted hunks</span>
+
+<span class="com"># Three inputs beat two. The common ancestor is what makes a</span>
+<span class="com"># conflict readable — without it you are guessing which side changed.</span>
+git checkout --conflict=diff3 -- path/to/file.py
+<span class="com">#   &lt;&lt;&lt;&lt;&lt;&lt;&lt; ours  |  ||||||| base  |  ======= theirs  |  &gt;&gt;&gt;&gt;&gt;&gt;&gt;</span>
+
+<span class="com"># Take one side wholesale, when you are certain which side it is</span>
+git checkout --ours   path/to/file.py   <span class="com"># in a REBASE: the upstream branch</span>
+git checkout --theirs path/to/file.py   <span class="com"># in a REBASE: your own commit</span>
+
+<span class="com"># Mark it resolved and carry on — the verb follows the operation</span>
+git add path/to/file.py
+git rebase --continue            <span class="com"># or merge --continue / cherry-pick --continue</span>
+
+<span class="com"># Walk the whole thing back, at any point, losing nothing</span>
+git rebase --abort
+git merge --abort
+
+<span class="com"># Stop resolving the same conflict on every retry of the same rebase</span>
+git config --global rerere.enabled true
+      </pre>
+      <div class="concept-desc verdict">
+        <strong>Git checks that the markers are gone, not that the result makes sense.</strong>
+        A resolution that compiles is the minimum bar and a resolution whose tests pass is the
+        real one — run them before <code>--continue</code>, not after the rebase finishes, or
+        you will be bisecting your own conflict resolutions later. The saving grace is that
+        <code>--abort</code> is available at every step and costs nothing, which makes a
+        conflict the rare git situation you can always walk out of unchanged.
+      </div>
+    </div>
+
+    <div class="concept-card">
       <div class="concept-label">Reference</div>
       <div class="concept-title">Investigation &amp; Undo — The Commands That Save You</div>
       <div class="concept-desc">

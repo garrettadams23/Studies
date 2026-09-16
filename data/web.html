@@ -507,6 +507,76 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🪜</span>
+              <span class="topic-name">The Cascade &amp; Specificity — Why the Rule You Wrote Is Not Applying</span>
+              <span class="topic-badge">CSS</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Four Questions, In Order, and Specificity Is Only the Third</div>
+                <div class="concept-desc">
+                  When two declarations set the same property on the same element, the browser does not
+                  guess and does not take the last one it read. It asks four questions in a fixed order
+                  and stops at the first that separates them. <strong class="c-cyan">Most arguments about
+                  CSS <span class="acro-exp">(Cascading Style Sheets)</span> are two people at different rungs of this ladder</strong>, which is why "just add
+                  <code>!important</code>" ends them and teaches nobody anything.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>#</th><th>The question</th><th>What wins</th></tr>
+                    <tr><td>1</td><td>Where did it come from, and is it important?</td><td>An author <code>!important</code> beats an author normal rule. A <em>user</em> <code>!important</code> beats even that — which is how a reader's accessibility stylesheet overrides yours, and is the reason the rung exists</td></tr>
+                    <tr><td>2</td><td>Which cascade layer?</td><td>Unlayered normal styles beat layered ones, and later layers beat earlier. <strong>For <code>!important</code> the whole order reverses</strong></td></tr>
+                    <tr><td>3</td><td>How specific is the selector?</td><td>Compared as a tuple — ids, then classes and attributes and pseudo-classes, then elements — left to right. One id beats any number of classes</td></tr>
+                    <tr><td>4</td><td>Which came last?</td><td>Source order, and only here. This is the rung people think is rung one</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Specificity is <strong>a tuple compared left to right, not a three-digit number</strong>.
+                    Eleven classes do not add up to one id, and the day someone tells you they do is the day
+                    a stylesheet acquires its first <code>!important</code>. Note also that
+                    <code>:where()</code> contributes <em>zero</em> specificity while <code>:is()</code> and
+                    <code>:not()</code> take the specificity of their most specific argument — which makes
+                    <code>:where()</code> the one selector that lets you write a broad default somebody else
+                    can override with a single class.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The bug that sent you here</div>
+                <div class="concept-title">"It Is Not Applying" Usually Means It Applied and Lost</div>
+                <div class="concept-desc">
+                  CSS does not silently ignore a rule
+                  it matched. It shows you the winner and strikes through the loser, so the first move is
+                  never to edit the stylesheet — it is to select the element and read what the browser
+                  actually did. <strong class="c-amber">A struck-through declaration and a missing
+                  declaration are completely different bugs</strong>, and they look identical from the
+                  editor.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <tr><th>What you see</th><th>What happened</th><th>Fix</th></tr>
+                    <tr><td>Your rule is listed and struck through</td><td>It matched and lost the cascade</td><td>Read the rule above it. Raise specificity deliberately, or put yours in a later layer — do not reach for <code>!important</code> at rung one of four</td></tr>
+                    <tr><td>Your rule is not listed at all</td><td>The selector never matched this element</td><td>A typo, the wrong element, or a descendant combinator that does not hold. Check the element you selected is the one you meant</td></tr>
+                    <tr><td>Listed, not struck through, and still no effect</td><td>The <em>value</em> was invalid, so the whole declaration was dropped</td><td>One bad value discards its own declaration and nothing else. A misspelled <code>var()</code> name does this quietly — see Modern CSS</td></tr>
+                    <tr><td>It works until you add a shorthand</td><td>A shorthand resets every longhand it covers, including the ones you did not mention</td><td><code>background: red</code> wipes <code>background-image</code>. Order the shorthand first, longhands after</td></tr>
+                    <tr><td>It applies to the parent and not the child</td><td>The property does not inherit</td><td>Colour and font inherit; padding, border and background do not. <code>inherit</code> asks for it explicitly</td></tr>
+                    <tr><td>Two identical selectors, the wrong one wins</td><td>Source order, rung four — and bundlers decide it</td><td>The import order in the build, not the order in your editor</td></tr>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Open the element inspector before you open the stylesheet.</strong> Two seconds
+                    there distinguishes *lost the cascade* from *never matched* from *value rejected*, and
+                    those three have nothing in common except the sentence the reader says out loud. The one
+                    habit worth building: when you find yourself writing <code>!important</code>, you have
+                    concluded rung three without checking rungs one and two &mdash; and on a codebase with
+                    cascade layers, rung two was very probably the answer and would have cost one line.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">✨</span>

@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **43**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **62**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,22 +38,22 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,551** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
-| Mean chars per concept card | **1,382**, or **1,117 excluding verdicts** — the second is the padding counter-metric: it rose 1 while the first rose 1, so the growth is not all verdict | `depth_report.py` |
+| Topics | **1,552** across 30 domains | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
+| Mean chars per concept card | **1,389**, or **1,122 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **72 of 78**, 5 zeros and 1 wrong-card miss, all 6 recorded, 0 unexplained | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
-| Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **35% raw** headroom — room for ~821 more topics | `page_budget.py` |
+| Reader questions answered | **170 of 175**, **0 unexplained** — eleven batches. The two subject-shaped ones opened at a third missing; the eight symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros and the 1 wrong-card are recorded verdicts, and `--self-test` checks that a verdict still describes its row. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
+| Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
+| Page budget | **34% raw** headroom — room for ~805 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,117 chars**, median 3,705 — the number a deepening wave has to move | `depth_report.py` |
-| Gates | **39**, and the same 39 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 14/14 · visual 2/2 · backup 3/3 | `make all` |
-| Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **43** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Depth tail | **10th percentile 2,135 chars**, median 3,731 — the number a deepening wave has to move | `depth_report.py` |
+| Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
+| Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
+| Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
+| Session records | **67** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -447,9 +447,9 @@ cannot be measured, is honestly marked as having no condition at all.
 
 ## The fifth, which is about this file
 
-| Risk | State |
-|---|---|
-| **The plan outgrows its own readability** — 11,600 lines, and the useful part is the last few hundred | ✅ **Closed.** Option 3 shipped, then option 1 at 22,745 lines |
+| Risk | Reopens when | State |
+|---|---|---|
+| **The plan outgrows its own readability** — 11,600 lines, and the useful part is the last few hundred | `check_plan_numbers.py` reports the live file past **8,000 lines** | ✅ **Closed.** Option 3 shipped, then option 1 at 22,745 lines |
 
 §6 of the backlog reality check said this in a milder form: *most of those 935 will never be
 built, and the useful part of this file is the last two hundred lines*. That was true at
@@ -487,6 +487,35 @@ still describes Phases 4–6 as planned and quotes ~828 remaining cards. It went
 archive uncorrected. A plan that records what it expected beside what happened is worth more
 than one that records only the outcome, and that table is the primary evidence for this
 archive's most repeated lesson: **the backlog count was badly inflated.**
+
+### And then it was marked Closed with no reopen condition
+
+Which is the defect the section directly above diagnoses, in the one row that had earned the
+right not to have it. The four accumulation risks each got a *reopens when* column and an
+argument for why a closed risk without one **comes back unannounced**. The fifth — the only
+risk here that the file closed by following its own instruction — was written up as a
+success story and left with a State column and nothing else.
+
+It went unnoticed because the evidence for it is the file you are reading, and a file does
+not look long from inside a session that is adding to it. **This one added 1,353 lines, a
+31% increase, without anybody thinking about length once.** That is precisely the accumulation
+shape: a small cost per session, never collected, no day on which it becomes today's problem.
+
+So the row has a condition now, and `check_plan_numbers.py` prints the line count on every
+`make check` and warns past the threshold. It reports rather than fails, because a long plan
+is not a broken build and gating it would mean a session that wrote a good record could not
+commit it.
+
+**8,000 is measured rather than chosen**: double the ~4,000 the split left, and a third of
+the 22,745 that made it acute. Far enough away not to nag, close enough that the file is
+still comfortably splittable on the day it fires.
+
+The general form, which is the fourth instance this session of the same thing: **a rule
+written for a category tends not to be applied to the case that motivated it.**
+`check_renames` matched case-sensitively because its own example was lower case;
+`check_css_vars` read only the stylesheet because its own example was in the stylesheet;
+`script.js` was the one file missing a convention three others had; and the register's
+reopen-condition rule was applied to every risk except the one that proved it was needed.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -4320,4 +4349,1976 @@ measuring the code path rather than the promise.
 ```
 resilience 63 -> 64 checks · 39 gates green · smoke 163 · search 51
 axe 31 · mobile 14 · visual 2 · backup 3
+```
+
+---
+
+## Session — the two waves Phase 11 never read, and the number that was the floor
+
+Every census came back clean — `make check` green on a clean tree, 8 thin
+topics of which 7 are short by design, 0 unread duplicate pairs, 0 deep
+orphans, 72 of 78 reader questions answered with all 6 misses recorded. So
+the queue was not a census. It was §6 of Phase 11: **V1, V3 and V5 were
+audited after Phase 7 closed and V2 and V4 were not.** Those two are the
+waves this session ran.
+
+### The mechanical search over-matched exactly as §7 predicted
+
+V2 is "numbers followed by items, days, requests, GB". Run literally it
+returns most of the site: `max 15` hop counts in RIP, `Cat 5e 1 Gb/s 100m`,
+`max_workers=5`, `f″ &lt; 0 concave down`, Amdahl's table, a 401k deferral cap.
+Narrowing to numbers that sit next to *vendor-default language* —
+`by default`, `maximum of`, `limit of`, `quota`, `up to`, `capped at` — cut
+it to 66 hits across 22 domains, and reading those 66 left **six** that are
+a vendor's number rather than a teaching one:
+
+| Claim | Domain | Verdict |
+|---|---|---|
+| Inter-site AD replication "15 minutes by default" | `infra` | **Wrong.** Fixed, below |
+| Prefetch "capped at 1,024 entries on client editions" | `blueteam` | Right, and incomplete — anchored and extended |
+| Cloud Storage minimums "Nearline 30, Coldline 90, Archive 365" | `cloud` | Right, and designed around — anchored |
+| AD Connect deletion threshold "500 objects per run" | `infra` | Right, and the card already prints the cmdlet that reads it. Left alone |
+| DNS scavenging "both default to seven days" | `infra` | Right, unchanged since Windows 2000. Left alone |
+| journald "up to 10% of the filesystem" | `linux` | Right, a systemd default. Left alone |
+
+**Three of six needed nothing.** That is the §7 result a third time, and it
+is worth stating plainly rather than treating as a disappointment: a pass
+that reads sixty-six claims and changes three is a pass that found the site
+already disciplined, and the only way to learn that was to read them.
+
+### The one that was wrong, and the shape of the error
+
+```
+Between sites    15 minutes by default, and compressed
+```
+
+**15 minutes is the lowest interval a site link will accept. The default is
+180.** The two numbers are adjacent in every admin's memory and they mean
+opposite things, which is why this one is easy to write and hard to see.
+
+What makes it worth a record is not the number — it is that the card's own
+verdict *depended* on it:
+
+> Before troubleshooting, confirm enough time has passed for the path involved
+
+A reader who does exactly what the verdict says, waits the fifteen minutes
+the table gave them, and then opens `repadmin /replsummary` on a healthy
+forest has been sent to debug nothing by the card that was trying to stop
+them. **A wrong number in a table is a fact; a wrong number a verdict
+instructs the reader to act on is a bug.** That distinction is the one to
+carry: when auditing a class of claims, read what the card *does* with the
+number before deciding how much the number matters.
+
+Fixed to "up to 3 hours out of the box", with the trap promoted into the
+verdict — the figure everyone quotes is the floor, and for the first two and
+a half hours a healthy forest looks exactly like a broken one — and a fact
+anchor recording both numbers so the next reader re-verifies in a minute.
+
+### V4, and two 93s that are not a contradiction
+
+V4's method is "cross-check `m365`, `cloud` and `blueteam` against each
+other first". Reading the retention numbers in all three:
+
+| Number | Where | About |
+|---|---|---|
+| 93 days | `m365` | SharePoint recycle bin, both stages |
+| 93 days | `cloud` | Azure Monitor platform metrics |
+| 30 days | `m365`, twice | Group soft delete — dated in one card, fact-anchored in the other, and **they agree** |
+| 30 days | `m365` | Quarantine release window |
+| 30 / 90 days | `blueteam` | "keep 30 because 90 was expensive" — a budget anecdote, not a default |
+
+The two 93s are the finding. They are equal, they are in the cross-checked
+domains, and they are **about entirely different products** — a numeric
+contradiction checker would have flagged them on its first run and been
+wrong. `check_contradictions.py` already refuses this class in its
+docstring: *"a limit, a retention period, a version number — needs to know
+what the number is about, which no amount of regex supplies."* This is that
+sentence meeting its own example. V4 closes with no edits and the refusal
+vindicated.
+
+### What the two waves leave
+
+Phase 11 stays open as a standing discipline, and all five waves have now
+been read at least once. The counter-discipline held: **the volatile-span
+count did not move** (45 before, 45 after) and the fact anchors went 9 → 12,
+which is the right direction — an anchor records where a number came from
+without promising to re-check it, and all three of this session's numbers
+are ones a reader can verify faster than a maintainer can re-audit.
+
+```
+45 volatile spans (unchanged) · fact anchors 9 -> 12 · 39 gates green
+check · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 14
+visual 2 · backup 3
+```
+
+---
+
+## Session — the census that was counting, and the word the reader threw in
+
+The last session's record ends on a table it wrote for `storage_denied_test.mjs`
+and did not apply anywhere else:
+
+| Asserts | Passes when |
+|---|---|
+| **It did not throw** | The feature is silently broken |
+| **It returned something** | The something is wrong |
+| **It returned the right thing** | — |
+
+`query_probe.mjs` has a field for the third row. It is called `want`, it names
+the topic a query should reach, its own comment says *"a query that comes back
+with cards, none of them the one it was asking for, is a miss wearing a result
+count"* — and it was filled in for **one of the seven reader groups**. The other
+66 queries were the middle row.
+
+### Filling it in cost twelve points of a headline number
+
+**72 of 78 answered became 57.** The first six queries of the first group
+contained four misses that had been scored as successes since the file was
+written:
+
+```
+printer offline        1 result   redteam/bettercap-the-mitm-framework
+user forgot password   2 results  script/iot-security · endpoint/browser-management
+shared drive not mapping  2       threat/the-cyber-kill-chain · pentest/pentest-reporting
+account keeps locking out 3       mind/survival-mindsets · blueteam/phishing-first-ten-minutes
+```
+
+And `how do adults learn` missed a topic **titled** *How Adults Actually Learn*.
+
+A `want` is only written where one card is the defensible answer; six queries
+have none and stay scored by count, because inventing a target to move a number
+is the same failure in the other direction.
+
+### The fifteen split three ways, and only four were the corpus
+
+Read one at a time against the wanted card's own text — which is the step that
+made this worth doing, because before it all fifteen looked alike:
+
+| Cause | n | What it looks like |
+|---|---|---|
+| **One word too many** | 9 | The subject word is in the card; the filler beside it is not. `do we need iso 27001` missed a card *titled* ISO 27001 over **need**; `cron not running` missed *Cron Jobs* over **running** |
+| **The strict stage stopped on a worse card** | 2 | `kill a process` is a literal phrase in the PowerShell reference, so the search never widens to *Process Management*. Recorded, not fixed — preferring a later stage needs ranking, and this matcher is a filter |
+| **The card does not use the reader's word** | 4 | The Git advanced-workflows card never says *merge conflict*. The adult-learning card says *spacing*. The JML card says *joiner*, never *new starter* |
+
+### The matcher stage, and the number that had to be measured
+
+A conjunction weights every term the same and a reader's question does not. The
+fix is a fourth stage that drops the words which cannot narrow anything — and
+**the rule for which those are cannot be a word list**:
+
+```
+check 39.8%   need 25.2%   break 21.3%   running 19.1%   keeps 12.1%
+disk   8.5%   iso   1.1%   caching 2.5%  cron    1.4%    dropping 1.7%
+```
+
+An absolute cut-off gets it wrong immediately: `policy` sits at 19.5% and is the
+*subject* of "group policy not applying", one row above `running` at 19.1% which
+is filler in "cron not running". **The ratio inside the query is what is
+stable** — a word four times commoner than the rarest word the reader typed
+cannot be what they were asking about, and requiring it can only remove cards
+the rare word already found.
+
+### Two guards, both put there by something going wrong first
+
+The first version closed 15 misses down to 10 and broke two gated fixtures.
+`agile isn't working` collapsed to *agile* and `page loads halfway` to
+*halfway*, each widening a query that had already found its topic. No frequency
+separates them: **`working` is 19.2% and `running` is 19.1%**, one is the
+subject and one is filler, and that is English rather than statistics. The guard
+is a floor of two terms — *relaxing to a single word is not a relaxation of the
+reader's question, it is a different question* — and it costs the two queries
+whose filler was everything but one word. Both belong in the card anyway.
+
+The second version manufactured wrong answers out of honest zeros:
+
+```
+difference between a hub and a switch   →  Docker — Containers, Images & Compose
+terraform state locked                 →  Policy as Code — OPA/Rego & Kyverno
+docker image too big                   →  VS Code — Remote Dev & Dev Containers
+someone clicked the link               →  Endpoint Security
+```
+
+All four are *recorded verdicts* in the probe — deliberate zeros a previous
+session reasoned about and kept. Turning them into confident wrong cards is the
+exact trade `script.js` settled long ago in its own stage-two comment: **a
+fallback that returns the wrong answer is worse than one that returns
+nothing.** So the stage runs only on a query the conjunction already answered.
+Relaxing an answer widens it; relaxing a zero invents one.
+
+### What it came to, honestly
+
+```
+                       answered   zeros   wrong card   unexplained
+counting only              72       5          1            0
+want filled in             57       5         16           15
++ relaxation stage         60       5         13           12
+```
+
+Three misses closed, **no zero manufactured and no gate ceiling moved** — the
+first version bought five more and paid for them in both currencies, and was
+thrown away for it. The remaining twelve are named in `query_probe.mjs` and are
+mostly kind 1: the card says it in the other word, which is a prose wave and
+better writing either way.
+
+The mobile gate gained a check on the way past. The relaxed message names the
+words it kept, so its length depends on the query, and `page loads halfway`
+had quietly started taking the new branch — which is not the same as testing
+it. The case worth pinning is the widest: a relaxed query across fifteen
+domains, where the count, the domain count and two quoted terms are long at
+once.
+
+```
+probe 78 queries · 60 answered · 12 unexplained, named · search 51/51 with no
+ceiling moved · mobile 14 -> 15 · 39 gates green · smoke 163 · a11y 31
+resilience 64 · visual 2 · backup 3
+```
+
+---
+
+## Session — three cards the probe named, and none of them was a synonym
+
+The previous record left twelve named misses and called them "mostly kind 1:
+the card says it in the other word, which is a prose wave". That framing was
+half wrong, and reading the three best ones is what showed it.
+
+**Kind 1 says name both words. Two of these three had no word to name** — they
+had a hole where the reader's question goes, and the probe found the hole by
+looking for the word.
+
+| Miss | What the card already had | What was missing |
+|---|---|---|
+| `merge conflict` | `bisect`, `rebase -i`, `reflog`, `stash`, `cherry-pick`, `worktree`, `blame`, four kinds of undo | **Conflicts.** A card that teaches rebase and cherry-pick and never says what happens when they stop |
+| `cron not running` | PATH, redirect output, `chmod +x`, crontab.guru | The symptom. Four bullets of causes with no statement of what the reader is looking at |
+| `printer offline` | Technologies, deployment models, secure release, a six-step triage | The single commonest printer ticket there is |
+
+### The inversions each one turned out to have
+
+None of these were reachable by adding a word, and each has the shape the
+rubric asks for — the sentence that is true and contrary to instinct:
+
+* **A merge conflict is git declining to guess, and "ours" and "theirs" swap
+  meaning between a merge and a rebase.** A merge replays their commits into
+  your branch, so *ours* is yours. A rebase replays *your* commits onto their
+  branch, so while it runs *ours* is everyone else's work and *theirs* is your
+  own commit. Resolving a rebase by the reflex learned from merges deletes your
+  own change and leaves a clean-looking history that silently dropped it. Git
+  checks the markers are gone, not that the result makes sense.
+* **A cron job that "did not run" almost always ran.** The fingerprint is *it
+  works when you type it and not when cron types it*, which is one sentence
+  about the environment — and `env -i /bin/sh -c '/path/to/job'` reproduces it
+  in one line and is right far more often than the expression is wrong. The
+  `%` that cron reads as a newline and the dot that makes `run-parts` skip a
+  file are in the table now; both were missing and both are silent.
+* **"The printer is offline" is a claim by the client, not a report from the
+  device.** A device printing its configuration page for somebody standing
+  beside it can show offline on every desk in the building, because the queue
+  is reporting that *this computer* did not get an answer it expected. Which
+  makes power-cycling the printer a reboot of the one component that was never
+  at fault.
+
+### Why this is not keyword stuffing, and how to tell next time
+
+The probe's own rule is that seeding symptom phrases into cards is *"keyword
+stuffing with a rationalisation attached"*, and it is right. The test that
+separates the two is not whether the word appears afterwards — it is
+**whether the card was incomplete without the thing the word names**:
+
+> A card that teaches `git rebase -i` and never mentions conflicts is missing
+> content. A card that lists cron's PATH gotcha without naming the symptom is
+> missing a sentence. Adding "merge conflict" to a card that genuinely has no
+> conflict material would have been the stuffing.
+
+Three of nine remaining misses are still the synonym shape — *joiner* against
+*new starter*, *spacing* against *spaced repetition* — and they are a smaller,
+different edit. Two more, `kill a process` and `writing a detection`, are the
+matcher limit recorded last session and not a content problem at all.
+
+```
+probe 63 of 78 answered · 9 unexplained, named · 3 concept cards added
+depth mean 1,382 -> 1,383 · excluding verdicts 1,117, unmoved
+39 gates green · check · smoke 163 · search 51 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — two symptoms infra described without naming, and a stale verdict
+
+Four more of the probe's misses, and the most useful thing this wave produced
+was not a card. It was catching a `keep` note that had gone false.
+
+### The two infra cards
+
+Both had the mechanism and neither had the ticket.
+
+**Processing Order & Precedence** explains LSDOU, Enforced, Block Inheritance,
+the computer/user split and loopback — and never says what the reader types.
+The missing card is the one the rest of the topic implies: *"it is not applying"
+usually means something else won*, because **precedence working correctly looks
+exactly like a policy that did not arrive**. Five reports, five causes, and only
+one of them is a fault. The verdict is `gpresult /h` run as the affected user on
+the affected machine, with its limit stated in the same breath — it reports what
+*did* happen and has nothing to say about what *should* have, so it settles "did
+something else win" and never "is this policy right".
+
+**File Services** had share-versus-NTFS, DFS and quotas, and nothing about the
+drive letter. *A mapped drive is an intention, not a connection* — re-established
+at every sign-in, in whatever security context the process doing the asking
+holds, which is why one letter can be present, absent and unreachable on one
+machine at one moment. The red cross that is cosmetic, the map that loses a race
+with the network, the elevated process holding a different token, one credential
+set per server name, and the address that authenticates differently from the
+name. Five tickets that read as one.
+
+### The stale verdict, which is the part worth keeping
+
+`someone clicked the link` carried this note:
+
+> kind 3 — the response card exists and does not use these words
+
+It had been true. It was not true any more: the query stopped being a zero when
+the matcher gained its relaxation stage, and it was returning four cards — none
+of them the phishing-response card — while a note said it returned none. **A
+recorded verdict decays when the thing it describes changes underneath it**, and
+nothing checks a `keep` note the way `check_plan_numbers.py` checks a table row.
+
+Reading the card settled it, and the answer was smaller than the note: it says
+`clicked` three times, `someone` twice, `URL` twice and **`link` not once**. A
+phishing response card that never uses the word the person reporting it will use
+is not being precise, it is using the technical word where both belong. Two
+words changed.
+
+The general form, which is the thing to carry: **a verdict recorded against a
+zero is only valid while the query is still a zero.** Every `keep` note in that
+file asserts a state, and the ones asserting "returns nothing" are the ones a
+matcher change can silently falsify. The probe reports zeros and misses
+separately; it does not check that a note still describes the row it sits on.
+
+### And two recorded rather than fixed
+
+`kill a process` and `writing a detection` are the matcher limit from the
+previous session, now written into the file instead of reappearing as
+unexplained every run. Both have every word of the query in the wanted card; a
+literal phrase in a worse card answers first and stops the search. Preferring a
+later stage needs ranking, and this matcher is a filter.
+
+```
+probe 78 · 66 answered · 5 unexplained, named · zeros 5 -> 4
+5 concept cards this wave and last · mean 1,384 / 1,118 excluding verdicts, both +2
+39 gates green · check · smoke 163 · search 51 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the check that already existed, one file over
+
+The previous record ended on a general statement and did not act on it:
+
+> A verdict recorded against a zero is only valid while the query is still a
+> zero. The probe reports zeros and misses separately; it does not check that a
+> note still describes the row it sits on.
+
+It does now. And the first thing the work turned up is the part worth keeping:
+**`near_duplicates.py` has had exactly this check for as long as it has had
+verdicts.**
+
+```
+# A verdict whose pair no longer scores is a verdict about content that has
+```
+
+Its docstring even argues the case — *"a verdict whose pair no longer scores is
+reported as stale, so the queue is worked"*. Two files in the same `tools/`
+directory store a human's recorded judgement about a measurement. One checked
+that the judgement still had something to be about. The other did not, and the
+one that did not is where a note went false and stayed false.
+
+**The lesson is not "add staleness checks".** It is that a convention invented
+once for a good reason does not travel to the next file that needs it unless
+somebody carries it, and the thing that made this visible was a *defect*, not a
+review. Looking for the same shape elsewhere costs a grep: `search_test.mjs`
+also holds recorded misses, and it already handles the same decay in the same
+direction — *"a miss that starts working is reported too — it should be promoted
+into FIXTURES"*. Two of three had it. Nobody had noticed the third.
+
+### What is checkable, and what deliberately is not
+
+A `keep` note is prose, and most of what it says is an argument. Two assertions
+in it are not:
+
+| Claim | Check |
+|---|---|
+| The note says the query **returns nothing** | It either returns nothing or it does not. "zero", "found nothing", "returns nothing", "no results" |
+| The note explains why a query **misses its `want`** | It either still misses or it reaches the card, in which case the reason has been answered and the note is hiding finished work |
+
+No threshold, nothing for a reader to overrule — the sharp shape
+`check_css_vars.py` argues for. What it will not do is judge whether the prose
+is *right*: a note reading "the comparison is not phrased" could be wrong about
+the corpus and this cannot tell. It checks the one assertion a machine can
+evaluate and leaves the argument to a person, which is the division this file
+draws everywhere else.
+
+### It reports; its logic gates
+
+The probe is a census and stays one — gating it would make a content wave's
+findings break the build, which is the whole reason it exits 0. But the
+staleness decision is ordinary logic, so `--self-test` runs it against eight
+fixtures in `make check` and in CI, with no browser. **Gates 39 → 40**, the
+same 40 in both lists.
+
+Proved twice, because a check that has never fired is a check nobody has tested:
+the fixtures, and then the live path, by falsifying a real note on a copy of the
+file and watching it name the row.
+
+```
+  "printer offline"  (a service desk engineer)
+      the note says this returns nothing; it returns 1
+```
+
+The stale report prints **before** the findings and again after them, because a
+note that has gone false is a defect in the file rather than a fact about the
+site, and every count on the page is read through it.
+
+```
+gates 39 -> 40 · probe self-test 8 fixtures · 78 queries · 66 answered
+0 stale verdicts · smoke 163 · search 51 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the queue emptied, and the number it emptied to is lower than the one it started at
+
+```
+72 of 78 answered   ← counting results
+57 of 78 answered   ← counting whether the right card came back
+71 of 78 answered   ← after the matcher stage and eleven cards
+ 0 unexplained
+```
+
+The middle number is the honest one and it is the reason the last is worth
+anything. A census that went **up** from 72 would have been the same lie in a
+better mood.
+
+### The last five, and what each turned out to be
+
+| Miss | Verdict |
+|---|---|
+| `outlook won't connect` | **A hole.** The M365 troubleshooting playbook is five abstract layers and a symptom table written in categories — it never names one product. A playbook whose examples are "one user, one feature" cannot be found by a ticket that says *Outlook won't connect*, and cannot be used by the person holding that ticket either |
+| `spaced repetition` | **A wrong `want`.** The card I pointed it at names Spacing in its *title* and covers it in one table row about teaching other people. The card that teaches the technique is in `productivity`, which then turned out not to name it in running text — it says "spaced-repetition software" in a verdict and nowhere else |
+| `why does caching break things` | Synonym, with something worth adding underneath it |
+| `first week as a manager` | Synonym, same |
+| `onboarding a new starter` | Synonym — the card says *joiner* three times and *onboarding* never |
+
+### The correction is the part to keep
+
+`spaced repetition` was pointed at the wrong card by me, in the same session
+that argued a `want` should only be written where one card is the defensible
+answer. Two cards had the word in scope and I picked the one whose **title**
+matched instead of the one whose **content** did. The probe caught it the only
+way it could — by continuing to report a miss after a change that should have
+closed it.
+
+**Title-matching is how a `want` goes wrong**, and it is worth writing down
+because it is the cheap, plausible move: the career card is called *How Adults
+Actually Learn — Relevance, Practice, Feedback & Spacing* and is about running
+training for other people. The reader typing "spaced repetition" wants to study,
+not to teach. Same word, different subject, and the slug is no help at all.
+
+### Three synonyms, and what they were covering
+
+None of the three was worth only a word, which has now happened often enough
+this session to be the rule rather than the exception:
+
+* **Caching breaks things in one direction only.** It never makes the source
+  wrong; it serves an answer that *used to be* correct — which is why a cache
+  bug reproduces perfectly for one person and is invisible to everybody else,
+  including whoever is trying to fix it.
+* **The first week as a manager is not phase one, it is the week that decides
+  whether you get one.** A new manager who spends it answering the technical
+  questions has told the team precisely what they intend to be for.
+* **Every M365 report arrives phrased as a client problem, because the client
+  is the only layer the user can see.** Four of the five layers are invisible
+  from a desk, so a tenant incident, an expired token, a disabled service plan
+  and a Conditional Access policy all surface as one sentence. Which is why the
+  instinct is to repair the thing the sentence names, and why that instinct is
+  wrong four times out of five.
+
+### Where the probe stands
+
+Every one of the 78 now carries the topic it should reach or a recorded reason
+why it cannot, and the seven recorded ones are: four zeros a previous session
+reasoned about and kept, and three misses that are matcher limits rather than
+corpus gaps. **The backlog is empty and the file says why for every row in it.**
+
+The next session should not read this as "the probe is finished". It is finished
+*against its own 78 questions*, and those were written by people who know the
+site. The measurement that would move now is more queries, not more fixes — and
+the honest expectation is that a fresh 78 would open at something like 57 again.
+
+```
+probe 78 · 71 answered · 0 unexplained · 11 concept cards and prose edits
+across 9 domains this session · 40 gates green · smoke 163 · search 51
+a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the prediction, tested: a fresh 29 questions opened at the same third
+
+The last record made a claim and it was cheap to check:
+
+> The probe is finished *against its own 78 questions*, and those were written by
+> people who know the site. The honest expectation is that a fresh 78 would open
+> at something like 57 again.
+
+**Twenty-nine new questions opened with ten misses.** The original 78 opened
+with fifteen. Both are about a third, and the agreement is the useful part: the
+miss rate is a property of writing a reference, not of this particular batch or
+of the people who wrote it. A site that answers its own questions is not the
+same as a site that answers a reader's.
+
+### What the ten were
+
+Three of them were **holes**, and each hole sits directly under a heading that
+promised to cover it:
+
+* **`"The Disk Is Full"` never mentioned inodes.** Its step 1 is `df -h`, and
+  inode exhaustion is precisely the case where `df -h` tells you there is no
+  emergency while every write fails with the *"No space left on device"* the
+  card opens on. The shape underneath is worth the card on its own: the more
+  often a job fails, the faster it exhausts the thing that would let it report
+  the failure.
+* **The SSH card never quoted `Permission denied (publickey)`.** The most common
+  SSH error there is, and the message misleads in a specific direction — it
+  almost never means the key is wrong. The cause that outranks all the others is
+  a group-writable **home directory**, which the card's own `chmod` block does
+  not cover because it stops at `~/.ssh`.
+* **Subject Access Requests at Scale never said "GDPR" or "data subject".** The
+  card is about a right, and it named neither the right's holder nor the
+  regulation that creates it.
+
+Four were synonyms with something real underneath — *penetration test* against
+*pentest*, *screen sharing* against *Screen Shares*, *on call* against
+*on-call*, the leaver's *files* against *the OneDrive*. And three are the
+matcher.
+
+### Two `want` values that were wrong, both mine, both caught the same way
+
+`spaced repetition` last session, and `port already in use` this one. The second
+is the more instructive: I pointed it at Process Management because the phrase
+has "process" in it, and the commands that answer *what is holding this port*
+live in the performance-debugging card's `lsof`/`fuser` section. **The probe
+caught both by continuing to report a miss after a change that should have
+closed it** — which is the only way a wrong target can announce itself, and an
+argument for fixing the card *and* re-running rather than fixing and assuming.
+
+### The stage-stop class now has four members
+
+`kill a process`, `writing a detection`, `incident postmortem`, `penetration
+test report`. In every one of them **the wanted card contains every word of the
+query**, and a single other card containing the words *adjacent* answers first
+and stops the search:
+
+```
+penetration test report   1 match in 1 domain
+incident postmortem       1 match in 1 domain · matched ignoring hyphens
+kill a process            1 match in 1 domain
+writing a detection       1 match in 1 domain
+```
+
+All four return **exactly one result**, and that is a signal rather than a
+coincidence. Recorded here rather than acted on, because the fix is a change to
+the stage order and that deserves its own measurement.
+
+```
+probe 105 questions · 95 answered · 3 unexplained, named · 8 concept cards
+and prose edits across 7 domains · 40 gates green · smoke 163 · search 51
+a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — a single result is a coincidence, except when it is the answer
+
+The previous record left four misses with one fingerprint and declined to act:
+
+```
+penetration test report   1 match in 1 domain
+incident postmortem       1 match in 1 domain · matched ignoring hyphens
+kill a process            1 match in 1 domain
+writing a detection       1 match in 1 domain
+```
+
+In all four the card the reader wanted contains **every word of the query**, and
+a single unrelated card containing those words *adjacent* answers first and
+stops the search. Being adjacent is the whole of its claim.
+
+So a single result escalates now. It is safe in the strict direction because
+each stage is a superset of the one before: a card containing the query as a
+phrase necessarily contains the query's words, so widening cannot lose the hit
+it started from.
+
+### The guard, and the three discriminators that did not work
+
+The first version broke two gated fixtures, both of which had exactly one result
+and the *right* one. `why is my laptop slow` returned the card called **"Why Is
+My Laptop Slow?"** and widening it to sixteen serves nobody.
+
+Three candidate rules were measured before one worked:
+
+| Rule | Why not |
+|---|---|
+| Result count after widening | The four good cases land at 12, 16, 22 and 30; the two bad ones at 10 and 16. No cap separates them |
+| Word rarity | `penetration` is in 1.0% of topics, `revoke` in 2.6%. The word that should have been protected is the *commoner* one |
+| **The lone hit's own slug carries a word of the query** | **This works**, and it is not a coincidence that it does — a slug is built from a title, and a title is a claim about the subject rather than a mention of it |
+
+That leaves one fixture genuinely worse: `revoke before reset` goes from one
+perfect hit to ten containing it, because the phrase is the card's *thesis* and
+not its title, and no rule reaches that. **Its ceiling moved 8 → 20 and the
+fixture table says in full that this is a cost paid rather than a stale number
+corrected** — the one exception to a rule that file states plainly, written down
+beside the number so nobody later reads 20 as generosity.
+
+### The staleness check earned its keep two waves after it was written
+
+It fired for the first time on this change, unprompted, naming three rows:
+
+```
+"writing a detection"   the note explains a miss that no longer misses
+"kill a process"        the note explains a miss that no longer misses
+"standups"              the note explains a miss that no longer misses
+```
+
+`standups` is the one worth pausing on. Its note is **the reason the probe grew
+a `want` field at all**, it had survived several sessions, and it ended with a
+refusal: *writing 'standups' into the prose to close it is the keyword stuffing
+this file forbids.* The escalation closed it without a word of prose being bent,
+which is exactly what that note was holding out for — and without the check,
+three verdicts describing a world that no longer exists would have sat there
+until somebody happened to re-read them.
+
+### And one word
+
+`explain oauth` returned **nothing** against a domain full of OAuth cards. The
+conjunction required a word the OAuth card has no reason to contain, and the
+query is two words long, so the relaxation stage's floor of two could not drop
+it. `explain` is an instruction to the site, never a subject, and it joins
+`how what why when where`. Only that one: **`show` is a Cisco command here**,
+and `define` and `describe` are ordinary content verbs in a reference.
+`explained` and `explains` are separate tokens and stay, which is what keeps
+*Load Balancers Explained* reachable by its own title.
+
+```
+probe 105 questions · 101 answered · 0 unexplained · 0 wrong-card · 0 stale
+4 zeros, all recorded · search 51/51 with one ceiling moved and the reason
+written beside it · 40 gates green · smoke 163 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the guard this file credits with catching "whitelist" was not catching it
+
+Found by reading, not by a tool, and while doing something else entirely. The
+SSH card was open for a different reason and one of its rows said:
+
+```
+AllowUsers   alice bob   Whitelist who can SSH in
+```
+
+`data/renames.json` has listed **whitelist → allowlist since 2020-06**.
+`check_renames.py` runs in `make check` and in CI. The build had been green
+throughout. And the session operating manual at the top of this file names that
+exact rename as failure #3, with the guard column reading *"`check_renames.py`,
+already in `make check`. First time it caught same-session writing."*
+
+It caught that one. It could not have caught these:
+
+```
+whitelist   Whitelist who can SSH in                       linux
+whitelist   Whitelists exactly where scripts may load from sec
+whitelist   Whitelist which executables are allowed to run sec
+whitelist   Application whitelisting, EDR                  threat
+whitelist   a whitelisted domain added to fix one          m365
+blacklist   Check your IP against blacklists regularly     linux
+```
+
+### Two characters of regex, and both of them hid the same class
+
+```python
+re.finditer(r"\b" + re.escape(old) + r"\b", text)
+```
+
+**No `re.I`.** A rename is a rename whatever the capitalisation, and a
+sentence-initial capital is the single likeliest place for one to hide, because
+that is exactly where prose puts the word it is about. Four of the six were
+capitalised.
+
+**A trailing `\b`.** `\bwhitelist\b` does not match *whitelisting*, and the word
+most often appears as a gerund. Five of the six were inflected; four were both.
+
+Inflection is opt-in per entry — `"inflect": true` — because a product name does
+not pluralise into a different product, and `(?:s|d|ed|ing)?` hung on "Azure AD"
+is noise looking for somewhere to happen. Case-insensitivity is not opt-in,
+because there is no entry for which it is wrong.
+
+### What this is actually an instance of
+
+The register's fifth risk is *this file believing its own record*. This is the
+tooling version of it: **a guard's entry in a table says what it is for, not
+what it does**, and the table is the thing everyone reads. The manual's failure
+list has a column called "Guard", one row of which has been quietly wrong since
+it was written.
+
+Two cheap habits fall out of it, and the second is the one worth keeping:
+
+1. A check whose registry is *data* wants a self-test over that data's shapes,
+   not over the one case that motivated it. This one now has twelve fixtures —
+   lowercase, capitalised, gerund, plural, participle, historical, beside-the-
+   new-name, allow-listed suffix, wrong case on a product, and a non-inflecting
+   entry that must not inflect. **Gates 40 → 41.**
+2. **Grep for what a guard claims to cover before trusting the claim.** One
+   `grep -rin whitelist data/` would have found this at any point in five years.
+   Nobody ran it, because the check existed and the build was green — which is
+   the precise failure mode a green build creates.
+
+```
+renames 6 fixed across 4 domains · check_renames self-test 12 fixtures
+gates 40 -> 41 · probe 105 · 101 answered · smoke 163 · search 51 · a11y 31
+resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — applying the last finding to the next guard, and the port list nothing read
+
+The previous record ended on a habit rather than a fix:
+
+> **Grep for what a guard claims to cover before trusting the claim.**
+
+So it was applied to the other guards, and the interesting result is that
+**most of them survived it.** `lint_content.py` claims to find hard-coded
+colours; sweeping every hex literal in `data/` outside code blocks turns up
+exactly two, and both are the cases its own docstring says it deliberately
+excludes — *"deploy #4521"* and a card teaching hex notation. That check does
+what its row says.
+
+`check_contradictions.py` did not.
+
+### Fifteen services, fourteen of them from one domain
+
+Its port half reads prose — *"SSH on port 22"*, *"port 22 (SSH)"*, *"22/tcp"* —
+and prose is where a port gets **mentioned**. It is not where a reference
+**states** one. `net` carries *Common Ports — Protocol Reference*, a table whose
+header row reads `Port(s) | Protocol | Transport | Security Notes`, and the
+check could not read a table. A wrong number in that table is simultaneously
+the likeliest port error on this site and the least likely to be caught by eye.
+
+Reading by **header** rather than by shape — a table qualifies when one header
+cell names a port and another names a protocol or service, and no other table
+qualifies — took the count from **15 services to 44**.
+
+### The combined row, which is where a naive reader invents a finding
+
+The first prototype reported **IMAPS on 993 and 995**. The row is:
+
+```
+993 / 995   IMAPS / POP3S
+```
+
+The row is correct and the reader was wrong, which is the exact failure this
+file exists to avoid committing. Three shapes, and only one needs a rule:
+
+| Row | Reading |
+|---|---|
+| `20 / 21` · `FTP (data/control)` | one service, two ports — both are FTP |
+| `22` · `SSH / SFTP / SCP` | one port, three services — all three |
+| `993 / 995` · `IMAPS / POP3S` | two and two — paired positionally |
+| `80 / 443 / 8080` · `HTTP / HTTPS` | **skipped.** Which goes with which is not in the row, and guessing is how a check starts inventing findings |
+
+Parentheticals are stripped before splitting, so the slash inside *FTP
+(data/control)* is not read as a separator.
+
+### The second rule was found by the injection test, not by the fixtures
+
+The fixtures passed with only the first and third rules. Then a wrong port was
+injected into the real table — and **nothing happened**, because `22 | SSH /
+SFTP / SCP` is three names and one port, which the rule skipped as ambiguous.
+It is not ambiguous; it is how a reference writes a family, and skipping it lost
+the site's only tabular statement of the most quoted port on it.
+
+With the rule added, the same injection reads:
+
+```
+SSH: 22 in net; 2222 in net
+```
+
+and the multi-port count returns to eight on restore. **A fixture suite proves
+the rules you thought of.** Running the check against the real file, having
+deliberately broken it, is what finds the rule you did not — and this is the
+second time this session that the difference has produced the finding.
+
+The eight services now reported with more than one port are all legitimate
+pairs — DHCP 67/68, FTP 20/21, IPsec 500/1701/4500, NetBIOS 137/139, SIP
+5060/5061, SNMP 161/162, DNS 53/853, TLS 443/853 — which is the report doing
+its job: it says *read this list, do not automate it*, and the list is readable.
+
+```
+port table 15 -> 44 services · self-test 17 -> 18 fixtures · 41 gates green
+smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — do the gates actually fire, and the thousand reads nobody checked
+
+Two sessions of auditing guards by reading them. This one asked the cruder
+question instead: **break the file on purpose and see whether the check
+notices.** Six injections, each in a place awkward enough to be a plausible
+blind spot — a cross-reference inside a table cell, a hex literal in a `style`
+attribute on a `<td>`, an unclosed `div` mid-card, an undefined custom property,
+a `data-checked` in the future, an old product name in a table:
+
+```
+xref: a broken cross-reference inside a table cell          FIRED
+colour: a hex literal in a style attr on a table cell       FIRED
+markup: an unclosed div at the end of a concept card        FIRED
+css-vars: an undefined custom property                      FIRED
+volatility: a data-checked in the future                    FIRED
+renames: an old product name in a table cell                FIRED
+```
+
+Six for six, which is the answer you want and is worth the ten minutes it took
+to be sure of rather than confident about.
+
+### The gap was not in what a guard checked. It was in where it looked
+
+`check_css_vars.py` exists because of `var(--bg1)` — a name nothing declares,
+which CSS handles by discarding the declaration and **inheriting**, so the
+symptom is a plausible wrong colour rather than a missing one. Its docstring
+scopes it to `style.css` and gives a reason:
+
+> The `data/*.html` corpus mentions `var(--gap)` and `var(--spacing-md)` inside
+> code samples that *teach* custom properties, and flagging a teaching example
+> would be the instrument being wrong about what it is reading.
+
+That is right about the corpus and wrong about the scope. A `var()` inside a
+**style attribute** is not a teaching example — it is a live declaration with
+exactly that bug available to it. The counts settle it:
+
+| Where | Reads |
+|---|---|
+| `style.css` | 17 names, checked since the file was written |
+| `style="…"` in `data/*.html` | **1,061**, checked by nothing |
+| `script.js`, written into generated markup | **10**, checked by nothing |
+| `var()` anywhere else in `data/` | **4** — the teaching examples, and scoping to the attribute excludes them by construction rather than by exemption |
+
+All 1,071 are clean today. That is the point: the check now holds them there,
+and it needs no allow-list to do it.
+
+### The boundary was the shape of the bug, not the shape of the class
+
+Worth stating because it is the second time this session:
+`check_renames.py` matched case-sensitively because the rename that motivated it
+was written in lower case. `check_css_vars.py` read only the stylesheet because
+the `var()` that motivated it was in the stylesheet. **A guard written from one
+defect inherits that defect's accidents**, and the accidents are invisible
+afterwards because the check is green and the row in the table says what it is
+for.
+
+The rule this file should have had from the start, and now does: *every place
+the site names a custom property, the name is declared or it is not.*
+
+```
+css-vars now covers style.css + 1,061 attribute reads + 10 in script.js
+self-test 7 -> 13 fixtures · 6 injections, 6 fired · 41 gates green
+smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the half of the acronym check that was written backwards
+
+The breadth census in `lint_content.py` has said the same thing for many
+sessions — *64 single-meaning acronyms rendered in 6+ domains; breadth is the
+only signal that a second meaning has been borrowed somewhere* — and the manual
+lists the matching failure: **two wrong acronym expansions shipped and were
+found by reading, not by any check.** So the queue was read.
+
+It found something one layer down from where it was looking.
+
+### The site writes definitions both ways round; the check reads one
+
+`check_contradictions.py` has `INLINE_EXP_RE`, which matches `ACRO
+(Expansion)`. The site also writes `Expansion (ACRO)` — *"Tech companies
+borrowed the **Incident Command System (ICS)** from emergency services"* — and
+there are **85 of those**, none of them ever in front of the check that exists
+to compare them with the dictionary.
+
+Reading the reversed form needed two normalisations, both mechanical:
+
+* **A leading article belongs to the sentence.** "…is An Architecture Decision
+  Record (ADR)" defines the same thing as "Architecture Decision Record".
+* **A trailing `s` is the sentence's, not the expansion's.** "Web Application
+  Firewalls (WAF)" is not a disagreement with "Web Application Firewall".
+
+Without those, five of the fifteen findings would have been the instrument being
+wrong about what it was reading, which is this file's oldest rule.
+
+### And a dictionary with two entries missing from it
+
+```python
+return {e["a"].upper(): [m["e"] for m in e["m"]] for e in entries}
+```
+
+The dictionary deliberately distinguishes **`SOC` from `SoC`** and **`IOC` from
+`IoC`**. Upper-casing collides them, and a dict comprehension lets the later one
+win — so this check had been reading a dictionary with *Security Operations
+Center* and *Indicator of Compromise* silently absent. Nothing noticed, because
+**the check's job is to find disagreements and a meaning it cannot see produces
+none.** Merged now, which is right rather than merely safe: the comparison is
+case-insensitive anyway.
+
+### What the ten real findings were
+
+Two were spellings — one card writing *Approximate Nearest Neighbor* two lines
+from an annotation saying *Neighbour*, and *Organisational Unit* against the
+dictionary's *Organizational*. Aligned to the dictionary, which is what a single
+source of truth is for.
+
+The other eight were **meanings the site uses and the dictionary does not
+carry**: Language Server Protocol, Internal Developer Platform, Top Secret, EFI
+System Partition, Tuition Assistance, Global Catalog, Incident Command System.
+Three of them were sitting in a `n` note reading *"Also: Incident Command
+System"* — recorded as a remark where the reader of the acronym page sees one
+meaning and the card means the other. They are meanings now.
+
+### The change immediately made another gate fire, correctly
+
+Giving ICS a second meaning turned it into an ambiguous acronym, and
+`lint_content.py` **failed the build** for `sec` and `threat`:
+
+> ICS renders in 'sec' with no byDomain decision, so it annotates as 'Industrial
+> Control System'. Add "sec" to that entry's byDomain.
+
+Which is the guard working: an implicit choice became an explicit one the moment
+a second meaning existed to choose between. `ops` is the Incident Command
+System; `sec` and `threat` are industrial control. **The ambiguous-acronym
+counter fell 4 → 3**, the first time it has moved.
+
+`check_plan_numbers.py` then caught the README, which states the dictionary's
+size and had not been told about the new entry. Both guards did in one run what
+this session has spent three waves discovering by hand.
+
+### And the dictionary disagreeing with itself
+
+Aligning *Organisational Unit* to the dictionary did not take in `infra`,
+because the annotator kept putting it back — from the dictionary. **`LSDOU`
+expands to "Local, Site, Domain, Organisational Unit" and `OU` expands to
+"Organizational Unit".** Two entries in the single source of truth, one term,
+two spellings, and no check looks *inside* the dictionary: `check_contradictions`
+compares the content against it and takes it as given.
+
+Fixed by hand rather than by a tool, because n is one and a check for "no two
+entries spell the same term differently" needs a notion of "same term" that this
+repository would have to invent. Worth knowing it is unguarded, though: the file
+every other acronym check treats as authoritative is the one file nothing
+checks. The remaining British spellings in `ops` are *Organisationally* and
+*Organisational Memory* — ordinary prose, not the product term, and correctly
+left alone.
+
+```
+reversed-form definitions now read: 85 · dictionary merge fixes 2 lost entries
+8 meanings added, 2 spellings aligned · ambiguous acronyms 4 -> 3
+dictionary 1,102 -> 1,103 · 41 gates green · probe 105 · 101 answered
+smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — checking the file every other check treats as authoritative
+
+The previous record ended on a sentence that was meant as an observation and
+turned out to be a queue:
+
+> The file every other acronym check treats as authoritative is the one file
+> nothing checks.
+
+So it was checked, seven ways. **Four came back clean and two of the checks I
+designed were wrong**, which is most of what this session was worth.
+
+### The two that should not exist
+
+**Spelling consistency.** The dictionary is British-spelled prose, so a word
+appearing in both conventions looked like a defect worth finding. It finds two
+pairs and both are correct:
+
+```
+neighbour (ANN)  vs  neighbor (NDP)    — Neighbor Discovery Protocol, RFC 4861
+fibre (FCoE)     vs  fiber (FDDI)      — Fibre Channel, and Fiber Distributed
+                                          Data Interface, each a registered name
+```
+
+Two findings, two false positives. A check with that record does not get
+written.
+
+**Dead per-domain configuration.** 34 of 204 `byDomain` decisions name a domain
+the acronym never appears in, which reads like stale config until you look: they
+are *anticipatory*, pre-answering the question for the day the term arrives, and
+deleting them would silently hand that day's writer the default meaning. The
+first version of the measurement was also simply wrong — it borrowed the
+annotator's rule that skips slash compounds, so **`CI/CD` did not count as `CD`
+appearing anywhere** and inflated the finding to 51. The instrument was wrong
+about what it was reading, twice in one wave.
+
+### The three that were worth writing, and what they found
+
+The fields that steer the annotator are the quietest possible place for a
+defect: `annotate` falls through to `m[0]` when it is misspelled, a misspelled
+`byDomain` key is simply never consulted, and the build stays green while the
+wrong expansion ships **site-wide**. That is failure #10's exact shape arriving
+through configuration instead of prose. Four rules, all passing today, all now
+held there.
+
+Then two rules about the meanings themselves, and these found things:
+
+| Entry | Carried | Reading |
+|---|---|---|
+| `ATT&CK` | *Adversarial Tactics, Techniques, and Common Knowledge* **and** *…Techniques and Common Knowledge* | An Oxford comma is not a second meaning. The dictionary page listed both |
+| `DPAPI` | *Data Protection Application Programming Interface* **and** *Data Protection API* | One of them leaves an acronym short. The differing tail's initials spell it, which is the definition of being the same phrase |
+
+Both are decidable, which is why they are rules and not a similarity score. And
+**seven entries carried `annotate` beside `noAnnotate`** — a value the annotator
+can never reach, naming in every case the meaning it would have defaulted to.
+A comment wearing a setting's clothes, removed.
+
+### The pattern across three waves now
+
+```
+check_renames      matched case-sensitively    because the rename was lower case
+check_css_vars     read only style.css         because the var() was in style.css
+check_acronyms     read only the prose         because the wrong expansion was prose
+```
+
+**A guard written from one defect inherits that defect's accidents.** The
+accidents are invisible afterwards, because the check exists, the build is
+green, and the table in this file says what the guard is *for* rather than what
+it *does*. The cheap counter-habit, which has now paid three times: when a
+guard's row says it covers a class, spend ten minutes proving it covers the
+class and not the instance.
+
+```
+check_acronyms self-test 12 -> 24 fixtures · 7 inert fields removed
+2 duplicate meanings collapsed · 1,180 -> 1,178 meanings · 41 gates green
+smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — asking the question the reader asks, not the one the writer filed it under
+
+Three batches of reader questions now, and the third was written differently on
+purpose. Batches one and two asked about **subjects** — *what is a subnet mask*,
+*third party risk*, *incident postmortem* — and opened at about a third missing.
+Batch three asked about **symptoms**, aimed at the domains the first two barely
+touched:
+
+```
+my query returns duplicates          the load balancer says unhealthy
+my regex is too slow                 why is my cloud bill so high
+my tests pass individually but       my lambda times out
+  fail together
+```
+
+**Six of the nine missed.** Two thirds, against a third for the subject-shaped
+questions, and every one of the six was a card that covers its mechanism
+thoroughly and had never written down the sentence a reader would type.
+
+That is the pattern this session has been finding one instance at a time — cron,
+printers, SSH, inodes, Group Policy, mapped drives, the M365 playbook — arriving
+as a measured rate rather than an anecdote. **A reference is written from the
+subject outwards and read from the symptom inwards**, and nothing in a normal
+review notices the gap, because from inside the card the subject is obviously
+covered.
+
+### What each one turned out to be missing
+
+None of the six needed a word. All six needed the sentence the word belongs to:
+
+* **SQL Joins** explains fan-out and never says *duplicates* — which is what
+  people call it. The tell is that the row count is a clean multiple of what you
+  expected, and the fix is aggregating the many side, not `DISTINCT`, which
+  hides the fan-out and leaves `SUM()` just as inflated.
+* **Load Balancers** covers health checks well and never says *unhealthy*. So
+  the causes are ranked now, and three of the four are the check rather than the
+  server: unreachable from the balancer's own subnet, a `401` or a redirect
+  where `200` was expected, a timeout shorter than the endpoint's own dependency
+  call. Curl the health path from the balancer's side of the network first — if
+  it answers and the console still says unhealthy, the disagreement is the
+  finding.
+* **FinOps** is an answer to *"why is the bill so high?"* and never asks it.
+  A bill with no attribution is a single large number, and a single large number
+  can only be negotiated, not reduced.
+* **AWS Serverless** describes Lambda's scale-to-zero and never its ceiling.
+  *"My Lambda times out"* is usually the design saying it is not a function.
+* **Test Data** names order-dependent failures; *"they pass individually and
+  fail together"* is that sentence said out loud, and hearing it as a diagnosis
+  rules out timing and environment in one go.
+* **Catastrophic Backtracking** needed nothing at all — see below.
+
+### One of the six was the matcher, and it took two words to prove
+
+```
+regex slow       →  Catastrophic Backtracking — When a Regular Expression Is a
+                    Denial of Service
+regex too slow   →  nothing
+```
+
+The card is right there. `too` was a hard requirement, and a card about a regex
+that takes minutes has no reason to contain it — and the query is two content
+words, so the relaxation stage's floor of two cannot drop it. **A comparative
+intensifier is never a subject**, so it joins `explain` and the question words.
+
+`only` at 55.6% of topics and `just` at 22.1% were measured beside it and left
+alone: both are load-bearing here — *only the first hop*, *just enough* — and a
+stop list earns its entries one at a time.
+
+```
+probe 105 -> 116 questions · 112 answered · 0 unexplained · 5 cards given their
+symptom · 41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64
+mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the domain with thirty-nine topics and nothing on the cascade
+
+Batch four, same shape as batch three and aimed at the domains still barely
+probed — `script`, `web`, `ai`, `endpoint`. The rate held: **six of nine
+symptom-phrased questions missed**, against a third for subject-phrased ones.
+Five were sentences a card had never written down. One was a whole card that
+did not exist.
+
+### `my css is not applying` returned nothing at all
+
+`web` carries 39 topics — Flexbox, Grid, Responsive, Modern CSS, the DOM, the
+event loop, React, bundlers, Design Systems — and **nothing on the cascade**.
+No specificity, no origin order, no layers-versus-`!important`. The foundation
+every other CSS card sits on was the one thing missing, and the domain's own
+shape made it invisible: each CSS topic pairs a "what it is" card with a named
+failure mode, and none of the five failure modes was *the rule did not apply*.
+
+Written to that shape, with the part worth carrying being the ladder:
+
+| # | The question | What wins |
+|---|---|---|
+| 1 | Origin and importance | A *user* `!important` beats an author one — how a reader's accessibility stylesheet overrides yours |
+| 2 | Cascade layer | Unlayered beats layered, later beats earlier — **and for `!important` the whole order reverses** |
+| 3 | Specificity | A tuple compared left to right, not a three-digit number. Eleven classes never add up to one id |
+| 4 | Source order | Only here. This is the rung people think is rung one |
+
+And the failure card's first row is the one that matters: **a struck-through
+declaration and a missing declaration are completely different bugs, and they
+look identical from the editor.** Open the inspector before the stylesheet.
+
+### The thing found by chasing an anomaly
+
+`the model keeps making things up` reached its card and returned **thirty**
+results, with the card's exact phrase in exactly one of them. The single-result
+escalation was firing on a perfect hit, because the named-topic guard compares
+the query's words against the slug's words *literally* — and the query says
+`model` where the slug says `models`. It now runs both through the same plural
+fold as the conjunction, and the query returns one.
+
+That guard was written two waves ago to stop exactly this, and it had a hole in
+it the width of a plural. **A guard you added to protect a case can still miss
+that case**, and the only way to know is the anomaly: thirty results for a query
+whose phrase exists once.
+
+### The rest
+
+*"The model keeps making things up"* is a fair description of the symptom and a
+misleading one of the cause — nothing is being made *up*, in the sense of a
+decision to invent; the same machinery produced the true sentence with the same
+confidence. The endpoint card says *a device that shows as non-compliant* now,
+which is what the console says. And `script`'s file-handling card already
+answered the encoding question.
+
+```
+probe 116 -> 124 questions · 120 answered · 0 unexplained
+topics 1,551 -> 1,552 · related 4,790 -> 4,798 links, mainland 1,466
+41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — forty-seven topic names with a space in the wrong place
+
+Batch five of reader questions, aimed at `hw`, `infra`, `threat`, `cs` and
+`mind`. The rate held a third time — six of eleven missed — and the fixes are
+the usual shape, three of them worth repeating:
+
+* **"The computer randomly restarts"** is the commonest intermittent-fault
+  report, and it splits in one question: a machine that reboots *without* a stop
+  screen was never asked to reboot — it lost power long enough to drop out,
+  which is supply, thermals or a connector. One that shows a stop screen crashed,
+  and that is a different investigation entirely.
+* **"No signal" is the monitor reporting on the cable, not on the computer.**
+  Five of the six checks are outside the monitor, and the monitor is the part
+  the ticket names — because it is the part with a screen to say something on.
+  Swap the cable rather than reseating it: reseating fixes a connection and
+  tells you nothing about a cable that failed internally, which is the one that
+  comes back next week.
+* **A process that vanishes with nothing in its own log** did not crash — it was
+  killed, and a process cannot log its own `SIGKILL`. `dmesg` has the verdict,
+  and the trap is that the killed process is frequently not the one that
+  consumed the memory: the kernel picks by score, so the database dies and the
+  batch job that caused it carries on.
+
+### And then the gate caught something none of that was looking for
+
+Adding a per-domain decision so `POST` expands correctly in `hw` made a smoke
+check fail:
+
+```
+FAIL : every landing card's 'start here' names resolve, in all domains
+       — hw: POST, Beep Codes & Diagnostic LEDs — Reading a Machine That Will Not Boot
+```
+
+The name the page had was **`POST , Beep Codes`**. The annotator writes
+` <span class="acro-exp">(…)</span>` after an acronym, and the code that strips
+it back out to recover "the title as written" left the leading space stranded in
+front of whatever punctuation followed. Scanning every topic: **forty-seven
+names carried it.** `SPF, DKIM , DMARC`. `MTU , Fragmentation`. `SSRF , XXE &
+Deserialization`.
+
+Not cosmetic: that text is the name the search index, the study list, the jump
+lists and the start-here resolver all compare against. It had been there for as
+long as the annotator had, and the only reason it surfaced now is that one of
+the forty-eight happened to be named in a landing card.
+
+### The fix was wrong twice, and the second time was the interesting one
+
+**Attempt one** tidied every space-before-punctuation in the title. That looked
+obviously safe — slugs drop punctuation and collapse whitespace, so `POST , Beep`
+and `POST, Beep` have always produced the same slug. They do. But:
+
+```
+Custom Properties, :has() & Layers
+```
+
+That space is nowhere near an acronym, and closing it merges `Properties` and
+`has` into one word, moving the Modern CSS permalink. `suggest_related.py
+--check`, `check_paths.py` and two smoke checks all failed on the same moved
+slug within a single run.
+
+**Attempt two** added a lookahead — tidy only when no word character follows.
+It worked, and it was still the wrong shape, because it operates on the whole
+title and can touch text that had nothing to do with any acronym. The near miss
+was not bad luck; it was the surface.
+
+**The actual fix is one character, and it was already written three times in
+this repository.** The annotator emits ` <span class="acro-exp">(…)</span>`, and
+the space belongs to the span:
+
+```
+lint_content.py      \s*<span class="acro-exp">…      correct since it was written
+gen_cheatsheet.py    \s*<span class="acro-exp">…      correct
+stamp_freshness.py   \s*<span class="acro-exp">…      correct
+script.js               <span class="acro-exp">…      the odd one out
+```
+
+In the pair that is supposed to be byte-for-byte identical. Taking the space
+with the span cannot touch anything that was not adjacent to something removed,
+so `:has()`, `.NET` and `.intunewin` are safe by construction rather than by
+lookahead. `labelText()` needed the DOM version of the same idea — that space is
+a separate text node, so it survives `remove()` — and trims only the node
+immediately before each span.
+
+**The reason to write this down is the sequence.** A content wave touched an
+acronym's configuration; that exposed a long-standing defect in unrelated code;
+the obvious fix moved a permalink; three separate gates caught it before it
+could ship; and the correct fix turned out to be a convention the repository
+already followed everywhere else. None of those five steps was planned, and the
+middle two are the argument for the other three existing.
+
+The transferable part is the last step. **When a fix needs a special case, check
+whether the codebase already solved the general one somewhere.** It had, in
+three files, and the version that needed no special case was one character
+long.
+
+```
+probe 124 -> 135 questions · 131 answered · 0 unexplained
+47 topic names corrected · 41 gates green · smoke 163 · search 51 · a11y 31
+resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the sentence a card is an answer to, and never asks
+
+Batch six, aimed at `script`, `eng`, `ops` and `blueteam`. The rate held a
+fourth time, and the five fixes share a shape sharper than "the symptom is not
+named". In each one **the card is an answer to a question it never states**:
+
+| The reader types | The card | What it was missing |
+|---|---|---|
+| `too many alerts` | *Alert Fatigue as a Reliability Problem* | The complaint it is an answer to. "Too many alerts" is not about volume — it reports that the ratio crossed the point where reading carefully stopped being rational |
+| `our estimates are always wrong` | *Planning Without Theatre — Honest Estimates* | Its own premise. The estimate was a range read as a date, and **a range is not wrong when the outcome lands inside it** |
+| `circular import` | *Modules, Packages & pip* | The failure, which appears nowhere on the site. The error names the innocent module — the one that was half-built when the loop came back round |
+| `we got a vulnerability report from a stranger` | *Responsible Disclosure & Bug Bounties* | Nothing, as it turned out — see below |
+
+Both of the first two now return **exactly one card**, which is the best result
+this measurement produces.
+
+### The one that was already covered, found by reading the whole card
+
+`we got a vulnerability report from a stranger` looked like the biggest gap of
+the batch: the disclosure card is written entirely from the researcher's side,
+title included. Writing the receiving-side card was the obvious move.
+
+It is in the card already — compressed into the closing verdict, which is this
+site's convention for *the same subject arriving from the other direction*:
+*"publish a policy and a contact address, acknowledge within days, never
+threaten a good-faith reporter, and give credit."*
+
+So the edit was one clause naming the moment, plus the sentence that verdict was
+missing: **the first reply, not the patch, decides whether this becomes an
+incident or a story.** **Reading to the end of the card before writing a new one
+is the cheapest habit in this file**, and it is the third time this session it
+has turned a proposed card into a sentence.
+
+### The query is still a zero, and that is the right answer
+
+It stays at zero because `got` is a verb no reference card has reason to
+contain, and a zero is never relaxed — `script.js` settled that with four
+measured examples of relaxation turning honest zeros into confident wrong cards.
+**A recorded zero on a card that answers the question is a better outcome than a
+sentence bent to reach it**, and the note now says which of the two it is.
+
+```
+probe 135 -> 143 questions · 138 answered · 0 unexplained · 5 recorded zeros
+41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the one risk that closed itself, and was then left without a condition
+
+This session has added **1,353 lines to this file — a 31% increase** — and at no
+point did anybody think about its length. Which is the fifth risk exactly, so it
+was worth checking what the register says about it.
+
+It says **Closed**, and nothing else. No *reopens when* column, in the one row
+that had earned the right to have one: the fifth risk is the only entry here
+that the file closed **by following its own instruction** rather than by
+somebody happening to notice. The section directly above it spends four
+paragraphs arguing that *a closed risk with no reopen condition is a risk that
+will come back unannounced*, gives all four accumulation risks a condition, and
+then writes the fifth up as a success story with a State column and nothing else.
+
+### Why it went unnoticed, which is the interesting half
+
+**The evidence for this risk is the file you are reading, and a file does not
+look long from inside a session that is adding to it.** Every other row in the
+register points at a number in a table a tool checks. This one points at a
+property of the document doing the pointing.
+
+That is the accumulation shape in its purest form: a small cost per session,
+never collected, and no day on which it becomes today's problem. The register's
+own text says *"act when it gets bad" fails precisely because bad has no
+threshold* — and then the row demonstrating that was the row left without one.
+
+### The condition
+
+`check_plan_numbers.py` prints the live file's line count on every `make check`
+and warns past **8,000**. Measured, not chosen: double the ~4,000 the split left,
+and a third of the 22,745 that made the risk acute. Far enough not to nag, close
+enough that the file is still comfortably splittable on the day it fires.
+
+It reports and does not fail. A long plan is not a broken build, and gating it
+would mean a session that wrote a good record could not commit it.
+
+### The fourth instance of one pattern
+
+```
+check_renames      case-sensitive        its own example was lower case
+check_css_vars     style.css only        its own example was in style.css
+script.js          missing the \s*       three sibling files had it
+the risk register  no reopen condition   on the risk that proved they were needed
+```
+
+**A rule written for a category tends not to be applied to the case that
+motivated it.** Four times in one session, in four unrelated places, found four
+different ways — by a grep, by an injection, by a smoke failure, and by noticing
+that the file had grown while nobody was watching. The rule is written down now;
+the habit it wants is to apply a new rule backwards to its own origin before
+applying it forwards to everything else.
+
+```
+plan.md 4,323 -> 5,705 lines · reopen condition at 8,000, evaluated by make check
+41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — five zeros, four of them one word apart from their own card
+
+Batch seven, across `sec`, `grc`, `devops`, `productivity` and `eng`. Five
+queries returned **nothing at all**, and four of those had a card sitting right
+there:
+
+```
+i keep procrastinating          →  a card titled Procrastination
+my terraform destroyed something →  Terraform — Infrastructure as Code in Practice
+my code review comments ignored  →  Code Review — Doing It Well
+an employee is leaving and we
+  think they took data           →  Offboarding as a Security Control
+```
+
+Every one of them an **inflection**: `procrastinating` against
+*procrastination*, `destroyed` against *destroy*, `ignored` against *ignore*,
+and an offboarding card that never says *leaving* or *employee* — it says
+*departing person* and *leaver record* throughout, which is better prose and
+worse findability.
+
+All four now return **exactly one card**, and none of the edits was a word
+dropped in. Each turned out to have something to say:
+
+* **"I keep procrastinating" is said about one task while a great deal else gets
+  done that day**, and *keep* is the useful half — a recurring avoidance points
+  at a feeling attached to that task rather than at a character flaw.
+* **"Terraform destroyed something" is almost never `destroy` run by mistake.**
+  It is an `apply` whose plan contained a red line nobody read, because a
+  rename, a moved resource or a changed immutable attribute all replace rather
+  than update.
+* **A comment answered with a reason is not ignored**; one silently left
+  unaddressed reads as a judgement about the reviewer. That is what the
+  *respond to every comment* row is for, and it is the row that gets skipped.
+* **"They took data" is answerable only by telemetry collected before the
+  suspicion arose** — which is the real argument for offboarding being a control
+  rather than an errand.
+
+### The inflection class, recorded rather than solved
+
+Four instances in one batch, and this session has now seen ten: `sharing` against
+*Screen Shares*, `report` against *Reporting*, `spaced` against *spacing*,
+`models` against *model*, and these four. `plurals()` folds a trailing `s` and
+nothing else, deliberately — the file's own note says a real stemmer needs a
+tokenised index and this matcher reads raw text.
+
+A prefix rule would close most of them: `procrastinating` and `procrastination`
+share thirteen characters, `destroyed` and `destroy` seven. It would also match
+`string` to `str` unless the threshold is high, and a threshold is exactly the
+soft, arguable shape this toolchain keeps rejecting in favour of sharp ones.
+
+**So it is written down rather than built**, with its ten instances, because the
+next session to consider stemming should decide it with a list and not an
+intuition — and because every one of the ten was closable in prose, by a
+sentence the card was better for having.
+
+```
+probe 143 -> 151 questions · 146 answered · 0 unexplained · 5 recorded zeros
+41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the topic named Vim could not be found by searching for Vim
+
+Batch eight ended on one query the probe would not let go of: `how do i use
+vim` missed `shortcut/vim`. So did `vim`. So did every query containing the
+word. The topic is *named* Vim, its first sentence is *Vim starts in Normal
+mode*, and the search index held both — as `…modal editingvim starts in normal
+mode…`.
+
+### An element boundary is a word boundary, and the index did not know
+
+`plainText` drops a tag rather than replacing it with a space, and says why:
+
+> Tags become nothing, not a space. That looks like the more dangerous choice
+> and is the correct one: it is what `textContent` does, and the source already
+> carries a newline between anything that needs separating.
+
+The first half is true. The second half is a fact about the files that existed
+when it was written, and it stopped being true the moment a topic was authored
+on one line. `shortcut/vim` is. So is every generated acronym page, because the
+generator writes one line per topic.
+
+The word survives the fusion only if it is long enough to be matched as a
+substring. `vim` is three characters, and `matcher()` requires a word boundary
+below `SHORT_TERM` — for a good reason of its own, the one that stopped `IR`
+matching *requires*, *first* and *directory*. Two correct rules, each blameless,
+and between them a topic nobody could find by its own name.
+
+The fix is the distinction the original note was reaching for: **block tags
+become a space, inline tags still become nothing.** The acronym expansion the
+note was protecting — `CIDR (Classless Inter-Domain Routing)` rather than
+`CIDR ( Classless Inter-Domain Routing )` — is inline and is untouched.
+
+A census over the built page afterwards: **1,233 of 1,552 topics** were losing
+at least one short term to a fused boundary, 6,621 terms in all. Almost all were
+reachable by another route — an acronym's expansion is long enough to match as a
+substring, which is why `sacl`, `abac` and `ahci` all worked and the defect
+stayed invisible for as long as anybody spot-checked it. `vim` had no other
+route, and so was the one that showed.
+
+### The `ss` exception was right about `class` and wrong about why
+
+`my tests pass locally but fail in ci` missed the flaky-test card that says, in
+its verdict, that the tests **pass** on your machine. `tests`/`test` folded.
+`fail`/`fails` folded. `pass`/`passes` could not, because `plurals()` folds one
+character and excepted `ss` endings — on the stated ground that *class* is not
+the plural of *clas*.
+
+True, and the wrong conclusion. The plural of `class` is not `clas`; it is
+`classes`. The exception marked exactly the words that take `-es` and then did
+nothing with them, so the rule produced a non-word in both directions:
+`switches` offered `switche`, `processes` offered `processe`, and `pass`,
+`switch` and `process` offered nothing at all.
+
+Going back the other way, `-es` is two plurals wearing one spelling — `cases` is
+`case` + s, `passes` is `pass` + es, and the string does not say which. Both
+singulars are offered rather than guessed at: **a wrong alternate is a regex
+that matches nothing, a wrong guess is a card the reader never sees.** `-ies` is
+the one that *is* decidable and is handled first.
+
+This is not the prefix rule the last session wrote down and declined to build.
+That decision stands — a prefix rule needs a threshold, and a threshold is the
+arguable shape this toolchain keeps refusing. Two more plural rules are still
+rules.
+
+### One first draft, caught by the census it was written for
+
+The first version of `plurals()` returned the term unchanged for anything three
+characters or shorter — a guard the old code applied only when *stripping*. It
+also stopped `use` offering `uses`, and `why do we use containers`, answered for
+eight batches, went to a miss. The probe named it on the next run. A census kept
+green is a regression test that nobody had to write.
+
+### Four zeros, four cards that were already there
+
+```
+teams meeting audio not working  →  Teams Call Quality — the card says "calls are bad"
+laptop battery drains fast       →  Batteries: What Wears Them Out
+my ssh key stopped working       →  "Permission denied (publickey)"
+my tests pass locally, fail in ci→  Flaky Tests — a Reliability Problem
+```
+
+Each gained the sentence naming the symptom it already answers, and each had
+something to say once it was written:
+
+* **"The audio was bad in that meeting" is two investigations, and how many
+  people said it decides which one** — one call is per-user analytics, a pattern
+  is the dashboard.
+* **"It drains fast now" is a capacity complaint, not a settings one**, which is
+  why the answer is chemistry and not a power plan.
+* **"My key stopped working" is how `Permission denied (publickey)` arrives as a
+  ticket** — and the error almost never means the key is wrong.
+* **The test that passes on your machine and fails in CI is a timing
+  assumption**, and the local machine is too fast to violate it.
+
+### The one that was a gap: a page that came out wrong
+
+`the printer prints blank pages` found nothing, and the printer topic covers
+offline queues, drivers, deployment and secure release — every way *nothing*
+comes out. It had nothing for a page that came out and is wrong, which is the
+opposite investigation and an easier one: the path worked end to end, so the
+fault is in what was sent or in what put it on the paper.
+
+Six symptoms, ranked by what they actually mean, each with the test that settles
+it — and the same first step as the triage order above it, for the opposite
+reason. There it proves the device works; here it separates the device from
+everything upstream, because the config page is the one page in the building
+that no driver, queue or application touched.
+
+### The fifth instance, and the sharpest
+
+```
+check_renames      case-sensitive        its own example was lower case
+check_css_vars     style.css only        its own example was in style.css
+script.js          missing the \s*       three sibling files had it
+the risk register  no reopen condition   on the risk that proved they were needed
+plainText          tags become nothing   "the source already carries a newline"
+plurals()          one character         "class is not the plural of clas"
+```
+
+The first four were a rule not applied to the case that motivated it. The last
+two are a step past that: **a rule that writes down its own assumption is still
+only as true as the assumption, and neither of these was ever checked against
+the corpus.** Both notes are careful, both are cited approvingly by later code,
+and both were false — one about the files, one about English. The habit the
+first four wanted was to apply a new rule backwards. The habit these two want is
+to go and measure the sentence that begins *because*.
+
+```
+probe 151 -> 164 questions · 159 answered · 0 unexplained · 5 recorded zeros
+1,233 of 1,552 topics were fusing words at an element boundary; 0 now
+41 gates green · smoke 163 · search 53 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the note that reasoned from a fact it had not measured
+
+The last record ended on a habit: *go and measure the sentence that begins
+`because`.* This one is that habit, run once, on the nearest available target.
+
+`script.js` carries a note explaining why its tag pattern is `</?[a-zA-Z][^>]*>`
+and not `<[^>]+>`:
+
+> `<[^>]+>` looks equivalent and is not — `WHERE created_at < now()` inside a
+> code block has a `>` somewhere after it, so the loose pattern swallows the
+> comparison operator and everything up to it.
+
+`lint_content._CODE_TAG` has the same rule, with the same one-line reason. Six
+Python tools had the loose pattern, each with its own copy of it.
+
+### Eight spans, four files
+
+```
+math.html                  < 0 and f(1) = 1 >          erased outright
+script.01-references.html  < <span class="num">        a shell redirect and the tag after it
+career.html                <!-- Four cards did not      the comment ends at its own >=,
+philosophy.html   ×2         clear the >=15-card bar     and the rest becomes card text
+```
+
+Two kinds. Content the loose pattern eats, and comments it only half-eats.
+
+### The paragraph that was wrong
+
+The comment half was already known. `lint_content.gt_in_comment` gates it, and
+the note above that gate is careful, specific, and reasons from a measurement:
+
+> Three such comments exist. All three sit *between* topics, so nothing measures
+> them and no number on this site is currently wrong.
+
+The first sentence is true. The second does not follow, and checking took one
+command. `depth_report.topics()` takes each block from one topic's start to the
+**next one's start**, so whatever sits between two topics is measured as part of
+the topic above it. All three comments were being counted: **112, 112 and 102
+characters of phantom content on three real cards.**
+
+No number was wrong, which is exactly why it stayed invisible for as long as it
+did. The mean moves by 0.2 characters across 1,552 topics, and checking every
+one of the eight disputed spans against the thin threshold and the deep
+threshold, in both directions, gives **zero crossings**. The invariant held. It
+held by luck, which is what the note said about the *content* and had not
+checked about itself.
+
+### One definition, six imports
+
+`TAG_RE` now lives once, in `lint_content.py`, and `acronym_drift`,
+`check_contradictions`, `check_renames`, `depth_report`, `near_duplicates`,
+`orphan_report` and `build.py` import it. Three of them already imported
+`domain_files` from that file, so the dependency is not new — only the second
+thing crossing it.
+
+The gate's own note argued the other way: *gating the condition is cheaper and
+more complete than hardening sixteen regexes*. That was true of sixteen copies
+and false of one definition, and it was never true of the content half — no
+comment rule reaches `< 0 and f(1) = 1 >`. The gate stays, with its reasoning
+corrected in place, because the inline `<[^>]+>` calls that read a single
+already-narrow match are still there and still cheap to protect.
+
+**Every census output is byte-identical before and after.** That is the result,
+not a disappointment: a latent defect closed, nothing to re-verify, and one
+paragraph in the repository that now says something true.
+
+```
+6 tools + build.py share one TAG_RE · 6 census outputs byte-identical
+0 threshold crossings, checked both ways across all 8 disputed spans
+41 gates green · smoke 163 · search 53 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the stop word that was rare, and the accents nobody could type
+
+Batch ten, and two matcher changes that both had to argue against the evidence
+that admitted the last ones.
+
+### `got`, which fails the frequency test and joins anyway
+
+`WIDE_STOP` has been grown one word at a time, each with a measured
+justification, and the measurement has always been frequency: `actually` at
+39.1% of topics is filler; `only` at 55.6% and `just` at 22.1% are load-bearing
+in this corpus and stayed out.
+
+`got` is at **3.5%**. By that test it is a rare word, and a rare word is
+normally precious — it narrows. It joins on the other half of the test, the one
+the note stated and never named as the test: **it is never a subject.** Nobody
+searches for `got`. It arrives attached to the thing that happened — `i got
+paged at 3am again`, `we got a vulnerability report from a stranger` — and a
+card describing that thing has no reason to narrate its arrival. Requiring it
+requires a word the corpus cannot supply, which is a guaranteed zero and not a
+narrow answer.
+
+The second of those queries had been sitting in `query_probe.mjs` for eight
+batches as a recorded, unsolvable kind-3 zero, **with the diagnosis already
+written out**:
+
+> `got` is a verb no reference card has reason to contain, and a zero cannot be
+> relaxed.
+
+Both clauses true, conclusion backwards. A verb no card has reason to contain is
+the argument for stopping it. And the thing that noticed was the staleness check
+added two sessions ago: the verdict said the query returns nothing, the query
+returned six, and the harness said so on the next run.
+
+### 17 accented words, and an English keyboard
+
+`ubermensch` returned nothing. The card names it in a table, spelled
+**Übermensch**, and no keyboard a reader is likely to have types that.
+
+A census of the whole corpus: **17 distinct accented words, 31 occurrences** —
+Niccolò, Übermensch, Schrödinger, ásatrú, façade, café. Three were unreachable
+(`ubermensch`, `schrodinger`, `niccolo machiavelli`); `machiavelli` alone worked,
+because the surname carries no accent.
+
+Folding diacritics is a rule and not a threshold, which is the only reason it is
+here: NFD splits a letter from its combining marks and the marks are dropped. It
+runs on **both sides** — the index at parse, the query where the query is
+lowercased. Folding one side would move the bug rather than fix it: the reader
+who *does* have the umlaut would become the one who finds nothing. Both
+spellings are gated fixtures for exactly that reason.
+
+It costs a highlight. The marker searches the live DOM, where the accent is
+still there, so a hit on one of those 31 occurrences opens its topic and marks
+nothing in it. A card a reader can reach and has to skim beats a card they
+cannot reach.
+
+### The experiment that was run and thrown away
+
+The last session recorded an **inflection class** — ten queries whose word was
+one suffix away from the card's — and declined to build a stemmer, asking that
+whoever next considered it decide "with a list and not an intuition".
+
+`i got paged at 3am again` was the eleventh, so the list was long enough.
+`check_renames.py` already folds `(?:s|d|ed|ing)?`, so the rule existed in this
+repository and had not been applied to its sibling — the shape this session has
+found five times.
+
+It was built, measured, and reverted:
+
+```
+search_test   51/53   "should we fine tune or use rag"  9 > ceiling 8
+                      "how do i find a file"          178 > ceiling 140
+probe         one more query over 60, and `i got paged at 3am again`
+              still returned nothing — "again" is the word that breaks it
+```
+
+**The change did not fix the case that motivated it and widened two gated
+queries by a third.** The recorded decision stands, now with a measurement
+underneath it instead of a prediction. That is worth more than the feature would
+have been: the next session to consider stemming has a number.
+
+What fixed the query was the card. *On-Call Done Humanely* said "pages at 3am
+for non-issues drive burnout"; it now says being **paged** at 3am for a
+non-issue, **and then again the next night**, is what drives it — the recurrence
+rather than any one night, which is both the reader's phrasing and the truer
+sentence.
+
+### Three more cards that already answered the question
+
+```
+what should i put on my resume  →  Your CV — the question is the wrong one,
+                                   and the card can say why
+my manager wants an estimate    →  Estimates People Can Trust
+the printer prints blank pages  →  (the card written last wave, now indexed)
+```
+
+*Your CV* opened on "the question is not what to include — it is what earns the
+top third". It now names the question first: **"what should I put on my CV" is
+the wrong question and a comforting one — the answer to it is "everything", and
+everything is what nobody reads.** *Estimates People Can Trust* now opens on who
+is asking: **when a manager wants an estimate, what they almost always want is a
+date to repeat to somebody else**, which is why the padding cycle starts.
+
+```
+probe 164 -> 170 questions · 166 answered · 0 unexplained · 4 recorded zeros
+WIDE_STOP +1 (measured against its own frequency rule, and against it)
+41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — three cards that were carrying a judgement in a table
+
+The thin counter has sat at eight for several waves with a note beside it
+saying seven of the eight are short by design. That note was written from the
+badges, which is a reasonable way to triage a list and not a way to read a card.
+Read properly, three of the eight had something to say.
+
+### The list first, because the list is the interesting part
+
+The `military` domain has **ten** topics on staff codes. Six are substantial —
+prefixes, functional numbers, sub-designators, branch comparison, the
+cross-matrix, and how the three parts combine. Four are short, and the learning
+path shows why: they are steps 1–4 and 10 of *Reading Military Structure*, an
+on-ramp deliberately placed before the deep versions.
+
+So the first instinct — these are duplicates, retire them into the deep cards —
+was wrong, and `paths.json` said so in one grep. **A short card placed before a
+long one is scaffolding, not redundancy.** What was wrong with them was
+different: two of the four had no sentence at all.
+
+### `Common Codes Decoded` — 342 characters, zero concept cards
+
+A bare table of ten codes, eight of which the cross-matrix covers better. The
+two it did not cover were the card's actual subject and nobody had noticed:
+**XO and NCO are not staff codes.** They sit in that table because they sit in
+the same sentences — an org chart says *S4*, *XO* and *SNCO* in one breath — and
+a reader who tries to parse *XO* as letter-plus-number gets nothing back. That
+failure is the fastest way to learn where the code system stops and the
+vocabulary of rank and appointment begins. The card now says so, and the table
+that was the whole topic is now the evidence for it.
+
+### `Staff Functions 1–9` — and the contradiction inside it
+
+Same shape, and this one had a factual disagreement with its own deep version:
+the thin card listed **S7** among the examples for function 7; *Functional
+Numbers 1 through 9* lists J7 · G7 · A7 and notes that usage varies by branch.
+One of them was over-claiming, and the careful one is the deep one.
+
+Fixing the row exposed the card's missing sentence, which was sitting in the
+table's last column all along: **the gaps are the useful part.** One through six
+appear at every level; seven and eight generally start at division. A battalion
+holds no budget of its own and has no force-generation role, so there is no S8
+and, in most structures, no S7. The number tells you the function; whether the
+number exists at all tells you how large the headquarters is.
+
+### `Rules of Engagement — Read This First`
+
+The redteam domain's preamble, and the one every other card in that domain
+cross-references. It said *always work inside a signed scope* and stopped there
+— which is the advice everybody gives and nobody expands.
+
+It now names what the document has to contain, with the usual omission beside
+each line, and ends on the two that actually matter: **the third-party line and
+the stop condition.** A client can authorise testing of their own systems and
+cannot authorise testing of their provider's, so an engagement that drifts onto
+a platform's shared infrastructure has no permission behind it however carefully
+the rest was scoped. And the moment a test causes an outage, the only thing that
+matters is whether somebody can be reached and told to stop.
+
+### The ceiling that came down
+
+`lint_content`'s "table with no verdict" ceiling has been 12 for many waves,
+with the twelve recorded as deliberate: *lookup tables where a judgement would
+be filler*. Two of them were not. The ceiling is now 10, lowered in the commit
+that earned it, as the note above it requires.
+
+**"A judgement would be filler" is a verdict about a card, and it expires.** It
+was true of those two when it was written — they were tables nobody had looked
+at — and stopped being true the moment somebody read them. A recorded verdict on
+a backlog is a snapshot of attention, not a property of the thing.
+
+### Two measurements that came back clean
+
+Both were run in the habit the last wave set: go and measure the sentence that
+begins *because*.
+
+* `lint_content.bare_tables` fires on a table that is the **first** child of
+  `.topic-body`. **84 tables sit directly in `.topic-body` and not one of them
+  is first**, so the check has never fired on real content. That is not a
+  defect: the note above it already records that the highlighting reason was
+  fixed in `script.js` instead, that widening this to all 84 was considered and
+  rejected, and that what remains is a narrow layout rule. Measured, correct,
+  left alone.
+* `check_volatility`'s console queue is three rows and **all three are false
+  positives** — two generic uses of "the admin centre" and one job title. The
+  bare `<vendor> admin` alternatives look redundant with `admin cent(er|re)` and
+  are not: they catch a table of console names where the word *centre* is in the
+  heading. The note already says the regex cannot separate *Exchange admin* the
+  console from *Exchange admin* the person and prints the sentence so a reader
+  can. Measured, correct, left alone.
+
+Two clean results are worth recording next to the two that were not. The habit
+is not "the notes are wrong"; it is "the notes are checkable".
+
+```
+thin 8 -> 7 · depth tail 2,122 -> 2,135 · verdictless tables 12 -> 10
+site's two thinnest topics: 317 and 500 chars -> 1,205 and 1,056
+41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the tail is short on purpose, and the counter-example worth keeping
+
+### Reading the rest of the thin list, because the last wave's note said to
+
+The thin row now reads *the ones left are short by design*, and the last wave
+put that sentence there after reading three of the eight. This wave read the
+other four, because a claim made from three cases is the shape of claim this
+file keeps catching.
+
+They hold. *The Data Interview*, *The Full-Stack Picture*, *Cert Roadmaps* and
+*Software Supply Chain Security* are map cards: each one's job is to connect a
+domain to the rest of the site, each ends on a judgement, and each would be
+worse for being longer. The two `linux` entries below them — *File Ops & Text
+Processing*, *Networking (CLI)* — are Linux+ objective references, the same form
+the duplicate census already records as deliberate.
+
+Below the thin line the tail is almost entirely the `script` beginner series:
+eighteen cards of 600–1,100 characters, three or four concept cards each, and
+**zero `.verdict` spans between them**. That reads like a gap and is not one.
+Those cards end on judgements — *keep variables as local as possible*, *bugs
+love the edges, test there* — inside the concept description, because they have
+no tables for a verdict to follow. The `.verdict` class marks a sentence after a
+table, not the presence of a sentence worth reading.
+
+**So the deepening wave the depth row asks for has no work in it right now**,
+and that is the finding. `Cert Roadmaps` gained one row — an Azure track, absent
+from a cert map on a site whose cloud, endpoint and m365 domains are largely
+Microsoft — and nothing else in the tail needed a word.
+
+### Two more cards that already answered the question
+
+`my email went to spam` returned **nothing**, against a card titled *Email
+Authentication — SPF, DKIM, DMARC* that contains both "spam" and "junk". The
+blocker was `went`, and the fix was the opening sentence the card should have
+had anyway: **"our email went to spam" and "somebody is sending mail as us" are
+the same problem read from opposite ends, and the same three DNS records answer
+both.** One card, one hit, and the reader who arrives from either end lands in
+the same place.
+
+`somebody deleted the wrong thing` reached seventeen cards and not the
+postmortem one, which is about exactly that and never says it. It now opens on
+the archetype: *somebody deleted the wrong thing, or shipped the wrong config,
+and the only question that matters now is which question the room asks next.*
+
+### The counter-example, recorded rather than fixed
+
+`the intern deleted the wrong thing` is the same query with one extra word, and
+it still returns seven cards about nothing. The relaxation stage is working
+exactly as designed: `intern` is the rarest word, so it is the one kept.
+
+There is no honest fix. The site has no reason to name an intern, and writing
+one in to catch the query is the keyword stuffing this census exists to refuse.
+So it is checked in **with a `want` as well as a verdict**, which makes the
+harness score it as a wrong-card miss and count it as explained rather than
+quietly passing on its result count — the same distinction that caught
+`standups` four waves ago.
+
+It is the first entry in the census's wrong-card column, and it is there to stay
+visible. **A relaxation rule that keeps the rarest word is right almost always,
+and this is what its failure looks like** — worth one row that a future session
+reads before proposing to change the rule.
+
+```
+probe 170 -> 175 questions · 170 answered · 0 unexplained · 4 zeros · 1 wrong card
+thin 7, unchanged and read in full · one Azure track added to the cert map
+41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
 ```

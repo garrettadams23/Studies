@@ -54,9 +54,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 DATA = ROOT / "data"
+sys.path.insert(0, str(ROOT / "tools"))
+from lint_content import TAG_RE  # noqa: E402
 
 PRE_RE = re.compile(r"<(pre|code)\b.*?</\1>", re.S | re.I)
-TAG_RE = re.compile(r"<[^>]+>")
 ACRO_EXP_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
 
 # "UEM (Unified Endpoint Management)" written by hand in prose. The annotator's
@@ -180,13 +181,53 @@ def prose(text):
 
 
 def dictionary():
+    """ACRONYM -> every expansion the dictionary carries for it.
+
+    Merged, not overwritten. The first version was a dict comprehension keyed on
+    `e["a"].upper()`, and the dictionary deliberately distinguishes two pairs by
+    case — `SOC` from `SoC`, `IOC` from `IoC`. Upper-casing collides them and a
+    comprehension lets the later one win, so this check has been reading a
+    dictionary with **Security Operations Center and Indicator of Compromise
+    silently missing from it**. Nothing noticed, because the check's job is to
+    find disagreements and a meaning it cannot see produces none.
+
+    Merging is the right answer rather than preserving the case distinction: the
+    comparison below is case-insensitive anyway, and a card writing "SOC" for
+    either sense is writing something the site defines somewhere.
+    """
     entries = json.loads((DATA / "acronyms.json").read_text(encoding="utf-8"))["entries"]
-    return {e["a"].upper(): [m["e"] for m in e["m"]] for e in entries}
+    merged = collections.defaultdict(list)
+    for e in entries:
+        for m in e["m"]:
+            if m["e"] not in merged[e["a"].upper()]:
+                merged[e["a"].upper()].append(m["e"])
+    return dict(merged)
+
+
+# "Incident Command System (ICS)" — the definition written the other way round.
+# INLINE_EXP_RE reads `ACRO (Expansion)` and the site writes both, so half of
+# what it was built to check was never in front of it: **85 definitions in this
+# form against the acronym-first ones it does read.**
+REVERSED_EXP_RE = re.compile(
+    r"((?:\b[A-Z][A-Za-z0-9'-]+\s+){1,6}[A-Za-z0-9'-]+)\s*\(([A-Z][A-Z0-9]{1,7})\)")
+
+# A leading article belongs to the sentence, not to the expansion: "…is An
+# Architecture Decision Record (ADR)" defines the same thing as "Architecture
+# Decision Record".
+ARTICLE_RE = re.compile(r"^(?:a|an|the)\s+", re.I)
 
 
 def norm(s):
-    """Compare expansions on their words, not their punctuation or case."""
-    return re.sub(r"[^a-z0-9 ]", " ", s.lower()).split()
+    """Compare expansions on their words, not their punctuation or case.
+
+    Each word loses a trailing `s`, so "Web Application Firewalls" and "Web
+    Application Firewall" are the same claim written for different sentences.
+    That is a style difference in the prose around the acronym, and reporting it
+    would be this check being wrong about what it is reading.
+    """
+    words = re.sub(r"[^a-z0-9 ]", " ", ARTICLE_RE.sub("", s.strip()).lower()).split()
+    return [w[:-1] if len(w) > 3 and w.endswith("s") and not w.endswith("ss") else w
+            for w in words]
 
 
 def check_expansions(vocab):
@@ -196,8 +237,10 @@ def check_expansions(vocab):
         if path.stem == "acronym":
             continue
         text = prose(path.read_text(encoding="utf-8"))
-        for m in INLINE_EXP_RE.finditer(text):
-            acro, exp = m.group(1), re.sub(r"\s+", " ", m.group(2)).strip()
+        pairs = [(m.group(1), m.group(2)) for m in INLINE_EXP_RE.finditer(text)]
+        pairs += [(m.group(2), m.group(1)) for m in REVERSED_EXP_RE.finditer(text)]
+        for acro, raw in pairs:
+            acro, exp = acro, re.sub(r"\s+", " ", raw).strip()
             if acro in NOT_ACRONYM or acro.upper() not in vocab:
                 continue
             if not looks_like_expansion(acro, exp):
@@ -215,13 +258,108 @@ def check_expansions(vocab):
     return findings
 
 
+# ── the table half ──────────────────────────────────────────────────────────
+#
+# The site's canonical port list is a **table**, and this check could not read
+# one. The patterns above find where a port is *mentioned* in a sentence; they
+# do not find where a reference *states* one. `net`'s *Common Ports — Protocol
+# Reference* has a header row reading `Port(s) | Protocol | Transport | Security
+# Notes` and rows under it, and a wrong number there is at once the likeliest
+# port error on this site and the least likely to be caught by eye. The prose
+# scan saw none of it — fifteen services, fourteen keyed from a single domain,
+# against forty-five service/port pairs sitting in three labelled tables.
+#
+# Read by **header**, never by shape. A table qualifies when its header row has
+# one cell naming a port and another naming a protocol or service; anything
+# else is left alone. That is the same sharp test the rest of this toolchain
+# prefers: the header says what the column is, or the table is not one of these.
+TABLE_RE = re.compile(r"<table\b[^>]*>(.*?)</table>", re.S | re.I)
+ROW_RE = re.compile(r"<tr\b[^>]*>(.*?)</tr>", re.S | re.I)
+CELL_RE = re.compile(r"<t([hd])\b[^>]*>(.*?)</t\1>", re.S | re.I)
+PORT_HEADER_RE = re.compile(r"\bports?\b|\bport\(s\)", re.I)
+SERVICE_HEADER_RE = re.compile(r"\bprotocols?\b|\bservices?\b|\bapplications?\b", re.I)
+PARENS_RE = re.compile(r"\([^()]*\)")
+
+
+def cell_text(html):
+    return re.sub(r"\s+", " ", TAG_RE.sub(" ", ACRO_EXP_RE.sub("", html))).strip()
+
+
+def split_row(port_cell, service_cell):
+    """(service, port) pairs from one row, or nothing when the row is ambiguous.
+
+    A reference table combines related rows, and combining is where a naive
+    reader invents a contradiction. Three real shapes, and only the third needs
+    a rule:
+
+        20 / 21   FTP (data/control)    one service, two ports  -> both are FTP
+        22        SSH / SFTP / SCP      one port, three services -> all three
+        514       Syslog                the ordinary case
+        993 / 995 IMAPS / POP3S         two and two -> pair them, positionally
+
+    The first prototype of this read the third row as *IMAPS on 993 and 995* and
+    reported IMAPS as disagreeing with itself. The row was correct and the reader
+    was wrong, which is the failure this file exists to avoid committing itself.
+
+    Parentheticals are stripped before splitting, so the slash inside
+    "FTP (data/control)" is not mistaken for a service separator.
+    """
+    ports = [n for n in re.findall(r"\b(\d{1,5})\b", port_cell)
+             if 1 <= int(n) <= 65535]
+    names = [s.strip() for s in re.split(r"\s*/\s*", PARENS_RE.sub(" ", service_cell))
+             if re.match(r"^[A-Za-z][A-Za-z0-9+.-]{1,14}$", s.strip())]
+    if not ports or not names:
+        return []
+    if len(names) == 1:
+        return [(names[0], p) for p in ports]
+    if len(ports) == 1:
+        # The symmetric case, and the one the first version dropped: several
+        # services on one port is how a reference writes a family. `22 | SSH /
+        # SFTP / SCP` is three true claims, and skipping it lost the site's only
+        # tabular statement of the most quoted port on it. Found by injecting a
+        # wrong number into the real table and watching nothing happen.
+        return [(n, ports[0]) for n in names]
+    if len(names) == len(ports):
+        return list(zip(names, ports))
+    # Several services and a different number of ports: which goes with which is
+    # not recoverable from the row, and guessing is how a check starts inventing
+    # findings. Skipped on purpose.
+    return []
+
+
+def table_ports(src):
+    """(service, port) from every header-labelled port table in one file."""
+    out = []
+    for table in TABLE_RE.finditer(src):
+        rows = [[(kind, cell_text(html)) for kind, html in CELL_RE.findall(r)]
+                for r in ROW_RE.findall(table.group(1))]
+        header = next((r for r in rows if any(k == "h" for k, _ in r)), None)
+        if not header:
+            continue
+        labels = [v for _, v in header]
+        port_i = next((i for i, v in enumerate(labels) if PORT_HEADER_RE.search(v)), None)
+        svc_i = next((i for i, v in enumerate(labels) if SERVICE_HEADER_RE.search(v)), None)
+        if port_i is None or svc_i is None or port_i == svc_i:
+            continue
+        for row in rows:
+            if any(k == "h" for k, _ in row) or len(row) <= max(port_i, svc_i):
+                continue
+            out += split_row(row[port_i][1], row[svc_i][1])
+    return out
+
+
 def check_ports():
     """service -> the ports the site attaches to it, so disagreement is visible."""
     seen = collections.defaultdict(lambda: collections.defaultdict(set))
     for path in sorted(DATA.glob("*.html")):
         if path.stem == "acronym":
             continue
-        text = prose(path.read_text(encoding="utf-8"))
+        src = path.read_text(encoding="utf-8")
+        for service, port in table_ports(src):
+            if service.upper() in TRANSPORTS or service.upper() in NOT_SERVICE:
+                continue
+            seen[service.upper()][port].add(path.stem)
+        text = prose(src)
         for n, pattern in enumerate(PORT_PATTERNS):
             for m in pattern.finditer(text):
                 if n == 1:
@@ -360,8 +498,31 @@ PAIR_FIXTURES = [
 ]
 
 
+# One row of a port table, and what it is allowed to claim. The third and the
+# last are the reason this function exists at all: a combined row read naively
+# reports a protocol as disagreeing with itself, and a row whose two cells
+# cannot be lined up has to be skipped rather than guessed at.
+ROW_FIXTURES = [
+    ("the ordinary case", "514", "Syslog", [("Syslog", "514")]),
+    ("one service, two ports", "20 / 21", "FTP (data/control)",
+     [("FTP", "20"), ("FTP", "21")]),
+    ("two services, two ports, paired in order", "993 / 995", "IMAPS / POP3S",
+     [("IMAPS", "993"), ("POP3S", "995")]),
+    ("a slash inside a parenthetical is not a separator", "443", "HTTPS (HTTP/TLS)",
+     [("HTTPS", "443")]),
+    ("a range in the port cell", "137 / 139", "NetBIOS",
+     [("NetBIOS", "137"), ("NetBIOS", "139")]),
+    ("several services on one port is a family, not an ambiguity", "22",
+     "SSH / SFTP / SCP", [("SSH", "22"), ("SFTP", "22"), ("SCP", "22")]),
+    ("counts that do not line up are skipped, not guessed", "80 / 443 / 8080",
+     "HTTP / HTTPS", []),
+    ("a port out of range is not a port", "99999", "Nothing", []),
+    ("no service name to key on", "22", "—", []),
+]
+
+
 def self_test():
-    """The pair comparison, on text where the answer is known.
+    """The pair comparison and the table row reader, on known answers.
 
     This mode reported zero findings across every real pair on its first run,
     which is the right answer and is indistinguishable from a check that cannot
@@ -369,6 +530,14 @@ def self_test():
     """
     vocab = dictionary()
     failures = 0
+    for name, port_cell, service_cell, want in ROW_FIXTURES:
+        got = split_row(port_cell, service_cell)
+        status = "ok  " if got == want else "FAIL"
+        if got != want:
+            failures += 1
+            print(f"  {status} {name}: expected {want}, got {got}")
+        else:
+            print(f"  {status} {name}")
     for name, a, b, want in PAIR_FIXTURES:
         got = disagreements(claims(prose(a), vocab), claims(prose(b), vocab))
         status = "ok  " if len(got) == want else "FAIL"
@@ -377,7 +546,8 @@ def self_test():
             print(f"  {status} {name}: expected {want}, got {len(got)} — {got}")
         else:
             print(f"  {status} {name}")
-    print(f"\nself-test: {len(PAIR_FIXTURES)} fixtures, {failures} failure(s).")
+    print(f"\nself-test: {len(PAIR_FIXTURES) + len(ROW_FIXTURES)} fixtures, "
+          f"{failures} failure(s).")
     return 1 if failures else 0
 
 

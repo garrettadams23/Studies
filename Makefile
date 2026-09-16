@@ -55,6 +55,7 @@ check:
 	$(PY) tools/fix_topic_names.py --check
 	$(PY) tools/annotate_acronyms.py --self-test
 	$(PY) tools/annotate_acronyms.py --check
+	$(PY) tools/check_renames.py --self-test
 	$(PY) tools/check_renames.py
 	$(PY) tools/check_contradictions.py --self-test
 	$(PY) tools/check_contradictions.py --strict
@@ -70,6 +71,7 @@ check:
 	$(PY) tools/page_budget.py
 	$(PY) tools/check_plan_numbers.py --self-test
 	$(PY) tools/check_plan_numbers.py
+	$(NODE) tools/query_probe.mjs --self-test
 
 ## census: the four reports that measure content rather than gate it
 census:

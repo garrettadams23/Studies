@@ -1118,7 +1118,12 @@ gcloud compute instances list --project my-prod-project</pre>
                   <div class="concept-desc verdict">
                     <strong class="c-green">Decision:</strong> event-driven glue → Lambda; long-running
                     services in containers → ECS/EKS on Fargate (no servers) or EC2 (cheaper at
-                    scale, more ops). Fargate is the "I don't want to manage nodes" answer for
+                    scale, more ops). A function also has a hard ceiling on how long one invocation may
+                    run, so <strong>"my Lambda times out"</strong> is usually the design telling you it is
+                    not a function: a long job belongs behind a queue, split into steps, or moved to a
+                    container. Raising the timeout buys minutes and bills for every one of them, including
+                    the ones spent waiting on something that was never going to answer.
+                    Fargate is the "I don't want to manage nodes" answer for
                     containers.
                   </div>
                 </div>
@@ -1469,6 +1474,9 @@ gcloud compute instances list --project my-prod-project</pre>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>What is metered</th><th>The trap</th></tr>
+                    <!-- fact: Cloud Storage minimum storage duration is 30 days Nearline,
+                         90 Coldline, 365 Archive | source: Google Cloud Storage storage class
+                         minimum durations | checked: 2026-09 -->
                     <tr><td>Minimum storage duration per class</td><td>Nearline 30 days, Coldline 90, Archive 365. Delete on day 2 and you still pay the rest</td></tr>
                     <tr><td>Retrieval charges on cold classes</td><td>Per GB read. A cold archive that gets queried monthly is the wrong class</td></tr>
                     <tr><td>Class transitions</td><td>Each object moved is an operation, and there can be a great many objects</td></tr>

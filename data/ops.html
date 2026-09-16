@@ -2068,7 +2068,9 @@ projected_date = history[-1][0] + timedelta(weeks=weeks_remaining)
       <span class="concept-label">Concept</span>
       <h4 class="concept-title">A postmortem is a story about a system, not a trial of a person</h4>
       <p class="concept-desc">A postmortem (or "post-incident review") is a written analysis of what happened during an
-      outage or incident, why it happened, and what will change as a result. The single most important design decision in
+      outage or incident, why it happened, and what will change as a result. Somebody deleted the wrong thing, or shipped
+      the wrong config, and the only question that matters now is which question the room asks next. The single most
+      important design decision in
       any postmortem process is whether it's <em>blameless</em> — focused on "what conditions made this mistake possible
       and likely?" rather than "who do we blame for this?" Get that one decision right, and people will tell you the truth
       about what happened. Get it wrong, and every future postmortem will quietly omit the details that actually mattered.</p>
@@ -2791,9 +2793,14 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">Sustainable Operations, Not Hero Burnout</div>
                 <div class="concept-desc">
-                  On-call is necessary but corrosive when done badly — pages at 3am for non-issues
-                  drive burnout and attrition. Good on-call is designed: few, actionable alerts and a
-                  culture that fixes root causes.
+                  Being on call is necessary, and corrosive when done badly — being paged at 3am
+                  for a non-issue, and then again the next night, is what drives burnout and
+                  attrition. It is the recurrence that does the damage rather than any one night,
+                  which is why counting pages per rotation says more than any of them. Good on-call
+                  is designed: few, actionable
+                  alerts and a culture that fixes root causes. The distinction worth holding is that
+                  a rota decides who is on call and only the alert design decides whether that costs
+                  them the night.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -4386,7 +4393,9 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
         model of the system. Watching them reproduce it removes the filter, and the reproduction
         itself frequently contains the answer — a dialog dismissed too fast, a wrong field, a step
         skipped because it has never mattered before. Ask them to show you rather than tell you, and
-        then, crucially, do not take over.
+        then, crucially, do not take over. Screen sharing is the instrument for this, and the
+        temptation it creates is the problem with it: the moment you request control you stop
+        learning what they were doing and start doing it yourself.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -5956,7 +5965,10 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
         usually wrong. When the seventh page is real, it is acknowledged more slowly and
         investigated less thoroughly, because the prior probability they have absorbed says it will
         be nothing. The system's mean time to detect has quietly increased, and no dashboard shows
-        it.
+        it. Which is the honest reading of <strong>"we get too many alerts"</strong>: it is not a
+        complaint about volume, it is a report that the signal-to-noise ratio has crossed the point
+        where reading them carefully stopped being rational. Cutting the count is the remedy only
+        because the ratio is what actually moved.
       </div>
       <div class="dw">
         <div class="concept-desc">

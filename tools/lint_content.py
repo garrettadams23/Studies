@@ -123,14 +123,22 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # down by 279 from the corrected figure.
 #
 # 469 -> ... -> 108 -> 12. The backlog is cleared. 722 verdicts written by hand
-# across every domain, and the 12 that remain are the `military` staff-code
+# across every domain, and the 12 that remained were the `military` staff-code
 # cross-matrix and SF form series — lookup tables where a judgement would be
 # filler, recorded as deliberate rather than chipped at.
 #
-# The ceiling is 12 rather than 0 for that reason. If it ever reads 13, either
-# a new card ends on a table or one of those twelve was edited: both are worth
+# 12 -> 10. Two of those twelve turned out not to be lookup tables after all.
+# *Staff Functions 1–9* and *Common Codes Decoded* were the site's two thinnest
+# topics, and each had a judgement to make that its table had been carrying
+# silently: the gaps in the staff-function table say how big a headquarters is,
+# and two rows of the code table are not staff codes at all. "A judgement would
+# be filler" is a verdict about a card, and it has to be re-earned whenever the
+# card is looked at properly.
+#
+# The ceiling is 10 rather than 0 for that reason. If it ever reads 11, either
+# a new card ends on a table or one of those ten was edited: both are worth
 # a look, which is what a ceiling at the true floor buys you.
-CEILINGS = {"inline style attribute": 401, "table with no verdict": 12}
+CEILINGS = {"inline style attribute": 401, "table with no verdict": 10}
 
 
 # A `style=` attribute is either avoidable or it is not, and the old count mixed
@@ -213,6 +221,23 @@ def slugify(s):
     s = re.sub(r"[\s_]+", "-", s)
     s = re.sub(r"-+", "-", s)
     return s[:60] or "topic"
+
+
+# ── Markup to text, one definition ──────────────────────────────────────────
+# A tag needs a name — `</?[a-zA-Z]` — plus the comment form. `<[^>]+>` looks
+# equivalent and is not. It is the loose pattern `script.js` documented and
+# stopped using, and `_CODE_TAG` below has never used; six tools here still had
+# it, each with its own copy. On this site it swallows a shell redirect in a
+# code block (`< <span class="num">`), an inequality in a maths card
+# (`< 0 and f(1) = 1 >`), and only the first line of a comment containing a `>`
+# (`<!-- Four cards did not clear the >=15…`) — leaving the rest of that comment
+# in the text as if a reader could see it. Eight spans across four files,
+# measured. The browser gets all eight right, because `< ` cannot open a tag.
+#
+# It lives here, once, because six identical copies is six chances to diverge
+# and this file already exports `domain_files` to most of them. The copies
+# agreed on the wrong pattern for as long as nobody compared them.
+TAG_RE = re.compile(r"</?[a-zA-Z][^>]*>|<!--[\s\S]*?-->", re.S)
 
 
 # ── Where a domain's source lives ───────────────────────────────────────────
@@ -828,6 +853,8 @@ def topic_label(block):
     else:
         h = TOPIC_HEADER_RE.search(plain)
         raw = h.group(1) if h else ""
+    # ACRO_SPAN_RE above already takes the space in front of the span with it,
+    # which is what script.js's plainLabel() was missing for years.
     return unescape(re.sub(r"<[^>]+>", "", raw)).strip(), bool(m)
 
 
@@ -894,8 +921,8 @@ def main():
         for line, snippet in gt_in_comment(text):
             errors.append(
                 f"{name}:{line}: an HTML comment inside a .topic contains '>' — "
-                f"{snippet!r}. Every tool here strips markup with <[^>]+>, which "
-                f"stops at that '>' and reads the rest as card content. Write "
+                f"{snippet!r}. The tools that still strip markup with <[^>]+> "
+                f"stop at that '>' and read the rest as card content. Write "
                 f"'at least' or '&gt;'")
 
         for (line,) in bare_tables(text):
@@ -1202,28 +1229,39 @@ BARE_TABLE_FIXTURES = [
 
 # An HTML comment that contains a ">" survives a naive tag strip.
 #
-# Sixteen tools in this repo strip markup with `re.sub(r"<[^>]+>", "", ...)`,
+# Sixteen tools in this repo stripped markup with `re.sub(r"<[^>]+>", "", ...)`,
 # and that regex stops at the first ">" it meets. A comment reading
 # `<!-- did not clear the >=15-card bar -->` is therefore not one tag but two
 # fragments with `=15-card bar` as plain text between them, and every one of
-# those tools reads that text as content: depth_report counts its characters,
-# near_duplicates folds it into an overlap score, the acronym annotator would
-# happily expand inside it.
+# those tools read that text as content: depth_report counted its characters,
+# near_duplicates folded it into an overlap score, the acronym annotator would
+# happily have expanded inside it.
 #
-# Three such comments exist. All three sit *between* topics, so nothing
-# measures them and no number on this site is currently wrong. That is the
-# whole reason for this check: **the invariant holds by luck rather than by
-# construction**, and one comment written inside a card body with a ">" in it
-# would silently move numbers that appear in plan.md's measured-state table
-# with nothing to say it had happened.
+# **The paragraph that stood here was wrong, and it is worth keeping the
+# correction.** It said the three such comments all sit *between* topics, so
+# nothing measures them and no number on this site is currently wrong. The
+# first clause is true. The second does not follow: `depth_report.topics()`
+# takes each block from one topic's start to the *next* one's, so whatever sits
+# between two topics is measured as part of the one above it. All three
+# comments were being counted — 112, 112 and 102 characters of phantom content
+# on three real cards.
 #
-# Gating the condition is cheaper and more complete than hardening sixteen
-# regexes, because a comment that cannot contain ">" cannot break any of them.
-# The fix is always trivial — write "at least 15" or "&gt;=15".
+# No number was wrong, which is what made it invisible: the mean moves by 0.2
+# characters across 1,552 topics, and no card crossed the thin or the deep
+# threshold in either direction (checked, both ways, for all eight spans the
+# two patterns disagree about). The invariant did hold by luck. The note
+# explaining why was reasoning from a fact it had not measured — which is the
+# same failure, one level up.
 #
-# Scoped to comments inside a .topic block, which are the only ones any tool
-# reads. The file-level ones outside a topic are left alone: they are where
-# the domain's own bookkeeping lives, and no measurement ever reaches them.
+# The seven tools that strip a whole topic block now share one `TAG_RE`
+# (defined at the top of this file), so for those the condition is closed by
+# construction rather than gated. This check stays for the rest — the inline
+# `<[^>]+>` calls that read a single already-narrow match — because it is three
+# lines, it cannot be wrong in the dangerous direction, and the fix it asks for
+# is always trivial: write "at least 15" or "&gt;=15".
+#
+# Scoped to comments inside a .topic block. The file-level ones outside a topic
+# are left alone: they are where the domain's own bookkeeping lives.
 _COMMENT_RE = re.compile(r"<!--(.*?)-->", re.S)
 
 

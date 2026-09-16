@@ -453,7 +453,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>24-pin and 8-pin power connectors</td><td>The 8-pin CPU connector is the one people forget; the machine will not post</td></tr>
             <tr><td>Front-panel header</td><td>Power switch, reset, LEDs <span class="acro-exp">(Light Emitting Diode)</span> — the fiddliest ten minutes of any build</td></tr>
             <tr><td>CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span> battery and clear jumper</td><td>The fix for a machine that will not post after a bad setting</td></tr>
-            <tr><td>Diagnostic LEDs or a POST code display</td><td>The single most useful feature on a board when something is wrong</td></tr>
+            <tr><td>Diagnostic LEDs or a POST <span class="acro-exp">(Power-On Self-Test)</span> code display</td><td>The single most useful feature on a board when something is wrong</td></tr>
             <tr><td>VRM <span class="acro-exp">(Voltage Regulator Module)</span> and its heatsink</td><td>Converts 12 V to CPU voltage; poor VRM cooling throttles a good CPU</td></tr>
           </tbody>
         </table>
@@ -897,7 +897,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🚦</span>
-    <span class="topic-name">POST, Beep Codes &amp; Diagnostic LEDs <span class="acro-exp">(Light Emitting Diode)</span> — Reading a Machine That Will Not Boot</span>
+    <span class="topic-name">POST <span class="acro-exp">(Power-On Self-Test)</span>, Beep Codes &amp; Diagnostic LEDs <span class="acro-exp">(Light Emitting Diode)</span> — Reading a Machine That Will Not Boot</span>
     <span class="topic-badge">Diagnosis</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -911,7 +911,11 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         image on screen — and if it fails before that last step there is nothing to read. The
         machine has not gone silent; it is reporting through the only channels it has left, which
         are beeps, LEDs and a two-digit code display. Knowing that these exist is what turns "it is
-        dead" into a specific fault.
+        dead" into a specific fault &mdash; and it is where <strong>"no display"</strong> and
+        <strong>"no signal on the monitor"</strong> part company. No signal while the machine is
+        plainly running is a display-path problem and belongs with the Displays card; no image
+        <em>and</em> no beep, no LED and no fan is a machine that never reached the step at which an
+        image would exist.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -1009,7 +1013,12 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         identified yet — temperature, load, elapsed time since power-on, physical position,
         humidity, what else is running on the same circuit. Reframing "it happens randomly" as
         "there is a condition I have not found" changes the work from waiting for it to happen into
-        looking for what is different when it does.
+        looking for what is different when it does. <strong>"The computer randomly restarts"</strong>
+        is the commonest report of this shape, and it is worth hearing precisely: a machine that
+        reboots without a bugcheck screen was not asked to reboot — it lost power for long enough to
+        drop out, which points at the supply, the thermals or a connector rather than at software.
+        A machine that shows a stop screen first crashed, which is a different investigation
+        entirely, and the difference is one question to the person reporting it.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -1326,6 +1335,39 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       </div>
     </div>
     <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">"No Signal" Is the Monitor Reporting on the Cable, Not on the Computer</div>
+      <div class="concept-desc">
+        A monitor showing <strong>no signal</strong> has power, a working panel and firmware enough to
+        draw that message — which is most of the monitor working. What it is saying is that the input
+        it is watching is silent, and it cannot tell you why. The machine being off is one of the
+        less likely reasons, and the ranking below is worth having because the instinct, replacing
+        the monitor, is last.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Check</th><th>Why it comes where it does</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>The input source the monitor is watching</td><td>Free, instant, and a genuinely large share of these. A monitor with three inputs auto-selects and gets it wrong</td></tr>
+            <tr><td>Which socket the cable is in on the machine</td><td>With a discrete graphics card fitted, the motherboard's own output is usually dead. The cable is in the wrong hole and the machine is fine</td></tr>
+            <tr><td>The cable, swapped rather than reseated</td><td>DisplayPort in particular re-negotiates on every wake, so a marginal cable fails intermittently on resume and works on a cold boot</td></tr>
+            <tr><td>The adapter, if there is one</td><td>A USB-C port carries video only if it supports the alt mode, and a passive adapter cannot invent a signal the port does not emit</td></tr>
+            <tr><td>The cable's rating against what you are asking for</td><td>A cable that carries 1080p happily can fail entirely at 4K 60Hz &mdash; not degrade, fail</td></tr>
+            <tr><td>The machine, last</td><td>And if it is the machine, it is a POST <span class="acro-exp">(Power-On Self-Test)</span> question, not a display one</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Swap the cable rather than reseating it.</strong> Reseating fixes a connection
+        problem and tells you nothing about a cable that has failed internally, which is the more
+        common of the two and the one that comes back next week. And note the shape of the whole
+        table: <strong>five of the six checks are outside the monitor, and the monitor is the part
+        the ticket names</strong> &mdash; because it is the part with a screen to say something on.
+      </div>
+    </div>
+    <div class="concept-card">
       <div class="concept-label">Troubleshooting</div>
       <div class="concept-title">Scaling — Why the Text Is the Wrong Size on the Second Monitor</div>
       <div class="concept-desc">
@@ -1449,6 +1491,38 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       </div>
     </div>
     <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">"The Printer Is Offline" Is a Claim by the Client, Not a Report From the Device</div>
+      <div class="concept-desc">
+        The commonest printer ticket there is, and the word misleads everyone who reads it: a
+        queue showing <strong>offline</strong> is saying that <em>this computer</em> did not get
+        the answer it expected, which is a different statement from the printer being off. A
+        device printing its own configuration page for somebody standing beside it can be
+        showing offline on every desk in the building at the same time.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>What is actually true</th><th>How it looks</th><th>What to do</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Windows set "Use Printer Offline" after one failed poll and never cleared it</td><td>Queue offline; the device answers on the network</td><td>Clear the flag in the queue itself. It is client-side state, not something the device asked for</td></tr>
+            <tr><td>The status channel is blocked, not the print path</td><td>Jobs print, and the queue reports offline or "status unknown" the whole time</td><td>Bidirectional support polls the device, usually over SNMP <span class="acro-exp">(Simple Network Management Protocol)</span>. A firewall rule or a disabled agent silences the reply, not the printing</td></tr>
+            <tr><td>The device took a different address</td><td>It answers on a new one; the queue still points at the old</td><td>Reserve the address, or point the port at a name instead of a number</td></tr>
+            <tr><td>The queue is paused rather than offline</td><td>Jobs pile up with no error at all</td><td>Somebody paused it to stop a runaway job and never resumed it</td></tr>
+            <tr><td>The device really is off, jammed or out of toner</td><td>The configuration page does not print either</td><td>Now it is a physical problem, and the triage below is the right order</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Ask for the configuration page before anyone touches a driver.</strong> It
+        separates a broken device from an estate that cannot talk to a working one, and the
+        second is far more common — which means the reflex of power-cycling the printer is
+        usually a reboot of the one component that was never at fault. A queue reporting
+        offline while the device prints is a status-channel problem and nothing else.
+      </div>
+    </div>
+    <div class="concept-card">
       <div class="concept-label">Troubleshooting</div>
       <div class="concept-title">Secure Release, and the Triage Order That Works</div>
       <div class="concept-desc">
@@ -1483,6 +1557,40 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           scanned and printed documents on internal drives, are frequently leased, and are returned
           at end of term with that storage intact unless someone asks — the point made in
           <span class="xref">Media Sanitisation &amp; Disposal — What "Wiped" Actually Means</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">It Printed, and the Page Is Wrong — Blank, Garbled or Streaked</div>
+      <div class="concept-desc">
+        The triage order above answers <em>nothing came out</em>. A page that came out wrong is the
+        opposite investigation, and an easier one: the path worked end to end, so the fault is in
+        what was sent or in what put it on the paper. The shape of the wrongness says which, and
+        readers report the shape accurately even when they can describe nothing else.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What comes out</th><th>Usually</th><th>The test that settles it</th></tr></thead>
+          <tbody>
+            <tr><td>Blank pages, one after another</td><td>A consumable or a seal — an empty cartridge, a new one with its shipping strip still in, or an inkjet head that has dried out</td><td>The device's own config page: it never touches a driver</td></tr>
+            <tr><td>Pages of source code, or a one-line error banner</td><td>The driver speaks a page language the device does not — classically a PostScript driver against a PCL-only device after a queue was rebuilt</td><td>Print from a plain text editor. Right there and wrong from the application means the language, not the device</td></tr>
+            <tr><td>Faded, or one band lighter down the page</td><td>Toner low, or settled unevenly after transport</td><td>Rock the cartridge and reprint. It is a delaying tactic, not a fix, and it confirms the diagnosis in one page</td></tr>
+            <tr><td>The same mark repeating at a fixed interval</td><td>A defect on a rotating part — the interval <em>is</em> its circumference</td><td>Measure the gap between repeats; the service manual maps interval to part</td></tr>
+            <tr><td>Toner that rubs off under a thumb</td><td>The fuser is not reaching temperature — sometimes because the tray is set to a media type that tells it to run cool</td><td>Correct the tray's media setting first; it is free, and it is the cause often enough to check before quoting a fuser</td></tr>
+            <tr><td>Right content, wrong margins or scale</td><td>Paper size disagreeing between the job, the driver default and the tray</td><td>Compare all three. The tray is the one nobody checks</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Print the device's own config page first — the same first step as the triage
+          order above, for the opposite reason.</strong> There it proved the device works; here it
+          separates the device from everything upstream of it, because it is the one page in the
+          building that no driver, queue or application touched. Wrong on the config page is a
+          hardware fault and the ticket goes to whoever holds the maintenance contract; right on the
+          config page means the driver, the queue or the application, and those are cheap to test in
+          that order. This card is not a repair guide — the interval-to-part mapping and the fuser
+          specification live in the manufacturer's service manual, and knowing which document to
+          open is the part worth carrying.
         </div>
       </div>
     </div>
@@ -2586,7 +2694,9 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-label">Concept</div>
       <div class="concept-title">Batteries: What Wears Them Out, and the Advice That Is Out of Date</div>
       <div class="concept-desc">
-        Lithium-ion cells age on two clocks at once — cycles used, and time spent at a high state of
+        "It drains fast now and will not hold a charge" is a capacity complaint rather than a
+        settings one, which is why the answer is chemistry and not a power plan. Lithium-ion cells
+        age on two clocks at once — cycles used, and time spent at a high state of
         charge and temperature. Most of the folklore in circulation was true of nickel chemistry
         decades ago and is wrong now.
       </div>
