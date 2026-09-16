@@ -227,6 +227,9 @@ const READERS = [
     ["user left who gets their files", "", "m365/joiner-mover-leaver-in-m365-terms-the-process-that-prevents-"],
     ["why is the wifi slow in one room", "", "net/wireless-troubleshooting-roaming-sticky-clients-its-slow"],
     ["screen sharing with a user", "", "ops/remote-support-skills-screen-shares-phone-only-diagnosis-gui"],
+    // ── batch nine ──
+    ["teams meeting audio not working", "",
+     "m365/teams-call-quality-cqd-the-network-requirements-the-real-cul"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -276,6 +279,15 @@ const READERS = [
     ["why do we use containers", "", "linux/docker-containers-package-once-run-anywhere"],
     ["why does caching break things", "", "devops/caching-strategies-from-app-to-cdn"],
     ["what is an embedding", "", "ai/embeddings-rag-giving-ai-access-to-your-own-data"],
+    // ── batch eight ──
+    ["the trolley problem", "",
+     "philosophy/ethics-the-three-families-and-using-them-on-a-real-decision"],
+    ["what does opsec actually mean", "",
+     "military/opsec-operational-security-in-cyber-real-life"],
+    ["how do i use vim", "", "shortcut/vim"],
+    ["what is big o for", "", "cs/big-o-in-practice-what-the-notation-hides"],
+    ["i cannot do integrals", "",
+     "math/unit-3-integrals-series-area-techniques-differential-equatio"],
     ["should we fine tune or use rag", "",
      "ai/fine-tuning-vs-prompting-vs-rag-picking-the-right-tool"],
     // The first `want` written for this was wrong, and the correction is the
@@ -322,6 +334,8 @@ const READERS = [
     ["rotate a secret", "", "sec/secrets-management-stop-hardcoding-passwords"],
     ["out of disk inodes", "",
      "linux/the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro"],
+    // ── batch nine ──
+    ["my ssh key stopped working", "", "linux/ssh-secure-remote-access-done-right"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -354,6 +368,9 @@ const READERS = [
     ["estimating", "", "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
     ["incident postmortem", "", "ops/writing-a-postmortem-people-actually-learn-from"],
     ["on call", "", "ops/on-call-done-humanely"],
+    // ── batch nine ──
+    ["nobody writes documentation", "",
+     "ops/knowledge-management-kcs-in-practice-and-keeping-articles-fr"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -390,6 +407,9 @@ const READERS = [
     ["the pipeline is too slow", "",
      "devops/build-caches-incremental-builds-where-the-minutes-actually-g"],
     ["my code review comments are ignored", "", "eng/code-review-doing-it-well"],
+    // ── batch nine ──
+    ["my tests pass locally but fail in ci", "",
+     "devops/flaky-tests-a-reliability-problem-in-the-test-suite"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -402,6 +422,11 @@ const READERS = [
      "linux/performance-debugging-when-you-need-to-go-deeper"],
     ["backup job failed"],
     ["blue screen"],
+    // ── batch nine ──
+    ["laptop battery drains fast", "",
+     "hw/laptops-batteries-thermals-what-is-actually-replaceable"],
+    ["the printer prints blank pages", "",
+     "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -418,6 +443,9 @@ const READERS = [
     ["rag returns irrelevant chunks", "",
      "ai/retrieval-augmented-generation-rag-explained-simply"],
     ["my prompt works sometimes", "", "ai/using-ai-well-prompting-responsibility"],
+    // ── batch nine ──
+    ["kubernetes pod crashloopbackoff", "",
+     "devops/pods-that-will-not-run-reading-the-status-before-the-logs"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -439,6 +467,8 @@ const READERS = [
     ["technical interview", "", "career/interview-preparation-getting-the-job"],
     ["burnout", "", "mind/burnout-recognizing-it-before-it-breaks-you"],
     ["career change into it", "", "career/breaking-into-it-from-zero-to-hired"],
+    // ── batch nine ──
+    ["should i get a degree or certs", "", "career/breaking-into-it-from-zero-to-hired"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],

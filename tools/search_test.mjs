@@ -165,6 +165,22 @@ const FIXTURES = [
   // already had an answer.
   ["agile vs waterfall",   "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile", 6],
   ["tcp vs udp",           "net/tcp-vs-udp-transport-layer", 40],
+  // An element boundary is a word boundary. The index dropped tags rather than
+  // replacing them with a space, on the ground that the source carries a
+  // newline between anything that needs separating — true of inline markup,
+  // false of a topic authored on one line. `shortcut/vim` is, so its text read
+  // `…modal editingvim starts…` and `vim`, short enough to be boundary-matched
+  // rather than substring-matched, occurred nowhere in it. **Searching for
+  // `vim` did not return the topic named Vim.** The fixture is the short word,
+  // not the phrase, because only a short word can be lost this way.
+  ["vim",                  "shortcut/vim", 12],
+  // The plural fold, on the half of English it did not have. `tests`/`test` and
+  // `fail`/`fails` both fold on one character; `pass`/`passes` needs two, and one
+  // unfoldable word is all the conjunction needs to return nothing. The fixture
+  // is the whole sentence rather than the word pair, because the failure only
+  // appears when every *other* word in the query has already matched.
+  ["my tests pass locally but fail in ci",
+   "devops/flaky-tests-a-reliability-problem-in-the-test-suite", 8],
 ];
 
 // Queries a reader plausibly types that still find nothing. Not failures — the

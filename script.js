@@ -838,6 +838,36 @@ function plainLabel(html) {
   return plainText(html.replace(RE_ACRO_LABEL, ""));
 }
 
+/**
+ * The same text, prepared for the search index: element boundaries separated.
+ *
+ * `plainText` drops a tag rather than replacing it with a space, on the stated
+ * ground that the source already carries a newline between anything that needs
+ * separating. That is true of inline markup — the author writes the space if
+ * there is one, and it is what keeps `CIDR (Classless Inter-Domain Routing)`
+ * out of `CIDR ( Classless Inter-Domain Routing )`. It is **not** true across a
+ * block boundary, where the separating whitespace is a habit of the source file
+ * rather than a fact about the markup.
+ *
+ * `shortcut/vim` is authored on one line, so its indexed text read
+ * `…modal editingvim starts in normal mode…`, and `vim` — three characters, so
+ * boundary-matched rather than substring-matched (SHORT_TERM) — occurred
+ * nowhere in it with a boundary on both sides. **Searching for `vim` did not
+ * return the topic named Vim.** Every table cell in a generated acronym page
+ * fuses the same way, for the same reason: the generator writes one line.
+ *
+ * So block tags become a space and inline tags still become nothing, which is
+ * the distinction the original note was reaching for. It is the index's text
+ * only; the name, title, badge and description a reader sees are inner HTML of
+ * one inline element each and keep `plainText` unchanged.
+ */
+const RE_BLOCK_TAG =
+  /<\/?(?:div|table|thead|tbody|tfoot|tr|td|th|caption|li|ul|ol|dl|dt|dd|p|h[1-6]|br|hr|section|article|header|footer|blockquote|pre|figure|figcaption)\b[^>]*>/gi;
+
+function indexText(html) {
+  return plainText(html.replace(RE_BLOCK_TAG, " ")).toLowerCase();
+}
+
 const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
 const RE_TOPIC_LEVEL = /data-level="([a-z]+)"/;
 const RE_TOPIC_REVIEWED = /data-reviewed="(\d{4}-\d{2})"/;
@@ -874,7 +904,7 @@ function domainTopics(domainId) {
       // It is chrome, not content: leaving it in made "min" match 1,337 of
       // 1,367 topics, which is the same failure the acronym-alternate bug
       // produced and would have been just as invisible.
-      text: plainText(chunk.replace(RE_TOPIC_READ, "")).toLowerCase(),
+      text: indexText(chunk.replace(RE_TOPIC_READ, "")),
     });
     start = next;
   }
@@ -1954,9 +1984,29 @@ function foldSeparators(lowered) {
  * rule demands a word boundary, and "users" does not have one before the "s".
  *
  * The same one-character heuristic `near_duplicates._fold()` already uses, for
- * the same reason and with the same exception — "class" is not the plural of
- * "clas", so a "ss" ending is left alone. Crude on purpose: a real stemmer needs
- * a tokenised index, and this matcher works on raw text.
+ * the same reason. Crude on purpose: a real stemmer needs a tokenised index, and
+ * this matcher works on raw text.
+ *
+ * **The `-es` plural was the half of the rule that was missing**, and the `ss`
+ * exception hid it. A word ending in a sibilant takes `-es`, so one character was
+ * the wrong number in *both* directions: `switches` offered `switche` and
+ * `processes` offered `processe`, while `pass`, `switch` and `process` offered
+ * nothing at all — the exception was right about `class` and wrong about why. The
+ * plural of `class` is not `clas`; it is `classes`.
+ *
+ * The symptom was `my tests pass locally but fail in ci`, which missed the
+ * flaky-test card that says the tests *pass* on your machine. `tests`/`test` and
+ * `fail`/`fails` both folded; `pass`/`passes` was the only word in the query that
+ * could not, and one word is all a conjunction needs.
+ *
+ * Going the other way, `-es` is two plurals wearing one spelling: `cases` is
+ * `case` + s and `passes` is `pass` + es, and nothing in the string distinguishes
+ * them. Both singulars are offered instead of guessed at, because a wrong one is
+ * a regex that matches nothing while a wrong guess is a card the reader never
+ * sees. `-ies` is the one that *is* decidable (`policy`/`policies`) and is
+ * handled first. Nothing else joins: the irregulars — `indices`, `matrices`,
+ * `analyses` — are a dictionary, not a rule, and a dictionary here would be the
+ * tokenised index this deliberately is not.
  */
 /**
  * A number written both ways, because the site and the reader disagree.
@@ -1980,11 +2030,25 @@ function numberForms(term) {
   return other ? [term, other] : [term];
 }
 
+// `s` is deliberately absent: a term ending in one is handled by the branches
+// above this is used in, so it could only ever produce `passs`.
+const RE_SIBILANT = /(?:x|z|ch|sh)$/;
+const RE_Y_PLURAL = /[^aeiou]ies$/;
+const RE_Y_SINGULAR = /[^aeiou]y$/;
+
 function plurals(term) {
-  if (term.endsWith("s")) {
-    return term.endsWith("ss") || term.length <= 3 ? [term] : [term, term.slice(0, -1)];
+  if (RE_Y_PLURAL.test(term)) return [term, term.slice(0, -3) + "y"];
+  // `-es` is two plurals wearing one spelling — `case` + s and `pass` + es, and
+  // nothing in the string says which. Both singulars are offered rather than
+  // guessed at: the one that is not a word matches nothing, which costs a regex
+  // and is the same bargain the rest of this function already makes.
+  if (term.endsWith("es") && term.length > 4) {
+    return [term, term.slice(0, -1), term.slice(0, -2)];
   }
-  return [term, term + "s"];
+  if (term.endsWith("ss")) return [term, term + "es"];
+  if (term.endsWith("s")) return term.length <= 3 ? [term] : [term, term.slice(0, -1)];
+  if (RE_Y_SINGULAR.test(term)) return [term, term.slice(0, -1) + "ies"];
+  return [term, RE_SIBILANT.test(term) ? term + "es" : term + "s"];
 }
 
 const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
@@ -2003,6 +2067,12 @@ const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with 
   // stay, which is what keeps *Load Balancers Explained* and *Indexes
   // Explained* reachable by their own titles.
   //
+  // `actually` joins them at 39.1% of topics — filler in a query, however often
+  // it appears in a *title* here (*What DevOps Actually Is*, *How Adults
+  // Actually Learn*). Stopping it cannot cost those cards a reader: it only
+  // removes a hard requirement, and the rare word beside it still carries the
+  // query. Nobody has ever searched for "actually".
+  //
   // `too` joins for the same reason and was found the same way. `regex slow`
   // reaches *Catastrophic Backtracking — When a Regular Expression Is a Denial
   // of Service*; **`regex too slow` reaches nothing**, because a card about a
@@ -2012,7 +2082,7 @@ const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with 
   // 22.1% were measured beside it and left alone: both are load-bearing in this
   // corpus — *only the first hop*, *just enough* — and a stop list earns its
   // entries one at a time.
-  + "explain too "
+  + "explain too actually "
   // `vs` and `versus` join them for the same reason `or` is here. The site
   // titles a dozen topics "X vs Y", so the as-typed pass answers those before
   // the fallback ever runs — but `agile vs waterfall`, which no single card
@@ -2465,7 +2535,7 @@ function runSearch(raw) {
   // recorded zero is worth more than a plausible wrong answer.
   const RELAX_RATIO = 4;
   let relaxedTo = null;
-  if (matchCount && (widened === "words" || widened === "broad") && words.length > 2) {
+  if (matchCount && (widened === "words" || widened === "broad") && words.length > 1) {
     const corpus = [];
     domainSections().forEach(section => domainTopics(section.dataset.domain).forEach(t => {
       if (t.folded === undefined) t.folded = foldSeparators(t.text);
@@ -2479,25 +2549,53 @@ function runSearch(raw) {
     // "different question" case again.
     const present = words.map((_, i) => i).filter(i => df[i] > 0);
     let keep = present.length >= 2 ? present : words.map((_, i) => i);
-    // Never below two. Relaxing to a single word is not a relaxation of the
-    // reader's question, it is a different question — and it is where this rule
-    // goes wrong. `agile isn't working` collapses to *agile* and `page loads
-    // halfway` to *halfway*, both widening a gated fixture that already found
-    // its topic, because "working" is 19.2% and "running" is 19.1% and no
-    // frequency can tell the query's own subject from its filler at that
-    // distance. Keeping two terms costs the two queries whose filler was
-    // everything but one word, and those are better fixed in the card.
+    // Down to two by ratio alone. Going below two is allowed but conditional —
+    // see NARROW below — because the objection to a one-word relaxation was
+    // never that one word is too few. It was that it *widens*: `agile isn't
+    // working` collapses to *agile* and `page loads halfway` to *halfway*, and
+    // both widened a gated fixture that had already found its topic. No
+    // frequency separates those from the good cases — "working" is 19.2% and
+    // "running" is 19.1% — but the result size does, and directly, because it
+    // is the thing that was actually objected to.
     while (keep.length > 2) {
       const rarest = keep.reduce((a, b) => (df[a] <= df[b] ? a : b));
       const commonest = keep.reduce((a, b) => (df[a] >= df[b] ? a : b));
       if (commonest === rarest || df[commonest] < RELAX_RATIO * df[rarest]) break;
       keep = keep.filter(i => i !== commonest);
     }
-    if (keep.length !== words.length) {
+    // The last term standing, when dropping to it keeps the answer narrow.
+    // `how do i use vim` is [use, vim]: *use* is 36.1% of topics and *vim* is a
+    // handful, so the ratio is emphatic and the floor of two was the only thing
+    // stopping it. Relaxed to *vim* it returns a handful; relaxed to *agile* it
+    // returns 24 and breaks a ceiling. NARROW is the line between them, set at
+    // the widest result a single content word may produce and still be an
+    // answer rather than a subject listing.
+    const NARROW = 10;
+    let single = null;
+    if (keep.length === 2) {
+      const rarest = keep.reduce((a, b) => (df[a] <= df[b] ? a : b));
+      const other = keep.find(i => i !== rarest);
+      if (df[other] >= RELAX_RATIO * df[rarest] && df[rarest] > 0) single = [rarest];
+    }
+
+    if (keep.length !== words.length || single) {
       const before = { count: matchCount, domains: domainCount, widened };
-      wideMatchers = keep.map(i => allMatchers[i]);
-      reset();
-      sweep("words");
+      const sweepWith = idx => {
+        wideMatchers = idx.map(i => allMatchers[i]);
+        reset();
+        sweep("words");
+      };
+      // The ratio says the common term is filler, and for three words or more
+      // that is enough on its own. For the last pair it is enough *and* the
+      // result has to stay narrow, which is the only thing the objection to
+      // one-word relaxation was ever about.
+      if (single) {
+        sweepWith(single);
+        if (matchCount && matchCount <= NARROW) keep = single;
+        else sweepWith(keep);
+      } else {
+        sweepWith(keep);
+      }
       wideMatchers = allMatchers;
       if (matchCount && !tooBroad()) {
         widened = "relax";

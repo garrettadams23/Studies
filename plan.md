@@ -40,20 +40,20 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,552** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
-| Mean chars per concept card | **1,388**, or **1,121 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,389**, or **1,122 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **146 of 151**, **0 unexplained and 0 wrong-card** — seven batches. The two subject-shaped ones opened at a third missing; the five symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 5 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
+| Reader questions answered | **159 of 164**, **0 unexplained and 0 wrong-card** — nine batches. The two subject-shaped ones opened at a third missing; the seven symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 5 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
 | Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~808 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~806 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,122 chars**, median 3,731 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **163** · search **53** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **62** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **63** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5824,5 +5824,141 @@ sentence the card was better for having.
 ```
 probe 143 -> 151 questions · 146 answered · 0 unexplained · 5 recorded zeros
 41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the topic named Vim could not be found by searching for Vim
+
+Batch eight ended on one query the probe would not let go of: `how do i use
+vim` missed `shortcut/vim`. So did `vim`. So did every query containing the
+word. The topic is *named* Vim, its first sentence is *Vim starts in Normal
+mode*, and the search index held both — as `…modal editingvim starts in normal
+mode…`.
+
+### An element boundary is a word boundary, and the index did not know
+
+`plainText` drops a tag rather than replacing it with a space, and says why:
+
+> Tags become nothing, not a space. That looks like the more dangerous choice
+> and is the correct one: it is what `textContent` does, and the source already
+> carries a newline between anything that needs separating.
+
+The first half is true. The second half is a fact about the files that existed
+when it was written, and it stopped being true the moment a topic was authored
+on one line. `shortcut/vim` is. So is every generated acronym page, because the
+generator writes one line per topic.
+
+The word survives the fusion only if it is long enough to be matched as a
+substring. `vim` is three characters, and `matcher()` requires a word boundary
+below `SHORT_TERM` — for a good reason of its own, the one that stopped `IR`
+matching *requires*, *first* and *directory*. Two correct rules, each blameless,
+and between them a topic nobody could find by its own name.
+
+The fix is the distinction the original note was reaching for: **block tags
+become a space, inline tags still become nothing.** The acronym expansion the
+note was protecting — `CIDR (Classless Inter-Domain Routing)` rather than
+`CIDR ( Classless Inter-Domain Routing )` — is inline and is untouched.
+
+A census over the built page afterwards: **1,233 of 1,552 topics** were losing
+at least one short term to a fused boundary, 6,621 terms in all. Almost all were
+reachable by another route — an acronym's expansion is long enough to match as a
+substring, which is why `sacl`, `abac` and `ahci` all worked and the defect
+stayed invisible for as long as anybody spot-checked it. `vim` had no other
+route, and so was the one that showed.
+
+### The `ss` exception was right about `class` and wrong about why
+
+`my tests pass locally but fail in ci` missed the flaky-test card that says, in
+its verdict, that the tests **pass** on your machine. `tests`/`test` folded.
+`fail`/`fails` folded. `pass`/`passes` could not, because `plurals()` folds one
+character and excepted `ss` endings — on the stated ground that *class* is not
+the plural of *clas*.
+
+True, and the wrong conclusion. The plural of `class` is not `clas`; it is
+`classes`. The exception marked exactly the words that take `-es` and then did
+nothing with them, so the rule produced a non-word in both directions:
+`switches` offered `switche`, `processes` offered `processe`, and `pass`,
+`switch` and `process` offered nothing at all.
+
+Going back the other way, `-es` is two plurals wearing one spelling — `cases` is
+`case` + s, `passes` is `pass` + es, and the string does not say which. Both
+singulars are offered rather than guessed at: **a wrong alternate is a regex
+that matches nothing, a wrong guess is a card the reader never sees.** `-ies` is
+the one that *is* decidable and is handled first.
+
+This is not the prefix rule the last session wrote down and declined to build.
+That decision stands — a prefix rule needs a threshold, and a threshold is the
+arguable shape this toolchain keeps refusing. Two more plural rules are still
+rules.
+
+### One first draft, caught by the census it was written for
+
+The first version of `plurals()` returned the term unchanged for anything three
+characters or shorter — a guard the old code applied only when *stripping*. It
+also stopped `use` offering `uses`, and `why do we use containers`, answered for
+eight batches, went to a miss. The probe named it on the next run. A census kept
+green is a regression test that nobody had to write.
+
+### Four zeros, four cards that were already there
+
+```
+teams meeting audio not working  →  Teams Call Quality — the card says "calls are bad"
+laptop battery drains fast       →  Batteries: What Wears Them Out
+my ssh key stopped working       →  "Permission denied (publickey)"
+my tests pass locally, fail in ci→  Flaky Tests — a Reliability Problem
+```
+
+Each gained the sentence naming the symptom it already answers, and each had
+something to say once it was written:
+
+* **"The audio was bad in that meeting" is two investigations, and how many
+  people said it decides which one** — one call is per-user analytics, a pattern
+  is the dashboard.
+* **"It drains fast now" is a capacity complaint, not a settings one**, which is
+  why the answer is chemistry and not a power plan.
+* **"My key stopped working" is how `Permission denied (publickey)` arrives as a
+  ticket** — and the error almost never means the key is wrong.
+* **The test that passes on your machine and fails in CI is a timing
+  assumption**, and the local machine is too fast to violate it.
+
+### The one that was a gap: a page that came out wrong
+
+`the printer prints blank pages` found nothing, and the printer topic covers
+offline queues, drivers, deployment and secure release — every way *nothing*
+comes out. It had nothing for a page that came out and is wrong, which is the
+opposite investigation and an easier one: the path worked end to end, so the
+fault is in what was sent or in what put it on the paper.
+
+Six symptoms, ranked by what they actually mean, each with the test that settles
+it — and the same first step as the triage order above it, for the opposite
+reason. There it proves the device works; here it separates the device from
+everything upstream, because the config page is the one page in the building
+that no driver, queue or application touched.
+
+### The fifth instance, and the sharpest
+
+```
+check_renames      case-sensitive        its own example was lower case
+check_css_vars     style.css only        its own example was in style.css
+script.js          missing the \s*       three sibling files had it
+the risk register  no reopen condition   on the risk that proved they were needed
+plainText          tags become nothing   "the source already carries a newline"
+plurals()          one character         "class is not the plural of clas"
+```
+
+The first four were a rule not applied to the case that motivated it. The last
+two are a step past that: **a rule that writes down its own assumption is still
+only as true as the assumption, and neither of these was ever checked against
+the corpus.** Both notes are careful, both are cited approvingly by later code,
+and both were false — one about the files, one about English. The habit the
+first four wanted was to apply a new rule backwards. The habit these two want is
+to go and measure the sentence that begins *because*.
+
+```
+probe 151 -> 164 questions · 159 answered · 0 unexplained · 5 recorded zeros
+1,233 of 1,552 topics were fusing words at an element boundary; 0 now
+41 gates green · smoke 163 · search 53 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
 ```

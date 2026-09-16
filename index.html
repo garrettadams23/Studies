@@ -35616,7 +35616,8 @@ and identifying which one is usually faster than staring at the test.
 <div class="concept-desc verdict">
 The fastest reproduction technique is to <strong>make the machine worse</strong>: run the suite
 under CPU <span class="acro-exp">(Central Processing Unit)</span> contention, with a slower disk, in parallel, in a different order. A flake that will
-not reproduce locally is usually a timing assumption, and the local machine is too fast to
+not reproduce locally &mdash; the test that passes on your machine and fails in CI &mdash;
+is usually a timing assumption, and the local machine is too fast to
 violate it &mdash; which is the same finding the frontend cards reach from the other side.
 </div>
 </div>
@@ -41182,8 +41183,9 @@ ssh-add ~/.ssh/id_ed25519</pre>
 <div class="concept-label">Failure mode</div>
 <div class="concept-title">"Permission denied (publickey)" — the Server Never Got to Try Your Key</div>
 <div class="concept-desc">
-The single most common SSH error, and the message is misleading in a specific way:
-<strong>it almost never means the key is wrong.</strong> It means the server reached the
+"My key stopped working" is how this arrives as a ticket, and this is what it looks like
+from the terminal. It is the single most common SSH error, and the message is misleading in
+a specific way: <strong>it almost never means the key is wrong.</strong> It means the server reached the
 end of the methods it was willing to accept without a single one succeeding — and with
 <code>PasswordAuthentication no</code> set, as the hardening table below recommends,
 there is nothing left to fall back to and no hint about which step failed.
@@ -60910,7 +60912,7 @@ exploitable
 <div class="topic" id="windows" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🪟</span><span class="topic-name">Windows</span><span class="topic-badge">Shortcuts • OS</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="dw"><table class="ai-table"><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td>Win + L</td><td>Lock screen</td></tr><tr><td>Win + D</td><td>Show / hide desktop</td></tr><tr><td>Win + E</td><td>Open File Explorer</td></tr><tr><td>Win + R</td><td>Run dialog</td></tr><tr><td>Win + Shift + S</td><td>Snip a screenshot</td></tr><tr><td>Win + . </td><td>Emoji picker</td></tr><tr><td>Ctrl + Shift + Esc</td><td>Task Manager</td></tr><tr><td>Alt + Tab</td><td>Switch windows</td></tr><tr><td>Win + Tab</td><td>Task view</td></tr></tbody></table></div></div></div>
 <div class="topic" id="macos" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🍎</span><span class="topic-name">macOS</span><span class="topic-badge">Shortcuts • OS</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="dw"><table class="ai-table"><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td>Cmd + Space</td><td>Spotlight search</td></tr><tr><td>Cmd + Tab</td><td>Switch apps</td></tr><tr><td>Cmd + W / Q</td><td>Close window / quit app</td></tr><tr><td>Cmd + Shift + 4</td><td>Screenshot selection</td></tr><tr><td>Cmd + `</td><td>Cycle app windows</td></tr><tr><td>Cmd + Opt + Esc</td><td>Force quit</td></tr><tr><td>Ctrl + Cmd + Q</td><td>Lock screen</td></tr><tr><td>Cmd + Shift + .</td><td>Show hidden files</td></tr></tbody></table></div></div></div>
 <div class="topic" id="terminal-bash" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">⌨️</span><span class="topic-name">Terminal / Bash</span><span class="topic-badge">Shortcuts • CLI</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="dw"><table class="ai-table"><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td>Ctrl + C</td><td>Kill current command</td></tr><tr><td>Ctrl + Z</td><td>Suspend to background</td></tr><tr><td>Ctrl + R</td><td>Reverse history search</td></tr><tr><td>Ctrl + A / E</td><td>Jump to line start / end</td></tr><tr><td>Ctrl + U / K</td><td>Cut to start / end of line</td></tr><tr><td>Ctrl + W</td><td>Delete previous word</td></tr><tr><td>Ctrl + L</td><td>Clear screen</td></tr><tr><td>!!</td><td>Repeat last command</td></tr><tr><td>Ctrl + D</td><td>Logout / EOF <span class="acro-exp">(End of File)</span></td></tr></tbody></table></div></div></div>
-<div class="topic" id="vim" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">✏️</span><span class="topic-name">Vim</span><span class="topic-badge">Shortcuts • Editor</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">MODES</div><div class="concept-title">Modal Editing</div><div class="concept-desc">Vim starts in Normal mode. Press i or a to Insert, Esc to return. Commands begin with : in Normal mode.</div></div><table class="ai-table"><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td>i / a / o</td><td>Insert before / after / new line</td></tr><tr><td>:w  :q  :wq</td><td>Write, quit, write+quit</td></tr><tr><td>:q!</td><td>Quit without saving</td></tr><tr><td>dd / yy / p</td><td>Delete / yank / paste line</td></tr><tr><td>/text  then n</td><td>Search, next match</td></tr><tr><td>gg / G</td><td>Top / bottom of file</td></tr><tr><td>:%s/old/new/g</td><td>Replace all</td></tr></tbody></table></div></div>
+<div class="topic" id="vim" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">✏️</span><span class="topic-name">Vim</span><span class="topic-badge">Shortcuts • Editor</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">MODES</div><div class="concept-title">Modal Editing</div><div class="concept-desc">Vim starts in Normal mode, which is the whole difficulty of learning to use it: the keys you press are commands, not text, until you enter Insert with i or a. Esc returns. Commands begin with : in Normal mode &mdash; including the one everybody needs first, <code>:q!</code>.</div></div><table class="ai-table"><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td>i / a / o</td><td>Insert before / after / new line</td></tr><tr><td>:w  :q  :wq</td><td>Write, quit, write+quit</td></tr><tr><td>:q!</td><td>Quit without saving</td></tr><tr><td>dd / yy / p</td><td>Delete / yank / paste line</td></tr><tr><td>/text  then n</td><td>Search, next match</td></tr><tr><td>gg / G</td><td>Top / bottom of file</td></tr><tr><td>:%s/old/new/g</td><td>Replace all</td></tr></tbody></table></div></div>
 <div class="topic" id="vs-code" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">💻</span><span class="topic-name">VS Code</span><span class="topic-badge">Shortcuts • Editor</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="dw"><table class="ai-table"><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td>Ctrl/Cmd + P</td><td>Quick open file</td></tr><tr><td>Ctrl/Cmd + Shift + P</td><td>Command palette</td></tr><tr><td>Ctrl + ` </td><td>Toggle terminal</td></tr><tr><td>Ctrl/Cmd + /</td><td>Toggle comment</td></tr><tr><td>Ctrl/Cmd + B</td><td>Toggle sidebar</td></tr><tr><td>Ctrl/Cmd + Shift + F</td><td>Search across files</td></tr><tr><td>F2</td><td>Rename symbol</td></tr><tr><td>Alt + ↑ / ↓</td><td>Move line up / down</td></tr></tbody></table></div></div></div>
 <div class="topic" id="tmux-browser" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🖥️</span><span class="topic-name">tmux &amp; Browser</span><span class="topic-badge">Shortcuts • Tools</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">TMUX</div><div class="concept-title">Prefix = Ctrl + B</div><div class="concept-desc">Press the prefix, then a key: c new window, n/p next/prev, % split vertical, " split horizontal, d detach, arrows to move between panes.</div></div><table class="ai-table"><thead><tr><th>Browser Keys</th><th>Action</th></tr></thead><tbody><tr><td>Ctrl/Cmd + T / W</td><td>New / close tab</td></tr><tr><td>Ctrl/Cmd + Shift + T</td><td>Reopen closed tab</td></tr><tr><td>Ctrl/Cmd + L</td><td>Focus address bar</td></tr><tr><td>Ctrl/Cmd + F</td><td>Find on page</td></tr><tr><td>Ctrl + Tab</td><td>Next tab</td></tr><tr><td>Ctrl/Cmd + Shift + N</td><td>Private window</td></tr></tbody></table></div></div>
 <div class="topic" id="dod-quick-reference" data-reviewed="2026-07" data-read="1" data-level="core"><div class="topic-header"><span class="topic-icon">🎖️</span><span class="topic-name">DoD <span class="acro-exp">(Department of Defense)</span> Quick Reference</span><span class="topic-badge">Shortcuts • DoD</span><span class="topic-read" title="Rough reading time, estimated from length">1 min</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">CONTEXT</div><div class="concept-title">Networks &amp; Access</div><div class="concept-desc">DoD work spans classification domains and PKI-based identity. The CAC is the smart-card credential for authentication and digital signing.</div></div><table class="ai-table"><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody><tr><td>CAC</td><td>Common Access Card (smart-card credential)</td></tr><tr><td>PKI</td><td>Public Key Infrastructure (certs/keys)</td></tr><tr><td>NIPRNet</td><td>Unclassified DoD network</td></tr><tr><td>SIPRNet</td><td>Secret-level classified network</td></tr><tr><td>JWICS</td><td>Top Secret / SCI <span class="acro-exp">(Sensitive Compartmented Information)</span> network</td></tr><tr><td>RMF</td><td>Risk Management Framework (NIST 800-37)</td></tr><tr><td>ATO <span class="acro-exp">(Authority to Operate)</span> / IATT</td><td>Authorization / Interim Auth to Test</td></tr><tr><td>eMASS</td><td>Enterprise Mission Assurance Support Service</td></tr><tr><td>STIG</td><td>Security Technical Implementation Guide</td></tr><tr><td>SCAP</td><td>Security Content Automation Protocol</td></tr><tr><td>POA&amp;M</td><td>Plan of Action &amp; Milestones</td></tr><tr><td>IAVA</td><td>Information Assurance Vulnerability Alert</td></tr><tr><td>DISA</td><td>Defense Information Systems Agency</td></tr><tr><td>FISMA</td><td>Federal Information Security Modernization Act</td></tr></tbody></table></div></div>
@@ -64515,12 +64517,12 @@ efficient life nobody wanted.
 </div>
 </div>
 </div>
-<div class="topic" id="ethics-the-three-families-and-using-them-on-a-real-decision" data-reviewed="2026-08" data-read="7" data-level="core">
+<div class="topic" id="ethics-the-three-families-and-using-them-on-a-real-decision" data-reviewed="2026-08" data-read="8" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚖️</span>
 <span class="topic-name">Ethics — The Three Families, and Using Them On a Real Decision</span>
 <span class="topic-badge">WESTERN TRADITION</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -64550,6 +64552,20 @@ Where all three agree, the decision is easy and you did not need the framework.
 <strong>Where they conflict is exactly where the hard cases live</strong>, and
 naming which one you are following — and what you are therefore giving up — is
 most of what ethical reasoning actually consists of.
+</div>
+<div class="concept-desc">
+The <strong>trolley problem</strong> is the standard vehicle for exactly this
+conflict, and it is worth knowing what it is <em>for</em>, because it is
+routinely mistaken for a puzzle with an answer. A runaway trolley will kill
+five people; you can divert it onto a track where it kills one. Most people
+divert. Change nothing about the arithmetic and ask them to push one large
+person off a bridge to stop it, and most people refuse — <strong>same numbers,
+opposite answer</strong>. The point was never which choice is correct. It is
+that the two cases are identical to a consequentialist and obviously different
+to everyone answering, which is evidence that people are running more than one
+of the three families at once and switching between them without noticing.
+That is the finding, and it is the reason this card treats them as three
+questions rather than three candidate verdicts.
 </div>
 </div>
 </div>
@@ -116636,8 +116652,8 @@ different answer —
 <span class="ctag ctag-general">Hands-On</span>
 </div>
 <span class="domain-sub">Ohm's law · Power & thermals · Motherboards · CPU & memory · Storage interfaces · PSUs</span>
-<span class="domain-meta" aria-label="28 topics, about 2h 05m to read"
->28 topics · ~2h 05m</span>
+<span class="domain-meta" aria-label="28 topics, about 2h 10m to read"
+>28 topics · ~2h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -118071,12 +118087,12 @@ return.
 </div>
 </div>
 <!-- ── TOPIC: PRINTERS & MFPs ────────────────────────────────── -->
-<div class="topic" id="printers-mfps-technologies-drivers-print-servers-secure-rele" data-reviewed="2026-08" data-read="7" data-level="core">
+<div class="topic" id="printers-mfps-technologies-drivers-print-servers-secure-rele" data-reviewed="2026-08" data-read="10" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖨️</span>
 <span class="topic-name">Printers &amp; MFPs <span class="acro-exp">(Multifunction Printer)</span> — Technologies, Drivers, Print Servers &amp; Secure Release</span>
 <span class="topic-badge">Peripherals</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">10 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -118202,6 +118218,40 @@ And one estate-level note that belongs with security rather than with printing: 
 scanned and printed documents on internal drives, are frequently leased, and are returned
 at end of term with that storage intact unless someone asks — the point made in
 <span class="xref" data-xref="media-sanitisation-disposal-what-wiped-actually-means" role="link" tabindex="0">Media Sanitisation &amp; Disposal — What "Wiped" Actually Means</span>.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Troubleshooting</div>
+<div class="concept-title">It Printed, and the Page Is Wrong — Blank, Garbled or Streaked</div>
+<div class="concept-desc">
+The triage order above answers <em>nothing came out</em>. A page that came out wrong is the
+opposite investigation, and an easier one: the path worked end to end, so the fault is in
+what was sent or in what put it on the paper. The shape of the wrongness says which, and
+readers report the shape accurately even when they can describe nothing else.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>What comes out</th><th>Usually</th><th>The test that settles it</th></tr></thead>
+<tbody>
+<tr><td>Blank pages, one after another</td><td>A consumable or a seal — an empty cartridge, a new one with its shipping strip still in, or an inkjet head that has dried out</td><td>The device's own config page: it never touches a driver</td></tr>
+<tr><td>Pages of source code, or a one-line error banner</td><td>The driver speaks a page language the device does not — classically a PostScript driver against a PCL-only device after a queue was rebuilt</td><td>Print from a plain text editor. Right there and wrong from the application means the language, not the device</td></tr>
+<tr><td>Faded, or one band lighter down the page</td><td>Toner low, or settled unevenly after transport</td><td>Rock the cartridge and reprint. It is a delaying tactic, not a fix, and it confirms the diagnosis in one page</td></tr>
+<tr><td>The same mark repeating at a fixed interval</td><td>A defect on a rotating part — the interval <em>is</em> its circumference</td><td>Measure the gap between repeats; the service manual maps interval to part</td></tr>
+<tr><td>Toner that rubs off under a thumb</td><td>The fuser is not reaching temperature — sometimes because the tray is set to a media type that tells it to run cool</td><td>Correct the tray's media setting first; it is free, and it is the cause often enough to check before quoting a fuser</td></tr>
+<tr><td>Right content, wrong margins or scale</td><td>Paper size disagreeing between the job, the driver default and the tray</td><td>Compare all three. The tray is the one nobody checks</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong>Print the device's own config page first — the same first step as the triage
+order above, for the opposite reason.</strong> There it proved the device works; here it
+separates the device from everything upstream of it, because it is the one page in the
+building that no driver, queue or application touched. Wrong on the config page is a
+hardware fault and the ticket goes to whoever holds the maintenance contract; right on the
+config page means the driver, the queue or the application, and those are cheap to test in
+that order. This card is not a repair guide — the interval-to-part mapping and the fuser
+specification live in the manufacturer's service manual, and knowing which document to
+open is the part worth carrying.
 </div>
 </div>
 </div>
@@ -119300,7 +119350,9 @@ older than three years, and the one owners never think of.
 <div class="concept-label">Concept</div>
 <div class="concept-title">Batteries: What Wears Them Out, and the Advice That Is Out of Date</div>
 <div class="concept-desc">
-Lithium-ion cells age on two clocks at once — cycles used, and time spent at a high state of
+"It drains fast now and will not hold a charge" is a capacity complaint rather than a
+settings one, which is why the answer is chemistry and not a power plan. Lithium-ion cells
+age on two clocks at once — cycles used, and time spent at a high state of
 charge and temperature. Most of the folklore in circulation was true of nickel chemistry
 decades ago and is wrong now.
 </div>
@@ -121051,7 +121103,8 @@ is the one feature where "we will find out in production" is not an acceptable p
 <div class="concept-label">Technique</div>
 <div class="concept-title">Two Tools, and Knowing Which Question You Have</div>
 <div class="concept-desc">
-"Teams calls are bad" is two different investigations. One user on one call is a per-call
+"The audio was bad in that meeting" is two different investigations, and how many people
+said it decides which one you have. One user on one call is a per-call
 problem, answered by the call analytics on that user in the <span class="volatile" data-checked="2026-09">Teams admin centre</span>. "Calls are
 bad in the Manchester office" is a trend, answered by the Call Quality Dashboard, which
 aggregates across the tenant and can group by building and subnet — but only if someone
