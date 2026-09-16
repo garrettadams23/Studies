@@ -33,11 +33,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
+sys.path.insert(0, str(ROOT / "tools"))
+from lint_content import TAG_RE  # noqa: E402
 
 DEEP_CARDS = 3
 DEEP_CHARS = 3000
 
-TAG_RE = re.compile(r"<[^>]+>")
 # Order-independent on purpose. The first version required `id` immediately
 # after `class="topic"`, and a later build change that stamped `data-read` and
 # `data-level` into the same tag pushed `id` rightwards — this tool then found

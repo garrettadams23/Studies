@@ -41,8 +41,8 @@ DATA = ROOT / "data"
 # Reusing it here is what lets build.py stamp the ids the page used to derive at
 # runtime — see assign_topic_ids.
 sys.path.insert(0, str(ROOT / "tools"))
-from lint_content import (ACRO_SPAN_RE, XREF_RE, domain_files, domain_of,  # noqa: E402
-                          slugify, topic_label)
+from lint_content import (ACRO_SPAN_RE, TAG_RE, XREF_RE, domain_files,  # noqa: E402
+                          domain_of, slugify, topic_label)
 
 # Set to False (or pass --no-minify) to keep the built HTML pretty-printed.
 MINIFY = "--no-minify" not in sys.argv
@@ -78,7 +78,10 @@ def minify_html(source):
 # precision is not real and printing "47 min" implies it is.
 WPM = 180
 
-_TAG_RE = re.compile(r"<[^>]+>")
+# `lint_content.TAG_RE`, under the private name the rest of this file uses. The
+# reasoning lives there: a tag needs a name, so `< 0 and f(1) = 1 >` in a maths
+# card is content and a comment containing a `>` is not.
+_TAG_RE = TAG_RE
 _ACRO_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
 _PRE_BLOCK_RE = re.compile(r"<pre\b.*?</pre\s*>", re.S)
 _TABLE_RE = re.compile(r"<table\b.*?</table\s*>", re.S)

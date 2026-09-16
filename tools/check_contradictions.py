@@ -54,9 +54,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 DATA = ROOT / "data"
+sys.path.insert(0, str(ROOT / "tools"))
+from lint_content import TAG_RE  # noqa: E402
 
 PRE_RE = re.compile(r"<(pre|code)\b.*?</\1>", re.S | re.I)
-TAG_RE = re.compile(r"<[^>]+>")
 ACRO_EXP_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
 
 # "UEM (Unified Endpoint Management)" written by hand in prose. The annotator's

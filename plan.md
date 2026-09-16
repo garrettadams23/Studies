@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **53** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **63** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **64** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5959,6 +5959,81 @@ to go and measure the sentence that begins *because*.
 ```
 probe 151 -> 164 questions · 159 answered · 0 unexplained · 5 recorded zeros
 1,233 of 1,552 topics were fusing words at an element boundary; 0 now
+41 gates green · smoke 163 · search 53 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the note that reasoned from a fact it had not measured
+
+The last record ended on a habit: *go and measure the sentence that begins
+`because`.* This one is that habit, run once, on the nearest available target.
+
+`script.js` carries a note explaining why its tag pattern is `</?[a-zA-Z][^>]*>`
+and not `<[^>]+>`:
+
+> `<[^>]+>` looks equivalent and is not — `WHERE created_at < now()` inside a
+> code block has a `>` somewhere after it, so the loose pattern swallows the
+> comparison operator and everything up to it.
+
+`lint_content._CODE_TAG` has the same rule, with the same one-line reason. Six
+Python tools had the loose pattern, each with its own copy of it.
+
+### Eight spans, four files
+
+```
+math.html                  < 0 and f(1) = 1 >          erased outright
+script.01-references.html  < <span class="num">        a shell redirect and the tag after it
+career.html                <!-- Four cards did not      the comment ends at its own >=,
+philosophy.html   ×2         clear the >=15-card bar     and the rest becomes card text
+```
+
+Two kinds. Content the loose pattern eats, and comments it only half-eats.
+
+### The paragraph that was wrong
+
+The comment half was already known. `lint_content.gt_in_comment` gates it, and
+the note above that gate is careful, specific, and reasons from a measurement:
+
+> Three such comments exist. All three sit *between* topics, so nothing measures
+> them and no number on this site is currently wrong.
+
+The first sentence is true. The second does not follow, and checking took one
+command. `depth_report.topics()` takes each block from one topic's start to the
+**next one's start**, so whatever sits between two topics is measured as part of
+the topic above it. All three comments were being counted: **112, 112 and 102
+characters of phantom content on three real cards.**
+
+No number was wrong, which is exactly why it stayed invisible for as long as it
+did. The mean moves by 0.2 characters across 1,552 topics, and checking every
+one of the eight disputed spans against the thin threshold and the deep
+threshold, in both directions, gives **zero crossings**. The invariant held. It
+held by luck, which is what the note said about the *content* and had not
+checked about itself.
+
+### One definition, six imports
+
+`TAG_RE` now lives once, in `lint_content.py`, and `acronym_drift`,
+`check_contradictions`, `check_renames`, `depth_report`, `near_duplicates`,
+`orphan_report` and `build.py` import it. Three of them already imported
+`domain_files` from that file, so the dependency is not new — only the second
+thing crossing it.
+
+The gate's own note argued the other way: *gating the condition is cheaper and
+more complete than hardening sixteen regexes*. That was true of sixteen copies
+and false of one definition, and it was never true of the content half — no
+comment rule reaches `< 0 and f(1) = 1 >`. The gate stays, with its reasoning
+corrected in place, because the inline `<[^>]+>` calls that read a single
+already-narrow match are still there and still cheap to protect.
+
+**Every census output is byte-identical before and after.** That is the result,
+not a disappointment: a latent defect closed, nothing to re-verify, and one
+paragraph in the repository that now says something true.
+
+```
+6 tools + build.py share one TAG_RE · 6 census outputs byte-identical
+0 threshold crossings, checked both ways across all 8 disputed spans
 41 gates green · smoke 163 · search 53 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
 ```

@@ -84,7 +84,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 sys.path.insert(0, str(ROOT / "tools"))
-from lint_content import domain_files  # noqa: E402
+from lint_content import TAG_RE, domain_files  # noqa: E402
 
 FLOOR = 0.5
 # Generated from the dictionary, so every entry duplicates a title by construction.
@@ -100,7 +100,6 @@ one two three first every each all any some other another same different new old
 good bad best worst practice practical guide intro introduction overview basics
 fundamentals reference explained deep dive part""".split())
 
-TAG_RE = re.compile(r"<[^>]+>")
 ACRO_RE = re.compile(r'<span class="acro-exp">.*?</span\s*>', re.S)
 NAME_RE = re.compile(r'class="topic-name"[^>]*>(.*?)</span>\s*(?:<span class="topic-badge|</div>)', re.S)
 TOPIC_RE = re.compile(r'<div class="topic"')

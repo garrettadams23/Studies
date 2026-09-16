@@ -54,7 +54,7 @@ from html import unescape
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from lint_content import domain_files  # noqa: E402
+from lint_content import TAG_RE, domain_files  # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 DATA = ROOT / "data"
@@ -62,7 +62,6 @@ DATA = ROOT / "data"
 PRE_RE = re.compile(r"<(pre|code)\b.*?</\1>", re.S | re.I)
 LABEL_RE = re.compile(
     r'<span class="topic-badge">.*?</span\s*>|<div class="concept-label">.*?</div\s*>', re.S)
-TAG_RE = re.compile(r"<[^>]+>")
 ACRO_EXP_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
 # Two or more capitals, allowing digits and a trailing lowercase 's' or 'e'
 # (IPs, VLANs, 10GbE) — the shapes the dictionary itself already uses.

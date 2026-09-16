@@ -38,13 +38,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 sys.path.insert(0, str(ROOT / "tools"))
-from lint_content import domain_files  # noqa: E402
+from lint_content import TAG_RE, domain_files  # noqa: E402
 
 THIN_CHARS = 1800
 REFERENCE_DOMAINS = {"shortcut", "acronym"}
 
 TOPIC_RE = re.compile(r'<div class="topic"')
-TAG_RE = re.compile(r"<[^>]+>")
 NAME_RE = re.compile(r'class="topic-name"[^>]*>(.*?)</span>\s*(?:<span class="topic-badge|</div>)', re.S)
 BADGE_RE = re.compile(r'class="topic-badge">(.*?)</span>', re.S)
 
