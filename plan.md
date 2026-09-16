@@ -18,10 +18,10 @@ What is left here is what a session actually reads.
 |---|---|---|
 | **The session operating manual** | The loop, the ordering constraints, and ten failures with their guards | 📘 **start here** |
 | **The card rubric** | What the good cards have, measured from forty written in one session | 📘 reference |
-| **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
+| **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **65**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **66**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -50,10 +50,11 @@ run rather than letting them pass as verified:
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,135 chars**, median 3,735 — the number a deepening wave has to move | `depth_report.py` |
+| Dated claims | **45 volatile spans and 12 fact anchors: 57 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference | `check_volatility.py` |
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **70** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **71** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -266,8 +267,17 @@ been.
 
 The site carries two conventions for claims that age — `<span class="volatile"
 data-checked="…">` for the claim itself, and `<!-- fact: … | source: … | checked: … -->` for
-where a number came from. Together they cover **46 volatile spans and 5 fact anchors: 51
-dated claims** across 1,432 topics.
+where a number came from. Together they cover the site's dated claims — **the count is the
+*Dated claims* row of the measured-state table**, and is not repeated here.
+
+It used to be repeated here, as *46 volatile spans and 5 fact anchors: 51 dated claims
+across 1,432 topics*, and every figure in that sentence was wrong by the time anybody
+read it. The register three sections down states the rule this section needed — *no number
+is repeated here; each row points at the row of the measured-state table that carries its
+figure, because a second copy would only be a second thing to go stale* — and wrote it
+after being wrong in exactly this way. Phase 11 never got the fix, which is this file's
+most-recorded shape: **a rule written for a category tends not to be applied to the case
+that motivated it.**
 
 The obvious next question is: 51 out of how many?
 
@@ -319,7 +329,7 @@ those kinds are enumerable by hand in a way the instances are not.
 
 | Class | Ages because | Where it lives |
 |---|---|---|
-| **Console names and paths** | Vendors rename consoles every few years | `m365`, `cloud`, `endpoint` — already covered by `check_volatility.py`'s queue, now down to 2 candidates |
+| **Console names and paths** | Vendors rename consoles every few years | `m365`, `cloud`, `endpoint` — already covered by `check_volatility.py`'s queue; the count is the *Dated claims* row |
 | **Console hostnames** | They move — `endpoint.microsoft.com` became `intune.microsoft.com` | Same three domains; the enumerated-host rule added this session catches these |
 | **Service limits and quotas** | Raised, lowered, or made configurable | `cloud`, `m365`, `data` — "5,000 items", "93 days", "20 requests per batch" |
 | **Tier gating** | "Requires E5" is a licensing decision, not a technical fact | `m365` especially, and it is the class most likely to be quietly wrong |
@@ -358,7 +368,7 @@ near-matches in §2 are that second kind.
 | **V2** | Service limits | Search for numbers followed by "items", "days", "requests", "GB"; date the ones that are designed around, rewrite the rest |
 | **V3** | Prices | `career`, `hw`, `cloud`. Almost all should be rewritten rather than dated |
 | **V4** | Default retention | Cross-check `m365`, `cloud` and `blueteam` against each other first — §9's contradiction pass applies here |
-| **V5** | Re-audit console paths | `check_volatility.py` already reports this; it is 2 candidates today and will grow with each `m365` or `cloud` wave |
+| **V5** | Re-audit console paths | `check_volatility.py` already reports this, and the count is the *Dated claims* row. It grows with each `m365` or `cloud` wave — it has, from 2 to 3 |
 
 **And the counter-discipline:** every wave should *reduce* the number of dated claims where
 it can, by rewriting. A rising volatile-span count is not automatically progress — it can
@@ -378,8 +388,12 @@ the mechanical search over-matches exactly as predicted.**
 
 Two things this pass also settled. **This session's 46 new cards are freshness-clean by
 construction** — they were written mechanism-first, per the card rubric, and introduce no
-undated price, limit or version claim (`check_volatility.py` still reports 46 spans, and its
-only two console candidates are the pre-existing `m365` cards above). And the phase stays
+undated price, limit or version claim, and `check_volatility.py`'s console candidates are all
+pre-existing `m365` cards. A third has joined the two named above since this pass —
+*Exchange Server On-Prem*, on the phrase **every Exchange admin meets**, where `admin` is a
+job title rather than a console. It is read and recorded in `context()`'s docstring, which
+is the right home for it: the regex cannot separate the two senses without evidence it does
+not have, so the report prints the sentence and a person decides in a second. And the phase stays
 **open as a standing discipline, not a queue** — §6's V5 grows with every `m365`/`cloud` wave,
 so there is nothing to mark closed. The right output of a Phase 11 pass is this table, not a
 pile of edits — which is the whole argument of §3.
@@ -401,7 +415,7 @@ appears on the original list.
 | **Silent style drift** — the house form improves and earlier content is never revisited, so the site becomes two sites wearing one theme | 330 topics (23%) single-concept and under 1,800 chars, concentrated in domains written early. `data` was 93% thin | the **Thin** row of the measured state | `depth_report.py` puts thin above **2%**, or any one domain above 10% | ✅ **closed** |
 | **Blind duplication** — the audit method governs new cards and has never looked backwards, so two sessions months apart both cover a subject and both cards ship | 36 title pairs at ≥50% token overlap. Two `script` cards on regular expressions, three Kubernetes cards across two domains | the **Near-duplicate pairs** row | `near_duplicates.py --unexplained` returns anything at all | ✅ **closed** |
 | **Unreachable quality** — good cards exist and nothing links to them, so the reader who would benefit never arrives | 902 topics with no related-topic link, **159 of them with 3+ cards and 3,000+ chars** | the **Orphans** row | `orphan_report.py` reports a single **deep** orphan | ✅ **closed** |
-| **Unfalsifiable freshness** — the site can state what it has dated and cannot state what it has not | 51 dated claims. Three attempts to count the denominator failed on IP addresses, Wi-Fi standards and shell variables | nowhere — that is the risk | never; there is no condition to watch, which is the finding | **Accepted, not mitigable.** Phase 11 §3 |
+| **Unfalsifiable freshness** — the site can state what it has dated and cannot state what it has not | Three attempts to count the denominator failed on IP addresses, Wi-Fi standards and shell variables | the **Dated claims** row carries the numerator; the denominator lives nowhere, and *that* is the risk — this row used to repeat the total inline, breaking the rule stated below it | never; there is no condition to watch, which is the finding | **Accepted, not mitigable.** Phase 11 §3 |
 
 **Three of these were closed by a session that did not close them here.** The record
 *"closing 'unreachable quality', the third open accumulation risk"* re-measured all four and
@@ -6653,4 +6667,80 @@ check_plan_numbers: Learning paths row now carries the stranded count
 gates 41 -> 42, Makefile and CI in the same commit
 41 -> 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64
 mobile 15 · visual 2 · backup 3 · probe 193 of 202, 0 unexplained
+```
+
+## Session — the register wrote the rule, and Phase 11 never got it
+
+### Applying the last wave's lens to the rest of the file
+
+The previous record ends on a general form: *where two obligations are stated in
+one sentence and only one is gated, the ungated half is unenforced and decays at
+full speed while the sentence keeps claiming both.* A form like that is only
+worth writing down if the next session points it at something, so this one did —
+at every remaining number in this file that a tool produces and nothing checks.
+
+**Phase 11 is where they all live**, and every one of them had drifted:
+
+| Claim, as written | Today |
+|---|---|
+| *46 volatile spans and 5 fact anchors: 51 dated claims* | **45 spans, 12 anchors, 57 claims** |
+| *across 1,432 topics* | **1,553** |
+| *now down to 2 candidates* | **3** |
+| *it is 2 candidates today* | **3** |
+| *`check_volatility.py` still reports 46 spans* | **45** |
+| *its only two console candidates* | **three** |
+
+Six sentences, none of them checked, all of them wrong. The phase is marked
+**📘 living** in the index, which is the part that stings: it was the section a
+reader was most invited to trust.
+
+### The rule already existed, three sections down, written for this exact defect
+
+The risk register says it, and says why:
+
+> *No number is repeated here. Each row points at the row of the measured-state
+> table that carries its figure, because that table is checked by
+> `check_plan_numbers.py` and a second copy would only be a second thing to go
+> stale — **which is how this table got wrong in the first place.***
+
+The register learned it the hard way, wrote the rule, and applied it to itself.
+Phase 11 sat directly above it carrying six inline copies. That is **the fourth
+instance this file has recorded of the same shape** — a rule written for a
+category and not applied to the case that motivated it — and the first one where
+the rule and the violation are in the same document, eighty lines apart.
+
+Worse: the register **broke its own rule in one row**. The *unfalsifiable
+freshness* row repeated *51 dated claims* inline, and its own *where the number
+lives now* column said **nowhere — that is the risk**. It knew the figure had no
+checked home and wrote a copy anyway, because there was nowhere to point.
+
+### So the fix was to give it somewhere to point
+
+A **Dated claims** row now sits in the measured-state table, derived by
+`check_plan_numbers.py` from `check_volatility.py`: spans, anchors, their total,
+and the console-candidate count. Thirteen derivable rows, up from twelve.
+
+Phase 11 §1 and §4, the V5 wave, and the register row now all point at it and
+carry no copies. §7's audit record is **left as a record** — what that pass
+found is history and history does not get edited — but its present-tense
+parenthetical is replaced with what is true now, including the third candidate
+and why it is a false positive.
+
+The distinction Phase 11 §3 makes survives intact and is now stated where it
+cannot be confused: **the numerator was always countable and the denominator
+never will be.** The phase's whole argument is about the denominator. Nobody
+noticed the numerator was sitting beside it, uncounted, for a year.
+
+### Proved rather than assumed
+
+The row was checked by breaking it: 45 changed to 44 in the table, the tool
+reported *Dated claims: the row does not carry 45, 57* and exited 1, then the
+file was restored and it exited 0. Adding a row to a checker and not confirming
+it can fail is the *asserts it did not throw* row of this file's own three-shapes
+table, and it would have been particularly funny here.
+
+```
+13 derivable rows (was 12) · 0 drifted · 6 stale prose numbers retired
+Phase 11 §1 §4, V5, and the register row now point at the checked row
+42 gates green · plan.md 6,670 lines, reopens at 8,000
 ```

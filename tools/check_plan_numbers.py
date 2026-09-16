@@ -249,6 +249,20 @@ def derive():
     room, = grab(r"Room for ~([\d,]+) more", budget, "page_budget.py")
     out["Page budget"] = [raw_pct, room]
 
+    # Phase 11's numbers lived in its own prose for as long as it has existed,
+    # and every one of them had drifted: 46 spans and 5 anchors when the site
+    # had 1,432 topics, against 45 and 12 today. The risk register repeated the
+    # total a third time, in the one row whose own column admits the figure
+    # lives "nowhere" — which is what a number with no checked home does. The
+    # denominator is still not countable and that is Phase 11 §3's finding; the
+    # numerator always was.
+    vol = run("check_volatility.py")
+    spans, anchors = grab(r"([\d,]+) volatile span\(s\), ([\d,]+) fact anchor\(s\)",
+                          vol, "check_volatility.py", 2)
+    cands, = grab(r"([\d,]+) topic\(s\) name a vendor console with no dated span",
+                  vol, "check_volatility.py")
+    out["Dated claims"] = [spans, anchors, spans + anchors, cands]
+
     gates = run("check_gates.py")
     n_gates, = grab(r"([\d,]+) in both", gates, "check_gates.py")
     out["Gates"] = [n_gates]
