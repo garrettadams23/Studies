@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **60**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **61**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **60** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **61** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -447,9 +447,9 @@ cannot be measured, is honestly marked as having no condition at all.
 
 ## The fifth, which is about this file
 
-| Risk | State |
-|---|---|
-| **The plan outgrows its own readability** — 11,600 lines, and the useful part is the last few hundred | ✅ **Closed.** Option 3 shipped, then option 1 at 22,745 lines |
+| Risk | Reopens when | State |
+|---|---|---|
+| **The plan outgrows its own readability** — 11,600 lines, and the useful part is the last few hundred | `check_plan_numbers.py` reports the live file past **8,000 lines** | ✅ **Closed.** Option 3 shipped, then option 1 at 22,745 lines |
 
 §6 of the backlog reality check said this in a milder form: *most of those 935 will never be
 built, and the useful part of this file is the last two hundred lines*. That was true at
@@ -487,6 +487,35 @@ still describes Phases 4–6 as planned and quotes ~828 remaining cards. It went
 archive uncorrected. A plan that records what it expected beside what happened is worth more
 than one that records only the outcome, and that table is the primary evidence for this
 archive's most repeated lesson: **the backlog count was badly inflated.**
+
+### And then it was marked Closed with no reopen condition
+
+Which is the defect the section directly above diagnoses, in the one row that had earned the
+right not to have it. The four accumulation risks each got a *reopens when* column and an
+argument for why a closed risk without one **comes back unannounced**. The fifth — the only
+risk here that the file closed by following its own instruction — was written up as a
+success story and left with a State column and nothing else.
+
+It went unnoticed because the evidence for it is the file you are reading, and a file does
+not look long from inside a session that is adding to it. **This one added 1,353 lines, a
+31% increase, without anybody thinking about length once.** That is precisely the accumulation
+shape: a small cost per session, never collected, no day on which it becomes today's problem.
+
+So the row has a condition now, and `check_plan_numbers.py` prints the line count on every
+`make check` and warns past the threshold. It reports rather than fails, because a long plan
+is not a broken build and gating it would mean a session that wrote a good record could not
+commit it.
+
+**8,000 is measured rather than chosen**: double the ~4,000 the split left, and a third of
+the 22,745 that made it acute. Far enough away not to nag, close enough that the file is
+still comfortably splittable on the day it fires.
+
+The general form, which is the fourth instance this session of the same thing: **a rule
+written for a category tends not to be applied to the case that motivated it.**
+`check_renames` matched case-sensitively because its own example was lower case;
+`check_css_vars` read only the stylesheet because its own example was in the stylesheet;
+`script.js` was the one file missing a convention three others had; and the register's
+reopen-condition rule was applied to every risk except the one that proved it was needed.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -5671,6 +5700,66 @@ sentence bent to reach it**, and the note now says which of the two it is.
 
 ```
 probe 135 -> 143 questions · 138 answered · 0 unexplained · 5 recorded zeros
+41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the one risk that closed itself, and was then left without a condition
+
+This session has added **1,353 lines to this file — a 31% increase** — and at no
+point did anybody think about its length. Which is the fifth risk exactly, so it
+was worth checking what the register says about it.
+
+It says **Closed**, and nothing else. No *reopens when* column, in the one row
+that had earned the right to have one: the fifth risk is the only entry here
+that the file closed **by following its own instruction** rather than by
+somebody happening to notice. The section directly above it spends four
+paragraphs arguing that *a closed risk with no reopen condition is a risk that
+will come back unannounced*, gives all four accumulation risks a condition, and
+then writes the fifth up as a success story with a State column and nothing else.
+
+### Why it went unnoticed, which is the interesting half
+
+**The evidence for this risk is the file you are reading, and a file does not
+look long from inside a session that is adding to it.** Every other row in the
+register points at a number in a table a tool checks. This one points at a
+property of the document doing the pointing.
+
+That is the accumulation shape in its purest form: a small cost per session,
+never collected, and no day on which it becomes today's problem. The register's
+own text says *"act when it gets bad" fails precisely because bad has no
+threshold* — and then the row demonstrating that was the row left without one.
+
+### The condition
+
+`check_plan_numbers.py` prints the live file's line count on every `make check`
+and warns past **8,000**. Measured, not chosen: double the ~4,000 the split left,
+and a third of the 22,745 that made the risk acute. Far enough not to nag, close
+enough that the file is still comfortably splittable on the day it fires.
+
+It reports and does not fail. A long plan is not a broken build, and gating it
+would mean a session that wrote a good record could not commit it.
+
+### The fourth instance of one pattern
+
+```
+check_renames      case-sensitive        its own example was lower case
+check_css_vars     style.css only        its own example was in style.css
+script.js          missing the \s*       three sibling files had it
+the risk register  no reopen condition   on the risk that proved they were needed
+```
+
+**A rule written for a category tends not to be applied to the case that
+motivated it.** Four times in one session, in four unrelated places, found four
+different ways — by a grep, by an injection, by a smoke failure, and by noticing
+that the file had grown while nobody was watching. The rule is written down now;
+the habit it wants is to apply a new rule backwards to its own origin before
+applying it forwards to everything else.
+
+```
+plan.md 4,323 -> 5,705 lines · reopen condition at 8,000, evaluated by make check
 41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
 ```
