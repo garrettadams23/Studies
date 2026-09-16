@@ -123,14 +123,22 @@ VOID = {"br", "hr", "img", "input", "meta", "link", "source", "col"}
 # down by 279 from the corrected figure.
 #
 # 469 -> ... -> 108 -> 12. The backlog is cleared. 722 verdicts written by hand
-# across every domain, and the 12 that remain are the `military` staff-code
+# across every domain, and the 12 that remained were the `military` staff-code
 # cross-matrix and SF form series — lookup tables where a judgement would be
 # filler, recorded as deliberate rather than chipped at.
 #
-# The ceiling is 12 rather than 0 for that reason. If it ever reads 13, either
-# a new card ends on a table or one of those twelve was edited: both are worth
+# 12 -> 10. Two of those twelve turned out not to be lookup tables after all.
+# *Staff Functions 1–9* and *Common Codes Decoded* were the site's two thinnest
+# topics, and each had a judgement to make that its table had been carrying
+# silently: the gaps in the staff-function table say how big a headquarters is,
+# and two rows of the code table are not staff codes at all. "A judgement would
+# be filler" is a verdict about a card, and it has to be re-earned whenever the
+# card is looked at properly.
+#
+# The ceiling is 10 rather than 0 for that reason. If it ever reads 11, either
+# a new card ends on a table or one of those ten was edited: both are worth
 # a look, which is what a ceiling at the true floor buys you.
-CEILINGS = {"inline style attribute": 401, "table with no verdict": 12}
+CEILINGS = {"inline style attribute": 401, "table with no verdict": 10}
 
 
 # A `style=` attribute is either avoidable or it is not, and the old count mixed

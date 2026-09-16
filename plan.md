@@ -39,21 +39,21 @@ run rather than letting them pass as verified:
 | Measure | Value | Tool |
 |---|---|---|
 | Topics | **1,552** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
 | Mean chars per concept card | **1,389**, or **1,122 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **166 of 170**, **0 unexplained and 0 wrong-card** — ten batches. The two subject-shaped ones opened at a third missing; the eight symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
 | Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~806 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~805 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,122 chars**, median 3,731 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,135 chars**, median 3,731 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
-| Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **65** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
+| Session records | **66** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6145,6 +6145,109 @@ date to repeat to somebody else**, which is why the padding cycle starts.
 ```
 probe 164 -> 170 questions · 166 answered · 0 unexplained · 4 recorded zeros
 WIDE_STOP +1 (measured against its own frequency rule, and against it)
+41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — three cards that were carrying a judgement in a table
+
+The thin counter has sat at eight for several waves with a note beside it
+saying seven of the eight are short by design. That note was written from the
+badges, which is a reasonable way to triage a list and not a way to read a card.
+Read properly, three of the eight had something to say.
+
+### The list first, because the list is the interesting part
+
+The `military` domain has **ten** topics on staff codes. Six are substantial —
+prefixes, functional numbers, sub-designators, branch comparison, the
+cross-matrix, and how the three parts combine. Four are short, and the learning
+path shows why: they are steps 1–4 and 10 of *Reading Military Structure*, an
+on-ramp deliberately placed before the deep versions.
+
+So the first instinct — these are duplicates, retire them into the deep cards —
+was wrong, and `paths.json` said so in one grep. **A short card placed before a
+long one is scaffolding, not redundancy.** What was wrong with them was
+different: two of the four had no sentence at all.
+
+### `Common Codes Decoded` — 342 characters, zero concept cards
+
+A bare table of ten codes, eight of which the cross-matrix covers better. The
+two it did not cover were the card's actual subject and nobody had noticed:
+**XO and NCO are not staff codes.** They sit in that table because they sit in
+the same sentences — an org chart says *S4*, *XO* and *SNCO* in one breath — and
+a reader who tries to parse *XO* as letter-plus-number gets nothing back. That
+failure is the fastest way to learn where the code system stops and the
+vocabulary of rank and appointment begins. The card now says so, and the table
+that was the whole topic is now the evidence for it.
+
+### `Staff Functions 1–9` — and the contradiction inside it
+
+Same shape, and this one had a factual disagreement with its own deep version:
+the thin card listed **S7** among the examples for function 7; *Functional
+Numbers 1 through 9* lists J7 · G7 · A7 and notes that usage varies by branch.
+One of them was over-claiming, and the careful one is the deep one.
+
+Fixing the row exposed the card's missing sentence, which was sitting in the
+table's last column all along: **the gaps are the useful part.** One through six
+appear at every level; seven and eight generally start at division. A battalion
+holds no budget of its own and has no force-generation role, so there is no S8
+and, in most structures, no S7. The number tells you the function; whether the
+number exists at all tells you how large the headquarters is.
+
+### `Rules of Engagement — Read This First`
+
+The redteam domain's preamble, and the one every other card in that domain
+cross-references. It said *always work inside a signed scope* and stopped there
+— which is the advice everybody gives and nobody expands.
+
+It now names what the document has to contain, with the usual omission beside
+each line, and ends on the two that actually matter: **the third-party line and
+the stop condition.** A client can authorise testing of their own systems and
+cannot authorise testing of their provider's, so an engagement that drifts onto
+a platform's shared infrastructure has no permission behind it however carefully
+the rest was scoped. And the moment a test causes an outage, the only thing that
+matters is whether somebody can be reached and told to stop.
+
+### The ceiling that came down
+
+`lint_content`'s "table with no verdict" ceiling has been 12 for many waves,
+with the twelve recorded as deliberate: *lookup tables where a judgement would
+be filler*. Two of them were not. The ceiling is now 10, lowered in the commit
+that earned it, as the note above it requires.
+
+**"A judgement would be filler" is a verdict about a card, and it expires.** It
+was true of those two when it was written — they were tables nobody had looked
+at — and stopped being true the moment somebody read them. A recorded verdict on
+a backlog is a snapshot of attention, not a property of the thing.
+
+### Two measurements that came back clean
+
+Both were run in the habit the last wave set: go and measure the sentence that
+begins *because*.
+
+* `lint_content.bare_tables` fires on a table that is the **first** child of
+  `.topic-body`. **84 tables sit directly in `.topic-body` and not one of them
+  is first**, so the check has never fired on real content. That is not a
+  defect: the note above it already records that the highlighting reason was
+  fixed in `script.js` instead, that widening this to all 84 was considered and
+  rejected, and that what remains is a narrow layout rule. Measured, correct,
+  left alone.
+* `check_volatility`'s console queue is three rows and **all three are false
+  positives** — two generic uses of "the admin centre" and one job title. The
+  bare `<vendor> admin` alternatives look redundant with `admin cent(er|re)` and
+  are not: they catch a table of console names where the word *centre* is in the
+  heading. The note already says the regex cannot separate *Exchange admin* the
+  console from *Exchange admin* the person and prints the sentence so a reader
+  can. Measured, correct, left alone.
+
+Two clean results are worth recording next to the two that were not. The habit
+is not "the notes are wrong"; it is "the notes are checkable".
+
+```
+thin 8 -> 7 · depth tail 2,122 -> 2,135 · verdictless tables 12 -> 10
+site's two thinnest topics: 317 and 500 chars -> 1,205 and 1,056
 41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
 ```
