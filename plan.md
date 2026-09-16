@@ -43,7 +43,7 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,389**, or **1,122 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **166 of 170**, **0 unexplained and 0 wrong-card** — ten batches. The two subject-shaped ones opened at a third missing; the eight symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
+| Reader questions answered | **170 of 175**, **0 unexplained** — eleven batches. The two subject-shaped ones opened at a third missing; the eight symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros and the 1 wrong-card are recorded verdicts, and `--self-test` checks that a verdict still describes its row. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
 | Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~805 more topics | `page_budget.py` |
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **66** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **67** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6248,6 +6248,77 @@ is not "the notes are wrong"; it is "the notes are checkable".
 ```
 thin 8 -> 7 · depth tail 2,122 -> 2,135 · verdictless tables 12 -> 10
 site's two thinnest topics: 317 and 500 chars -> 1,205 and 1,056
+41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
+```
+
+---
+
+## Session — the tail is short on purpose, and the counter-example worth keeping
+
+### Reading the rest of the thin list, because the last wave's note said to
+
+The thin row now reads *the ones left are short by design*, and the last wave
+put that sentence there after reading three of the eight. This wave read the
+other four, because a claim made from three cases is the shape of claim this
+file keeps catching.
+
+They hold. *The Data Interview*, *The Full-Stack Picture*, *Cert Roadmaps* and
+*Software Supply Chain Security* are map cards: each one's job is to connect a
+domain to the rest of the site, each ends on a judgement, and each would be
+worse for being longer. The two `linux` entries below them — *File Ops & Text
+Processing*, *Networking (CLI)* — are Linux+ objective references, the same form
+the duplicate census already records as deliberate.
+
+Below the thin line the tail is almost entirely the `script` beginner series:
+eighteen cards of 600–1,100 characters, three or four concept cards each, and
+**zero `.verdict` spans between them**. That reads like a gap and is not one.
+Those cards end on judgements — *keep variables as local as possible*, *bugs
+love the edges, test there* — inside the concept description, because they have
+no tables for a verdict to follow. The `.verdict` class marks a sentence after a
+table, not the presence of a sentence worth reading.
+
+**So the deepening wave the depth row asks for has no work in it right now**,
+and that is the finding. `Cert Roadmaps` gained one row — an Azure track, absent
+from a cert map on a site whose cloud, endpoint and m365 domains are largely
+Microsoft — and nothing else in the tail needed a word.
+
+### Two more cards that already answered the question
+
+`my email went to spam` returned **nothing**, against a card titled *Email
+Authentication — SPF, DKIM, DMARC* that contains both "spam" and "junk". The
+blocker was `went`, and the fix was the opening sentence the card should have
+had anyway: **"our email went to spam" and "somebody is sending mail as us" are
+the same problem read from opposite ends, and the same three DNS records answer
+both.** One card, one hit, and the reader who arrives from either end lands in
+the same place.
+
+`somebody deleted the wrong thing` reached seventeen cards and not the
+postmortem one, which is about exactly that and never says it. It now opens on
+the archetype: *somebody deleted the wrong thing, or shipped the wrong config,
+and the only question that matters now is which question the room asks next.*
+
+### The counter-example, recorded rather than fixed
+
+`the intern deleted the wrong thing` is the same query with one extra word, and
+it still returns seven cards about nothing. The relaxation stage is working
+exactly as designed: `intern` is the rarest word, so it is the one kept.
+
+There is no honest fix. The site has no reason to name an intern, and writing
+one in to catch the query is the keyword stuffing this census exists to refuse.
+So it is checked in **with a `want` as well as a verdict**, which makes the
+harness score it as a wrong-card miss and count it as explained rather than
+quietly passing on its result count — the same distinction that caught
+`standups` four waves ago.
+
+It is the first entry in the census's wrong-card column, and it is there to stay
+visible. **A relaxation rule that keeps the rarest word is right almost always,
+and this is what its failure looks like** — worth one row that a future session
+reads before proposing to change the rule.
+
+```
+probe 170 -> 175 questions · 170 answered · 0 unexplained · 4 zeros · 1 wrong card
+thin 7, unchanged and read in full · one Azure track added to the cert map
 41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
 ```

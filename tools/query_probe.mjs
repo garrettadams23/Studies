@@ -230,6 +230,10 @@ const READERS = [
     // ── batch nine ──
     ["teams meeting audio not working", "",
      "m365/teams-call-quality-cqd-the-network-requirements-the-real-cul"],
+    // ── batch eleven ──
+    ["my email went to spam", "", "threat/email-authentication-spf-dkim-dmarc"],
+    ["is this email a scam", "",
+     "sec/phishing-beyond-email-smishing-vishing-and-qr-code-scams"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -311,6 +315,9 @@ const READERS = [
     ["explain oauth", "", "sec/oauth-20-oidc-saml-federated-identity"],
     // ── batch ten ──
     ["ubermensch", "", "philosophy/philosophy-schools-of-thought"],
+    // ── batch eleven ──
+    ["i cannot remember any of this", "",
+     "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -382,6 +389,17 @@ const READERS = [
     // ── batch ten ──
     ["my manager wants an estimate", "",
      "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+    // ── batch eleven ──
+    ["somebody deleted the wrong thing", "",
+     "ops/writing-a-postmortem-people-actually-learn-from"],
+    // The same question with one extra word, kept as the counter-example.
+    // `intern` is rare, so the relaxation stage keeps it and drops the rest —
+    // correctly, by its own rule, and the answer is seven cards about nothing.
+    // The site has no reason to name an intern, and writing one in to catch
+    // the query is the keyword stuffing this file exists to refuse. Kind 3.
+    ["the intern deleted the wrong thing",
+     "kind 3 — the reader's incidental noun. The generic phrasing above reaches the card; this one asks the site to contain a word it has no reason to contain",
+     "ops/writing-a-postmortem-people-actually-learn-from"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,

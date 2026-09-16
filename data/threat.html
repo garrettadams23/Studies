@@ -1464,7 +1464,7 @@ sha256sum evidence.img    <span class="com"># must match — proves a faithful c
     <div class="concept-card">
       <div class="concept-label">THE PROBLEM</div>
       <div class="concept-title">Email Was Built With No Identity Checks</div>
-      <div class="concept-desc">The original email protocol (SMTP) lets anyone claim to be anyone — you can trivially forge the "From" address. This is why phishing and spoofing are so easy. Three layered DNS-based standards were bolted on to fix this: SPF, DKIM, and DMARC. Together they let receiving servers verify that an email genuinely came from the domain it claims. Every email/security admin must understand these.</div>
+      <div class="concept-desc">"Our email went to spam" and "somebody is sending mail as us" are the same problem read from opposite ends, and the same three DNS <span class="acro-exp">(Domain Name System)</span> records answer both. The original email protocol (SMTP) lets anyone claim to be anyone — you can trivially forge the "From" address. This is why phishing and spoofing are so easy. Three layered DNS-based standards were bolted on to fix this: SPF, DKIM, and DMARC. Together they let receiving servers verify that an email genuinely came from the domain it claims. Every email/security admin must understand these.</div>
     </div>
     <div class="concept-card">
       <div class="concept-label">THE THREE STANDARDS</div>
@@ -1472,7 +1472,7 @@ sha256sum evidence.img    <span class="com"># must match — proves a faithful c
       <table class="ai-table">
         <thead><tr><th>Standard</th><th>Question It Answers</th><th>How</th></tr></thead>
         <tbody>
-          <tr><td><strong>SPF</strong><br>Sender Policy Framework</td><td>"Is this server allowed to send for this domain?"</td><td>DNS <span class="acro-exp">(Domain Name System)</span> TXT <span class="acro-exp">(Text Record)</span> record lists authorized sending IPs <span class="acro-exp">(Internet Protocol)</span></td></tr>
+          <tr><td><strong>SPF</strong><br>Sender Policy Framework</td><td>"Is this server allowed to send for this domain?"</td><td>DNS TXT <span class="acro-exp">(Text Record)</span> record lists authorized sending IPs <span class="acro-exp">(Internet Protocol)</span></td></tr>
           <tr><td><strong>DKIM</strong><br>DomainKeys Identified Mail</td><td>"Was this message altered? Is the signature valid?"</td><td>Server signs mail with a private key; public key in DNS verifies it</td></tr>
           <tr><td><strong>DMARC</strong><br>Domain-based Message Auth</td><td>"What do I do if SPF/DKIM fail?"</td><td>DNS policy: none / quarantine / reject + reporting</td></tr>
         </tbody>

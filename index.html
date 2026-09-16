@@ -17443,7 +17443,7 @@ most controls on this page assume an outsider.
 <div class="concept-card">
 <div class="concept-label">THE PROBLEM</div>
 <div class="concept-title">Email Was Built With No Identity Checks</div>
-<div class="concept-desc">The original email protocol (SMTP) lets anyone claim to be anyone — you can trivially forge the "From" address. This is why phishing and spoofing are so easy. Three layered DNS-based standards were bolted on to fix this: SPF, DKIM, and DMARC. Together they let receiving servers verify that an email genuinely came from the domain it claims. Every email/security admin must understand these.</div>
+<div class="concept-desc">"Our email went to spam" and "somebody is sending mail as us" are the same problem read from opposite ends, and the same three DNS <span class="acro-exp">(Domain Name System)</span> records answer both. The original email protocol (SMTP) lets anyone claim to be anyone — you can trivially forge the "From" address. This is why phishing and spoofing are so easy. Three layered DNS-based standards were bolted on to fix this: SPF, DKIM, and DMARC. Together they let receiving servers verify that an email genuinely came from the domain it claims. Every email/security admin must understand these.</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">THE THREE STANDARDS</div>
@@ -17451,7 +17451,7 @@ most controls on this page assume an outsider.
 <table class="ai-table">
 <thead><tr><th>Standard</th><th>Question It Answers</th><th>How</th></tr></thead>
 <tbody>
-<tr><td><strong>SPF</strong><br>Sender Policy Framework</td><td>"Is this server allowed to send for this domain?"</td><td>DNS <span class="acro-exp">(Domain Name System)</span> TXT <span class="acro-exp">(Text Record)</span> record lists authorized sending IPs <span class="acro-exp">(Internet Protocol)</span></td></tr>
+<tr><td><strong>SPF</strong><br>Sender Policy Framework</td><td>"Is this server allowed to send for this domain?"</td><td>DNS TXT <span class="acro-exp">(Text Record)</span> record lists authorized sending IPs <span class="acro-exp">(Internet Protocol)</span></td></tr>
 <tr><td><strong>DKIM</strong><br>DomainKeys Identified Mail</td><td>"Was this message altered? Is the signature valid?"</td><td>Server signs mail with a private key; public key in DNS verifies it</td></tr>
 <tr><td><strong>DMARC</strong><br>Domain-based Message Auth</td><td>"What do I do if SPF/DKIM fail?"</td><td>DNS policy: none / quarantine / reject + reporting</td></tr>
 </tbody>
@@ -26895,7 +26895,9 @@ so "not my circus" doesn't quietly become "my outage."</p>
 <span class="concept-label">Concept</span>
 <h4 class="concept-title">A postmortem is a story about a system, not a trial of a person</h4>
 <p class="concept-desc">A postmortem (or "post-incident review") is a written analysis of what happened during an
-outage or incident, why it happened, and what will change as a result. The single most important design decision in
+outage or incident, why it happened, and what will change as a result. Somebody deleted the wrong thing, or shipped
+the wrong config, and the only question that matters now is which question the room asks next. The single most
+important design decision in
 any postmortem process is whether it's <em>blameless</em> — focused on "what conditions made this mistake possible
 and likely?" rather than "who do we blame for this?" Get that one decision right, and people will tell you the truth
 about what happened. Get it wrong, and every future postmortem will quietly omit the details that actually mattered.</p>
@@ -96368,12 +96370,12 @@ make refusing it cost them nothing &mdash; then it gets said yes to on its merit
 </div>
 </div>
 </div>
-<div class="topic" id="cert-roadmaps-choosing-a-path" data-reviewed="2026-08" data-read="1" data-level="core">
+<div class="topic" id="cert-roadmaps-choosing-a-path" data-reviewed="2026-08" data-read="2" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎓</span>
 <span class="topic-name">Cert Roadmaps — Choosing a Path</span>
 <span class="topic-badge">Career</span>
-<span class="topic-read" title="Rough reading time, estimated from length">1 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -96392,6 +96394,7 @@ Pick a track that matches your goal and work up it.
 <tr><td>Red team</td><td>Security+ → PenTest+ → OSCP <span class="acro-exp">(Offensive Security Certified Professional)</span> → (OSEP/CRTO)</td></tr>
 <tr><td>Cloud (AWS)</td><td>Cloud Practitioner → Solutions Architect Assoc → Security Specialty</td></tr>
 <tr><td>Cloud (GCP)</td><td>Cloud Digital Leader → Associate Cloud Engineer → Professional Architect</td></tr>
+<tr><td>Cloud (Azure)</td><td>AZ-900 → AZ-104 → AZ-500, with MS-102 instead of AZ-104 if the estate is mostly M365</td></tr>
 <tr><td>Management</td><td>PMP <span class="acro-exp">(Project Management Professional)</span> / CISM <span class="acro-exp">(Certified Information Security Manager)</span> for leadership tracks</td></tr>
 </table>
 <div class="concept-desc verdict">
