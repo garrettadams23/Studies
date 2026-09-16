@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **63**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **64**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,22 +38,22 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,552** across 30 domains | `depth_report.py` |
+| Topics | **1,553** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,390**, or **1,122 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,391**, or **1,123 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **190 of 202**, **0 unexplained** — twelve batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 9 remaining zeros and the 3 wrong-cards are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
-| Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~804 more topics | `page_budget.py` |
+| Reader questions answered | **193 of 202**, **0 unexplained** — twelve batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 8 remaining zeros and the 1 wrong-card are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,586 steps, 1,490 of 1,553 topics** | `check_paths.py` |
+| Related links | **1,493 topics, 4,808 links, 0 one-way** — one mainland of 1,467, three reference-domain islands | `suggest_related.py --check` |
+| Page budget | **34% raw** headroom — room for ~802 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,135 chars**, median 3,732 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,135 chars**, median 3,735 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **68** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **69** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6438,4 +6438,115 @@ probe 175 -> 202 questions · 190 answered · 0 unexplained · 9 zeros · 3 wron
 1 tool fix: CLAIMS_ZERO guarded against hyphenated compounds, +2 fixtures
 41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3 · mean/card 1,389 -> 1,390, excluding verdicts 1,122 unchanged
+```
+
+## Session — closing the three things the last wave named rather than wrote
+
+### The queue was a list this time, because the last session left one
+
+The previous record ends by naming three findings it deliberately did not act
+on: one kind-2 gap with its evidence, and two kind-1 misses each carrying a
+`want` and a verdict. That was the whole point of writing them down — **a wave
+that stops at its audit limit is only disciplined if the next one starts there**,
+and this file has a history of naming work that then waited weeks.
+
+All three are closed. It cost one new topic and two paragraphs.
+
+### `m365` had forty-two topics and said *time zone* zero times
+
+The new card is **Calendar Time Zones — Why the Invite Lands an Hour Out**, and
+the sentence it exists for is that *a meeting has no time*. It has one stored
+instant and one rendering per mailbox, so "the invite is an hour out" is never a
+question about the meeting — the instant is almost always right, and the ticket
+is a disagreement between two renderings of it.
+
+That reframing does the diagnostic work, which is why it leads. It makes one
+question obvious — **who sees it wrong?** — and that question partitions the
+causes in a way nothing else does: one attendee points at a client or mailbox
+zone, everybody points at the organiser or a room object, only the panel points
+at the room mailbox's own zone, set at creation and never touched again. The
+reflex the card argues against is the one a service desk actually uses: walking
+the caller through their own Outlook settings, which confirms nothing in three
+of the five rows because the wrong object belongs to somebody else.
+
+The second card is the recurring series that is right until the clocks change,
+and it carries the one row on the page that is **nobody's mistake** — two
+countries changing clocks on different weekends genuinely puts a call an hour
+out for a fortnight twice a year, and the calendar is telling the truth. A
+troubleshooting card that cannot say *this one is not a fault* teaches people to
+keep fixing it.
+
+It closes by naming what it is **not**: the storing-timestamps problem, which
+`script` already covers and which the calendar already gets right. Store the
+instant, render late — the calendar does that. What is left is a configuration
+disagreement between objects that each hold an opinion, and no amount of
+correctness in the store prevents it.
+
+### The two kind-1 fixes, and the one that was an inflection rather than a word
+
+`data is leaving over dns` reached seven cards and not the exfiltration one.
+The card's own first concept is titled *How Data Leaves* — so the site was not
+using a different **word**, it was using a different **inflection**, and the
+matcher does not relate *leaving* to *leaves*.
+
+That distinction decided the fix. A stemmer is the obvious answer and this
+project already tried one and reverted it, which is a recorded result and not a
+thing to re-litigate on a single query. So it was fixed in prose, and the
+sentence earns its place independently: *exfiltration is the attacker's word for
+it; the defender meets the same event as a question — why is data leaving over
+DNS at three in the morning*. Two vocabularies for one event is exactly why that
+table is read from both ends, and the card claims to be a detection skill in its
+second sentence without ever saying what detection looks like from the inside.
+
+`setting up a new laptop` missed Autopilot the same way. The fix names the
+ticket and then inverts it — the point of Autopilot is that **nobody sets one
+up** — with the honest cost attached: a profile that is wrong is wrong on every
+machine at once, and there is no technician in the loop to notice.
+
+### The new topic was a deep orphan for about four minutes
+
+`orphan_report.py` reported **1 deep orphan** immediately after the splice,
+which is the precise condition the register's *unreachable quality* row says
+reopens the risk. It was doing its job on the first new hand-written topic since
+the risk was closed.
+
+Five bidirectional pairs fixed it, chosen by hand and not from the tool's
+ranking — `suggest_related.py` put *Windows DNS Administration*, *Landing Zones*
+and *Firewall Policy Design* in the top six, all of them matching on the word
+**zones**, which is three different meanings of the word in one list. The tool
+scores lexically and says so; the reason the loop's step 10 says *by hand* is
+sitting in that output.
+
+It also went onto the `m365-administration` path, after the mailbox-types step
+rather than at the end, because the room mailbox is where the fault comes from
+and the general playbook is already the last step. Mainland went 1,466 → 1,467,
+so it joined the graph rather than starting a fourth island.
+
+### One ordering constraint earned its row in the table again
+
+`make check` failed on a stale social card, because the topic count is rendered
+into the image and the count moved. That is constraint #4 in the manual — *any
+content change → `make og`* — and it is the second-cheapest thing on the list to
+forget, because nothing about editing a data file suggests an image is
+downstream of it. The gate caught it in nine seconds.
+
+### And one thing that was checked rather than assumed
+
+The scratch query runner used for diagnosis returned 6 for one query and 34 for
+a near-identical one, which looked like state leaking between queries in a
+shared page. It is not: they were two different strings, and a **longer** query
+returning **more** cards is the staged matcher falling through to a wider stage
+when the conjunction finds nothing. Verified by running the pair isolated and
+batched and comparing — identical both ways.
+
+Worth a paragraph because the alternative was to quietly discard a session's
+worth of measurements on a hunch, and the check cost one command. The file's
+third habit is *verify by measurement, not by assertion*, and that applies to
+suspecting your own instruments as much as to trusting them.
+
+```
+probe 202 questions · 193 answered (was 190) · 0 unexplained · 8 zeros · 1 wrong card
+1 topic added (m365, 1,552 -> 1,553) · 2 prose fixes · 5 related pairs · 1 path step
+41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3 · mean/card 1,390 -> 1,391, excluding verdicts 1,122 -> 1,123
 ```

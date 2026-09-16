@@ -237,10 +237,9 @@ const READERS = [
     // ── batch twelve ──
     ["shared mailbox or distribution list", "",
      "m365/microsoft-365-groups-the-object-underneath-teams-sharepoint-"],
-    ["the meeting invite is an hour out",
-     "kind 2, named and not written — m365 has 42 topics and says 'time zone' zero times"],
-    ["setting up a new laptop",
-     "kind 1, named and not fixed — the card is provisioning and zero-touch; the ticket is 'set up a new laptop' and the card never says it",
+    ["the meeting invite is an hour out", "",
+     "m365/calendar-time-zones-why-the-invite-lands-an-hour-out"],
+    ["setting up a new laptop", "",
      "endpoint/windows-autopilot-zero-touch-provisioning"],
   ]],
   ["a SOC analyst or defender", [
@@ -287,8 +286,7 @@ const READERS = [
     ["is the attacker still in"],
     ["a laptop is beaconing out",
      "kind 3 — 'beaconing' alone reaches 11 cards; 'laptop' and 'out' are the reader's words"],
-    ["data is leaving over dns",
-     "kind 1, named and not fixed — the site says exfiltration, the defender says data is leaving",
+    ["data is leaving over dns", "",
      "redteam/data-exfiltration-channels-dns-icmp-https"],
   ]],
   ["a learner meeting a subject", [

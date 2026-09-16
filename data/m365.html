@@ -3441,6 +3441,116 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             </div>
           </div>
 
+          <!-- ── TOPIC: CALENDAR TIME ZONES ──────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🕐</span>
+              <span class="topic-name">Calendar Time Zones — Why the Invite Lands an Hour Out</span>
+              <span class="topic-badge">Exchange Online • Troubleshooting</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Meeting Has No Time — It Has an Instant and Several Renderings</div>
+                <div class="concept-desc">
+                  The store holds one instant. Every attendee's client then <em>renders</em> that
+                  instant in a time zone it decided on for itself, and the meeting the user is
+                  looking at is the rendering, not the instant. This is why
+                  <strong class="c-amber">"the invite is an hour out" is never a question about
+                  the meeting</strong> — the instant is almost always correct, and the ticket is a
+                  disagreement between two renderings of it.
+                  <br><br>
+                  That reframing does the diagnostic work, because it makes the useful question
+                  obvious and it is the one nobody asks: <strong class="c-cyan">who sees it
+                  wrong?</strong> One attendee, everybody, or only the room. Each answer points at
+                  a different object, and without it every cause below stays on the table.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Who sees it wrong</th><th>What to look at</th></tr></thead>
+                    <tbody>
+                      <tr><td>One attendee, everyone else fine</td><td>That person's client or mailbox zone — the two can disagree, and the mailbox wins for anything server-side</td></tr>
+                      <tr><td>Everybody, by the same offset</td><td>The organiser's zone when they created it, or an equipment or room object in the invite</td></tr>
+                      <tr><td>Only the panel outside the room</td><td>The room mailbox carries its own zone, set at creation and usually never touched again</td></tr>
+                      <tr><td>Only meetings from one external party</td><td>An iCal feed with a floating time and no zone; the receiving client renders it in its own</td></tr>
+                      <tr><td>Half a recurring series</td><td>The series crosses a daylight-saving boundary — see below, because this one is not a misconfiguration</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Ask who sees it wrong before touching a setting. Three of these five rows are
+                    fixed on an object the reporting user does not own, and the reflex — walking the
+                    caller through their own Outlook settings — confirms nothing when the answer is
+                    a room mailbox or the organiser's laptop.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Failure mode</div>
+                <div class="concept-title">The Recurring Series That Is Right Until the Clocks Change</div>
+                <div class="concept-desc">
+                  A recurrence is not a list of instants. It is a rule — <em>09:00 every Tuesday</em>
+                  — plus the zone that rule is read in, and daylight saving is what makes those two
+                  facts come apart. A weekly meeting stored against a zone stays at 09:00 local
+                  across the change, which is normally what everyone wants. Stored against a fixed
+                  offset instead, it moves to 08:00 or 10:00 for the rest of the year.
+                  <br><br>
+                  <strong class="c-amber">The tell is that the series splits.</strong> Occurrences
+                  before the change are correct and occurrences after are not, or the reverse, and
+                  the boundary is a date rather than an attendee. It is also the one cause on this
+                  page that can be <em>nobody's mistake</em>: two countries change clocks on
+                  different weekends, so a call between them genuinely is an hour out for two or
+                  three weeks a year and the calendar is telling the truth.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+                    <tbody>
+                      <tr><td>Correct before a date, wrong after</td><td>Fixed offset rather than a named zone, or a stale time-zone database on one endpoint</td></tr>
+                      <tr><td>Wrong for a fortnight twice a year, then right</td><td>The two ends change clocks on different weekends. Not a fault</td></tr>
+                      <tr><td>Wrong only for attendees in one country</td><td>A region that stopped observing daylight saving; the rule changed and an endpoint has the old one</td></tr>
+                      <tr><td>Moved after the organiser travelled</td><td>Their client adopted the device zone and re-anchored new items to it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Do not repair a broken series occurrence by occurrence. Delete it and recreate
+                    it from a machine whose zone you have checked, because editing single instances
+                    of a series produces exceptions that survive the fix and fail again at the next
+                    change. The one exception is a meeting that genuinely spans two countries
+                    mid-transition — that one gets an explanation to the attendees, not a change.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">What to Standardise, and What Is Not Yours to Fix</div>
+                <div class="concept-desc">
+                  Most of this is preventable at provisioning rather than diagnosable at the service
+                  desk, and the prevention costs nothing at the point it is cheap.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Do</th><th>Because</th></tr></thead>
+                    <tbody>
+                      <tr><td>Set the zone on room and equipment mailboxes at creation</td><td>They default to the tenant's and nobody revisits them; a room in another office is wrong from day one</td></tr>
+                      <tr><td>Include the zone in the joiner checklist for anyone hired outside the head office</td><td>The mailbox zone is set on first sign-in and inherits whatever the machine said that morning</td></tr>
+                      <tr><td>Treat an external booking system as untrusted for time</td><td>A floating time has no zone to be wrong about; the fix is at the sender and rarely available</td></tr>
+                      <tr><td>Keep endpoints patched</td><td>Time-zone rules are data, governments change them, and the update arrives as a patch</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>This is not the storing-timestamps problem</strong>, and the two get
+                    conflated in every discussion of the subject.
+                    <span class="xref">Dates &amp; Times — Trickier Than You Think</span> covers
+                    what a system should record, and the answer there — store the instant, render
+                    late — is already what the calendar does. What is left here is a configuration
+                    disagreement between objects that each hold an opinion about a zone, and no
+                    amount of correctness in the store prevents it. Fix the object, not the meeting.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- ── TOPIC: ENTRA ID GOVERNANCE ──────────────────────────────── -->
           <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
