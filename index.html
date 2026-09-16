@@ -30765,7 +30765,10 @@ this week by alerts that resolved themselves has learned, correctly, that the pa
 usually wrong. When the seventh page is real, it is acknowledged more slowly and
 investigated less thoroughly, because the prior probability they have absorbed says it will
 be nothing. The system's mean time to detect has quietly increased, and no dashboard shows
-it.
+it. Which is the honest reading of <strong>"we get too many alerts"</strong>: it is not a
+complaint about volume, it is a report that the signal-to-noise ratio has crossed the point
+where reading them carefully stopped being rational. Cutting the count is the remedy only
+because the ratio is what actually moved.
 </div>
 <div class="dw">
 <div class="concept-desc">
@@ -38240,9 +38243,11 @@ the most common failure, and an escalation path is worth having before you need 
 </tbody>
 </table>
 <div class="concept-desc verdict">
-The mirror image is worth stating for anyone on the receiving side: publish a policy and a
-contact address, acknowledge within days, never threaten a good-faith reporter, and give
-credit. A vulnerability disclosure policy is one of the cheapest security controls an
+The mirror image is worth stating for anyone on the receiving side &mdash; the day a
+vulnerability report arrives from a stranger nobody invited, which is how almost all of
+them arrive. <strong>The first reply, not the patch, decides whether this becomes an
+incident or a story.</strong> Publish a policy and a contact address, acknowledge within
+days, never threaten a good-faith reporter, and give credit. A vulnerability disclosure policy is one of the cheapest security controls an
 organisation can adopt — it costs a page and an inbox, and it converts the researcher who
 found your flaw from an unknown risk into a free contributor. The engagement-side
 equivalent of all this paperwork is
@@ -52138,12 +52143,12 @@ first_tag = data[<span class="str">"user"</span>][<span class="str">"profile"</s
 </div>
 </div>
 <!-- ── TOPIC: MODULES & PACKAGES ─────────────────────────────── -->
-<div class="topic" id="modules-packages-pip-using-other-peoples-code" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="modules-packages-pip-using-other-peoples-code" data-reviewed="2026-07" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📚</span>
 <span class="topic-name">Modules, Packages &amp; pip — Using Other People's Code</span>
 <span class="topic-badge">SCRIPT • Foundation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -52226,6 +52231,16 @@ deactivate</pre>
 <tr><td>logging</td><td>Proper logging (not just print)</td></tr>
 </tbody>
 </table>
+<div class="concept-desc">
+One failure is worth naming because the error message points at the wrong place. A
+<strong>circular import</strong> &mdash; <code>a.py</code> imports <code>b.py</code>, which
+imports <code>a.py</code> &mdash; fails with <em>cannot import name X from partially
+initialised module</em>, and the module it names is usually the innocent one: it is the
+module that was half-built when the loop came back round to it. Moving the import inside
+the function that needs it breaks the cycle at import time and is a legitimate fix, but it
+is also a signal &mdash; two modules that each need the other are usually one module, or
+want a third holding what they share.
+</div>
 <div class="concept-desc verdict">
 <strong>Check the standard library before installing anything; it is larger than
 most people assume.</strong> Path handling, JSON, dates, subprocess and HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>
@@ -99449,7 +99464,11 @@ everyone still on the team remembers.
 The gap between those two readings causes most planning conflict in technical organisations.
 Engineering produces a roadmap meaning "this is the order we intend to work in"; the business
 receives dates. Neither side is being unreasonable, and the fix is presentational: express
-confidence explicitly, so the document says what it means.
+confidence explicitly, so the document says what it means. <strong>"Our estimates are always
+wrong"</strong> is usually this conflict wearing a measurement's clothes &mdash; the
+estimate was a range read as a date, and a range is not wrong when the outcome lands inside
+it. An estimate that is reliably wrong in <em>one direction</em> is a different and far more
+useful finding, because it is correctable.
 </div>
 <div class="dw">
 <table class="ref-table">

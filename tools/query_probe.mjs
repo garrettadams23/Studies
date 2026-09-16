@@ -246,6 +246,11 @@ const READERS = [
     ["how do i escalate privileges on linux", "",
      "pentest/privilege-escalation-from-foothold-to-full-control"],
     ["my payload keeps getting caught"],
+    // ── batch six ──
+    ["too many false positives", "",
+     "blueteam/writing-a-good-rule-specificity-false-positive-analysis-the-"],
+    ["we got a vulnerability report from a stranger",
+     "kind 3 — the disclosure card covers the receiving side in its closing verdict and now names the moment. 'got' is a verb no reference card has reason to contain, and a zero cannot be relaxed: relaxing zeros manufactures wrong answers, which script.js settled with four measured examples"],
     // ── batch two ──
     ["is this domain malicious"],
     ["mfa prompt i did not request", "",
@@ -329,6 +334,13 @@ const READERS = [
     // escalation in script.js closed it without a word of prose being bent,
     // which is what that note was holding out for.
     ["standups", "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
+    // ── batch six ──
+    ["our estimates are always wrong", "",
+     "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+    ["nobody reads the documentation", "",
+     "career/documentation-types-docs-as-code-four-kinds-and-why-mixing-t"],
+    ["too many alerts", "",
+     "ops/alert-fatigue-as-a-reliability-problem-and-testing-runbooks-"],
     ["our standups are useless",
      "kind 3, same cause — 'standups' carries the query and misses for the reason above; 'our standup is useless' reaches the Daily Scrum row that answers it",
      "eng/scrum-three-accountabilities-five-events-three-artifacts"],
@@ -361,6 +373,11 @@ const READERS = [
     ["the script hangs and never exits"],
     // ── batch five ──
     ["my program uses too much memory"],
+    // ── batch six ──
+    ["circular import", "", "script/modules-packages-pip-using-other-peoples-code"],
+    ["list index out of range", "",
+     "script/exception-handling-writing-code-that-doesnt-crash"],
+    ["my function returns none"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",

@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **59**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **60**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -40,20 +40,20 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,552** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
-| Mean chars per concept card | **1,387**, or **1,120 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two all session across eleven new concept cards, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,388**, or **1,121 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **131 of 135**, **0 unexplained and 0 wrong-card** — five batches. The two subject-shaped ones opened at a third missing; the three symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
+| Reader questions answered | **138 of 143**, **0 unexplained and 0 wrong-card** — six batches. The two subject-shaped ones opened at a third missing; the four symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 5 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
 | Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~809 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~808 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,122 chars**, median 3,724 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,122 chars**, median 3,727 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **59** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **60** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5624,4 +5624,53 @@ long.
 probe 124 -> 135 questions · 131 answered · 0 unexplained
 47 topic names corrected · 41 gates green · smoke 163 · search 51 · a11y 31
 resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the sentence a card is an answer to, and never asks
+
+Batch six, aimed at `script`, `eng`, `ops` and `blueteam`. The rate held a
+fourth time, and the five fixes share a shape sharper than "the symptom is not
+named". In each one **the card is an answer to a question it never states**:
+
+| The reader types | The card | What it was missing |
+|---|---|---|
+| `too many alerts` | *Alert Fatigue as a Reliability Problem* | The complaint it is an answer to. "Too many alerts" is not about volume — it reports that the ratio crossed the point where reading carefully stopped being rational |
+| `our estimates are always wrong` | *Planning Without Theatre — Honest Estimates* | Its own premise. The estimate was a range read as a date, and **a range is not wrong when the outcome lands inside it** |
+| `circular import` | *Modules, Packages & pip* | The failure, which appears nowhere on the site. The error names the innocent module — the one that was half-built when the loop came back round |
+| `we got a vulnerability report from a stranger` | *Responsible Disclosure & Bug Bounties* | Nothing, as it turned out — see below |
+
+Both of the first two now return **exactly one card**, which is the best result
+this measurement produces.
+
+### The one that was already covered, found by reading the whole card
+
+`we got a vulnerability report from a stranger` looked like the biggest gap of
+the batch: the disclosure card is written entirely from the researcher's side,
+title included. Writing the receiving-side card was the obvious move.
+
+It is in the card already — compressed into the closing verdict, which is this
+site's convention for *the same subject arriving from the other direction*:
+*"publish a policy and a contact address, acknowledge within days, never
+threaten a good-faith reporter, and give credit."*
+
+So the edit was one clause naming the moment, plus the sentence that verdict was
+missing: **the first reply, not the patch, decides whether this becomes an
+incident or a story.** **Reading to the end of the card before writing a new one
+is the cheapest habit in this file**, and it is the third time this session it
+has turned a proposed card into a sentence.
+
+### The query is still a zero, and that is the right answer
+
+It stays at zero because `got` is a verb no reference card has reason to
+contain, and a zero is never relaxed — `script.js` settled that with four
+measured examples of relaxation turning honest zeros into confident wrong cards.
+**A recorded zero on a card that answers the question is a better outcome than a
+sentence bent to reach it**, and the note now says which of the two it is.
+
+```
+probe 135 -> 143 questions · 138 answered · 0 unexplained · 5 recorded zeros
+41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
 ```

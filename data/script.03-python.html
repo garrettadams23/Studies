@@ -259,6 +259,16 @@ deactivate</pre>
           <tr><td>logging</td><td>Proper logging (not just print)</td></tr>
         </tbody>
       </table>
+      <div class="concept-desc">
+        One failure is worth naming because the error message points at the wrong place. A
+        <strong>circular import</strong> &mdash; <code>a.py</code> imports <code>b.py</code>, which
+        imports <code>a.py</code> &mdash; fails with <em>cannot import name X from partially
+        initialised module</em>, and the module it names is usually the innocent one: it is the
+        module that was half-built when the loop came back round to it. Moving the import inside
+        the function that needs it breaks the cycle at import time and is a legitimate fix, but it
+        is also a signal &mdash; two modules that each need the other are usually one module, or
+        want a third holding what they share.
+      </div>
       <div class="concept-desc verdict">
         <strong>Check the standard library before installing anything; it is larger than
         most people assume.</strong> Path handling, JSON, dates, subprocess and HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>
