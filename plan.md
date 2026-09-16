@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **55**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **56**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -53,7 +53,7 @@ run rather than letting them pass as verified:
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **55** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **56** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5303,5 +5303,84 @@ left alone.
 reversed-form definitions now read: 85 · dictionary merge fixes 2 lost entries
 8 meanings added, 2 spellings aligned · ambiguous acronyms 4 -> 3
 dictionary 1,102 -> 1,103 · 41 gates green · probe 105 · 101 answered
+smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — checking the file every other check treats as authoritative
+
+The previous record ended on a sentence that was meant as an observation and
+turned out to be a queue:
+
+> The file every other acronym check treats as authoritative is the one file
+> nothing checks.
+
+So it was checked, seven ways. **Four came back clean and two of the checks I
+designed were wrong**, which is most of what this session was worth.
+
+### The two that should not exist
+
+**Spelling consistency.** The dictionary is British-spelled prose, so a word
+appearing in both conventions looked like a defect worth finding. It finds two
+pairs and both are correct:
+
+```
+neighbour (ANN)  vs  neighbor (NDP)    — Neighbor Discovery Protocol, RFC 4861
+fibre (FCoE)     vs  fiber (FDDI)      — Fibre Channel, and Fiber Distributed
+                                          Data Interface, each a registered name
+```
+
+Two findings, two false positives. A check with that record does not get
+written.
+
+**Dead per-domain configuration.** 34 of 204 `byDomain` decisions name a domain
+the acronym never appears in, which reads like stale config until you look: they
+are *anticipatory*, pre-answering the question for the day the term arrives, and
+deleting them would silently hand that day's writer the default meaning. The
+first version of the measurement was also simply wrong — it borrowed the
+annotator's rule that skips slash compounds, so **`CI/CD` did not count as `CD`
+appearing anywhere** and inflated the finding to 51. The instrument was wrong
+about what it was reading, twice in one wave.
+
+### The three that were worth writing, and what they found
+
+The fields that steer the annotator are the quietest possible place for a
+defect: `annotate` falls through to `m[0]` when it is misspelled, a misspelled
+`byDomain` key is simply never consulted, and the build stays green while the
+wrong expansion ships **site-wide**. That is failure #10's exact shape arriving
+through configuration instead of prose. Four rules, all passing today, all now
+held there.
+
+Then two rules about the meanings themselves, and these found things:
+
+| Entry | Carried | Reading |
+|---|---|---|
+| `ATT&CK` | *Adversarial Tactics, Techniques, and Common Knowledge* **and** *…Techniques and Common Knowledge* | An Oxford comma is not a second meaning. The dictionary page listed both |
+| `DPAPI` | *Data Protection Application Programming Interface* **and** *Data Protection API* | One of them leaves an acronym short. The differing tail's initials spell it, which is the definition of being the same phrase |
+
+Both are decidable, which is why they are rules and not a similarity score. And
+**seven entries carried `annotate` beside `noAnnotate`** — a value the annotator
+can never reach, naming in every case the meaning it would have defaulted to.
+A comment wearing a setting's clothes, removed.
+
+### The pattern across three waves now
+
+```
+check_renames      matched case-sensitively    because the rename was lower case
+check_css_vars     read only style.css         because the var() was in style.css
+check_acronyms     read only the prose         because the wrong expansion was prose
+```
+
+**A guard written from one defect inherits that defect's accidents.** The
+accidents are invisible afterwards, because the check exists, the build is
+green, and the table in this file says what the guard is *for* rather than what
+it *does*. The cheap counter-habit, which has now paid three times: when a
+guard's row says it covers a class, spend ten minutes proving it covers the
+class and not the instance.
+
+```
+check_acronyms self-test 12 -> 24 fixtures · 7 inert fields removed
+2 duplicate meanings collapsed · 1,180 -> 1,178 meanings · 41 gates green
 smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```
