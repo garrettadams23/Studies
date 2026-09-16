@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **58**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **59**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,17 +43,17 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,387**, or **1,120 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two all session across eleven new concept cards, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **120 of 124**, **0 unexplained and 0 wrong-card** — four batches. The two subject-shaped ones opened at a third missing; the two symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
+| Reader questions answered | **131 of 135**, **0 unexplained and 0 wrong-card** — five batches. The two subject-shaped ones opened at a third missing; the three symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
 | Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~810 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~809 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,122 chars**, median 3,723 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,122 chars**, median 3,724 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **58** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **59** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5521,4 +5521,82 @@ probe 116 -> 124 questions · 120 answered · 0 unexplained
 topics 1,551 -> 1,552 · related 4,790 -> 4,798 links, mainland 1,466
 41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
+```
+
+---
+
+## Session — forty-seven topic names with a space in the wrong place
+
+Batch five of reader questions, aimed at `hw`, `infra`, `threat`, `cs` and
+`mind`. The rate held a third time — six of eleven missed — and the fixes are
+the usual shape, three of them worth repeating:
+
+* **"The computer randomly restarts"** is the commonest intermittent-fault
+  report, and it splits in one question: a machine that reboots *without* a stop
+  screen was never asked to reboot — it lost power long enough to drop out,
+  which is supply, thermals or a connector. One that shows a stop screen crashed,
+  and that is a different investigation entirely.
+* **"No signal" is the monitor reporting on the cable, not on the computer.**
+  Five of the six checks are outside the monitor, and the monitor is the part
+  the ticket names — because it is the part with a screen to say something on.
+  Swap the cable rather than reseating it: reseating fixes a connection and
+  tells you nothing about a cable that failed internally, which is the one that
+  comes back next week.
+* **A process that vanishes with nothing in its own log** did not crash — it was
+  killed, and a process cannot log its own `SIGKILL`. `dmesg` has the verdict,
+  and the trap is that the killed process is frequently not the one that
+  consumed the memory: the kernel picks by score, so the database dies and the
+  batch job that caused it carries on.
+
+### And then the gate caught something none of that was looking for
+
+Adding a per-domain decision so `POST` expands correctly in `hw` made a smoke
+check fail:
+
+```
+FAIL : every landing card's 'start here' names resolve, in all domains
+       — hw: POST, Beep Codes & Diagnostic LEDs — Reading a Machine That Will Not Boot
+```
+
+The name the page had was **`POST , Beep Codes`**. The annotator writes
+` <span class="acro-exp">(…)</span>` after an acronym, and the code that strips
+it back out to recover "the title as written" left the leading space stranded in
+front of whatever punctuation followed. Scanning every topic: **forty-seven
+names carried it.** `SPF, DKIM , DMARC`. `MTU , Fragmentation`. `SSRF , XXE &
+Deserialization`.
+
+Not cosmetic: that text is the name the search index, the study list, the jump
+lists and the start-here resolver all compare against. It had been there for as
+long as the annotator had, and the only reason it surfaced now is that one of
+the forty-eight happened to be named in a landing card.
+
+### The fix was wrong the first time, and the gates said so in one run
+
+Closing the space looked obviously safe — slugs drop punctuation and collapse
+whitespace, so `POST , Beep` and `POST, Beep` have always produced the same
+slug. They do. But:
+
+```
+Custom Properties, :has() & Layers
+```
+
+Close *that* space and `Properties` and `has` become one word, and the Modern
+CSS permalink moves. `suggest_related.py --check`, `check_paths.py` and two
+smoke checks all failed on the same moved slug within a single run.
+
+So the rule is **tidy a space before punctuation only when a word character does
+not follow it**, which leaves every pseudo-class, `.NET` and `.intunewin` alone
+and still fixes all forty-seven. Ported to `lint_content.topic_label` in the same
+shape, because those two are a deliberate byte-for-byte pair.
+
+**The reason to write this down is the sequence.** A content wave touched an
+acronym's configuration; that exposed a five-year-old defect in unrelated code;
+the obvious fix moved a permalink; three separate gates caught it before it
+could ship. None of those four steps was planned, and the middle two are the
+argument for the other two existing.
+
+```
+probe 124 -> 135 questions · 131 answered · 0 unexplained
+47 topic names corrected · 41 gates green · smoke 163 · search 51 · a11y 31
+resilience 64 · mobile 15 · visual 2 · backup 3
 ```

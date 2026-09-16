@@ -453,7 +453,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>24-pin and 8-pin power connectors</td><td>The 8-pin CPU connector is the one people forget; the machine will not post</td></tr>
             <tr><td>Front-panel header</td><td>Power switch, reset, LEDs <span class="acro-exp">(Light Emitting Diode)</span> — the fiddliest ten minutes of any build</td></tr>
             <tr><td>CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span> battery and clear jumper</td><td>The fix for a machine that will not post after a bad setting</td></tr>
-            <tr><td>Diagnostic LEDs or a POST code display</td><td>The single most useful feature on a board when something is wrong</td></tr>
+            <tr><td>Diagnostic LEDs or a POST <span class="acro-exp">(Power-On Self-Test)</span> code display</td><td>The single most useful feature on a board when something is wrong</td></tr>
             <tr><td>VRM <span class="acro-exp">(Voltage Regulator Module)</span> and its heatsink</td><td>Converts 12 V to CPU voltage; poor VRM cooling throttles a good CPU</td></tr>
           </tbody>
         </table>
@@ -897,7 +897,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🚦</span>
-    <span class="topic-name">POST, Beep Codes &amp; Diagnostic LEDs <span class="acro-exp">(Light Emitting Diode)</span> — Reading a Machine That Will Not Boot</span>
+    <span class="topic-name">POST <span class="acro-exp">(Power-On Self-Test)</span>, Beep Codes &amp; Diagnostic LEDs <span class="acro-exp">(Light Emitting Diode)</span> — Reading a Machine That Will Not Boot</span>
     <span class="topic-badge">Diagnosis</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -911,7 +911,11 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         image on screen — and if it fails before that last step there is nothing to read. The
         machine has not gone silent; it is reporting through the only channels it has left, which
         are beeps, LEDs and a two-digit code display. Knowing that these exist is what turns "it is
-        dead" into a specific fault.
+        dead" into a specific fault &mdash; and it is where <strong>"no display"</strong> and
+        <strong>"no signal on the monitor"</strong> part company. No signal while the machine is
+        plainly running is a display-path problem and belongs with the Displays card; no image
+        <em>and</em> no beep, no LED and no fan is a machine that never reached the step at which an
+        image would exist.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -1009,7 +1013,12 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         identified yet — temperature, load, elapsed time since power-on, physical position,
         humidity, what else is running on the same circuit. Reframing "it happens randomly" as
         "there is a condition I have not found" changes the work from waiting for it to happen into
-        looking for what is different when it does.
+        looking for what is different when it does. <strong>"The computer randomly restarts"</strong>
+        is the commonest report of this shape, and it is worth hearing precisely: a machine that
+        reboots without a bugcheck screen was not asked to reboot — it lost power for long enough to
+        drop out, which points at the supply, the thermals or a connector rather than at software.
+        A machine that shows a stop screen first crashed, which is a different investigation
+        entirely, and the difference is one question to the person reporting it.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -1323,6 +1332,39 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           image retention. It is a fine choice for a laptop with varied content and a poor one for a
           monitor showing the same application layout all day.
         </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">"No Signal" Is the Monitor Reporting on the Cable, Not on the Computer</div>
+      <div class="concept-desc">
+        A monitor showing <strong>no signal</strong> has power, a working panel and firmware enough to
+        draw that message — which is most of the monitor working. What it is saying is that the input
+        it is watching is silent, and it cannot tell you why. The machine being off is one of the
+        less likely reasons, and the ranking below is worth having because the instinct, replacing
+        the monitor, is last.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Check</th><th>Why it comes where it does</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>The input source the monitor is watching</td><td>Free, instant, and a genuinely large share of these. A monitor with three inputs auto-selects and gets it wrong</td></tr>
+            <tr><td>Which socket the cable is in on the machine</td><td>With a discrete graphics card fitted, the motherboard's own output is usually dead. The cable is in the wrong hole and the machine is fine</td></tr>
+            <tr><td>The cable, swapped rather than reseated</td><td>DisplayPort in particular re-negotiates on every wake, so a marginal cable fails intermittently on resume and works on a cold boot</td></tr>
+            <tr><td>The adapter, if there is one</td><td>A USB-C port carries video only if it supports the alt mode, and a passive adapter cannot invent a signal the port does not emit</td></tr>
+            <tr><td>The cable's rating against what you are asking for</td><td>A cable that carries 1080p happily can fail entirely at 4K 60Hz &mdash; not degrade, fail</td></tr>
+            <tr><td>The machine, last</td><td>And if it is the machine, it is a POST <span class="acro-exp">(Power-On Self-Test)</span> question, not a display one</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-desc verdict">
+        <strong>Swap the cable rather than reseating it.</strong> Reseating fixes a connection
+        problem and tells you nothing about a cable that has failed internally, which is the more
+        common of the two and the one that comes back next week. And note the shape of the whole
+        table: <strong>five of the six checks are outside the monitor, and the monitor is the part
+        the ticket names</strong> &mdash; because it is the part with a screen to say something on.
       </div>
     </div>
     <div class="concept-card">

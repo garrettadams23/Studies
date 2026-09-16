@@ -828,7 +828,11 @@ def topic_label(block):
     else:
         h = TOPIC_HEADER_RE.search(plain)
         raw = h.group(1) if h else ""
-    return unescape(re.sub(r"<[^>]+>", "", raw)).strip(), bool(m)
+    # Removing the expansion strands the space the annotator put before it, so
+    # "POST <span>(…)</span>, Beep" becomes "POST , Beep". Tidied here to match
+    # plainLabel() in script.js; slugify() was never affected either way.
+    label = unescape(re.sub(r"<[^>]+>", "", raw)).strip()
+    return re.sub(r"\s+([,.;:!?)\]])(?![A-Za-z0-9])", r"\1", label), bool(m)
 
 
 def main():

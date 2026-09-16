@@ -3538,6 +3538,31 @@ fuser -m /mnt/data
 lsof | grep deleted        <span class="com"># common cause of "df full but du not"</span></pre>
     </div>
     <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Server Ran Out of Memory and the Application's Log Says Nothing</div>
+      <div class="concept-desc">A process that disappears with no error in its own log, no stack trace and
+      no shutdown message was very often not asked to stop &mdash; the kernel's out-of-memory killer ended it,
+      and a process cannot log its own <code>SIGKILL</code>. The verdict is in the kernel ring buffer instead,
+      which is the one place nobody looks because the application is the thing that broke.</div>
+      <pre class="code-block"><span class="com"># The sentence that answers it, and the reason to look here first</span>
+dmesg -T | grep -i -E <span class="str">'killed process|out of memory|oom'</span>
+journalctl -k --since <span class="str">"1 hour ago"</span> | grep -i oom
+
+<span class="com"># Who the kernel would pick next: highest oom_score wins</span>
+<span class="kw">for</span> p <span class="kw">in</span> /proc/[0-9]*; <span class="kw">do</span>
+  <span class="fn">printf</span> <span class="str">'%s %s %s\n'</span> <span class="str">"$(cat $p/oom_score 2>/dev/null)"</span> <span class="str">"${p##*/}"</span> <span class="str">"$(cat $p/comm 2>/dev/null)"</span>
+<span class="kw">done</span> | sort -rn | head
+
+<span class="com"># It is not always the biggest process -- the score weighs size against</span>
+<span class="com"># privilege and oom_score_adj, so a tuned daemon can survive a hungrier one</span></pre>
+      <div class="concept-desc verdict"><strong>Check <code>dmesg</code> before you read the application's
+      logs, not after.</strong> Thirty seconds there separates "the service crashed" from "the service was
+      executed", and those have nothing in common: the first is a bug in the application and the second is a
+      capacity decision somebody has to make. The trap is that the killed process is frequently not the one
+      that consumed the memory &mdash; the kernel picks by score, so the database dies and the batch job that
+      caused it carries on.</div>
+    </div>
+    <div class="concept-card">
       <div class="concept-label">DEEPER TOOLS</div>
       <div class="concept-title">When You Need the Heavy Artillery</div>
       <table class="ai-table">

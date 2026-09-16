@@ -241,6 +241,11 @@ const READERS = [
     ["writing a detection", "",
      "blueteam/what-detection-engineering-is-and-why-it-split-off-from-soc-"],
     ["chain of custody", "", "blueteam/chain-of-custody-evidence-handling"],
+    // ── batch five ──
+    ["nmap shows filtered", "", "net/nmap-scan-types-reference"],
+    ["how do i escalate privileges on linux", "",
+     "pentest/privilege-escalation-from-foothold-to-full-control"],
+    ["my payload keeps getting caught"],
     // ── batch two ──
     ["is this domain malicious"],
     ["mfa prompt i did not request", "",
@@ -354,6 +359,20 @@ const READERS = [
     ["encoding error reading a file", "",
      "script/working-with-files-reading-writing-and-paths"],
     ["the script hangs and never exits"],
+    // ── batch five ──
+    ["my program uses too much memory"],
+  ]],
+  ["somebody in front of the machine itself", [
+    ["computer randomly restarts", "",
+     "hw/intermittent-faults-heat-vibration-marginal-power-how-to-rep"],
+    ["no display on the monitor", "",
+     "hw/displays-panel-types-scaling-colour-the-multi-monitor-pitfal"],
+    ["raid array degraded", "",
+     "infra/raid-erasure-coding-what-redundancy-buys-and-the-rebuild-win"],
+    ["the server is out of memory", "",
+     "linux/performance-debugging-when-you-need-to-go-deeper"],
+    ["backup job failed"],
+    ["blue screen"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -380,6 +399,8 @@ const READERS = [
     ["how to study for an exam", "",
      "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
     ["leaving a job well"],
+    ["my manager micromanages me", "",
+     "mind/a-manager-you-cannot-fix-what-is-yours-to-change-and-what-is"],
     // ── batch two ──
     ["salary negotiation", "", "career/interview-preparation-getting-the-job"],
     ["technical interview", "", "career/interview-preparation-getting-the-job"],

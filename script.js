@@ -810,9 +810,33 @@ function plainText(html) {
   return decodeEntities(html.replace(RE_TAG, "").replace(RE_WS, " ")).trim();
 }
 
-/** Same, with the inline acronym expansions dropped — the title as written. */
+/**
+ * Same, with the inline acronym expansions dropped — the title as written.
+ *
+ * Removing the span leaves the space the annotator put *before* it, so a title
+ * whose acronym is followed by punctuation comes back with the space stranded:
+ * `POST , Beep Codes`, `SPF, DKIM , DMARC`, `MTU , Fragmentation`. **Forty-seven
+ * topic names carried that**, and it is not cosmetic — this text is the name the
+ * search index, the study list, the jump lists and the landing cards' "start
+ * here" resolution all compare against.
+ *
+ * Slugs must not move, and the trailing lookahead is what guarantees it. A slug
+ * drops punctuation and collapses whitespace, so closing up `POST , Beep` is
+ * invisible to it — but only while the two sides stay separated by *something*.
+ * `Custom Properties, :has() & Layers` is the counter-example, and it is real:
+ * closing that space merges `Properties` and `has` into one word and moves the
+ * Modern CSS permalink. The rule is therefore **tidy a space before punctuation
+ * only when a word character does not follow it**, which leaves every CSS
+ * pseudo-class alone and still fixes all forty-seven names.
+ *
+ * Found by the gates, not by reading: the first version of this took the space
+ * out of `:has()`, and `suggest_related.py --check`, `check_paths.py` and two
+ * smoke checks all failed on the same moved slug within one run.
+ */
+const RE_SPACE_BEFORE_PUNCT = /\s+([,.;:!?)\]])(?![A-Za-z0-9])/g;
+
 function plainLabel(html) {
-  return plainText(html.replace(RE_ACRO_SPAN, ""));
+  return plainText(html.replace(RE_ACRO_SPAN, "")).replace(RE_SPACE_BEFORE_PUNCT, "$1");
 }
 
 const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
@@ -1314,7 +1338,9 @@ function labelText(el) {
     node = el.cloneNode(true);
     node.querySelectorAll(".acro-exp").forEach(n => n.remove());
   }
-  return node.textContent.replace(/\s+/g, " ");
+  // The annotator's span carries a leading space, so removing it strands one
+  // before any punctuation that followed the acronym — see plainLabel().
+  return node.textContent.replace(/\s+/g, " ").replace(RE_SPACE_BEFORE_PUNCT, "$1");
 }
 
 function slugify(s) {

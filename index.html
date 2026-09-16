@@ -2282,7 +2282,12 @@ Half-open; doesn't complete handshake; less logged
 <td>RST</td>
 <td>No response</td>
 <td>
-Maps firewall rules; determines filtered/unfiltered
+Maps firewall rules; determines filtered/unfiltered. Worth holding onto:
+when a scan <strong>shows filtered</strong>, nmap received nothing at all,
+which is a statement about the path rather than about the port. Closed is
+an answer — a refusal is a reply. Filtered is silence, and silence is
+produced by a firewall dropping the probe, a rule on the host, or a network
+that never carried it
 </td>
 </tr>
 <tr>
@@ -38260,8 +38265,8 @@ equivalent of all this paperwork is
 <span class="ctag ctag-aplus">A+</span>
 </div>
 <span class="domain-sub">FHS · Permissions · Boot Process · Signals · systemd · RAID · Hardware</span>
-<span class="domain-meta" aria-label="61 topics, about 2h 15m to read"
->61 topics · ~2h 15m</span>
+<span class="domain-meta" aria-label="61 topics, about 2h 20m to read"
+>61 topics · ~2h 20m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -41728,12 +41733,12 @@ systemd-cgtop                <span class="com"># top-like view of cgroup resourc
 </div>
 <!-- BEGINNER29-LINUX v1 -->
 <!-- ── TOPIC: PERFORMANCE DEBUGGING ──────────────────────── -->
-<div class="topic" id="performance-debugging-when-you-need-to-go-deeper" data-reviewed="2026-07" data-read="3" data-level="advanced">
+<div class="topic" id="performance-debugging-when-you-need-to-go-deeper" data-reviewed="2026-07" data-read="4" data-level="advanced">
 <div class="topic-header">
 <span class="topic-icon">🔬</span>
 <span class="topic-name">Performance Debugging — When You Need to Go Deeper</span>
 <span class="topic-badge">LINUX • Advanced</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -41781,6 +41786,31 @@ fuser -m /mnt/data
 
 <span class="com"># Find deleted-but-still-open files eating disk space</span>
 lsof | grep deleted        <span class="com"># common cause of "df full but du not"</span></pre>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">The Server Ran Out of Memory and the Application's Log Says Nothing</div>
+<div class="concept-desc">A process that disappears with no error in its own log, no stack trace and
+no shutdown message was very often not asked to stop &mdash; the kernel's out-of-memory killer ended it,
+and a process cannot log its own <code>SIGKILL</code>. The verdict is in the kernel ring buffer instead,
+which is the one place nobody looks because the application is the thing that broke.</div>
+<pre class="code-block"><span class="com"># The sentence that answers it, and the reason to look here first</span>
+dmesg -T | grep -i -E <span class="str">'killed process|out of memory|oom'</span>
+journalctl -k --since <span class="str">"1 hour ago"</span> | grep -i oom
+
+<span class="com"># Who the kernel would pick next: highest oom_score wins</span>
+<span class="kw">for</span> p <span class="kw">in</span> /proc/[0-9]*; <span class="kw">do</span>
+  <span class="fn">printf</span> <span class="str">'%s %s %s\n'</span> <span class="str">"$(cat $p/oom_score 2>/dev/null)"</span> <span class="str">"${p##*/}"</span> <span class="str">"$(cat $p/comm 2>/dev/null)"</span>
+<span class="kw">done</span> | sort -rn | head
+
+<span class="com"># It is not always the biggest process -- the score weighs size against</span>
+<span class="com"># privilege and oom_score_adj, so a tuned daemon can survive a hungrier one</span></pre>
+<div class="concept-desc verdict"><strong>Check <code>dmesg</code> before you read the application's
+logs, not after.</strong> Thirty seconds there separates "the service crashed" from "the service was
+executed", and those have nothing in common: the first is a bug in the application and the second is a
+capacity decision somebody has to make. The trap is that the killed process is frequently not the one
+that consumed the memory &mdash; the kernel picks by score, so the database dies and the batch job that
+caused it carries on.</div>
 </div>
 <div class="concept-card">
 <div class="concept-label">DEEPER TOOLS</div>
@@ -67767,12 +67797,12 @@ this one is about the measuring stick rather than the feeling.
 </div>
 </div>
 <!-- ── TOPIC: A MANAGER YOU CANNOT FIX ───────────────────── -->
-<div class="topic" id="a-manager-you-cannot-fix-what-is-yours-to-change-and-what-is" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="a-manager-you-cannot-fix-what-is-yours-to-change-and-what-is" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧭</span>
 <span class="topic-name">A Manager You Cannot Fix — What Is Yours to Change, and What Is Not</span>
 <span class="topic-badge">Lifestyle • People</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -67784,7 +67814,13 @@ this one is about the measuring stick rather than the feeling.
 different answers, and treating them the same is why people spend years unhappy in a
 situation one honest conversation would have changed — or, worse, keep trying to fix
 something that was never going to move. Work out which one you are in before deciding
-anything.
+anything. <strong>"My manager micromanages me"</strong> is the commonest way this arrives
+and it belongs in all three columns depending on the cause: a mismatch when they are
+managing you the way they would want to be managed, overload when checking everything is
+how an underwater person feels in control, and only occasionally the third kind. The
+distinguishing question is not how closely they check but <em>whether the checking ever
+relaxes when you are demonstrably reliable</em> — with the first two it does, slowly, and
+that is the whole difference.
 </div>
 <div class="dw">
 <table class="ref-table">
@@ -117012,7 +117048,7 @@ a vendor.
 <tr><td>24-pin and 8-pin power connectors</td><td>The 8-pin CPU connector is the one people forget; the machine will not post</td></tr>
 <tr><td>Front-panel header</td><td>Power switch, reset, LEDs <span class="acro-exp">(Light Emitting Diode)</span> — the fiddliest ten minutes of any build</td></tr>
 <tr><td>CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span> battery and clear jumper</td><td>The fix for a machine that will not post after a bad setting</td></tr>
-<tr><td>Diagnostic LEDs or a POST code display</td><td>The single most useful feature on a board when something is wrong</td></tr>
+<tr><td>Diagnostic LEDs or a POST <span class="acro-exp">(Power-On Self-Test)</span> code display</td><td>The single most useful feature on a board when something is wrong</td></tr>
 <tr><td>VRM <span class="acro-exp">(Voltage Regulator Module)</span> and its heatsink</td><td>Converts 12 V to CPU voltage; poor VRM cooling throttles a good CPU</td></tr>
 </tbody>
 </table>
@@ -117455,7 +117491,7 @@ unrecoverable one — see the data-recovery triage card. Preserve first, diagnos
 <div class="topic" id="post-beep-codes-diagnostic-leds-reading-a-machine-that-will-" data-reviewed="2026-08" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚦</span>
-<span class="topic-name">POST, Beep Codes &amp; Diagnostic LEDs <span class="acro-exp">(Light Emitting Diode)</span> — Reading a Machine That Will Not Boot</span>
+<span class="topic-name">POST <span class="acro-exp">(Power-On Self-Test)</span>, Beep Codes &amp; Diagnostic LEDs <span class="acro-exp">(Light Emitting Diode)</span> — Reading a Machine That Will Not Boot</span>
 <span class="topic-badge">Diagnosis</span>
 <span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
@@ -117470,7 +117506,11 @@ initialises memory, brings up the chipset, finds a display adapter, then finally
 image on screen — and if it fails before that last step there is nothing to read. The
 machine has not gone silent; it is reporting through the only channels it has left, which
 are beeps, LEDs and a two-digit code display. Knowing that these exist is what turns "it is
-dead" into a specific fault.
+dead" into a specific fault &mdash; and it is where <strong>"no display"</strong> and
+<strong>"no signal on the monitor"</strong> part company. No signal while the machine is
+plainly running is a display-path problem and belongs with the Displays card; no image
+<em>and</em> no beep, no LED and no fan is a machine that never reached the step at which an
+image would exist.
 </div>
 <div class="dw">
 <table class="ref-table">
@@ -117551,12 +117591,12 @@ newly-built machine will not post, testing it outside the case is worth the ten 
 </div>
 </div>
 <!-- ── TOPIC: INTERMITTENT FAULTS ────────────────────────────── -->
-<div class="topic" id="intermittent-faults-heat-vibration-marginal-power-how-to-rep" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="intermittent-faults-heat-vibration-marginal-power-how-to-rep" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎲</span>
 <span class="topic-name">Intermittent Faults — Heat, Vibration, Marginal Power &amp; How to Reproduce Them</span>
 <span class="topic-badge">Diagnosis</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -117568,7 +117608,12 @@ Faults described as random almost never are. They are conditional on something n
 identified yet — temperature, load, elapsed time since power-on, physical position,
 humidity, what else is running on the same circuit. Reframing "it happens randomly" as
 "there is a condition I have not found" changes the work from waiting for it to happen into
-looking for what is different when it does.
+looking for what is different when it does. <strong>"The computer randomly restarts"</strong>
+is the commonest report of this shape, and it is worth hearing precisely: a machine that
+reboots without a bugcheck screen was not asked to reboot — it lost power for long enough to
+drop out, which points at the supply, the thermals or a connector rather than at software.
+A machine that shows a stop screen first crashed, which is a different investigation
+entirely, and the difference is one question to the person reporting it.
 </div>
 <div class="dw">
 <table class="ref-table">
@@ -117848,12 +117893,12 @@ and the moment someone has just paid a lab is the moment they will actually act 
 </div>
 </div>
 <!-- ── TOPIC: DISPLAYS ───────────────────────────────────────── -->
-<div class="topic" id="displays-panel-types-scaling-colour-the-multi-monitor-pitfal" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="displays-panel-types-scaling-colour-the-multi-monitor-pitfal" data-reviewed="2026-08" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">Displays — Panel Types, Scaling, Colour &amp; the Multi-Monitor Pitfalls</span>
 <span class="topic-badge">Peripherals</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -117882,6 +117927,39 @@ are static for eight hours a day, which is the exact condition that produces per
 image retention. It is a fine choice for a laptop with varied content and a poor one for a
 monitor showing the same application layout all day.
 </div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">"No Signal" Is the Monitor Reporting on the Cable, Not on the Computer</div>
+<div class="concept-desc">
+A monitor showing <strong>no signal</strong> has power, a working panel and firmware enough to
+draw that message — which is most of the monitor working. What it is saying is that the input
+it is watching is silent, and it cannot tell you why. The machine being off is one of the
+less likely reasons, and the ranking below is worth having because the instinct, replacing
+the monitor, is last.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead>
+<tr><th>Check</th><th>Why it comes where it does</th></tr>
+</thead>
+<tbody>
+<tr><td>The input source the monitor is watching</td><td>Free, instant, and a genuinely large share of these. A monitor with three inputs auto-selects and gets it wrong</td></tr>
+<tr><td>Which socket the cable is in on the machine</td><td>With a discrete graphics card fitted, the motherboard's own output is usually dead. The cable is in the wrong hole and the machine is fine</td></tr>
+<tr><td>The cable, swapped rather than reseated</td><td>DisplayPort in particular re-negotiates on every wake, so a marginal cable fails intermittently on resume and works on a cold boot</td></tr>
+<tr><td>The adapter, if there is one</td><td>A USB-C port carries video only if it supports the alt mode, and a passive adapter cannot invent a signal the port does not emit</td></tr>
+<tr><td>The cable's rating against what you are asking for</td><td>A cable that carries 1080p happily can fail entirely at 4K 60Hz &mdash; not degrade, fail</td></tr>
+<tr><td>The machine, last</td><td>And if it is the machine, it is a POST <span class="acro-exp">(Power-On Self-Test)</span> question, not a display one</td></tr>
+</tbody>
+</table>
+</div>
+<div class="concept-desc verdict">
+<strong>Swap the cable rather than reseating it.</strong> Reseating fixes a connection
+problem and tells you nothing about a cable that has failed internally, which is the more
+common of the two and the one that comes back next week. And note the shape of the whole
+table: <strong>five of the six checks are outside the monitor, and the monitor is the part
+the ticket names</strong> &mdash; because it is the part with a screen to say something on.
 </div>
 </div>
 <div class="concept-card">
