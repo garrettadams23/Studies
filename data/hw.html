@@ -1663,6 +1663,44 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       </div>
     </div>
     <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Device That Charges and Never Appears</div>
+      <div class="concept-desc">
+        Power and data are negotiated separately over the same connector, so a device that
+        lights up has proved nothing about whether it will enumerate. That is the whole
+        difficulty of this ticket: the one piece of evidence the user volunteers — <em>it is
+        getting power</em> — is the piece that does not narrow anything, and it is the reason
+        the cable stops being a suspect long before it should. The user's own report is
+        usually the operating system's wording rather than theirs — <em>USB device not
+        recognised</em>, or a device that is simply absent from the list — and neither
+        phrasing distinguishes between the causes below.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Charges, never appears</td><td>Charge-only cable — two conductors and no data pair. The commonest cause and the cheapest to rule out</td></tr>
+            <tr><td>Works direct, not through the dock</td><td>The hub chain: bandwidth or power shared across downstream ports, or a dock firmware bug</td></tr>
+            <tr><td>Worked until the fourth device went in</td><td>Bus power budget spent. An unpowered hub divides one port's supply among everything on it</td></tr>
+            <tr><td>Works in one port, not its neighbour</td><td>Ports on one machine differ by generation and by mode; a device needing full speed on a slower port may not come up at all</td></tr>
+            <tr><td>"USB device not recognised" — the unknown-device notification</td><td>Enumeration started and the descriptor exchange failed — marginal cable, marginal power, or genuinely faulty hardware</td></tr>
+            <tr><td>Intermittent, and worse when moved</td><td>The connector or the cable, not the device. Reproduce it by flexing the cable at each end</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Work it in cost order, and the driver is last.</strong> Swap the cable for a
+          known-good data cable, then move to a port directly on the machine, then remove the
+          device from the hub chain, then reduce what else is drawing from the bus — four moves,
+          none of which needs admin rights or a reboot, and between them they account for most of
+          these tickets. Reinstalling the driver is the move that feels like progress and is the
+          one worth trying fifth, because a driver that was working yesterday rarely stopped on
+          its own. The corollary is a purchasing decision rather than a diagnostic one: buy
+          certified data cables and label them, because an estate that cannot tell its cables
+          apart pays for this ticket repeatedly.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
       <div class="concept-label">Troubleshooting</div>
       <div class="concept-title">Docks in a Fleet — the Failure Patterns, and One Security Note</div>
       <div class="concept-desc">

@@ -234,6 +234,14 @@ const READERS = [
     ["my email went to spam", "", "threat/email-authentication-spf-dkim-dmarc"],
     ["is this email a scam", "",
      "sec/phishing-beyond-email-smishing-vishing-and-qr-code-scams"],
+    // ── batch twelve ──
+    ["shared mailbox or distribution list", "",
+     "m365/microsoft-365-groups-the-object-underneath-teams-sharepoint-"],
+    ["the meeting invite is an hour out",
+     "kind 2, named and not written — m365 has 42 topics and says 'time zone' zero times"],
+    ["setting up a new laptop",
+     "kind 1, named and not fixed — the card is provisioning and zero-touch; the ticket is 'set up a new laptop' and the card never says it",
+     "endpoint/windows-autopilot-zero-touch-provisioning"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -275,6 +283,13 @@ const READERS = [
     ["mfa prompt i did not request", "",
      "threat/mfa-bypass-in-practice-adversary-in-the-middle-push-fatigue-"],
     ["how long to keep logs", "", "blueteam/log-retention-as-a-design-decision"],
+    // ── batch twelve ──
+    ["is the attacker still in"],
+    ["a laptop is beaconing out",
+     "kind 3 — 'beaconing' alone reaches 11 cards; 'laptop' and 'out' are the reader's words"],
+    ["data is leaving over dns",
+     "kind 1, named and not fixed — the site says exfiltration, the defender says data is leaving",
+     "redteam/data-exfiltration-channels-dns-icmp-https"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -318,6 +333,10 @@ const READERS = [
     // ── batch eleven ──
     ["i cannot remember any of this", "",
      "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
+    // ── batch twelve ──
+    ["authentication vs authorization"],
+    ["what is a race condition"],
+    ["what is an api gateway"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -351,6 +370,11 @@ const READERS = [
      "linux/the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro"],
     // ── batch nine ──
     ["my ssh key stopped working", "", "linux/ssh-secure-remote-access-done-right"],
+    // ── batch twelve ──
+    ["disk is full but du shows nothing"],
+    ["too many open files"],
+    ["the clock on the server is wrong"],
+    ["dns works on the host but not in the container"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -400,6 +424,10 @@ const READERS = [
     ["the intern deleted the wrong thing",
      "kind 3 — the reader's incidental noun. The generic phrasing above reaches the card; this one asks the site to contain a word it has no reason to contain",
      "ops/writing-a-postmortem-people-actually-learn-from"],
+    // ── batch twelve ──
+    ["retrospectives are a waste of time", "",
+     "career/facilitating-retrospectives-tabletops-neutrality-and-the-har"],
+    ["we have too many meetings"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -441,6 +469,11 @@ const READERS = [
      "devops/flaky-tests-a-reliability-problem-in-the-test-suite"],
     // ── batch ten ──
     ["the database is slow", "", "data/query-optimization-sargability-n1"],
+    // ── batch twelve ──
+    ["floating point rounding is wrong",
+     "kind 3 — the card says 'it is not a bug in your code'; 'wrong' is the one word too many, and the relaxation stage deliberately never runs on a zero"],
+    ["off by one"],
+    ["the api returns 500 and nothing is logged"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -458,6 +491,9 @@ const READERS = [
      "hw/laptops-batteries-thermals-what-is-actually-replaceable"],
     ["the printer prints blank pages", "",
      "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
+    // ── batch twelve ──
+    ["usb device not recognised"],
+    ["the fans are always loud"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -479,6 +515,13 @@ const READERS = [
      "devops/pods-that-will-not-run-reading-the-status-before-the-logs"],
     // ── batch ten ──
     ["i got paged at 3am again", "", "ops/on-call-done-humanely"],
+    // ── batch twelve ──
+    ["image pull backoff"],
+    ["the certificate renewed and the site still says expired",
+     "still zero after the card was fixed, and deliberately — the renewed-and-not-reloaded row went into the TLS card because its table was missing a failure and its verdict claimed the incomplete chain was the only one; 'site' and 'says' are the reader's filler, and the conjunction cannot drop them because the relaxation stage never runs on a zero",
+     "sec/tls-https-how-secure-connections-work"],
+    ["nat gateway is the biggest line on the bill",
+     "kind 3 — cloud states the NAT gateway is billed hourly plus per GB per AZ; the ranking is the reader's framing"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -505,6 +548,9 @@ const READERS = [
     // ── batch ten ──
     ["what should i put on my resume", "",
      "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
+    // ── batch twelve ──
+    ["tell me about yourself"],
+    ["no experience but i want the job"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -524,6 +570,10 @@ const READERS = [
     // ── batch ten ──
     ["our backups have never been tested", "",
      "ops/backup-disaster-recovery-surviving-the-worst-case"],
+    // ── batch twelve ──
+    ["how long do we keep backups"],
+    ["what is soc 2", "",
+     "grc/soc-2-trust-service-criteria-for-cloud-service-providers"],
   ]],
 ];
 
@@ -559,7 +609,15 @@ const READERS = [
  * would make a content wave's findings break the build. A stale note is worse
  * than a finding, though, so it prints before them and again after.
  */
-const CLAIMS_ZERO = /\bzeros?\b|found nothing|returns? nothing|no results|nothing back/i;
+// `\bzeros?\b` matched **zero-touch**, in a note reading "the card is provisioning
+// and zero-touch". A hyphen is a word boundary, so the word *zero* inside a
+// hyphenated compound satisfied it and a correct note was reported stale — the
+// same token-boundary-is-not-a-word-boundary failure `annotate_acronyms.py`
+// records for `DP` inside `UDP`, arriving here in a different alphabet. The
+// guard is the same shape: require that nothing hyphenates onto either side,
+// because *zero-touch*, *zero-trust* and *zero-day* are all subjects this site
+// writes about and none of them is a claim about a result count.
+const CLAIMS_ZERO = /(?<!-)\bzeros?\b(?!-)|found nothing|returns? nothing|no results|nothing back/i;
 
 function staleReason(keep, hits, want) {
   if (!keep) return null;
@@ -579,6 +637,8 @@ const stale = [];
 if (args.includes("--self-test")) {
   const F = [
     ["a note claiming a zero on a query that answers", "kind 3 — still zero", ["a/b"], "", true],
+    ["…but not the word inside a hyphenated compound", "the card is provisioning and zero-touch", ["a/b"], "", false],
+    ["…in either direction", "a zero-day is not a result count", ["a/b"], "", false],
     ["…even when the word is plural", "two zeros recorded here", ["a/b"], "", true],
     ["…and when it is spelled out", "it found nothing and was kept", ["a/b", "c/d"], "", true],
     ["a note claiming a zero on a query that is one", "kind 1, still zero", [], "", false],

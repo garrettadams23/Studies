@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **62**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **63**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -40,20 +40,20 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,552** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,389**, or **1,122 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,390**, or **1,122 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **170 of 175**, **0 unexplained** — eleven batches. The two subject-shaped ones opened at a third missing; the eight symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros and the 1 wrong-card are recorded verdicts, and `--self-test` checks that a verdict still describes its row. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **190 of 202**, **0 unexplained** — twelve batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 9 remaining zeros and the 3 wrong-cards are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
 | Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~805 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~804 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,135 chars**, median 3,731 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,135 chars**, median 3,732 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **67** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **68** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6321,4 +6321,121 @@ probe 170 -> 175 questions · 170 answered · 0 unexplained · 4 zeros · 1 wron
 thin 7, unchanged and read in full · one Azure track added to the cert map
 41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 visual 2 · backup 3
+```
+
+## Session — the card I wrote to close a query used the site's words, not the reader's
+
+### The queue was empty, so the questions had to be new
+
+Every census came back clean: thin 7 at 0%, 0 deep orphans, 0 unread
+duplicate pairs, 0 unexplained probe rows, 41 gates green. That is the state
+this file says means *the queue is no longer a list* — so the work had to come
+from asking something nobody had asked. **Batch twelve: 27 fresh reader
+questions**, spread across all nine reader groups rather than concentrated,
+because the previous eleven batches' split by reader is the only thing that has
+reliably predicted where the gaps are.
+
+Seven came back zero. The split, after ruling the matcher out on each — retype
+with contractions expanded, then with the rarest word alone, *before* concluding
+the corpus is at fault:
+
+| Query | Verdict |
+|---|---|
+| `the certificate renewed and the site still says expired` | **kind 2.** Real gap, written |
+| `usb device not recognised` | **kind 2.** Real gap, written |
+| `retrospectives are a waste of time` | **kind 1.** The card answers it and never says it |
+| `a laptop is beaconing out` | kind 3 — `beaconing` alone reaches 11 cards |
+| `nat gateway is the biggest line on the bill` | kind 3 — `cloud` already states the hourly-plus-per-GB-per-AZ billing |
+| `floating point rounding is wrong` | kind 3 — the card says *it is not a bug in your code*; `wrong` is one word too many |
+| `the meeting invite is an hour out` | **kind 2, named and not written** — see below |
+
+### The best finding was a card that had already ruled out what I found
+
+`sec`'s TLS card carries a four-row *Errors You'll See* table, and under it a
+verdict claiming the incomplete chain is **"the only failure in this table that
+does not announce itself."** That is a falsifiable claim sitting in prose, and
+it is false: the table had no row for the certificate that was renewed on disk
+and never reloaded into the running process. It is the second-commonest cert
+ticket after plain expiry, and the table's own first row is what causes it —
+*Renew/replace cert (Let's Encrypt auto-renews)* is the sentence that makes
+people stop at the renewal.
+
+So the row went in, and **the verdict had to be rewritten, not appended to**,
+because the claim it made no longer held. The two failures turn out to be
+mirror images, which is the sentence the card now leads on: the incomplete
+chain works on your machine and fails for everybody else; the renewed-and-not-
+reloaded cert fails for everybody while the file on disk says it is fine.
+*Renewal is not deployment.* One command settles both, and `ops`'s web-server
+card already had it — `openssl s_client … | openssl x509 -noout -dates` — which
+is the argument for reading the neighbours before writing: the fix was already
+on the site, one domain over, unattached to the failure it diagnoses.
+
+### And then I made the exact mistake I had just written down
+
+Two of the seven zeros were recorded as **kind 1 — the site names the
+practitioner's concept and the reader types the symptom**: `data is leaving
+over dns` misses because the site says *exfiltration*, and `setting up a new
+laptop` misses because the site says *provisioning* and *zero-touch*. I wrote
+that pattern into the probe as two verdicts, in this session, before writing
+the cards.
+
+Then I wrote the USB card using *enumerate*, *descriptor exchange* and
+*unnamed or unknown device* — and re-ran the probe, and `usb device not
+recognised` **still returned zero**. The card was correct, mechanism-first, and
+unreachable by the person it was written for.
+
+The fix was not a compromise, which is the part worth keeping: *"USB device not
+recognised"* is not a keyword to stuff, it is **the string the operating system
+puts on the user's screen**, and a card about a failure should quote the words
+the reader is looking at. Naming it is the rubric's second property — give the
+failure a fingerprint — not an accommodation to a matcher. It now returns
+exactly one card, the right one.
+
+**The general form:** *writing down a pattern does not install it.* This file
+has recorded that shape four times for rules applied to every case but the one
+that motivated them. This is the same defect one step earlier — the rule was
+written **for** the case in front of me and still did not reach the card I wrote
+ninety seconds later.
+
+### The staleness checker caught its own author, and was right to
+
+`--self-test`'s verdict-staleness check reported my note on `setting up a new
+laptop` as claiming a zero on a query returning six. The note does not claim a
+zero. It says *"the card is provisioning and zero-touch"* — and `\bzeros?\b`
+matched **zero** inside **zero-touch**, because a hyphen is a word boundary.
+
+This is the token-boundary failure this file already records for `DP` inside
+`UDP` and `RA` inside `YARA`, arriving in a different alphabet. The guard is the
+same shape — `(?<!-)\bzeros?\b(?!-)` — and it matters more than it looks,
+because *zero-trust*, *zero-day* and *zero-touch* are three subjects this site
+writes about at length, so the false-positive rate was going to climb with every
+security wave. Two fixtures added; the self-test fails without the guard.
+
+**The rule about rules holds here too.** The check was written because a note
+went false and nothing noticed. The first thing it did once it had a real
+corpus of notes to read was report a true note as false — and the temptation was
+to reword the note, which would have been bending the record to fit the tool.
+
+### Left named rather than guessed at
+
+`the meeting invite is an hour out` is a genuine kind 2 and is **not** written.
+`m365` has 42 topics and says *time zone* **zero times**; the two cards that
+cover time zones are `script`'s, and both are written for somebody storing a
+timestamp, not for somebody whose room mailbox disagrees with the organiser's
+client. The causes — client versus mailbox time zone, a room with its own, a
+recurring series created before a DST rule changed, an external iCal with a
+floating time — return nothing in that domain. It is named here with its
+evidence rather than written in a wave that had already spent its three cards,
+because this file's own audit rule says a probe pass producing more than two or
+three card edits has stopped being an audit.
+
+The same applies to the two kind-1 rows above: both now carry a `want` and a
+verdict, so the next session starts from the finding rather than re-deriving it.
+
+```
+probe 175 -> 202 questions · 190 answered · 0 unexplained · 9 zeros · 3 wrong cards
+3 cards edited: sec TLS (row + verdict rewritten), hw docks (concept card), career retros (prose)
+1 tool fix: CLAIMS_ZERO guarded against hyphenated compounds, +2 fixtures
+41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3 · mean/card 1,389 -> 1,390, excluding verdicts 1,122 unchanged
 ```

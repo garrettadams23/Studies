@@ -9263,12 +9263,12 @@ destination.
 </div>
 <!-- BEGINNER9-SEC v1 -->
 <!-- ── TOPIC: TLS/HTTPS HOW IT WORKS ─────────────────────── -->
-<div class="topic" id="tls-https-how-secure-connections-work" data-reviewed="2026-07" data-read="4" data-level="core">
+<div class="topic" id="tls-https-how-secure-connections-work" data-reviewed="2026-07" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔒</span>
 <span class="topic-name">TLS <span class="acro-exp">(Transport Layer Security)</span> &amp; HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> — How Secure Connections Work</span>
 <span class="topic-badge">SEC • Foundation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -9313,15 +9313,24 @@ If you trust the root, and the root signed the intermediate, and the intermediat
 <tr><td>Name mismatch</td><td>cert for example.com used on sub.example.com</td><td>Use wildcard cert or include SANs <span class="acro-exp">(Subject Alternative Name)</span></td></tr>
 <tr><td>Untrusted CA</td><td>self-signed or private CA</td><td>Install CA cert in trust store or buy a public cert</td></tr>
 <tr><td>Incomplete chain</td><td>missing intermediate cert</td><td>Include full chain in server config</td></tr>
+<tr><td>Expired, and the file on disk is not</td><td>renewal wrote a new cert; the running process still holds the old one</td><td>Reload the service — and check every node behind the load balancer</td></tr>
 </tbody>
 </table>
 <div class="concept-desc verdict">
-<strong>The incomplete-chain row is the one that wastes days, because it works
-on your machine.</strong> Browsers cache intermediates from previous sites, so a
-server missing one is fine for the person who set it up and broken for a
-customer, a mobile app or a curl in a pipeline. Test every certificate change
-from something that has never visited the site — that single habit catches the
-only failure in this table that does not announce itself.
+<strong>Two of these rows lie about which thing is broken, and they lie in
+opposite directions.</strong> The incomplete chain works on your machine:
+browsers cache intermediates from previous sites, so a server missing one is
+fine for the person who set it up and broken for a customer, a mobile app or a
+curl in a pipeline. The renewed-and-not-reloaded row is the reverse — the
+evidence contradicts itself. The renewal reported success, the file on disk
+carries next year's dates, and every client still sees last month's, because a
+running process read that file once when it started and has not looked since.
+<strong>Renewal is not deployment.</strong> Both rows answer to the same habit:
+check what is being <em>served</em> rather than what is on disk, from something
+that has never visited the site. One command settles it —
+<code>echo | openssl s_client -connect host:443 | openssl x509 -noout -dates</code>
+— and run it against each node individually, because a pool where one member
+reloaded is a fault that comes and goes with the hash.
 </div>
 </div>
 <div class="concept-card">
@@ -70512,12 +70521,12 @@ down what changes fast.
 </div>
 </div>
 <!-- ── TOPIC: FACILITATION ───────────────────────────────────── -->
-<div class="topic" id="facilitating-retrospectives-tabletops-neutrality-and-the-har" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="facilitating-retrospectives-tabletops-neutrality-and-the-har" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🪑</span>
 <span class="topic-name">Facilitating Retrospectives &amp; Tabletops — Neutrality and the Hard Question</span>
 <span class="topic-badge">LIFESTYLE • Enablement</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -70558,8 +70567,12 @@ entirely.
 <div class="concept-label">Reference</div>
 <div class="concept-title">The Dynamics That Wreck a Retrospective, and the Counters</div>
 <div class="concept-desc">
-These are predictable enough to plan for, and each has a specific move rather than a general
-appeal for better behaviour.
+<strong>"Retrospectives are a waste of time" is usually an accurate report, not a bad
+attitude.</strong> A team that says so has usually sat through several that produced
+nothing, and the reasons are not mysterious: they are the seven rows below, and every one
+of them is a facilitation failure rather than a fact about the format. Each is predictable
+enough to plan for, and each has a specific move rather than a general appeal for better
+behaviour.
 </div>
 <div class="dw">
 <table class="ref-table">
@@ -70578,6 +70591,12 @@ appeal for better behaviour.
 The silent-written-round is the single highest-leverage technique here. It costs three
 minutes, it removes the anchoring effect of whoever spoke first, and it reliably surfaces
 the observation that the most junior person in the room was not going to say out loud.
+The last row is the one that decides whether the complaint is fair: a session that
+reaches the same finding as last time and moves on has just demonstrated that nothing
+the previous one produced was ever done, and running another in a fortnight will produce
+it a third time. <strong>Cancel the retrospective before you run one that cannot change
+anything</strong> — a team that has learned the meeting is decorative will not give you
+its real answers later, and that is a more expensive thing to lose than the hour.
 </div>
 </div>
 </div>
@@ -118321,12 +118340,12 @@ open is the part worth carrying.
 </div>
 </div>
 <!-- ── TOPIC: DOCKS, USB-C & THUNDERBOLT ─────────────────────── -->
-<div class="topic" id="docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati" data-reviewed="2026-08" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔗</span>
 <span class="topic-name">Docks, USB-C &amp; Thunderbolt — Power Delivery, Alt Modes &amp; the Compatibility Mess</span>
 <span class="topic-badge">Peripherals</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -118383,6 +118402,44 @@ When specifying docks, read the power delivered <em>to the host</em> rather than
 dock's own supply rating. A dock with a 180 W brick may deliver only 65 W upstream because
 the rest feeds its own ports and displays — and a workstation-class laptop under load will
 slowly flatten on it.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Failure mode</div>
+<div class="concept-title">The Device That Charges and Never Appears</div>
+<div class="concept-desc">
+Power and data are negotiated separately over the same connector, so a device that
+lights up has proved nothing about whether it will enumerate. That is the whole
+difficulty of this ticket: the one piece of evidence the user volunteers — <em>it is
+getting power</em> — is the piece that does not narrow anything, and it is the reason
+the cable stops being a suspect long before it should. The user's own report is
+usually the operating system's wording rather than theirs — <em>USB device not
+recognised</em>, or a device that is simply absent from the list — and neither
+phrasing distinguishes between the causes below.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+<tbody>
+<tr><td>Charges, never appears</td><td>Charge-only cable — two conductors and no data pair. The commonest cause and the cheapest to rule out</td></tr>
+<tr><td>Works direct, not through the dock</td><td>The hub chain: bandwidth or power shared across downstream ports, or a dock firmware bug</td></tr>
+<tr><td>Worked until the fourth device went in</td><td>Bus power budget spent. An unpowered hub divides one port's supply among everything on it</td></tr>
+<tr><td>Works in one port, not its neighbour</td><td>Ports on one machine differ by generation and by mode; a device needing full speed on a slower port may not come up at all</td></tr>
+<tr><td>"USB device not recognised" — the unknown-device notification</td><td>Enumeration started and the descriptor exchange failed — marginal cable, marginal power, or genuinely faulty hardware</td></tr>
+<tr><td>Intermittent, and worse when moved</td><td>The connector or the cable, not the device. Reproduce it by flexing the cable at each end</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong>Work it in cost order, and the driver is last.</strong> Swap the cable for a
+known-good data cable, then move to a port directly on the machine, then remove the
+device from the hub chain, then reduce what else is drawing from the bus — four moves,
+none of which needs admin rights or a reboot, and between them they account for most of
+these tickets. Reinstalling the driver is the move that feels like progress and is the
+one worth trying fifth, because a driver that was working yesterday rarely stopped on
+its own. The corollary is a purchasing decision rather than a diagnostic one: buy
+certified data cables and label them, because an estate that cannot tell its cables
+apart pays for this ticket repeatedly.
 </div>
 </div>
 </div>

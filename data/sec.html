@@ -1490,15 +1490,24 @@ entered = <span class="str">"my_secure_pass"</span>
           <tr><td>Name mismatch</td><td>cert for example.com used on sub.example.com</td><td>Use wildcard cert or include SANs <span class="acro-exp">(Subject Alternative Name)</span></td></tr>
           <tr><td>Untrusted CA</td><td>self-signed or private CA</td><td>Install CA cert in trust store or buy a public cert</td></tr>
           <tr><td>Incomplete chain</td><td>missing intermediate cert</td><td>Include full chain in server config</td></tr>
+          <tr><td>Expired, and the file on disk is not</td><td>renewal wrote a new cert; the running process still holds the old one</td><td>Reload the service — and check every node behind the load balancer</td></tr>
         </tbody>
       </table>
       <div class="concept-desc verdict">
-        <strong>The incomplete-chain row is the one that wastes days, because it works
-        on your machine.</strong> Browsers cache intermediates from previous sites, so a
-        server missing one is fine for the person who set it up and broken for a
-        customer, a mobile app or a curl in a pipeline. Test every certificate change
-        from something that has never visited the site — that single habit catches the
-        only failure in this table that does not announce itself.
+        <strong>Two of these rows lie about which thing is broken, and they lie in
+        opposite directions.</strong> The incomplete chain works on your machine:
+        browsers cache intermediates from previous sites, so a server missing one is
+        fine for the person who set it up and broken for a customer, a mobile app or a
+        curl in a pipeline. The renewed-and-not-reloaded row is the reverse — the
+        evidence contradicts itself. The renewal reported success, the file on disk
+        carries next year's dates, and every client still sees last month's, because a
+        running process read that file once when it started and has not looked since.
+        <strong>Renewal is not deployment.</strong> Both rows answer to the same habit:
+        check what is being <em>served</em> rather than what is on disk, from something
+        that has never visited the site. One command settles it —
+        <code>echo | openssl s_client -connect host:443 | openssl x509 -noout -dates</code>
+        — and run it against each node individually, because a pool where one member
+        reloaded is a fault that comes and goes with the hash.
       </div>
     </div>
     <div class="concept-card">
