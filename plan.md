@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | 51 dated claims, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path | 📘 reference |
-| Session records | The last **57**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **58**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,22 +38,22 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,551** across 30 domains | `depth_report.py` |
+| Topics | **1,552** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **8**, 1% — and `--thin` now prints badge, position and xref count beside each, because seven of the eight are short by design | `depth_report.py` |
-| Mean chars per concept card | **1,386**, or **1,119 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two all session across nine new concept cards, which is the shape to want; this wave moved the first by one and the second by none, which is what adding sentences rather than cards does | `depth_report.py` |
+| Mean chars per concept card | **1,387**, or **1,120 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two all session across eleven new concept cards, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **112 of 116**, **0 unexplained and 0 wrong-card** — three batches now. The first two opened at a third missing; batch three, phrased as symptoms rather than subjects, opened at **two thirds**. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,585 steps, 1,489 of 1,551 topics** | `check_paths.py` |
-| Related links | **1,491 topics, 4,790 links, 0 one-way** — one mainland of 1,465, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~812 more topics | `page_budget.py` |
+| Reader questions answered | **120 of 124**, **0 unexplained and 0 wrong-card** — four batches. The two subject-shaped ones opened at a third missing; the two symptom-shaped ones at **two thirds**, and that gap is the session's main content finding. The 4 remaining zeros are recorded verdicts, and `--self-test` checks that a verdict still describes its row | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,585 steps, 1,489 of 1,552 topics** | `check_paths.py` |
+| Related links | **1,492 topics, 4,798 links, 0 one-way** — one mainland of 1,466, three reference-domain islands | `suggest_related.py --check` |
+| Page budget | **34% raw** headroom — room for ~810 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,122 chars**, median 3,723 — the number a deepening wave has to move | `depth_report.py` |
 | Gates | **41**, and the same 41 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **51** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **12**, all deliberate lookup tables in `military` | `lint_content.py` |
-| Session records | **57** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **58** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5459,4 +5459,66 @@ stop list earns its entries one at a time.
 probe 105 -> 116 questions · 112 answered · 0 unexplained · 5 cards given their
 symptom · 41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64
 mobile 15 · visual 2 · backup 3
+```
+
+---
+
+## Session — the domain with thirty-nine topics and nothing on the cascade
+
+Batch four, same shape as batch three and aimed at the domains still barely
+probed — `script`, `web`, `ai`, `endpoint`. The rate held: **six of nine
+symptom-phrased questions missed**, against a third for subject-phrased ones.
+Five were sentences a card had never written down. One was a whole card that
+did not exist.
+
+### `my css is not applying` returned nothing at all
+
+`web` carries 39 topics — Flexbox, Grid, Responsive, Modern CSS, the DOM, the
+event loop, React, bundlers, Design Systems — and **nothing on the cascade**.
+No specificity, no origin order, no layers-versus-`!important`. The foundation
+every other CSS card sits on was the one thing missing, and the domain's own
+shape made it invisible: each CSS topic pairs a "what it is" card with a named
+failure mode, and none of the five failure modes was *the rule did not apply*.
+
+Written to that shape, with the part worth carrying being the ladder:
+
+| # | The question | What wins |
+|---|---|---|
+| 1 | Origin and importance | A *user* `!important` beats an author one — how a reader's accessibility stylesheet overrides yours |
+| 2 | Cascade layer | Unlayered beats layered, later beats earlier — **and for `!important` the whole order reverses** |
+| 3 | Specificity | A tuple compared left to right, not a three-digit number. Eleven classes never add up to one id |
+| 4 | Source order | Only here. This is the rung people think is rung one |
+
+And the failure card's first row is the one that matters: **a struck-through
+declaration and a missing declaration are completely different bugs, and they
+look identical from the editor.** Open the inspector before the stylesheet.
+
+### The thing found by chasing an anomaly
+
+`the model keeps making things up` reached its card and returned **thirty**
+results, with the card's exact phrase in exactly one of them. The single-result
+escalation was firing on a perfect hit, because the named-topic guard compares
+the query's words against the slug's words *literally* — and the query says
+`model` where the slug says `models`. It now runs both through the same plural
+fold as the conjunction, and the query returns one.
+
+That guard was written two waves ago to stop exactly this, and it had a hole in
+it the width of a plural. **A guard you added to protect a case can still miss
+that case**, and the only way to know is the anomaly: thirty results for a query
+whose phrase exists once.
+
+### The rest
+
+*"The model keeps making things up"* is a fair description of the symptom and a
+misleading one of the cause — nothing is being made *up*, in the sense of a
+decision to invent; the same machinery produced the true sentence with the same
+confidence. The endpoint card says *a device that shows as non-compliant* now,
+which is what the console says. And `script`'s file-handling card already
+answered the encoding question.
+
+```
+probe 116 -> 124 questions · 120 answered · 0 unexplained
+topics 1,551 -> 1,552 · related 4,790 -> 4,798 links, mainland 1,466
+41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
+visual 2 · backup 3
 ```

@@ -2354,7 +2354,11 @@ function runSearch(raw) {
     _searchHits.forEach(set => set.forEach(id => { only = id; }));
     if (!only) return false;
     const parts = new Set(String(only).split(/[^a-z0-9]+/));
-    return words.some(w => parts.has(foldSeparators(w.toLowerCase())));
+    // Through the same plural fold the conjunction uses, or the guard misses
+    // the case it exists for: `the model keeps making things up` has its exact
+    // phrase in one card, whose slug says *models*. Without this it escalated a
+    // perfect single hit into thirty.
+    return words.some(w => plurals(foldSeparators(w.toLowerCase())).some(f => parts.has(f)));
   };
   sweep(false);
   const strictCount = matchCount;

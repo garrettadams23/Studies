@@ -347,6 +347,13 @@ const READERS = [
     ["my tests pass individually but fail together", "",
      "devops/test-data-the-constraint-that-shapes-every-environment"],
     ["the build works locally but not in ci"],
+    // ── batch four ──
+    ["my css is not applying", "",
+     "web/the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi"],
+    ["the page is blank", "", "web/how-the-browser-renders-a-page"],
+    ["encoding error reading a file", "",
+     "script/working-with-files-reading-writing-and-paths"],
+    ["the script hangs and never exits"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -355,6 +362,14 @@ const READERS = [
      "net/load-balancers-explained-spreading-the-work-around"],
     ["iam permission denied", "", "cloud/aws-iam-deep-assumerole-sts-boundaries"],
     ["i deleted something in production"],
+    // ── batch four ──
+    ["the device shows non compliant", "",
+     "endpoint/compliance-policies-deep-settings-grace-periods-what-non-com"],
+    ["the model keeps making things up", "",
+     "ai/hallucination-why-models-fabricate-and-what-actually-reduces"],
+    ["rag returns irrelevant chunks", "",
+     "ai/retrieval-augmented-generation-rag-explained-simply"],
+    ["my prompt works sometimes", "", "ai/using-ai-well-prompting-responsibility"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
