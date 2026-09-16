@@ -5570,30 +5570,55 @@ lists and the start-here resolver all compare against. It had been there for as
 long as the annotator had, and the only reason it surfaced now is that one of
 the forty-eight happened to be named in a landing card.
 
-### The fix was wrong the first time, and the gates said so in one run
+### The fix was wrong twice, and the second time was the interesting one
 
-Closing the space looked obviously safe — slugs drop punctuation and collapse
-whitespace, so `POST , Beep` and `POST, Beep` have always produced the same
-slug. They do. But:
+**Attempt one** tidied every space-before-punctuation in the title. That looked
+obviously safe — slugs drop punctuation and collapse whitespace, so `POST , Beep`
+and `POST, Beep` have always produced the same slug. They do. But:
 
 ```
 Custom Properties, :has() & Layers
 ```
 
-Close *that* space and `Properties` and `has` become one word, and the Modern
-CSS permalink moves. `suggest_related.py --check`, `check_paths.py` and two
-smoke checks all failed on the same moved slug within a single run.
+That space is nowhere near an acronym, and closing it merges `Properties` and
+`has` into one word, moving the Modern CSS permalink. `suggest_related.py
+--check`, `check_paths.py` and two smoke checks all failed on the same moved
+slug within a single run.
 
-So the rule is **tidy a space before punctuation only when a word character does
-not follow it**, which leaves every pseudo-class, `.NET` and `.intunewin` alone
-and still fixes all forty-seven. Ported to `lint_content.topic_label` in the same
-shape, because those two are a deliberate byte-for-byte pair.
+**Attempt two** added a lookahead — tidy only when no word character follows.
+It worked, and it was still the wrong shape, because it operates on the whole
+title and can touch text that had nothing to do with any acronym. The near miss
+was not bad luck; it was the surface.
+
+**The actual fix is one character, and it was already written three times in
+this repository.** The annotator emits ` <span class="acro-exp">(…)</span>`, and
+the space belongs to the span:
+
+```
+lint_content.py      \s*<span class="acro-exp">…      correct since it was written
+gen_cheatsheet.py    \s*<span class="acro-exp">…      correct
+stamp_freshness.py   \s*<span class="acro-exp">…      correct
+script.js               <span class="acro-exp">…      the odd one out
+```
+
+In the pair that is supposed to be byte-for-byte identical. Taking the space
+with the span cannot touch anything that was not adjacent to something removed,
+so `:has()`, `.NET` and `.intunewin` are safe by construction rather than by
+lookahead. `labelText()` needed the DOM version of the same idea — that space is
+a separate text node, so it survives `remove()` — and trims only the node
+immediately before each span.
 
 **The reason to write this down is the sequence.** A content wave touched an
-acronym's configuration; that exposed a five-year-old defect in unrelated code;
+acronym's configuration; that exposed a long-standing defect in unrelated code;
 the obvious fix moved a permalink; three separate gates caught it before it
-could ship. None of those four steps was planned, and the middle two are the
-argument for the other two existing.
+could ship; and the correct fix turned out to be a convention the repository
+already followed everywhere else. None of those five steps was planned, and the
+middle two are the argument for the other three existing.
+
+The transferable part is the last step. **When a fix needs a special case, check
+whether the codebase already solved the general one somewhere.** It had, in
+three files, and the version that needed no special case was one character
+long.
 
 ```
 probe 124 -> 135 questions · 131 answered · 0 unexplained

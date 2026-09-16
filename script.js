@@ -738,6 +738,8 @@ const RE_TOPIC_BADGE = classRe("topic-badge");
 const RE_CONCEPT_TITLE = classRe("concept-title");
 const RE_CONCEPT_DESC = classRe("concept-desc");
 const RE_ACRO_SPAN = /<span class="acro-exp">\([^<]*?\)<\/span\s*>/g;
+// Same, plus the space the annotator wrote in front of it — see plainLabel().
+const RE_ACRO_LABEL = /\s*<span class="acro-exp">\([^<]*?\)<\/span\s*>/g;
 
 /**
  * The contents of the first element matching `open`, counting nesting.
@@ -813,30 +815,27 @@ function plainText(html) {
 /**
  * Same, with the inline acronym expansions dropped — the title as written.
  *
- * Removing the span leaves the space the annotator put *before* it, so a title
- * whose acronym is followed by punctuation comes back with the space stranded:
- * `POST , Beep Codes`, `SPF, DKIM , DMARC`, `MTU , Fragmentation`. **Forty-seven
- * topic names carried that**, and it is not cosmetic — this text is the name the
- * search index, the study list, the jump lists and the landing cards' "start
- * here" resolution all compare against.
+ * **The span owns the space in front of it.** The annotator writes
+ * ` <span class="acro-exp">(…)</span>`, so removing the span alone strands that
+ * space wherever punctuation followed the acronym: `POST , Beep Codes`,
+ * `SPF, DKIM , DMARC`, `MTU , Fragmentation`. Forty-seven topic names carried
+ * it, and it is not cosmetic — this text is the name the search index, the study
+ * list, the jump lists and the landing cards' "start here" resolution all
+ * compare against.
  *
- * Slugs must not move, and the trailing lookahead is what guarantees it. A slug
- * drops punctuation and collapses whitespace, so closing up `POST , Beep` is
- * invisible to it — but only while the two sides stay separated by *something*.
- * `Custom Properties, :has() & Layers` is the counter-example, and it is real:
- * closing that space merges `Properties` and `has` into one word and moves the
- * Modern CSS permalink. The rule is therefore **tidy a space before punctuation
- * only when a word character does not follow it**, which leaves every CSS
- * pseudo-class alone and still fixes all forty-seven names.
+ * `lint_content.py`, `gen_cheatsheet.py` and `stamp_freshness.py` have all had
+ * the `\s*` since they were written. This file was the odd one out, in the pair
+ * that is supposed to be byte-for-byte identical.
  *
- * Found by the gates, not by reading: the first version of this took the space
- * out of `:has()`, and `suggest_related.py --check`, `check_paths.py` and two
- * smoke checks all failed on the same moved slug within one run.
+ * The first attempt at the fix tidied every space-before-punctuation in the
+ * title instead, and moved a permalink: `Custom Properties, :has() & Layers` has
+ * such a space, nowhere near an acronym, and closing it merges `Properties` and
+ * `has` into one word. Three separate gates caught it in one run. Taking the
+ * space with the span has no such surface — it can only touch text that was
+ * adjacent to something removed.
  */
-const RE_SPACE_BEFORE_PUNCT = /\s+([,.;:!?)\]])(?![A-Za-z0-9])/g;
-
 function plainLabel(html) {
-  return plainText(html.replace(RE_ACRO_SPAN, "")).replace(RE_SPACE_BEFORE_PUNCT, "$1");
+  return plainText(html.replace(RE_ACRO_LABEL, ""));
 }
 
 const RE_TOPIC_READ = /<span class="topic-read"[^>]*>.*?<\/span>/gi;
@@ -1336,11 +1335,20 @@ function labelText(el) {
   let node = el;
   if (el.querySelector(".acro-exp")) {
     node = el.cloneNode(true);
-    node.querySelectorAll(".acro-exp").forEach(n => n.remove());
+    // Take the space in front of the span with it. In the DOM that space is a
+    // separate text node, so it survives `remove()` and strands itself before
+    // any punctuation that followed the acronym — see plainLabel() for what
+    // that cost. Trimming only the node immediately before each span keeps the
+    // rest of the title untouched.
+    node.querySelectorAll(".acro-exp").forEach(n => {
+      const before = n.previousSibling;
+      if (before && before.nodeType === 3) {
+        before.textContent = before.textContent.replace(/\s+$/, "");
+      }
+      n.remove();
+    });
   }
-  // The annotator's span carries a leading space, so removing it strands one
-  // before any punctuation that followed the acronym — see plainLabel().
-  return node.textContent.replace(/\s+/g, " ").replace(RE_SPACE_BEFORE_PUNCT, "$1");
+  return node.textContent.replace(/\s+/g, " ");
 }
 
 function slugify(s) {
