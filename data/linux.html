@@ -6047,4 +6047,117 @@ ltrace ./myprogram
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-09">
+  <div class="topic-header">
+    <span class="topic-icon">⛔</span>
+    <span class="topic-name">&ldquo;Permission Denied&rdquo; as Root — The Layers That Outrank a Mode Bit</span>
+    <span class="topic-badge">LINUX • Operations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Root Is the Answer to One Check, and It Is Not the Check That Failed</div>
+      <div class="concept-desc">
+        Being root satisfies the <strong>discretionary</strong> access check — the owner, group
+        and mode bits on the inode. Five other mechanisms sit outside that check and none of
+        them consults your user id, so a refusal while root is not a contradiction and not a
+        bug. <strong class="c-amber">It is a message from a layer you were not thinking
+        about.</strong>
+        <br><br>
+        What makes this expensive is that all five produce the same words. The kernel returns
+        <code>EPERM</code> or <code>EACCES</code>, the shell prints <em>Permission denied</em>,
+        and nothing in the message names which layer refused. So the diagnostic is not reading
+        the error harder — it is asking which layer is in play, and four of the five answer to
+        a command that takes a second and needs no privileges at all.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Why root does not help</th></tr></thead>
+          <tbody>
+            <tr><td>Read-only mount</td><td>The filesystem is not accepting writes from anyone. Often deliberate; sometimes the kernel remounted it read-only after an I/O <span class="acro-exp">(Input/Output)</span> error, which is a failing disk wearing a permissions costume</td></tr>
+            <tr><td>The immutable attribute</td><td><code>chattr +i</code> is enforced below the permission bits. Root can remove it and cannot write through it</td></tr>
+            <tr><td>Mandatory access control</td><td>SELinux <span class="acro-exp">(Security-Enhanced Linux)</span> and AppArmor enforce a system-wide policy regardless of ownership. Root is a subject like any other</td></tr>
+            <tr><td>NFS <span class="acro-exp">(Network File System)</span> root squash</td><td>The export maps the client's root to an unprivileged user. You are root locally and nobody on the server</td></tr>
+            <tr><td>A dropped capability</td><td>Root in a container is root minus whatever the runtime removed. The uid is 0 and the power is not</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The read-only row is the one to check first and not because it is commonest — because
+          it is the only one that might mean the hardware is dying. A filesystem the kernel
+          remounted itself is reporting an I/O error, and every minute spent on the permissions
+          question is a minute not spent reading <code>dmesg</code>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Five Commands, in Cost Order, and None of Them Changes Anything</div>
+      <div class="concept-desc">
+        Each of these answers one row and only reads. Run them in this order and stop at the
+        first that explains the refusal.
+      </div>
+      <pre class="code-block"><span class="com"># 1. Is the filesystem writable at all — and did the kernel do this to itself?</span>
+findmnt -T /path/to/file -o TARGET,SOURCE,FSTYPE,OPTIONS
+dmesg -T | grep -i -E 'remount|read-only|i/o error'
+
+<span class="com"># 2. Is the file immutable or append-only? The flag shows as i or a.</span>
+lsattr /path/to/file
+
+<span class="com"># 3. Did a mandatory policy refuse it? A denial is always logged.</span>
+getenforce                        <span class="com"># Enforcing means SELinux is in play</span>
+ausearch -m AVC -ts recent        <span class="com"># the denial, with the context it wanted</span>
+aa-status                         <span class="com"># the Ubuntu/SUSE equivalent</span>
+journalctl -k | grep -i -E 'avc|apparmor'
+
+<span class="com"># 4. Is it NFS, and is root being squashed?</span>
+findmnt -T /path/to/file -o FSTYPE   <span class="com"># nfs / nfs4</span>
+<span class="com"># then on the server: grep root_squash /etc/exports</span>
+
+<span class="com"># 5. Are you in a container with the capability removed?</span>
+capsh --print | grep -i 'current\|bounding'
+cat /proc/self/status | grep CapEff</pre>
+      <div class="concept-desc verdict">
+        <strong>Never open with <code>chmod 777</code>.</strong> It cannot fix any row in the
+        table above — all five sit outside the bits it changes — so it does not work, and it
+        leaves a world-writable file behind that outlives the ticket and the person who wrote
+        it. A fix that could not have worked and did not get reverted is the worst outcome
+        available here, and it is the commonest one.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">When the Five Commands All Come Back Clean</div>
+      <div class="concept-desc">
+        Then the refusal is about a <em>different path</em> than the one you are looking at, and
+        this is the case the table cannot show you. The kernel checks execute permission on
+        every directory in the path, so a file with mode 644 inside a directory with mode 700
+        owned by someone else is unreachable — and the error names the file rather than the
+        directory that refused. A symlink resolving somewhere unexpected does the same thing.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>What it settles</th></tr></thead>
+          <tbody>
+            <tr><td><code>namei -l /full/path/to/file</code></td><td>Every component of the path with its mode, owner and symlink target, in one line each</td></tr>
+            <tr><td><code>strace -f -e trace=file cmd</code></td><td>Which syscall failed, on which path, with which errno — the tie-breaker when the guess ran out</td></tr>
+            <tr><td><code>sudo -u theuser -- test -r /path</code></td><td>Whether the failure reproduces as the account that actually runs the service</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Reach for <code>strace</code> when the guessing stops, not before.</strong> It
+          answers the question the error message refused to — which path and which errno — and
+          it is the one step here that costs something, because attaching to a process is
+          intrusive and slow.
+          <span class="xref">strace &amp; ltrace — Watching a Program Ask the Kernel for Things</span>
+          covers reading its output, and
+          <span class="xref">SELinux &amp; AppArmor — Mandatory Access Control</span>
+          covers fixing a policy rather than disabling one, which is the third row's real answer
+          and the one people skip.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body linux -->

@@ -241,6 +241,11 @@ const READERS = [
      "m365/calendar-time-zones-why-the-invite-lands-an-hour-out"],
     ["setting up a new laptop", "",
      "endpoint/windows-autopilot-zero-touch-provisioning"],
+    // ── batch thirteen ──
+    ["onedrive is not syncing"],
+    ["teams keeps signing me out"],
+    ["the user says the file is gone",
+     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -288,6 +293,12 @@ const READERS = [
      "kind 3 — 'beaconing' alone reaches 11 cards; 'laptop' and 'out' are the reader's words"],
     ["data is leaving over dns", "",
      "redteam/data-exfiltration-channels-dns-icmp-https"],
+    // ── batch thirteen ──
+    ["what is this powershell doing"],
+    ["impossible travel alert"],
+    ["a service account signed in from another country",
+     "kind 2, named and not written — the two halves exist apart and the join does not. `sec` governs non-human identity and `blueteam` ITDR covers impossible travel for people; neither says a service account has no travel to be impossible, so a geo anomaly on one is a different alarm and a louder one. 'signed' is also an inflection miss against 'sign-in'",
+     "sec/non-human-identity-service-accounts-workloads-and-the-sprawl"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -335,6 +346,10 @@ const READERS = [
     ["authentication vs authorization"],
     ["what is a race condition"],
     ["what is an api gateway"],
+    // ── batch thirteen ──
+    ["what is a cve"],
+    ["why is udp faster"],
+    ["what does a 502 mean"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -373,6 +388,10 @@ const READERS = [
     ["too many open files"],
     ["the clock on the server is wrong"],
     ["dns works on the host but not in the container"],
+    // ── batch thirteen ──
+    ["systemd service will not start"],
+    ["the pod is pending"],
+    ["why is my container using so much memory"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -426,6 +445,9 @@ const READERS = [
     ["retrospectives are a waste of time", "",
      "career/facilitating-retrospectives-tabletops-neutrality-and-the-har"],
     ["we have too many meetings"],
+    // ── batch thirteen ──
+    ["we keep missing deadlines"],
+    ["how do i say no to a stakeholder"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -472,6 +494,10 @@ const READERS = [
      "kind 3 — the card says 'it is not a bug in your code'; 'wrong' is the one word too many, and the relaxation stage deliberately never runs on a zero"],
     ["off by one"],
     ["the api returns 500 and nothing is logged"],
+    // ── batch thirteen ──
+    ["permission denied but i am root", "",
+     "linux/permission-denied-as-root-the-layers-that-outrank-a-mode-bit"],
+    ["it works in dev and breaks in prod"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -492,6 +518,10 @@ const READERS = [
     // ── batch twelve ──
     ["usb device not recognised"],
     ["the fans are always loud"],
+    // ── batch thirteen ──
+    ["the screen is flickering", "",
+     "hw/displays-panel-types-scaling-colour-the-multi-monitor-pitfal"],
+    ["it will not boot from usb"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -520,6 +550,10 @@ const READERS = [
      "sec/tls-https-how-secure-connections-work"],
     ["nat gateway is the biggest line on the bill",
      "kind 3 — cloud states the NAT gateway is billed hourly plus per GB per AZ; the ranking is the reader's framing"],
+    // ── batch thirteen ──
+    ["s3 access denied"],
+    ["the alert fired and nothing was wrong"],
+    ["terraform plan shows changes i did not make"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -549,6 +583,9 @@ const READERS = [
     // ── batch twelve ──
     ["tell me about yourself"],
     ["no experience but i want the job"],
+    // ── batch thirteen ──
+    ["how do i explain a gap in my cv"],
+    ["i failed the interview"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -572,6 +609,9 @@ const READERS = [
     ["how long do we keep backups"],
     ["what is soc 2", "",
      "grc/soc-2-trust-service-criteria-for-cloud-service-providers"],
+    // ── batch thirteen ──
+    ["what evidence proves mfa is on"],
+    ["we outsourced it who is responsible"],
   ]],
 ];
 

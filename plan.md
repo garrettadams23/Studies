@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **67**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **68**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,23 +38,23 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,553** across 30 domains | `depth_report.py` |
+| Topics | **1,554** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
 | Mean chars per concept card | **1,391**, or **1,123 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **193 of 202**, **0 unexplained** — twelve batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 8 remaining zeros and the 1 wrong-card are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,590 steps, 1,493 of 1,553 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,493 topics, 4,808 links, 0 one-way** — one mainland of 1,467, three reference-domain islands | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~802 more topics | `page_budget.py` |
+| Reader questions answered | **216 of 227**, **0 unexplained** — thirteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros and the 1 wrong-card are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,591 steps, 1,494 of 1,554 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,494 topics, 4,818 links, 0 one-way** — one mainland of 1,468, three reference-domain islands | `suggest_related.py --check` |
+| Page budget | **34% raw** headroom — room for ~800 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,135 chars**, median 3,735 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,135 chars**, median 3,736 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **45 volatile spans and 12 fact anchors: 57 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference | `check_volatility.py` |
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **72** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **73** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6832,4 +6832,108 @@ README: 3 figures now checked, located by sentence so a rewrite stays legal
 CONTRIBUTING: one count removed rather than checked — Phase 11 §5, outside freshness
 verified both ways: wrong number fails, deleted sentence passes, restored passes
 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+```
+
+## Session — three inflection misses in one batch, and the copula that was missing one form
+
+### Batch thirteen, and a 20% zero rate
+
+Twenty-five fresh questions, five zeros. The split after ruling the matcher out
+on each:
+
+| Query | Verdict |
+|---|---|
+| `permission denied but i am root` | **kind 2**, written — and the zero was a stop word |
+| `we outsourced it who is responsible` | **kind 1**, the card says *Outsource the Work, Not the Risk* and never names the question |
+| `the screen is flickering` | **kind 1**, the symptom table says *flicker* |
+| `the user says the file is gone` | kind 3 — the ladder is real and spread across three `m365` cards |
+| `a service account signed in from another country` | **kind 2, named and not written** |
+
+### The card that was missing, and it is a good one
+
+`linux` had five cards on permissions and nothing on **being refused while
+root**, which is one of the few Linux faults that genuinely stops people. The
+sentence it exists for: *root is the answer to one check, and it is not the
+check that failed.* Being root satisfies the discretionary check on the mode
+bits. Five mechanisms sit outside it — a read-only mount, the immutable
+attribute, mandatory access control, NFS root squash, a dropped capability —
+and none consults your uid.
+
+What makes the ticket expensive is that **all five produce identical words.**
+`EPERM`, *Permission denied*, and nothing naming the layer. So the diagnostic is
+not reading the error harder; it is asking which layer is in play, and four of
+the five answer to a read-only command that needs no privileges.
+
+The causes were not evenly absent, which is what made this kind 2 rather than
+kind 3. Mandatory access control has a whole topic and says *even root is
+constrained*; `strace`'s card names `EACCES` and says to check the path. But
+`chattr`, `root_squash`, `remount` and `read-only mount` returned **zero** in
+`linux`, and nothing anywhere put the five in one place.
+
+Two judgements in it worth keeping. The read-only row goes **first and not
+because it is commonest** — it is the only one that might mean the disk is
+dying, and a filesystem the kernel remounted itself is reporting an I/O error.
+And the verdict refuses `chmod 777` on the grounds that it *cannot work*: every
+row in the table sits outside the bits it changes, so it fails and leaves a
+world-writable file behind. **A fix that could not have worked and did not get
+reverted is the worst outcome available, and it is the commonest one.**
+
+### The linter caught an invented cross-reference, again, within a minute
+
+The xref was written as *SELinux (Security-Enhanced Linux) & AppArmor —
+Mandatory Access Control*, copied from the rendered page where the annotator had
+already inserted the expansion. The source title has no expansion in it. Failure
+#2 in the manual — *titles reconstructed from memory* — except this one was
+reconstructed from the **rendered output**, which is a new way to get it wrong
+and the same fix: run the linter, it names the correction.
+
+### Three inflection misses, and why the answer was not a stemmer
+
+`leaves`/`leaving` last wave, and this wave `flicker`/`flickering` and
+`outsource`/`outsourced`. Three independent instances is where this file usually
+stops calling something a coincidence.
+
+**The stemmer is still the wrong answer, and that is not a guess.** `b90bd2b`
+built one, measured it, and reverted it: it breached two ceilings
+(`how do i find a file` 129 → 178) and *did not fix the query that motivated
+it*. A recorded measurement beats three new anecdotes, so the fix stayed in prose
+both times — and both prose edits were better writing independent of the search:
+a column headed **Symptom** exists to be recognised in the reader's words, so
+*Flickering, or an occasional momentary black* is simply the correct entry, and
+naming the question a third-party-risk card is an answer to is the rubric's
+first property.
+
+### The one that was a stop word, and the shape it came in
+
+`permission denied but i am root` returned nothing while `permission denied
+root` returned eight including the new card. The blocker was **`am`**.
+
+`WIDE_STOP` contains *is are was were be been*. It did not contain *am*. The
+copula was complete except for the first person singular — which is **this
+file's most-recorded shape, in a list of function words**: a rule applied to a
+category with one member missed.
+
+It is the cheapest entry the list will ever take. 61 occurrences in the corpus,
+every one a copula — *who am I*, *what am I automating*, *Am I allowed to do
+it?* — no acronym claims the letters, and nobody searches for it. The cost of
+missing it fell entirely on **first-person symptom queries**, which is how a
+reader describing their own problem phrases it. Search gates unchanged at 56/56
+with no ceiling moved. `being` was measured beside it (466 occurrences,
+load-bearing in titles) and left alone, because the list's own note says entries
+are earned one at a time.
+
+### Named and not written
+
+`a service account signed in from another country`. Both halves exist and the
+join does not: `sec` governs non-human identity, `blueteam` covers impossible
+travel **for people**, and nothing says the obvious thing — *a service account
+has no travel to be impossible*, so a geo anomaly on one is a different alarm and
+a louder one. Recorded with its evidence rather than written, because the wave
+had spent its three cards.
+
+```
+probe 202 -> 227 questions · 216 answered · 0 unexplained · 10 zeros · 1 wrong card
+1 topic added (linux, 1,553 -> 1,554) · 2 prose fixes · 5 related pairs · 1 path step
+matcher: `am` joins WIDE_STOP — search 56/56, no ceiling moved
+42 gates green · smoke 163 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

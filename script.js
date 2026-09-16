@@ -2077,9 +2077,26 @@ function plurals(term) {
 }
 
 const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
-  + "were be been do does did can could should would will shall may might must "
+  + "were be been am do does did can could should would will shall may might must "
   + "i we you they it he she this that these those my our your their its "
   + "how what why when where which who does not no yes if then than so "
+  // `am` was the one form of *to be* this list did not have. `is are was were
+  // be been` were all here from the start and the first person singular was
+  // not, which is the shape this project keeps recording: a rule applied to a
+  // category with one member missed. It cost `permission denied but i am root`
+  // — zero, against a card written that same hour titled *"Permission Denied"
+  // as Root*, while `permission denied root` returned it fine.
+  //
+  // It is the cheapest entry this list will ever take. 61 occurrences in the
+  // corpus, every one of them a copula — *who am I*, *what am I automating*,
+  // *Am I allowed to do it?* — no acronym claims the letters, and nobody has
+  // searched for it. The cost of missing it falls entirely on **first-person
+  // symptom queries**, which is how a reader describing their own problem
+  // phrases it.
+  //
+  // `being` was measured beside it and left alone, because a stop list earns
+  // its entries one at a time and that one is load-bearing in titles here.
+  //
   // `explain` joins the question words because that is what it is: an
   // instruction to the site, never a subject. `explain oauth` returned
   // **nothing** against a domain full of OAuth cards, because the conjunction
