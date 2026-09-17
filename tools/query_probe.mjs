@@ -246,6 +246,11 @@ const READERS = [
     ["teams keeps signing me out"],
     ["the user says the file is gone",
      "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want"],
+    // ── batch fourteen ──
+    ["the printer is printing garbage", "",
+     "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
+    ["i cannot install software"],
+    ["my password expired and i cannot change it"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -298,6 +303,12 @@ const READERS = [
     ["impossible travel alert"],
     ["a service account signed in from another country", "",
      "sec/non-human-identity-service-accounts-workloads-and-the-sprawl"],
+    // ── batch fourteen ──
+    ["the alert says it was blocked do i still care",
+     "kind 2, written and still zero. The Alert Triage card had zero mentions of blocked/prevented/contained and now carries two concept cards on it; `blocked alert` and `prevented alert` each return exactly that card. The full sentence fails on `says` and `care`, which a card about prevention has no reason to contain, and the relaxation stage never runs on a zero",
+     "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
+    ["we found crypto mining on a server",
+     "kind 2, named and not written — `mining` appears 6 times site-wide and every one is a passing mention in a findings list. The card would have one sentence: mining is a symptom of access, not the incident. Somebody had enough access to run a process, and what they chose to monetise it with is the least interesting thing about that"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -355,6 +366,10 @@ const READERS = [
     ["what is a cve"],
     ["why is udp faster"],
     ["what does a 502 mean"],
+    // ── batch fourteen ──
+    ["what is a webhook"],
+    ["why do certificates expire"],
+    ["what is a reverse proxy"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -397,6 +412,10 @@ const READERS = [
     ["systemd service will not start"],
     ["the pod is pending"],
     ["why is my container using so much memory"],
+    // ── batch fourteen ──
+    ["how do i find what is using a port"],
+    ["the log file is huge"],
+    ["the service starts then dies"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -453,6 +472,9 @@ const READERS = [
     // ── batch thirteen ──
     ["we keep missing deadlines"],
     ["how do i say no to a stakeholder"],
+    // ── batch fourteen ──
+    ["the person who knew left"],
+    ["how do i push back on a deadline"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -503,6 +525,9 @@ const READERS = [
     ["permission denied but i am root", "",
      "linux/permission-denied-as-root-the-layers-that-outrank-a-mode-bit"],
     ["it works in dev and breaks in prod"],
+    // ── batch fourteen ──
+    ["my change broke something unrelated"],
+    ["the bug only happens in production"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -527,6 +552,9 @@ const READERS = [
     ["the screen is flickering", "",
      "hw/displays-panel-types-scaling-colour-the-multi-monitor-pitfal"],
     ["it will not boot from usb"],
+    // ── batch fourteen ──
+    ["the keyboard types the wrong characters"],
+    ["slow since the update"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -559,6 +587,10 @@ const READERS = [
     ["s3 access denied"],
     ["the alert fired and nothing was wrong"],
     ["terraform plan shows changes i did not make"],
+    // ── batch fourteen ──
+    ["the deploy succeeded but nothing changed"],
+    ["the autoscaler keeps flapping",
+     "kind 2, named and not written — autoscaling is covered in `cloud`, `devops` and `eng`, and the oscillation fault is not: `cooldown` and `hysteresis` each return **zero** across the whole site, and they are the two words the answer is made of"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -591,6 +623,9 @@ const READERS = [
     // ── batch thirteen ──
     ["how do i explain a gap in my cv"],
     ["i failed the interview"],
+    // ── batch fourteen ──
+    ["rejected with no feedback"],
+    ["how long should i stay in a job"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -617,6 +652,9 @@ const READERS = [
     // ── batch thirteen ──
     ["what evidence proves mfa is on"],
     ["we outsourced it who is responsible"],
+    // ── batch fourteen ──
+    ["who approved this change"],
+    ["we have no asset inventory"],
   ]],
 ];
 

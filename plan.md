@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **74**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **75**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,10 +43,10 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,392**, or **1,123 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **217 of 227**, **0 unexplained** — thirteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 9 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **237 of 250**, **0 unexplained** — fourteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 12 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,591 steps, 1,494 of 1,554 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,494 topics, 4,832 links, 0 one-way** — one mainland of **1,478 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~799 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~797 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,135 chars**, median 3,736 — the number a deepening wave has to move | `depth_report.py` |
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **79** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **80** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7513,4 +7513,93 @@ point is a color that cannot follow the theme rather than the mention of one.
 equiv: 192 pairs, 187 identical, 5 changed — and the 5 are the contrast fix landing
 lint_content: FUNC_RE added, 9 colour fixtures where there were none, 55 total
 42 gates green · smoke 163 · search 56 · a11y 31 both themes · visual 2 · mobile 15
+```
+
+## Session — the triage card had no word for the commonest alert in a modern SOC
+
+### Batch fourteen
+
+Twenty-three questions, four zeros (17%), and one of them was a real gap in a
+card this file would have called finished.
+
+`blueteam`'s **Alert Triage — Working the Queue From Alert to Verdict** is a
+good card: three concepts, an inversion worth the price of entry (*an alert is a
+rule matching, not a thing that happened*), and a cost-ordered question list.
+Grepped for the words a prevented alert arrives as:
+
+```
+blocked 0 · prevent 0 · quarantin 0 · contained 0 · stopped 0
+```
+
+**Zero.** A card about turning alerts into verdicts, in an estate where EDR
+blocks hundreds a week, with no word for the shape most of them have.
+
+### The sentence it was missing
+
+*A block is a detection, not a resolution.* The control did its job on this
+attempt on this host, and the queue reads that as the end of the matter — but a
+block is **evidence of arrival**. Something reached that machine and tried.
+
+The distinction that makes it workable is **delivery versus execution**:
+execution was stopped, delivery succeeded, and delivery is the finding. A
+payload that reached an endpoint reached it through a path, and that path is
+still open when the alert closes.
+
+Which produces one question rather than a full investigation — *what was the
+delivery path, and is it still open?* — answerable in about a minute from the
+telemetry the card's own third row already uses.
+
+The second card is the part that keeps it honest. **This is not an argument for
+working every blocked alert**; there are hundreds a week and treating them as
+incidents is how a queue dies, because the analyst stops reading any of them —
+strictly worse than auto-closing them on purpose. So it gives a promotion rule
+(the same indicator on a host without the control; an unexplained delivery path;
+a target that does not receive commodity malware by accident; a second block on
+one host in a week; a block late in a chain) and ends on the decision:
+**auto-close the rest deliberately, and write down that you did.** A documented
+suppression is revisitable; an analyst who has quietly stopped reading a category
+is the same outcome with nobody accountable for it.
+
+### Written, reachable, and still a zero
+
+`blocked alert` returns exactly one card. `prevented alert` returns exactly one
+card. Both are this one.
+
+`the alert says it was blocked do i still care` still returns **nothing**,
+because of `says` and `care` — filler a card about prevention has no reason to
+contain, and the relaxation stage deliberately never runs on a zero. Recorded,
+not papered over. The content gap was real and is closed; the query is a matcher
+limit already documented three times in this file.
+
+### Two more named rather than written
+
+The wave had spent its cards, so both carry their evidence instead:
+
+- **`we found crypto mining on a server`** — `mining` appears **six times
+  site-wide**, every one a passing mention in a findings list. The card would
+  have one sentence: *mining is a symptom of access, not the incident.* Somebody
+  had enough access to run a process, and what they chose to monetise it with is
+  the least interesting thing about that.
+- **`the autoscaler keeps flapping`** — autoscaling is covered in `cloud`,
+  `devops` and `eng`; the oscillation fault is not. **`cooldown` and
+  `hysteresis` each return zero across the whole site**, and they are the two
+  words the answer is made of.
+
+Naming the missing *words* rather than the missing subject is what makes these
+two pickable up by a session that has not read this record — the same form that
+got `m365`'s calendar gap written two waves after it was found.
+
+### And the printer already had the card, in the wrong word
+
+`the printer is printing garbage` reached nothing against a concept card titled
+*It Printed, and the Page Is Wrong — Blank, **Garbled** or Streaked*, whose
+second row is the PostScript-driver-against-a-PCL-device answer. Garbled is the
+technician's word; **garbage**, gibberish and *it printed junk* are the user's.
+The card now says both, which is the fourth time this run that naming the
+reader's word has been the whole fix.
+
+```
+probe 227 -> 250 questions · 237 answered · 0 unexplained · 12 zeros · 1 wrong · 3 wide
+2 concept cards added to Alert Triage · 1 prose fix · 2 gaps named with their evidence
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15 · visual 2
 ```

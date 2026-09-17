@@ -79541,8 +79541,8 @@ incident.
 <span class="ctag ctag-secplus">GCIH</span>
 </div>
 <span class="domain-sub">NSM · SIEM · EDR · Detection · DFIR · Threat Intel</span>
-<span class="domain-meta" aria-label="62 topics, about 2h 35m to read"
->62 topics · ~2h 35m</span>
+<span class="domain-meta" aria-label="62 topics, about 2h 40m to read"
+>62 topics · ~2h 40m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -83727,12 +83727,12 @@ were tracking different things.
 </div>
 </div>
 </div>
-<div class="topic" id="alert-triage-working-the-queue-from-alert-to-verdict" data-reviewed="2026-09" data-read="5" data-level="core">
+<div class="topic" id="alert-triage-working-the-queue-from-alert-to-verdict" data-reviewed="2026-09" data-read="9" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔎</span>
 <span class="topic-name">Alert Triage — Working the Queue From Alert to Verdict</span>
 <span class="topic-badge">BLUETEAM • Operations</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">9 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -83800,6 +83800,71 @@ Separate the three and tuning stops removing detections: <span class="xref" data
 asks whether you removed the noise or the detection, and this is where that question is answered
 or lost. The third row is the one worth chasing &mdash; an alert nobody can resolve is a
 telemetry problem being recorded, every time, as a rule problem.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Inversion</div>
+<div class="concept-title">&ldquo;Blocked&rdquo; Is a Detection, Not a Resolution</div>
+<div class="concept-desc">
+A prevented alert reads like a closed one, and that is the whole problem with it.
+The control did its job on <em>this</em> attempt on <em>this</em> host, and the
+queue treats that as the end of the matter — but a block is evidence of arrival.
+<strong class="c-amber">Something reached that machine and tried.</strong> The
+block tells you nothing about how it got there, and nothing about what arrived
+beside it.
+<br><br>
+The distinction that makes this workable is <strong>delivery versus
+execution</strong>. Execution was stopped; delivery succeeded, and delivery is
+the finding. A payload that reached an endpoint reached it through a path, and
+that path is still open when the alert closes.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>A block tells you</th><th>It does not tell you</th></tr></thead>
+<tbody>
+<tr><td>This control worked, here, this time</td><td>Whether the same thing was delivered to a host where the control is missing, failing or excluded</td></tr>
+<tr><td>The file or command was seen</td><td>How it arrived — mail, removable media, a web download, or a process already running on the box</td></tr>
+<tr><td>Something matched a known-bad signature</td><td>Whether this is stage two of something earlier that matched nothing</td></tr>
+<tr><td>A timestamp and a host</td><td>Whether the attacker now knows what you block, which is what a probe is for</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong>One question, not the full set: what was the delivery path, and is it
+still open?</strong> That is answerable in about a minute from the same
+telemetry the third row of the order above uses, and it is the only question a
+prevented alert reliably earns.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Decision</div>
+<div class="concept-title">When a Prevented Alert Is Worth the Full Investigation</div>
+<div class="concept-desc">
+This is not an argument for working every blocked alert. There are hundreds a
+week in most estates and treating them as incidents is how a queue dies — the
+analyst stops reading any of them, which is strictly worse than auto-closing
+them on purpose. The useful move is a rule for which ones get promoted.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Promote when</th><th>Why that one</th></tr></thead>
+<tbody>
+<tr><td>The same indicator appears on a host without the control</td><td>The block was luck of coverage, and the uncovered host is where the story continues</td></tr>
+<tr><td>The delivery path is unknown after one look</td><td>An unexplained arrival is the finding, whatever happened next</td></tr>
+<tr><td>The target is an account or host that matters</td><td>Domain controllers, build agents and admin workstations do not receive commodity malware by accident</td></tr>
+<tr><td>It is the second block on that host this week</td><td>One is noise from the internet; a pattern against one machine is aim</td></tr>
+<tr><td>The block happened late in a chain</td><td>Everything before it succeeded, and nothing alerted on any of it</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong>Auto-close the rest deliberately, and write down that you did.</strong>
+A documented suppression is a decision somebody can revisit when the estate
+changes; an analyst who has quietly stopped reading a noisy category is the
+same outcome with nobody accountable for it and no way to find out. The
+difference between the two is a line in the detection's own record — which is
+<span class="xref" data-xref="the-detection-lifecycle-idea-to-retirement-and-the-gates-bet" role="link" tabindex="0">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>'s
+argument arriving in the triage queue.
 </div>
 </div>
 </div>
@@ -118444,7 +118509,10 @@ at end of term with that storage intact unless someone asks — the point made i
 The triage order above answers <em>nothing came out</em>. A page that came out wrong is the
 opposite investigation, and an easier one: the path worked end to end, so the fault is in
 what was sent or in what put it on the paper. The shape of the wrongness says which, and
-readers report the shape accurately even when they can describe nothing else.
+readers report the shape accurately even when they can describe nothing else — though
+rarely in these words. <strong>Pages of garbage characters, gibberish, or "it printed
+junk"</strong> are all the second row below: the driver is speaking a page language the
+device does not.
 </div>
 <div class="dw">
 <table class="ref-table">
