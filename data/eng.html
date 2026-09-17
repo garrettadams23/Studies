@@ -6775,3 +6775,82 @@ cosign verify $IMAGE \
               </div>
             </div>
           </div>
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">📈</span>
+              <span class="topic-name">Autoscaling in Practice — The Metric, the Lag, and Why It Oscillates</span>
+              <span class="topic-badge">Reliability</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">An Autoscaler Is a Control Loop, and Every Control Loop Can Oscillate</div>
+                <div class="concept-desc">
+                  Autoscaling is usually introduced as capacity management and it is really
+                  <strong>feedback control</strong>: measure, compare to a target, act, wait, measure
+                  again. Everything that goes wrong with it is a thing that goes wrong with control
+                  loops, and the dominant one is <strong class="c-amber">delay</strong>.
+                  <br><br>
+                  The loop's delay is not the scaling decision — that is instant. It is the time
+                  from deciding to having capacity that is actually serving: the instance boots, the
+                  runtime starts, the cache is cold, the load balancer's health check has to pass
+                  twice. Two to five minutes is ordinary. <strong>For that whole window the metric
+                  keeps saying what it said before you acted</strong>, so a loop that reacts to it
+                  again adds capacity it already ordered — and when the wave lands, removes it all
+                  at once.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Symptom</th><th>What is actually happening</th></tr></thead>
+                    <tbody>
+                      <tr><td>Scales out hard, then straight back in, repeatedly</td><td>The loop is reacting inside its own lag. Classic oscillation; the fix is a cooldown, not a threshold</td></tr>
+                      <tr><td>Scales out and never comes back</td><td>The scale-in rule is stricter than the scale-out one, which is usually correct and worth knowing you chose</td></tr>
+                      <tr><td>Adds instances while latency keeps rising</td><td>The bottleneck is not the thing being scaled — a shared database, a lock, a rate-limited dependency</td></tr>
+                      <tr><td>Never triggers, then falls over</td><td>Averaged CPU <span class="acro-exp">(Central Processing Unit)</span> across a fleet hides a hot shard. The mean of a bimodal distribution describes nothing</td></tr>
+                      <tr><td>Scales on a schedule fine, badly on demand</td><td>The metric lags the load. Queue depth leads; CPU follows; user-visible latency follows last</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Flapping is a lag problem wearing a threshold costume</strong>, and the
+                    reflex — widening the thresholds — treats the symptom and slows every genuine
+                    response. Add a cooldown longer than the time to useful capacity, and make
+                    scale-in slower than scale-out, because being briefly overprovisioned costs
+                    money and being briefly underprovisioned costs the request.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Pick the Metric That Leads, Not the One That Is Easy</div>
+                <div class="concept-desc">
+                  CPU is the default because every platform exposes it, and it is a lagging
+                  indicator of almost every interesting saturation. A queue that is filling tells
+                  you about work already accepted and not yet done, which is the definition of
+                  needing more capacity — and it says so before any CPU number moves.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Metric</th><th>Leads or lags</th><th>Use when</th></tr></thead>
+                    <tbody>
+                      <tr><td>Queue depth, or backlog age</td><td>Leads</td><td>Anything with a queue in front of it. The best default there is</td></tr>
+                      <tr><td>Concurrent requests in flight</td><td>Leads</td><td>Request-driven services; it saturates before CPU does</td></tr>
+                      <tr><td>CPU utilisation</td><td>Lags</td><td>Genuinely CPU-bound work, and nothing else</td></tr>
+                      <tr><td>Memory</td><td>Neither, usually</td><td>Rarely a scaling signal. A rising floor is a leak, and more instances hide it</td></tr>
+                      <tr><td>p99 latency</td><td>Lags badly</td><td>An alerting signal. By the time it moves, users have already felt it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Scale on the thing that fills up, and alert on the thing users feel.</strong>
+                    Those are different metrics and using one for both jobs is where most bad
+                    autoscaling configurations come from. The queue-depth argument is the same one
+                    <span class="xref">Backpressure &amp; Flow Control</span> makes about refusing
+                    work: a queue is where the truth about capacity lives, and
+                    <span class="xref">Load Shedding &amp; Graceful Degradation — Choosing What to Drop Before You Are Forced To</span>
+                    is what to do in the minutes before new capacity is serving — because
+                    autoscaling is never fast enough to be the answer to a spike, only to a trend.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

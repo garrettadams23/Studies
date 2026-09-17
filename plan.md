@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **75**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **76**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -38,23 +38,23 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,554** across 30 domains | `depth_report.py` |
+| Topics | **1,556** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,392**, or **1,123 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,393**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **237 of 250**, **0 unexplained** — fourteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 12 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,591 steps, 1,494 of 1,554 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,494 topics, 4,832 links, 0 one-way** — one mainland of **1,478 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~797 more topics | `page_budget.py` |
+| Reader questions answered | **239 of 250**, **0 unexplained** — fourteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,594 steps, 1,496 of 1,556 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,496 topics, 4,850 links, 0 one-way** — one mainland of **1,480 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **34% raw** headroom — room for ~796 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,135 chars**, median 3,736 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,142 chars**, median 3,738 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **80** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **81** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7602,4 +7602,92 @@ reader's word has been the whole fix.
 probe 227 -> 250 questions · 237 answered · 0 unexplained · 12 zeros · 1 wrong · 3 wide
 2 concept cards added to Alert Triage · 1 prose fix · 2 gaps named with their evidence
 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15 · visual 2
+```
+
+## Session — writing the two cards the last wave named, and the verb that cost one its query
+
+### Both gaps written
+
+The previous record named two and wrote neither, with the missing **words**
+rather than the missing subject — which is the form that makes a finding
+pickable up cold. Both are cards now.
+
+**`eng` — Autoscaling in Practice.** The sentence: *an autoscaler is a control
+loop, and every control loop can oscillate.* The delay in the loop is not the
+decision, which is instant; it is the time from deciding to having capacity
+that is **actually serving** — boot, runtime start, cold cache, two passing
+health checks. Two to five minutes is ordinary, and for that whole window the
+metric still says what it said before you acted.
+
+So flapping is a **lag problem wearing a threshold costume**, and the reflex —
+widening thresholds — treats the symptom and slows every genuine response. The
+second card is about metric choice, and its verdict is the one that decides
+configurations: **scale on the thing that fills up, alert on the thing users
+feel.** Queue depth leads, CPU lags, p99 lags badly; using one metric for both
+jobs is where most bad autoscaling comes from.
+
+`cooldown` and `hysteresis` were the two words that returned zero site-wide when
+the gap was named. That was the whole diagnosis, and it survived contact with
+the writing.
+
+**`threat` — Cryptojacking.** The sentence the last wave predicted: *mining is a
+symptom of access, not the incident.* A process ran on your server as some user,
+reached the internet, and stayed — and **every one of those facts is true of a
+ransomware operator on the same box.** The finding is not *we have a miner*, it
+is *somebody can run code here and we did not know*.
+
+The verdict is the part worth keeping: **it is the cheapest true positive you
+will get all year.** A miner is an intrusion that volunteered its own detection
+by burning a metered resource, and an estate that finds one and cleans it up has
+spent the evidence without reading it. Work it as an intrusion and let the mining
+be the timestamp — most investigations never get a reliable moment when the
+attacker was definitely present.
+
+### And `found` joined the stop list, on a rule already written
+
+`we found crypto mining on a server` returned **nothing** on the day the card was
+written, while `cryptojacking` returned it alone and `crypto mining on a server`
+returned it among six. The blocker was **`found`**.
+
+This file already settled the test, for `got`:
+
+> a rare word is normally a *narrowing* word and precious. The reason it joins is
+> the other half of the test: **it is never a subject.** It arrives attached to
+> the thing that happened, and a card describing that thing has no reason to
+> narrate its arrival.
+
+`found` is a **reporting verb** of exactly that shape — the reader narrating
+their own discovery. 7% of topics, **zero topic titles**, and requiring it
+requires a word the corpus cannot reliably supply.
+
+Measured before shipping, not after: search **56/56 with no ceiling moved**, and
+`usb found in car park` — a query that has been in the census since batch one —
+returns the same two cards it always did. `find`, `finds` and `finding` stay,
+because *Finding What Detection Missed*, *Finding and Fixing Weaknesses* and
+*Finding Your First IDOR* are titles here.
+
+**This is the opposite of the failure this run keeps recording.** Every other
+instance was a rule not applied to the case that motivated it; this is a rule
+written for one word being applied to the next word of the same shape, which is
+what the rule was for.
+
+### The depth tail moved, which it had not for a while
+
+Two cards of five and six concept cards each moved the **10th percentile from
+2,135 to 2,142** — the number the measured-state table calls *what a deepening
+wave has to move*. A recent record concluded that the deepening wave had no work
+in it, and it was right about the tail: the way to move that number turned out
+not to be lengthening thin cards but adding deep ones, because the percentile is
+a position in a distribution and new mass at the top pushes it.
+
+The padding counter-metric behaved too — mean 1,392 → 1,393 and
+excluding-verdicts 1,123 → 1,124, moving **together**, which is the shape the
+row asks for.
+
+```
+2 topics added (1,554 -> 1,556) · 9 related pairs · 3 path steps
+probe 250 questions · 239 answered · 0 unexplained · 10 zeros · 1 wrong · 3 wide
+`found` joins WIDE_STOP on the `got` test — 56/56, no ceiling moved
+10th percentile 2,135 -> 2,142 · mean/card and excl-verdicts both +1
+42 gates green · smoke 163 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

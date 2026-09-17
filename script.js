@@ -2079,7 +2079,7 @@ function plurals(term) {
 const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
   + "were be been am do does did can could should would will shall may might must "
   + "i we you they it he she this that these those my our your their its "
-  + "how what why when where which who does not no yes if then than so "
+  + "how what why when where which who does not no yes if then than so found "
   // `am` was the one form of *to be* this list did not have. `is are was were
   // be been` were all here from the start and the first person singular was
   // not, which is the shape this project keeps recording: a rule applied to a
@@ -2143,6 +2143,23 @@ const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with 
   // a zero cannot be relaxed". Both clauses true; the conclusion was wrong. A
   // verb no card has reason to contain is the argument for stopping it.
   // `get` and `gets` stay — *How Devices Get Their IP Address* is a title here.
+  //
+  // `found` joins on the same test and nothing new. It is a **reporting verb**:
+  // `we found crypto mining on a server`, `usb found in car park`, `we found a
+  // vulnerability` — the reader narrating their own discovery, and a card about
+  // the thing discovered has no reason to say somebody found it. 7% of topics,
+  // **zero topic titles**, and requiring it is requiring a word the corpus
+  // cannot reliably supply.
+  //
+  // It cost the cryptojacking card its own query on the day that card was
+  // written: `cryptojacking` returned it alone and `crypto mining on a server`
+  // returned it among six, while the sentence a person actually types returned
+  // nothing. Measured before shipping — search 56/56 with no ceiling moved, and
+  // `usb found in car park` returns the same two cards it did before.
+  //
+  // `find`, `finds` and `finding` stay. *Finding What Detection Missed*,
+  // *Finding and Fixing Weaknesses* and *Finding Your First IDOR* are titles
+  // here, and `findings` is a noun this corpus uses as a subject constantly.
   + "explain too actually got "
   // `vs` and `versus` join them for the same reason `or` is here. The site
   // titles a dozen topics "X vs Y", so the as-typed pass answers those before

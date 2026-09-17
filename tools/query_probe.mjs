@@ -307,8 +307,8 @@ const READERS = [
     ["the alert says it was blocked do i still care",
      "kind 2, written and still zero. The Alert Triage card had zero mentions of blocked/prevented/contained and now carries two concept cards on it; `blocked alert` and `prevented alert` each return exactly that card. The full sentence fails on `says` and `care`, which a card about prevention has no reason to contain, and the relaxation stage never runs on a zero",
      "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
-    ["we found crypto mining on a server",
-     "kind 2, named and not written — `mining` appears 6 times site-wide and every one is a passing mention in a findings list. The card would have one sentence: mining is a symptom of access, not the incident. Somebody had enough access to run a process, and what they chose to monetise it with is the least interesting thing about that"],
+    ["we found crypto mining on a server", "",
+     "threat/cryptojacking-mining-is-a-symptom-of-access-not-the-incident"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -589,8 +589,8 @@ const READERS = [
     ["terraform plan shows changes i did not make"],
     // ── batch fourteen ──
     ["the deploy succeeded but nothing changed"],
-    ["the autoscaler keeps flapping",
-     "kind 2, named and not written — autoscaling is covered in `cloud`, `devops` and `eng`, and the oscillation fault is not: `cooldown` and `hysteresis` each return **zero** across the whole site, and they are the two words the answer is made of"],
+    ["the autoscaler keeps flapping", "",
+     "eng/autoscaling-in-practice-the-metric-the-lag-and-why-it-oscill"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
