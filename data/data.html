@@ -267,6 +267,46 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The Failure Mode</div>
+                <div class="concept-title">Write Skew — the Anomaly the List of Three Leaves Out</div>
+                <div class="concept-desc">
+                  Every isolation table, including the one above, is organised around dirty reads,
+                  non-repeatable reads and phantoms. Those three are what the levels were
+                  historically defined against — and <strong class="c-amber">none of them is the
+                  reason anybody actually needs <code>SERIALIZABLE</code></strong>.
+                  <br><br>
+                  The reason is <strong>write skew</strong>, and its shape is this: two transactions
+                  read the same set of rows, each checks an invariant across that set, each finds it
+                  satisfied, and each then writes a <em>different</em> row. No transaction overwrote
+                  another's write, so nothing was lost. No transaction re-read anything, so nothing
+                  was non-repeatable. Both commit, and the invariant they both checked is now false.
+                  <br><br>
+                  Two doctors both on call, each checking that at least one other doctor is on call
+                  before going off. Both see the other. Both go off. The rule *at least one doctor is
+                  on call* was enforced by both transactions and broken by their combination.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Level</th><th>Prevents write skew?</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>REPEATABLE READ</code> / snapshot isolation</td><td><strong>No.</strong> Each transaction has a valid snapshot and writes rows nobody else touched. This is the case people assume is covered and is not</td></tr>
+                      <tr><td><code>SERIALIZABLE</code> (Postgres SSI)</td><td>Yes — it detects the read-write dependency cycle and aborts one. That abort <em>is</em> the feature, and the application must retry</td></tr>
+                      <tr><td><code>SELECT … FOR UPDATE</code> on the rows read</td><td>Yes, by making the read a write. Works at any level and is the usual practical answer</td></tr>
+                      <tr><td>A constraint the database can check</td><td>Best of all where it fits — a unique index or an exclusion constraint cannot be skewed, because the check is not a read</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>If a transaction reads rows to decide whether it may write, the rows it
+                    read are part of what it is writing.</strong> That is the whole rule, and it is
+                    the one an isolation table cannot express — the table describes what each level
+                    permits, and write skew is about a relationship between two transactions rather
+                    than a property of either. Either lock what you read, move the invariant into a
+                    constraint, or run <code>SERIALIZABLE</code> and write the retry loop. Choosing
+                    none of the three is a decision too, usually made by not knowing this row exists.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 <div class="topic" data-reviewed="2026-09">
@@ -937,6 +977,47 @@
                     open by application code that did work between <code>BEGIN</code> and
                     <code>COMMIT</code> it did not need to — an HTTP call, a file write, a
                     user waiting on a form.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Idle Transaction That Stops the Database Cleaning Up</div>
+                <div class="concept-desc">
+                  <em>Keep transactions short</em> is advice every reference gives and few explain,
+                  and the lock contention above is only its cheaper half. The expensive half is that
+                  <strong class="c-amber">an open transaction pins a snapshot, and nothing older
+                  than the oldest live snapshot can be reclaimed</strong> — anywhere in the database,
+                  not just in the tables that transaction touched.
+                  <br><br>
+                  That produces the symptom that sends people looking in exactly the wrong place:
+                  <strong>autovacuum is running, on schedule, succeeding — and bloat keeps
+                  growing.</strong> It is not failing. It is doing its job and finding nothing it is
+                  allowed to remove, because a session somewhere has been <code>idle in
+                  transaction</code> since this morning.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>What you see</th><th>Why the open transaction causes it</th></tr></thead>
+                    <tbody>
+                      <tr><td>The table is bloated — index and heap growing while autovacuum runs cleanly</td><td>Dead rows are newer than the oldest snapshot, so they are still potentially visible and cannot be removed</td></tr>
+                      <tr><td>A query that was fast last week now scans</td><td>The table is mostly dead rows; the planner's row estimate and the physical reality have separated</td></tr>
+                      <tr><td>Replication lag on a replica doing nothing</td><td>A long read on the replica conflicts with cleanup arriving from the primary; the replica waits or cancels the query</td></tr>
+                      <tr><td>Disk growing with no data growth</td><td>Same cause. The rows were deleted and the space was never reclaimable</td></tr>
+                      <tr><td>Postgres warning about transaction ID wraparound</td><td>The far end of the same mechanism, and the one that eventually stops writes entirely</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Ask what the oldest transaction is before you ask anything about
+                    vacuum.</strong> In Postgres that is one query against
+                    <code>pg_stat_activity</code> — the oldest <code>xact_start</code>, and the
+                    <code>state</code> beside it — and <code>idle in transaction</code> is the
+                    answer far more often than any vacuum setting is. The fix is in the application,
+                    not the database: a connection that opened a transaction and then went to do
+                    something else. Set <code>idle_in_transaction_session_timeout</code> so the
+                    database ends them for you, and treat that as a backstop rather than a fix,
+                    because the code that leaves them open is also the code holding a pool
+                    connection it is not using.
                   </div>
                 </div>
               </div>

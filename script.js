@@ -3389,12 +3389,21 @@ const ST_NOT_STUDYABLE = new Set(["acronym"]);
  * Studyable = there is something to put on the back of the card.
  *
  * The domain exclusion above was the right judgement and the wrong unit. Six
- * topics outside `acronym` build a flashcard whose back is **completely empty** —
- * `shortcut`'s *Windows*, *macOS*, *Terminal / Bash* and *VS Code*, the AI
- * glossary, and the military code list. Every one of them is the same species as
- * the acronym dictionary: a lookup table, with a heading and rows and no prose
- * anywhere in the topic. There is no question a table of keystrokes answers, and
- * turning one over reveals nothing.
+ * topics outside `acronym` built a flashcard whose back was **completely empty**
+ * when this was written — `shortcut`'s *Windows*, *macOS*, *Terminal / Bash* and
+ * *VS Code*, the AI glossary, and the military code list. Every one of them is
+ * the same species as the acronym dictionary: a lookup table, with a heading and
+ * rows and no prose anywhere in the topic. There is no question a table of
+ * keystrokes answers, and turning one over reveals nothing.
+ *
+ * **It is four today**, and that is the rule working rather than drifting: the
+ * AI glossary and the military code list have since gained prose, so they build
+ * a real card and the shape test lets them back in without anybody editing this
+ * list. Measured rather than assumed — 1,556 index entries, 1,487 with both a
+ * concept title and a description, 5 with a title alone, 0 with a description
+ * alone, 64 excluded of which 60 are the acronym dictionary. The named six are
+ * kept above as the evidence that produced the rule; the live count is whatever
+ * `stIsStudyable` says today.
  *
  * So the rule is about shape rather than domain, which also means the next
  * lookup card somebody writes is excluded without anybody remembering to add it.

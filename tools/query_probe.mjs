@@ -416,6 +416,11 @@ const READERS = [
     ["how do i find what is using a port"],
     ["the log file is huge"],
     ["the service starts then dies"],
+    // ── batch fifteen ──
+    ["why is my table bloated", "",
+     "data/locking-mvcc-concurrency-without-chaos"],
+    ["autovacuum is running but bloat keeps growing", "",
+     "data/locking-mvcc-concurrency-without-chaos"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -528,6 +533,11 @@ const READERS = [
     // ── batch fourteen ──
     ["my change broke something unrelated"],
     ["the bug only happens in production"],
+    // ── batch fifteen ──
+    ["two transactions both checked and both committed", "",
+     "data/acid-transactions-isolation-levels"],
+    ["do i need serializable", "",
+     "data/acid-transactions-isolation-levels"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",

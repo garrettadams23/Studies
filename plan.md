@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **76**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **77**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,18 +43,18 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,393**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **239 of 250**, **0 unexplained** — fourteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **243 of 254**, **0 unexplained** — fifteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,594 steps, 1,496 of 1,556 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,496 topics, 4,850 links, 0 one-way** — one mainland of **1,480 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~796 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~794 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,142 chars**, median 3,738 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,142 chars**, median 3,739 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **81** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **82** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7690,4 +7690,88 @@ probe 250 questions · 239 answered · 0 unexplained · 10 zeros · 1 wrong · 3
 `found` joins WIDE_STOP on the `got` test — 56/56, no ceiling moved
 10th percentile 2,135 -> 2,142 · mean/card and excl-verdicts both +1
 42 gates green · smoke 163 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — the decks were fine, and the isolation table stopped one row short
+
+### Two censuses that came back clean, which is worth the paragraph
+
+The plan records *a flashcard with a blank back* and *a quiz that answered
+itself* as things found **by reading**, and nothing has ever counted them. So
+they were counted.
+
+**The decks are in good shape.** 1,556 index entries: **1,487** carry both a
+concept title and a description, **5** carry a title alone, **0** carry a
+description alone, and **64** are excluded — 60 of them the generated acronym
+dictionary. The blank-back problem was already solved properly, by a rule about
+*shape* rather than domain, so the next lookup card somebody writes is excluded
+without anyone remembering to add it.
+
+The one thing the measurement corrected was the comment beside that rule, which
+names **six** topics that build an empty card. It is **four**: the AI glossary
+and the military code list have since gained prose and the shape test lets them
+back in. The comment is now explicit that the six are the evidence that produced
+the rule and the live count is whatever `stIsStudyable` says — the distinction
+Phase 11 §8 drew between a record and a claim.
+
+### Then `data`, which is comprehensive and stops one row short
+
+Forty-four topics covering vacuum, bloat, isolation levels, repeatable read,
+serializable, phantoms, stale statistics and deadlocks. Three phrases return
+**zero across the whole site**: `write skew`, `parameter sniffing`, and
+`long-running transaction`. The first and third are the two findings.
+
+**Write skew.** The ACID card teaches the four isolation levels against *the
+three anomalies — dirty, non-repeatable, phantom*, which is the textbook set and
+is what the levels were historically defined against. **None of them is why
+anybody needs `SERIALIZABLE`.**
+
+Write skew is: two transactions read the same rows, each checks an invariant
+across them, each writes a *different* row. Nothing was overwritten, nothing was
+re-read, both commit, and the invariant both checked is now false. Two doctors
+each confirming another is on call before going off, both seeing the other, both
+going off.
+
+The reason an isolation table cannot express it is the interesting part and it is
+now the card's verdict: **the table describes what each level permits, and write
+skew is a relationship between two transactions rather than a property of
+either.** Snapshot isolation allows it precisely because each transaction is
+individually well-behaved. The rule that replaces the table: *if a transaction
+reads rows to decide whether it may write, the rows it read are part of what it
+is writing.*
+
+**The idle transaction.** The MVCC card says *keep transactions short* and
+explains the lock-contention half. The expensive half was missing: an open
+transaction pins a snapshot, and **nothing older than the oldest live snapshot
+can be reclaimed anywhere in the database** — not just in the tables that
+transaction touched.
+
+Which produces the symptom that sends people to the wrong place entirely:
+**autovacuum running, on schedule, succeeding — and bloat growing.** It is not
+failing. It is finding nothing it is allowed to remove. So the verdict is a
+reordering of the investigation: *ask what the oldest transaction is before you
+ask anything about vacuum*, which is one query against `pg_stat_activity`, and
+`idle in transaction` is the answer more often than any vacuum setting is.
+
+Both cards state the thing the surrounding material implies and never says,
+which is the same shape as *three cards that were carrying a judgement in a
+table* — except here the judgement was not in the table either. It was absent.
+
+### And the reader's word, for the fifth time this run
+
+`why is my table bloated` returned **nothing** against a card written twenty
+minutes earlier whose first symptom row read *Table and index bloat rising*.
+`bloat` is the noun the documentation uses; **bloated** is the adjective a person
+types, and it appeared twice on the site, both in unrelated domains.
+
+The row now opens *The table is bloated*. Fifth instance this run, and the first
+where the card it failed to reach was one I had just written — which is the same
+correction as the USB card in the first wave, arriving after the lesson had been
+written down twice.
+
+```
+deck census: 1,487 strong · 5 title-only · 0 blank · 64 excluded (60 generated)
+2 concept cards added to `data`; topics unchanged at 1,556, mean/card unchanged
+probe 250 -> 254 · 243 answered · 0 unexplained
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 ```
