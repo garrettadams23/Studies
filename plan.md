@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **77**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **78**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -43,7 +43,7 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,393**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **243 of 254**, **0 unexplained** — fifteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **245 of 257**, **0 unexplained** — fifteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,594 steps, 1,496 of 1,556 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,496 topics, 4,850 links, 0 one-way** — one mainland of **1,480 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~794 more topics | `page_budget.py` |
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **82** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **83** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7773,5 +7773,89 @@ written down twice.
 deck census: 1,487 strong · 5 title-only · 0 blank · 64 excluded (60 generated)
 2 concept cards added to `data`; topics unchanged at 1,556, mean/card unchanged
 probe 250 -> 254 · 243 answered · 0 unexplained
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+```
+
+## Session — the diagnosis I had reached by hand five times, printed
+
+### Five is where a tool earns its keep
+
+`usb device not recognised`, `the screen is flickering`, `we outsourced it who is
+responsible`, `why is my table bloated`, `data is leaving over dns`. Five zeros
+in this run, five identical investigations, and the same three commands every
+time: retype the query with its rarest word, grep the corpus for each word, find
+the one that is not there.
+
+The fifth was against a card written twenty minutes earlier, by the session that
+had already written the lesson down twice.
+
+This file's operating manual settles what to do with that. **Six of ten failures
+were caught by a tool, and the ratio is the argument for the tools** — a
+diagnosis re-derived five times is a diagnosis that should be printed.
+
+### What it prints, and why it needs no judgement to read
+
+Under every unexplained zero, the probe now shows how many topics contain each
+word of the query, one word at a time. The two kinds of zero separate at a
+glance:
+
+```
+ZERO  "the laptop smells of burning"             0  nothing — investigate
+      in the corpus: laptop 106 · smells 0 · burning 8
+      → "smells" is not on the site — the reader's word, not a missing card
+
+ZERO  "the same query is fast sometimes and slow other times"   0
+      in the corpus: same 711 · query 244 · fast 414 · sometimes 90 · slow 304 · other 684 · times 263
+      → every word is here; the conjunction is what failed
+```
+
+A word at **0** is kind 1 — *fix in prose, it is better writing anyway*. Every
+word present and still a zero is the matcher, and the relaxation stage
+deliberately does not run on a zero. No threshold, nothing for a reader to
+overrule.
+
+It runs **only on a zero with no recorded verdict**, because it costs a corpus
+sweep per query and a zero somebody has already explained has had this done once.
+
+**It is deliberately not a suggestion engine.** It names the absent word; whether
+the card should use it is a judgement, and the difference between naming a
+symptom a reader recognises and keyword stuffing is exactly that judgement.
+
+### Both of its first two findings were real, and one was a safety gap
+
+The `fast sometimes` one is **kind 3**, and the tool said so before any grep:
+every word present. `data` has a concept card titled *The Query That Was Fast and
+Went Slow: Stale Statistics and the Plan Flip*. The narrower gap beside it is
+recorded — `parameter sniffing` and `cardinality estimat` each return zero
+site-wide, and they are the *intermittent* case rather than the one-way flip.
+
+The other one mattered more. `hw` covers a burning smell properly — *Smell of
+burnt electronics, no visible damage → power it down* — in **Components &
+Schematics**, which is the card for somebody holding a board. The card a person
+with a laptop lands on is *Laptops — Batteries, Thermals & What Is Actually
+Replaceable*, and it had **zero** mentions of smell or burning. It covers
+swelling carefully, including that swelling is a safety issue.
+
+Swelling and a burning smell are not the same urgency, and the card said one and
+not the other:
+
+> **Stop.** A burning or sharp chemical smell is not a wear symptom — power down,
+> unplug, and do not charge it again. **Swelling gives you days; a smell does
+> not.**
+
+The query reaches both cards now. **The tool found a missing safety instruction
+on its first run**, from a query written to test whether the tool worked.
+
+### And the `want` was wrong, which the measurement caught
+
+The verdict first pointed at *Systematic Hardware Troubleshooting* — a guess from
+the subject rather than from the search. The probe put the row in **Components &
+Schematics**, and the card a reader actually needs was a third one. Three
+candidates, and the one that mattered was not the guess or the hit.
+
+```
+query_probe: per-word corpus counts under every unexplained zero
+probe 254 -> 257 · 245 answered · 0 unexplained
+2 prose fixes, one of them a missing safety instruction
 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 ```

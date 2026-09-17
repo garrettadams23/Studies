@@ -538,6 +538,9 @@ const READERS = [
      "data/acid-transactions-isolation-levels"],
     ["do i need serializable", "",
      "data/acid-transactions-isolation-levels"],
+    ["the same query is fast sometimes and slow other times",
+     "kind 3 — every word is in the corpus and no card carries them together, which is what the per-word line under a zero is for. `data` has a concept card titled *The Query That Was Fast and Went Slow: Stale Statistics and the Plan Flip*. The nearby gap is real and narrower: `parameter sniffing` and `cardinality estimat` each return zero site-wide, and they are the intermittent case rather than the one-way flip"],
+    ["my sql is slow only for one customer"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -565,6 +568,8 @@ const READERS = [
     // ── batch fourteen ──
     ["the keyboard types the wrong characters"],
     ["slow since the update"],
+    ["the laptop smells of burning", "",
+     "hw/laptops-batteries-thermals-what-is-actually-replaceable"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -775,6 +780,44 @@ const hitsFor = q => page.evaluate(query => {
   return { hits: out, note: document.getElementById("search-count")?.textContent || "" };
 }, q);
 
+/**
+ * How many topics contain each word of a query, one word at a time.
+ *
+ * Built after the same diagnosis was reached **by hand five times in one run** —
+ * `usb device not recognised`, `the screen is flickering`, `we outsourced it who
+ * is responsible`, `why is my table bloated` and `data is leaving over dns` were
+ * each a zero because one word of the query is not in the corpus while the
+ * subject plainly is. Every one of them took the same three commands to find,
+ * and the fifth was against a card written twenty minutes earlier.
+ *
+ * That is the point at which this file's own argument applies: **six of ten
+ * failures were caught by a tool, and the ratio is the case for the tools.** A
+ * diagnosis re-derived five times is a diagnosis that should be printed.
+ *
+ * It separates the two kinds of zero at a glance and needs no judgement to read:
+ *
+ *   * a word at **0** is the corpus missing the reader's word — kind 1, and the
+ *     rule for it is *fix in prose, it is better writing anyway*
+ *   * every word present, and still a zero, is the conjunction failing on words
+ *     no single card carries together — a matcher limit, and the relaxation
+ *     stage deliberately does not run on a zero
+ *
+ * Deliberately *not* a suggestion engine. It says which word is absent; whether
+ * the card should use it is a judgement, and the difference between naming a
+ * symptom the reader recognises and keyword stuffing is exactly that judgement.
+ */
+const wordsFor = q => page.evaluate(query => {
+  const stop = typeof WIDE_STOP !== "undefined" ? WIDE_STOP : new Set();
+  const words = query.split(/\s+/).filter(w => w.length >= 2 && !stop.has(w.toLowerCase()));
+  const corpus = [];
+  domainSections().forEach(section =>
+    domainTopics(section.dataset.domain).forEach(t => corpus.push(t.text.toLowerCase())));
+  return words.map(w => {
+    const needle = w.toLowerCase();
+    return [w, corpus.reduce((n, text) => n + (text.includes(needle) ? 1 : 0), 0)];
+  });
+}, q);
+
 let total = 0, zeros = 0, explained = 0, wide = 0, wrong = 0;
 const unexplained = [];
 
@@ -813,13 +856,17 @@ for (const [reader, queries] of READERS) {
     const why = staleReason(keep, hits, want);
     if (why) stale.push([reader, q, why]);
     if (hits.length > WIDE) wide++;
-    rows.push([q, hits, keep, missed, want]);
+    // Only for a zero, and only when nobody has already written the verdict:
+    // it costs a corpus sweep per query and a recorded zero has had its
+    // diagnosis done once already.
+    const absent = (!hits.length && !keep) ? await wordsFor(q) : null;
+    rows.push([q, hits, keep, missed, want, absent]);
   }
   const show = ONLY_ZERO
     ? rows.filter(r => !r[1].length || r[3] || r[1].length > WIDE) : rows;
   if (!show.length) continue;
   console.log(`\n${reader}\n`);
-  for (const [q, hits, keep, missed, want] of show) {
+  for (const [q, hits, keep, missed, want, absent] of show) {
     const mark = !hits.length ? (keep ? "kept" : "ZERO")
                : missed       ? (keep ? "kept" : "MISS")
                : hits.length > WIDE ? (keep ? "wide" : "WIDE") : "ok  ";
@@ -828,6 +875,15 @@ for (const [reader, queries] of READERS) {
                : hits.length ? hits[0]
                : (keep || "nothing — investigate");
     console.log(`  ${mark}  ${JSON.stringify(q).padEnd(40)} ${String(hits.length).padStart(3)}  ${tail.slice(0, 72)}`);
+    if (absent && absent.length) {
+      const gone = absent.filter(([, n]) => n === 0);
+      console.log(`        in the corpus: ` +
+        absent.map(([w, n]) => `${w} ${n}`).join(" · ") +
+        (gone.length
+          ? `\n        → ${gone.map(([w]) => `“${w}”`).join(", ")} ` +
+            `${gone.length > 1 ? "are" : "is"} not on the site — the reader's word, not a missing card`
+          : `\n        → every word is here; the conjunction is what failed`));
+    }
   }
 }
 
