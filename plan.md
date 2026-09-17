@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **73**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **74**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -46,7 +46,7 @@ run rather than letting them pass as verified:
 | Reader questions answered | **217 of 227**, **0 unexplained** — thirteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 9 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,591 steps, 1,494 of 1,554 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,494 topics, 4,832 links, 0 one-way** — one mainland of **1,478 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~800 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~799 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,135 chars**, median 3,736 — the number a deepening wave has to move | `depth_report.py` |
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **78** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **79** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7418,4 +7418,99 @@ acronym_drift 1,485 -> 1,141 rows; 344 product names removed, 0 true acronyms lo
 threshold measured, not picked: 3 keeps SaaS/PaaS/IaaS, 1 would lose GHz/IPv6/10GbE
 the remainder hits Phase 11 §3's wall — no property left to require
 42 gates green · make check clean
+```
+
+## Session — the color check was reading an empty set, and zero looked like health
+
+### Starting somewhere else entirely
+
+The lead was the linter's `401 inline style attribute (ceiling 401)`, a counter
+that has not moved in a long time. The theory — `color: var(--cyan)` appears 400
+times and `.c-cyan` already exists, so hundreds could become classes — was
+**wrong, and measuring took two minutes**: of the 401 *avoidable* attributes,
+**7** are a pure color with a matching class, all on `<th>`. The cyan ones are
+nearly all in the 757 `.ref-table` first cells where a `c-*` class loses on
+specificity, exactly as that comment says.
+
+What the measurement turned up instead was three rows further down the list.
+
+### 168 color literals the check could not see
+
+`lint_content.py` fails the build on a hard-coded color, with this message:
+
+> *hard-coded colour {literal} — it keeps its dark-mode value in light mode.*
+
+Its detector is `HEX_RE = #[0-9a-fA-F]{3,8}` — **hex notation only**. The content
+carries **168 `rgba()` literals across ten domains**, and the hex count is
+**zero**. The check had been passing on an empty set for as long as it existed,
+and a green line that says nothing is wrong is indistinguishable from one that
+says *I am not looking*.
+
+It is the defect its own message describes, precisely. `--cyan` is `#00d4ff`
+in dark and `#0274af` in light, so `rgba(0, 212, 255, 0.3)` in a card kept the
+dark value in daylight.
+
+### Fourteen of them were worse than stale
+
+`rgba(168, 85, 247, …)` appears fourteen times, and `style.css` says what that
+number is:
+
+```css
+--purple: #ad5ff7;   /* was #a855f7, 4.47:1 on --bg3 — just under */
+```
+
+**`#a855f7` is the superseded purple.** A contrast fix was applied to the
+variable and fourteen hardcoded copies kept the failing value — so the
+accessibility problem the change was made to solve was still on the page,
+fourteen times, in the one form the fix could not reach.
+
+### All 168 mapped, which is what made the fix mechanical
+
+154 matched a current theme variable exactly; the other 14 were the purple
+above. None was an arbitrary color. So each became
+`color-mix(in srgb, var(--X) N%, transparent)` — already house style, used 20
+times in `style.css`.
+
+### The proof, which is the part worth copying
+
+`make equiv` exists to say whether a styling change rendered identically, and
+this change **should not be identical** — in light mode that is the entire
+point. So it was run against dark mode and the output checked numerically rather
+than read:
+
+```
+154,566 elements compared across 30 domains, 33 properties each
+192 colour pairs · 187 numerically identical · 5 genuinely different
+```
+
+The 187 are a **serialisation** change and nothing else: Chrome prints a
+`color-mix()` result as `color(srgb 1 0.690196 0.12549 / 0.3)` where it printed
+`rgba(255, 176, 32, 0.3)`, and 176/255 = 0.690196. Byte-identical rendering,
+different string.
+
+The 5 are `rgb(168, 85, 247) → rgb(173, 95, 247)`. That is `#a855f7 → #ad5ff7`:
+**the only elements whose appearance changed are the fourteen that were carrying
+the pre-fix purple**, and they now carry the corrected one.
+
+A diff of 45 rows read by eye would have been "all the same, fine". Parsing it
+turned one number into the finding.
+
+### And the check had no fixtures at all
+
+Which is why nothing noticed. Every other rule in that file has a fixture group;
+the color rule had none, so there was never a case asserting *this input must be
+reported*. **A check with no fixture cannot tell "nothing is wrong" from "I am
+not looking", and this one had been unable to tell since it was written.**
+
+Nine fixtures now: hex, `rgba`, `rgb`, `hsl`, an SVG paint attribute, a ticket
+number that looks like hex, a CSS sample inside `<pre>`, and the two forms that
+must **not** report — `var()` and `color-mix()` over a variable, because the
+point is a color that cannot follow the theme rather than the mention of one.
+55 fixtures in the file, 0 failures.
+
+```
+168 literals converted in 10 domains · 14 of them the superseded --purple
+equiv: 192 pairs, 187 identical, 5 changed — and the 5 are the contrast fix landing
+lint_content: FUNC_RE added, 9 colour fixtures where there were none, 55 total
+42 gates green · smoke 163 · search 56 · a11y 31 both themes · visual 2 · mobile 15
 ```
