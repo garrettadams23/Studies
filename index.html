@@ -14528,12 +14528,12 @@ which is precisely the property that lets the review actually finish.
 </div>
 </div>
 <!-- ── TOPIC: NON-HUMAN IDENTITY ─────────────────────────────── -->
-<div class="topic" id="non-human-identity-service-accounts-workloads-and-the-sprawl" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="non-human-identity-service-accounts-workloads-and-the-sprawl" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🤖</span>
 <span class="topic-name">Non-Human Identity — Service Accounts, Workloads and the Sprawl Nobody Owns</span>
 <span class="topic-badge">Identity</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -14610,9 +14610,19 @@ it — and observation answers most of the questions a review would have asked.
 </tbody>
 </table>
 <div class="concept-desc verdict">
-The last row deserves emphasis, because it decides how a bad day goes. If nobody knows what
-breaks when a given credential is rotated, then during an incident the honest choice is
-between an unknown outage and leaving an attacker's access in place. Teams facing that
+<strong>The two alerting rows are the cheapest detections in identity security and the
+least deployed, for one reason worth stating plainly: a person's location varies
+legitimately and a workload's does not.</strong> Impossible travel is a probabilistic
+alarm for a human — people fly, use VPNs <span class="acro-exp">(Virtual Private Network)</span>, hand a laptop to a colleague — and it is nearly
+a deterministic one here, because a service account has no travel to be impossible. A
+batch job that has authenticated from one subnet for three years and appears from another
+country has no innocent explanation of the kind a human sign-in usually has. Same with an
+interactive logon: nothing legitimate about a machine identity involves a keyboard. Tune
+these two per identity rather than per tenant and they are close to noiseless.
+<br><br>
+The last row deserves emphasis too, because it decides how a bad day goes. If nobody knows
+what breaks when a given credential is rotated, then during an incident the honest choice
+is between an unknown outage and leaving an attacker's access in place. Teams facing that
 choice under pressure usually pick wrong. Rotating on a schedule while everything is calm
 is not hygiene theatre — it is the rehearsal that makes revocation an available option.
 </div>

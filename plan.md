@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **68**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **69**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -40,10 +40,10 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,554** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,391**, or **1,123 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,392**, or **1,123 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **216 of 227**, **0 unexplained** — thirteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros and the 1 wrong-card are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **217 of 227**, **0 unexplained** — thirteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 9 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,591 steps, 1,494 of 1,554 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,494 topics, 4,818 links, 0 one-way** — one mainland of 1,468, three reference-domain islands | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~800 more topics | `page_budget.py` |
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **73** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **74** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -6936,4 +6936,107 @@ probe 202 -> 227 questions · 216 answered · 0 unexplained · 10 zeros · 1 wro
 1 topic added (linux, 1,553 -> 1,554) · 2 prose fixes · 5 related pairs · 1 path step
 matcher: `am` joins WIDE_STOP — search 56/56, no ceiling moved
 42 gates green · smoke 163 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — I filed a kind-2 from a grep, and the card refuted it
+
+### The correction first, because it is the finding
+
+Last wave named `a service account signed in from another country` as **kind 2,
+a real gap, not written** — the two halves exist apart and the join does not.
+That verdict was reached from a grep over `sec` and `blueteam`. Reading the card
+took two minutes and refuted it: `Non-Human Identity` already carries both
+alerting rows, *alert on interactive sign-in by a service account* and *alert on
+use from a new address, region or client*.
+
+The probe's docstring warns about the inverse of this and has for a long time:
+
+> a kind-3 call is a decision not to write something, and it was being made
+> from a topic list.
+
+**A kind-2 call made from a grep is the same error pointed the other way, and it
+is the more expensive one**, because a wrong kind-3 leaves a gap and a wrong
+kind-2 ships a duplicate. The rule generalises: *neither verdict is safe until
+the nearest card has been read*, and the card is the unit, not the domain and
+not the grep.
+
+What was actually missing was a sentence. Both rows were carrying a judgement
+the prose never made — the *three cards that were carrying a judgement in a
+table* shape, again — so it is stated now: **a person's location varies
+legitimately and a workload's does not.** Impossible travel is probabilistic for
+a human, who flies and uses VPNs, and nearly deterministic here, because a
+service account has no travel to be impossible. The query reaches the card
+first now.
+
+Then the tool corrected me a second time. With the query answered, its note
+became *"a miss that no longer misses"* by the staleness rule's own definition,
+so the note had to go and the correction had to live here instead. That is the
+rule working exactly as designed: **the probe records defects, not history.**
+
+### `wide` was the one outcome with no verdict trail
+
+Zeros carry a `keep` and are counted explained or unexplained. Wrong-cards do
+too. **Wide was incremented into a headline number and forgotten** — for
+thirteen batches, three queries sat in it and nothing recorded whether that was
+acceptable or whether nobody had looked. Same shape as the navigation claim and
+Phase 11's numbers, arriving in the census that found both.
+
+It is scored like the other two now, and the three have verdicts. Two are
+inherent and say so: `what is a hash` reaches 126 because *hash* is in a ninth
+of the site and every use of it is correct, and `how does dns work` reaches 67
+for the same reason. Ranking would fix them; this matcher is a filter by design
+and says so.
+
+### The third had a cause, and the fix did not survive contact
+
+`what is big o for` returns **114 cards — a fourteenth of the site — because it
+collapses to the single word `big`.** The `o` is one character and dropped as a
+free-floating requirement, which is correct and deliberate: a one-character word
+narrows nothing.
+
+The measurements that make it a defect rather than a fact of life: `big o`
+returns **10** and `big o notation` returns **2**, both correct, because a short
+query is answered by the phrase stage and never reaches this one. **A reader who
+wraps the term in a question gets a different search from one who does not.**
+
+There is a mechanism in the matcher for exactly this — `joined`, which pairs a
+word with its neighbour because `fine-tune` folds to `finetune`. It could not
+see this case, because it is computed from the list the one-character word has
+already been removed from. So the fix looked obvious: require the pair joined
+rather than dropping the short word.
+
+**Built, measured, reverted.** It broke `the 5 whys`, a gated fixture, which
+needs the number kept as its own token rather than fused. Narrowing the rule to
+letters does not save it either: `what is a c pointer` needs `pointer` and
+would get `cpointer`, which is nothing. Nothing in a query says whether a
+one-character word is part of a compound or a word in its own right, and that
+is Phase 11 §3's conclusion in a different file — **the right response to a rule
+that cannot be narrowed is not to ship it.**
+
+One narrowing is left and is *decidable*, which is why it is named rather than
+dismissed: keep the join only where the joined form actually occurs in the
+folded corpus. `bigo` does, `cpointer` and `5whys` do not. It is not attempted
+because it costs a corpus sweep on every query rather than only inside
+relaxation, and that is a real budget rather than a guess.
+
+### The fixture that caught the interaction I introduced
+
+Scoring `wide` broke the staleness check within the hour. Its rule — *a note
+explaining a miss that now reaches its topic is stale* — fired on all three new
+verdicts, because **a wide query does reach its want. That is the definition of
+wide**: the answer present inside a set nobody can read.
+
+The rule was right for the case it was written for and had no way to know a
+second existed. It now retires a note only when the query is *otherwise
+healthy*, and the two new fixtures cover both directions — a wide set that still
+reaches its want is not stale, a set that has since narrowed is.
+
+Twelve fixtures, and the guard is real: without it the first fails.
+
+```
+probe 227 questions · 217 answered · 0 unexplained · 9 zeros · 1 wrong · 3 wide, all recorded
+wide is now a scored outcome with a verdict trail; staleness distinguishes it from solved
+one matcher fix built, measured against the gates, and reverted
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+mean/card 1,391 -> 1,392, excluding verdicts 1,123 unchanged — this wave's prose was a verdict
 ```

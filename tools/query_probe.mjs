@@ -296,8 +296,7 @@ const READERS = [
     // ── batch thirteen ──
     ["what is this powershell doing"],
     ["impossible travel alert"],
-    ["a service account signed in from another country",
-     "kind 2, named and not written — the two halves exist apart and the join does not. `sec` governs non-human identity and `blueteam` ITDR covers impossible travel for people; neither says a service account has no travel to be impossible, so a geo anomaly on one is a different alarm and a louder one. 'signed' is also an inflection miss against 'sign-in'",
+    ["a service account signed in from another country", "",
      "sec/non-human-identity-service-accounts-workloads-and-the-sprawl"],
   ]],
   ["a learner meeting a subject", [
@@ -319,7 +318,9 @@ const READERS = [
     ["what does opsec actually mean", "",
      "military/opsec-operational-security-in-cyber-real-life"],
     ["how do i use vim", "", "shortcut/vim"],
-    ["what is big o for", "", "cs/big-o-in-practice-what-the-notation-hides"],
+    ["what is big o for",
+     "wide, and the one of the three with a cause rather than a corpus: `o` is one character, dropped as a free-floating requirement because a one-character word narrows nothing, so the query collapses to `big` — 114 cards. `big o` returns 10 and `big o notation` returns 2, because a short query is answered by the phrase stage and never reaches this one. The join-instead-of-drop fix was built and reverted: it broke `the 5 whys`, a gated fixture, and narrowing it to letters fails on `what is a c pointer`, which needs `pointer` and not `cpointer`. A corpus-aware version — join only where the joined form exists in the folded text — is decidable and not attempted, because it costs a sweep on every query",
+     "cs/big-o-in-practice-what-the-notation-hides"],
     ["i cannot do integrals", "",
      "math/unit-3-integrals-series-area-techniques-differential-equatio"],
     ["should we fine tune or use rag", "",
@@ -333,8 +334,12 @@ const READERS = [
     ["spaced repetition", "", "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
     ["how do adults learn", "", "career/how-adults-actually-learn-relevance-practice-feedback-spacin"],
     // ── batch two ──
-    ["what is a hash", "", "sec/passwords-hashing-how-logins-are-stored-safely"],
-    ["how does dns work", "", "net/dns-the-internets-phone-book"],
+    ["what is a hash",
+     "wide and inherent — `hash` is in a ninth of the site and every use is correct. Eight genuinely relevant cards are in the set, including the wanted one. Only ranking would fix this, and this matcher is a filter by design",
+     "sec/passwords-hashing-how-logins-are-stored-safely"],
+    ["how does dns work",
+     "wide and inherent, same shape as `what is a hash` — relaxes to `dns` + `work`, and DNS is load-bearing across the whole site. Four DNS cards are in the set",
+     "net/dns-the-internets-phone-book"],
     ["what is a load balancer", "", "net/load-balancers-explained-spreading-the-work-around"],
     ["explain oauth", "", "sec/oauth-20-oidc-saml-federated-identity"],
     // ── batch ten ──
@@ -655,13 +660,26 @@ const READERS = [
 // guard is the same shape: require that nothing hyphenates onto either side,
 // because *zero-touch*, *zero-trust* and *zero-day* are all subjects this site
 // writes about and none of them is a claim about a result count.
+// A tenth of the site, near enough, and the number this file has always used.
+// Named because it is now a scoring threshold rather than a display one.
+const WIDE = 60;
+
 const CLAIMS_ZERO = /(?<!-)\bzeros?\b(?!-)|found nothing|returns? nothing|no results|nothing back/i;
 
 function staleReason(keep, hits, want) {
   if (!keep) return null;
   if (hits.length && CLAIMS_ZERO.test(keep))
     return `the note says this returns nothing; it returns ${hits.length}`;
-  if (want && hits.includes(want))
+  // Reaching the wanted card only retires a note when the query is otherwise
+  // healthy. A **wide** query reaches its want and is still broken — that is
+  // the whole definition of wide, the answer present inside a set nobody can
+  // read — so its note is describing the live defect, not a solved one.
+  //
+  // Found by the rule firing on the three notes written the hour `wide` became
+  // a scored outcome. The rule was correct for the case it was written for and
+  // had no way to know a second case existed, which is this project's most
+  // repeated shape and the reason the fixtures below now cover both.
+  if (want && hits.includes(want) && hits.length <= WIDE)
     return "the note explains a miss that no longer misses — it reaches its topic";
   return null;
 }
@@ -682,6 +700,10 @@ if (args.includes("--self-test")) {
     ["a note claiming a zero on a query that is one", "kind 1, still zero", [], "", false],
     ["a note explaining a miss that still misses", "the comparison is not phrased", ["a/b"], "x/y", false],
     ["a note explaining a miss that now reaches", "matcher limit", ["x/y"], "x/y", true],
+    ["…but not when the set is still too wide to read", "wide and inherent",
+     [...Array(WIDE + 1).keys()].map(n => `d/t${n}`).concat("x/y"), "x/y", false],
+    ["…and a wide note on a set that has since narrowed is stale", "wide and inherent",
+     ["x/y", "d/t1"], "x/y", true],
     ["no note at all", "", ["a/b"], "x/y", false],
     ["a note with no claim this can check", "kind 3, checked at fault level", ["a/b"], "", false],
   ];
@@ -725,22 +747,36 @@ for (const [reader, queries] of READERS) {
       wrong++;
       if (!keep) unexplained.push([reader, q, want]);
       else explained++;
+    } else if (hits.length > WIDE) {
+      // Wide is not wrong — the widened stage is labelled where it runs — but a
+      // query returning a tenth of the site is a query nobody can use, and for
+      // thirteen batches this was the one outcome here with **no verdict
+      // trail**. Zeros carry a `keep` and are counted explained or not; so do
+      // wrong-cards. Wide was incremented into a headline number and forgotten,
+      // so three queries sat in it for a year with nothing recorded about
+      // whether that was acceptable or nobody had looked.
+      //
+      // It is now scored like the other two. The difference stays real — a wide
+      // result contains the answer and a zero does not — so it is counted
+      // separately in the summary and never called a miss.
+      if (!keep) unexplained.push([reader, q, want]);
+      else explained++;
     }
     const why = staleReason(keep, hits, want);
     if (why) stale.push([reader, q, why]);
-    // Wide is not wrong — the widened stage is labelled where it runs — but a
-    // query returning a tenth of the site is a query nobody can use.
-    if (hits.length > 60) wide++;
+    if (hits.length > WIDE) wide++;
     rows.push([q, hits, keep, missed, want]);
   }
-  const show = ONLY_ZERO ? rows.filter(r => !r[1].length || r[3]) : rows;
+  const show = ONLY_ZERO
+    ? rows.filter(r => !r[1].length || r[3] || r[1].length > WIDE) : rows;
   if (!show.length) continue;
   console.log(`\n${reader}\n`);
   for (const [q, hits, keep, missed, want] of show) {
     const mark = !hits.length ? (keep ? "kept" : "ZERO")
                : missed       ? (keep ? "kept" : "MISS")
-               : hits.length > 60 ? "wide" : "ok  ";
+               : hits.length > WIDE ? (keep ? "wide" : "WIDE") : "ok  ";
     const tail = missed ? (keep || `wanted ${want}`)
+               : hits.length > WIDE ? (keep || "a tenth of the site — investigate")
                : hits.length ? hits[0]
                : (keep || "nothing — investigate");
     console.log(`  ${mark}  ${JSON.stringify(q).padEnd(40)} ${String(hits.length).padStart(3)}  ${tail.slice(0, 72)}`);
