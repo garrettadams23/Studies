@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **78**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **83** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **84** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7858,4 +7858,75 @@ query_probe: per-word corpus counts under every unexplained zero
 probe 254 -> 257 · 245 answered · 0 unexplained
 2 prose fixes, one of them a missing safety instruction
 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+```
+
+## Session — a number I incremented fifteen times, and it was wrong every time
+
+### The register's rule, broken in the index of the file that states it
+
+Two rows carried the session-record count. The measured-state table's row is
+derived by `check_plan_numbers.py`. The index table's row at the top of the file
+was maintained by hand — and they disagreed **by five, in every version of this
+file since the split**: 62 against 67, then 63 against 68, all the way to 78
+against 83.
+
+The register three sections down states the rule this breaks, and states why:
+
+> **No number is repeated here.** Each row points at the row of the
+> measured-state table that carries its figure, because that table is checked by
+> `check_plan_numbers.py` and a second copy would only be a second thing to go
+> stale — **which is how this table got wrong in the first place.**
+
+The index row was a second copy. It went stale immediately and stayed stale.
+
+### The part that is about me rather than the file
+
+I incremented it **fifteen times in this run**, once per wave, alongside the
+checked one. Every increment was correct arithmetic on a wrong number, and the
+wrongness was one subtraction away the whole time: `83 − 242` against
+`78 − 242`. I never did it, because the row *looked like* a thing that needed
+incrementing and incrementing it made `make check` pass — the check was
+satisfied by the other row, so the ritual felt verified.
+
+**A hand-maintained duplicate beside a checked original is worse than a
+hand-maintained number alone**, because the green build is evidence about the
+copy that is checked and reads as evidence about both.
+
+So the row carries no count now. It points at the checked one, the way every
+register row does.
+
+### And the trigger the file set for itself is about to fire
+
+`check_plan_numbers.py` prints the live file's length on every run, and the
+fifth risk reopens at **8,000 lines**. At the start of this wave the file was at
+**7,861**, and this record was written expecting to cross it.
+
+**It did not.** The file is at **7,922** — the record came to 61 lines and the
+threshold is 78 away. So the sentence above was wrong when it was written, and
+correcting it is a better demonstration of this section's own argument than
+being right would have been: **I forecast a threshold crossing while standing
+next to a tool that reports the number, and missed by 78 lines.** The condition
+is still false. The split waits for the wave that makes it true, and that wave
+will know because the tool will say so rather than because somebody judged the
+file long.
+
+That number was chosen carefully — *double the ~4,000 the split left, and a
+third of the 22,745 that made it acute* — and the reason the file's most-quoted
+passage is about this risk is that it is the only one that ever carried a
+**condition** rather than a judgement about when something feels too long:
+
+> That is a condition a session can evaluate by running the censuses it runs
+> anyway, and **the session that found it true is the session that acted.**
+
+It was not true when this wave started, at 7,861 lines, and acting then would
+have been acting on a forecast — which is the thing this file criticises in
+*"act when it gets bad"*, because a forecast has no threshold either. So the
+work went first, the record went in, and the condition is now true on its own
+terms.
+
+```
+the index row's count removed rather than corrected — it points at the checked row now
+13 derivable rows · 0 drifted
+plan.md 7,861 -> 7,922 · the fifth risk reopens at 8,000 and did NOT fire
+the crossing was forecast in this record's own first draft and missed by 78 lines
 ```
