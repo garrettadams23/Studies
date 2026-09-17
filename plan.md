@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **71**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **72**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -45,7 +45,7 @@ run rather than letting them pass as verified:
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **217 of 227**, **0 unexplained** — thirteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 9 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,591 steps, 1,494 of 1,554 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,494 topics, 4,818 links, 0 one-way** — one mainland of 1,468, three reference-domain islands | `suggest_related.py --check` |
+| Related links | **1,494 topics, 4,832 links, 0 one-way** — one mainland of **1,478 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~800 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **76** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **77** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7248,5 +7248,91 @@ second constraint in it to earn its row this run — `make og` did in wave 2.
 2 registry rows — a spelling needs the compound form as well as the word
 verified both directions: reintroduce -> exit 1 with line numbers, restore -> exit 0
 CONTRIBUTING documents it; cheat sheet regenerated from source, not edited
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+```
+
+## Session — "whole reference domains" was true of one of the three
+
+### The claim, and why it was worth testing rather than accepting
+
+`orphan_report.py` has computed islands for a long time, and its docstring
+settles them:
+
+> The islands that remain are **whole reference domains** whose neighbours are
+> legitimately their own kind: the calculus track, the keyboard-shortcut tables,
+> the quotes collection. Requiring every component to be connected would mean
+> inventing a link out of `math`, and an invented "See also" is worse than a
+> short one.
+
+That is a good argument and it is the reason the census is not a gate. It was
+also a verdict on three islands reached from the strongest of the three, which
+is the shape this run has now found in the navigation claim, in Phase 11, in the
+front door, and in a stop list. So it got measured:
+
+| Island | Islanded | Already on the mainland |
+|---|---|---|
+| `math` | 16 | **0** — whole, and the argument holds exactly |
+| `shortcut` | 7 | **29** |
+| `quotes` | 3 | **3** |
+
+**Two of the three were not domains standing apart. They were the cards nobody
+got to.** A link from `shortcut/windows` to *Windows Administration
+Fundamentals* is not invented when twenty-nine of its siblings already reach
+`endpoint`, `linux`, `script`, `sec` and `military` — and the three connected
+`quotes` cards are the Stoic, Existentialist and Eastern collections, all
+pointing at `philosophy`, while the three islanded ones are the *meta* cards
+about sourcing and misattribution.
+
+### One link per card, not one link per component
+
+Worth stating because the cheap version is wrong and looks right. A **single**
+link from any island member to any mainland member merges the whole component,
+and the census would go quiet.
+
+It would do nothing for a reader. The "See also" strip is per topic: someone
+sitting on `shortcut/macos` sees `macos`'s links, not the component's. **Graph
+connectivity is a property of the graph and not of the page anybody is on**, so
+seven bridges went in, one per card that had an honest target:
+
+| Card | Now also reaches | Why |
+|---|---|---|
+| `windows` | Windows Administration Fundamentals | the shortcuts, then the job |
+| `macos` | macOS for Windows Admins | same, and the translation table is what a Windows person needs next |
+| `Microsoft Office (Excel/Word)` | Data Analysis with pandas — Spreadsheets in Code | the step after the spreadsheet stops being enough |
+| `Universal Shortcuts` | Desk, Body, Eyes, Wrists, Back | keyboard over mouse is an **ergonomics** move before it is a speed one |
+| `Text Editing & Window Shortcuts` | Intermediate Vim — Editing as a Language | the deep end of the same subject |
+| `Sourcing a Quotation` | How You Know — Evidence, Certainty, Changing Your Mind | provenance of a claim, which is what both cards are about |
+| `Misattributed — Famous Lines` | the same | a quote that survives because nobody checked |
+
+`spotify-media` and `system-general` got none, and that is the discipline
+working rather than failing: no honest target existed, and a short strip beats a
+padded one. They stay reachable because their neighbours now lead out.
+
+**Mainland 1,467 → 1,478 (98%), three islands → one.**
+
+### The number the judgement turned on was the one not printed
+
+The report named each island and its domain spread and **never said how much of
+that domain was already connected** — so the two cases are indistinguishable in
+its output, and the verdict written from it treated them as one thing for as
+long as it stood.
+
+It prints it now: `math 16 islanded, 0 on the mainland`. **An island whose
+domain is wholly islanded is a decision. An island beside twenty-nine connected
+siblings is a backlog.** The words are identical without the figure.
+
+### And the slug truncated, exactly where the manual says it does
+
+The macOS bridge was written from the title as
+`…the-translation-table-security-model`. The real id ends `-mode`: slugs
+truncate at 60 characters, which is failure #7 in the operating manual and cost
+a session a one-way edge once. Caught by checking the target against
+`related.json` before writing it rather than after — thirty seconds, and the
+only reason this record does not have a broken link in it.
+
+```
+7 bridges, one per card that had an honest target; 2 cards left deliberately short
+islands 3 -> 1 · mainland 1,467 -> 1,478 (98%) · links 4,818 -> 4,832 · 0 one-way
+orphan_report now prints mainland coverage per island — the number the call needs
 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 ```

@@ -92,11 +92,36 @@ def linked_ids():
 # English*, *Threats Explained Simply*, *Everyday Security Hygiene* — which only
 # ever offered a beginner the other two beginner cards.
 #
-# **This is a census and cannot be a gate.** The islands that remain are whole
+# **This is a census and cannot be a gate.** Requiring every component to be
+# connected would mean inventing a link out of `math`, and an invented "See also"
+# is worse than a short one.
+#
+# That argument used to be made about all three islands that remained — *whole
 # reference domains whose neighbours are legitimately their own kind: the
-# calculus track, the keyboard-shortcut tables, the quotes collection. Requiring
-# every component to be connected would mean inventing a link out of `math`, and
-# an invented "See also" is worse than a short one.
+# calculus track, the keyboard-shortcut tables, the quotes collection.* Measured,
+# it was true of **one**:
+#
+#     math       16 islanded of 16   — whole, and the argument holds
+#     shortcut    7 islanded of 36   — 29 siblings already link out
+#     quotes      3 islanded of  6   — 3 siblings already link out
+#
+# A link from `shortcut/windows` to Windows Administration Fundamentals is not
+# invented when twenty-nine of its siblings already reach `endpoint`, `linux`,
+# `script` and `military`. Those two were not reference domains standing apart;
+# they were the cards nobody got to. Seven bridges later the site has one island.
+#
+# So the row below prints **how much of each island's domain is already on the
+# mainland**, because that is the number the judgement turns on and it was the
+# number missing when the judgement was made. An island whose domain is wholly
+# islanded is a decision. An island beside twenty-nine connected siblings is a
+# backlog.
+#
+# The bridges were one per *card*, not one per component. A single link merges a
+# component and does nothing for a reader sitting on the card that still points
+# only inward — the "See also" strip is per topic, and connectivity is a property
+# of the graph rather than of the page anybody is on. `spotify-media` and
+# `system-general` kept none, because no honest target existed and a short strip
+# beats a padded one.
 
 def components(links):
     """Connected components of the related-topic graph, largest first."""
@@ -134,7 +159,12 @@ def report_islands(links, domain_of_id):
         for t in comp:
             d = domain_of_id(t)
             doms[d] = doms.get(d, 0) + 1
-        spread = " · ".join(f"{d} {n}" for d, n in sorted(doms.items()))
+        # How much of each domain is already connected. See the note above: this
+        # is what separates a domain that stands apart on purpose from a set of
+        # cards nobody linked, and the two look identical without it.
+        spread = " · ".join(
+            f"{d} {n} islanded, {sum(1 for t in main if domain_of_id(t) == d)} on the mainland"
+            for d, n in sorted(doms.items()))
         print(f"  island of {len(comp):>2}  [{spread}]")
         for t in sorted(comp)[:4]:
             print(f"      {t}")
