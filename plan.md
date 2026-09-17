@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **70**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **71**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **75** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **76** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -384,7 +384,7 @@ the mechanical search over-matches exactly as predicted.**
 |---|---|---|
 | **V1 — tier gating** | `E5`/`E3`/`P1`/`P2` across `m365`, `endpoint`, `eng`, `ops`, `productivity` | **~none.** `ops`/`productivity` `P1`/`P2` are incident priorities; `eng` `(E3)` is a footnote marker; `m365`'s `E3`/`E5` are the *subject* of the licensing card, not a gating claim. The one real claim — `m365`'s litigation-hold tier note — is already written in the §5 style: *"holds generally require the enterprise tier … find out which you have before promising counsel a capability."* |
 | **V3 — prices** | `career` home-lab budgets, salary figures | The budget **tiers** (`$0` / `$0–50` / `$100–500`) are pedagogical anchors that do not age; the only genuinely volatile detail is the used-mini-PC range, already hedged with `~`. Rewriting the tier labels would damage the table it organises. Left as-is. |
-| **V5 — console paths** | `check_volatility.py`'s 2 candidates (`Teams Voice`, `Reporting & Usage Analytics`) | **False positives.** The flagged mentions are generic prose — *"wired in through the admin centre"*, *"data the admin centre has never heard of"* — not console-path claims. The real console names in those cards (`Teams admin centre`, `Entra admin centre`) already carry `volatile` spans. |
+| **V5 — console paths** | `check_volatility.py`'s 2 candidates (`Teams Voice`, `Reporting & Usage Analytics`) | **False positives.** The flagged mentions are generic prose — *"wired in through the admin center"*, *"data the admin center has never heard of"* — not console-path claims. The real console names in those cards (`Teams admin center`, `Entra admin center`) already carry `volatile` spans. |
 
 Two things this pass also settled. **This session's 46 new cards are freshness-clean by
 construction** — they were written mechanism-first, per the card rubric, and introduce no
@@ -613,7 +613,7 @@ net                  3       5    10    25        shortcut            0       0 
 
 | Shape | Domains | Reading |
 |---|---|---|
-| **Hub** — high in, moderate out | `sec` 27 in · `ops` 20 in · `script` 14 in | The site's centres of gravity. Other domains reach for them, which is correct: they are the shared vocabulary |
+| **Hub** — high in, moderate out | `sec` 27 in · `ops` 20 in · `script` 14 in | The site's centers of gravity. Other domains reach for them, which is correct: they are the shared vocabulary |
 | **Broadcaster** — high out, near-zero in | `m365` 21 out / 1 in · `cs` 15 out / 1 in · `hw` 9 out / 0 in | These reference the rest of the site and nothing references them back. Not wrong, but it means a reader arriving anywhere else never learns they exist |
 | **Island** — near-zero both ways | `math`, `quotes`, `philosophy`, `productivity`, `web` (0 in) | Reachable only by clicking the chip. `web` at **8 self-references and 0 inbound** is the surprising one: a large technical domain nothing else points at |
 
@@ -639,7 +639,7 @@ theory cards** and the operational cards that rest on them:
 - rounding gotchas → *Number Representation*; failover quorum → *Consensus*; saga & streaming ordering → *Time in Distributed Systems*; Redis → *Caches & the Memory Hierarchy*
 - embeddings/RAG → *Vectors & Embeddings*; ML fundamentals → *Derivatives & Gradient Descent*; ER modelling → *Sets & Relations*; data-structure choice & back-of-envelope → *Big-O in Practice*; hash-table choice → *Hash Tables & the DoS*
 
-`cs` went from **one inbound reference to a See-also connection on fourteen of its centres of
+`cs` went from **one inbound reference to a See-also connection on fourteen of its centers of
 gravity**, and because the edges are bidirectional, each operational card now surfaces the
 theory beneath it. Hand-curated, not term-overlap (§3), so the strip carries them without
 filling with noise. (The batch-2 pass also re-caught the acro-span title-truncation trap: three
@@ -798,7 +798,7 @@ advanced layer and every hit is verified against the content. A fourth round add
 Law** — `cs` had Little's Law for latency but not the parallelism ceiling (why more cores stop
 helping; the serial fraction sets the limit; Gustafson as the counterpoint). A fifth round added **Byzantine Fault Tolerance** — `cs` had crash-fault consensus (Raft/Paxos)
 but not the Byzantine fault model (agreement when nodes lie; the Byzantine generals problem and
-its one-third bound; 3f+1 vs 2f+1; why blockchains need it and a trusted data centre does not),
+its one-third bound; 3f+1 vs 2f+1; why blockchains need it and a trusted data center does not),
 linked to Consensus and FLP. **Six cards from five careful rounds** (Merkle, CRDT, TCP
 congestion, LSM, Amdahl, BFT), each a foundational structure a neighbour merely gestured at —
 and five of the six clustered in `cs` and its neighbours, because the theory domain is where a
@@ -1137,7 +1137,7 @@ The genuine zeros clustered in hybrid and cloud-side management, not the on-prem
   a compliant one. Its decision line is &ldquo;will this box still be off-Azure in two years&rdquo;.
 - **Azure Automation &amp; Update Manager** (`cloud`) — runbooks (managed identity, never a stored
   password; Hybrid Runbook Worker for on-prem reach) and agentless server patching whose reach
-  through Arc covers cloud and data-centre servers on one schedule. Its decision table sorts the
+  through Arc covers cloud and data-center servers on one schedule. Its decision table sorts the
   patch tools by estate — Autopatch for Intune clients, Update Manager for servers, MECM SUP for the
   ConfigMgr estate — and the automation tools by job — runbook vs Function vs Logic App.
 
@@ -6308,9 +6308,9 @@ begins *because*.
   rejected, and that what remains is a narrow layout rule. Measured, correct,
   left alone.
 * `check_volatility`'s console queue is three rows and **all three are false
-  positives** — two generic uses of "the admin centre" and one job title. The
+  positives** — two generic uses of "the admin center" and one job title. The
   bare `<vendor> admin` alternatives look redundant with `admin cent(er|re)` and
-  are not: they catch a table of console names where the word *centre* is in the
+  are not: they catch a table of console names where the word *center* is in the
   heading. The note already says the regex cannot separate *Exchange admin* the
   console from *Exchange admin* the person and prints the sentence so a reader
   can. Measured, correct, left alone.
@@ -7177,5 +7177,76 @@ is a better answer than the number it set out to produce.
 V2 and V4 read: 30 claims, 2 dated, 0 rewritten, 0 contradictions
 dated claims 57 -> 59 — both limits a card designs around, which is §5's test
 V1–V5 now all read, none closed: §6 is a standing discipline, not a queue
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+```
+
+## Session — American spelling, and the dictionary the prose had been disagreeing with
+
+### The request, and the thing that made it more than a preference
+
+The site is written for a Northeast American reader and was spelling *centre*
+the British way in **93 places across 22 files**.
+
+The part worth recording is what turned up on the way to checking scope. The
+site ships `data/acronyms.json`, and that dictionary has **always** expanded the
+same word the American way:
+
+| Acronym | Expansion, as the dictionary has always had it |
+|---|---|
+| KDC | Key Distribution **Center** |
+| NOC | Network Operations **Center** |
+| ISAC | Information Sharing and Analysis **Center** |
+| CIS | **Center** for Internet Security |
+| AZ | an isolated **datacenter** within a cloud region |
+
+So `sec` wrote *Key Distribution Centre* in prose while the dictionary the same
+page loads expanded KDC as *Key Distribution Center*. **The prose had been
+disagreeing with the reference it ships for as long as both existed**, and no
+check could see it because the acronym checker compares expansions against the
+dictionary and never the surrounding sentence.
+
+That makes this a correctness fix that happened to arrive as a preference.
+
+### One brand, and the anchor that protects it for free
+
+`Lenovo ThinkCentre` is a product name and must not move. It needs no special
+case, and the reason is the same one that decides how the guard is built:
+`\bcentre\b` requires a word boundary, and there is none between *Think* and
+*Centre*.
+
+The same anchor is why **one registry row is not enough**. `datacentre` has no
+boundary before *centre* either, so a single `centre → center` rule would have
+silently left every compound behind. Two rows, and a note in the registry saying
+why, because the next person adding a spelling rule will hit this exact edge.
+
+### Made a rule rather than an edit
+
+A one-time replace would drift back on the first card somebody writes. So the
+convention went into `data/renames.json`, which `check_renames.py` fails the
+build on — **the same mechanism that has enforced *allowlist* over *whitelist*
+since 2020**, and the registry now says out loud that it holds two kinds of
+entry rather than only vendor renames.
+
+**Proved rather than assumed, in both directions.** A `centre` and a
+`datacentre` were reintroduced into two domains; the guard named both with line
+numbers and exited 1. Restoring them gave 0. Adding a rule to a checker without
+confirming it can fail is the *asserts it did not throw* row of this file's own
+three-shapes table, and it is the second time this run that habit has been worth
+the minute it costs.
+
+### The generated file, which is the whole reason for the ordering table
+
+`CALCULUS-CHEAT-SHEET.md` still said *centre* after the pass, because it is
+**generated from `data/math.html`** and the sweep had already fixed the source.
+Editing the artefact would have been undone by the next build, and
+`gen_cheatsheet.py --check` would have gone red on the next commit rather than
+this one. The manual's ordering table exists for exactly this, and this is the
+second constraint in it to earn its row this run — `make og` did in wave 2.
+
+```
+93 occurrences, 22 files, 1 brand untouched
+2 registry rows — a spelling needs the compound form as well as the word
+verified both directions: reintroduce -> exit 1 with line numbers, restore -> exit 0
+CONTRIBUTING documents it; cheat sheet regenerated from source, not edited
 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 ```

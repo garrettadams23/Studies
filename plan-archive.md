@@ -7924,7 +7924,7 @@ Thirty-first wave, and the last piece of work before this session's branch was l
 ### What shipped
 
 `#topic-id/3` now resolves to the third concept card in that topic: the domain hydrates, the topic
-opens, the card is scrolled to centre and outlined for a couple of seconds. Clicking any concept
+opens, the card is scrolled to center and outlined for a couple of seconds. Clicking any concept
 card's label copies that link.
 
 Three decisions worth recording:
@@ -9086,7 +9086,7 @@ site, nearly all of them terminals; a queue that noisy is wallpaper, not work.
 ### Screenshot-dated warnings, as spans rather than notes
 
 The item asked for a "console as of <date>" note per card. What shipped instead marks the console
-**name** — `<span class="volatile" data-checked="2026-08">Intune admin centre</span>` — because that
+**name** — `<span class="volatile" data-checked="2026-08">Intune admin center</span>` — because that
 is the thing that changes, and a whole-card note would put a date on a paragraph that is still
 correct. Ten added, 33 → 43 dated claims.
 
@@ -9517,7 +9517,7 @@ sentences in one build.
 the part a developer gets paged for. It is organised around *discovered → crawled → indexed →
 ranking*, because naming the failing joint turns a vague complaint into a five-minute diagnosis,
 and because it separates work you can do from work you cannot: an engineer who accepts a ranking
-target has accepted a goal with no lever attached. The centrepiece is the mistake everyone makes
+target has accepted a goal with no lever attached. The centerpiece is the mistake everyone makes
 once — blocking a URL in `robots.txt` so the crawler can never read the `noindex` inside it, which
 leaves the page indexed permanently and removes the only mechanism that could have cleared it. The
 migration section says the redirect map is the deliverable and must be built from a crawl of the
@@ -9674,7 +9674,7 @@ text was printed beside the topic name rather than just the count:
 - **`\badmin\.[a-z]` matched `old-admin.example.com`** in a subdomain-enumeration card.
   Now requires a real boundary before it and skips the reserved example domains.
 
-**14 → 2**, and the two survivors are honest ones: both say "admin centre" in passing
+**14 → 2**, and the two survivors are honest ones: both say "admin center" in passing
 without making a claim about it, which is precisely the case the tool's own docstring
 predicted and refused to fail the build over.
 
@@ -10193,7 +10193,7 @@ opens by naming the failure mode precisely: a register becomes a list of everyth
 was ever uneasy about, scored once, owned by "IT", reviewed the week before an audit, and
 correctly treated as a compliance artefact thereafter.
 
-The centre of the card is that **the wording is the work**. "Cyber attack" is a category,
+The center of the card is that **the wording is the work**. "Cyber attack" is a category,
 "No MFA" is a missing control that names the fix and hides the consequence, "Legacy systems"
 is a condition. The sentence shape — *because of X there is a risk that Y resulting in Z* —
 forces the missing information out, and the test is memorable: **can the entry be wrong?**
@@ -10403,7 +10403,7 @@ accents, baked-in white in images, inline SVG, and contrast checked once in ligh
 never again.
 
 **Forms.** Opens where the losses are: the form is where users leave, and the failures are
-not aesthetic. The centre is validation *timing*, with a two-line policy that removes most
+not aesthetic. The center is validation *timing*, with a two-line policy that removes most
 complaints — **blur to show, input to clear** — and the note that validating while typing
 before the first blur is correct and feels like being interrupted mid-sentence. Then error
 messages that say what would be valid rather than that this is not, the platform attributes
@@ -17814,7 +17814,7 @@ is usually to name the trap and the habit that avoids it.
 > **The last row is the habit that makes the other three survivable.** Everyone
 > eventually applies a firewall rule that severs their own session, and a
 > scheduled job that flushes the rules in five minutes turns that from a
-> data-centre visit into a five-minute wait.
+> data-center visit into a five-minute wait.
 
 > **On disks larger than a few terabytes, treat RAID 5 as deprecated.** A rebuild
 > reads every remaining disk end to end for many hours, which is precisely the
@@ -20013,7 +20013,7 @@ check that was not made.
 ### And the check found something the cards did not say
 
 Microsoft is moving these consoles onto the `cloud.microsoft` domain, one
-service at a time — the Exchange centre already answers at
+service at a time — the Exchange center already answers at
 `admin.cloud.microsoft/exchange`, and Teams is mid-migration with
 `teams.microsoft.com` redirecting to `teams.cloud.microsoft`. **This is exactly
 the change the volatile-span convention exists to catch**, and the card whose

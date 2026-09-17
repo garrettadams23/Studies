@@ -89,6 +89,22 @@ all 30 domains while one is rendered. `tools/smoke_test.mjs` checks exactly that
 if it starts failing "search still reaches unopened domains", something started
 reading the DOM again.
 
+## Spelling: American, and checked
+
+The site is written in **American English**. `data/renames.json` carries the words
+this matters for and `check_renames.py` fails the build on them, the same mechanism
+that has enforced *allowlist* over *whitelist* since 2020.
+
+`centre` → `center` was applied across 93 occurrences in 22 files. The site's own
+acronym dictionary had always expanded KDC, NOC, ISAC and CIS the American way, so
+the prose had been disagreeing with the dictionary it ships for as long as both
+existed — which is what made this a correctness fix rather than only a preference.
+
+Two registry rows are needed for a spelling, not one. The pattern is anchored with
+`\b`, so `centre` cannot match inside `datacentre`; that same anchor is why Lenovo's
+**ThinkCentre** needs no allow-list entry. If you add a spelling rule, add the
+compound forms too, and confirm the guard actually fires before trusting it.
+
 ## Class conventions (use these, not one-off variants)
 
 | Purpose            | Use                     | Do **not** use                          |
