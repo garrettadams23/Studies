@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **69**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **70**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -50,11 +50,11 @@ run rather than letting them pass as verified:
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,135 chars**, median 3,736 — the number a deepening wave has to move | `depth_report.py` |
-| Dated claims | **45 volatile spans and 12 fact anchors: 57 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference | `check_volatility.py` |
+| Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **74** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **75** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -397,6 +397,65 @@ not have, so the report prints the sentence and a person decides in a second. An
 **open as a standing discipline, not a queue** — §6's V5 grows with every `m365`/`cloud` wave,
 so there is nothing to mark closed. The right output of a Phase 11 pass is this table, not a
 pile of edits — which is the whole argument of §3.
+
+## 8. Audit pass — V2 and V4, the two waves §7 did not read
+
+§7 is titled *V1, V3 and V5* and nothing since said why the other two were
+skipped. They were the queue's only genuinely outstanding items, so they were
+read the way §4 prescribes: per class, by hand, with the instances enumerated
+rather than pattern-matched.
+
+**V4 — default retention.** Eighteen duration claims sit in a retention context
+across the whole site. Five are vendor defaults and **all five already carry a
+date**: the SharePoint recycle bin, Microsoft 365 Group soft delete, the Teams
+expiry window, the audit-log horizon, and Azure Monitor's platform metrics. The
+other thirteen are not claims about the world at all:
+
+| What they are | Examples |
+|---|---|
+| Command and config examples | `--vacuum-time=7d`, `MaxRetentionSec=1month`, `find -mtime +30`, an SQL `INTERVAL '90 days'` |
+| A sample policy inside a sample document | `grc`'s *delete after 3 years per schedule DR-014* |
+| Advice about what **you** should set | `cloud`'s *14 or 30 days for application logs* |
+| A rhetorical quote being challenged | `cloud`'s *"We keep 90 days"*, immediately answered with *Analytics vs Basic vs Archive behave differently* |
+| A rule of thumb about money | `career`'s *3–6 months of expenses* |
+
+The §9 cross-check V4 asks for also came back clean: `m365`, `cloud` and
+`blueteam` do not contradict each other, and the two 93-day figures are
+different subjects that happen to share a number.
+
+**V2 — service limits.** Twelve limit-shaped claims outside code blocks, and
+**two were real and undated**:
+
+| Claim | Why it is a limit and not a fact |
+|---|---|
+| MongoDB's **16 MB** document ceiling | The card designs around it — *model as a separate collection* — which is §5's exact test for when a span is right |
+| Entra Connect's **500-object** deletion threshold | A vendor default that is configurable, in a sentence whose durable half was already written: *know the threshold exists before you meet it* |
+
+Both now carry a `volatile` span. The other ten are back-of-envelope anchors
+(`eng` says so in the card title), a worked capacity example in quotes, a dry-run
+output, a contract size band, and **SATA III's ~600 MB/s ceiling — which is a
+standard, and therefore the Wi-Fi-rates case from §2 in different clothing.** A
+number fixed by a published specification does not age however product-shaped it
+looks.
+
+### What the two passes together say
+
+Five waves have now been read and the score is **four real edits across the
+whole queue** — three in §7's reckoning and two here. Phase 11 opened by failing
+to count the denominator and concluding the site was probably more disciplined
+than a mechanical check could show. Two hand passes over five classes are the
+evidence for that, and they cost an afternoon each rather than a permanent check
+nobody trusts.
+
+**The ratio is the finding.** Thirty claims examined, two actionable: the
+mechanical searches over-match by roughly fifteen to one, exactly as §2 predicted
+and for the same reason — the shape of a number says nothing about whether the
+world can move underneath it. What separates them is always the sentence around
+it, and reading that is a minute's work per instance and not automatable at all.
+
+So V2 and V4 join V1, V3 and V5 as **read, not closed.** §6's waves are a
+standing discipline: V5 grows with every `m365` or `cloud` wave, and V2 grows
+with every card that designs around a vendor number.
 
 
 ---
@@ -7039,4 +7098,84 @@ wide is now a scored outcome with a verdict trail; staleness distinguishes it fr
 one matcher fix built, measured against the gates, and reverted
 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 mean/card 1,391 -> 1,392, excluding verdicts 1,123 unchanged — this wave's prose was a verdict
+```
+
+## Session — the two Phase 11 waves that had never been read
+
+### §7 is titled "V1, V3 and V5", and nothing ever said why
+
+Phase 11 §6 lists five verification waves. §7 records an audit pass over three of
+them and its own heading names the three it did. **Nothing anywhere explains the
+omission of V2 and V4**, and the phase sits in the index marked *📘 living*, so a
+reader takes the pass for complete.
+
+They were the only genuinely outstanding items in the file's only remaining
+queue, so this wave read them. The full result is Phase 11 §8; what follows is
+what the reading was like, which the table there cannot carry.
+
+### Thirty claims, two actionable
+
+**V4 — default retention.** Eighteen duration claims in a retention context. All
+five that are vendor defaults already carry a date. The other thirteen are not
+claims about the world: `--vacuum-time=7d` and `MaxRetentionSec=1month` are
+config examples, *delete after 3 years per schedule DR-014* is a sample policy
+inside a sample document, *14 or 30 days for application logs* is advice about
+what the reader should set, and *3–6 months of expenses* is a rule of thumb about
+money. One is a **quote being argued with** — `cloud`'s *"We keep 90 days"*,
+answered in the same row by *Analytics vs Basic vs Archive behave differently* —
+and a mechanical check would have flagged the sentence whose entire point is
+that the number is not the answer.
+
+The §9 cross-check V4 asks for came back clean too. The two 93-day figures in
+`m365` and `cloud` are different subjects that happen to share a number, which is
+the shape a contradiction check has to be able to not fire on.
+
+**V2 — service limits.** Twelve limit-shaped claims outside code blocks, two
+real: MongoDB's 16 MB document ceiling and Entra Connect's 500-object deletion
+threshold. Both now carry a span.
+
+### Both additions are the case §5 says a span is *for*, and that matters
+
+§6 ends on a counter-discipline that is easy to skip: *every wave should reduce
+the number of dated claims where it can. A rising volatile-span count is not
+automatically progress.* This wave raised it from 45 to 47 and rewrote nothing,
+which looks like the failure that warning describes.
+
+It is not, and the distinction is the phase's own:
+
+> The volatile span is right **where the specific number is the point — a limit
+> you must design around.** It is the wrong tool where the number was only ever
+> illustrative.
+
+The MongoDB card's next words after the number are *model as a separate
+collection* — a schema decision taken **because** of that ceiling. Entra
+Connect's sentence already carried its durable half, *know the threshold exists
+before you meet it*, and the number is what tells you whether your nightly run is
+near it. Neither is illustrative. And nothing was rewritten because there was
+nothing to rewrite: the other ten were never facts about the world.
+
+### The ratio, which is the actual finding
+
+**Thirty claims examined, two actionable.** The mechanical searches over-match by
+about fifteen to one, exactly as §2 predicted, and for the reason §3 gives:
+**the shape of a number says nothing about whether the world can move underneath
+it.** What separates a limit from an illustration is always the sentence around
+it.
+
+`hw`'s *SATA III ceiling ~600 MB/s* is the cleanest example. It looks exactly
+like a product limit — a vendor name, a unit, a number — and it is a **published
+standard**, fixed forever. It is §2's Wi-Fi-rates case in different clothing, and
+it is the fourth time this file has caught the same pattern-matcher on the same
+mistake.
+
+Five waves read across two passes, **four real edits in total.** Phase 11 opened
+by failing to count the denominator and guessing the site was more disciplined
+than a check could show. That guess now has thirty read instances under it, which
+is a better answer than the number it set out to produce.
+
+```
+V2 and V4 read: 30 claims, 2 dated, 0 rewritten, 0 contradictions
+dated claims 57 -> 59 — both limits a card designs around, which is §5's test
+V1–V5 now all read, none closed: §6 is a standing discipline, not a queue
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 ```
