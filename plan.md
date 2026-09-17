@@ -21,7 +21,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
-| Session records | The last **72**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
+| Session records | The last **73**. The other **242** are in `plan-archive.md`, oldest first | 📘 living |
 
 **Everything closed is in [`plan-archive.md`](plan-archive.md)** — the July 2026 review,
 the content roadmaps, Phases 3 to 10, the Execution Handbook, the calculus track and the
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **77** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **78** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7335,4 +7335,87 @@ only reason this record does not have a broken link in it.
 islands 3 -> 1 · mainland 1,467 -> 1,478 (98%) · links 4,818 -> 4,832 · 0 one-way
 orphan_report now prints mainland coverage per island — the number the call needs
 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
+```
+
+## Session — three tools nothing runs, and the one that is a census
+
+### The question nobody had asked of `tools/`
+
+Every checker here is wired into `make check` and into CI, and
+`check_gates.py` fails the build if the two lists diverge. **Three files in
+`tools/` are in neither**, and nothing had ever asked why:
+
+| File | What it is | Verdict |
+|---|---|---|
+| `retire_topic.py` | Merges a topic and records the alias, so five `localStorage` prefixes survive | A **manual operation**, correctly unwired — it edits content on request |
+| `patch_chrome_shortcuts.py` | A one-shot injector from an earlier wave | Same shape, spent |
+| `acronym_drift.py` | A **census** — capitalised tokens the dictionary has never heard of | Should be read, and was not |
+
+Two of three are fine. The third is a census, and this file's operating manual
+§6 has a rule about those: *a census nobody reads is decoration*, written after a
+counter rose 39% while being "tracked". The start-of-session list names
+`lint_content.py` and `check_volatility.py` and does not name this one.
+
+### Read, and measured against the bar the repository already set
+
+`check_volatility.py` states the standard in its own comment, and it is the only
+place here that puts a number on it: its first version was **21% precise**, and
+*"a candidate list that noisy is not a work queue, it is wallpaper."* It was
+tuned in one pass over its own output.
+
+`acronym_drift.py` had never been given that pass. It reported **1,485 rows**,
+and the largest false-positive class was one rule away:
+
+> **A run of three lowercase letters means the capitals are word starts, not
+> initials.**
+
+PowerShell, JavaScript, SharePoint, GraphQL, DynamoDB, PostgreSQL,
+CloudFormation, BigQuery, LinkedIn, AppArmor — **344 rows removed, and not one
+true acronym among them.**
+
+Three rather than two, and measured rather than picked: `SaaS`, `PaaS` and
+`IaaS` are S-**aa**-S, a two-letter middle the dictionary itself uses, and a
+threshold of one would take `GHz`, `IPv6` and `10GbE`.
+
+### The 1,141 that are left cannot be narrowed, and that is the finding
+
+The survivors include `GitHub`, `DevOps`, `MySQL`, `NoSQL`, `MITRE`, `Win32` and
+`M365` — proper nouns whose shape is **identical** to `GB`, `GHz`, `EU`, `CV` and
+`L3`. An initialism's letters are the initials of an expansion and a product
+name's are not, and you need the expansion to tell, which is the thing that is
+missing by definition.
+
+That is **Phase 11 §3 in a fourth place**: *the distinguishing property is not
+the shape of the text.* The list there is now:
+
+| Check | First version matched | Fixed by |
+|---|---|---|
+| Hard-coded colors | invoice numbers, CSS examples | a color *context* |
+| Ambiguous acronyms | every note containing "also" | evidence of real use in two domains |
+| Vendor consoles | MMC, `old-admin.example.com` | word boundaries |
+| Ageing claims | IP addresses, Wi-Fi standards | **nothing** |
+| **Capitalised drift** | **product names** | **a compound-word rule, then nothing** |
+
+The difference from the ageing-claims row is that this one **had a narrowing
+available and had never been given it**. So the 344 ship, and the honest label
+for the rest ships in the same breath: sorted by frequency the first screen is
+where the real ones are, and past that it is product names all the way down.
+
+### And it stays out of the start-of-session list
+
+Which is the decision the §6 rule actually asks for. A census belongs on that
+list when reading it changes what a session does; this one, at 1,141 rows whose
+top entries are `GitHub` and `DevOps`, would be the decoration the rule was
+written against. **It is a reading list before a dictionary wave, and the
+docstring now says so rather than implying a queue.**
+
+The alternative — adding it and letting sessions skim it — is exactly how the
+counter that rose 39% while "tracked" came to rise.
+
+```
+tools/ audited: 3 unwired, 2 correctly so, 1 a census that had never been read
+acronym_drift 1,485 -> 1,141 rows; 344 product names removed, 0 true acronyms lost
+threshold measured, not picked: 3 keeps SaaS/PaaS/IaaS, 1 would lose GHz/IPv6/10GbE
+the remainder hits Phase 11 §3's wall — no property left to require
+42 gates green · make check clean
 ```

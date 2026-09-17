@@ -14,6 +14,34 @@ block — and a CI step that fails on new capitalised tokens would block every
 content wave for a `TODO` in a snippet. It is meant to be read before a
 dictionary wave, not to stop a build.
 
+## How good the queue is, which nothing had asked
+
+`check_volatility.py` sets this repository's bar for an advisory list and states
+it plainly: its first version was 21% precise, *"and a candidate list that noisy
+is not a work queue, it is wallpaper."* It was then tuned in one pass over its
+own output. **Nothing had ever run that test here.**
+
+Run: **1,485 rows**, and the largest false-positive class was one narrowing
+away. A run of three lowercase letters means the capitals are word starts rather
+than initials, and it removed **344 rows — PowerShell, JavaScript, SharePoint,
+GraphQL, DynamoDB, PostgreSQL, CloudFormation, BigQuery, LinkedIn, AppArmor —
+without a single true acronym among them.**
+
+**And the remaining 1,141 cannot be narrowed further**, which is the more useful
+half of the result. The survivors include `GitHub`, `DevOps`, `MySQL`, `NoSQL`,
+`MITRE`, `Win32` and `M365`: proper nouns whose shape is identical to
+`GB`, `GHz`, `EU`, `CV` and `L3`. The distinguishing property is not in the
+token — an initialism's letters are the initials of an expansion and a product
+name's are not, and you need the expansion to tell, which is exactly what is
+missing.
+
+That is **Phase 11 §3's conclusion in a fourth place**: *the distinguishing
+property is not the shape of the text*. The difference from Phase 11 is that
+this check had a narrowing available and had never been given it, so the honest
+outcome is to ship the 344 and say in the same breath that the rest is a reading
+list rather than a work queue. Sorted by frequency, the first screen is where
+the real ones are; past that it is product names all the way down.
+
 Nothing here gates CI, and that is a decision rather than an omission. The two
 things this tool can measure — a capitalised token the dictionary lacks, and an
 entry no card uses — are both legitimate in quantity. The first is full of
@@ -76,6 +104,10 @@ TOKEN_RE = re.compile(
     r"\b[A-Z][A-Za-z0-9]*[A-Z0-9][A-Za-z0-9]*&[A-Z][A-Za-z0-9]*\b"   # ATT&CK
     r"|\b[A-Z]&[A-Z]\b"                                              # M&A, R&D
     r"|\b[A-Z][A-Za-z0-9]*[A-Z0-9][A-Za-z0-9]*\b")
+
+# Three consecutive lowercase letters: the tell of a compound word wearing
+# capitals. See the exclusion in scan() for what it costs and why it is three.
+COMPOUND_RE = re.compile(r"[a-z]{3}")
 
 # Words that are all-capitals in prose without being acronyms. Short on purpose:
 # anything longer is a sign the exclusions above are not doing their job.
@@ -144,6 +176,19 @@ def scan(only_domain=None):
             if up in NOT_ACRONYMS or len(token) < 2 or token.isdigit():
                 continue
             if token.isupper() and token.lower() in words:
+                continue
+            # A run of three lowercase letters means the capitals are word
+            # starts, not initials: PowerShell, JavaScript, SharePoint,
+            # GraphQL, DynamoDB, CloudFormation, AppArmor, PostgreSQL,
+            # BigQuery, LinkedIn. **344 of 1,485 rows, every one of them a
+            # product name**, which is the single largest false-positive class
+            # this report had.
+            #
+            # Three rather than two, measured against what two would cost:
+            # `SaaS`, `PaaS` and `IaaS` are S-aa-S, and an acronym whose middle
+            # is a two-letter run is a shape the dictionary itself uses. One
+            # would take `GHz`, `IPv6` and `10GbE`.
+            if COMPOUND_RE.search(token):
                 continue
             seen[token] += 1
             where[token].add(domain)
