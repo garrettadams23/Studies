@@ -251,6 +251,10 @@ const READERS = [
      "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
     ["i cannot install software"],
     ["my password expired and i cannot change it"],
+    // ── batch sixteen ──
+    ["the user cannot sign in on their phone"],
+    ["the meeting room screen is blank", "",
+     "hw/conference-room-technology-the-av-stack-and-why-it-always-br"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -309,6 +313,13 @@ const READERS = [
      "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
     ["we found crypto mining on a server", "",
      "threat/cryptojacking-mining-is-a-symptom-of-access-not-the-incident"],
+    // ── batch sixteen ──
+    ["someone is exfiltrating over https",
+     "kind 3 — the per-word line names it: the card lacks `exfiltrating`, an inflection of its own title. Writing the participle in would be bending a sentence to the matcher, which the rules above forbid, and the stemmer that would fix it was built and reverted in `b90bd2b`",
+     "redteam/data-exfiltration-channels-dns-icmp-https"],
+    ["a user got a weird text message",
+     "kind 3 — the card lacks only `weird`, which is the reader's **verdict on** the message rather than anything about it. A card describing a smishing attempt has no reason to call it weird, and the card already says `text messages`",
+     "sec/phishing-beyond-email-smishing-vishing-and-qr-code-scams"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -370,6 +381,9 @@ const READERS = [
     ["what is a webhook"],
     ["why do certificates expire"],
     ["what is a reverse proxy"],
+    // ── batch sixteen ──
+    ["what does stateless mean"],
+    ["what is a container registry"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -421,6 +435,9 @@ const READERS = [
      "data/locking-mvcc-concurrency-without-chaos"],
     ["autovacuum is running but bloat keeps growing", "",
      "data/locking-mvcc-concurrency-without-chaos"],
+    // ── batch sixteen ──
+    ["how do i see what changed on this server"],
+    ["i cannot find the big files"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -480,6 +497,12 @@ const READERS = [
     // ── batch fourteen ──
     ["the person who knew left"],
     ["how do i push back on a deadline"],
+    // ── batch sixteen ──
+    ["the handover was useless",
+     "kind 3 — the card lacks only `useless`, the same editorial word that blocks `our standups are useless`. It cannot join WIDE_STOP: `The Risk Register in Practice — Wording, Ownership & Why Most Are Useless` is a topic title, so stopping it would cost that card its own name — the `get`/`gets` case, measured rather than assumed",
+     "blueteam/shift-handover-in-a-soc"],
+    ["nobody owns this service",
+     "wide and inherent — `service` is in a fifth of the site and every use is correct. The subject is real and covered from three sides: `ops` asset and configuration management, `eng` on ownership, and `sec` non-human identity on the population nobody owns. Ranking would pick between them; this matcher is a filter"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -541,6 +564,10 @@ const READERS = [
     ["the same query is fast sometimes and slow other times",
      "kind 3 — every word is in the corpus and no card carries them together, which is what the per-word line under a zero is for. `data` has a concept card titled *The Query That Was Fast and Went Slow: Stale Statistics and the Plan Flip*. The nearby gap is real and narrower: `parameter sniffing` and `cardinality estimat` each return zero site-wide, and they are the intermittent case rather than the one-way flip"],
     ["my sql is slow only for one customer"],
+    // ── batch sixteen ──
+    ["i cannot reproduce the bug"],
+    ["the stack trace is useless",
+     "kind 3, same binding word as the handover row — `useless` is the reader's verdict and cannot be stopped. The nearby subject is real and narrower: a trace that points only at framework or async frames"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -570,6 +597,9 @@ const READERS = [
     ["slow since the update"],
     ["the laptop smells of burning", "",
      "hw/laptops-batteries-thermals-what-is-actually-replaceable"],
+    // ── batch sixteen ──
+    ["the wifi adapter disappeared",
+     "kind 3 — `disappeared` at 2 is the binding word and it is the reader's narration. `wifi` reads 44 once folded, which the per-word line reported as 4 until it folded both sides the way the matcher does"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -606,6 +636,9 @@ const READERS = [
     ["the deploy succeeded but nothing changed"],
     ["the autoscaler keeps flapping", "",
      "eng/autoscaling-in-practice-the-metric-the-lag-and-why-it-oscill"],
+    // ── batch sixteen ──
+    ["my costs doubled overnight",
+     "kind 3 — `doubled` at 4 is the binding word. `devops` FinOps and `cloud` cover cost spikes; nothing has a reason to say a bill doubled"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -641,6 +674,9 @@ const READERS = [
     // ── batch fourteen ──
     ["rejected with no feedback"],
     ["how long should i stay in a job"],
+    // ── batch sixteen ──
+    ["should i specialise or generalise",
+     "kind 2, named and not written — the only genuine content gap in batch sixteen. `specialise` 6 and `generalise` 8 are scattered and no card is about the choice; `specialist or generalist` returns zero and `t-shaped` returns four, none of them `career`. One of the commonest questions in an IT career, and the domain has 45 topics without it"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -670,6 +706,8 @@ const READERS = [
     // ── batch fourteen ──
     ["who approved this change"],
     ["we have no asset inventory"],
+    // ── batch sixteen ──
+    ["what is our data retention policy"],
   ]],
 ];
 
@@ -806,17 +844,46 @@ const hitsFor = q => page.evaluate(query => {
  * the card should use it is a judgement, and the difference between naming a
  * symptom the reader recognises and keyword stuffing is exactly that judgement.
  */
-const wordsFor = q => page.evaluate(query => {
+const wordsFor = (q, want) => page.evaluate(([query, wanted]) => {
   const stop = typeof WIDE_STOP !== "undefined" ? WIDE_STOP : new Set();
   const words = query.split(/\s+/).filter(w => w.length >= 2 && !stop.has(w.toLowerCase()));
+  // Folded on both sides, because the matcher is. The first version compared
+  // raw lowercase text and reported **`wifi 4`** against a corpus that writes
+  // *Wi-Fi* — 40 times in `net` alone. A diagnostic that undercounts is worse
+  // than no diagnostic, because it turns a matcher problem into a false "the
+  // reader's word is missing" and sends the next session to write prose that
+  // was already there.
+  //
+  // `foldSeparators` is the same function the search uses on both sides of its
+  // own comparison, so this counts what the conjunction would have counted.
+  const fold = s => foldSeparators(s.toLowerCase());
   const corpus = [];
   domainSections().forEach(section =>
-    domainTopics(section.dataset.domain).forEach(t => corpus.push(t.text.toLowerCase())));
-  return words.map(w => {
-    const needle = w.toLowerCase();
-    return [w, corpus.reduce((n, text) => n + (text.includes(needle) ? 1 : 0), 0)];
-  });
-}, q);
+    domainTopics(section.dataset.domain).forEach(t => corpus.push(fold(t.text))));
+  // A word can be all over the site and absent from the one card that should
+  // answer, which is the case the corpus count cannot see and the commonest
+  // shape of a kind-1 miss. `the meeting room screen is blank` reported *every
+  // word is here* — `screen` 116, `blank` 29 — while the conference-room card
+  // said neither, describing the same fault as *wrong input selected* and
+  // *check the display's input source*.
+  //
+  // Where a query carries a `want`, the useful question is not whether the site
+  // has the word. It is whether **that card** does, and that is computable for
+  // exactly the queries somebody has already decided the answer for.
+  let inWant = null;
+  if (wanted) {
+    const [dom, id] = [wanted.slice(0, wanted.indexOf("/")), wanted.slice(wanted.indexOf("/") + 1)];
+    const t = (domainTopics(dom) || []).find(x => x.id === id);
+    if (t) inWant = words.map(w => [w, fold(t.text).includes(fold(w))]);
+  }
+  return {
+    corpus: words.map(w => {
+      const needle = fold(w);
+      return [w, corpus.reduce((n, text) => n + (text.includes(needle) ? 1 : 0), 0)];
+    }),
+    inWant,
+  };
+}, [q, want || ""]);
 
 let total = 0, zeros = 0, explained = 0, wide = 0, wrong = 0;
 const unexplained = [];
@@ -859,7 +926,7 @@ for (const [reader, queries] of READERS) {
     // Only for a zero, and only when nobody has already written the verdict:
     // it costs a corpus sweep per query and a recorded zero has had its
     // diagnosis done once already.
-    const absent = (!hits.length && !keep) ? await wordsFor(q) : null;
+    const absent = (!hits.length && !keep) ? await wordsFor(q, want) : null;
     rows.push([q, hits, keep, missed, want, absent]);
   }
   const show = ONLY_ZERO
@@ -875,14 +942,28 @@ for (const [reader, queries] of READERS) {
                : hits.length ? hits[0]
                : (keep || "nothing — investigate");
     console.log(`  ${mark}  ${JSON.stringify(q).padEnd(40)} ${String(hits.length).padStart(3)}  ${tail.slice(0, 72)}`);
-    if (absent && absent.length) {
-      const gone = absent.filter(([, n]) => n === 0);
+    if (absent && absent.corpus.length) {
+      const gone = absent.corpus.filter(([, n]) => n === 0);
+      // "every word is here" is true and unhelpful when one of them is here
+      // four times. The conjunction requires every word of the query in one
+      // card, so the rarest is the binding constraint — the same reasoning the
+      // relaxation stage uses when it keeps the rarest word and drops the rest.
+      // Naming it turns "investigate" into a place to start.
+      const rarest = absent.corpus.slice().sort((a, b) => a[1] - b[1])[0];
       console.log(`        in the corpus: ` +
-        absent.map(([w, n]) => `${w} ${n}`).join(" · ") +
+        absent.corpus.map(([w, n]) => `${w} ${n}`).join(" · ") +
         (gone.length
           ? `\n        → ${gone.map(([w]) => `“${w}”`).join(", ")} ` +
             `${gone.length > 1 ? "are" : "is"} not on the site — the reader's word, not a missing card`
-          : `\n        → every word is here; the conjunction is what failed`));
+          : `\n        → every word is here; “${rarest[0]}” at ${rarest[1]} is the binding one, ` +
+            `and no card carries it with the rest`));
+      if (absent.inWant) {
+        const missing = absent.inWant.filter(([, ok]) => !ok).map(([w]) => `“${w}”`);
+        console.log(`        in ${want}: ` +
+          (missing.length
+            ? `${missing.join(", ")} ${missing.length > 1 ? "are" : "is"} not in the card that should answer`
+            : `every word is in the wanted card — the matcher, not the prose`));
+      }
     }
   }
 }

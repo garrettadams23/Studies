@@ -40,10 +40,10 @@ run rather than letting them pass as verified:
 |---|---|---|
 | Topics | **1,556** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,393**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,394**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **245 of 257**, **0 unexplained** — fifteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **254 of 273**, **0 unexplained** — sixteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,594 steps, 1,496 of 1,556 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,496 topics, 4,850 links, 0 one-way** — one mainland of **1,480 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~794 more topics | `page_budget.py` |
@@ -54,7 +54,7 @@ run rather than letting them pass as verified:
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **84** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **85** here, **242** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -7929,4 +7929,92 @@ the index row's count removed rather than corrected — it points at the checked
 13 derivable rows · 0 drifted
 plan.md 7,861 -> 7,922 · the fifth risk reopens at 8,000 and did NOT fire
 the crossing was forecast in this record's own first draft and missed by 78 lines
+```
+
+## Session — the diagnostic was wrong twice, and both corrections made it useful
+
+### Batch sixteen, and a first result worth stating
+
+Sixteen questions, eight zeros, and **not one of them was a vocabulary gap.**
+Every zero came back *every word is here*. After five kind-1 fixes in this run,
+a fresh batch produced no missing-word misses at all.
+
+That reading turned out to be worth about ninety seconds, because the tool that
+produced it was wrong twice.
+
+### First: it was not folding, and the matcher is
+
+`the wifi adapter disappeared` reported **`wifi 4`**. The site writes **Wi-Fi**,
+53 times in `net` alone. The diagnostic was comparing raw lowercase text while
+the search folds separators on both sides of its own comparison, so every
+hyphenated term in the corpus was undercounted by roughly tenfold.
+
+**A diagnostic that undercounts is worse than none**, because it turns a matcher
+problem into a false *the reader's word is missing* and sends the next session to
+write prose that was already there. Folded on both sides now, with the same
+function the search uses: `wifi 4` → **`wifi 44`**.
+
+### Second: "every word is here" was true and useless
+
+`the handover was useless` — *handover 14 · useless 30 · every word is here*.
+True, and it says nothing about where to look. The conjunction needs every word
+in **one** card, so the rarest word is the binding constraint — which is the
+reasoning the relaxation stage already uses when it keeps the rarest and drops
+the rest.
+
+It names it now: *“useless” at 30 is the binding one, and no card carries it with
+the rest.*
+
+### Third, and this is the one that made it actionable
+
+A word can be all over the site and absent from **the one card that should
+answer**, and the corpus count cannot see that. `the meeting room screen is
+blank` reported *every word is here* — `screen` 116, `blank` 29 — while the
+conference-room card said **neither**, describing the same fault as *wrong input
+selected* and *check the display's input source*.
+
+Where a query carries a `want`, that question is computable, and it is the
+question that matters. So four zeros now read like this:
+
+```
+in hw/conference-room-technology…: “screen”, “blank” are not in the card that should answer
+in redteam/data-exfiltration-channels…: “exfiltrating” is not in the card that should answer
+in sec/phishing-beyond-email-smishing…: “weird” is not in the card that should answer
+in blueteam/shift-handover-in-a-soc: “useless” is not in the card that should answer
+```
+
+**Four investigations replaced by four lines, and only one of them is a fix.**
+
+### Which is the judgement the tool cannot make, made easy
+
+The conference-room card is about displays and never says *screen* or *blank*.
+That is a genuine prose gap and it is fixed — the Display row now opens
+*Screen blank, or “No Signal” on an otherwise working display*.
+
+The other three are the reader's **editorial** vocabulary, not the card's
+subject. `exfiltrating` is an inflection of the card's own title. `weird` is the
+reader's verdict on the message, and a card describing a smishing attempt has no
+reason to call it weird. `useless` is the same shape.
+
+**`useless` was tested properly and refused**, which is the counter-case that
+gives the stop-word rule teeth. It blocks three queries — standups, handover,
+stack trace — and looked exactly like `got` and `found`. It cannot join:
+*The Risk Register in Practice — Wording, Ownership & Why Most Are Useless* is a
+topic title, and stopping it would cost that card its own name. That is the
+`get`/`gets` guard from the `got` note, firing for the first time.
+
+### One real gap, named
+
+`should i specialise or generalise` is the only content finding in the batch.
+`specialise` 6 and `generalise` 8 are scattered across domains, `specialist or
+generalist` returns zero, `t-shaped` returns four and none of them is `career`.
+**One of the commonest questions in an IT career, and the domain has 45 topics
+without it.**
+
+```
+probe 257 -> 273 · 254 answered · 0 unexplained · 18 zeros · 1 wrong · 4 wide
+the per-word diagnostic corrected twice: folds like the matcher, names the binding word
+and checks the wanted card — three lines that replaced four investigations
+1 prose fix · 8 verdicts recorded · 1 stop-word candidate tested and refused
+42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
 ```
