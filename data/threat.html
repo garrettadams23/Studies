@@ -4022,7 +4022,7 @@ so nothing was exploited, and every step was a legitimate user action.</pre>
                 <div class="concept-label">The Fingerprint</div>
                 <div class="concept-title">Long Lives, Fragile Protocols, and a Patch Window Measured in Years</div>
                 <div class="concept-desc">
-                  OT environments look nothing like a data centre and break the assumptions security tooling is
+                  OT environments look nothing like a data center and break the assumptions security tooling is
                   built on. The equipment is old on purpose (a controller runs for twenty years), the protocols
                   predate authentication, and a vulnerability scan aggressive enough to be routine in IT can crash
                   a controller that has never seen an unexpected packet.
@@ -4179,6 +4179,81 @@ so nothing was exploited, and every step was a legitimate user action.</pre>
                     or <em>change where it goes</em> — a bank-detail change, a first payment to a new payee — because
                     that is the control the whole cash-out chain has to defeat, and the one most estates leave to a
                     single click.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">⛏️</span>
+              <span class="topic-name">Cryptojacking — Mining Is a Symptom of Access, Not the Incident</span>
+              <span class="topic-badge">Threat</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Interesting Question Is Not the Mining</div>
+                <div class="concept-desc">
+                  Mining is what somebody chose to do with access they already had, and it is the
+                  least interesting thing about the situation. A process ran on your server as some
+                  user, reached the internet, and stayed. <strong class="c-amber">Every one of
+                  those facts is true of a ransomware operator on the same box.</strong>
+                  <br><br>
+                  So the finding is not <em>we have a miner</em>. The finding is <strong>somebody
+                  can run code here and we did not know</strong>, and the miner is simply the
+                  variant that announced itself by using a resource anyone can measure. Treating
+                  the cleanup as the response is the error, because the access is what survives it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Read as</th><th>Actually means</th></tr></thead>
+                    <tbody>
+                      <tr><td>A nuisance — it only costs CPU <span class="acro-exp">(Central Processing Unit)</span></td><td>Unauthorised code execution with outbound network, persisting across reboots</td></tr>
+                      <tr><td>An opportunistic commodity attack</td><td>Often true, and irrelevant: the access path is the same one a targeted actor would buy</td></tr>
+                      <tr><td>Contained once the process is killed</td><td>The entry point is untouched, and mining is the noisiest thing an operator can do — quieter tenants leave no CPU trace</td></tr>
+                      <tr><td>A server problem</td><td>The credential or vulnerability that let it in is usually reusable elsewhere in the estate</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>It is the cheapest true positive you will get all year.</strong> A miner
+                    is an intrusion that has volunteered its own detection by burning a metered
+                    resource, and the estate that finds one and cleans it up has spent the evidence
+                    without reading it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Troubleshooting</div>
+                <div class="concept-title">How They Get In, and Where to Look First</div>
+                <div class="concept-desc">
+                  The entry points are a short and stable list, because mining is economically
+                  marginal — an operator who has to work for access mines nothing, they sell it.
+                  That is what makes the investigation tractable: the paths worth checking are the
+                  ones that cost the attacker nothing.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Path</th><th>What to check</th></tr></thead>
+                    <tbody>
+                      <tr><td>An exposed admin or orchestration API <span class="acro-exp">(Application Programming Interface)</span></td><td>Anything management-plane reachable from the internet without authentication — the commonest cause by a distance</td></tr>
+                      <tr><td>A known unpatched internet-facing service</td><td>The exploit is public and automated; check the patch date against the disclosure date, not against your policy</td></tr>
+                      <tr><td>A leaked or reused cloud credential</td><td>Usage from an address or region the identity has never used. Mining bills arrive before anyone reads the log</td></tr>
+                      <tr><td>A poisoned container image or dependency</td><td>The image's provenance, and whether anything pulls <code>:latest</code> from a registry nobody owns</td></tr>
+                      <tr><td>A build agent or CI runner</td><td>They are powerful, short-lived, rarely monitored, and hold credentials for everything downstream</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Work it as an intrusion and let the mining be the timestamp.</strong>
+                    It gives you something most investigations never get — a reliable moment when
+                    the attacker was definitely present — so the question to answer is what else
+                    that identity or host touched between the entry and that moment. Rebuild rather
+                    than clean: a host that ran somebody else's code is a host whose state you can
+                    no longer reason about, which is the same argument
+                    <span class="xref">Ransomware — The Defining Threat of the Era</span> makes
+                    about recovery, arriving in a case nobody treats as serious enough to apply it.
                   </div>
                 </div>
               </div>

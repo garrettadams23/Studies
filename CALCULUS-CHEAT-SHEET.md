@@ -430,7 +430,7 @@ One consequence to carry into the tests: a definite integral is a signed area. R
 | Point-slope form | y − y₁ = m(x − x₁) — the form every tangent-line answer takes |
 | Distance | d = √((x₂ − x₁)² + (y₂ − y₁)²) |
 | Midpoint | ((x₁ + x₂)/2, (y₁ + y₂)/2) |
-| Circle (centre h,k) | (x − h)² + (y − k)² = r²; the unit circle is x² + y² = 1 |
+| Circle (center h,k) | (x − h)² + (y − k)² = r²; the unit circle is x² + y² = 1 |
 | Ellipse ("oval") | (x − h)²/a² + (y − k)²/b² = 1 — a circle stretched by a and b |
 
 > **Point-slope is the row that earns its place in a calculus course.** Every tangent-line question reduces to a point and a slope, which is exactly what a derivative gives you — so the formula that takes those two directly is the one you will type most. The discriminant is the other: it answers "how many real roots" without solving anything.
@@ -858,7 +858,7 @@ A rectangle's flat top is wrong almost everywhere — it matches the curve at on
 | Rule | Formula, with Δx = (b − a)/n |
 |---|---|
 | **Trapezoidal** | (Δx/2)·[f(x₀) + 2f(x₁) + 2f(x₂) + … + 2f(x_n−1) + f(x_n)] |
-| **Midpoint** | Δx·[f(m₁) + f(m₂) + … + f(m_n)], where each m is the centre of its slice |
+| **Midpoint** | Δx·[f(m₁) + f(m₂) + … + f(m_n)], where each m is the center of its slice |
 | **Simpson's** | (Δx/3)·[f(x₀) + 4f(x₁) + 2f(x₂) + 4f(x₃) + … + 4f(x_n−1) + f(x_n)] |
 
 The coefficient pattern is the thing to memorise, and each is different. Trapezoid: **1, 2, 2, …, 2, 1**. Simpson's: **1, 4, 2, 4, 2, …, 4, 1** — ends are 1, then alternate 4 and 2, always ending on a 4 before the final 1.
@@ -928,7 +928,7 @@ Useful bonus for alternating series: the error from stopping after n terms is **
 ### Radius and interval of convergence — Hands-on
 
 ```
-# A power series Σ cₙ(x − a)ⁿ converges on an interval centred
+# A power series Σ cₙ(x − a)ⁿ converges on an interval centered
 # at a. Find it with the RATIO TEST on the whole term.
 
 # Example: Σ (x − 2)ⁿ / (n · 3ⁿ)

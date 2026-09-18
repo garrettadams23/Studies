@@ -234,6 +234,27 @@ const READERS = [
     ["my email went to spam", "", "threat/email-authentication-spf-dkim-dmarc"],
     ["is this email a scam", "",
      "sec/phishing-beyond-email-smishing-vishing-and-qr-code-scams"],
+    // ── batch twelve ──
+    ["shared mailbox or distribution list", "",
+     "m365/microsoft-365-groups-the-object-underneath-teams-sharepoint-"],
+    ["the meeting invite is an hour out", "",
+     "m365/calendar-time-zones-why-the-invite-lands-an-hour-out"],
+    ["setting up a new laptop", "",
+     "endpoint/windows-autopilot-zero-touch-provisioning"],
+    // ── batch thirteen ──
+    ["onedrive is not syncing"],
+    ["teams keeps signing me out"],
+    ["the user says the file is gone",
+     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want"],
+    // ── batch fourteen ──
+    ["the printer is printing garbage", "",
+     "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
+    ["i cannot install software"],
+    ["my password expired and i cannot change it"],
+    // ── batch sixteen ──
+    ["the user cannot sign in on their phone"],
+    ["the meeting room screen is blank", "",
+     "hw/conference-room-technology-the-av-stack-and-why-it-always-br"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -275,6 +296,30 @@ const READERS = [
     ["mfa prompt i did not request", "",
      "threat/mfa-bypass-in-practice-adversary-in-the-middle-push-fatigue-"],
     ["how long to keep logs", "", "blueteam/log-retention-as-a-design-decision"],
+    // ── batch twelve ──
+    ["is the attacker still in"],
+    ["a laptop is beaconing out",
+     "kind 3 — 'beaconing' alone reaches 11 cards; 'laptop' and 'out' are the reader's words"],
+    ["data is leaving over dns", "",
+     "redteam/data-exfiltration-channels-dns-icmp-https"],
+    // ── batch thirteen ──
+    ["what is this powershell doing"],
+    ["impossible travel alert"],
+    ["a service account signed in from another country", "",
+     "sec/non-human-identity-service-accounts-workloads-and-the-sprawl"],
+    // ── batch fourteen ──
+    ["the alert says it was blocked do i still care",
+     "kind 2, written and still zero. The Alert Triage card had zero mentions of blocked/prevented/contained and now carries two concept cards on it; `blocked alert` and `prevented alert` each return exactly that card. The full sentence fails on `says` and `care`, which a card about prevention has no reason to contain, and the relaxation stage never runs on a zero",
+     "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
+    ["we found crypto mining on a server", "",
+     "threat/cryptojacking-mining-is-a-symptom-of-access-not-the-incident"],
+    // ── batch sixteen ──
+    ["someone is exfiltrating over https",
+     "kind 3 — the per-word line names it: the card lacks `exfiltrating`, an inflection of its own title. Writing the participle in would be bending a sentence to the matcher, which the rules above forbid, and the stemmer that would fix it was built and reverted in `b90bd2b`",
+     "redteam/data-exfiltration-channels-dns-icmp-https"],
+    ["a user got a weird text message",
+     "kind 3 — the card lacks only `weird`, which is the reader's **verdict on** the message rather than anything about it. A card describing a smishing attempt has no reason to call it weird, and the card already says `text messages`",
+     "sec/phishing-beyond-email-smishing-vishing-and-qr-code-scams"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -295,7 +340,9 @@ const READERS = [
     ["what does opsec actually mean", "",
      "military/opsec-operational-security-in-cyber-real-life"],
     ["how do i use vim", "", "shortcut/vim"],
-    ["what is big o for", "", "cs/big-o-in-practice-what-the-notation-hides"],
+    ["what is big o for",
+     "wide, and the one of the three with a cause rather than a corpus: `o` is one character, dropped as a free-floating requirement because a one-character word narrows nothing, so the query collapses to `big` — 114 cards. `big o` returns 10 and `big o notation` returns 2, because a short query is answered by the phrase stage and never reaches this one. The join-instead-of-drop fix was built and reverted: it broke `the 5 whys`, a gated fixture, and narrowing it to letters fails on `what is a c pointer`, which needs `pointer` and not `cpointer`. A corpus-aware version — join only where the joined form exists in the folded text — is decidable and not attempted, because it costs a sweep on every query",
+     "cs/big-o-in-practice-what-the-notation-hides"],
     ["i cannot do integrals", "",
      "math/unit-3-integrals-series-area-techniques-differential-equatio"],
     ["should we fine tune or use rag", "",
@@ -309,8 +356,12 @@ const READERS = [
     ["spaced repetition", "", "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
     ["how do adults learn", "", "career/how-adults-actually-learn-relevance-practice-feedback-spacin"],
     // ── batch two ──
-    ["what is a hash", "", "sec/passwords-hashing-how-logins-are-stored-safely"],
-    ["how does dns work", "", "net/dns-the-internets-phone-book"],
+    ["what is a hash",
+     "wide and inherent — `hash` is in a ninth of the site and every use is correct. Eight genuinely relevant cards are in the set, including the wanted one. Only ranking would fix this, and this matcher is a filter by design",
+     "sec/passwords-hashing-how-logins-are-stored-safely"],
+    ["how does dns work",
+     "wide and inherent, same shape as `what is a hash` — relaxes to `dns` + `work`, and DNS is load-bearing across the whole site. Four DNS cards are in the set",
+     "net/dns-the-internets-phone-book"],
     ["what is a load balancer", "", "net/load-balancers-explained-spreading-the-work-around"],
     ["explain oauth", "", "sec/oauth-20-oidc-saml-federated-identity"],
     // ── batch ten ──
@@ -318,6 +369,21 @@ const READERS = [
     // ── batch eleven ──
     ["i cannot remember any of this", "",
      "productivity/retrieval-practice-why-testing-yourself-beats-rereading"],
+    // ── batch twelve ──
+    ["authentication vs authorization"],
+    ["what is a race condition"],
+    ["what is an api gateway"],
+    // ── batch thirteen ──
+    ["what is a cve"],
+    ["why is udp faster"],
+    ["what does a 502 mean"],
+    // ── batch fourteen ──
+    ["what is a webhook"],
+    ["why do certificates expire"],
+    ["what is a reverse proxy"],
+    // ── batch sixteen ──
+    ["what does stateless mean"],
+    ["what is a container registry"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -351,6 +417,27 @@ const READERS = [
      "linux/the-disk-is-full-diagnosing-storage-problems-like-a-calm-pro"],
     // ── batch nine ──
     ["my ssh key stopped working", "", "linux/ssh-secure-remote-access-done-right"],
+    // ── batch twelve ──
+    ["disk is full but du shows nothing"],
+    ["too many open files"],
+    ["the clock on the server is wrong"],
+    ["dns works on the host but not in the container"],
+    // ── batch thirteen ──
+    ["systemd service will not start"],
+    ["the pod is pending"],
+    ["why is my container using so much memory"],
+    // ── batch fourteen ──
+    ["how do i find what is using a port"],
+    ["the log file is huge"],
+    ["the service starts then dies"],
+    // ── batch fifteen ──
+    ["why is my table bloated", "",
+     "data/locking-mvcc-concurrency-without-chaos"],
+    ["autovacuum is running but bloat keeps growing", "",
+     "data/locking-mvcc-concurrency-without-chaos"],
+    // ── batch sixteen ──
+    ["how do i see what changed on this server"],
+    ["i cannot find the big files"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -400,6 +487,22 @@ const READERS = [
     ["the intern deleted the wrong thing",
      "kind 3 — the reader's incidental noun. The generic phrasing above reaches the card; this one asks the site to contain a word it has no reason to contain",
      "ops/writing-a-postmortem-people-actually-learn-from"],
+    // ── batch twelve ──
+    ["retrospectives are a waste of time", "",
+     "career/facilitating-retrospectives-tabletops-neutrality-and-the-har"],
+    ["we have too many meetings"],
+    // ── batch thirteen ──
+    ["we keep missing deadlines"],
+    ["how do i say no to a stakeholder"],
+    // ── batch fourteen ──
+    ["the person who knew left"],
+    ["how do i push back on a deadline"],
+    // ── batch sixteen ──
+    ["the handover was useless",
+     "kind 3 — the card lacks only `useless`, the same editorial word that blocks `our standups are useless`. It cannot join WIDE_STOP: `The Risk Register in Practice — Wording, Ownership & Why Most Are Useless` is a topic title, so stopping it would cost that card its own name — the `get`/`gets` case, measured rather than assumed",
+     "blueteam/shift-handover-in-a-soc"],
+    ["nobody owns this service",
+     "wide and inherent — `service` is in a fifth of the site and every use is correct. The subject is real and covered from three sides: `ops` asset and configuration management, `eng` on ownership, and `sec` non-human identity on the population nobody owns. Ranking would pick between them; this matcher is a filter"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -441,6 +544,30 @@ const READERS = [
      "devops/flaky-tests-a-reliability-problem-in-the-test-suite"],
     // ── batch ten ──
     ["the database is slow", "", "data/query-optimization-sargability-n1"],
+    // ── batch twelve ──
+    ["floating point rounding is wrong",
+     "kind 3 — the card says 'it is not a bug in your code'; 'wrong' is the one word too many, and the relaxation stage deliberately never runs on a zero"],
+    ["off by one"],
+    ["the api returns 500 and nothing is logged"],
+    // ── batch thirteen ──
+    ["permission denied but i am root", "",
+     "linux/permission-denied-as-root-the-layers-that-outrank-a-mode-bit"],
+    ["it works in dev and breaks in prod"],
+    // ── batch fourteen ──
+    ["my change broke something unrelated"],
+    ["the bug only happens in production"],
+    // ── batch fifteen ──
+    ["two transactions both checked and both committed", "",
+     "data/acid-transactions-isolation-levels"],
+    ["do i need serializable", "",
+     "data/acid-transactions-isolation-levels"],
+    ["the same query is fast sometimes and slow other times",
+     "kind 3 — every word is in the corpus and no card carries them together, which is what the per-word line under a zero is for. `data` has a concept card titled *The Query That Was Fast and Went Slow: Stale Statistics and the Plan Flip*. The nearby gap is real and narrower: `parameter sniffing` and `cardinality estimat` each return zero site-wide, and they are the intermittent case rather than the one-way flip"],
+    ["my sql is slow only for one customer"],
+    // ── batch sixteen ──
+    ["i cannot reproduce the bug"],
+    ["the stack trace is useless",
+     "kind 3, same binding word as the handover row — `useless` is the reader's verdict and cannot be stopped. The nearby subject is real and narrower: a trace that points only at framework or async frames"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -458,6 +585,21 @@ const READERS = [
      "hw/laptops-batteries-thermals-what-is-actually-replaceable"],
     ["the printer prints blank pages", "",
      "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
+    // ── batch twelve ──
+    ["usb device not recognised"],
+    ["the fans are always loud"],
+    // ── batch thirteen ──
+    ["the screen is flickering", "",
+     "hw/displays-panel-types-scaling-colour-the-multi-monitor-pitfal"],
+    ["it will not boot from usb"],
+    // ── batch fourteen ──
+    ["the keyboard types the wrong characters"],
+    ["slow since the update"],
+    ["the laptop smells of burning", "",
+     "hw/laptops-batteries-thermals-what-is-actually-replaceable"],
+    // ── batch sixteen ──
+    ["the wifi adapter disappeared",
+     "kind 3 — `disappeared` at 2 is the binding word and it is the reader's narration. `wifi` reads 44 once folded, which the per-word line reported as 4 until it folded both sides the way the matcher does"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -479,6 +621,24 @@ const READERS = [
      "devops/pods-that-will-not-run-reading-the-status-before-the-logs"],
     // ── batch ten ──
     ["i got paged at 3am again", "", "ops/on-call-done-humanely"],
+    // ── batch twelve ──
+    ["image pull backoff"],
+    ["the certificate renewed and the site still says expired",
+     "still zero after the card was fixed, and deliberately — the renewed-and-not-reloaded row went into the TLS card because its table was missing a failure and its verdict claimed the incomplete chain was the only one; 'site' and 'says' are the reader's filler, and the conjunction cannot drop them because the relaxation stage never runs on a zero",
+     "sec/tls-https-how-secure-connections-work"],
+    ["nat gateway is the biggest line on the bill",
+     "kind 3 — cloud states the NAT gateway is billed hourly plus per GB per AZ; the ranking is the reader's framing"],
+    // ── batch thirteen ──
+    ["s3 access denied"],
+    ["the alert fired and nothing was wrong"],
+    ["terraform plan shows changes i did not make"],
+    // ── batch fourteen ──
+    ["the deploy succeeded but nothing changed"],
+    ["the autoscaler keeps flapping", "",
+     "eng/autoscaling-in-practice-the-metric-the-lag-and-why-it-oscill"],
+    // ── batch sixteen ──
+    ["my costs doubled overnight",
+     "kind 3 — `doubled` at 4 is the binding word. `devops` FinOps and `cloud` cover cost spikes; nothing has a reason to say a bill doubled"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -505,6 +665,18 @@ const READERS = [
     // ── batch ten ──
     ["what should i put on my resume", "",
      "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
+    // ── batch twelve ──
+    ["tell me about yourself"],
+    ["no experience but i want the job"],
+    // ── batch thirteen ──
+    ["how do i explain a gap in my cv"],
+    ["i failed the interview"],
+    // ── batch fourteen ──
+    ["rejected with no feedback"],
+    ["how long should i stay in a job"],
+    // ── batch sixteen ──
+    ["should i specialise or generalise",
+     "kind 2, named and not written — the only genuine content gap in batch sixteen. `specialise` 6 and `generalise` 8 are scattered and no card is about the choice; `specialist or generalist` returns zero and `t-shaped` returns four, none of them `career`. One of the commonest questions in an IT career, and the domain has 45 topics without it"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -524,6 +696,18 @@ const READERS = [
     // ── batch ten ──
     ["our backups have never been tested", "",
      "ops/backup-disaster-recovery-surviving-the-worst-case"],
+    // ── batch twelve ──
+    ["how long do we keep backups"],
+    ["what is soc 2", "",
+     "grc/soc-2-trust-service-criteria-for-cloud-service-providers"],
+    // ── batch thirteen ──
+    ["what evidence proves mfa is on"],
+    ["we outsourced it who is responsible"],
+    // ── batch fourteen ──
+    ["who approved this change"],
+    ["we have no asset inventory"],
+    // ── batch sixteen ──
+    ["what is our data retention policy"],
   ]],
 ];
 
@@ -559,13 +743,34 @@ const READERS = [
  * would make a content wave's findings break the build. A stale note is worse
  * than a finding, though, so it prints before them and again after.
  */
-const CLAIMS_ZERO = /\bzeros?\b|found nothing|returns? nothing|no results|nothing back/i;
+// `\bzeros?\b` matched **zero-touch**, in a note reading "the card is provisioning
+// and zero-touch". A hyphen is a word boundary, so the word *zero* inside a
+// hyphenated compound satisfied it and a correct note was reported stale — the
+// same token-boundary-is-not-a-word-boundary failure `annotate_acronyms.py`
+// records for `DP` inside `UDP`, arriving here in a different alphabet. The
+// guard is the same shape: require that nothing hyphenates onto either side,
+// because *zero-touch*, *zero-trust* and *zero-day* are all subjects this site
+// writes about and none of them is a claim about a result count.
+// A tenth of the site, near enough, and the number this file has always used.
+// Named because it is now a scoring threshold rather than a display one.
+const WIDE = 60;
+
+const CLAIMS_ZERO = /(?<!-)\bzeros?\b(?!-)|found nothing|returns? nothing|no results|nothing back/i;
 
 function staleReason(keep, hits, want) {
   if (!keep) return null;
   if (hits.length && CLAIMS_ZERO.test(keep))
     return `the note says this returns nothing; it returns ${hits.length}`;
-  if (want && hits.includes(want))
+  // Reaching the wanted card only retires a note when the query is otherwise
+  // healthy. A **wide** query reaches its want and is still broken — that is
+  // the whole definition of wide, the answer present inside a set nobody can
+  // read — so its note is describing the live defect, not a solved one.
+  //
+  // Found by the rule firing on the three notes written the hour `wide` became
+  // a scored outcome. The rule was correct for the case it was written for and
+  // had no way to know a second case existed, which is this project's most
+  // repeated shape and the reason the fixtures below now cover both.
+  if (want && hits.includes(want) && hits.length <= WIDE)
     return "the note explains a miss that no longer misses — it reaches its topic";
   return null;
 }
@@ -579,11 +784,17 @@ const stale = [];
 if (args.includes("--self-test")) {
   const F = [
     ["a note claiming a zero on a query that answers", "kind 3 — still zero", ["a/b"], "", true],
+    ["…but not the word inside a hyphenated compound", "the card is provisioning and zero-touch", ["a/b"], "", false],
+    ["…in either direction", "a zero-day is not a result count", ["a/b"], "", false],
     ["…even when the word is plural", "two zeros recorded here", ["a/b"], "", true],
     ["…and when it is spelled out", "it found nothing and was kept", ["a/b", "c/d"], "", true],
     ["a note claiming a zero on a query that is one", "kind 1, still zero", [], "", false],
     ["a note explaining a miss that still misses", "the comparison is not phrased", ["a/b"], "x/y", false],
     ["a note explaining a miss that now reaches", "matcher limit", ["x/y"], "x/y", true],
+    ["…but not when the set is still too wide to read", "wide and inherent",
+     [...Array(WIDE + 1).keys()].map(n => `d/t${n}`).concat("x/y"), "x/y", false],
+    ["…and a wide note on a set that has since narrowed is stale", "wide and inherent",
+     ["x/y", "d/t1"], "x/y", true],
     ["no note at all", "", ["a/b"], "x/y", false],
     ["a note with no claim this can check", "kind 3, checked at fault level", ["a/b"], "", false],
   ];
@@ -607,6 +818,73 @@ const hitsFor = q => page.evaluate(query => {
   return { hits: out, note: document.getElementById("search-count")?.textContent || "" };
 }, q);
 
+/**
+ * How many topics contain each word of a query, one word at a time.
+ *
+ * Built after the same diagnosis was reached **by hand five times in one run** —
+ * `usb device not recognised`, `the screen is flickering`, `we outsourced it who
+ * is responsible`, `why is my table bloated` and `data is leaving over dns` were
+ * each a zero because one word of the query is not in the corpus while the
+ * subject plainly is. Every one of them took the same three commands to find,
+ * and the fifth was against a card written twenty minutes earlier.
+ *
+ * That is the point at which this file's own argument applies: **six of ten
+ * failures were caught by a tool, and the ratio is the case for the tools.** A
+ * diagnosis re-derived five times is a diagnosis that should be printed.
+ *
+ * It separates the two kinds of zero at a glance and needs no judgement to read:
+ *
+ *   * a word at **0** is the corpus missing the reader's word — kind 1, and the
+ *     rule for it is *fix in prose, it is better writing anyway*
+ *   * every word present, and still a zero, is the conjunction failing on words
+ *     no single card carries together — a matcher limit, and the relaxation
+ *     stage deliberately does not run on a zero
+ *
+ * Deliberately *not* a suggestion engine. It says which word is absent; whether
+ * the card should use it is a judgement, and the difference between naming a
+ * symptom the reader recognises and keyword stuffing is exactly that judgement.
+ */
+const wordsFor = (q, want) => page.evaluate(([query, wanted]) => {
+  const stop = typeof WIDE_STOP !== "undefined" ? WIDE_STOP : new Set();
+  const words = query.split(/\s+/).filter(w => w.length >= 2 && !stop.has(w.toLowerCase()));
+  // Folded on both sides, because the matcher is. The first version compared
+  // raw lowercase text and reported **`wifi 4`** against a corpus that writes
+  // *Wi-Fi* — 40 times in `net` alone. A diagnostic that undercounts is worse
+  // than no diagnostic, because it turns a matcher problem into a false "the
+  // reader's word is missing" and sends the next session to write prose that
+  // was already there.
+  //
+  // `foldSeparators` is the same function the search uses on both sides of its
+  // own comparison, so this counts what the conjunction would have counted.
+  const fold = s => foldSeparators(s.toLowerCase());
+  const corpus = [];
+  domainSections().forEach(section =>
+    domainTopics(section.dataset.domain).forEach(t => corpus.push(fold(t.text))));
+  // A word can be all over the site and absent from the one card that should
+  // answer, which is the case the corpus count cannot see and the commonest
+  // shape of a kind-1 miss. `the meeting room screen is blank` reported *every
+  // word is here* — `screen` 116, `blank` 29 — while the conference-room card
+  // said neither, describing the same fault as *wrong input selected* and
+  // *check the display's input source*.
+  //
+  // Where a query carries a `want`, the useful question is not whether the site
+  // has the word. It is whether **that card** does, and that is computable for
+  // exactly the queries somebody has already decided the answer for.
+  let inWant = null;
+  if (wanted) {
+    const [dom, id] = [wanted.slice(0, wanted.indexOf("/")), wanted.slice(wanted.indexOf("/") + 1)];
+    const t = (domainTopics(dom) || []).find(x => x.id === id);
+    if (t) inWant = words.map(w => [w, fold(t.text).includes(fold(w))]);
+  }
+  return {
+    corpus: words.map(w => {
+      const needle = fold(w);
+      return [w, corpus.reduce((n, text) => n + (text.includes(needle) ? 1 : 0), 0)];
+    }),
+    inWant,
+  };
+}, [q, want || ""]);
+
 let total = 0, zeros = 0, explained = 0, wide = 0, wrong = 0;
 const unexplained = [];
 
@@ -627,25 +905,66 @@ for (const [reader, queries] of READERS) {
       wrong++;
       if (!keep) unexplained.push([reader, q, want]);
       else explained++;
+    } else if (hits.length > WIDE) {
+      // Wide is not wrong — the widened stage is labelled where it runs — but a
+      // query returning a tenth of the site is a query nobody can use, and for
+      // thirteen batches this was the one outcome here with **no verdict
+      // trail**. Zeros carry a `keep` and are counted explained or not; so do
+      // wrong-cards. Wide was incremented into a headline number and forgotten,
+      // so three queries sat in it for a year with nothing recorded about
+      // whether that was acceptable or nobody had looked.
+      //
+      // It is now scored like the other two. The difference stays real — a wide
+      // result contains the answer and a zero does not — so it is counted
+      // separately in the summary and never called a miss.
+      if (!keep) unexplained.push([reader, q, want]);
+      else explained++;
     }
     const why = staleReason(keep, hits, want);
     if (why) stale.push([reader, q, why]);
-    // Wide is not wrong — the widened stage is labelled where it runs — but a
-    // query returning a tenth of the site is a query nobody can use.
-    if (hits.length > 60) wide++;
-    rows.push([q, hits, keep, missed, want]);
+    if (hits.length > WIDE) wide++;
+    // Only for a zero, and only when nobody has already written the verdict:
+    // it costs a corpus sweep per query and a recorded zero has had its
+    // diagnosis done once already.
+    const absent = (!hits.length && !keep) ? await wordsFor(q, want) : null;
+    rows.push([q, hits, keep, missed, want, absent]);
   }
-  const show = ONLY_ZERO ? rows.filter(r => !r[1].length || r[3]) : rows;
+  const show = ONLY_ZERO
+    ? rows.filter(r => !r[1].length || r[3] || r[1].length > WIDE) : rows;
   if (!show.length) continue;
   console.log(`\n${reader}\n`);
-  for (const [q, hits, keep, missed, want] of show) {
+  for (const [q, hits, keep, missed, want, absent] of show) {
     const mark = !hits.length ? (keep ? "kept" : "ZERO")
                : missed       ? (keep ? "kept" : "MISS")
-               : hits.length > 60 ? "wide" : "ok  ";
+               : hits.length > WIDE ? (keep ? "wide" : "WIDE") : "ok  ";
     const tail = missed ? (keep || `wanted ${want}`)
+               : hits.length > WIDE ? (keep || "a tenth of the site — investigate")
                : hits.length ? hits[0]
                : (keep || "nothing — investigate");
     console.log(`  ${mark}  ${JSON.stringify(q).padEnd(40)} ${String(hits.length).padStart(3)}  ${tail.slice(0, 72)}`);
+    if (absent && absent.corpus.length) {
+      const gone = absent.corpus.filter(([, n]) => n === 0);
+      // "every word is here" is true and unhelpful when one of them is here
+      // four times. The conjunction requires every word of the query in one
+      // card, so the rarest is the binding constraint — the same reasoning the
+      // relaxation stage uses when it keeps the rarest word and drops the rest.
+      // Naming it turns "investigate" into a place to start.
+      const rarest = absent.corpus.slice().sort((a, b) => a[1] - b[1])[0];
+      console.log(`        in the corpus: ` +
+        absent.corpus.map(([w, n]) => `${w} ${n}`).join(" · ") +
+        (gone.length
+          ? `\n        → ${gone.map(([w]) => `“${w}”`).join(", ")} ` +
+            `${gone.length > 1 ? "are" : "is"} not on the site — the reader's word, not a missing card`
+          : `\n        → every word is here; “${rarest[0]}” at ${rarest[1]} is the binding one, ` +
+            `and no card carries it with the rest`));
+      if (absent.inWant) {
+        const missing = absent.inWant.filter(([, ok]) => !ok).map(([w]) => `“${w}”`);
+        console.log(`        in ${want}: ` +
+          (missing.length
+            ? `${missing.join(", ")} ${missing.length > 1 ? "are" : "is"} not in the card that should answer`
+            : `every word is in the wanted card — the matcher, not the prose`));
+      }
+    }
   }
 }
 

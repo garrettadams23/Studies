@@ -301,13 +301,37 @@ PAINT_ATTR_RE = re.compile(
     r'"(#[0-9a-fA-F]{3,8})"'
 )
 HEX_RE = re.compile(r"#[0-9a-fA-F]{3,8}\b")
+# ...and the same literal in the other notation, which this check could not see
+# for as long as it existed. It was written against `#rrggbb` because that is
+# the form the instance that motivated it happened to use, and the content had
+# **168 `rgba()` literals in ten domains** while the hex count sat at **zero** —
+# so the check passed on an empty set and read as a clean bill of health.
+#
+# They were the defect the error message below describes, exactly: `--cyan` is
+# `#00d4ff` dark and `#0274af` light, so `rgba(0, 212, 255, 0.3)` kept the dark
+# value in daylight. Fourteen were worse than that — `rgba(168, 85, 247, …)` is
+# the *superseded* `--purple`, which style.css records as changed for contrast:
+# `--purple: #ad5ff7;  /* was #a855f7, 4.47:1 on --bg3 — just under */`. The
+# variable was fixed and the hardcoded copies kept the failing value.
+#
+# `var()` and `color-mix()` are not literals and never match: the point is a
+# colour that cannot follow the theme, not the mention of a colour.
+FUNC_RE = re.compile(r"\b(?:rgba?|hsla?)\([^)]*\)", re.I)
 
 
 def hex_colours(text):
-    """(line_number, literal) for each hex used as a colour."""
+    """(line_number, literal) for each colour literal used as a colour.
+
+    Named for hex because that is all it could once see. It reads both
+    notations now; the name is kept because three call sites and a self-test
+    fixture use it, and renaming it would be the larger edit for no reader.
+    """
     for m in STYLE_ATTR_RE.finditer(text):
+        line = text[: m.start()].count("\n") + 1
         for h in HEX_RE.finditer(m.group(1)):
-            yield text[: m.start()].count("\n") + 1, h.group(0)
+            yield line, h.group(0)
+        for h in FUNC_RE.finditer(m.group(1)):
+            yield line, h.group(0)
     for m in PAINT_ATTR_RE.finditer(text):
         yield text[: m.start()].count("\n") + 1, m.group(1)
 
@@ -1346,8 +1370,32 @@ SEE_FIXTURES = [
 ]
 
 
+# The colour check had **no fixtures at all**, which is why nothing noticed it
+# was reading an empty set: the hex count was zero and zero looks like health.
+# A check with no fixture cannot tell "nothing is wrong" from "I am not
+# looking", and this one had been unable to tell for as long as it existed.
+COLOUR_FIXTURES = [
+    ('<div style="color: #38bdf8">x</div>', 1, "hex in a style attribute — the original case"),
+    ('<div style="border-color: rgba(0, 212, 255, 0.3)">x</div>', 1,
+     "the same colour in the notation the check could not see"),
+    ('<div style="background: rgb(168,85,247)">x</div>', 1, "rgb without alpha"),
+    ('<div style="color: hsl(199 89% 48%)">x</div>', 1, "hsl counts too"),
+    ('<div style="color: var(--cyan)">x</div>', 0, "a variable is the fix, not the defect"),
+    ('<div style="border-color: color-mix(in srgb, var(--cyan) 30%, transparent)">x</div>', 0,
+     "color-mix over a variable still follows the theme"),
+    ('<p>ticket #4521 and invoice #4471</p>', 0, "a number that looks like hex, outside any style"),
+    ('<pre>background: rgba(0,0,0,.5)</pre>', 0, "a CSS sample teaching the notation is not a claim"),
+    ('<svg><rect fill="#00d4ff"/></svg>', 1, "a paint attribute, which was already covered"),
+]
+
+
 def self_test():
     failures = 0
+    for text, want, why in COLOUR_FIXTURES:
+        got = len(list(hex_colours(text)))
+        if got != want:
+            failures += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
     for text, want, why in WRAPPED_COMMENT_FIXTURES:
         got = len(wrapped_comments(text))
         if got != want:
@@ -1395,7 +1443,7 @@ def self_test():
          + len(WRAPPED_COMMENT_FIXTURES) + len(NESTING_FIXTURES)
          + len(BARE_TABLE_FIXTURES) + len(GT_COMMENT_FIXTURES)
          + len(BADGE_FIXTURES)
-         + len(SEE_FIXTURES))
+         + len(SEE_FIXTURES) + len(COLOUR_FIXTURES))
     print(f"self-test: {n} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 

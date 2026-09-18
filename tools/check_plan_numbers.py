@@ -156,6 +156,24 @@ def readme_problems():
     if not present(acronyms, text):
         out.append(f"README.md: does not state the dictionary's size, {acronyms:,}")
 
+    # The three below were added after a pass that pointed the previous wave's
+    # lens — *only the gated half of a claim survives* — at the front door. The
+    # domain table was checked; everything around it was not, and all three had
+    # drifted: 1,545 topics against 1,553, 140,926 content elements against
+    # 142,7xx, and 241 archived session records against 242.
+    #
+    # The README is the most-read file here and was the least-checked, which is
+    # the whole argument for this block. It is deliberately not a `present()`
+    # test for a named figure: each number is found by its own sentence, so a
+    # rewrite that drops the claim is allowed and only a claim that is *wrong*
+    # fails. A check that forces a file to keep saying something is a check that
+    # writes the file.
+    for label, pattern, actual in README_FIGURES(text):
+        if pattern is None:
+            continue
+        if pattern != actual:
+            out.append(f"README.md: says {pattern:,} {label}, the tools say {actual:,}")
+
     # Any bare "N domains" in a present-tense document. Restricted to these two
     # files on purpose: plan.md and its archive are full of counts that were
     # true when written and are the record, not a claim. CONTRIBUTING.md said
@@ -168,6 +186,33 @@ def readme_problems():
                 out.append(f"{name}:{line}: says '{m.group(0)}', "
                            f"data/domains.json has {len(domains)}")
     return out
+
+
+def README_FIGURES(text):
+    """(label, number the README states or None, number the tools derive).
+
+    Each figure is located by the sentence that makes the claim rather than by
+    scanning for any integer, so deleting the sentence is a legal edit and only
+    a surviving-but-wrong number is a failure.
+    """
+    import suggest_related
+    figures = []
+
+    topics = len(suggest_related.topics())
+    m = re.search(r"measured at ([\d,]+) topics", text)
+    figures.append(("topics", int(m.group(1).replace(",", "")) if m else None, topics))
+
+    budget = run("page_budget.py")
+    elements, = grab(r"content_elements\s+([\d,]+)", budget, "page_budget.py")
+    m = re.search(r"instead of ([\d,]+)\*\*", text)
+    figures.append(("content elements", int(m.group(1).replace(",", "")) if m else None,
+                    elements))
+
+    m = re.search(r"and ([\d,]+) session records", text)
+    figures.append(("archived session records",
+                    int(m.group(1).replace(",", "")) if m else None,
+                    session_records(ARCHIVE)))
+    return figures
 
 
 def session_records(path):
@@ -229,7 +274,14 @@ def derive():
     n_paths, steps, reach, total = grab(
         r"([\d,]+) paths, ([\d,]+) steps, ([\d,]+) distinct topics of ([\d,]+) on the site",
         paths, "check_paths.py", 4)
-    out["Learning paths"] = [n_paths, steps, reach, total]
+    # The stranded count is here because the claim it settles — *0 hand-written
+    # topics off a path* — sat in the plan as prose for weeks while three topics
+    # were off one. The orphan half of the same sentence was checked all along.
+    # A navigation claim with one measured half and one asserted half is the
+    # shape this file keeps rediscovering, so both halves are derived now.
+    stranded, = grab(r"([\d,]+) hand-written topic\(s\) on no path",
+                     paths, "check_paths.py")
+    out["Learning paths"] = [n_paths, steps, reach, total, stranded]
 
     rel = run("suggest_related.py", "--check")
     linked, links, oneway = grab(
@@ -241,6 +293,20 @@ def derive():
     raw_pct, = grab(r"raw_mb\s+[\d.]+\s+[\d.]+\s+(\d+)% left", budget, "page_budget.py")
     room, = grab(r"Room for ~([\d,]+) more", budget, "page_budget.py")
     out["Page budget"] = [raw_pct, room]
+
+    # Phase 11's numbers lived in its own prose for as long as it has existed,
+    # and every one of them had drifted: 46 spans and 5 anchors when the site
+    # had 1,432 topics, against 45 and 12 today. The risk register repeated the
+    # total a third time, in the one row whose own column admits the figure
+    # lives "nowhere" — which is what a number with no checked home does. The
+    # denominator is still not countable and that is Phase 11 §3's finding; the
+    # numerator always was.
+    vol = run("check_volatility.py")
+    spans, anchors = grab(r"([\d,]+) volatile span\(s\), ([\d,]+) fact anchor\(s\)",
+                          vol, "check_volatility.py", 2)
+    cands, = grab(r"([\d,]+) topic\(s\) name a vendor console with no dated span",
+                  vol, "check_volatility.py")
+    out["Dated claims"] = [spans, anchors, spans + anchors, cands]
 
     gates = run("check_gates.py")
     n_gates, = grab(r"([\d,]+) in both", gates, "check_gates.py")

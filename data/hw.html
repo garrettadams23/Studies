@@ -288,7 +288,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>A burnt or cracked component with a scorch mark</td><td>Something failed catastrophically — check what it powers before replacing</td></tr>
             <tr><td>Corrosion around a connector or battery</td><td>Liquid or leaked cell; damage extends further than it looks</td></tr>
             <tr><td>Board looks perfect and the device is dead</td><td>Most likely a chip or firmware fault — not visually diagnosable</td></tr>
-            <tr><td>Smell of burnt electronics, no visible damage</td><td>Real, and worth taking seriously; power it down</td></tr>
+            <tr><td>It smells of burning — burnt electronics, no visible damage</td><td>Real, and worth taking seriously; power it down</td></tr>
             <tr><td>Repeated identical failures across a fleet</td><td>A design or batch fault; escalate to the vendor rather than repairing</td></tr>
           </tbody>
         </table>
@@ -1408,7 +1408,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <thead><tr><th>Symptom</th><th>Usual cause</th></tr></thead>
           <tbody>
             <tr><td>Works at 60 Hz, black screen at 144 Hz</td><td>Cable or port bandwidth; try a certified cable</td></tr>
-            <tr><td>Occasional flicker or momentary black</td><td>Marginal cable, or a long run without an active cable</td></tr>
+            <tr><td>Flickering, or an occasional momentary black</td><td>Marginal cable, or a long run without an active cable</td></tr>
             <tr><td>Third monitor will not light up on a dock</td><td>Dock or GPU <span class="acro-exp">(Graphics Processing Unit)</span> output limit, or DisplayPort daisy-chaining not enabled</td></tr>
             <tr><td>Two monitors work, both drop when a third is added</td><td>Total bandwidth exceeded across a shared link</td></tr>
             <tr><td>Monitor not detected after sleep</td><td>Handshake failure — common; try a different port or disable deep sleep</td></tr>
@@ -1567,7 +1567,10 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         The triage order above answers <em>nothing came out</em>. A page that came out wrong is the
         opposite investigation, and an easier one: the path worked end to end, so the fault is in
         what was sent or in what put it on the paper. The shape of the wrongness says which, and
-        readers report the shape accurately even when they can describe nothing else.
+        readers report the shape accurately even when they can describe nothing else — though
+        rarely in these words. <strong>Pages of garbage characters, gibberish, or "it printed
+        junk"</strong> are all the second row below: the driver is speaking a page language the
+        device does not.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -1659,6 +1662,44 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           dock's own supply rating. A dock with a 180 W brick may deliver only 65 W upstream because
           the rest feeds its own ports and displays — and a workstation-class laptop under load will
           slowly flatten on it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure mode</div>
+      <div class="concept-title">The Device That Charges and Never Appears</div>
+      <div class="concept-desc">
+        Power and data are negotiated separately over the same connector, so a device that
+        lights up has proved nothing about whether it will enumerate. That is the whole
+        difficulty of this ticket: the one piece of evidence the user volunteers — <em>it is
+        getting power</em> — is the piece that does not narrow anything, and it is the reason
+        the cable stops being a suspect long before it should. The user's own report is
+        usually the operating system's wording rather than theirs — <em>USB device not
+        recognised</em>, or a device that is simply absent from the list — and neither
+        phrasing distinguishes between the causes below.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Charges, never appears</td><td>Charge-only cable — two conductors and no data pair. The commonest cause and the cheapest to rule out</td></tr>
+            <tr><td>Works direct, not through the dock</td><td>The hub chain: bandwidth or power shared across downstream ports, or a dock firmware bug</td></tr>
+            <tr><td>Worked until the fourth device went in</td><td>Bus power budget spent. An unpowered hub divides one port's supply among everything on it</td></tr>
+            <tr><td>Works in one port, not its neighbour</td><td>Ports on one machine differ by generation and by mode; a device needing full speed on a slower port may not come up at all</td></tr>
+            <tr><td>"USB device not recognised" — the unknown-device notification</td><td>Enumeration started and the descriptor exchange failed — marginal cable, marginal power, or genuinely faulty hardware</td></tr>
+            <tr><td>Intermittent, and worse when moved</td><td>The connector or the cable, not the device. Reproduce it by flexing the cable at each end</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Work it in cost order, and the driver is last.</strong> Swap the cable for a
+          known-good data cable, then move to a port directly on the machine, then remove the
+          device from the hub chain, then reduce what else is drawing from the bus — four moves,
+          none of which needs admin rights or a reboot, and between them they account for most of
+          these tickets. Reinstalling the driver is the move that feels like progress and is the
+          one worth trying fifth, because a driver that was working yesterday rarely stopped on
+          its own. The corollary is a purchasing decision rather than a diagnostic one: buy
+          certified data cables and label them, because an estate that cannot tell its cables
+          apart pays for this ticket repeatedly.
         </div>
       </div>
     </div>
@@ -1821,7 +1862,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <table class="ref-table">
           <thead><tr><th>Layer</th><th>Typical failure</th></tr></thead>
           <tbody>
-            <tr><td>Display</td><td>Wrong input selected; wakes slowly; handshake failure over HDMI <span class="acro-exp">(High-Definition Multimedia Interface)</span></td></tr>
+            <tr><td>Display</td><td>Screen blank, or “No Signal” on an otherwise working display — wrong input selected, wakes slowly, or a handshake failure over HDMI <span class="acro-exp">(High-Definition Multimedia Interface)</span></td></tr>
             <tr><td>Camera</td><td>Claimed by another application; privacy shutter closed; USB <span class="acro-exp">(Universal Serial Bus)</span> bandwidth</td></tr>
             <tr><td>Microphones</td><td>Muted at the device rather than in software; wrong device selected</td></tr>
             <tr><td>Speakers</td><td>Audio routed to the laptop's own output — the single most common fault</td></tr>
@@ -2708,6 +2749,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>"Leaving it plugged in ruins the battery"</td><td>Overcharging is prevented in hardware. What ages it is sitting at 100% and warm — which is why vendors ship charge limits</td></tr>
             <tr><td>"Calibrating restores capacity"</td><td>It re-syncs the <em>gauge</em>, so the percentage becomes honest again. The capacity does not change</td></tr>
             <tr><td>"Swelling means it is faulty"</td><td>Swelling is normal end-of-life gassing. It is also a <strong>safety issue</strong> — stop using it, do not puncture it, do not put it in general waste</td></tr>
+            <tr><td>"It smells of burning, but it still works"</td><td><strong class="c-red">Stop.</strong> A burning or sharp chemical smell is not a wear symptom — power down, unplug, and do not charge it again. Swelling gives you days; a smell does not</td></tr>
             <tr><td>"Any replacement will do"</td><td>Cheap cells are a genuine fire risk. This is the component where the brand of the spare matters most</td></tr>
           </tbody>
         </table>

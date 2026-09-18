@@ -209,7 +209,7 @@ CONSOLE_FIXTURES = [
     ("Entra admin center ▸ Conditional Access", True, "a named console path"),
     ("sign in at intune.microsoft.com", True, "a console host"),
     ("Guest access in Teams | Teams admin", True, "names where a setting lives"),
-    ("the Microsoft 365 admin centre", True, "a console by name"),
+    ("the Microsoft 365 admin center", True, "a console by name"),
     ("Exchange Administrator — mailboxes, mail flow", False,
      "a role name, not a console"),
     ("most Teams administration is really SharePoint", False,

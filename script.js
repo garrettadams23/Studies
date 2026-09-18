@@ -2077,9 +2077,26 @@ function plurals(term) {
 }
 
 const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with as is are was "
-  + "were be been do does did can could should would will shall may might must "
+  + "were be been am do does did can could should would will shall may might must "
   + "i we you they it he she this that these those my our your their its "
-  + "how what why when where which who does not no yes if then than so "
+  + "how what why when where which who does not no yes if then than so found "
+  // `am` was the one form of *to be* this list did not have. `is are was were
+  // be been` were all here from the start and the first person singular was
+  // not, which is the shape this project keeps recording: a rule applied to a
+  // category with one member missed. It cost `permission denied but i am root`
+  // — zero, against a card written that same hour titled *"Permission Denied"
+  // as Root*, while `permission denied root` returned it fine.
+  //
+  // It is the cheapest entry this list will ever take. 61 occurrences in the
+  // corpus, every one of them a copula — *who am I*, *what am I automating*,
+  // *Am I allowed to do it?* — no acronym claims the letters, and nobody has
+  // searched for it. The cost of missing it falls entirely on **first-person
+  // symptom queries**, which is how a reader describing their own problem
+  // phrases it.
+  //
+  // `being` was measured beside it and left alone, because a stop list earns
+  // its entries one at a time and that one is load-bearing in titles here.
+  //
   // `explain` joins the question words because that is what it is: an
   // instruction to the site, never a subject. `explain oauth` returned
   // **nothing** against a domain full of OAuth cards, because the conjunction
@@ -2126,6 +2143,23 @@ const WIDE_STOP = new Set(("a an the and or but of to in on at by for from with 
   // a zero cannot be relaxed". Both clauses true; the conclusion was wrong. A
   // verb no card has reason to contain is the argument for stopping it.
   // `get` and `gets` stay — *How Devices Get Their IP Address* is a title here.
+  //
+  // `found` joins on the same test and nothing new. It is a **reporting verb**:
+  // `we found crypto mining on a server`, `usb found in car park`, `we found a
+  // vulnerability` — the reader narrating their own discovery, and a card about
+  // the thing discovered has no reason to say somebody found it. 7% of topics,
+  // **zero topic titles**, and requiring it is requiring a word the corpus
+  // cannot reliably supply.
+  //
+  // It cost the cryptojacking card its own query on the day that card was
+  // written: `cryptojacking` returned it alone and `crypto mining on a server`
+  // returned it among six, while the sentence a person actually types returned
+  // nothing. Measured before shipping — search 56/56 with no ceiling moved, and
+  // `usb found in car park` returns the same two cards it did before.
+  //
+  // `find`, `finds` and `finding` stay. *Finding What Detection Missed*,
+  // *Finding and Fixing Weaknesses* and *Finding Your First IDOR* are titles
+  // here, and `findings` is a noun this corpus uses as a subject constantly.
   + "explain too actually got "
   // `vs` and `versus` join them for the same reason `or` is here. The site
   // titles a dozen topics "X vs Y", so the as-typed pass answers those before
@@ -3355,12 +3389,21 @@ const ST_NOT_STUDYABLE = new Set(["acronym"]);
  * Studyable = there is something to put on the back of the card.
  *
  * The domain exclusion above was the right judgement and the wrong unit. Six
- * topics outside `acronym` build a flashcard whose back is **completely empty** —
- * `shortcut`'s *Windows*, *macOS*, *Terminal / Bash* and *VS Code*, the AI
- * glossary, and the military code list. Every one of them is the same species as
- * the acronym dictionary: a lookup table, with a heading and rows and no prose
- * anywhere in the topic. There is no question a table of keystrokes answers, and
- * turning one over reveals nothing.
+ * topics outside `acronym` built a flashcard whose back was **completely empty**
+ * when this was written — `shortcut`'s *Windows*, *macOS*, *Terminal / Bash* and
+ * *VS Code*, the AI glossary, and the military code list. Every one of them is
+ * the same species as the acronym dictionary: a lookup table, with a heading and
+ * rows and no prose anywhere in the topic. There is no question a table of
+ * keystrokes answers, and turning one over reveals nothing.
+ *
+ * **It is four today**, and that is the rule working rather than drifting: the
+ * AI glossary and the military code list have since gained prose, so they build
+ * a real card and the shape test lets them back in without anybody editing this
+ * list. Measured rather than assumed — 1,556 index entries, 1,487 with both a
+ * concept title and a description, 5 with a title alone, 0 with a description
+ * alone, 64 excluded of which 60 are the acronym dictionary. The named six are
+ * kept above as the evidence that produced the rule; the live count is whatever
+ * `stIsStudyable` says today.
  *
  * So the rule is about shape rather than domain, which also means the next
  * lookup card somebody writes is excluded without anybody remembering to add it.
