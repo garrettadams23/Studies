@@ -12,7 +12,7 @@ PY ?= python3
 NODE ?= node
 
 .DEFAULT_GOAL := build
-.PHONY: build check test a11y og og-check visual all fmt acronyms stamp census clean help search browser resilience mobile backup measure equiv
+.PHONY: build check test a11y og og-check visual all fmt acronyms stamp census clean help search browser resilience mobile backup measure equiv probe-check
 
 ## build: regenerate index.html from data/ (the usual command)
 build:
@@ -130,8 +130,18 @@ mobile:
 backup:
 	$(NODE) tools/backup_test.mjs
 
+## probe-check: plan.md's reader-questions row, against a live census
+#
+# `check_plan_numbers.py` derives thirteen rows of the measured-state table and
+# names four it cannot. Naming is not checking: this row's headline was kept
+# current while the three sub-counts beside it drifted by eight, and nothing
+# could see it because the row needs a browser and `make check` has none. The
+# browser is here, so the check is here.
+probe-check:
+	$(NODE) tools/query_probe.mjs --check-plan
+
 ## browser: every gate that needs playwright and chromium
-browser: test search a11y visual resilience mobile backup
+browser: test search a11y visual resilience mobile backup probe-check
 
 ## all: build, then every check, then every browser gate
 #

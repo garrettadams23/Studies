@@ -181,7 +181,7 @@
  *   node tools/query_probe.mjs --self-test   # the staleness check, on fixtures
  */
 
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 
 const chromium = await (async () => {
@@ -208,6 +208,10 @@ if (!existsSync(`${ROOT}/index.html`)) {
 
 const args = process.argv.slice(2);
 const ONLY_ZERO = args.includes("--zero");
+// Checking the plan row against a filtered run would compare the whole row to
+// part of a census, and pass or fail for the wrong reason.
+const CHECK_PLAN = args.includes("--check-plan");
+const READER_ARG = args.includes("--reader");
 const READER = args.includes("--reader") ? args[args.indexOf("--reader") + 1] : "";
 
 // Grouped by who is asking, because that is how the gaps cluster. A query that
@@ -804,6 +808,50 @@ function staleReason(keep, hits, want) {
   return null;
 }
 
+/**
+ * The plan row that quotes this census, checked against what it just counted.
+ *
+ * `check_plan_numbers.py` derives thirteen rows of plan.md's measured-state
+ * table and names the four it cannot, *rather than letting them pass as
+ * verified*. **Naming is not checking**, and this row proved it: its headline
+ * was kept current at *254 of 273* while the three sub-counts in the same
+ * sentence said **10 zeros, 1 wrong-card and 3 wide** against a tool printing
+ * 18, 1 and 4. The last record to touch them incremented the zeros from 9 to
+ * 10 on a run that reported 18.
+ *
+ * Nothing could see it because the row needs a browser, and `make check` has
+ * none by design. But the browser is here, seventeen seconds after this file
+ * starts, holding every one of those numbers at the moment it prints them — so
+ * the check belongs beside the count, not in the tool that cannot take one.
+ *
+ * Containment, on digit boundaries, exactly as `present()` does it in the
+ * sibling tool: the row is prose and the wording should stay free. That does
+ * mean a number the cell mentions for another reason would satisfy it, which is
+ * why the drift narrative for this row lives in its session record and the cell
+ * carries only the current state. A measured-state row that quotes its own
+ * history is a row that can be right about the past and wrong about now.
+ */
+const PLAN = `${ROOT}/plan.md`;
+const PLAN_ROW = "Reader questions answered";
+
+function planCell(text) {
+  const header = "| Measure | Value | Tool |";
+  const start = text.indexOf(header);
+  if (start < 0) return null;
+  for (const line of text.slice(start).split("\n").slice(2)) {
+    if (!line.startsWith("|")) break;
+    const cells = line.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+    if (cells[0] === PLAN_ROW) return cells[1];
+  }
+  return null;
+}
+
+// 6 must not satisfy 60, and 17 must not satisfy 173.
+function carries(cell, value) {
+  const forms = [String(value), value.toLocaleString("en-US")];
+  return forms.some(f => new RegExp(`(?<![\\d,])${f.replace(/,/g, ",")}(?![\\d,])`).test(cell));
+}
+
 const stale = [];
 
 // ── self-test ───────────────────────────────────────────────────────────────
@@ -832,7 +880,38 @@ if (args.includes("--self-test")) {
     const got = Boolean(staleReason(keep, hits, want));
     if (got !== expect) { bad++; console.log(`FAIL : ${name} — expected ${expect}, got ${got}`); }
   }
-  console.log(`query_probe self-test: ${F.length} fixtures, ${bad} failure(s).`);
+
+  // The row reader, on fixtures, for the same reason: `--check-plan` exists
+  // because a number nothing derived drifted by eight, and a deriver nobody
+  // has watched fail is a deriver nobody should trust. The digit-boundary
+  // cases are the ones that would make it pass while the row was wrong.
+  const TABLE = [
+    "| Measure | Value | Tool |",
+    "|---|---|---|",
+    "| Topics | **1,557** across 30 domains | `depth_report.py` |",
+    `| ${PLAN_ROW} | **255 of 273** — 17 zeros, 1 wrong-card, 4 wide | \`query_probe.mjs\` |`,
+    "| Gates | **42** | `check_gates.py` |",
+  ].join("\n");
+  const G = [
+    ["the row is found in the table", () => planCell(TABLE).startsWith("**255 of 273**")],
+    ["a table without the row reads null", () => planCell(TABLE.replace(PLAN_ROW, "Something else")) === null],
+    ["a file without the table reads null", () => planCell("nothing here") === null],
+    ["the row stops at the table's end", () => planCell(TABLE + "\n\nprose\n| x | y | z |") !== null],
+    ["a number the row carries", () => carries(planCell(TABLE), 17)],
+    ["a number it does not", () => !carries(planCell(TABLE), 18)],
+    ["a thousands-separated number", () => carries("**1,557** across 30", 1557)],
+    ["4 must not be satisfied by 42", () => !carries("| **42** |", 4)],
+    ["17 must not be satisfied by 173", () => !carries("173 things", 17)],
+    ["nor by 2,173", () => !carries("2,173 things", 173)],
+    ["0 is a value like any other", () => carries("**0 unexplained**", 0)],
+  ];
+  for (const [name, fn] of G) {
+    let got;
+    try { got = fn(); } catch (e) { got = `threw ${e.message}`; }
+    if (got !== true) { bad++; console.log(`FAIL : ${name} — got ${got}`); }
+  }
+
+  console.log(`query_probe self-test: ${F.length + G.length} fixtures, ${bad} failure(s).`);
   process.exit(bad ? 1 : 0);
 }
 
@@ -958,8 +1037,10 @@ for (const [reader, queries] of READERS) {
     const absent = (!hits.length && !keep) ? await wordsFor(q, want) : null;
     rows.push([q, hits, keep, missed, want, absent]);
   }
-  const show = ONLY_ZERO
-    ? rows.filter(r => !r[1].length || r[3] || r[1].length > WIDE) : rows;
+  // A gate prints what failed, not 273 lines of what did not.
+  const show = CHECK_PLAN ? []
+    : ONLY_ZERO ? rows.filter(r => !r[1].length || r[3] || r[1].length > WIDE)
+    : rows;
   if (!show.length) continue;
   console.log(`\n${reader}\n`);
   for (const [q, hits, keep, missed, want, absent] of show) {
@@ -1021,5 +1102,36 @@ if (unexplained.length) {
 if (stale.length) {
   console.log(`\n${stale.length} of the recorded verdicts above are stale, and they are the ` +
               `first thing to fix: the counts on this page are read through them.`);
+}
+if (CHECK_PLAN) {
+  if (READER_ARG) {
+    console.log("\n::error::--check-plan cannot run with --reader: the row describes the whole census.");
+    process.exit(2);
+  }
+  const cell = planCell(readFileSync(PLAN, "utf-8"));
+  if (cell === null) {
+    console.log(`\n::error::plan.md no longer has a ${JSON.stringify(PLAN_ROW)} row to check.`);
+    process.exit(2);
+  }
+  const expected = [
+    ["answered", total - zeros - wrong],
+    ["queries", total],
+    ["unexplained", unexplained.length],
+    ["zeros", zeros],
+    ["wrong-card", wrong],
+    ["wide", wide],
+  ];
+  const gone = expected.filter(([, v]) => !carries(cell, v));
+  if (gone.length) {
+    console.log(`\n${JSON.stringify(PLAN_ROW)}: the row does not carry ` +
+                gone.map(([n, v]) => `${v} (${n})`).join(", "));
+    console.log(`    row says  ${cell}`);
+    console.log(`    this run  ${expected.map(([n, v]) => `${n} ${v}`).join(" · ")}`);
+    console.log("\nThe row is one of the four `check_plan_numbers.py` cannot derive. " +
+                "This is where it is derived.");
+    process.exit(1);
+  }
+  console.log(`\nplan.md's ${JSON.stringify(PLAN_ROW)} row carries all six of this run's numbers.`);
+  process.exit(0);
 }
 console.log("\nA census, not a gate — see this file's docstring.");

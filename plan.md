@@ -37,10 +37,14 @@ twice.
 
 **The measured state, as of the last session record.** Every number below is produced by a
 tool in `tools/`, not by anybody's recollection, and `make census` prints the first four.
-Eleven of the fifteen rows are now *checked* by `check_plan_numbers.py` in `make check` —
-when it was first run, **nine of those eleven were wrong**, the page budget by a factor of
-twelve. The four it cannot derive need a browser or a stopwatch, and it names them on every
-run rather than letting them pass as verified:
+**Thirteen of the seventeen rows** are checked by `check_plan_numbers.py` in `make check`.
+When it first ran there were eleven, and **nine of the eleven were wrong**, the page budget
+by a factor of twelve. It names the four it cannot derive on every run rather than letting
+them pass as verified — and **naming is not checking**, which one of the four then proved:
+that row's headline stayed current for four waves while the three sub-counts in the same
+sentence drifted by eight, because nothing read them. A fourteenth row is checked now,
+by `query_probe.mjs --check-plan` in `make all` and CI, on the argument that the browser
+the row needs was already running. Three are left, and all three want a stopwatch:
 
 | Measure | Value | Tool |
 |---|---|---|
@@ -49,7 +53,7 @@ run rather than letting them pass as verified:
 | Mean chars per concept card | **1,394**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **255 of 273**, **0 unexplained** — sixteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 17 remaining zeros, the 1 wrong-card and the 4 wide results are recorded verdicts — and those three sub-counts had drifted to 10, 1 and 3 while the headline beside them was kept current, because this row is one of the four nothing derives. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **255 of 273**, **0 unexplained** — sixteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 17 remaining zeros, the 1 wrong-card and the 4 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,595 steps, 1,497 of 1,557 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,497 topics, 4,860 links, 0 one-way** — one mainland of **1,481 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
 | Page budget | **34% raw** headroom — room for ~791 more topics | `page_budget.py` |
@@ -57,10 +61,10 @@ run rather than letting them pass as verified:
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,142 chars**, median 3,740 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
-| Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
+| Gates | **43**, and the same 43 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **42** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **43** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4436,4 +4440,96 @@ dialectForms joins script.js: -ise/-ize only, 6-char floor, -our/-or and -ce/-se
 search 56 -> 58 · the 56 byte-identical with the rule stubbed out · new fixture fails without it
 plan row corrected: 10/1/3 -> 17/1/4, the sub-counts of an unchecked row
 42 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — naming a row as unchecked, and calling that checking it
+
+### The row the last wave named
+
+The previous record ended on a specific claim: *"Making it derivable is the next
+wave, and it is tractable — `query_probe.mjs` already has every one of those
+numbers at the moment it prints them."* This is that wave, and the claim held
+with nothing discovered on the way that changed it.
+
+`check_plan_numbers.py` derives thirteen of the measured-state table's rows and
+prints the four it cannot, with a reason each, *"rather than letting them pass
+as verified."* That sentence is the whole defect. **Naming a row as underivable
+is not a check on it**, and the row it names first is the one that drifted: its
+headline was kept current at *254 of 273* across four waves while the three
+sub-counts in the same sentence said **10 zeros, 1 wrong-card, 3 wide** against a
+tool printing **18, 1 and 4**. One record incremented the zeros from 9 to 10 on a
+run that reported 18.
+
+### The argument for where it goes
+
+The reason given for not deriving it is true and is not a reason: *`query_probe.mjs`
+drives a real browser*, and `make check` has none by design — its docstring says
+so, and that is why four generated artefacts moved into it. But **the browser is
+already running**, seventeen seconds into a census that holds all six numbers at
+the moment it prints them. So the check went beside the count rather than into
+the tool that cannot take one:
+
+```
+node tools/query_probe.mjs --check-plan
+```
+
+It reads plan.md, finds the row, and requires the cell to carry all six of the
+run's numbers — answered, queries, unexplained, zeros, wrong-card and wide — by
+containment on digit boundaries, which is exactly how `present()` does it one
+file over. Same convention, because a second convention for the same job is a
+second thing to learn.
+
+**It gates.** `make all` runs it, `build-check.yml` runs it, and
+`check_gates.py` now agrees on **43**. The census itself still exits 0 whatever
+it finds — a zero is a finding, not a failure — and that is untouched: a row
+misquoting a tool is not a finding about the site, it is drift, which is what
+the sibling tool has always exited 1 for.
+
+### Proved by reproducing the original drift
+
+The row was set back to **10 zeros … 3 wide**, the values it actually carried,
+and the gate printed:
+
+```
+"Reader questions answered": the row does not carry 17 (zeros), 4 (wide)
+    this run  answered 255 · queries 273 · unexplained 0 · zeros 17 · wrong-card 1 · wide 4
+```
+
+and exited 1. Not a constructed fixture — the exact sentence that was in this
+file this morning, failing the check that did not exist then.
+
+Eleven fixtures for the row reader joined the self-test, and four of them fail
+against a naive `cell.includes(String(value))`: **4 satisfied by 42**, **17 by
+173**, **173 by 2,173**, and `1,557` not found at all. Those four are the ones
+that would let the gate pass while the row was wrong, which is the only failure
+mode a containment check has.
+
+### One thing the row had to give up
+
+The cell briefly carried its own drift story — *"had drifted to 10, 1 and 3"* —
+and that had to come out, because a containment check cannot tell a current
+number from a historical one, and a cell quoting both can be satisfied by the
+wrong one. **A measured-state row that quotes its own history is a row that can
+be right about the past and wrong about now.** The history is three paragraphs
+up, in the record, where it cannot be mistaken for a measurement.
+
+### And the sentence above the table was wrong in the same way
+
+*"Eleven of the fifteen rows are now checked."* The table has **seventeen** rows
+and thirteen are checked. The sentence was accurate when written and had been
+read past ever since, one paragraph above the table whose drift it was
+describing — which is the fourth time this file has recorded a rule stated in
+prose beside the thing that enforces it, and not applied to itself.
+
+It now says thirteen of seventeen, plus a fourteenth in `make all`, and **three
+left, all of which want a stopwatch**. That is a claim a future session can
+check by counting the rows, which the old one was too.
+
+```
+query_probe.mjs --check-plan: 6 numbers, containment on digit boundaries, exit 1 on drift
+gates 42 -> 43, agreeing in `make all` and build-check.yml
+self-test 12 -> 23 fixtures · 4 of the 11 new ones fail a naive containment
+proved by restoring the real drifted cell: named both wrong numbers, exit 1
+plan preamble corrected: eleven of fifteen -> thirteen of seventeen, +1 elsewhere
+43 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```
