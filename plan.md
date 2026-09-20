@@ -64,7 +64,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **46** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **47** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -779,6 +779,33 @@ audit → the major regimes → the governance machinery). Paths went **6 → 12
 the entry point they lacked. The remaining zero-path domains are either small enough that the
 chip is entry enough or are the islands §4 says want prose, not a forced sequence — so the
 paths programme, like the connectivity one, stops where a genuine reader-sequence does.
+
+### And the ordering is a narrative, which is now measured rather than assumed
+
+This section's title has always said a path is *one domain's story*, and meant it
+about **coverage** — which domains had a path at all. It turns out to be true of
+**ordering** too, and the number is the evidence.
+
+95 of the 1,497 topics on a path are on more than one, so two paths can disagree
+about which of a pair comes first. `check_paths.py --ordering` counts it: **56
+pairs are ordered by two or more paths, and 17 of them — 30% — are ordered in
+opposite directions.** They cluster: eight between `ai-at-work` and
+`ai-safety-and-governance`, four between `ransomware-end-to-end` and
+`threat-landscape`.
+
+Read one at a time, every one is two legitimate stories.
+`cryptography-end-to-end` puts encryption basics before password hashing because
+the track builds from primitives; `security-for-everyone` puts hashing first
+because it is the concrete thing a reader has already met. **Neither is wrong and
+no third path can arbitrate**, which is exactly what it means for these to be
+narratives rather than prerequisites.
+
+So the 30% is the finding and not a defect, and it has one consequence worth
+writing down before somebody spends a wave on it: **a global ordering cannot be
+derived from `paths.json`.** A generated curriculum, or a "what should I read
+first" feature, would be building on a relation this data does not carry, and
+would contradict itself on a third of the pairs it found. The report exists so
+the next session reads the number instead of re-deriving it.
 
 ## 4. What this does not mean
 
@@ -4909,4 +4936,82 @@ attempt 1 lexical novelty — median 0.86, and both tails are good verdicts
 attempt 2 judgement lexicon — 574 without one, 12 read, 12 were judgements
 no tool shipped: a census with no decision attached is decoration
 431 of 2,716 (16%) in 32 of 35 domains name a row by position — now in the rubric
+```
+
+## Session — 102 stories that disagree about the order a third of the time
+
+### The measurement
+
+A path is an ordered list. 95 of the 1,497 topics on a path are on more than
+one, so two paths can make competing claims about which of a pair comes first,
+and nothing had ever asked whether they agree.
+
+**They disagree 30% of the time.** 56 topic pairs are ordered by two or more
+paths; **17 are ordered both ways.** Eight of the seventeen are one path pair —
+`ai-at-work` against `ai-safety-and-governance` — and four are
+`ransomware-end-to-end` against `threat-landscape`.
+
+### Why 30% is the finding and not seventeen bugs
+
+Read one at a time, each is two legitimate stories:
+
+> `cryptography-end-to-end` puts encryption basics before password hashing,
+> because the track builds from primitives. `security-for-everyone` puts hashing
+> first, because it is the concrete thing the reader has already met.
+
+Neither is wrong. `ransomware-end-to-end` leads with ransomware because the path
+is *about* ransomware; `threat-landscape` reaches it after infostealers because
+it is working through an ecosystem. **No third path can arbitrate**, and that is
+the definition of a narrative rather than a prerequisite.
+
+If these were prerequisite claims, 30% would be alarming. The fact that every
+case reads as defensible is what tells you they are not prerequisite claims —
+the disagreement rate is the *evidence for* the section's long-standing title,
+not a contradiction of it.
+
+**The consequence is worth more than the count**, and it is written into the
+paths section so a future session finds it before starting: a global ordering
+cannot be derived from `paths.json`. A generated curriculum would be building on
+a relation the data does not carry and would contradict itself on a third of the
+pairs it found.
+
+### The three decidable defects, all at zero
+
+Worth stating because they are what a person would assume this was checking:
+
+| | Count |
+|---|---|
+| a topic listed twice in one path | 0 — and already warned on, so this was not new |
+| a path that is an ordered subsequence of another | 0 |
+| a step pointing at a topic that does not exist | 0, gated |
+
+So the ordering report gates nothing, which is consistent with the rest of this
+file: *topics off a path are reported, never failed*, because a topic does not
+owe a path. There is nothing here to fail on either.
+
+### The report was wrong twice before it was right, and the fixtures are why
+
+**It undercounted by eighteen.** Iterating the pair keys and skipping `x > y`
+never visits a pair whose only key is the reverse — two paths that both say
+`b` then `a` produce only `("b","a")`, and the loop skipped it. 38 against a
+hand count of 56, and a report that quietly undercounts is the one thing a
+report is worst at showing you. Normalising the pair before the lookup fixed it.
+
+**And it counted one path as two.** A path that repeats a step orders that pair
+in both directions by itself, so `["a","b","a"]` scored as a disagreement. That
+is a copy-paste, the duplicate warning four lines up already reports it, and
+turning it into a second and wronger finding is how a census loses trust. The
+rule is distinct *paths*, not assertions.
+
+The second one was caught by a fixture written for it — `a pair one path orders
+twice is not shared` — which failed on the first run. **Six fixtures for a
+function that gates nothing** is the right ratio here, because a report nobody
+can check is worse than no report: it gets quoted.
+
+```
+56 pairs ordered by two or more paths · 17 both ways (30%) · 0 defects
+check_paths.py --ordering, reporting only — the number is the finding
++6 self-test fixtures; two of them are the two bugs the first version had
+consequence recorded: no global ordering can be derived from paths.json
+45 gates green · make all clean
 ```
