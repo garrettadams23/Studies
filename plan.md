@@ -64,7 +64,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **45** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **46** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -225,6 +225,32 @@ contribution to it.
 | 3 | **Ranks honestly, with the limits** | Not a list of mitigations but a ranked one, each with what it does *not* do. The ranking is the content; an unranked list is a search result |
 | 4 | **Says what it is not** | The scope sentence. "This is not a diagnosis." "DMARC is worth doing and is not a BEC control." Naming the boundary is what makes the rest trustworthy |
 | 5 | **Ends on a decision** | The verdict is an instruction or a judgement, never a summary. If the last sentence restates the card, delete it and promote the second-to-last |
+
+### How property 5 actually gets done, which nobody had written down
+
+A verdict has to refer to the table above it without repeating it, and this site
+solved that a long time ago in a way no file here had ever stated. **It names a
+row by position.**
+
+> *The last row is the one to design around.* · *Only the second row actually
+> bounds the damage; the rest raise the effort.* · *Work down this table in
+> order and stop at the first row that works.* · *The last row is the one that
+> ruins a Friday.* · *Only one of these rows can fine you, and it is the one
+> with dates attached.*
+
+**431 of 2,716 verdicts — 16%, in 32 of the 35 domain files.** Measured, not
+recalled, and the spread is the interesting half: this is not one author's tic
+in one domain, it is the house form.
+
+It works because it does the two things at once that a verdict has to. It is a
+*judgement* — a claim about which row matters, which is the one thing a table
+cannot state about itself — and it is a *pointer*, so the verdict never has to
+restate the content it is ranking. A verdict that begins "The last row" has
+already committed to saying something the table does not.
+
+The practical rule: **if you cannot name which row matters, the table is
+probably unranked**, and §3's listicle row applies to it rather than to the
+verdict.
 
 ## 3. The failure modes, with their tells
 
@@ -4780,4 +4806,107 @@ probe 273 -> 302 questions · 282 answered · 0 unexplained · 19 zeros · 1 wro
 batch seventeen opened at 22 of 29 — two thirds, the third batch running to predict it
 mean/card 1,394 unchanged, excluding verdicts 1,124 -> 1,125: one long card, not padding
 45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — a measurement of verdict quality that did not work, and what it found anyway
+
+### The thing nobody had measured
+
+The register's standing habit is *once a phase, measure something nobody has
+measured*, and the card rubric names the target itself. Its §5 table has two
+columns, **Checked mechanically** and **Not checked, ever**, and the second
+column's first entry is *whether the card is interesting*. One row down from
+that is the one that looked reachable:
+
+> **Restated verdict** — the closing sentence says what the table said. *Cut it.
+> A missing verdict is better than a redundant one.*
+
+`lint_content.py` counts tables with **no** verdict — ten, all deliberate. It
+has never had anything to say about the 2,716 verdicts that **do** exist. So the
+question was: is a restatement detectable?
+
+### Attempt one: lexical novelty. It ranks good verdicts at both ends
+
+For each verdict, the fraction of its distinct content words absent from the
+table it follows. A restatement should score low.
+
+Median **0.86**. And the bottom of the distribution is not restatements:
+
+> *Mounting pressure is the row that matters and the one nobody argues about.*
+> *The named blocker is the row that turns a report into a request.*
+> *Row three is the whole intervention; the rest is measurement and housekeeping.*
+
+Those are three of the twelve lowest-novelty verdicts on the site and all three
+are doing exactly what the rubric asks. They score low **because a verdict that
+picks a row has to name the row**, and naming it means reusing the table's
+words.
+
+The other tail is no better. Fourteen verdicts score a flat **1.00** — no
+content word in common with their table — and they include *The last row is the
+one to design around* and *Every row leaves hardware behind on somebody's
+site*. Zero lexical overlap, and both are plainly about the table.
+
+**The metric is orthogonal to the property.** A restatement can be written
+entirely in fresh words, and a good verdict can be written almost entirely in
+the table's. That is not a tuning problem; it is the wrong axis.
+
+### Attempt two: judgement markers. 21% lack them and are fine
+
+A lexicon of forty decision words — *worth*, *never*, *instead*, *prefer*, *the
+row that*, *rather than*, *the test is*. A verdict carrying none of them is a
+candidate summary. **574 of 2,716, 21%.**
+
+Twelve read at random from that bucket, and every one is a judgement:
+
+> *Good fit: a fleet of reasonably standard devices where update babysitting is
+> eating a person. Poor fit: heavily regulated change windows…*
+> *Record the timezone explicitly.*
+> *Quick test: if the installer works from an elevated PsExec -s shell with no
+> desktop, it will work in system context.*
+
+The lexicon was a dictionary pretending to be a rule, and English has more ways
+to give an instruction than anybody enumerates on a Tuesday.
+
+### The conclusion, and it is the phase-11 one
+
+**Verdict quality is not lexically measurable, and no third attempt is planned.**
+Both proxies failed for the same underlying reason — restatement is a *semantic*
+relation and every cheap handle on it is syntactic — and a hand-read of the
+likeliest bucket found nothing to catch. Phase 11 reached this about the
+freshness denominator after three attempts and wrote the reasoning down instead
+of the tool; this is the same shape and gets the same treatment.
+
+**No tool shipped, on purpose.** A census with no decision attached to it is the
+decoration this file already warned about once. The number that would have gone
+in the measured-state table — *574 verdicts with no judgement marker* — is a
+number nobody should act on, and putting it in a table is how it becomes a
+number somebody eventually does act on.
+
+### And the thing the failure found, which is the actual deliverable
+
+Reading the tails to work out why the metric was lying produced a house form
+that no file here had ever stated. **431 verdicts — 16%, across 32 of 35 domain
+files — point at their table by naming a row by position.**
+
+> *The last row is the one that ruins a Friday.* · *Only the second row actually
+> bounds the damage.* · *Work down this table in order and stop at the first row
+> that works.*
+
+It is the mechanism under the rubric's property 5, and it is in the rubric now.
+It does both halves of a verdict's job at once: a claim about **which row
+matters** is the one thing a table cannot say about itself, and a pointer means
+the verdict never has to restate what it is ranking. The practical rule that
+falls out is testable by the writer: **if you cannot name which row matters, the
+table is probably unranked**, and the listicle failure applies to the table
+rather than to the verdict.
+
+That is worth more than the check would have been. The check would have
+reported candidates a person then had to read; this changes what gets written.
+
+```
+2,716 verdicts measured two ways · 0 restatements found by either, or by reading
+attempt 1 lexical novelty — median 0.86, and both tails are good verdicts
+attempt 2 judgement lexicon — 574 without one, 12 read, 12 were judgements
+no tool shipped: a census with no decision attached is decoration
+431 of 2,716 (16%) in 32 of 35 domains name a row by position — now in the rubric
 ```
