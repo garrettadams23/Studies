@@ -50,21 +50,21 @@ the row needs was already running. Three are left, and all three want a stopwatc
 |---|---|---|
 | Topics | **1,557** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,395**, or **1,125 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,395**, or **1,126 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **304 of 330**, **0 unexplained** — eighteen batches. The two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 25 remaining zeros, the 1 wrong-card and the 7 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **305 of 330**, **0 unexplained** — eighteen batches. The two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 7 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,595 steps, 1,497 of 1,557 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,497 topics, 4,860 links, 0 one-way** — one mainland of **1,481 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~788 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~787 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,142 chars**, median 3,739 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,142 chars**, median 3,740 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **48** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **49** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5117,5 +5117,79 @@ probe 302 -> 330 questions · 304 answered · 0 unexplained · 25 zeros · 1 wro
 batch eighteen opened at 20 of 28 — two thirds, the third batch in a row
 2 of 8 zeros had a word at 0 in the corpus; both were the real gaps
 1 named and not written: `our reserved instances expired`, with its missing word
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — writing the card the last wave named, and the gate that caught its author
+
+### The gap, closed the wave after it was named
+
+The previous record named `our reserved instances expired` as kind 2 and wrote
+the evidence instead of the card, because the wave had spent its edit. That form
+— **the missing word plus the missing owner**, rather than the missing subject —
+has now got three cards written by a later wave, and this is the fourth.
+
+**`cloud` — A Commitment Expires, and Nothing Tells You**, added to *Commitment
+Discounts*, which was thorough on buying one and silent on the other end. The
+sentence: **expiry is a diary problem wearing a cost incident's clothes.**
+
+The fingerprint is what makes it findable and is the reason it gets misdiagnosed
+for days: **a cost jump with a flat usage graph.** Nothing was deployed, nothing
+scaled, no region was added — and the rise is suspiciously round, because it is
+exactly the 30–70% that had been coming off. When the usage line does not move
+across the step, the cause is commercial and every hour in the architecture
+diagram is an hour in the wrong document.
+
+It is missed structurally rather than carelessly. A commitment is bought by one
+person in one quarter and lapses twelve or thirty-six months later, by which time
+that person has moved. **Coverage is a percentage on a dashboard nobody opens,
+and it falls silently rather than alerting.** The nearest sibling on this site is
+a certificate: bought once, silent until the day it is not, fixed by a date with
+an owner rather than by any technical control.
+
+The verdict is the row that surprised me while writing it. **Auto-renew is the
+wrong default for the same reason buying without a forecast is — it turns a
+decision into a subscription**, and renews a commitment nobody re-forecast, which
+is the exact failure of the card directly above it, arriving on a timer. The
+right default is a dated review owned by whoever owns the forecast, with
+auto-renew on only where the baseline has already held across a full previous
+term.
+
+### And the reader's word, on the fourth consecutive wave to need it
+
+`our reserved instances expired` returned **zero against the card written to
+answer it**. The card said *expires*, *expiry* and *lapses*; the reader says
+**expired**, and the matcher's plural rule reaches `expireds` rather than
+`expires`.
+
+The fix is a clause that adds something rather than repeating anything — *the
+invoice does eventually explain itself, a line saying the reserved instances
+expired, and it arrives a month after that would have been useful* — which is
+both the reader's phrasing and a fact the card did not previously carry. Four
+waves in a row have now ended with this step, and the pattern is stable enough
+to be a prediction: **a card written mechanism-first will not close its own
+query, and the fix is always a sentence that is better than what it replaced.**
+
+### The gate from two waves ago failed the build on its author
+
+`make all` went red on **one word**: *organisation*, in a row of the table I had
+just written. `check_spelling.py` named the file, the word and the sentence.
+
+That is worth a paragraph because of what it says about the sweep it came from.
+Two waves ago the argument for building a rule-based checker rather than adding
+registry rows was that **enforcing a convention by row enforces exactly the words
+somebody thought of** — and the evidence was 2,192 spellings accumulated with the
+build green. The first thing the rule caught after that sweep was not a legacy
+card. It was new prose, written by the session that built it, three days after
+the convention was supposedly settled.
+
+A convention with a gate is a convention. Without one it is a paragraph in
+`CONTRIBUTING.md` that everybody agrees with and nobody satisfies.
+
+```
+1 concept card (cloud Commitment Discounts) · the gap the last wave named
+probe 330 questions · 305 answered · 0 unexplained · 24 zeros · 1 wrong · 7 wide
+the card did not close its own query until the reader's word went in — fourth wave running
+check_spelling.py failed the build on its own author's new prose, one word
 45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

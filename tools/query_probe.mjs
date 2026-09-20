@@ -746,15 +746,14 @@ const READERS = [
     // ── batch eighteen ──
     ["we cannot tell which team owns this spend"],
     ["the pager fires for things nobody fixes"],
-    // kind 2, named and not written — the wave had spent its card. `cloud`'s
-    // *Commitment Discounts* is thorough on **buying**: a commitment is a bet on
-    // your own forecast, commit the floor and never the ceiling. It has nothing
-    // on the other end. Expiry is a **diary** problem rather than a forecast
-    // one: the bill jumps 30-70% overnight with nothing deployed, nothing
-    // changed and no alert, because the discount stopped rather than the usage
-    // starting. `expired` is at 29 and none of them is a commitment.
-    ["our reserved instances expired",
-     "kind 2, named and not written — the missing half is expiry, and the missing word is a date somebody owns. See the note above this line"],
+    // kind 2, named in one wave and written in the next. `cloud`'s *Commitment
+    // Discounts* was thorough on **buying** — a commitment is a bet on your own
+    // forecast, commit the floor and never the ceiling — and had nothing on the
+    // other end. Expiry is a diary problem rather than a forecast one, and it
+    // is diagnosed as a technical incident for days because the usage graph is
+    // flat across the step.
+    ["our reserved instances expired", "",
+     "cloud/commitment-discounts-reserved-savings-plans-the-forecast-the"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
