@@ -44,23 +44,23 @@ run rather than letting them pass as verified:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,556** across 30 domains | `depth_report.py` |
+| Topics | **1,557** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
 | Mean chars per concept card | **1,394**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **254 of 273**, **0 unexplained** — sixteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,594 steps, 1,496 of 1,556 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,496 topics, 4,850 links, 0 one-way** — one mainland of **1,480 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~794 more topics | `page_budget.py` |
+| Reader questions answered | **255 of 273**, **0 unexplained** — sixteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 17 remaining zeros, the 1 wrong-card and the 4 wide results are recorded verdicts — and those three sub-counts had drifted to 10, 1 and 3 while the headline beside them was kept current, because this row is one of the four nothing derives. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,595 steps, 1,497 of 1,557 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,497 topics, 4,860 links, 0 one-way** — one mainland of **1,481 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **34% raw** headroom — room for ~791 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,142 chars**, median 3,739 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,142 chars**, median 3,740 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
 | Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **41** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **42** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4307,4 +4307,133 @@ say about a threshold it set for itself two hundred records earlier.
 plan.md 8,020 -> 4,227 · archive 20,972 -> 24,765 · 28,992 lines before and after
 45 records moved, 40 kept · nothing deleted, reordered or edited
 the fifth risk: reopened by its own condition, acted on, and closed again
+```
+
+## Session — the card the census named, and the two fixes it took after that
+
+### The gap was real, and writing it was a third of the work
+
+`should i specialise or generalise` had carried a **kind 2** verdict since batch
+sixteen — *named and not written, the only genuine content gap in batch sixteen* —
+with the evidence already filed: `specialist or generalist` returned zero,
+`t-shaped` returned four and none of them was `career`, and the domain had 45
+topics without one on the commonest question in an IT career.
+
+Verified before writing, the way step 1 of the loop says: `Growing Into Senior`
+carries a concept card titled **Two Valid Ladders**, which is the
+individual-contributor-or-manager axis and a different question. The four
+`t-shaped` hits are `cloud`, `data`, `infra` and `web`, and every one is a JSON
+shape or a traversal. Nothing covered the choice.
+
+**`career` — Specialist or Generalist.** Five concept cards. The sentence:
+*nobody gets to choose this in year one, and when the choice arrives it is much
+narrower than the debate.* The two failure modes are the content —
+the specialist's arrives all at once and has a date, the generalist's never
+arrives at all — and the verdict is which one that makes dangerous: **the one
+with no date is the one that gets left**, because a skill that stops being
+bought produces a bad month and a bad month produces a plan.
+
+The last card is the one that changes what a reader does: the shape is mostly an
+**employer decision wearing a study plan**. Under ~50 people you are a
+generalist by enforcement; at 500+ you are a specialist by org chart. *If you
+want to be broader, change employers; if you want to be deeper, change teams* —
+a curriculum is competing with forty hours a week and loses.
+
+### Then the query was still zero, which this file has already recorded once
+
+The previous time was verbatim: *"I wrote the USB card using enumerate,
+descriptor exchange and unnamed or unknown device — and re-ran the probe, and
+`usb device not recognised` **still returned zero**. The card was correct,
+mechanism-first, and unreachable by the person it was written for."*
+
+Same shape here, one word narrower. The card said `specialist` eleven times and
+`specialization` twice and **never the verb**. That is an ordinary kind 1, and
+the kind-1 rule is *fix in prose, it is better writing anyway* — so the opening
+sentence became the reader's question rather than a paraphrase of it:
+
+> *Should I specialize or generalize?* is asked as though it were a fork in the
+> road at the start, and it is not.
+
+`should i specialize or generalize` went from 0 to **1, the right card and
+nothing else**. The British spelling stayed at 0.
+
+### And the third fix is the one worth keeping
+
+That residual is a clean claim, because everything else had been ruled out: same
+card, same words, same matcher, one letter apart. The site is written in
+American English by convention, `CONTRIBUTING.md` says so, and
+`check_renames.py` enforces it — for `centre` and `datacentre`, which are the two
+rows the registry has.
+
+**Kind 1's own example is a spelling** — the site writes *imposter*, the reader
+types *impostor* — and its remedy is to name both words in the card. That works
+because it is one word, chosen once, in one place. It does not work here, and
+the reason is the test this session added to the probe's docstring:
+
+> could the writer have chosen the reader's word without changing anything
+> else? If yes it is kind 1 and belongs in the prose. If the reader's word is
+> the site's own word under a spelling **rule**, the card is not the place.
+
+Naming both spellings in one card closes exactly one query; doing it everywhere
+is the keyword stuffing kind 3 forbids, wearing an accommodation to readers as a
+costume. So it went where `3-way`/`three-way` already lives: `dialectForms` in
+`script.js`, beside `numberForms`, for the same stated reason — **the site and
+the reader disagree and neither of them is wrong.**
+
+### What joined, and the two families that did not
+
+| Family | Joins | Why |
+|---|---|---|
+| `-ise`/`-ize`, `-isation`, `-yse`/`-yze` | **yes** | No English word means one thing with an `s` and another with a `z`. A stem that only looks like the suffix — *advise*, *exercise*, *franchise* — offers `advize`, which matches nothing: one wasted alternate, the bargain `plurals()` already makes |
+| `-our`/`-or` | **no** | `four`→`for` and `tour`→`tor` are real words, so a wrong guess **widens** instead of missing, and widening is what this matcher recovers from worst. A length floor that excludes them also excludes `color` and `favor`, which are five characters |
+| `-ce`/`-se` | **no** | `advice`→`advise` is a different word. A wrong card the reader never sees is worse than a miss they can retype |
+
+Six characters is the floor, and it is what keeps `prize`/`prise` out — two
+words, not one word twice, and the only pair short enough to collide.
+
+### Proved in both directions, because a check that cannot fail is not a check
+
+The 56 gated search fixtures were captured with the rule and again with
+`dialectForms` stubbed to a no-op, and the two runs are **byte-identical** —
+every count, every fixture. The rule is purely additive at the gate. Then the
+two new fixtures were run against the stub: `should i specialise or generalise`
+**FAIL, 0 results, NOT FOUND**, and 57/58. Restored: 58/58.
+
+Both spellings are fixtures, and the comment says why: the American one passes
+on the prose fix alone, so a rule that widened in only one direction would pass
+it and look finished.
+
+### The staleness check caught its own author again
+
+The note written for this query two hours earlier said it returns nothing. By
+then it returned 1, and the census said so by name. The note was retired rather
+than reworded — the query is answered, so it keeps a `want` and no verdict.
+
+**That is the second time this check has reported a note by the person who wrote
+it, and the two outcomes are opposite**: the first time the note was right and
+the check was wrong, and the guard was fixed. This time the note was simply out
+of date, which is the case it exists for.
+
+### And the row it reads through had drifted the same way
+
+`Reader questions answered` is one of the four rows `check_plan_numbers.py`
+names as **not checked here — they need a browser or a stopwatch**. Its headline
+had been kept current at *254 of 273*. The three sub-counts in the same sentence
+had not: they said **10 zeros, 1 wrong-card, 3 wide** while the tool was printing
+**18, 1 and 4**. The last record to touch them incremented the zeros by one, from
+9 to 10, on a run that reported 18.
+
+So the row is both halves of this file's own argument in one sentence: the number
+a tool checks stayed right, and the number beside it, in the same cell, drifted
+eight. It is corrected here. **Making it derivable is the next wave**, and it is
+tractable — `query_probe.mjs` already has every one of those numbers at the
+moment it prints them.
+
+```
+1 topic added (1,556 -> 1,557) · 5 related pairs · 1 path step
+probe 273 questions · 254 -> 255 answered · 0 unexplained · 17 zeros · 1 wrong · 4 wide
+dialectForms joins script.js: -ise/-ize only, 6-char floor, -our/-or and -ce/-se refused
+search 56 -> 58 · the 56 byte-identical with the rule stubbed out · new fixture fails without it
+plan row corrected: 10/1/3 -> 17/1/4, the sub-counts of an unchecked row
+42 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

@@ -47,6 +47,27 @@
  * report produces edits to more than two or three cards, it has stopped being
  * an audit.
  *
+ * ## The one kind-1 zero whose kind-1 remedy is wrong
+ *
+ * Kind 1's example is a spelling — the site writes *imposter*, the reader types
+ * *impostor* — and its remedy is to name both words in the card. That works
+ * because it is **one word**, chosen once, in one place.
+ *
+ * `should i specialise or generalise` looks identical and is not. The site is
+ * written in American English by convention (`CONTRIBUTING.md`, enforced through
+ * `data/renames.json`), so the disagreement is not a word the writer picked; it
+ * is an orthographic rule applied to every word of its shape. Naming both
+ * spellings in the card closes exactly this query and no other, and doing it
+ * everywhere is the keyword stuffing kind 3 forbids, dressed as an accommodation
+ * to readers.
+ *
+ * So the test that separates them: **could the writer have chosen the reader's
+ * word without changing anything else?** If yes it is kind 1 and belongs in the
+ * prose. If the reader's word is the site's own word under a spelling rule, the
+ * card is not the place — the matcher is, and `script.js` carries the
+ * `-ise`/`-ize` equivalence for the same reason it carries `3-way`/`three-way`:
+ * the site and the reader disagree and neither of them is wrong.
+ *
  * ## Telling kind 2 from kind 3, because the first version of this got one wrong
  *
  * `wifi keeps dropping` was listed above as kind 3 — *the site has the
@@ -675,8 +696,16 @@ const READERS = [
     ["rejected with no feedback"],
     ["how long should i stay in a job"],
     // ── batch sixteen ──
-    ["should i specialise or generalise",
-     "kind 2, named and not written — the only genuine content gap in batch sixteen. `specialise` 6 and `generalise` 8 are scattered and no card is about the choice; `specialist or generalist` returns zero and `t-shaped` returns four, none of them `career`. One of the commonest questions in an IT career, and the domain has 45 topics without it"],
+    // Batch sixteen's one genuine content gap, and it took three fixes to
+    // close rather than the one it looked like. The card was written; the
+    // query stayed at zero because the card said `specialist` and
+    // `specialization` and never the verb — ordinary kind 1, fixed in prose.
+    // It stayed at zero in *this* spelling after that, which is the dialect
+    // case the docstring sets out. Kept in the reader's spelling on purpose:
+    // it is the half the site cannot fix in prose, so it is the half worth
+    // watching.
+    ["should i specialise or generalise", "",
+     "career/specialist-or-generalist-the-choice-and-when-you-actually-ge"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
