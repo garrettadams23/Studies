@@ -50,13 +50,13 @@ the row needs was already running. Three are left, and all three want a stopwatc
 |---|---|---|
 | Topics | **1,557** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,394**, or **1,125 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,395**, or **1,125 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **282 of 302**, **0 unexplained** — seventeen batches. The two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batch seventeen opened at 22 of 29, which is the same two thirds again. The 19 remaining zeros, the 1 wrong-card and the 7 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **304 of 330**, **0 unexplained** — eighteen batches. The two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 25 remaining zeros, the 1 wrong-card and the 7 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,595 steps, 1,497 of 1,557 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,497 topics, 4,860 links, 0 one-way** — one mainland of **1,481 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~789 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~788 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,142 chars**, median 3,739 — the number a deepening wave has to move | `depth_report.py` |
@@ -64,7 +64,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **47** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **48** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -5014,4 +5014,108 @@ check_paths.py --ordering, reporting only — the number is the finding
 +6 self-test fixtures; two of them are the two bugs the first version had
 consequence recorded: no global ordering can be derived from paths.json
 45 gates green · make all clean
+```
+
+## Session — batch eighteen, and two words the site had never written down
+
+### Two thirds again, for the third batch running
+
+**28 questions, 20 answered.** Batch seventeen was 22 of 29. Batch sixteen's
+symptom-shaped half was the same fraction. This file has now predicted the
+opening rate three times and been right three times, which makes it the one
+number here that behaves like a forecast rather than a measurement.
+
+Eight zeros, and the per-word diagnostic split them in one read, because **two
+of the eight contained a word the site does not have at all**:
+
+| Query | Binding word | Corpus |
+|---|---|---|
+| `the process is defunct` | `defunct` | **0** |
+| `i got laid off` | `laid` | **0** |
+
+Everything else in both queries was present in the hundreds. A word at zero is
+the report's clearest signal and it separated the real gaps from the phrasing
+misses before any card was opened.
+
+### `defunct` — and nine zombies, none of them a process
+
+`zombie` returns nine mentions on this site and **every one is a cloud-cost
+zombie**: an unattached disk, an idle load balancer, a forgotten dev
+environment. `grep zombie data/linux.html` returns nothing. So the classic Unix
+zombie — a child that exited and a parent that never reaped it — was absent from
+a domain with sixty-two topics, while its name was in use elsewhere for
+something else entirely.
+
+**`linux` — The Process You Cannot Kill Is Already Dead**, added to *Processes &
+Signals*, which is where it belongs for a reason the existing card supplied. That
+topic's signal table ends on a verdict: *keep SIGKILL for the process that has
+already ignored a polite request.* The zombie is the one state on the whole page
+where SIGKILL does nothing, because **a zombie is not a stuck process; it is a
+death certificate nobody has collected.**
+
+The fingerprint is the half worth having, and it is why this hides: memory flat,
+CPU flat, machine not slowing down. What fills is the process table, and the
+failure lands somewhere else and much later — the next `fork()` anywhere on the
+box returns **`Cannot allocate memory` on a machine with gigabytes free**. An
+out-of-memory error that is not about memory is the tell.
+
+Two things the card insists on because everybody gets them backwards. An
+**orphan is fine** — the parent died, PID 1 adopts and reaps correctly — so the
+intuition inverts: the one that still has a living parent is the broken one. And
+`<defunct>` is in the card because it is **the string `ps` prints on the
+reader's screen**, which is the rule this file set after the USB card: a card
+about a failure quotes the words the reader is looking at.
+
+### `laid` — a whole topic on it, and it would not say the word
+
+`mind` has *Layoffs & Job Loss — The First Week, and the Ones After*, and it is
+a good card. Its opening sentence was *"Almost everyone in a long IT career goes
+through this at least once"* — and `laid` returned zero across the entire site.
+
+The fix is four words and it is **better writing than what it replaced**: *almost
+everyone in a long IT career gets laid off at least once*. That is the promise
+the kind-1 rule makes and it keeps making good on it. `i got laid off` now
+returns one card, the right one.
+
+### Named and not written, with the word that is missing
+
+`our reserved instances expired`. `cloud`'s *Commitment Discounts* is thorough
+on **buying** one — a commitment is a bet on your own capacity forecast, commit
+the floor and never the ceiling — and has nothing on the other end. **Expiry is
+a diary problem, not a forecast problem:** the bill rises 30–70% overnight with
+nothing deployed, nothing changed and no alert, because the discount stopped
+rather than the usage starting. `expired` appears 29 times and not one is a
+commitment.
+
+Recorded with its evidence rather than written, because the wave had spent its
+card — and named as a **missing word plus a missing owner**, which is the form
+this file has twice found to be pickable up cold.
+
+### The six that were not gaps, and one that is thinner than kind 3 usually is
+
+`the new starter is missing from teams` (licensing, and `starter` is the
+reader's noun for a joiner) · `the usb ports on one side stopped working` (a
+controller or a front-panel header, which is exactly the isolate-and-halve shape
+`hw` teaches) · `the job ad wants ten years of a five year old tool` (a joke
+with a real question inside it, and no card has a reason to contain *ten* and
+*five* about one tool) · `the vendor will not fill in the questionnaire` — the
+best of the six, because `grc` files the answer under **the phase where the
+leverage is created rather than the phase where it is missed**: *bake security
+requirements into the contract — right to audit*. The reader's word is the
+artefact; the site's word is the clause.
+
+The thin one is `i changed one line and fifty tests failed`. `eng` has
+*Over-mocking* and *Test Doubles*, which is the cause — but the site names it
+from the writer's side, a test coupled to an implementation, and never from the
+reader's, fifty red tests after a one-line change. It is recorded as kind 3 and
+flagged as the thinnest of the five, because the gap is a sentence rather than a
+card and the next session should know that before it opens the file.
+
+```
+1 concept card (linux Processes & Signals) · 1 prose fix (mind) · 0 new topics
+probe 302 -> 330 questions · 304 answered · 0 unexplained · 25 zeros · 1 wrong · 7 wide
+batch eighteen opened at 20 of 28 — two thirds, the third batch in a row
+2 of 8 zeros had a word at 0 in the corpus; both were the real gaps
+1 named and not written: `our reserved instances expired`, with its missing word
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

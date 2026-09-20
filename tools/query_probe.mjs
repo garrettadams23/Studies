@@ -285,6 +285,11 @@ const READERS = [
      "wide and inherent, and the widest noun this site has: `network` is the only word left after the stop list drops `how do i prove it is not the`, and it is in a fifth of the corpus. The answer is inside the set — `ops` *Troubleshooting Like a Pro* and `net`'s own troubleshooting cards are all in the 83. Ranking would pick between them; this matcher is a filter"],
     ["the user has two accounts"],
     ["the software installed but does not appear"],
+    // ── batch eighteen ──
+    ["the user changed their name"],
+    ["everyone in one office cannot print"],
+    ["the new starter is missing from teams",
+     "kind 3 — `starter` at 12 is the binding word and it is the reader's noun for a joiner. `m365` covers the fault as a mechanism: group-based licensing, license assignment, and the joiner half of joiner-mover-leaver. The lag between an account existing and Teams showing it is licensing, and the card says so in the site's words"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -357,6 +362,10 @@ const READERS = [
      "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
     ["a domain admin logged in at 2am",
      "kind 3 — `2am` at 15 is the binding word and it is the reader's detail rather than the site's. The fault is covered as a mechanism: UEBA *baselines normal activity per user/host, then scores deviations*, and `off-hours` and `out of hours` appear ten times across `blueteam` and `threat`. Writing `2am` into a card would be the keyword stuffing kind 3 forbids"],
+    // ── batch eighteen ──
+    ["the same alert fires every night at the same time"],
+    ["we have no logs from before last week"],
+    ["the malware sample is password protected"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -426,6 +435,11 @@ const READERS = [
     ["what is a foreign key"],
     ["why do we need message queues"],
     ["what is a null pointer"],
+    // ── batch eighteen ──
+    ["why is base64 not encryption"],
+    ["what is a service principal"],
+    ["what is dns propagation"],
+    ["what is a bloom filter"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -485,6 +499,16 @@ const READERS = [
      "kind 3, checked at fault level rather than keyword level — `linux` covers the whole fault: *make it permanent, add to /etc/fstab*, UUIDs over `/dev/sdb1` because *device names can change between boots*, `mount -a` to test without rebooting, and `nofail` on non-essential mounts so a missing disk is not a boot failure. `disappeared` at 2 is the binding word and it is the reader's verb for a mount that was never persisted"],
     ["my container image is not updating"],
     ["which process is writing to the disk"],
+    // ── batch eighteen ──
+    ["sudo stopped working"],
+    // kind 2, and written: `defunct` returned zero site-wide, and every one of
+    // the nine `zombie` mentions was a cloud-cost zombie — an unattached disk,
+    // not a process. The card is in `Processes & Signals`, where the signals
+    // table already ends on "keep SIGKILL for the process that has already
+    // ignored a polite request", which is the one case where it does nothing.
+    ["the process is defunct", "",
+     "linux/processes-signals-running-programs-in-linux"],
+    ["too many redirects"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -554,6 +578,10 @@ const READERS = [
     ["we have a process and nobody follows it"],
     ["everything is urgent who decides"],
     ["the change board blocks everything"],
+    // ── batch eighteen ──
+    ["the ticket bounces between teams"],
+    ["nobody comes to the postmortem"],
+    ["we approve everything because saying no is hard"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -624,6 +652,11 @@ const READERS = [
      "wide and inherent — every word is a function word or nearly one. **And the `want` is not decidable, which is the honest half:** the symptom spans `eng` *Idempotency & Exactly-Once*, configuration-management idempotence in `script`, and plain leftover state, and idempotency alone is in ten files. Naming one target to make the number move would be the measurement lying in the other direction"],
     ["the error points at the wrong line"],
     ["my unit test passes but the feature is broken"],
+    // ── batch eighteen ──
+    ["the test suite takes forty minutes"],
+    ["i changed one line and fifty tests failed",
+     "kind 3, and the thinnest of the five — `eng` has *Over-mocking* and *Test Doubles*, which is the cause, but the site names it from the writer's side (a test coupled to the implementation) and never from the reader's (fifty red tests after a one-line change). The nearby gap is narrower than a card: the symptom sentence is missing from a subject that is otherwise covered"],
+    ["the log says success and the data is wrong"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -659,6 +692,10 @@ const READERS = [
     // ── batch seventeen ──
     ["one stick of ram or two"],
     ["the drive is clicking"],
+    // ── batch eighteen ──
+    ["it posts but windows will not start"],
+    ["the usb ports on one side stopped working",
+     "kind 3 — the reader's fault is *a whole controller or front-panel header, not a port*, which is the right diagnosis and is the shape `hw` teaches throughout: isolate, swap, halve. `usb` at 31 and `header` at 33 are both in the corpus; no card carries them with `side`, which is the reader's word for a physical grouping the site describes electrically"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -706,6 +743,18 @@ const READERS = [
     ["we are paying for something nobody uses"],
     ["the alert pages the wrong person"],
     ["staging costs as much as production"],
+    // ── batch eighteen ──
+    ["we cannot tell which team owns this spend"],
+    ["the pager fires for things nobody fixes"],
+    // kind 2, named and not written — the wave had spent its card. `cloud`'s
+    // *Commitment Discounts* is thorough on **buying**: a commitment is a bet on
+    // your own forecast, commit the floor and never the ceiling. It has nothing
+    // on the other end. Expiry is a **diary** problem rather than a forecast
+    // one: the bill jumps 30-70% overnight with nothing deployed, nothing
+    // changed and no alert, because the discount stopped rather than the usage
+    // starting. `expired` is at 29 and none of them is a commitment.
+    ["our reserved instances expired",
+     "kind 2, named and not written — the missing half is expiry, and the missing word is a date somebody owns. See the note above this line"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -755,6 +804,14 @@ const READERS = [
     // ── batch seventeen ──
     ["i have no portfolio"],
     ["should i take a pay cut to change field"],
+    // ── batch eighteen ──
+    // kind 1, fixed in prose: `mind` has a whole topic on it and said *goes
+    // through this*, while `laid` returned zero site-wide. It now says what the
+    // reader says, which is also the plainer sentence.
+    ["i got laid off", "",
+     "mind/layoffs-job-loss-the-first-week-and-the-ones-after"],
+    ["the job ad wants ten years of a five year old tool",
+     "kind 3 — every word is in the corpus, `job description` and `years of experience` both appear, and `career` covers reading an advert as a wish list rather than a specification. The query is a joke with a real question inside it, and the joke is what carries it: no card has a reason to contain `ten` and `five` about the same tool"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -790,6 +847,10 @@ const READERS = [
     ["the auditor wants a screenshot"],
     ["we cannot prove who had access last year"],
     ["the policy says one thing and we do another"],
+    // ── batch eighteen ──
+    ["who signed off on this exception"],
+    ["the vendor will not fill in the questionnaire",
+     "kind 3, checked at fault level — `grc` has the whole answer and files it under the phase where the leverage is created rather than the phase where it is missed: *bake security requirements into the contract — SLAs, breach notification, right to audit*. It also ranks the alternative evidence a refusing vendor can still be held to, with what each one is worth. `questionnaire` at 13 is the reader's word for the artefact; the site's word is the clause"],
   ]],
 ];
 

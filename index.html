@@ -38440,8 +38440,8 @@ equivalent of all this paperwork is
 <span class="ctag ctag-aplus">A+</span>
 </div>
 <span class="domain-sub">FHS · Permissions · Boot Process · Signals · systemd · RAID · Hardware</span>
-<span class="domain-meta" aria-label="62 topics, about 2h 20m to read"
->62 topics · ~2h 20m</span>
+<span class="domain-meta" aria-label="62 topics, about 2h 25m to read"
+>62 topics · ~2h 25m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -40519,12 +40519,12 @@ crontab without asking, one key away from <code>-e</code>.
 </div>
 </div>
 <!-- ── TOPIC: PROCESSES & SIGNALS ────────────────────────── -->
-<div class="topic" id="processes-signals-running-programs-in-linux" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="processes-signals-running-programs-in-linux" data-reviewed="2026-08" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚙️</span>
 <span class="topic-name">Processes &amp; Signals — Running Programs in Linux</span>
 <span class="topic-badge">LINUX • Foundation</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -40606,6 +40606,53 @@ jobs
 
 <span class="com"># Keep running after logout (nohup)</span>
 nohup python3 server.py &gt; server.log 2&gt;&amp;1 &amp;</pre>
+</div>
+<div class="concept-card">
+<div class="concept-label">THE ONE KILL CANNOT FIX</div>
+<div class="concept-title">The Process You Cannot Kill Is Already Dead</div>
+<div class="concept-desc">
+Everything above ends at <code>kill -9</code> &mdash; the signal that cannot be caught or
+ignored. There is one state where it does nothing at all, and the reason is that
+<strong>a zombie is not a stuck process; it is a death certificate nobody has
+collected.</strong><br><br>
+When a child exits, the kernel throws away its memory, its file handles and its CPU <span class="acro-exp">(Central Processing Unit)</span> time
+and keeps one small record: the exit status and the resource usage, waiting for the parent
+to ask for it. That record <em>is</em> the zombie. <code>ps</code> prints it with
+<code>Z</code> in the STAT column and <code>&lt;defunct&gt;</code> beside the name, and
+<strong>a signal sent to it is delivered to nothing</strong>, because nothing is left to
+receive one. The process that needs killing is the <em>parent</em> &mdash; the one that
+never called <code>wait()</code>.
+</div>
+<div class="concept-desc">
+The fingerprint is what makes this findable, because while it is happening it looks like
+nothing. <strong>Memory is flat, CPU is flat, and the machine is not slowing down</strong>
+&mdash; a zombie consumes neither. What fills up is the process table, and the failure
+arrives much later and somewhere else entirely: the next <code>fork()</code> anywhere on
+the box returns <code>Cannot allocate memory</code> on a machine with gigabytes free.
+<strong>An out-of-memory error that is not about memory is the tell.</strong><br><br>
+An <em>orphan</em> is the opposite case and is not a problem: the parent died first, so
+<code>init</code> or <code>systemd</code> adopts the child and reaps it correctly when it
+exits. The two get conflated constantly, and the intuition runs backwards &mdash; the one
+that still has a living parent is the broken one.
+</div>
+<table class="ref-table">
+<thead><tr><th>What to do</th><th>What it does</th><th>What it does not do</th></tr></thead>
+<tbody>
+<tr><td>Fix the parent to reap</td><td>The only actual fix &mdash; call <code>wait()</code>, or handle <code>SIGCHLD</code>. Everything below is a way of living with the bug</td><td>Help tonight, and it is unavailable for a vendor binary you cannot change</td></tr>
+<tr><td>Restart the parent</td><td>Clears the table immediately: the zombies are reparented to PID 1, which reaps them the moment it inherits them</td><td>Last. They return as soon as the parent is serving again, at the same rate</td></tr>
+<tr><td>Raise <code>kernel.pid_max</code></td><td>Buys time, and is worth doing anyway on a box that legitimately runs many processes</td><td>Fix anything. It moves the wall without removing it, and the next failure is identical and later</td></tr>
+<tr><td><code>kill -9</code> the zombie</td><td>Nothing whatsoever</td><td>Anything at all. It is the first thing everyone tries, and it is the one entry on this page where SIGKILL is not the answer</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong>The number to watch is not how many there are, it is whether it is going
+up.</strong> A handful that appear and vanish is a parent reaping slightly late, which is
+normal and not worth an alert. A count that only ever rises is a parent that never calls
+<code>wait()</code>, and you have until the process table fills. It is also why containers
+ship an init: a container's PID 1 is your application rather than <code>systemd</code>,
+most applications never reap, and adopting orphans is a job PID 1 is assumed to be doing
+&mdash; see <span class="xref" data-xref="container-internals-what-docker-is-actually-built-from" role="link" tabindex="0">Container Internals – What Docker Is Actually Built From</span>.
+</div>
 </div>
 </div>
 </div>
@@ -67827,7 +67874,7 @@ sensible one you will still be following in a month.
 <div class="concept-label">Concept</div>
 <div class="concept-title">It Is a Business Decision About a Role, Not a Verdict on You</div>
 <div class="concept-desc">
-Almost everyone in a long IT career goes through this at least once, and almost everyone
+Almost everyone in a long IT career gets laid off at least once, and almost everyone
 experiences it as a judgment anyway. It is worth separating the two deliberately, because
 the confusion is what makes the next few weeks harder than they need to be. Redundancy
 selection is driven by cost centers, contract end dates, project cancellations, acquisitions
