@@ -115,6 +115,17 @@ jobs:
           python tools/check_renames.py --self-test
           python tools/check_renames.py
 
+      # CONTRIBUTING.md says the site is written in American English, and for a
+      # year that was enforced for the two words that prompted it: `centre` and
+      # `datacentre`, as rows in a registry of vendor renames. A spelling is not
+      # a rename — it has no vendor and no month — and the site carried 2,192
+      # British spellings while claiming otherwise, including a `licence` in the
+      # note beside an acronym expanding to "Client Access License".
+      - name: Check spelling against the stated convention
+        run: |
+          python tools/check_spelling.py --self-test
+          python tools/check_spelling.py
+
       # A hand-written acronym expansion that disagrees with the dictionary is
       # a plain contradiction, and the annotator cannot see it — it only ever
       # adds expansions, never reads the ones an author typed.

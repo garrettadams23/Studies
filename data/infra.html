@@ -14,7 +14,7 @@
 
     <div class="concept-card">
       <div class="concept-label">The decision</div>
-      <div class="concept-title">Standard vs Datacenter Is a Virtualisation Question, Not a Feature Question</div>
+      <div class="concept-title">Standard vs Datacenter Is a Virtualization Question, Not a Feature Question</div>
       <div class="concept-desc">
         People assume Datacenter is "the one with the good features". For almost every role
         that matters — AD DS <span class="acro-exp">(Active Directory Domain Services)</span>, DNS <span class="acro-exp">(Domain Name System)</span>, DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span>, file services — the two editions are identical.
@@ -50,14 +50,14 @@
             <tr>
               <td>Typical fit</td>
               <td>Physical box, or a host running one or two VMs</td>
-              <td>A virtualisation host, or anything hyper-converged</td>
+              <td>A virtualization host, or anything hyper-converged</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> if a host will ever run more than about four Windows VMs,
-        Datacenter usually costs less than stacking Standard licences — and you stop having to
+        Datacenter usually costs less than stacking Standard licenses — and you stop having to
         count. Below that, Standard. Get this wrong in the direction of Standard and you are
         not merely under-licensed, you are under-licensed <em>retroactively</em>, which is how
         licensing turns into an audit finding.
@@ -71,12 +71,12 @@
         Windows Server is licensed per physical core, with minimums that catch people out: you
         license <strong>every physical core in the host</strong>, at least 8 per processor and
         at least 16 per server, regardless of how few you use. A 2× 6-core host is still billed
-        as 16 cores. Licences are sold in 2-core packs, so the arithmetic is always even.
+        as 16 cores. Licenses are sold in 2-core packs, so the arithmetic is always even.
       </div>
       <div class="concept-desc">
         The trap is hardware refresh. Moving a workload from an 8-core box to a 32-core box does
-        not carry the licence with it — the new host needs double the core licences before the
-        first VM boots. Price the licence alongside the tin, not after it.
+        not carry the license with it — the new host needs double the core licenses before the
+        first VM boots. Price the license alongside the tin, not after it.
       </div>
     </div>
 
@@ -84,7 +84,7 @@
       <div class="concept-label">The forgotten half</div>
       <div class="concept-title">CALs <span class="acro-exp">(Client Access License)</span> — Licensing the Connection, Not the Server</div>
       <div class="concept-desc">
-        Core licences let the server <em>run</em>. CALs let something <em>connect to it</em>.
+        Core licenses let the server <em>run</em>. CALs let something <em>connect to it</em>.
         They are bought separately, they are frequently forgotten, and they are the single most
         common finding in a Microsoft licensing review.
       </div>
@@ -191,7 +191,7 @@ DISM /Online /Set-Edition:ServerStandard /ProductKey:XXXXX-XXXXX-XXXXX-XXXXX-XXX
 
     <div class="concept-card">
       <div class="concept-label">Local admin</div>
-      <div class="concept-title"><code>sconfig</code>, and the Handful of Commands Worth Memorising</div>
+      <div class="concept-title"><code>sconfig</code>, and the Handful of Commands Worth Memorizing</div>
       <div class="concept-desc">
         A freshly built Core box needs enough local configuration to become remotely
         manageable — then you never sign in locally again. <code>sconfig</code> is a menu that
@@ -436,7 +436,7 @@ Install-WindowsFeature <span class="kw">-ConfigurationFilePath</span> .\baseline
           <tbody>
             <tr>
               <td>Deploy LAPS</td>
-              <td>Randomises the local administrator password per machine. Kills lateral movement by reused local credentials, which is the most common way one compromised host becomes all of them</td>
+              <td>Randomizes the local administrator password per machine. Kills lateral movement by reused local credentials, which is the most common way one compromised host becomes all of them</td>
             </tr>
             <tr>
               <td>Never browse or read mail from a server</td>
@@ -573,12 +573,12 @@ Get-LapsADPassword <span class="kw">-Identity</span> SRV01 <span class="kw">-AsP
       <div class="concept-title">Structure the Directory for Delegation and Policy, Not the Org Chart</div>
       <div class="concept-desc">
         The most common OU design mirrors the company's departments, and it is the wrong one,
-        because reorganisations then force directory work that has no technical reason to
+        because reorganizations then force directory work that has no technical reason to
         happen. Structure instead by <strong>what you do to objects</strong>: the two things an
         OU exists for are attaching Group Policy and delegating rights.
       </div>
       <div class="concept-desc">
-        A structure that survives reorganisation usually separates by object type first
+        A structure that survives reorganization usually separates by object type first
         (workstations, servers, users, service accounts), then by whatever genuinely drives
         different policy — region, build standard, or regulatory scope. Keep it shallow. Deep
         nesting makes precedence hard to reason about and gains nothing that a well-named
@@ -706,7 +706,7 @@ Move-ADDirectoryServerOperationMasterRole <span class="kw">-Identity</span> DC02
       <div class="concept-label">Placement</div>
       <div class="concept-title">Where to Put Them, and the RID Pool Nobody Watches</div>
       <div class="concept-desc">
-        For most organisations the defaults are fine: leave the roles where the first DC put
+        For most organizations the defaults are fine: leave the roles where the first DC put
         them, keep the two forest roles together, and put the PDC emulator on a well-connected
         DC in the main site. Complexity here buys very little.
       </div>
@@ -758,7 +758,7 @@ dcdiag /test:ridmanager /v | Select-String "Available RID Pool"</pre>
       </div>
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> "the change has not appeared yet" is usually correct
-        behaviour rather than a fault, so confirm enough time has passed for the path involved
+        behavior rather than a fault, so confirm enough time has passed for the path involved
         before troubleshooting anything. The number to hold for that is <strong>three hours, not
         fifteen minutes</strong> — 15 is the lowest interval a site link will accept, which is why
         it is the figure everyone quotes, and it is not what an untouched site link does. For the
@@ -872,8 +872,8 @@ repadmin /syncall /AdeP</pre>
         A Kerberos ticket carries the account's security identifiers, including a history field
         used during migrations. Without filtering, a compromised administrator in a trusted
         domain can inject an identifier belonging to a privileged group in
-        <em>your</em> domain, and your DCs <span class="acro-exp">(Domain Controller)</span> will honour it. That turns a trust into a full
-        privilege path between organisations.
+        <em>your</em> domain, and your DCs <span class="acro-exp">(Domain Controller)</span> will honor it. That turns a trust into a full
+        privilege path between organizations.
       </div>
       <div class="concept-desc">
         SID filtering discards identifiers that did not originate in the trusted domain, and it
@@ -1087,7 +1087,7 @@ New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class
         <strong>The verdict:</strong> Enforced and Block Inheritance are both escape hatches
         that make precedence hard to reason about, and they interact — Enforced wins over a
         block. Use them sparingly and document each one, because the person debugging the
-        resulting behaviour in two years will not guess why they are there.
+        resulting behavior in two years will not guess why they are there.
       </div>
     </div>
 
@@ -1255,14 +1255,14 @@ Set-GPPermission <span class="kw">-Name</span> "Laptop Power Settings" <span cla
       <div class="concept-label">The distinction</div>
       <div class="concept-title">Policies Are Enforced; Preferences Are Set and Let Go</div>
       <div class="concept-desc">
-        A policy setting is re-applied on every refresh and the interface for it is greyed out.
+        A policy setting is re-applied on every refresh and the interface for it is grayed out.
         A preference writes an ordinary value that the user can then change — and, depending on
         the action you chose, it may never be written again.
       </div>
       <div class="dw">
         <table class="ref-table">
           <thead>
-            <tr><th>Action</th><th>Behaviour</th><th>Use for</th></tr>
+            <tr><th>Action</th><th>Behavior</th><th>Use for</th></tr>
           </thead>
           <tbody>
             <tr><td>Create</td><td>Write only if absent; never touch again</td><td>A default the user may override</td></tr>
@@ -1469,7 +1469,7 @@ Get-ADUser <span class="kw">-Filter</span> * <span class="kw">-Properties</span>
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> gMSA is the default answer for a domain service. AD <span class="acro-exp">(Active Directory)</span>
         <!-- fact: gMSA password 240 characters, 30-day rotation | source: Active Directory group managed service account defaults | checked: 2026-08 -->
-        generates a 240-character password, rotates it every 30 days, and the servers authorised
+        generates a 240-character password, rotates it every 30 days, and the servers authorized
         to use it retrieve it themselves. Nobody ever knows it, so nobody can leak it.
       </div>
     </div>
@@ -1551,14 +1551,14 @@ setspn -S HTTP/app.corp.example.com CORP\svc-webapp</pre>
       <div class="concept-desc">
         The domain's time hierarchy is strict: every member syncs from a DC <span class="acro-exp">(Domain Controller)</span>, every DC from the
         PDC <span class="acro-exp">(Primary Domain Controller)</span> emulator, and the PDC emulator from an external source. The classic incident is a
-        virtualised PDC emulator syncing from its hypervisor host <em>and</em> an external
+        virtualized PDC emulator syncing from its hypervisor host <em>and</em> an external
         source, and oscillating between them.
       </div>
       <pre class="code-block">w32tm /query /status              <span class="com"># what am I syncing from?</span>
 w32tm /monitor                    <span class="com"># offsets across all DCs</span>
 w32tm /stripchart /computer:dc01 /samples:5 /dataonly</pre>
       <div class="concept-desc verdict">
-        <strong>Disable host time sync on a virtualised PDC emulator.</strong> One authority
+        <strong>Disable host time sync on a virtualized PDC emulator.</strong> One authority
         only. Two sources of truth for time is the same class of mistake as two sources of truth
         for data, and it fails more visibly.
       </div>
@@ -1579,7 +1579,7 @@ w32tm /stripchart /computer:dc01 /samples:5 /dataonly</pre>
       <div class="concept-label">The decision</div>
       <div class="concept-title">Three Ways to Authenticate a Synced User</div>
       <div class="concept-desc">
-        Directory synchronisation copies objects to the cloud. Authentication is a separate
+        Directory synchronization copies objects to the cloud. Authentication is a separate
         choice, and it is the one with operational consequences — it decides what happens to
         cloud sign-in when the on-premises directory is unreachable.
       </div>
@@ -1799,7 +1799,7 @@ Get-DnsServerResourceRecord <span class="kw">-ZoneName</span> corp.example.com <
       <div class="concept-label">Design</div>
       <div class="concept-title">Lease Length Is the Only Setting With Real Consequences</div>
       <div class="concept-desc">
-        Most DHCP configuration is mechanical. Lease duration is the judgement call, and it
+        Most DHCP configuration is mechanical. Lease duration is the judgment call, and it
         trades address availability against churn: too long and a guest network exhausts its
         pool, too short and clients renew constantly and a server outage bites within hours.
       </div>
@@ -1841,8 +1841,8 @@ Get-DnsServerResourceRecord <span class="kw">-ZoneName</span> corp.example.com <
 Get-DhcpServerv4ScopeStatistics <span class="kw">-ComputerName</span> dhcp01   <span class="com"># pool exhaustion</span>
 Get-DhcpServerInDC                                       <span class="com"># authorised servers</span></pre>
       <div class="concept-desc verdict">
-        <strong>Authorisation is a real control worth knowing.</strong> A Windows DHCP server
-        refuses to serve leases until authorised in AD <span class="acro-exp">(Active Directory)</span>, which prevents a lab server from
+        <strong>Authorization is a real control worth knowing.</strong> A Windows DHCP server
+        refuses to serve leases until authorized in AD <span class="acro-exp">(Active Directory)</span>, which prevents a lab server from
         handing out addresses on production. It does nothing about a non-Windows rogue server —
         that needs DHCP snooping on the switches.
       </div>
@@ -1990,7 +1990,7 @@ New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw"
         <table class="ref-table">
           <thead><tr><th></th><th>Offline root</th><th>Issuing CA</th></tr></thead>
           <tbody>
-            <tr><td>Domain-joined</td><td class="c-red">No — standalone, deliberately</td><td class="c-green">Yes, for templates and auto-enrolment</td></tr>
+            <tr><td>Domain-joined</td><td class="c-red">No — standalone, deliberately</td><td class="c-green">Yes, for templates and auto-enrollment</td></tr>
             <tr><td>Powered on</td><td>Only to sign or re-publish a CRL <span class="acro-exp">(Certificate Revocation List)</span></td><td>Always</td></tr>
             <tr><td>Compromise means</td><td class="c-red">Rebuild the entire PKI <span class="acro-exp">(Public Key Infrastructure)</span></td><td class="c-amber">Revoke its certificate, stand up a new one</td></tr>
           </tbody>
@@ -2047,7 +2047,7 @@ certutil -CRL                       <span class="com"># force a fresh CRL now</s
       <div class="concept-desc">
         A template defines what a certificate will contain, who may request one, and whether a
         human approves it. Publishing a template to a CA <span class="acro-exp">(Certificate Authority)</span> is not configuration — it is an
-        <strong>authorisation decision</strong>, standing until revoked, and it is the part
+        <strong>authorization decision</strong>, standing until revoked, and it is the part
         people treat casually.
       </div>
       <div class="dw">
@@ -2055,7 +2055,7 @@ certutil -CRL                       <span class="com"># force a fresh CRL now</s
           <thead><tr><th>Setting</th><th>Safe</th><th>Dangerous</th></tr></thead>
           <tbody>
             <tr><td>Subject name</td><td class="c-green">Built from AD <span class="acro-exp">(Active Directory)</span></td><td class="c-red">Supplied in the request</td></tr>
-            <tr><td>Enrolment rights</td><td>A specific group</td><td class="c-red">Domain Users / Domain Computers</td></tr>
+            <tr><td>Enrollment rights</td><td>A specific group</td><td class="c-red">Domain Users / Domain Computers</td></tr>
             <tr><td>Manager approval</td><td>Required for anything privileged</td><td>Disabled everywhere</td></tr>
             <tr><td>Extended key usage</td><td>Narrow — server auth only</td><td class="c-red">Client authentication, or Any Purpose</td></tr>
           </tbody>
@@ -2099,19 +2099,19 @@ Get-CATemplate</pre>
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🔄</span>
-    <span class="topic-name">Certificate Lifecycle — Auto-Enrolment and the Expiry Nobody Scheduled</span>
+    <span class="topic-name">Certificate Lifecycle — Auto-Enrollment and the Expiry Nobody Scheduled</span>
     <span class="topic-badge">Infra • PKI</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
     <div class="concept-card">
-      <div class="concept-label">Auto-enrolment</div>
+      <div class="concept-label">Auto-enrollment</div>
       <div class="concept-title">Getting Certificates Onto Devices Without Touching Them</div>
       <div class="concept-desc">
-        Auto-enrolment issues and renews certificates automatically for accounts that have the
+        Auto-enrollment issues and renews certificates automatically for accounts that have the
         rights. It needs three things aligned: <strong>Autoenroll</strong> permission on the
         template, the template published to an issuing CA <span class="acro-exp">(Certificate Authority)</span>, and a Group Policy setting enabling
-        auto-enrolment for the computer or user.
+        auto-enrollment for the computer or user.
       </div>
       <div class="concept-desc verdict">
         All three, or nothing happens and nothing complains. That silence is the whole
@@ -2243,7 +2243,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'Name -like "*jdoe*
             <tr><td>Stop the services, leave the host up</td><td>Failures now name the server; after a shutdown they do not</td></tr>
             <tr><td>Wait a full business cycle</td><td>A quarter, so quarterly jobs get their chance to fail</td></tr>
             <tr><td>Power off, keep the record and the object</td><td>Still trivially reversible</td></tr>
-            <tr><td>After another cycle: remove DNS, AD <span class="acro-exp">(Active Directory)</span> object, monitoring, backup job, licence</td><td>The list nobody finishes</td></tr>
+            <tr><td>After another cycle: remove DNS, AD <span class="acro-exp">(Active Directory)</span> object, monitoring, backup job, license</td><td>The list nobody finishes</td></tr>
           </tbody>
         </table>
       </div>
@@ -2288,7 +2288,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🧱</span>
-    <span class="topic-name">Virtualization Fundamentals — Hypervisors, Overcommit &amp; the Noisy Neighbour</span>
+    <span class="topic-name">Virtualization Fundamentals — Hypervisors, Overcommit &amp; the Noisy Neighbor</span>
     <span class="topic-badge">Infra • Virtualization</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -2334,7 +2334,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>High CPU ready time</td><td>The VM <span class="acro-exp">(Virtual Machine)</span> is ready to run but waiting for a physical core — the truest overcommit signal</td></tr>
             <tr><td>Memory ballooning</td><td>The host is reclaiming RAM from guests under pressure</td></tr>
             <tr><td>Swapping at the host</td><td class="c-red">Past ballooning — performance falls off a cliff here</td></tr>
-            <tr><td>Noisy neighbour</td><td>One greedy VM starving its co-tenants on the same host</td></tr>
+            <tr><td>Noisy neighbor</td><td>One greedy VM starving its co-tenants on the same host</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -2662,7 +2662,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         discipline, executed by people who have not slept properly since Tuesday — and it moves
         data in the harder direction, because now the <strong>DR site holds the newest copy</strong>
         and primary holds the stale one. That inversion is why failback, not failover, is where
-        organisations most often lose work.
+        organizations most often lose work.
       </div>
       <div class="dw">
         <table class="ref-table mb-14">
@@ -2672,7 +2672,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Replication direction</td><td>It still points primary → DR. Until it is reversed and caught up, the two sites disagree and the primary is the one that is wrong</td></tr>
             <tr><td>The primary itself</td><td>It failed for a reason. Returning to hardware or a configuration nobody re-verified is how you take a second outage in the same week</td></tr>
             <tr><td>DNS <span class="acro-exp">(Domain Name System)</span> and client caches</td><td>The short TTL <span class="acro-exp">(Time To Live)</span> that made failover quick is often raised back too early, or was never lowered and is now the delay</td></tr>
-            <tr><td>Licences and activation</td><td>Anything bound to a host ID, MAC <span class="acro-exp">(Media Access Control)</span> address or hardware key may need re-issuing in both directions</td></tr>
+            <tr><td>Licenses and activation</td><td>Anything bound to a host ID, MAC <span class="acro-exp">(Media Access Control)</span> address or hardware key may need re-issuing in both directions</td></tr>
             <tr><td>Objects created only on DR</td><td>New accounts, certificates, scheduled jobs and firewall rules made during the outage do not migrate themselves</td></tr>
           </tbody>
         </table>
@@ -2682,7 +2682,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           The cheapest tell that a DR plan has never been exercised end to end: it states an RTO
           for failover and none for failback. The second number is the one that decides whether
           you go back this weekend or run on DR for a month, and a plan that does not have it will
-          make that decision by accident, at two in the morning, in favour of whoever is loudest.
+          make that decision by accident, at two in the morning, in favor of whoever is loudest.
         </div>
       </div>
     </div>
@@ -2716,7 +2716,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
       <div class="concept-title">The Difference Is Who Owns the Filesystem</div>
       <div class="concept-desc">
         Block, file and object are usually introduced as three storage products. The distinction
-        that actually predicts their behaviour is simpler: <em>where the filesystem lives.</em> Block
+        that actually predicts their behavior is simpler: <em>where the filesystem lives.</em> Block
         storage hands a server raw addressable blocks and the server puts a filesystem on them. File
         storage keeps the filesystem on the storage system and lends you a path into it. Object
         storage has no filesystem at all — just a flat namespace of keys, retrieved whole over
@@ -2848,7 +2848,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
       </div>
       <div class="dw">
         <div class="concept-desc">
-          This is why single-parity RAID 5 fell out of favour for large disks rather than because of
+          This is why single-parity RAID 5 fell out of favor for large disks rather than because of
           any change in the mathematics of parity: the array grew, the rebuild got longer, and the
           exposure window grew with it. The mitigations are practical rather than clever.
         </div>
@@ -2878,7 +2878,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
       <div class="concept-label">Troubleshooting</div>
       <div class="concept-title">Erasure Coding — Why Scale-Out Systems Do Not Use RAID</div>
       <div class="concept-desc">
-        Erasure coding generalises parity: split an object into <em>k</em> data fragments, compute
+        Erasure coding generalizes parity: split an object into <em>k</em> data fragments, compute
         <em>m</em> parity fragments, distribute all of them across nodes, and reconstruct from any
         <em>k</em>. It is what object stores and distributed filesystems use, and the reason is
         economic — three-way replication costs 200% overhead, while a 10+4 code survives four
@@ -2982,7 +2982,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
       <div class="concept-title">Multipathing — The Thing That Is Either Configured or Actively Harmful</div>
       <div class="concept-desc">
         Multiple physical routes to the same LUN mean the operating system sees the same volume
-        several times. Multipathing software recognises them as one device and handles failover and
+        several times. Multipathing software recognizes them as one device and handles failover and
         load balancing. Without it configured correctly, the host either treats one disk as four
         separate disks — which is how volumes get overwritten — or fails to survive the path
         failure the redundancy was bought for.
@@ -3013,7 +3013,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">📂</span>
-    <span class="topic-name">SMB <span class="acro-exp">(Server Message Block)</span> &amp; NFS <span class="acro-exp">(Network File System)</span> at Scale — Protocol Behaviour, Versions &amp; Why File Workloads Feel Slow</span>
+    <span class="topic-name">SMB <span class="acro-exp">(Server Message Block)</span> &amp; NFS <span class="acro-exp">(Network File System)</span> at Scale — Protocol Behavior, Versions &amp; Why File Workloads Feel Slow</span>
     <span class="topic-badge">Infra • Storage</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -3077,7 +3077,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           <tbody>
             <tr><td>Slow only from a remote site</td><td>Round-trip latency, not bandwidth</td><td>Cache locally; replicate; use a protocol built for the WAN <span class="acro-exp">(Wide Area Network)</span></td></tr>
             <tr><td>Slow browsing, fast transfers</td><td>Metadata operations dominate</td><td>Fewer files per directory; faster metadata tier</td></tr>
-            <tr><td>Slow for one application only</td><td>It opens and closes files per operation</td><td>Application behaviour; a share is the wrong backing store</td></tr>
+            <tr><td>Slow for one application only</td><td>It opens and closes files per operation</td><td>Application behavior; a share is the wrong backing store</td></tr>
             <tr><td>Intermittent hangs</td><td>Oplock or lease conflicts between clients</td><td>Find the client holding the lock; check antivirus scanning the share</td></tr>
             <tr><td>Slow after a security change</td><td>SMB encryption or signing now enforced</td><td>Real cost; budget CPU <span class="acro-exp">(Central Processing Unit)</span> for it rather than turning it off</td></tr>
             <tr><td>Whole share stalls periodically</td><td>Backup or antivirus walking the tree</td><td>Reschedule; exclude correctly; use snapshot-based backup</td></tr>
@@ -3140,7 +3140,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
       <div class="concept-title">Queue Depth — The Number That Explains Confusing Results</div>
       <div class="concept-desc">
         Queue depth is how many operations are outstanding at once. It ties the other three
-        together through a relationship worth internalising: <strong>IOPS ≈ queue depth ÷
+        together through a relationship worth internalizing: <strong>IOPS ≈ queue depth ÷
         latency.</strong> A single-threaded workload with one outstanding operation and a
         one-millisecond latency cannot exceed a thousand IOPS no matter how capable the array is —
         because it never asks for more than one thing at a time.
@@ -3163,11 +3163,11 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          <strong>Read the three numbers together or you will optimise the wrong
+          <strong>Read the three numbers together or you will optimize the wrong
           thing.</strong> Low throughput with low latency and a shallow queue is an
           application that is not asking — buying faster storage changes nothing, and
           that is the most common misdiagnosis in this table. The last row is the
-          other one worth internalising: when the array reports healthy latency and
+          other one worth internalizing: when the array reports healthy latency and
           the host does not, the problem is the path.
         </div>
       </div>
@@ -3188,7 +3188,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>Hypervisor</td><td>Is another VM <span class="acro-exp">(Virtual Machine)</span> on this datastore consuming it? Is CPU <span class="acro-exp">(Central Processing Unit)</span> ready time the real issue?</td></tr>
             <tr><td>Path</td><td>Multipathing healthy? A degraded path halves throughput silently</td></tr>
             <tr><td>Array front end</td><td>Controller CPU, cache hit rate, port saturation</td></tr>
-            <tr><td>Array back end</td><td>Disk-group utilisation, a rebuild in progress, tiering moving data</td></tr>
+            <tr><td>Array back end</td><td>Disk-group utilization, a rebuild in progress, tiering moving data</td></tr>
             <tr><td>Media</td><td>Failing drive, SSD <span class="acro-exp">(Solid State Drive)</span> approaching wear-out, write cliff on a full drive</td></tr>
           </tbody>
         </table>
@@ -3198,7 +3198,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           on their own schedule, both make performance vary by time of day for no reason the
           application can see, and both are the answer more often than anyone expects. The
           hypervisor row connects to
-          <span class="xref">Virtualization Fundamentals — Hypervisors, Overcommit &amp; the Noisy Neighbour</span>.
+          <span class="xref">Virtualization Fundamentals — Hypervisors, Overcommit &amp; the Noisy Neighbor</span>.
         </div>
       </div>
     </div>
@@ -3238,7 +3238,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         <div class="concept-desc verdict">
           <strong>Monitor the pool, not the volumes, and alert well before it
           fills.</strong> Every row here fails the same way — the saving evaporates
-          and the underlying capacity is consumed faster than anyone modelled — and
+          and the underlying capacity is consumed faster than anyone modeled — and
           the failure is not gradual: a thin-provisioned pool hitting full takes every
           volume on it down at once. Efficiency features are worth having and they
           convert a capacity problem into an availability one.
@@ -3252,14 +3252,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         Thin provisioning is over-subscription: the array promises more capacity than it has,
         because most volumes never fill. This is sound and it is how essentially all modern storage
         is run. The failure mode is not gradual. Right up to the moment the pool is full,
-        performance and behaviour are normal — and then writes fail across every volume in the pool
+        performance and behavior are normal — and then writes fail across every volume in the pool
         simultaneously, including the ones nobody was growing.
       </div>
       <div class="dw">
         <table class="ref-table">
           <thead><tr><th>Control</th><th>Reason</th></tr></thead>
           <tbody>
-            <tr><td>Alert on pool utilisation at two thresholds, well before full</td><td>The first is a warning; the second is an emergency</td></tr>
+            <tr><td>Alert on pool utilization at two thresholds, well before full</td><td>The first is a warning; the second is an emergency</td></tr>
             <tr><td>Alert on rate of growth, not only on level</td><td>85% and stable is fine; 60% and climbing fast is not</td></tr>
             <tr><td>Keep headroom that is genuinely reserved</td><td>Headroom you would consume in a pinch is not headroom</td></tr>
             <tr><td>Know how long it takes to add capacity</td><td>If procurement takes six weeks, alert six weeks of growth early</td></tr>
@@ -3359,7 +3359,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         <div class="concept-desc verdict">
           The performance-headroom row is the trap in an all-flash world. Capacity is cheap and
           plentiful; controller CPU <span class="acro-exp">(Central Processing Unit)</span> and cache are not. An array at 50% capacity and 95% controller
-          utilisation needs expansion just as urgently, and no capacity report will say so.
+          utilization needs expansion just as urgently, and no capacity report will say so.
         </div>
       </div>
     </div>
@@ -3402,7 +3402,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
   <div class="topic-header">
     <span class="topic-icon">🧬</span>
     <span class="topic-name">VM <span class="acro-exp">(Virtual Machine)</span> Lifecycle — Templates, Cloning, Sysprep &amp; the Snowflake Problem</span>
-    <span class="topic-badge">INFRA • Virtualisation</span>
+    <span class="topic-badge">Infra • Virtualization</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
@@ -3423,7 +3423,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           <tbody>
             <tr><td>Install from ISO <span class="acro-exp">(International Organization for Standardization)</span>, by hand, each time</td><td>No</td><td>One-off lab work only</td></tr>
             <tr><td>Clone a running machine</td><td>Sort of, and dangerously</td><td>Almost never — see the identity problem below</td></tr>
-            <tr><td>Template from a generalised image</td><td>Yes</td><td>The baseline for most estates</td></tr>
+            <tr><td>Template from a generalized image</td><td>Yes</td><td>The baseline for most estates</td></tr>
             <tr><td>Template built by a pipeline</td><td>Yes, and auditable</td><td>Where images change often enough to justify it</td></tr>
             <tr><td>Configuration applied after boot</td><td>Yes, and inspectable</td><td>Pair with any of the above; this is where the drift goes</td></tr>
           </tbody>
@@ -3438,7 +3438,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
     </div>
     <div class="concept-card">
       <div class="concept-label">Reference</div>
-      <div class="concept-title">The Identity Problem — Why Generalising Exists</div>
+      <div class="concept-title">The Identity Problem — Why Generalizing Exists</div>
       <div class="concept-desc">
         Copying a running Windows machine copies things that were supposed to be unique to it, and
         the failures that follow are strange enough that people misdiagnose them for days.
@@ -3453,13 +3453,13 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>MAC <span class="acro-exp">(Media Access Control)</span> address</td><td>Duplicate leases, and an ARP <span class="acro-exp">(Address Resolution Protocol)</span> table that cannot decide</td></tr>
             <tr><td>SSH <span class="acro-exp">(Secure Shell)</span> host keys</td><td>Every client warns loudly; on Linux this is the classic clone tell</td></tr>
             <tr><td>Cloud-init / agent state</td><td>The new machine believes it is already configured</td></tr>
-            <tr><td>Licence activation state</td><td>Activation failures that appear weeks later</td></tr>
+            <tr><td>License activation state</td><td>Activation failures that appear weeks later</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          Generalising — <code>sysprep /generalize</code> on Windows, clearing machine-id, host keys
+          Generalizing — <code>sysprep /generalize</code> on Windows, clearing machine-id, host keys
           and cloud-init state on Linux — strips exactly this set, which is why a template is
-          generalised *once* and then never booted again. Booting a template to "just patch it
+          generalized *once* and then never booted again. Booting a template to "just patch it
           quickly" is how an estate ends up with fifty machines sharing an identity nobody notices
           until a domain join fails.
         </div>
@@ -3502,7 +3502,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
   <div class="topic-header">
     <span class="topic-icon">🚚</span>
     <span class="topic-name">Live Migration &amp; Maintenance Mode — Patching Hosts Without an Outage</span>
-    <span class="topic-badge">INFRA • Virtualisation</span>
+    <span class="topic-badge">Infra • Virtualization</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
@@ -3576,7 +3576,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           <thead><tr><th>Blocker</th><th>Why</th></tr></thead>
           <tbody>
             <tr><td>Attached local storage or an ISO <span class="acro-exp">(International Organization for Standardization)</span> on a host datastore</td><td>The target cannot see the file. The most common single cause</td></tr>
-            <tr><td>Passthrough hardware — GPU <span class="acro-exp">(Graphics Processing Unit)</span>, USB <span class="acro-exp">(Universal Serial Bus)</span> dongle, licence key</td><td>Cannot be virtualised across a move; the guest must be shut down</td></tr>
+            <tr><td>Passthrough hardware — GPU <span class="acro-exp">(Graphics Processing Unit)</span>, USB <span class="acro-exp">(Universal Serial Bus)</span> dongle, license key</td><td>Cannot be virtualized across a move; the guest must be shut down</td></tr>
             <tr><td>A snapshot chain</td><td>Some operations refuse to run against a machine with active snapshots</td></tr>
             <tr><td>Memory dirtying faster than the link can copy</td><td>A very busy database on a 1 Gb migration network never converges</td></tr>
             <tr><td>CPU feature mismatch</td><td>Compatibility mode disabled, or a genuinely newer host in the cluster</td></tr>
@@ -3601,7 +3601,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
   <div class="topic-header">
     <span class="topic-icon">📤</span>
     <span class="topic-name">P2V &amp; V2V — The Migrations That Still Happen</span>
-    <span class="topic-badge">INFRA • Virtualisation</span>
+    <span class="topic-badge">Infra • Virtualization</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
@@ -3647,7 +3647,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           <tbody>
             <tr><td>Take a full backup first, and test it</td><td>Not the conversion's snapshot — an independent restore path</td></tr>
             <tr><td>Record the network configuration</td><td>Addresses, routes, DNS <span class="acro-exp">(Domain Name System)</span>, and anything hard-coded elsewhere that points at it</td></tr>
-            <tr><td>Note licences tied to hardware</td><td>Some software keys to a MAC <span class="acro-exp">(Media Access Control)</span> address or a disk serial and will refuse to run after the move</td></tr>
+            <tr><td>Note licenses tied to hardware</td><td>Some software keys to a MAC <span class="acro-exp">(Media Access Control)</span> address or a disk serial and will refuse to run after the move</td></tr>
             <tr><td>Uninstall hardware-specific agents</td><td>RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span> managers, vendor monitoring, out-of-band tooling — all meaningless now</td></tr>
             <tr><td>Convert, then boot with the network disconnected</td><td>Two machines with one identity on the network is the classic conversion incident</td></tr>
             <tr><td>Remove ghost devices, install guest tools</td><td>The old drivers linger and cause strange failures months later</td></tr>
@@ -3701,8 +3701,8 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🩺</span>
-    <span class="topic-name">Virtualisation Troubleshooting — The Storage, Network, Host Triage Order</span>
-    <span class="topic-badge">INFRA • Virtualisation</span>
+    <span class="topic-name">Virtualization Troubleshooting — The Storage, Network, Host Triage Order</span>
+    <span class="topic-badge">Infra • Virtualization</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
@@ -3713,7 +3713,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         Inside the guest, everything looks like the guest's problem: the disk is slow, the processor
         is busy, the network is dropping. It usually is not. The guest cannot see the other twenty
         machines on its host, the host cannot see the other hosts on the storage array, and none of
-        them can see the switch. That is why virtualisation troubleshooting has an order — and why
+        them can see the switch. That is why virtualization troubleshooting has an order — and why
         starting inside the guest, which is where the ticket points, is nearly always the slowest
         route to the answer.
       </div>
@@ -3756,8 +3756,8 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          <strong>CPU ready is the one worth internalising</strong>, because it inverts the usual
-          reading. A guest with low processor utilisation that feels sluggish is the classic
+          <strong>CPU ready is the one worth internalizing</strong>, because it inverts the usual
+          reading. A guest with low processor utilization that feels sluggish is the classic
           signature: it is not using the processor because it cannot get it. Adding more virtual
           processors to that machine makes it *worse*, since the scheduler now has to find more free
           cores simultaneously — the correct fix is usually fewer.
@@ -3768,7 +3768,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
       <div class="concept-label">Troubleshooting</div>
       <div class="concept-title">Recurring Shapes</div>
       <div class="concept-desc">
-        Patterns worth recognising on sight, because each has a standard cause.
+        Patterns worth recognizing on sight, because each has a standard cause.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -3776,7 +3776,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           <tbody>
             <tr><td>Everything slow at 02:00 nightly</td><td>Backups, antivirus scans or index jobs all starting at once across guests</td></tr>
             <tr><td>One guest slow, host quiet</td><td>Actually the guest — or a snapshot nobody removed</td></tr>
-            <tr><td>All guests on one host slow</td><td>Host memory pressure, or one noisy neighbour saturating a shared path</td></tr>
+            <tr><td>All guests on one host slow</td><td>Host memory pressure, or one noisy neighbor saturating a shared path</td></tr>
             <tr><td>All guests on one datastore slow</td><td>The array, the path, or another workload on the same spindles</td></tr>
             <tr><td>Slow only after a migration</td><td>Landed on a busier host, or lost a cache warm-up</td></tr>
             <tr><td>Intermittent network loss for some guests</td><td>One uplink of a team failing, or a VLAN <span class="acro-exp">(Virtual Local Area Network)</span> missing on one host</td></tr>
@@ -3786,7 +3786,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         <div class="concept-desc verdict">
           The 02:00 row is a scheduling problem masquerading as a performance one, and the fix is
           organisational rather than technical: stagger the windows. The last row is the reminder
-          that "the server is slow" is a claim about a path, and the virtualisation layer is only
+          that "the server is slow" is a claim about a path, and the virtualization layer is only
           one segment of it — <span class="xref">Network Troubleshooting — A Systematic Approach</span>
           takes over where this card stops.
         </div>
@@ -3823,7 +3823,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           The asymmetry that decides these arguments: the current system's failure modes are known,
           bounded and already priced. A rewrite's are not, and they land on the day the rewrite goes
           live — which is also the day the people who understood the original are gone. That is not
-          an argument against ever modernising. It is the reason modernising is done in slices, and
+          an argument against ever modernizing. It is the reason modernizing is done in slices, and
           it is why "we should just rewrite it" costs credibility in a room that has watched
           somebody try.
         </div>
@@ -3853,7 +3853,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <tr><td>VSAM</td><td>Keyed record file access</td><td>An indexed key/value store predating the term</td></tr>
             <tr><td>Copybook</td><td>The record layout for a file or message</td><td>The struct definition — and the only parser you will get</td></tr>
             <tr><td>SMF</td><td>System Management Facilities records</td><td>Telemetry and audit logs, in a binary house format</td></tr>
-            <tr><td>RACF, ACF2, Top Secret</td><td>The access control products</td><td>The directory and the authorisation engine, not joined to yours</td></tr>
+            <tr><td>RACF, ACF2, Top Secret</td><td>The access control products</td><td>The directory and the authorization engine, not joined to yours</td></tr>
             <tr><td>3270, 5250</td><td>Terminal protocols</td><td>The green screen — a block-mode form, not a character stream</td></tr>
           </tbody>
         </table>
@@ -3906,7 +3906,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           <thead><tr><th>Trap</th><th>What actually happens</th><th>What to do</th></tr></thead>
           <tbody>
             <tr><td>EBCDIC, not ASCII <span class="acro-exp">(American Standard Code for Information Interchange)</span></td><td>A working file looks like binary noise in your editor</td><td>Convert explicitly, and know <em>which</em> code page — EBCDIC has national variants that move punctuation</td></tr>
-            <tr><td>Fixed width, no delimiters</td><td>There is nothing in the file that says where a field ends</td><td>Get the copybook. Treat it as a project deliverable with a name against it, not a favour</td></tr>
+            <tr><td>Fixed width, no delimiters</td><td>There is nothing in the file that says where a field ends</td><td>Get the copybook. Treat it as a project deliverable with a name against it, not a favor</td></tr>
             <tr><td>Packed decimal (COMP-3)</td><td>Two digits per byte, sign in the final nibble</td><td>Decode it as packed decimal. Reading it as text or as an integer corrupts money quietly</td></tr>
             <tr><td>Zoned decimal with overpunch</td><td>The sign is folded into the last digit, so −123 reads as <code>12L</code></td><td>Never regex a numeric field. Use the copybook's picture clause</td></tr>
             <tr><td>Trailing spaces are structural</td><td>Padding is how the record keeps its length</td><td>Trim on the way into your model, never on the way back out</td></tr>
@@ -3915,7 +3915,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The generalisation worth carrying away: on this platform <strong>a record layout is a
+          The generalization worth carrying away: on this platform <strong>a record layout is a
           binary contract, not a text format</strong>. Modern integration habits assume the file
           describes itself — a header row, a JSON <span class="acro-exp">(JavaScript Object Notation)</span> key, a delimiter to split on. Here nothing does,
           and every field boundary you assume is an assumption you are making on your own authority.
@@ -3936,14 +3936,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
         <table class="ref-table">
           <thead><tr><th>Fact</th><th>Why it inverts an instinct</th></tr></thead>
           <tbody>
-            <tr><td>Consumption is billed</td><td>Capacity licensing means an inefficient query is a line item on an invoice. Cloud teaches "add capacity, optimise later"; here optimisation <em>is</em> the cost control, and a chatty integration has a price attached to it</td></tr>
+            <tr><td>Consumption is billed</td><td>Capacity licensing means an inefficient query is a line item on an invoice. Cloud teaches "add capacity, optimize later"; here optimization <em>is</em> the cost control, and a chatty integration has a price attached to it</td></tr>
             <tr><td>The batch window is the real deadline</td><td>Overnight processing has a finish time the business depends on. An integration that adds twenty minutes to a run ending at 05:50 is an outage, discovered in production, once</td></tr>
             <tr><td>Identity is somewhere else</td><td>Mainframe accounts live in RACF or its competitors, not in your directory. The standing audit finding is an access review that covered every system except the one holding the money</td></tr>
             <tr><td>The knowledge is retiring</td><td>The person who answered your question last year may not be there next year. Write down every answer you get, in your repository, at the time you get it</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The last one is not sentiment. In practice it means the highest-value artefact your project
+          The last one is not sentiment. In practice it means the highest-value artifact your project
           produces is not the integration — it is <strong>the documented record layout and the
           documented meaning of each status code</strong>, written down for the first time in
           decades because you were the one who had to ask.
@@ -3953,7 +3953,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
 
     <div class="concept-card">
       <div class="concept-label">Concept</div>
-      <div class="concept-title">Modernising Without a Big Bang</div>
+      <div class="concept-title">Modernizing Without a Big Bang</div>
       <div class="concept-desc">
         The pattern that works is the strangler: put a façade in front of the existing system, move
         one function at a time behind it, and leave the old path running. What makes it work here is
@@ -3974,7 +3974,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           <strong class="c-amber">On automated translation:</strong> tools that convert COBOL to
           Java or C# produce COBOL written in Java — the same structure, the same eighty-branch
           paragraph, none of the domain knowledge, and now nobody at all understands it, because the
-          people who could read the original no longer recognise it. It converts a maintainable
+          people who could read the original no longer recognize it. It converts a maintainable
           legacy system into an unmaintainable modern one, which reads as progress on a slide.
         </div>
         <div class="concept-desc verdict">
@@ -4016,7 +4016,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                     <tr><td>A network link between racks fails</td><td><strong>Hard.</strong> Both sides are healthy and each sees half the cluster</td></tr>
                     <tr><td>A node is alive but unreachable</td><td>Indistinguishable from dead, from the outside. This is why fencing exists</td></tr>
                     <tr><td>Both halves decide they are authoritative</td><td><strong>Split-brain.</strong> Two writers on one dataset — the worst outcome available</td></tr>
-                    <tr><td>No majority anywhere</td><td>Correct behaviour is to <em>stop</em>. Unavailable beats corrupt</td></tr>
+                    <tr><td>No majority anywhere</td><td>Correct behavior is to <em>stop</em>. Unavailable beats corrupt</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     The line worth saying to anyone specifying a cluster: <strong>a two-node cluster with no witness
@@ -4035,7 +4035,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Arrangement</th><th>Quorum behaviour</th></tr>
+                    <tr><th>Arrangement</th><th>Quorum behavior</th></tr>
                     <tr><td>3 nodes</td><td>Tolerates 1 failure. <strong>The smallest genuinely sane cluster</strong></td></tr>
                     <tr><td>2 nodes + a witness</td><td>The witness is the third vote. It must be somewhere neither node's failure takes with it</td></tr>
                     <tr><td>File-share witness</td><td>A share on a third site or an independent host. Cheap, and the usual answer</td></tr>
@@ -4101,7 +4101,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                   <table class="ref-table">
                     <tr><th>Constraint</th><th>How it bites</th></tr>
                     <tr><td>Rack units and depth</td><td>42U is standard; depth is not. A 900mm server does not fit a 600mm rack, and nobody measures until delivery</td></tr>
-                    <tr><td>Floor loading</td><td>A full rack is 700&ndash;1,200 kg. <strong>Older buildings and raised floors have real limits</strong>, expressed per square metre</td></tr>
+                    <tr><td>Floor loading</td><td>A full rack is 700&ndash;1,200 kg. <strong>Older buildings and raised floors have real limits</strong>, expressed per square meter</td></tr>
                     <tr><td>Power per rack</td><td>Circuits are rated in amps. Two 16A feeds is roughly 7kW total, not per feed &mdash; and modern kit is dense</td></tr>
                     <tr><td>Cooling capacity</td><td>Every watt in is a watt of heat out. A rack the power can supply may exceed what the room can cool</td></tr>
                     <tr><td>Weight distribution</td><td>Heavy at the bottom. A top-heavy rack on castors is a genuine hazard while being moved</td></tr>
@@ -4110,7 +4110,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                     The order these are discovered in is almost always wrong: <strong>space is checked, then power,
                     then cooling, then floor loading &mdash; which is the reverse of how hard they are to fix</strong>.
                     Adding a rack is easy; adding a circuit is a project; adding cooling capacity is a building
-                    works programme. Ask about the last two first.
+                    works program. Ask about the last two first.
                   </div>
                 </div>
               </div>
@@ -4159,7 +4159,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                   </table>
                   <div class="concept-desc verdict">
                     The measurement that settles arguments is <strong>intake temperature at the top of the
-                    rack</strong>, not room temperature. Rooms are cool at head height and hot at 2 metres; the
+                    rack</strong>, not room temperature. Rooms are cool at head height and hot at 2 meters; the
                     equipment cares about what reaches its own intake, and a rack that is fine at the bottom and
                     throttling at the top is the standard picture in a room nobody has contained. The efficiency
                     version of this argument &mdash; what all that cooling costs, and what it emits &mdash; is
@@ -4173,7 +4173,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🏷️</span>
-              <span class="topic-name">Labelling &amp; Asset Tagging — The Boring Discipline That Pays Out at 3 a.m.</span>
+              <span class="topic-name">Labeling &amp; Asset Tagging — The Boring Discipline That Pays Out at 3 a.m.</span>
               <span class="topic-badge">Operations</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -4182,15 +4182,15 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                 <div class="concept-label">Core Concept</div>
                 <div class="concept-title">The Cost Is Paid Now and the Benefit Lands at 3 a.m.</div>
                 <div class="concept-desc">
-                  Labelling is the clearest example of a discipline whose economics are misjudged because the two
-                  sides land at different times. Labelling a rack costs an afternoon while everything is calm;
-                  <strong class="c-cyan">not labelling it costs twenty minutes of an outage</strong>, at the
+                  Labeling is the clearest example of a discipline whose economics are misjudged because the two
+                  sides land at different times. Labeling a rack costs an afternoon while everything is calm;
+                  <strong class="c-cyan">not labeling it costs twenty minutes of an outage</strong>, at the
                   moment when twenty minutes is the most expensive commodity in the building &mdash; and it costs
                   that repeatedly, for years.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Moment</th><th>Unlabelled</th><th>Labelled</th></tr>
+                    <tr><th>Moment</th><th>Unlabelled</th><th>Labeled</th></tr>
                     <tr><td>Routine change</td><td>Trace the cable by hand, or unplug and see what breaks</td><td>Read the label</td></tr>
                     <tr><td>Emergency, 3 a.m.</td><td><strong>Someone unplugs the wrong thing.</strong> This is the actual risk</td><td>Read the label</td></tr>
                     <tr><td>New starter's first week</td><td>Weeks of tribal knowledge transfer</td><td>The room documents itself</td></tr>
@@ -4209,7 +4209,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">What to Label, and What to Put on the Label</div>
                 <div class="concept-desc">
-                  Over-labelling fails as surely as under-labelling, because labels that carry information which
+                  Over-labeling fails as surely as under-labeling, because labels that carry information which
                   changes are wrong within a year and then actively mislead.
                 </div>
                 <div class="dw">
@@ -4324,7 +4324,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                 <div class="concept-label">Practice</div>
                 <div class="concept-title">The Restore Nobody Has Tested Is Not a Backup</div>
                 <div class="concept-desc">
-                  Every organisation has backups. A much smaller number have restores, and the difference only
+                  Every organization has backups. A much smaller number have restores, and the difference only
                   becomes visible on the day it matters. <strong class="c-amber">A restore that has never been
                   performed is a hypothesis</strong>, and it usually fails on something procedural rather than
                   something technical.
@@ -4360,7 +4360,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Core Concept</div>
-                <div class="concept-title">The Existing Card Covers One Server. This Is the Programme.</div>
+                <div class="concept-title">The Existing Card Covers One Server. This Is the Program.</div>
                 <div class="concept-desc">
                   Decommissioning a known server is a checklist. Decommissioning at estate scale is a different
                   problem, because the hard part is not the removal &mdash; it is
@@ -4370,14 +4370,14 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Stage</th><th>The real difficulty</th></tr>
-                    <tr><td>Finding candidates</td><td>Nobody volunteers a system. Low utilisation, no logins, no patches, no owner in the CMDB <span class="acro-exp">(Configuration Management Database)</span></td></tr>
-                    <tr><td>Establishing ownership</td><td><strong>The longest step.</strong> The named owner left in 2022 and their team was reorganised</td></tr>
+                    <tr><td>Finding candidates</td><td>Nobody volunteers a system. Low utilization, no logins, no patches, no owner in the CMDB <span class="acro-exp">(Configuration Management Database)</span></td></tr>
+                    <tr><td>Establishing ownership</td><td><strong>The longest step.</strong> The named owner left in 2022 and their team was reorganized</td></tr>
                     <tr><td>Notice period</td><td>Long enough for a real objection, short enough to finish. Four to six weeks is typical</td></tr>
-                    <tr><td>Powering off, not removing</td><td>Leave it off and recoverable for a defined window. This is the step that makes the programme safe</td></tr>
-                    <tr><td>Removal and disposal</td><td>Media sanitisation, asset record, licence reclaim &mdash; and the record that it happened</td></tr>
+                    <tr><td>Powering off, not removing</td><td>Leave it off and recoverable for a defined window. This is the step that makes the program safe</td></tr>
+                    <tr><td>Removal and disposal</td><td>Media sanitization, asset record, license reclaim &mdash; and the record that it happened</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    Run it as a <strong>standing programme with a monthly cohort</strong> rather than an annual
+                    Run it as a <strong>standing program with a monthly cohort</strong> rather than an annual
                     project. A cohort of ten systems a month finishes; a project to clear four hundred stalls at
                     ownership, which is the second row, and never restarts — and in the meantime the estate has
                     grown again.
@@ -4446,7 +4446,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
             <div class="topic-header">
               <span class="topic-icon">🩹</span>
               <span class="topic-name">Patching a Server Estate — Windows, Rings &amp; the Ones That Cannot Reboot</span>
-              <span class="topic-badge">INFRA • Operations</span>
+              <span class="topic-badge">Infra • Operations</span>
               <span class="topic-chev">▶</span>
             </div>
             <div class="topic-body">

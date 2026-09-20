@@ -139,7 +139,7 @@
                     bug in the language and it is silent.</strong> The
                     default is evaluated once at definition, so every call
                     without an argument shares one list — which produces
-                    behaviour that looks like data leaking between unrelated
+                    behavior that looks like data leaking between unrelated
                     calls. Use `None` as the default and create the object
                     inside the function; the same instinct fixes the copying
                     row.
@@ -1303,12 +1303,12 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                 <div class="concept-title">The JVM Decides Your Deployment Shape Before You Write a Line</div>
                 <div class="concept-desc">
                   Choosing Java is choosing a runtime that gets faster the longer it runs. The JIT <span class="acro-exp">(Just-In-Time)</span> compiler needs thousands of
-                  executions before it optimises a hot path, so a process is slowest exactly when it
+                  executions before it optimizes a hot path, so a process is slowest exactly when it
                   starts — and that single property decides where Java is excellent and where it is
                   a poor fit. A long-running service that warms up once and serves for weeks is the
                   best case in the industry: mature GC, world-class observability, and a profiler
                   that works in production. A function invoked for 200ms and discarded pays the
-                  startup and never reaches the optimisation.
+                  startup and never reaches the optimization.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -1323,7 +1323,7 @@ HTTP/1.1 <span class="num">429</span> Too Many Requests
                     something too.</strong> GraalVM native images compile ahead of time and start in
                     milliseconds, at the price of reflection configuration and a build that no
                     longer resembles the one you debug. Virtual threads (Loom) make blocking code
-                    scale like async code without the colouring problem, which is the biggest
+                    scale like async code without the coloring problem, which is the biggest
                     change to the language's concurrency story in twenty years — and it removes the
                     main reason teams reached for a different runtime.
                   </div>
@@ -1577,10 +1577,10 @@ $sum = <span class="fn">array_sum</span>($nums);
               </div>
               <div class="concept-card">
                 <div class="concept-label">The Decision</div>
-                <div class="concept-title">Undefined Behaviour Is Not "Crashes Sometimes" — It Is a Licence the Compiler Uses</div>
+                <div class="concept-title">Undefined Behavior Is Not "Crashes Sometimes" — It Is a License the Compiler Uses</div>
                 <div class="concept-desc">
-                  The table lists undefined behaviour as going "off the rails when you break the
-                  rules", and the modern reality is sharper and much stranger. An optimising
+                  The table lists undefined behavior as going "off the rails when you break the
+                  rules", and the modern reality is sharper and much stranger. An optimizing
                   compiler is entitled to assume UB never happens, and it reasons <em>backwards</em>
                   from that assumption. A null check placed after a pointer has already been
                   dereferenced can be deleted entirely, because the dereference proves the pointer
@@ -1659,11 +1659,11 @@ $sum = <span class="fn">array_sum</span>($nums);
                 </div>
                 <div class="concept-desc">
                   Two everyday consequences follow, and both look like magic until this is understood.
-                  A debugger stepping through an optimised build jumps backwards and shows variables
-                  as <em>optimised out</em>, because the line-to-instruction mapping stopped being
+                  A debugger stepping through an optimized build jumps backwards and shows variables
+                  as <em>optimized out</em>, because the line-to-instruction mapping stopped being
                   one-to-one. And <strong class="c-amber">a bug that disappears at <code>-O0</code> is
                   not a compiler bug nine times in ten</strong> &mdash; it is code whose meaning was
-                  never defined by the language, and the optimiser was entitled to assume the case
+                  never defined by the language, and the optimizer was entitled to assume the case
                   that bites you cannot happen.
                 </div>
               </div>
@@ -1673,7 +1673,7 @@ $sum = <span class="fn">array_sum</span>($nums);
                 <div class="concept-desc">
                   The stack grows down and the saved return address sits <em>above</em> a function's
                   locals, so a buffer that overflows writes towards the thing that decides where
-                  execution resumes. That single fact shapes the whole defence stack, and each layer
+                  execution resumes. That single fact shapes the whole defense stack, and each layer
                   answers a different part of it.
                 </div>
                 <div class="dw">
@@ -1687,7 +1687,7 @@ $sum = <span class="fn">array_sum</span>($nums);
                   <div class="concept-desc verdict">
                     Read the third column as the design brief for the next mitigation: <strong>ROP is
                     what NX produced, and info-leak bugs became valuable the day ASLR shipped.</strong>
-                    Defences here do not eliminate the class, they raise what an exploit has to
+                    Defenses here do not eliminate the class, they raise what an exploit has to
                     contain &mdash; which is why the honest summary of the last row is the only one
                     that changes the shape of the problem rather than its price.
                   </div>
@@ -1733,7 +1733,7 @@ $sum = <span class="fn">array_sum</span>($nums);
                 <div class="concept-title">SemVer Is a Promise a Human Makes, and the Lockfile Only Protects the Top Level</div>
                 <div class="concept-desc">
                   Ranges work because maintainers classify their own changes correctly, and the two
-                  ways that fails are both common. A maintainer ships a behaviour change as a minor
+                  ways that fails are both common. A maintainer ships a behavior change as a minor
                   release because it did not break the type signature — the build is green and one
                   code path now returns something else. Or the opposite: a genuine bug fix is
                   released as a major, so a project pinned to <code>^1</code> quietly stops
@@ -1936,7 +1936,7 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                 <div class="concept-title">The Scheduler's Idea of "Now" Is Not Yours, and Backfills Are Where That Bites</div>
                 <div class="concept-desc">
                   An Airflow run is named for the <em>start</em> of the interval it covers, and it
-                  fires at the <em>end</em> of that interval. A daily DAG labelled Monday runs on
+                  fires at the <em>end</em> of that interval. A daily DAG labeled Monday runs on
                   Tuesday morning, because Monday's data is only complete once Monday is over. That
                   is correct and it is the single most confusing thing about the tool: a task that
                   reads "today" from the system clock instead of from the run's own interval
@@ -2006,7 +2006,7 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                   metered query. A project that starts as thirty models and rebuilds fully each hour
                   becomes four hundred models rebuilding fully each hour without anyone deciding to,
                   and the finance conversation arrives before the engineering one. The controls are
-                  in the tool and unused by default: incremental materialisations so a model
+                  in the tool and unused by default: incremental materializations so a model
                   processes only new rows, table versus view chosen per model rather than
                   by habit, and a schedule that reflects how often the data actually changes rather
                   than how often someone might look.
@@ -2014,7 +2014,7 @@ df = spark.<span class="fn">read</span>.<span class="fn">parquet</span>(<span cl
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Choice</th><th>Cheap</th><th>Expensive</th></tr>
-                    <tr><td>Materialisation</td><td><code>incremental</code> with a good filter; <code>view</code> for thin passthroughs</td><td class="c-red">Everything as <code>table</code>, rebuilt in full, hourly</td></tr>
+                    <tr><td>Materialization</td><td><code>incremental</code> with a good filter; <code>view</code> for thin passthroughs</td><td class="c-red">Everything as <code>table</code>, rebuilt in full, hourly</td></tr>
                     <tr><td>Test coverage</td><td>Not-null and unique on keys, at the boundaries</td><td>A generic test on every column of every model, each a full scan</td></tr>
                     <tr><td>Freshness</td><td>Matched to the source's actual update cadence</td><td>Hourly everything, because it was the default in the example</td></tr>
                     <tr><td>The DAG's shape</td><td>Staging → intermediate → marts, each layer thin</td><td>A model that <code>ref()</code>s eleven others and is itself referenced twice</td></tr>

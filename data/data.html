@@ -55,7 +55,7 @@
                     <tr><td>Read hits the buffer pool</td><td>Memory-fast — the common, cheap case</td></tr>
                     <tr><td>Read misses</td><td>Random disk seek — orders of magnitude slower</td></tr>
                     <tr><td>Working set &gt; buffer pool</td><td>Performance cliff — every read hits disk</td></tr>
-                    <tr><td>Commit = WAL fsync</td><td>Commit latency is disk-sync latency; batch to amortise</td></tr>
+                    <tr><td>Commit = WAL fsync</td><td>Commit latency is disk-sync latency; batch to amortize</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     So the most useful capacity question is whether your hot data fits in RAM, and the
@@ -133,7 +133,7 @@
                     <code>UNIQUE</code>, <code>CHECK</code> — and relax one only with a named reason you
                     have written down, not a vague appeal to performance. The database is the one place a
                     rule is guaranteed; every layer above it holds only until the next writer forgets.
-                    Cheap up front, and the last line of defence when the application has a bug — which
+                    Cheap up front, and the last line of defense when the application has a bug — which
                     it will.
                   </div>
                 </div>
@@ -188,14 +188,14 @@
                     <thead><tr><th>Workload</th><th>Target</th><th>Why</th></tr></thead>
                     <tbody>
                       <tr><td>Transactional — orders, accounts, anything written often</td><td><strong>3NF, and stop</strong></td><td>Each fact stored once means a write touches one place. BCNF beyond this rarely changes the tables you would have drawn anyway</td></tr>
-                      <tr><td>Analytical — reporting, dashboards, a warehouse</td><td><strong>Denormalise deliberately</strong></td><td>Star schemas duplicate on purpose: joins are the cost at read time, and nothing is being updated in place</td></tr>
-                      <tr><td>A read-heavy path inside a transactional system</td><td>A derived column or a materialised view</td><td>Duplication with an owner and a refresh rule, which is different from duplication by accident</td></tr>
+                      <tr><td>Analytical — reporting, dashboards, a warehouse</td><td><strong>Denormalize deliberately</strong></td><td>Star schemas duplicate on purpose: joins are the cost at read time, and nothing is being updated in place</td></tr>
+                      <tr><td>A read-heavy path inside a transactional system</td><td>A derived column or a materialized view</td><td>Duplication with an owner and a refresh rule, which is different from duplication by accident</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-green">Denormalisation is a decision, not a failure —
+                    <strong class="c-green">Denormalization is a decision, not a failure —
                     provided it is written down.</strong> The distinction that matters is not
-                    normalised versus not; it is whether a duplicated value has a stated source of
+                    normalized versus not; it is whether a duplicated value has a stated source of
                     truth and something that keeps it honest. A copy nobody owns silently
                     diverges, and the divergence surfaces as two dashboards disagreeing months
                     later.
@@ -254,7 +254,7 @@
                     <tr><td><code>READ UNCOMMITTED</code></td><td>Dirty reads &mdash; other sessions' uncommitted values</td></tr>
                     <tr><td><code>READ COMMITTED</code> (common default)</td><td>Non-repeatable reads, and <strong>lost updates</strong> on read-modify-write</td></tr>
                     <tr><td><code>REPEATABLE READ</code> (MySQL default)</td><td>Phantom rows in some engines; MySQL uses gap locks to reduce them</td></tr>
-                    <tr><td><code>SERIALIZABLE</code></td><td>Nothing &mdash; but expect serialisation failures you must retry</td></tr>
+                    <tr><td><code>SERIALIZABLE</code></td><td>Nothing &mdash; but expect serialization failures you must retry</td></tr>
                     <tr><td><code>SELECT … FOR UPDATE</code></td><td>Locks the row now, at any level. The targeted fix for exactly this</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -271,7 +271,7 @@
                 <div class="concept-label">The Failure Mode</div>
                 <div class="concept-title">Write Skew — the Anomaly the List of Three Leaves Out</div>
                 <div class="concept-desc">
-                  Every isolation table, including the one above, is organised around dirty reads,
+                  Every isolation table, including the one above, is organized around dirty reads,
                   non-repeatable reads and phantoms. Those three are what the levels were
                   historically defined against — and <strong class="c-amber">none of them is the
                   reason anybody actually needs <code>SERIALIZABLE</code></strong>.
@@ -348,9 +348,9 @@
                 <div class="concept-title">Model the Invariant, Not the Current Process</div>
                 <div class="concept-desc">
                   The most common schema mistake is not a missing normal form. It is
-                  <strong>modelling how the business works this year</strong> — the approval steps,
+                  <strong>modeling how the business works this year</strong> — the approval steps,
                   the two regions, the one product line — instead of what is true about the domain
-                  regardless. Processes change every reorganisation; invariants do not, and the
+                  regardless. Processes change every reorganization; invariants do not, and the
                   schema that encodes the second survives the first.
                 </div>
                 <div class="dw">
@@ -549,20 +549,20 @@
                 <div class="concept-desc">
                   CTEs read as clean, stacked steps — and on some engines that readability has a
                   performance cost the syntax hides. Historically, and still in cases, a CTE is an
-                  <strong class="c-amber">optimization fence</strong>: it is materialised into a
+                  <strong class="c-amber">optimization fence</strong>: it is materialized into a
                   temporary result and the planner cannot push a predicate from the outer query into it.
                   So a CTE that scans a million rows, filtered to ten by a <code>WHERE</code> outside it,
                   <strong class="c-amber">computes the full million every time</strong> — the filter
-                  can't reach inside the fence. Older Postgres materialised every CTE; Postgres 12+
+                  can't reach inside the fence. Older Postgres materialized every CTE; Postgres 12+
                   inlines simple ones by default, but <code>MATERIALIZED</code> forces the fence back and
-                  other engines vary, so the behaviour is not something to assume. The recursive form has
+                  other engines vary, so the behavior is not something to assume. The recursive form has
                   its own trap: with no termination or cycle guard, a recursive CTE over a graph with a
                   loop runs forever.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>The assumption</th><th>The reality</th><th>The check</th></tr>
-                    <tr><td>&ldquo;A CTE is just a named subquery&rdquo;</td><td>On some engines it's a materialised fence</td><td><code>EXPLAIN</code> — is the outer <code>WHERE</code> pushed in?</td></tr>
+                    <tr><td>&ldquo;A CTE is just a named subquery&rdquo;</td><td>On some engines it's a materialized fence</td><td><code>EXPLAIN</code> — is the outer <code>WHERE</code> pushed in?</td></tr>
                     <tr><td>The outer filter reaches the CTE cheaply</td><td>Behind a fence, the CTE computes fully first</td><td>Filter inside the CTE, or rely on inlining</td></tr>
                     <tr><td>A recursive CTE terminates</td><td>A cycle in the data loops forever</td><td>Depth cap or cycle detection; mind <code>UNION</code> vs <code>UNION ALL</code></td></tr>
                     <tr><td><code>MATERIALIZED</code> for clarity</td><td>It re-imposes the fence you may not want</td><td>Use it deliberately, not by habit</td></tr>
@@ -688,7 +688,7 @@
                 <div class="concept-title">NOT IN Against One NULL Returns Zero Rows</div>
                 <div class="concept-desc">
                   <code>WHERE id NOT IN (SELECT customer_id FROM orders)</code> is the single most
-                  destructive NULL behaviour in SQL <span class="acro-exp">(Structured Query Language)</span>. If that subquery returns even one NULL, the comparison
+                  destructive NULL behavior in SQL <span class="acro-exp">(Structured Query Language)</span>. If that subquery returns even one NULL, the comparison
                   becomes <em>unknown</em> for every row, no row satisfies the predicate, and
                   <strong class="c-amber">the query returns nothing at all</strong>. Not an error &mdash; an empty
                   result, which reads as &ldquo;there are none&rdquo;.
@@ -882,7 +882,7 @@
                 <div class="concept-desc">
                   Sargability is how you <em>let</em> the planner use an index; the other half of query
                   performance is that the planner's choices rest on <strong class="c-cyan">statistics
-                  that go stale</strong>. The optimiser picks a plan from estimated row counts, and when
+                  that go stale</strong>. The optimizer picks a plan from estimated row counts, and when
                   the data grows or its distribution skews, yesterday's estimates send it down a bad
                   plan — the query that ran in milliseconds for months suddenly takes seconds, with no
                   code change, because the planner switched from an index seek to a full scan on numbers
@@ -903,7 +903,7 @@
                   </table>
                   <div class="concept-desc verdict">
                     So write sargable predicates, then treat <code>EXPLAIN ANALYZE</code> as the
-                    instrument you reach for <em>before</em> optimising anything — it replaces a guess
+                    instrument you reach for <em>before</em> optimizing anything — it replaces a guess
                     about what the database is doing with the fact. And keep statistics current, because
                     the most baffling regressions are not bad queries but good queries the planner
                     stopped understanding once the data moved out from under its estimates.
@@ -1069,7 +1069,7 @@
                   <table class="ref-table">
                     <tr><th>Operation</th><th>Why partitioning changes it</th></tr>
                     <tr><td>Deleting old data</td><td><code>DROP PARTITION</code> is instant; <code>DELETE</code> of 200M rows is an outage</td></tr>
-                    <tr><td>Vacuum and index maintenance</td><td>Runs per partition, so it fits in a window and can be parallelised</td></tr>
+                    <tr><td>Vacuum and index maintenance</td><td>Runs per partition, so it fits in a window and can be parallelized</td></tr>
                     <tr><td>Backups and restores</td><td>Older partitions are immutable, so they need copying once, not nightly</td></tr>
                     <tr><td>Query performance</td><td>Only improves with <em>partition pruning</em> &mdash; the predicate must include the partition key</td></tr>
                     <tr><td>Sharding across machines</td><td><strong>A one-way door.</strong> Cross-shard joins, transactions and re-sharding are all now your problem</td></tr>
@@ -1293,7 +1293,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     server turns the database from the guarantor of your invariants into a silent source
                     of corruption — the exact opposite of why you put rules in the database. And treat
                     MySQL and MariaDB as the separate databases they have become: choose deliberately on
-                    hosting, features and licence, and don't assume a library, backup tool, or SQL feature
+                    hosting, features and license, and don't assume a library, backup tool, or SQL feature
                     that works on one works unchanged on the other.
                   </div>
                 </div>
@@ -1346,7 +1346,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><th>Situation</th><th>How it behaves</th></tr>
                     <tr><td>Many readers, one writer</td><td>Fine, with WAL <span class="acro-exp">(Write-Ahead Log)</span> mode &mdash; readers do not block the writer or each other</td></tr>
                     <tr><td>Two processes writing at once</td><td>The second waits or gets <code>SQLITE_BUSY</code>. Set a <code>busy_timeout</code> or handle it</td></tr>
-                    <tr><td>A write-heavy multi-user application</td><td><strong>This is where it stops.</strong> Move to Postgres, or serialise writes through one process</td></tr>
+                    <tr><td>A write-heavy multi-user application</td><td><strong>This is where it stops.</strong> Move to Postgres, or serialize writes through one process</td></tr>
                     <tr><td>Database on NFS <span class="acro-exp">(Network File System)</span> or a network share</td><td><strong>Do not.</strong> File locking over the network is unreliable &mdash; this corrupts databases</td></tr>
                     <tr><td>Analytics over a large local file</td><td>Consider DuckDB instead &mdash; same single-file convenience, columnar engine</td></tr>
                   </table>
@@ -1417,7 +1417,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   </table>
                   <div class="concept-desc verdict">
                     The relationship between pool size and latency is the queueing one, not a
-                    linear one: <strong>utilisation past roughly 80% buys wait time rather than
+                    linear one: <strong>utilization past roughly 80% buys wait time rather than
                     throughput</strong>, and the knee is steep. A pool sized to keep the database
                     busy but not saturated finishes the same work sooner than one sized to keep
                     every request from ever queuing.
@@ -1463,14 +1463,14 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                 <div class="concept-title">The Expensive Mistake Is Choosing the Store Before You Know the Queries</div>
                 <div class="concept-desc">
                   The four families sort neatly by data shape, which makes the choice look like a
-                  modelling decision. It is not — it is a <strong class="c-cyan">query decision</strong>,
+                  modeling decision. It is not — it is a <strong class="c-cyan">query decision</strong>,
                   and the costly error is picking the store for how the data <em>looks</em> and
                   discovering, months in, the questions it cannot answer. Key-value is a hash map:
                   blazing by key, useless for &ldquo;find all X where Y&rdquo;. Document stores tempt
                   you to embed everything, then you need to join across documents and
                   <strong class="c-amber">rebuild joins in application code</strong> — slowly, and
                   without transactions. Wide-column scales without limit but forces the table to be
-                  modelled around one query, so a second access pattern means a second copy of the
+                  modeled around one query, so a second access pattern means a second copy of the
                   data. Each family is a bet on the questions you will ask, and the bet is hard to
                   unwind.
                 </div>
@@ -1479,7 +1479,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                     <tr><th>Family</th><th>The query it punishes</th></tr>
                     <tr><td>Key-value</td><td>Anything but &ldquo;get by exact key&rdquo; — no scans, no secondary lookups unless you build the index yourself</td></tr>
                     <tr><td>Document</td><td>Cross-document joins — rebuilt in app code, without the database's help or its transactions</td></tr>
-                    <tr><td>Wide-column</td><td>A second access pattern — the table is shaped for one query; another means denormalising a second copy</td></tr>
+                    <tr><td>Wide-column</td><td>A second access pattern — the table is shaped for one query; another means denormalizing a second copy</td></tr>
                     <tr><td>Graph</td><td>Aggregations and bulk scans — it is built to walk relationships, not to sum a column</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -1545,9 +1545,9 @@ db.orders.<span class="fn">aggregate</span>([
                   <table class="ref-table">
                     <tr><th>Signal</th><th>What it means</th></tr>
                     <tr><td><code>$lookup</code> appearing in your pipelines</td><td>You are doing joins in the application tier's database. Consider whether the model is relational</td></tr>
-                    <tr><td>The same fact duplicated in many documents</td><td>Denormalisation is the design; the cost is updating every copy, correctly, forever</td></tr>
+                    <tr><td>The same fact duplicated in many documents</td><td>Denormalization is the design; the cost is updating every copy, correctly, forever</td></tr>
                     <tr><td>A document growing without bound</td><td>Arrays that append per event hit the <span class="volatile" data-checked="2026-09">16 MB</span> document limit. Model as a separate collection</td></tr>
-                    <tr><td>Transactions across collections</td><td>Supported since 4.0, and slower than the single-document case. Frequent use is a modelling signal</td></tr>
+                    <tr><td>Transactions across collections</td><td>Supported since 4.0, and slower than the single-document case. Frequent use is a modeling signal</td></tr>
                     <tr><td>Aggregations that scan everything</td><td>Indexes must match the pipeline's first stages, or <code>$match</code> reads the collection</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -1600,7 +1600,7 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="concept-title">The Working Set Must Fit in RAM, and Eviction Decides What Happens When It Does Not</div>
                 <div class="concept-desc">
                   Redis is fast because everything is in memory, which makes memory the whole constraint.
-                  The moment the working set exceeds it, the behaviour is not &ldquo;a bit slower&rdquo; &mdash; it
+                  The moment the working set exceeds it, the behavior is not &ldquo;a bit slower&rdquo; &mdash; it
                   is whatever <code>maxmemory-policy</code> says, and <strong class="c-amber">the default on many
                   installations is to start refusing writes</strong>. That surprises people mid-incident rather
                   than during design.
@@ -1678,7 +1678,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>Small deployments</td><td><strong>Three nodes of Cassandra do less for you than one good Postgres.</strong> The trade only pays at scale</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                  DynamoDB removes the operational half and keeps the modelling half, which is often the
+                  DynamoDB removes the operational half and keeps the modeling half, which is often the
                   right compromise &mdash; but the single-table design it rewards is a genuine skill, and getting
                   it wrong shows up as hot partitions and surprise cost rather than as errors. <strong>Choose these
                   when you know the queries, the write rate is real, and the operational answer is decided</strong>;
@@ -1872,7 +1872,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><th>Workload</th><th>Where it belongs</th></tr>
                     <tr><td>Aggregate over millions of rows, few columns</td><td>Columnar, decisively. Often 10&ndash;100&times; less I/O <span class="acro-exp">(Input/Output)</span> than a row store</td></tr>
                     <tr><td>Fetch one row by primary key</td><td>Row store. This is what OLTP <span class="acro-exp">(Online Transaction Processing)</span> databases are built for</td></tr>
-                    <tr><td>Frequent single-row updates</td><td>Row store &mdash; columnar formats favour append and rewrite over in-place update</td></tr>
+                    <tr><td>Frequent single-row updates</td><td>Row store &mdash; columnar formats favor append and rewrite over in-place update</td></tr>
                     <tr><td>Analytics that fits on one machine</td><td><strong>DuckDB</strong>, in-process, over Parquet. No cluster, no server</td></tr>
                     <tr><td>Analytics that does not</td><td>ClickHouse or a warehouse. The jump from DuckDB is about node count, not about the model</td></tr>
                   </table>
@@ -1925,10 +1925,10 @@ db.orders.<span class="fn">aggregate</span>([
                   estate drowning in ungoverned Parquet it genuinely is the upgrade. But read the
                   usual pitch — <em>warehouse features on cheap open storage</em> — and it hides two
                   costs. First, the <strong class="c-amber">table format is a real commitment</strong>:
-                  Iceberg, Delta and Hudi are not interchangeable, and the engine and catalogue
+                  Iceberg, Delta and Hudi are not interchangeable, and the engine and catalog
                   ecosystem around each differs, so &ldquo;open&rdquo; still means choosing a camp.
                   Second, the flexibility is <strong class="c-amber">operational work you now own</strong>
-                  — compaction, the small-file problem, catalogue and metadata management — that a
+                  — compaction, the small-file problem, catalog and metadata management — that a
                   managed warehouse simply does for you. If your data arrives structured and your
                   scale fits a managed warehouse's pricing, the warehouse is not the legacy option you
                   are meant to grow out of; it is the lower-total-cost answer.
@@ -1992,7 +1992,7 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="concept-label">The Decision</div>
                 <div class="concept-title">Where the Definition Lives Decides Whether It Holds</div>
                 <div class="concept-desc">
-                  Every organisation has a definition of revenue. The question is not whether one
+                  Every organization has a definition of revenue. The question is not whether one
                   exists — it is how many places compute it, because each one is a copy that can
                   drift, and drift is discovered in a meeting where two people have different
                   numbers on the same slide.
@@ -2126,7 +2126,7 @@ db.orders.<span class="fn">aggregate</span>([
                 <div class="concept-label">The Failure Mode</div>
                 <div class="concept-title">The Number Nobody Has Measured Is How Long a Restore Takes</div>
                 <div class="concept-desc">
-                  Backup jobs are monitored and restores are not, so an organisation typically
+                  Backup jobs are monitored and restores are not, so an organization typically
                   knows its backups succeeded and has no idea what recovery costs. That gap is
                   where the unpleasant surprises live, and all of them are arithmetic that could
                   have been done in advance.
@@ -2340,11 +2340,11 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><td>App connects as the table owner</td><td>Owner bypasses RLS — all tenants visible</td><td>Non-owner role + <code>FORCE ROW LEVEL SECURITY</code></td></tr>
                     <tr><td>Forgotten tenant <code>set_config</code></td><td>Policy filters on an unset variable — leak or empty</td><td>Set tenant context centrally, on every checkout</td></tr>
                     <tr><td>Policy predicate isn't sargable</td><td>RLS on every query becomes a scan</td><td>Design the policy around an indexed tenant column</td></tr>
-                    <tr><td>Treating RLS as the only control</td><td>One bypass and isolation is gone</td><td>Keep app-side scoping too — RLS is defence-in-depth</td></tr>
+                    <tr><td>Treating RLS as the only control</td><td>One bypass and isolation is gone</td><td>Keep app-side scoping too — RLS is defense-in-depth</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     So use RLS as a genuine backstop — it catches the query that forgot to filter — but
-                    treat it as defence-in-depth, not the whole defence: a non-owner role with
+                    treat it as defense-in-depth, not the whole defense: a non-owner role with
                     <code>FORCE</code>, the tenant context set centrally so no path can forget, an index
                     on the filtered column, and app-side scoping kept in place. The failure mode is never
                     &ldquo;RLS rejected a valid query&rdquo;; it is <strong>&ldquo;RLS silently let
@@ -2409,14 +2409,14 @@ p99                 =  4,000 ms  ← this is what a user experiences
                     <tbody>
                       <tr><td>p95 and p99 query time</td><td>Mean, which is dominated by the fast majority</td></tr>
                       <tr><td>Total time per statement — calls &times; mean</td><td>Slowest single statement. A 5&nbsp;ms query run ten million times outranks a 3-second one run twice</td></tr>
-                      <tr><td>Wait events, grouped by what is being waited on</td><td>Processor utilisation, which is low precisely when the database is blocked</td></tr>
+                      <tr><td>Wait events, grouped by what is being waited on</td><td>Processor utilization, which is low precisely when the database is blocked</td></tr>
                       <tr><td>Connection <em>saturation</em>, as a fraction of the limit</td><td>Connection count, which means nothing without the limit beside it</td></tr>
                       <tr><td>Replication lag in bytes as well as seconds</td><td>Seconds alone, which reads as zero right up until the replica stops keeping up</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-green">The single highest-value view is total time per
-                    normalised statement</strong> — <code>pg_stat_statements</code> or the
+                    normalized statement</strong> — <code>pg_stat_statements</code> or the
                     performance schema — because it ranks queries by how much of the database's
                     life they consume rather than by how slow any one of them felt. The query at
                     the top of that list is almost never the one anybody complained about, and it
@@ -2462,7 +2462,7 @@ p99                 =  4,000 ms  ← this is what a user experiences
                 <div class="concept-label">The Inversion</div>
                 <div class="concept-title">The Title Describes the Team&rsquo;s Size, Not the Work</div>
                 <div class="concept-desc">
-                  The table above is how the roles differ when an organisation is large enough to
+                  The table above is how the roles differ when an organization is large enough to
                   separate them. Most are not. In a team of three, one &ldquo;data analyst&rdquo;
                   writes the ingestion job, owns the warehouse bill, defines the metrics and presents
                   them &mdash; and the same title at a company of three thousand means writing queries
@@ -2492,7 +2492,7 @@ p99                 =  4,000 ms  ← this is what a user experiences
                     <tr><td>&ldquo;Wear many hats&rdquo;</td><td>Small team &mdash; you are also the DBA and the analyst</td><td>How many people touch the warehouse?</td></tr>
                     <tr><td>&ldquo;Modern data stack&rdquo;</td><td>Warehouse plus dbt: analytics engineering</td><td>Who owns ingestion, and is it bought or built?</td></tr>
                     <tr><td>&ldquo;Stakeholder management&rdquo;</td><td>The hard part is agreeing definitions, not SQL</td><td>Who signs off what a metric means?</td></tr>
-                    <tr><td>&ldquo;Productionise our models&rdquo;</td><td>ML engineering, and there is an on-call rota</td><td>What is the rota, and how often does it fire?</td></tr>
+                    <tr><td>&ldquo;Productionize our models&rdquo;</td><td>ML engineering, and there is an on-call rota</td><td>What is the rota, and how often does it fire?</td></tr>
                     <tr><td>&ldquo;SQL and Excel&rdquo;</td><td>Analyst, and the tooling is the ceiling</td><td>What happened the last time a query was too slow?</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -2554,21 +2554,21 @@ p99                 =  4,000 ms  ← this is what a user experiences
                   surfaces the <strong class="c-amber">many-to-many relationships</strong>, because they
                   are not nouns — a student enrols in many courses and a course has many students needs
                   its own join table, and the tell that it was an entity all along is that the join
-                  carries attributes (the enrolment date, the grade).
+                  carries attributes (the enrollment date, the grade).
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>The trap</th><th>The fingerprint</th><th>The fix</th></tr>
                     <tr><td>Reference a value that should be frozen</td><td>Old orders &ldquo;change price&rdquo; when the product is edited</td><td>Snapshot point-in-time facts into the record</td></tr>
                     <tr><td>Miss a many-to-many</td><td>You bolt a comma-separated list into one column</td><td>A join table — many-to-many is never one column</td></tr>
-                    <tr><td>Ignore a join table's own attributes</td><td>Nowhere to put &ldquo;enrolment date&rdquo; or &ldquo;grade&rdquo;</td><td>The join was an entity; give it its own columns</td></tr>
-                    <tr><td>Over-normalise the read path</td><td>A 3NF-perfect schema, slow reporting</td><td>Derive a denormalised OLAP model; keep OLTP clean</td></tr>
+                    <tr><td>Ignore a join table's own attributes</td><td>Nowhere to put &ldquo;enrollment date&rdquo; or &ldquo;grade&rdquo;</td><td>The join was an entity; give it its own columns</td></tr>
+                    <tr><td>Over-normalize the read path</td><td>A 3NF-perfect schema, slow reporting</td><td>Derive a denormalized OLAP model; keep OLTP clean</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     So run the noun process, then run two passes it does not: mark every value that must
                     survive a change to its source and snapshot it, and turn every &ldquo;many of these
                     relate to many of those&rdquo; into a table you can later hang attributes on. The
-                    price snapshot is not a special case to memorise; it is the visible corner of the
+                    price snapshot is not a special case to memorize; it is the visible corner of the
                     rule that OLTP models facts <em>as-of</em> the moment they were true.
                   </div>
                 </div>
@@ -2771,7 +2771,7 @@ Key choice decides partition, so key choice decides what stays ordered.</pre>
                 <div class="concept-title">Handling Late Data — Pick One Deliberately</div>
                 <div class="dw">
                   <table class="ref-table">
-                    <thead><tr><th>Strategy</th><th>Behaviour</th><th>Costs</th></tr></thead>
+                    <thead><tr><th>Strategy</th><th>Behavior</th><th>Costs</th></tr></thead>
                     <tbody>
                       <tr><td>Watermark and drop</td><td>Close the window after a grace period; discard anything later</td><td>Simple and final. You must be able to say what the drop rate is</td></tr>
                       <tr><td>Allowed lateness with updates</td><td>Reopen and re-emit a corrected result</td><td>Downstream must handle a figure that changes after publication</td></tr>
@@ -2850,7 +2850,7 @@ Key choice decides partition, so key choice decides what stays ordered.</pre>
                   <div class="concept-desc verdict">
                     <strong class="c-red">The deletes row is the one that quietly ruins
                     warehouses.</strong> A timestamp-based load can never learn that a row is gone,
-                    so cancelled orders stay counted, closed accounts stay active, and the numbers
+                    so canceled orders stay counted, closed accounts stay active, and the numbers
                     drift upward forever in a way that looks like growth.
                   </div>
                 </div>
@@ -2933,7 +2933,7 @@ changes that step 2 already contains, on purpose.</pre>
                     <thead><tr><th>Consequence</th><th>What happens</th></tr></thead>
                     <tbody>
                       <tr><td>A column rename in a sprint</td><td>Breaks three dashboards owned by people the developer has never met</td></tr>
-                      <tr><td>A normalisation refactor</td><td>Downstream joins that reconstructed the application's logic silently produce different answers</td></tr>
+                      <tr><td>A normalization refactor</td><td>Downstream joins that reconstructed the application's logic silently produce different answers</td></tr>
                       <tr><td>Nobody told the team</td><td>Correct — they were not asked, because nothing in their workflow says the table is an interface</td></tr>
                     </tbody>
                   </table>
@@ -3038,7 +3038,7 @@ changes that step 2 already contains, on purpose.</pre>
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">Why This Keeps Failing as a Documentation Project</div>
                 <div class="concept-desc">
-                  Most organisations attempt this at least once as a catalogue exercise, and the
+                  Most organizations attempt this at least once as a catalog exercise, and the
                   shape of the failure is consistent enough to predict.
                 </div>
                 <div class="dw">
@@ -3047,7 +3047,7 @@ changes that step 2 already contains, on purpose.</pre>
                     <tbody>
                       <tr><td>A spreadsheet of every table and its owner</td><td>Correct for a month. Nothing in anyone's workflow updates it, and nobody notices it has stopped being true</td></tr>
                       <tr><td>A wiki page of pipeline diagrams</td><td>Same, plus the diagrams are prettier, so they are trusted longer after they stop being right</td></tr>
-                      <tr><td>A catalogue tool bought and populated once</td><td>The population was the project. Nothing repopulates it</td></tr>
+                      <tr><td>A catalog tool bought and populated once</td><td>The population was the project. Nothing repopulates it</td></tr>
                       <tr><td><strong>Lineage derived from the code that runs</strong></td><td>Cannot drift, because it is generated from the same definitions that execute. This is the only version that survives contact with a busy quarter</td></tr>
                     </tbody>
                   </table>
@@ -3068,7 +3068,7 @@ changes that step 2 already contains, on purpose.</pre>
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">Starting Small, Where It Actually Pays</div>
                 <div class="concept-desc">
-                  Neither of these is worth a platform programme. Both are worth doing narrowly,
+                  Neither of these is worth a platform program. Both are worth doing narrowly,
                   around the things that already hurt.
                 </div>
                 <div class="dw">
@@ -3085,7 +3085,7 @@ changes that step 2 already contains, on purpose.</pre>
                   <div class="concept-desc verdict">
                     The measure of success is unglamorous and specific: <strong>how long it takes to
                     answer "where did this number come from" for a figure you did not build</strong>.
-                    If that is still an afternoon of reading SQL, no amount of catalogue coverage has
+                    If that is still an afternoon of reading SQL, no amount of catalog coverage has
                     moved the thing that was costing you.
                   </div>
                 </div>
@@ -3151,11 +3151,11 @@ changes that step 2 already contains, on purpose.</pre>
                     <tr><td>The tax</td><td>Write amplification on random writes</td><td>Read &amp; space amplification; compaction spikes</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    You cannot minimise read, write and space amplification all at once — improving one worsens
-                    another, and the storage engine's tuning is a choice of which two to favour. That trade is the
+                    You cannot minimize read, write and space amplification all at once — improving one worsens
+                    another, and the storage engine's tuning is a choice of which two to favor. That trade is the
                     whole reason both structures exist and neither won:
-                    <span class="xref">Indexes Explained — B-tree, Hash &amp; Covering</span> is the read-optimised
-                    default; this is its write-optimised opposite.
+                    <span class="xref">Indexes Explained — B-tree, Hash &amp; Covering</span> is the read-optimized
+                    default; this is its write-optimized opposite.
                   </div>
                 </div>
               </div>
@@ -3174,7 +3174,7 @@ changes that step 2 already contains, on purpose.</pre>
                   lookups versus scans — and let that pick the engine, because the choice is baked deep into a
                   database and expensive to reverse. It is the same divide
                   <span class="xref">Cassandra &amp; DynamoDB — Wide-Column at Scale</span> lands on from the
-                  distributed-database side: write-optimised storage is what makes their ingest rates possible.
+                  distributed-database side: write-optimized storage is what makes their ingest rates possible.
                 </div>
               </div>
             </div>
@@ -3200,7 +3200,7 @@ changes that step 2 already contains, on purpose.</pre>
                   understanding none of them, and the backlog grows without bound. Data mesh inverts the ownership:
                   <strong class="c-amber">each business domain owns its data as a product</strong> — discoverable,
                   addressable, documented, with an SLA <span class="acro-exp">(Service Level Agreement)</span> — served through a self-serve platform under federated rather
-                  than central governance. It is a decentralisation of ownership, not a new storage engine.
+                  than central governance. It is a decentralization of ownership, not a new storage engine.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -3221,12 +3221,12 @@ changes that step 2 already contains, on purpose.</pre>
                 <div class="concept-title">It Is an Org Restructure Sold as an Architecture — and That Is Where It Goes Wrong</div>
                 <div class="concept-desc">
                   The failure mode is adopting the <em>word</em> without the <em>org change</em>. A team that stands
-                  up &ldquo;data products&rdquo; but keeps central ownership, or decentralises ownership without a
+                  up &ldquo;data products&rdquo; but keeps central ownership, or decentralizes ownership without a
                   self-serve platform, gets the worst of both worlds — <strong class="c-amber">the coordination cost
-                  of decentralisation and the bottleneck of centralisation at once</strong>, now with more moving
+                  of decentralization and the bottleneck of centralization at once</strong>, now with more moving
                   parts. Data mesh only pays off at a scale where the central team is genuinely the bottleneck and
                   the domains genuinely have the maturity and headcount to own data products, which describes a small
-                  number of large organisations. Below that scale, the coordination overhead exceeds the bottleneck
+                  number of large organizations. Below that scale, the coordination overhead exceeds the bottleneck
                   it removes.
                 </div>
                 <div class="dw">
@@ -3240,7 +3240,7 @@ changes that step 2 already contains, on purpose.</pre>
                   <div class="concept-desc verdict">
                     The honest test is which pain you have: if it is the central team's backlog, the mesh helps; if
                     it is your data being scattered and untrustworthy, the mesh makes that <em>worse</em> before
-                    better — and most organisations have the second problem.
+                    better — and most organizations have the second problem.
                   </div>
                 </div>
               </div>
@@ -3249,7 +3249,7 @@ changes that step 2 already contains, on purpose.</pre>
                 <div class="concept-title">Most Teams Need a Lakehouse and Clear Ownership, Not a Mesh</div>
                 <div class="concept-desc">
                   The reach-for-mesh mistake is treating it as the modern default. It is not — it is a specific
-                  answer to a specific scaling pain that most organisations do not have yet. For the majority, the
+                  answer to a specific scaling pain that most organizations do not have yet. For the majority, the
                   right move is the storage architecture plus data-product <em>discipline</em> — documentation, SLAs,
                   quality, a named owner — applied <em>within</em> a central or hub-and-spoke team. You get most of
                   &ldquo;data as a product&rdquo; without the organisational upheaval.
@@ -3257,7 +3257,7 @@ changes that step 2 already contains, on purpose.</pre>
                 <div class="concept-desc verdict">
                   So the decision is about scale and pain, not fashion. Adopt the mesh's <strong>principles</strong> —
                   treat data as a product, give it an owner and an SLA — always; adopt its full
-                  <strong>decentralisation</strong> only when a central team is provably the bottleneck and the
+                  <strong>decentralization</strong> only when a central team is provably the bottleneck and the
                   domains can genuinely carry ownership. Reach for a lakehouse for where the data lives — the choice
                   <span class="xref">Warehouse vs Lake vs Lakehouse</span> lays out — and reach for a mesh only when
                   <em>who owns it</em> is the thing that is broken. Either way it rests on the delivery guarantees

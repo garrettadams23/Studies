@@ -234,7 +234,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Site data blocked by the user</td><td>The accessor itself throws &mdash; reading <code>localStorage</code> is enough to break the page</td></tr>
                     <tr><td>Safari, no visit for weeks</td><td>Script-writable storage can be cleared under ITP; treat it as a cache, not a record</td></tr>
                     <tr><td>Storage pressure on the device</td><td>Non-persistent origins are evicted first, and nobody asks you</td></tr>
-                    <tr><td>Big writes on the main thread</td><td><code>localStorage</code> is <strong>synchronous</strong> &mdash; a large object blocks rendering to serialise it</td></tr>
+                    <tr><td>Big writes on the main thread</td><td><code>localStorage</code> is <strong>synchronous</strong> &mdash; a large object blocks rendering to serialize it</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                   Write every access inside <code>try/catch</code>, and make the page correct when the
@@ -562,7 +562,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Your rule is not listed at all</td><td>The selector never matched this element</td><td>A typo, the wrong element, or a descendant combinator that does not hold. Check the element you selected is the one you meant</td></tr>
                     <tr><td>Listed, not struck through, and still no effect</td><td>The <em>value</em> was invalid, so the whole declaration was dropped</td><td>One bad value discards its own declaration and nothing else. A misspelled <code>var()</code> name does this quietly — see Modern CSS</td></tr>
                     <tr><td>It works until you add a shorthand</td><td>A shorthand resets every longhand it covers, including the ones you did not mention</td><td><code>background: red</code> wipes <code>background-image</code>. Order the shorthand first, longhands after</td></tr>
-                    <tr><td>It applies to the parent and not the child</td><td>The property does not inherit</td><td>Colour and font inherit; padding, border and background do not. <code>inherit</code> asks for it explicitly</td></tr>
+                    <tr><td>It applies to the parent and not the child</td><td>The property does not inherit</td><td>Color and font inherit; padding, border and background do not. <code>inherit</code> asks for it explicitly</td></tr>
                     <tr><td>Two identical selectors, the wrong one wins</td><td>Source order, rung four — and bundlers decide it</td><td>The import order in the build, not the order in your editor</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -634,9 +634,9 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <div class="concept-desc verdict">
                   Two habits make the whole class of bug visible. <strong>Type your custom properties with
                   <code>@property</code></strong> where the browser supports it &mdash; it gives them a syntax, an
-                  initial value, and real invalid-value behaviour instead of silent unsetting. And
+                  initial value, and real invalid-value behavior instead of silent unsetting. And
                   <strong>register fallbacks at the point of use</strong>, because a <code>var()</code> that
-                  resolves to nothing is a very quiet way to lose a colour.
+                  resolves to nothing is a very quiet way to lose a color.
                   </div>
                 </div>
               </div>
@@ -683,7 +683,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   the outcome that actually happens: a token layer nobody owns. It goes the same way
                   every time. A palette is defined, a designer needs a shade that is not in it, an
                   arbitrary value gets used "just here", and eleven months later there are nine
-                  greys, four spacing scales and a component library whose primary button no longer
+                  grays, four spacing scales and a component library whose primary button no longer
                   matches the design file. The utility framework did not cause that — it made it
                   visible in the markup, which is the one genuine advantage in the argument, because
                   the same drift in a stylesheet is invisible until someone audits it.
@@ -700,7 +700,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <div class="concept-desc verdict">
                     <strong class="c-cyan">Judge a design system by how easy it is to do the right
                     thing, and how visible it is when someone does not.</strong> A system that
-                    requires a meeting to add a colour gets bypassed; one with no friction at all
+                    requires a meeting to add a color gets bypassed; one with no friction at all
                     stops being a system. And accessibility belongs in the tokens rather than in
                     review — contrast pairs defined as tokens are checkable automatically, which is
                     the difference between a policy and a property. See
@@ -829,8 +829,8 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <table class="ref-table">
                     <tr><th>Symptom</th><th>Cause, and the fix</th></tr>
                     <tr><td><code>arr.forEach(async x =&gt; await save(x))</code> completes instantly</td><td><code>forEach</code> ignores the returned promise. Use <code>for…of</code> with <code>await</code>, or <code>Promise.all(arr.map(save))</code></td></tr>
-                    <tr><td>Thirty sequential requests take thirty seconds</td><td><code>await</code> inside a loop serialises. <code>Promise.all</code> when they are independent</td></tr>
-                    <tr><td>&ldquo;UnhandledPromiseRejection&rdquo; with no stack you recognise</td><td>A promise nobody awaited threw. <code>Promise.allSettled</code> when partial failure is acceptable</td></tr>
+                    <tr><td>Thirty sequential requests take thirty seconds</td><td><code>await</code> inside a loop serializes. <code>Promise.all</code> when they are independent</td></tr>
+                    <tr><td>&ldquo;UnhandledPromiseRejection&rdquo; with no stack you recognize</td><td>A promise nobody awaited threw. <code>Promise.allSettled</code> when partial failure is acceptable</td></tr>
                     <tr><td>One failure loses all the successes</td><td><code>Promise.all</code> rejects on the first failure. <code>allSettled</code> returns every outcome</td></tr>
                     <tr><td>A <code>setTimeout(…, 0)</code> runs after a resolved promise</td><td>Microtasks (promises) drain before the next macrotask (timers). That ordering is the event loop</td></tr>
                   </table>
@@ -897,7 +897,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </table>
                   <div class="concept-desc verdict">
                   The mental model that makes all five predictable: <strong>a class is a function with an
-                  object hanging off it</strong>, instances hold data and delegate behaviour up the prototype chain,
+                  object hanging off it</strong>, instances hold data and delegate behavior up the prototype chain,
                   and <code>this</code> is supplied by the call rather than the definition. Prefer prototype methods
                   by default, and reach for a bound class field only for the callbacks you actually pass
                   around.
@@ -961,7 +961,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   The wins in order: remove the dependency, then split the route, then lazy-load the
                   component. Code splitting moves cost rather than removing it, so a route split that loads the
                   same modules on the next click has bought nothing. <strong>Ship less JavaScript is the only
-                  optimisation on this list that always works.</strong>
+                  optimization on this list that always works.</strong>
                   </div>
                 </div>
               </div>
@@ -1009,7 +1009,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="concept-desc">
                   Nearly every React bug is an attempt to work around <code>UI = f(state)</code> instead
                   of with it, and the culprit is usually <code>useEffect</code>. Effects are for
-                  <strong class="c-cyan">synchronising with external systems</strong> — a subscription, a
+                  <strong class="c-cyan">synchronizing with external systems</strong> — a subscription, a
                   non-React widget, the browser DOM — but they get used as a dumping ground for
                   &ldquo;run some code when things change,&rdquo; which produces two classic failures.
                   <strong class="c-amber">Derived state in an effect</strong>: storing a value that could
@@ -1030,7 +1030,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><td>Reading state in <code>setInterval</code></td><td>Stale closure — captures the old render's value</td><td>A ref, or the functional updater</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    So before reaching for <code>useEffect</code>, ask whether the work synchronises with
+                    So before reaching for <code>useEffect</code>, ask whether the work synchronizes with
                     something <em>outside</em> React — if not, it almost certainly belongs in render (for
                     derived values) or an event handler (for responses to actions). The rules of hooks
                     keep the machinery working; this is the deeper discipline that keeps the app correct:
@@ -1091,7 +1091,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <table class="ref-table">
                     <tr><th>Symptom</th><th>What is actually happening</th><th>The move</th></tr>
                     <tr><td>Value stuck at its initial state inside a timer or subscription</td><td>The closure captured render 0 and the deps array said that was fine</td><td>Functional updates — <code>setN(n =&gt; n + 1)</code> — or a ref for the mutable handle</td></tr>
-                    <tr><td>Effect runs on every render</td><td>An object, array or inline function in the deps is a new identity each time</td><td>Move it inside the effect, or memoise the value, not the effect</td></tr>
+                    <tr><td>Effect runs on every render</td><td>An object, array or inline function in the deps is a new identity each time</td><td>Move it inside the effect, or memoize the value, not the effect</td></tr>
                     <tr><td>Two requests, or a doubled subscription, in dev only</td><td class="c-yellow">StrictMode mounts, unmounts and remounts on purpose to find missing cleanup</td><td>Write the cleanup function — this is the bug being surfaced, not a bug in React</td></tr>
                     <tr><td>Response from an old request overwrites a newer one</td><td>Two in-flight fetches resolving out of order</td><td><code>AbortController</code>, or an ignore flag set in the cleanup</td></tr>
                   </table>
@@ -1148,7 +1148,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   The mechanical difference has a consequence for the developer, not just for the
                   renderer. React re-runs a component function on every state change, so the mental
                   model is "what does this render", and the costs are the ones the pitfalls card
-                  lists — memoisation, dependency arrays, stale closures over a render that no
+                  lists — memoization, dependency arrays, stale closures over a render that no
                   longer exists. Fine-grained reactivity subscribes at the value: changing a signal
                   updates the exact nodes that read it, the component body runs once, and an entire
                   category of bug disappears along with the tools invented to manage it. Svelte goes
@@ -1158,7 +1158,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Model</th><th>What you stop worrying about</th><th>What you take on</th></tr>
-                    <tr><td>Virtual DOM re-render</td><td>—</td><td>Memoisation, deps arrays, referential identity</td></tr>
+                    <tr><td>Virtual DOM re-render</td><td>—</td><td>Memoization, deps arrays, referential identity</td></tr>
                     <tr><td>Signals (Solid, Vue, Svelte 5, Angular)</td><td class="c-cyan">Most re-render tuning — the runtime knows exactly what changed</td><td>Reactivity that is invisible in the source: reading a value subscribes to it, and losing that read by destructuring breaks it</td></tr>
                     <tr><td>Compiled (Svelte)</td><td>Framework runtime size for reactivity</td><td>A build step that is not optional, and debugging output that differs from your source</td></tr>
                   </table>
@@ -1230,7 +1230,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     <tr><th>Mode / choice</th><th>The cost it carries</th></tr>
                     <tr><td>CSR</td><td>Blank first paint, poor SEO — fine behind a login, wrong for public pages</td></tr>
                     <tr><td>SSR</td><td>Per-request server compute, cold starts, a hydration delay to interactive</td></tr>
-                    <tr><td>SSG</td><td>Fastest, but stale until the next build — wrong for personalised/fresh data</td></tr>
+                    <tr><td>SSG</td><td>Fastest, but stale until the next build — wrong for personalized/fresh data</td></tr>
                     <tr><td>ISR</td><td>Static speed with a staleness window you must be able to tolerate</td></tr>
                     <tr><td><code>"use client"</code> high in the tree</td><td>Ships the whole subtree's JS — push the boundary to the leaves</td></tr>
                   </table>
@@ -1238,7 +1238,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                     So don't pick one mode for the app; pick per route — static where you can, dynamic
                     only where the page genuinely needs it — and treat the server/client boundary as the
                     real performance lever: <strong>the less you mark &ldquo;use client,&rdquo; the less
-                    JavaScript the user downloads</strong>. SSR and personalisation are powerful, but each
+                    JavaScript the user downloads</strong>. SSR and personalization are powerful, but each
                     is a server you operate and a cost per request, so reach for them where freshness or
                     SEO demands it, not by default.
                   </div>
@@ -1292,17 +1292,17 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   prevents it. <strong class="c-amber">Copied server state</strong> — pulling API <span class="acro-exp">(Application Programming Interface)</span> data
                   into a client store &ldquo;so components can read it&rdquo; — creates a second source
                   of truth that goes stale the instant the server changes.
-                  <strong class="c-amber">Over-globalised state</strong> — putting in a shared store what
+                  <strong class="c-amber">Over-globalized state</strong> — putting in a shared store what
                   one subtree owns — means a value changes and something three screens away breaks for
                   reasons nobody can trace. The through-line: a state-<em>management</em> problem is
-                  usually a state-<em>modelling</em> problem — the same fact living in two places.
+                  usually a state-<em>modeling</em> problem — the same fact living in two places.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Anti-pattern</th><th>The bug it becomes</th><th>The fix</th></tr>
                     <tr><td>Store derived data (totals, <code>isValid</code>)</td><td>Desync — the copy and its source disagree</td><td>Compute it on render; derive, don't store</td></tr>
                     <tr><td>Copy server data into a client store</td><td>Two sources of truth; the copy goes stale</td><td>Let a data-fetching cache own it</td></tr>
-                    <tr><td>Globalise component-local state</td><td>Spooky action at a distance; untraceable changes</td><td>Colocate — keep state near its only user</td></tr>
+                    <tr><td>Globalize component-local state</td><td>Spooky action at a distance; untraceable changes</td><td>Colocate — keep state near its only user</td></tr>
                     <tr><td>Keep filters/tabs in memory</td><td>Not shareable, lost on refresh</td><td>Put it in the URL — the URL is state</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -1506,7 +1506,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Hidden cost</th><th>WebSockets</th><th>SSE</th></tr>
-                    <tr><td>Proxy / load-balancer behaviour</td><td>Needs explicit upgrade and idle-timeout config</td><td>Just HTTP — usually works untouched</td></tr>
+                    <tr><td>Proxy / load-balancer behavior</td><td>Needs explicit upgrade and idle-timeout config</td><td>Just HTTP — usually works untouched</td></tr>
                     <tr><td>Scaling across servers</td><td>Needs a pub/sub backplane to fan out</td><td>Same fan-out need, but connections are cheap HTTP</td></tr>
                     <tr><td>Auth</td><td>Once at the handshake; handle mid-connection expiry</td><td>Rides normal cookies / headers</td></tr>
                     <tr><td>Reconnection</td><td>You write it</td><td>Built in (<code>Last-Event-ID</code>)</td></tr>
@@ -1634,7 +1634,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <strong>query key</strong>: it is the cache identity, so a key that omits a
                   variable the request depends on — the page number, the filter, the tenant — serves
                   one user's data under another's question, and the bug looks like a caching glitch
-                  rather than an authorisation one. The second is <strong>where the query lives</strong>:
+                  rather than an authorization one. The second is <strong>where the query lives</strong>:
                   a child component that fetches based on its parent's data cannot start until the
                   parent resolves, so each nesting level adds a full round trip.
                 </div>
@@ -1711,7 +1711,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   </table>
                   <div class="concept-desc verdict">
                   Use both, in that order: <strong>field to decide whether there is a problem, lab to find
-                  it</strong>. The thresholds worth memorising are LCP &le; 2.5 s, INP &le; 200 ms and CLS &le;
+                  it</strong>. The thresholds worth memorizing are LCP &le; 2.5 s, INP &le; 200 ms and CLS &le;
                   0.1, all at p75. And note that INP replaced FID <span class="acro-exp">(First Input Delay)</span> precisely because FID measured the wrong thing
                   &mdash; the delay before the first handler ran, rather than how long until the user saw a
                   result.
@@ -1766,7 +1766,7 @@ list.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
                   <table class="ref-table">
                     <tr><th>Scanners catch</th><th>Only a human catches</th></tr>
                     <tr><td><code>alt</code> missing</td><td><code>alt</code> present and useless &mdash; &ldquo;image1.png&rdquo;</td></tr>
-                    <tr><td>Contrast below ratio</td><td>Colour used as the <em>only</em> way to tell two states apart</td></tr>
+                    <tr><td>Contrast below ratio</td><td>Color used as the <em>only</em> way to tell two states apart</td></tr>
                     <tr><td>Input with no label</td><td>Label text that does not describe the field</td></tr>
                     <tr><td>Invalid ARIA attribute</td><td>Valid ARIA describing the wrong thing, which is worse than none</td></tr>
                     <tr><td>Missing heading levels</td><td>Focus order that jumps around the page, or a modal that does not trap focus</td></tr>
@@ -2106,7 +2106,7 @@ Three defects become visible immediately:
 
               <div class="concept-card">
                 <div class="concept-label">Concept</div>
-                <div class="concept-title">Two Ways Organisations Buy Their Way Into a Worse Position</div>
+                <div class="concept-title">Two Ways Organizations Buy Their Way Into a Worse Position</div>
                 <div class="concept-desc">
                   Both are attractive precisely because they convert an engineering backlog into a
                   purchase or a document, and both have made the underlying exposure larger rather
@@ -2116,7 +2116,7 @@ Three defects become visible immediately:
                   <table class="ref-table">
                     <thead><tr><th>Shortcut</th><th>What it actually does</th></tr></thead>
                     <tbody>
-                      <tr><td>Accessibility overlay widgets</td><td>A script that adjusts the page at runtime. It cannot repair a control that has no accessible name or a flow with no keyboard path, it frequently interferes with the assistive technology a user has already configured, and organisations that installed one have still faced complaints. It is a purchase that feels like a fix</td></tr>
+                      <tr><td>Accessibility overlay widgets</td><td>A script that adjusts the page at runtime. It cannot repair a control that has no accessible name or a flow with no keyboard path, it frequently interferes with the assistive technology a user has already configured, and organizations that installed one have still faced complaints. It is a purchase that feels like a fix</td></tr>
                       <tr><td>An optimistic conformance report</td><td>A published accessibility statement or vendor report claiming "supports" where the honest answer is "partially supports". Over-claiming is what converts a complaint into a documented misrepresentation, and it is checkable by anybody with a browser</td></tr>
                     </tbody>
                   </table>
@@ -2250,9 +2250,9 @@ Three defects become visible immediately:
               </div>
               <div class="concept-card">
                 <div class="concept-label">The Fingerprint</div>
-                <div class="concept-title">XSS Is an Output-Encoding Bug, Not an Input One — Which Is Why Sanitising Input Fails</div>
+                <div class="concept-title">XSS Is an Output-Encoding Bug, Not an Input One — Which Is Why Sanitizing Input Fails</div>
                 <div class="concept-desc">
-                  The instinct on XSS is to sanitise input at the door, and it keeps failing for a
+                  The instinct on XSS is to sanitize input at the door, and it keeps failing for a
                   structural reason: <strong class="c-amber">the same string is safe in one place and
                   dangerous in another</strong>. <code>&lt;b&gt;hi&lt;/b&gt;</code> is inert as HTML
                   text, live as an HTML attribute, a catastrophe inside a <code>&lt;script&gt;</code>
@@ -2263,20 +2263,20 @@ Three defects become visible immediately:
                   default escaping does and what <code>innerHTML</code> / <code>dangerouslySetInnerHTML</code>
                   bypass. The half people miss: the modern XSS is DOM-based — a client-side sink like
                   <code>innerHTML</code>, <code>location</code> or <code>eval</code> fed attacker-controlled
-                  data — and it never reaches the server, so server-side sanitisation cannot see it.
+                  data — and it never reaches the server, so server-side sanitization cannot see it.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Belief</th><th>Why it fails</th><th>What actually works</th></tr>
-                    <tr><td>&ldquo;Sanitise input at the door&rdquo;</td><td>The safe form depends on the output context, unknown at input</td><td>Encode at output, per context (framework default)</td></tr>
-                    <tr><td>&ldquo;The server sanitises, so we're safe&rdquo;</td><td>DOM <span class="acro-exp">(Document Object Model)</span> XSS lives entirely client-side</td><td>Audit client sinks: <code>innerHTML</code>, <code>location</code>, <code>eval</code></td></tr>
-                    <tr><td>&ldquo;We have a CSP, so XSS is handled&rdquo;</td><td>CSP limits blast radius, it doesn't remove the bug</td><td>Encode first; treat CSP as defence-in-depth</td></tr>
+                    <tr><td>&ldquo;Sanitize input at the door&rdquo;</td><td>The safe form depends on the output context, unknown at input</td><td>Encode at output, per context (framework default)</td></tr>
+                    <tr><td>&ldquo;The server sanitizes, so we're safe&rdquo;</td><td>DOM <span class="acro-exp">(Document Object Model)</span> XSS lives entirely client-side</td><td>Audit client sinks: <code>innerHTML</code>, <code>location</code>, <code>eval</code></td></tr>
+                    <tr><td>&ldquo;We have a CSP, so XSS is handled&rdquo;</td><td>CSP limits blast radius, it doesn't remove the bug</td><td>Encode first; treat CSP as defense-in-depth</td></tr>
                     <tr><td>&ldquo;SameSite killed CSRF&rdquo;</td><td>Lax still allows top-level GETs; subdomains and non-cookie auth differ</td><td>Keep tokens on state-changing actions</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     So the durable rule is: never build markup from untrusted strings, let the framework
                     encode at output, and where you must render rich content run it through a vetted
-                    sanitiser aimed at the right context. A nonce-based CSP is the seatbelt for the XSS
+                    sanitizer aimed at the right context. A nonce-based CSP is the seatbelt for the XSS
                     you still missed — worth having, never the thing you rely on. <strong>Encode at the
                     sink, not at the source.</strong>
                   </div>
@@ -2477,7 +2477,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                     <thead><tr><th>Reality</th><th>What it means for the build</th></tr></thead>
                     <tbody>
                       <tr><td>Rendering happens, but later</td><td>Major crawlers execute JavaScript — on a second pass, from a queue. Content that only exists after a client-side fetch is discovered late, and content behind an interaction is not discovered at all. Server-render or prerender anything that must be indexed</td></tr>
-                      <tr><td>Crawl budget is spent on junk first</td><td>Faceted navigation generates near-infinite URL combinations, and a crawler will happily spend its visit on <code>?sort=asc&amp;colour=red&amp;page=7</code> instead of your new pages. Canonicalise parameters, and block the genuinely infinite spaces from crawling</td></tr>
+                      <tr><td>Crawl budget is spent on junk first</td><td>Faceted navigation generates near-infinite URL combinations, and a crawler will happily spend its visit on <code>?sort=asc&amp;colour=red&amp;page=7</code> instead of your new pages. Canonicalize parameters, and block the genuinely infinite spaces from crawling</td></tr>
                       <tr><td>Lab and field data disagree, and field wins</td><td>A Lighthouse run is one synthetic load on your machine. Field data is a rolling window of real visits on real devices and networks. When they conflict, the field number is the one that counts — and it is why a fast local score coexists with a failing report</td></tr>
                     </tbody>
                   </table>
@@ -2631,7 +2631,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                 <div class="concept-title">The Edge Moves Compute Close to the User — Your Data Is Still Far, and That's the Real Limit</div>
                 <div class="concept-desc">
                   An edge function runs milliseconds from the user; the catch is that your database
-                  usually doesn't. Push dynamic rendering or personalisation to the edge and, the moment
+                  usually doesn't. Push dynamic rendering or personalization to the edge and, the moment
                   that code needs data, it makes a round-trip to an origin database in one region — so
                   you have <strong class="c-amber">moved the compute across the planet and left the data
                   behind</strong>, and the edge function sits waiting on the same cross-continent call it
@@ -2648,7 +2648,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                     <tr><th>What you moved to the edge</th><th>Whether it actually helps</th></tr>
                     <tr><td>Static assets (CDN)</td><td>Always — what the edge is best at</td></tr>
                     <tr><td>Small stateless logic (auth check, redirect, A/B)</td><td>Yes — no data round-trip needed</td></tr>
-                    <tr><td>Personalised render needing your DB <span class="acro-exp">(Database)</span></td><td>Only if the data is at the edge too; else the origin round-trip erases the win</td></tr>
+                    <tr><td>Personalized render needing your DB <span class="acro-exp">(Database)</span></td><td>Only if the data is at the edge too; else the origin round-trip erases the win</td></tr>
                     <tr><td>Direct edge → regional Postgres</td><td>Trap — connection exhaustion from ephemeral locations</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -2781,10 +2781,10 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                 <div class="concept-label">Concept</div>
                 <div class="concept-title">Amateur Design Is Usually Not Ugly — It Is Undecided</div>
                 <div class="concept-desc">
-                  Look at an interface that feels unpolished and the problem is rarely a bad colour
+                  Look at an interface that feels unpolished and the problem is rarely a bad color
                   or a bad font. It is that <strong>nothing has a consistent reason for the size it
                   is</strong>. Nine different font sizes, margins of 12, 14, 15 and 18 pixels chosen
-                  by eye, and four greys that are almost the same. Each decision was reasonable in
+                  by eye, and four grays that are almost the same. Each decision was reasonable in
                   isolation, and together they read as noise, because the eye is very good at
                   detecting near-misses and interprets them as carelessness.
                 </div>
@@ -2792,7 +2792,7 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
                   <div class="concept-desc">
                     The fix is not taste. It is <strong>constraint</strong>: pick a small set of
                     values and use only those. A developer who commits to five sizes, one scale of
-                    spacing and three text colours will produce something that looks considered,
+                    spacing and three text colors will produce something that looks considered,
                     because it is.
                   </div>
                 </div>
@@ -2840,7 +2840,7 @@ Pick from the scale, never between it.</pre>
                 <div class="concept-title">Spacing Carries the Structure</div>
                 <div class="concept-desc">
                   Readers group things by proximity before they read a word. Which means spacing is
-                  not decoration — it is the diagram of how the content is organised, and getting it
+                  not decoration — it is the diagram of how the content is organized, and getting it
                   wrong actively misinforms.
                 </div>
                 <div class="dw">
@@ -2878,20 +2878,20 @@ Wrong                                Right
 
               <div class="concept-card">
                 <div class="concept-label">Concept</div>
-                <div class="concept-title">Colour: Fewer Than You Think, and Contrast Is Not Optional</div>
+                <div class="concept-title">Color: Fewer Than You Think, and Contrast Is Not Optional</div>
                 <div class="dw">
                   <table class="ref-table">
                     <thead><tr><th>Role</th><th>How many</th><th>Note</th></tr></thead>
                     <tbody>
-                      <tr><td>Text</td><td>Two or three</td><td>Primary, muted, and possibly a de-emphasised third. Four greys that are nearly identical is the classic tell</td></tr>
+                      <tr><td>Text</td><td>Two or three</td><td>Primary, muted, and possibly a de-emphasized third. Four grays that are nearly identical is the classic tell</td></tr>
                       <tr><td>Surfaces</td><td>Two or three</td><td>Page, card, and something raised or inset</td></tr>
-                      <tr><td>Accent</td><td>One</td><td>The interactive colour. If everything is accented, nothing is</td></tr>
-                      <tr><td>Status</td><td>Three or four</td><td>Success, warning, error, information — and never colour alone, since a colour-blind reader sees an unlabelled shape</td></tr>
+                      <tr><td>Accent</td><td>One</td><td>The interactive color. If everything is accented, nothing is</td></tr>
+                      <tr><td>Status</td><td>Three or four</td><td>Success, warning, error, information — and never color alone, since a color-blind reader sees an unlabelled shape</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-amber">Check contrast with a tool, not with your eyes.</strong>
-                    A designer's mid-grey on white is frequently below the accessibility threshold,
+                    A designer's mid-gray on white is frequently below the accessibility threshold,
                     and it looks fine on a good monitor in a bright room — which is exactly the
                     condition under which the problem is invisible to the person making it. See
                     <span class="xref">Web Accessibility (a11y) — WCAG &amp; ARIA</span>.
@@ -2913,7 +2913,7 @@ Wrong                                Right
                       <tr><td>2</td><td>Set body to 16px and line height 1.5</td></tr>
                       <tr><td>3</td><td>Replace every font size with the nearest value from a five-step scale</td></tr>
                       <tr><td>4</td><td>Replace every margin and padding with the nearest value from the spacing scale</td></tr>
-                      <tr><td>5</td><td>Cut the greys down to two, and check both against the background</td></tr>
+                      <tr><td>5</td><td>Cut the grays down to two, and check both against the background</td></tr>
                       <tr><td>6</td><td>Increase the space above headings until each section reads as one block</td></tr>
                       <tr><td>7</td><td>Squint at it. Whatever stands out is what a first-time visitor will look at — check that is what you wanted</td></tr>
                     </tbody>
@@ -2940,9 +2940,9 @@ Wrong                                Right
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Concept</div>
-                <div class="concept-title">Name Colours by Role, Never by Appearance</div>
+                <div class="concept-title">Name Colors by Role, Never by Appearance</div>
                 <div class="concept-desc">
-                  Dark mode is not hard because of the colours. It is hard because of the
+                  Dark mode is not hard because of the colors. It is hard because of the
                   <em>names</em>. A variable called <code>--grey-100</code> or
                   <code>--light-border</code> is a description of how it looks, so in a dark theme it
                   is either wrong or a lie — and a codebase full of them cannot be themed without
@@ -2958,9 +2958,9 @@ Wrong                                Right
 :root                     { --bg: #fff;    --text: #16181d; --border: #e3e6ea; }
 :root[data-theme="dark"]  { --bg: #0b0d12; --text: #e8eaee; --border: #262b33; }</pre>
                   <div class="concept-desc verdict">
-                    <strong class="c-green">The retrofit test is one grep.</strong> If every colour
+                    <strong class="c-green">The retrofit test is one grep.</strong> If every color
                     in the codebase already comes from a variable, adding a theme is one block of
-                    declarations. If colours are written inline, the work is proportional to the
+                    declarations. If colors are written inline, the work is proportional to the
                     codebase and no framework shortens it — which is why "we will add dark mode
                     later" is a much larger promise than it sounds.
                   </div>
@@ -3051,13 +3051,13 @@ Wrong                                Right
                   <table class="ref-table">
                     <thead><tr><th>Thing</th><th>Problem</th><th>Fix</th></tr></thead>
                     <tbody>
-                      <tr><td><strong>Shadows</strong></td><td>A black shadow on a dark surface is invisible, so depth disappears entirely</td><td>Convey elevation with a lighter surface colour, or a subtle border, instead of a shadow</td></tr>
-                      <tr><td>Pure black and pure white</td><td>Maximum contrast is harsh and causes halation on dark backgrounds</td><td>Very dark grey and very light grey. Nearly every good dark theme avoids both extremes</td></tr>
-                      <tr><td>Saturated accent colours</td><td>Vibrate uncomfortably against dark backgrounds and often fail contrast</td><td>Desaturate and lighten the accent for the dark theme — it is a different value, not the same one</td></tr>
+                      <tr><td><strong>Shadows</strong></td><td>A black shadow on a dark surface is invisible, so depth disappears entirely</td><td>Convey elevation with a lighter surface color, or a subtle border, instead of a shadow</td></tr>
+                      <tr><td>Pure black and pure white</td><td>Maximum contrast is harsh and causes halation on dark backgrounds</td><td>Very dark gray and very light gray. Nearly every good dark theme avoids both extremes</td></tr>
+                      <tr><td>Saturated accent colors</td><td>Vibrate uncomfortably against dark backgrounds and often fail contrast</td><td>Desaturate and lighten the accent for the dark theme — it is a different value, not the same one</td></tr>
                       <tr><td>Images and logos with baked-in white</td><td>A white rectangle on a dark page</td><td>Transparent assets, a per-theme variant, or a container that keeps a light surface deliberately</td></tr>
-                      <tr><td>Charts and diagrams</td><td>Hard-coded stroke and fill colours, often inside inline SVG <span class="acro-exp">(Scalable Vector Graphics)</span></td><td>Use <code>currentColor</code> and variables. This is the single most-forgotten surface</td></tr>
+                      <tr><td>Charts and diagrams</td><td>Hard-coded stroke and fill colors, often inside inline SVG <span class="acro-exp">(Scalable Vector Graphics)</span></td><td>Use <code>currentColor</code> and variables. This is the single most-forgotten surface</td></tr>
                       <tr><td>Syntax highlighting and code blocks</td><td>A theme within a theme, usually shipped by a library</td><td>Pick a pair of themes and switch them with the same attribute</td></tr>
-                      <tr><td>Contrast ratios</td><td>A palette that passes in light can fail in dark, and nobody re-checks</td><td>Test both. The colours are different, so the results are different</td></tr>
+                      <tr><td>Contrast ratios</td><td>A palette that passes in light can fail in dark, and nobody re-checks</td><td>Test both. The colors are different, so the results are different</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
@@ -3079,14 +3079,14 @@ Wrong                                Right
                     <tbody>
                       <tr><td>Toggle on every screen once, by hand</td><td>Baked-in whites, invisible shadows, unthemed third-party components — most of it, in one pass</td></tr>
                       <tr><td>Automated contrast scan in both themes</td><td>The failures nobody sees, and it is the same tooling run twice with one attribute changed</td></tr>
-                      <tr><td>A screenshot diff of one representative view per theme</td><td>Accidental colour regressions, cheaply. Narrow it or it fails on every content change</td></tr>
+                      <tr><td>A screenshot diff of one representative view per theme</td><td>Accidental color regressions, cheaply. Narrow it or it fails on every content change</td></tr>
                       <tr><td>Grep for hex literals in components</td><td>The values that will not follow the theme. This is the check worth making a build failure</td></tr>
                       <tr><td>Print preview</td><td>Dark themes print as large black rectangles unless a print stylesheet says otherwise</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-green">The grep is the highest-value gate</strong>, and it
-                    generalises past theming: a hard-coded colour in a component is a value that
+                    generalizes past theming: a hard-coded color in a component is a value that
                     cannot participate in any future change of appearance, whether that is a second
                     theme, a rebrand, or a high-contrast mode. Catching it at write time costs
                     nothing; finding it later costs a codebase sweep.
@@ -3155,7 +3155,7 @@ Wrong                                Right
                       <tr><td>"Invalid input"</td><td>"Enter a date in the past" — say what would be valid, not that this is not</td></tr>
                       <tr><td>"Password does not meet requirements"</td><td>Show the requirements, live, with the ones already met marked. The rules should never have been a secret</td></tr>
                       <tr><td>"An error occurred"</td><td>What failed, whether their data was kept, and what to do now</td></tr>
-                      <tr><td>A red border alone</td><td>Border, icon, and text — colour alone is invisible to a colour-blind user and to a screen reader</td></tr>
+                      <tr><td>A red border alone</td><td>Border, icon, and text — color alone is invisible to a color-blind user and to a screen reader</td></tr>
                       <tr><td>An error summary at the top only</td><td>Summary <em>and</em> per-field messages, with the summary linking to each field. Long forms need both</td></tr>
                     </tbody>
                   </table>
@@ -3214,7 +3214,7 @@ Wrong                                Right
                     <thead><tr><th>Rule</th><th>Who it excludes</th></tr></thead>
                     <tbody>
                       <tr><td>A clever email regular expression</td><td>Valid addresses with apostrophes, plus-signs and new top-level domains. Check for an <code>@</code> and send a confirmation — delivery is the only real test</td></tr>
-                      <tr><td>Phone numbers must be ten digits</td><td>Most of the world. Accept spaces and <code>+</code>, and normalise server-side</td></tr>
+                      <tr><td>Phone numbers must be ten digits</td><td>Most of the world. Accept spaces and <code>+</code>, and normalize server-side</td></tr>
                       <tr><td>Names must be alphabetic, two parts, no punctuation</td><td>Hyphenated names, apostrophes, accents, single names, and anyone whose family name comes first</td></tr>
                       <tr><td>A maximum password length of 16</td><td>Password managers, passphrases, and any user with good habits. A hash is fixed-length whatever the input</td></tr>
                       <tr><td>A postcode pattern</td><td>Every country but yours. Validate per country or not at all — see <span class="xref">Internationalization (i18n) — Designing for Languages You Do Not Speak</span></td></tr>
@@ -3246,7 +3246,7 @@ Wrong                                Right
                       <tr><td>One question per screen, on mobile</td><td>Reduces cognitive load and makes each error unmissable; costs taps, which is the right trade on a phone</td></tr>
                       <tr><td>Show progress honestly</td><td>"Step 2 of 4" sets an expectation. A progress bar that stalls at 90% destroys the trust it was there to build</td></tr>
                       <tr><td>Disable the submit button only <em>after</em> a click</td><td>Prevents double submission. Disabling it until the form is valid hides <em>why</em> it cannot be submitted, which is the more common failure</td></tr>
-                      <tr><td>Ask the cheap questions first</td><td>Sunk cost is real and works in your favour; the invasive question lands better on screen three than on screen one</td></tr>
+                      <tr><td>Ask the cheap questions first</td><td>Sunk cost is real and works in your favor; the invasive question lands better on screen three than on screen one</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">

@@ -58,7 +58,7 @@
                     <tr><td>Both</td><td>Scale the stateless app tier out; scale the hard-to-shard database up</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    So statelessness is the enabling design, but the sequencing is the judgement: exhaust
+                    So statelessness is the enabling design, but the sequencing is the judgment: exhaust
                     the simple single-machine option before taking on the operational cost of a fleet, and
                     be honest about <em>why</em> you are going horizontal. If the answer is
                     &ldquo;for redundancy,&rdquo; you need at least two — not necessarily many; if it is
@@ -182,7 +182,7 @@
                 </div>
               </div>
               <div class="concept-card">
-                <div class="concept-label">The artefact</div>
+                <div class="concept-label">The artifact</div>
                 <div class="concept-title">One Worked Calculation, All the Way Through</div>
                 <div class="concept-desc">
                   The technique is only convincing when you watch it happen. Question:
@@ -201,7 +201,7 @@
                     <tr><td>5. The verdict</td><td>36 TB is not &ldquo;one Postgres table&rdquo;. It is fine as partitioned cold storage or a warehouse, and 5,000 writes/s needs a real design</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                  Two habits make this fast enough to do in a meeting. <strong>Memorise a handful of
+                  Two habits make this fast enough to do in a meeting. <strong>Memorize a handful of
                   anchors</strong> &mdash; 86,400 seconds in a day, ~10<sup>5</sup> for rough work, 1 KB per small
                   row, 1 MB per second is ~2.5 TB a month &mdash; and <strong>round aggressively and say you are
                   rounding</strong>. The output is never the number; it is which of the three verdicts you are in,
@@ -245,10 +245,10 @@
                 </div>
               </div>
               <div class="concept-card">
-                <div class="concept-label">The artefact</div>
+                <div class="concept-label">The artifact</div>
                 <div class="concept-title">A Pre-Mortem, Filled In for One Real Dependency</div>
                 <div class="concept-desc">
-                  &ldquo;Design for failure&rdquo; is agreed with universally and practised rarely, because
+                  &ldquo;Design for failure&rdquo; is agreed with universally and practiced rarely, because
                   it is stated as a principle rather than an exercise. The exercise takes twenty minutes and works
                   on one dependency at a time. Here is a completed one for a payment provider, and the format
                   transfers to anything:
@@ -457,7 +457,7 @@
                   <table class="ref-table">
                     <tr><th>What you lose</th><th>What has to replace it</th></tr>
                     <tr><td>The stack trace</td><td>Distributed tracing, with trace context propagated through <em>every</em> broker hop</td></tr>
-                    <tr><td>Knowing who consumes what</td><td>A schema registry or catalogue &mdash; otherwise nobody can safely change an event</td></tr>
+                    <tr><td>Knowing who consumes what</td><td>A schema registry or catalog &mdash; otherwise nobody can safely change an event</td></tr>
                     <tr><td>Exactly-once delivery</td><td>Consumers must be idempotent. Most brokers are at-least-once whatever the marketing says</td></tr>
                     <tr><td>Ordering</td><td>Guaranteed only within a partition &mdash; so the partition key is a design decision, not a default</td></tr>
                     <tr><td>One place to see the whole flow</td><td>A diagram somebody maintains, or the flow lives only in four people's heads</td></tr>
@@ -793,7 +793,7 @@
                   <table class="ref-table">
                     <tr><th>Letter</th><th>Read as a rule &mdash; the failure</th><th>Read as pressure &mdash; the use</th></tr>
                     <tr><td>S</td><td>One class, one method</td><td>If you cannot describe it without &ldquo;and&rdquo;, it is doing two things</td></tr>
-                    <tr><td>O</td><td>Never modify existing code</td><td>Frequently-changing behaviour deserves an extension point. The rest does not</td></tr>
+                    <tr><td>O</td><td>Never modify existing code</td><td>Frequently-changing behavior deserves an extension point. The rest does not</td></tr>
                     <tr><td>L</td><td>Formal substitutability proofs</td><td>A subclass that throws on half the interface is lying about what it is</td></tr>
                     <tr><td>I</td><td>Split every interface</td><td>Do not force an implementer to stub methods it has no use for</td></tr>
                     <tr><td>D</td><td>An interface for everything</td><td>Depend on abstractions <em>at the boundaries you actually cross</em></td></tr>
@@ -850,7 +850,7 @@
                   for indirection everywhere — an interface with a single implementation, an event bus
                   for a direct call, a config flag for a constant — and produces something
                   <strong class="c-amber">technically loose and genuinely harder to change</strong>,
-                  because one behaviour is now smeared across five files you must hold in your head at
+                  because one behavior is now smeared across five files you must hold in your head at
                   once. The point the two words miss: coupling is not uniformly bad — what matters is
                   whether the coupled things <em>change together</em>. Coupling along the axis of change
                   (the tax rules and the tax calculator, versioned as one) is fine; coupling across it
@@ -910,7 +910,7 @@
                 </div>
               </div>
               <div class="concept-card">
-                <div class="concept-label">The artefact</div>
+                <div class="concept-label">The artifact</div>
                 <div class="concept-title">The Contract, and the Three Questions to Ask of It</div>
                 <div class="concept-desc">
                   &ldquo;Design the contract first&rdquo; is agreed with and then skipped, because the
@@ -1068,7 +1068,7 @@
                   </table>
                   <div class="concept-desc verdict">
                     So treat clean code as a <strong>means — readability for the next person — not a
-                    rulebook to maximise</strong>: when a &ldquo;clean&rdquo; rule makes the code harder
+                    rulebook to maximize</strong>: when a &ldquo;clean&rdquo; rule makes the code harder
                     to follow, the rule is wrong for that case. The test is not &ldquo;did I follow the
                     principles&rdquo; but &ldquo;can the next person read this in one pass,&rdquo; and the
                     two come apart exactly at the extremes, where a rule pushed past its point of
@@ -1109,7 +1109,7 @@
                     comments are ignored"</strong> is usually what that looks like from the other
                     chair. *Respond to every comment* is the row that prevents it, and responding
                     includes saying no: a comment answered with a reason is not ignored, and a
-                    comment silently left unaddressed reads as a judgement about the reviewer.
+                    comment silently left unaddressed reads as a judgment about the reviewer.
                   </div>
                   <div class="concept-desc verdict">
                     Automate the boring parts (formatting, lint, tests in CI) so humans review what
@@ -1118,7 +1118,7 @@
                 </div>
               </div>
               <div class="concept-card">
-                <div class="concept-label">The artefact</div>
+                <div class="concept-label">The artifact</div>
                 <div class="concept-title">The Same Point, Written Three Ways</div>
                 <div class="concept-desc">
                   Advice about review comments is easy to agree with and hard to act on. Here is one real
@@ -1187,7 +1187,7 @@
                   I would have written differently&rdquo;</strong> — an aesthetic disagreement dressed as
                   a liability, which spends credibility on changes that carry no interest. Two: debt as
                   the justification for a doomed grand gesture — a &ldquo;tech-debt sprint&rdquo; that
-                  loses every prioritisation fight against features, or a
+                  loses every prioritization fight against features, or a
                   <strong class="c-amber">big rewrite that quietly throws away what the ugly code was
                   worth</strong>. Because debt only bites where it taxes a change you are actually
                   making, the framing that survives a product roadmap is not a debt backlog competing for
@@ -1197,7 +1197,7 @@
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>The move</th><th>Why it stalls or fails</th><th>What works instead</th></tr>
-                    <tr><td>A &ldquo;tech-debt sprint&rdquo;</td><td>Loses every prioritisation fight against features</td><td>Fund paydown inside the feature that must touch that code</td></tr>
+                    <tr><td>A &ldquo;tech-debt sprint&rdquo;</td><td>Loses every prioritization fight against features</td><td>Fund paydown inside the feature that must touch that code</td></tr>
                     <tr><td>The big rewrite</td><td>Discards years of embedded bug fixes; ships nothing for months</td><td>Strangler fig — replace incrementally behind the running system</td></tr>
                     <tr><td>A debt backlog nobody reads</td><td>Debt with no live cost never rises to the top</td><td>Track only debt in code you touch; leave the stable corners</td></tr>
                     <tr><td>&ldquo;This is debt&rdquo; meaning &ldquo;I dislike it&rdquo;</td><td>Spends credibility on taste, not cost</td><td>Name the interest, or concede it is not debt</td></tr>
@@ -1247,7 +1247,7 @@
                 </div>
               </div>
               <div class="concept-card">
-                <div class="concept-label">The artefact</div>
+                <div class="concept-label">The artifact</div>
                 <div class="concept-title">A Complete ADR, Short Enough That Someone Will Write One</div>
                 <div class="concept-desc">
                   ADRs fail by being described rather than shown, and then by being too long to write. The
@@ -1281,7 +1281,7 @@
                   code already says what was chosen. What the reader in two years needs is
                   <strong class="c-cyan">what else was considered and which constraint killed
                   it</strong> &mdash; because constraints expire, and when one does, the ADR is
-                  the only artefact that says the decision should now be revisited.
+                  the only artifact that says the decision should now be revisited.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -1352,7 +1352,7 @@
                   <table class="ref-table">
                     <tr><th>Rule</th><th>Why</th></tr>
                     <tr><td>Retry at one layer only</td><td>Retries multiply through the stack. Decide where, and make every other layer fail fast</td></tr>
-                    <tr><td>Exponential backoff <em>with jitter</em></td><td>Without jitter every client retries at the same instant &mdash; you have built a synchronised load test</td></tr>
+                    <tr><td>Exponential backoff <em>with jitter</em></td><td>Without jitter every client retries at the same instant &mdash; you have built a synchronized load test</td></tr>
                     <tr><td>Retry budget, not retry count</td><td>Cap retries as a share of traffic; a per-call count has no idea what the rest of the fleet is doing</td></tr>
                     <tr><td>Only retry idempotent operations</td><td>Otherwise a timeout on a call that actually succeeded charges the card twice</td></tr>
                     <tr><td>Timeout shorter than your caller's</td><td>A longer one is decoration &mdash; they gave up before you did</td></tr>
@@ -1404,14 +1404,14 @@
                 <div class="concept-desc">
                   A saga does not undo anything. It runs a <strong class="c-amber">second business
                   operation</strong> intended to offset the first, and the difference matters: a refund is not an
-                  un-charge, cancelling a shipment that already left is a different process, and an email that has
+                  un-charge, canceling a shipment that already left is a different process, and an email that has
                   been sent cannot be unsent. Every step you add multiplies the partial states somebody has to
                   have thought about.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Reality</th><th>What it demands</th></tr>
-                    <tr><td>There is no rollback</td><td>Write the compensating action for every step, as product behaviour rather than error handling</td></tr>
+                    <tr><td>There is no rollback</td><td>Write the compensating action for every step, as product behavior rather than error handling</td></tr>
                     <tr><td>Some steps cannot be compensated</td><td>Order them last, or make them reversible &mdash; send the email after the money has moved</td></tr>
                     <tr><td>Partial states are user-visible</td><td>The order that is paid but unshipped needs a screen and a support answer</td></tr>
                     <tr><td>Compensation can fail too</td><td>Now you need retries, a dead-letter path, and a human queue</td></tr>
@@ -1602,7 +1602,7 @@
                 <div class="concept-label">Where People Stall</div>
                 <div class="concept-title">Every Boundary Asks You to Stop Doing the Thing That Got You Here</div>
                 <div class="concept-desc">
-                  Each promotion is granted for a behaviour, and the next level needs a different one.
+                  Each promotion is granted for a behavior, and the next level needs a different one.
                   That is why the stall is so consistent and so invisible from the inside: the person is
                   doing more of what was rewarded, harder, and the ladder has stopped responding.
                 </div>
@@ -1617,7 +1617,7 @@
                   <div class="concept-desc verdict">
                     Read the row above your own and ask which column you spent last quarter in. The
                     <strong class="c-amber">stall column is the honest one</strong>: it is where the
-                    behaviour that is still being praised has quietly become the thing holding you at
+                    behavior that is still being praised has quietly become the thing holding you at
                     this level.
                   </div>
                 </div>
@@ -1627,7 +1627,7 @@
                 <div class="concept-title">You Are Promoted for Already Doing the Next Job, Not for Deserving It</div>
                 <div class="concept-desc">
                   The common model is a queue: serve the time, keep the quality high, and the level
-                  arrives. Almost nowhere works that way. A promotion is a company recognising, usually
+                  arrives. Almost nowhere works that way. A promotion is a company recognizing, usually
                   late, that somebody is <em>already</em> operating a level up &mdash; so the useful
                   question is never &ldquo;have I done enough?&rdquo; but
                   <strong class="c-cyan">&ldquo;where is the evidence I am already doing that job?&rdquo;</strong>
@@ -1676,12 +1676,12 @@
                 </div>
               </div>
               <div class="concept-card">
-                <div class="concept-label">The artefact</div>
+                <div class="concept-label">The artifact</div>
                 <div class="concept-title">What the Evidence Actually Looks Like</div>
                 <div class="concept-desc">
                   Archetypes are readable and hard to act on, because the gap between &ldquo;be a
                   Tech Lead&rdquo; and knowing what to put in a promotion packet is large. The packet is the
-                  artefact, and what belongs in it is <strong class="c-cyan">a sentence with a scope and an
+                  artifact, and what belongs in it is <strong class="c-cyan">a sentence with a scope and an
                   outcome</strong> &mdash; not a list of responsibilities.
                 </div>
                 <div class="dw">
@@ -1691,7 +1691,7 @@
                     <tr><td>Architect</td><td>&ldquo;Owned the event-schema standard now used by 6 services. Wrote ADR-014 and ADR-021; reviewed 30 designs against it.&rdquo;</td></tr>
                     <tr><td>Solver</td><td>&ldquo;Diagnosed and fixed the p99 regression that three teams had escalated for a month. Root cause was connection-pool exhaustion; published the write-up.&rdquo;</td></tr>
                     <tr><td>Right Hand</td><td>&ldquo;Ran the org's migration off the deprecated auth service &mdash; 14 teams, no missed deadline, weekly status the director used verbatim.&rdquo;</td></tr>
-                    <tr><td>The pattern in all four</td><td><strong>Scope</strong> (how many people or teams), <strong>outcome</strong> (what changed), <strong>artefact</strong> (something a reader can go and look at)</td></tr>
+                    <tr><td>The pattern in all four</td><td><strong>Scope</strong> (how many people or teams), <strong>outcome</strong> (what changed), <strong>artifact</strong> (something a reader can go and look at)</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                   The sentence to test any bullet against: <strong>would a stranger on the promotion
@@ -1737,14 +1737,14 @@
                 <div class="concept-label">Failure mode</div>
                 <div class="concept-title">Both Tracks Fail in Year One the Same Way — by Not Letting Go of the Old Job</div>
                 <div class="concept-desc">
-                  "Choose what energises you" is the right frame for the decision and says nothing
+                  "Choose what energizes you" is the right frame for the decision and says nothing
                   about the transition, which is where people actually struggle. Both tracks have
                   the same first-year failure and it is not a skills gap: it is continuing to do the
                   work that used to earn the praise. The new tech lead keeps taking the hardest
                   ticket, because that is what made them senior — and becomes the bottleneck on
                   every design while the team waits. The new manager keeps reviewing pull requests
                   at midnight, because shipping code is the only output that still feels real — and
-                  the 1:1s get cancelled first, because nobody complains about a cancelled 1:1 until
+                  the 1:1s get canceled first, because nobody complains about a canceled 1:1 until
                   three months later when somebody resigns.
                 </div>
                 <div class="dw">
@@ -1802,7 +1802,7 @@
                 </div>
               </div>
               <div class="concept-card">
-                <div class="concept-label">The artefact</div>
+                <div class="concept-label">The artifact</div>
                 <div class="concept-title">The Message That Actually Gets Another Team to Act</div>
                 <div class="concept-desc">
                   The advice is to build relationships and frame things in others' interests, which is true
@@ -1974,10 +1974,10 @@
                 <div class="concept-label">The Inversion</div>
                 <div class="concept-title">You Are Not Choosing Speed Against Integrity, You Are Choosing Speed Against Optionality</div>
                 <div class="concept-desc">
-                  The usual framing is normalised-and-correct versus denormalised-and-fast, which
-                  makes it sound like a taste. The sharper reading is that a normalised schema keeps
+                  The usual framing is normalized-and-correct versus denormalized-and-fast, which
+                  makes it sound like a taste. The sharper reading is that a normalized schema keeps
                   <strong class="c-cyan">access patterns you have not thought of yet</strong> cheap,
-                  and every denormalisation spends some of that to make one known pattern faster. The
+                  and every denormalization spends some of that to make one known pattern faster. The
                   joins are what the option costs.
                 </div>
                 <div class="concept-desc">
@@ -1985,7 +1985,7 @@
                   for the queries it was drawn around, and when the product asks for a new one the
                   choices are a scan, another index, or a migration &mdash; all three of which the
                   relational version would have answered with a <code>WHERE</code> clause.
-                  <strong class="c-amber">Denormalise where the access pattern is settled and the
+                  <strong class="c-amber">Denormalize where the access pattern is settled and the
                   volume is real</strong>; keep the parts still being argued about in third normal
                   form, because that argument is exactly the thing you are buying the option for.
                 </div>
@@ -2051,7 +2051,7 @@
                 </div>
               </div>
               <div class="concept-card">
-                <div class="concept-label">The artefact</div>
+                <div class="concept-label">The artifact</div>
                 <div class="concept-title">An Estimate, With Its Assumptions Showing</div>
                 <div class="concept-desc">
                   &ldquo;About three weeks&rdquo; is not an estimate; it is a number with the reasoning
@@ -2124,7 +2124,7 @@
                     <tr><th>Stage</th><th>Looks like it tests</th><th>Actually tests</th></tr>
                     <tr><td>Coding</td><td>Whether you know the algorithm</td><td>Whether you make visible progress while watched, and say what you are doing</td></tr>
                     <tr><td>System design</td><td>Whether you know the right architecture</td><td>Whether you establish requirements before drawing, and name what you traded away</td></tr>
-                    <tr><td>Behavioural</td><td>Whether you have good stories</td><td>Whether the <em>scope</em> of your stories matches the level being hired</td></tr>
+                    <tr><td>Behavioral</td><td>Whether you have good stories</td><td>Whether the <em>scope</em> of your stories matches the level being hired</td></tr>
                     <tr><td>Take-home</td><td>Whether the code works</td><td>What you consider &ldquo;finished&rdquo; when nobody is specifying it</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -2139,7 +2139,7 @@
                 <div class="concept-label">Silently wrong</div>
                 <div class="concept-title">The Story One Level Below the Role</div>
                 <div class="concept-desc">
-                  The commonest quiet failure in a behavioural round is a genuinely good answer pitched
+                  The commonest quiet failure in a behavioral round is a genuinely good answer pitched
                   a level low: a senior candidate describing how they personally fixed a hard bug, when
                   the question was really asking what changed for the team afterwards.
                   <strong class="c-amber">Nobody says so in the feedback</strong> &mdash; it comes back
@@ -2515,7 +2515,7 @@
                   <table class="ref-table">
                     <thead><tr><th>Term</th><th>What it covers</th></tr></thead>
                     <tbody>
-                      <tr><td>MDM <span class="acro-exp">(Mobile Device Management)</span></td><td>Enrolment, configuration profiles, remote wipe — device-level control</td></tr>
+                      <tr><td>MDM <span class="acro-exp">(Mobile Device Management)</span></td><td>Enrollment, configuration profiles, remote wipe — device-level control</td></tr>
                       <tr><td>MAM <span class="acro-exp">(Mobile Application Management)</span></td><td>Policy applied to the app and its data, on devices you do not own (BYOD)</td></tr>
                       <tr><td>EMM <span class="acro-exp">(Enterprise Mobility Management)</span></td><td>MDM + MAM + identity and content — the mobile-era bundle</td></tr>
                       <tr><td>UEM</td><td>EMM merged with traditional desktop management, so mobile and PC are one estate</td></tr>
@@ -2536,14 +2536,14 @@
                   <table class="ref-table">
                     <thead><tr><th>Area</th><th>Concretely</th></tr></thead>
                     <tbody>
-                      <tr><td>Enrolment &amp; provisioning</td><td>Autopilot / ABM <span class="acro-exp">(Apple Business Manager)</span> / Android Enterprise zero-touch, ESP <span class="acro-exp">(Enrollment Status Page)</span>, join type, naming</td></tr>
+                      <tr><td>Enrollment &amp; provisioning</td><td>Autopilot / ABM <span class="acro-exp">(Apple Business Manager)</span> / Android Enterprise zero-touch, ESP <span class="acro-exp">(Enrollment Status Page)</span>, join type, naming</td></tr>
                       <tr><td>Configuration</td><td>Baselines, CSP <span class="acro-exp">(Configuration Service Provider)</span> and OMA-URI <span class="acro-exp">(Open Mobile Alliance Uniform Resource Identifier)</span> policy, GPO-to-Intune migration, Wi-Fi/VPN/certificate profiles</td></tr>
                       <tr><td>Application delivery</td><td>Win32 packaging, MSI <span class="acro-exp">(Microsoft Installer)</span>, LOB <span class="acro-exp">(Line of Business)</span> and store apps, dependencies, detection rules, uninstall paths</td></tr>
                       <tr><td>Patch &amp; update rings</td><td>WUfB <span class="acro-exp">(Windows Update for Business)</span>, update rings, deferrals, macOS/iOS update policy, emergency out-of-band pushes</td></tr>
                       <tr><td>Compliance &amp; device trust</td><td>Compliance policies feeding Conditional Access, encryption, TPM/Secure Boot, attestation</td></tr>
                       <tr><td>Hardening</td><td>CIS/STIG-aligned baselines, ASR <span class="acro-exp">(Attack Surface Reduction)</span> rules, LAPS <span class="acro-exp">(Local Administrator Password Solution)</span>, removable-media and firewall policy</td></tr>
                       <tr><td>Automation</td><td>PowerShell and shell remediation scripts, proactive remediations, Graph API <span class="acro-exp">(Application Programming Interface)</span> reporting</td></tr>
-                      <tr><td>Lifecycle</td><td>Refresh cycles, retire/wipe, stale-device cleanup, licence reclaim, offboarding</td></tr>
+                      <tr><td>Lifecycle</td><td>Refresh cycles, retire/wipe, stale-device cleanup, license reclaim, offboarding</td></tr>
                       <tr><td>Firefighting</td><td>Why did this policy apply to 400 machines it shouldn't have — and how fast can it be pulled</td></tr>
                     </tbody>
                   </table>
@@ -2561,7 +2561,7 @@
                 <div class="concept-title">How It Differs From the Roles Next Door</div>
                 <div class="dw">
                   <table class="ref-table">
-                    <thead><tr><th>Neighbour</th><th>Where the line sits</th></tr></thead>
+                    <thead><tr><th>Neighbor</th><th>Where the line sits</th></tr></thead>
                     <tbody>
                       <tr>
                         <td>Desktop support</td>
@@ -2652,7 +2652,7 @@
                 <div class="concept-title">Every Individual Metric in This Space Is Gameable, and Most Are Actively Harmful</div>
                 <div class="concept-desc">
                   The request &ldquo;measure our developers' productivity&rdquo; sounds reasonable and has no good
-                  answer at the individual level, because <strong class="c-amber">every per-person metric optimises
+                  answer at the individual level, because <strong class="c-amber">every per-person metric optimizes
                   for the wrong thing the moment people know it is watched.</strong> Count commits and you get
                   smaller commits; count lines and you get more lines; count story points and you get inflated
                   estimates. The metric does not measure the work — it <em>changes</em> the work, and the change is
@@ -2664,12 +2664,12 @@
                     <tr><td>Lines of code</td><td>More code — the opposite of the goal</td></tr>
                     <tr><td>Commits / PRs per week</td><td>Trivial commits; PRs split to pad the count</td></tr>
                     <tr><td>Story points completed</td><td>Point inflation; estimation becomes negotiation</td></tr>
-                    <tr><td>Hours / activity tracked</td><td>Presence theatre; the deep work that has no keystrokes disappears</td></tr>
+                    <tr><td>Hours / activity tracked</td><td>Presence theater; the deep work that has no keystrokes disappears</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     This is Goodhart's Law with a salary attached: a measure under individual pressure stops being a
                     measure. The honest position to hold with a manager who wants a leaderboard is that
-                    <strong>the leaderboard itself is the harm</strong> — it manufactures the behaviour it claims to
+                    <strong>the leaderboard itself is the harm</strong> — it manufactures the behavior it claims to
                     detect.
                   </div>
                 </div>
@@ -2730,9 +2730,9 @@
         <table class="ref-table">
           <thead><tr><th></th><th>CapEx</th><th>OpEx</th></tr></thead>
           <tbody>
-            <tr><td>Typical purchase</td><td>Servers, network gear, perpetual licences, a building</td><td>Cloud consumption, subscriptions, support contracts, salaries</td></tr>
+            <tr><td>Typical purchase</td><td>Servers, network gear, perpetual licenses, a building</td><td>Cloud consumption, subscriptions, support contracts, salaries</td></tr>
             <tr><td>Hits the accounts</td><td>Spread across the asset's life</td><td>Immediately, every period</td></tr>
-            <tr><td>Approval</td><td>Annual cycle, larger committee, harder to start</td><td>Faster, but scrutinised every year thereafter</td></tr>
+            <tr><td>Approval</td><td>Annual cycle, larger committee, harder to start</td><td>Faster, but scrutinized every year thereafter</td></tr>
             <tr><td>Flexibility</td><td>Low — you own it whether you use it or not</td><td>High — you can stop, and that is the point</td></tr>
             <tr><td>Runs out</td><td>When the budget is spent</td><td>Never — but it compounds, forever</td></tr>
           </tbody>
@@ -2780,26 +2780,26 @@
       <div class="concept-title">Using the Distinction Rather Than Fighting It</div>
       <div class="concept-desc">
         Engineers who learn which budget a proposal lands in get more things approved — not by
-        gaming anything, but by asking for the thing in the form the organisation can currently say
+        gaming anything, but by asking for the thing in the form the organization can currently say
         yes to.
       </div>
       <div class="dw">
         <table class="ref-table">
           <thead><tr><th>Situation</th><th>Move</th></tr></thead>
           <tbody>
-            <tr><td>Capital budget exists, operating budget is frozen</td><td>A perpetual licence or owned hardware may pass where a subscription will not</td></tr>
+            <tr><td>Capital budget exists, operating budget is frozen</td><td>A perpetual license or owned hardware may pass where a subscription will not</td></tr>
             <tr><td>Capital approval takes two quarters</td><td>Subscription pricing turns a project into a decision the manager can already make</td></tr>
             <tr><td>Spend must not grow year on year</td><td>Reserved or committed pricing converts variable spend into a predictable line</td></tr>
-            <tr><td>The initiative may be cancelled</td><td>OpEx keeps the exit cheap; that optionality is worth paying for</td></tr>
+            <tr><td>The initiative may be canceled</td><td>OpEx keeps the exit cheap; that optionality is worth paying for</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
           <strong>Ask which budget has room before deciding what to propose.</strong>
           The same requirement can usually be met in either form, and the version that
           matches the budget with room gets approved in weeks rather than quarters —
-          which is not gaming anything, it is asking in the form the organisation can
+          which is not gaming anything, it is asking in the form the organization can
           currently say yes to. The last row is the honest one: for anything that
-          might be cancelled, keeping the exit cheap is worth paying for.
+          might be canceled, keeping the exit cheap is worth paying for.
         </div>
       </div>
     </div>
@@ -2828,7 +2828,7 @@
         <table class="ref-table">
           <thead><tr><th>Bucket</th><th>Contains</th><th>Cut it by</th></tr></thead>
           <tbody>
-            <tr><td>Run</td><td>Licences, support, hosting, salaries, refresh</td><td>Consolidation, automation, retiring things</td></tr>
+            <tr><td>Run</td><td>Licenses, support, hosting, salaries, refresh</td><td>Consolidation, automation, retiring things</td></tr>
             <tr><td>Grow</td><td>Capacity, upgrades, incremental capability</td><td>Deferring — the usual first casualty</td></tr>
             <tr><td>Transform</td><td>New capability the business asked for</td><td>Choosing fewer initiatives, not smaller ones</td></tr>
           </tbody>
@@ -2853,7 +2853,7 @@
           <thead><tr><th>Weak</th><th>Strong</th></tr></thead>
           <tbody>
             <tr><td>"We need the support contract"</td><td>"Without it, a controller failure is a 5-day outage instead of 4 hours"</td></tr>
-            <tr><td>"The licences went up 12%"</td><td>"Vendor increase; here are the two alternatives and what switching costs"</td></tr>
+            <tr><td>"The licenses went up 12%"</td><td>"Vendor increase; here are the two alternatives and what switching costs"</td></tr>
             <tr><td>"We should upgrade the firewalls"</td><td>"They lose vendor support in March; unsupported is a finding at the next audit"</td></tr>
             <tr><td>"We need more storage"</td><td>"Full in September at current growth; ordering in June avoids the emergency premium"</td></tr>
           </tbody>
@@ -2964,7 +2964,7 @@
       <div class="concept-title">Showing the Bill, or Sending It</div>
       <div class="concept-desc">
         When IT costs sit in one central budget, no consumer of those resources has any reason to use
-        fewer. Showback reports what each team consumed; chargeback moves the money. The behavioural
+        fewer. Showback reports what each team consumed; chargeback moves the money. The behavioral
         difference between them is large, and so is the political cost.
       </div>
       <div class="dw">
@@ -2972,7 +2972,7 @@
           <thead><tr><th></th><th>Showback</th><th>Chargeback</th></tr></thead>
           <tbody>
             <tr><td>Mechanism</td><td>Reports consumption</td><td>Transfers budget</td></tr>
-            <tr><td>Behaviour change</td><td>Real but modest</td><td>Strong — money concentrates attention</td></tr>
+            <tr><td>Behavior change</td><td>Real but modest</td><td>Strong — money concentrates attention</td></tr>
             <tr><td>Cost to run</td><td>Low</td><td>High — disputes, reconciliation, an allocation model</td></tr>
             <tr><td>Failure mode</td><td>Reports nobody reads</td><td>Arguments about the model instead of about the usage</td></tr>
             <tr><td>Start with</td><td>This one, always</td><td>Only once showback data is trusted</td></tr>
@@ -2997,7 +2997,7 @@
         <table class="ref-table">
           <thead><tr><th>Method</th><th>Good</th><th>Bad</th></tr></thead>
           <tbody>
-            <tr><td>Even split</td><td>Trivial, no arguments about the model</td><td>The small team subsidises the large one</td></tr>
+            <tr><td>Even split</td><td>Trivial, no arguments about the model</td><td>The small team subsidizes the large one</td></tr>
             <tr><td>By headcount</td><td>Simple and roughly fair</td><td>Ignores that some teams consume far more per head</td></tr>
             <tr><td>By measured usage</td><td>Most defensible</td><td>Needs tagging discipline that most estates lack</td></tr>
             <tr><td>Leave it central</td><td>No overhead at all</td><td>Nobody has an incentive to consume less of it</td></tr>
@@ -3049,7 +3049,7 @@
       <div class="concept-label">Reference</div>
       <div class="concept-title">Six Sections, One Page, In This Order</div>
       <div class="concept-desc">
-        Technical proposals fail by being organised the way the work was done — background, analysis,
+        Technical proposals fail by being organized the way the work was done — background, analysis,
         options, then the ask. Decision-makers read the first paragraph and skim the rest, so the ask
         goes first and the reasoning follows for whoever wants it.
       </div>
@@ -3099,11 +3099,11 @@
     </div>
     <div class="concept-card">
       <div class="concept-label">Concept</div>
-      <div class="concept-title">Benefits Realisation — the Half Nobody Comes Back For</div>
+      <div class="concept-title">Benefits Realization — the Half Nobody Comes Back For</div>
       <div class="concept-desc">
         Almost every business case promises a benefit, and almost nobody checks afterwards whether it
         arrived. The consequence is organisational rather than personal: when no case is ever
-        verified, every case is discounted in advance, and the honest proposals are penalised
+        verified, every case is discounted in advance, and the honest proposals are penalized
         alongside the optimistic ones. Volunteering the check — and reporting it even when the answer
         is mixed — is a durable way to become the person whose numbers are believed.
       </div>
@@ -3115,7 +3115,7 @@
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">⏱️</span>
-    <span class="topic-name">The Cost of Downtime — Modelling It Credibly Enough to Fund Resilience</span>
+    <span class="topic-name">The Cost of Downtime — Modeling It Credibly Enough to Fund Resilience</span>
     <span class="topic-badge">IT Finance</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -3172,7 +3172,7 @@
       <div class="concept-desc">
         Recovery targets are usually handed to IT as requirements and treated as arbitrary. They are
         not: an RTO is the point at which accumulating outage cost exceeds what the business will
-        spend to avoid it, and an RPO is the same judgement about lost data. Presenting the cost
+        spend to avoid it, and an RPO is the same judgment about lost data. Presenting the cost
         curve alongside the price of each recovery tier turns "we need zero downtime" into a
         conversation with an answer — usually a more modest one, chosen by the people who own the
         money. The tiers themselves are in
@@ -3199,7 +3199,7 @@
         A demo is a performance of the vendor's strengths, and it is extremely effective — after
         three of them, a team that started with no written requirements will have absorbed the
         criteria of whichever vendor presented most confidently. Writing requirements first is not
-        bureaucracy; it is the only defence against evaluating products against each other's
+        bureaucracy; it is the only defense against evaluating products against each other's
         marketing rather than against your actual need.
       </div>
       <div class="dw">
@@ -3210,7 +3210,7 @@
             <tr><td>Should-have</td><td>Weighted and scored, not pass/fail</td></tr>
             <tr><td>Constraint</td><td>Integration, data residency, accessibility, licensing model</td></tr>
             <tr><td>Non-functional</td><td>Availability, support hours, recovery targets, scale</td></tr>
-            <tr><td>Anti-requirement</td><td>What you explicitly do not want to buy — the scope creep defence</td></tr>
+            <tr><td>Anti-requirement</td><td>What you explicitly do not want to buy — the scope creep defense</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -3288,7 +3288,7 @@
       <div class="concept-desc">
         A proof of concept without agreed success criteria always succeeds, because "it worked" is
         assessed after everyone has invested weeks and formed opinions. Writing the criteria before
-        the trial starts is the whole mechanism — it is the only point at which the judgement is
+        the trial starts is the whole mechanism — it is the only point at which the judgment is
         still disinterested.
       </div>
       <div class="dw">
@@ -3344,7 +3344,7 @@
         </table>
         <div class="concept-desc verdict">
           <strong>Do the negotiating while the alternative is still real, because
-          after that you are asking for a favour.</strong> The curve in this table is
+          after that you are asking for a favor.</strong> The curve in this table is
           the entire lesson: leverage is a function of whether you could still walk
           away, and once the product is embedded the switching cost is yours, not
           theirs. Keep a second option genuinely alive until the terms are signed —
@@ -3357,7 +3357,7 @@
       <div class="concept-label">Reference</div>
       <div class="concept-title">Discount Is the Least Interesting Thing to Win</div>
       <div class="concept-desc">
-        Buyers fixate on percentage off list, which is the term vendors are most practised at
+        Buyers fixate on percentage off list, which is the term vendors are most practiced at
         conceding and the one that matters least over five years. The terms below are frequently
         easier to get and worth more.
       </div>
@@ -3386,7 +3386,7 @@
     </div>
     <div class="concept-card">
       <div class="concept-label">Technique</div>
-      <div class="concept-title">Behaviours That Reliably Cost You Money</div>
+      <div class="concept-title">Behaviors That Reliably Cost You Money</div>
       <div class="concept-desc">
         None of these is about being tough. They are about not giving away information that the other
         side is trained to use, and engineers give it away out of straightforwardness rather than
@@ -3438,9 +3438,9 @@
         <table class="ref-table">
           <thead><tr><th>Clause</th><th>Ask</th></tr></thead>
           <tbody>
-            <tr><td>Auto-renewal and notice period</td><td>How many days before renewal must we give notice — and is it diarised?</td></tr>
+            <tr><td>Auto-renewal and notice period</td><td>How many days before renewal must we give notice — and is it diarized?</td></tr>
             <tr><td>Annual uplift</td><td>Capped, or "vendor's then-current list price"?</td></tr>
-            <tr><td>Licence metric definition</td><td>What exactly counts as a user, a device or a core?</td></tr>
+            <tr><td>License metric definition</td><td>What exactly counts as a user, a device or a core?</td></tr>
             <tr><td>Audit rights</td><td>How much notice, how often, and who pays for the exercise?</td></tr>
             <tr><td>Support response definition</td><td>Response or resolution? Business hours in whose timezone?</td></tr>
             <tr><td>Data ownership and export</td><td>Ours, in what format, and for how long after termination?</td></tr>
@@ -3509,13 +3509,13 @@
             <tr><td>Per named user</td><td>Each identified person</td><td>Leavers still licensed; shared roles</td></tr>
             <tr><td>Per concurrent user</td><td>Simultaneous sessions</td><td>Peak measurement, and how peak is defined</td></tr>
             <tr><td>Per device</td><td>Each installation</td><td>One person with a laptop, a desktop and a phone</td></tr>
-            <tr><td>Per core or socket</td><td>Underlying hardware</td><td>Virtualisation: some vendors count the whole host</td></tr>
+            <tr><td>Per core or socket</td><td>Underlying hardware</td><td>Virtualization: some vendors count the whole host</td></tr>
             <tr><td>Consumption</td><td>Usage units</td><td>No ceiling; a bug can generate a bill</td></tr>
             <tr><td>Per environment</td><td>Prod, test, DR separately</td><td>DR standby capacity is frequently chargeable</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The virtualisation row is where the largest surprises live. Some licences count every core
+          The virtualization row is where the largest surprises live. Some licenses count every core
           in a cluster the software <em>could</em> run on, so a VM <span class="acro-exp">(Virtual Machine)</span> permitted to migrate freely across
           a large cluster can be licensable against all of it.
         </div>
@@ -3525,8 +3525,8 @@
       <div class="concept-label">Technique</div>
       <div class="concept-title">Being Ready Before the Letter Arrives</div>
       <div class="concept-desc">
-        A licence audit is a contractual right the vendor already has, and it is a revenue exercise
-        as much as a compliance one. The organisations that come out of it well are the ones that
+        A license audit is a contractual right the vendor already has, and it is a revenue exercise
+        as much as a compliance one. The organizations that come out of it well are the ones that
         knew their own position beforehand — not the ones that were compliant by luck.
       </div>
       <div class="dw">
@@ -3536,7 +3536,7 @@
             <tr><td>Know your entitlements — keep every contract and amendment together</td><td>Route everything through one named owner</td></tr>
             <tr><td>Measure deployment yourself, quarterly</td><td>Answer what is asked; volunteer nothing further</td></tr>
             <tr><td>Reclaim unused seats before anyone counts them</td><td>Verify their tooling's numbers against your own</td></tr>
-            <tr><td>Understand how the metric applies to your virtualisation</td><td>Check every claimed shortfall against the entitlement documents</td></tr>
+            <tr><td>Understand how the metric applies to your virtualization</td><td>Check every claimed shortfall against the entitlement documents</td></tr>
             <tr><td>Record who approved every non-standard deployment</td><td>Negotiate the remedy — a true-up is a commercial conversation</td></tr>
           </tbody>
         </table>
@@ -3583,7 +3583,7 @@
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          Process lock-in is the one that decides most renewals. By year three the organisation has
+          Process lock-in is the one that decides most renewals. By year three the organization has
           reshaped itself around the tool's assumptions, and the migration cost is a change-management
           project rather than a data transfer — which is precisely why it never appears in the
           original TCO <span class="acro-exp">(Total Cost of Ownership)</span> model.
@@ -3632,7 +3632,7 @@
       <div class="concept-title">Anyone With a Card Can Create a Supplier</div>
       <div class="concept-desc">
         SaaS removed procurement from the purchasing path. A team that needs a tool signs up in
-        minutes, and the organisation acquires a data processor, an authentication surface and a
+        minutes, and the organization acquires a data processor, an authentication surface and a
         recurring cost that no register records. The financial waste is the least of it — the
         unreviewed data-sharing and the orphaned account when the buyer leaves are the parts that
         matter.
@@ -3663,7 +3663,7 @@
       <div class="concept-title">Find It, Then Make the Sanctioned Path Easier</div>
       <div class="concept-desc">
         Discovery is straightforward and the sources are already in the building. Enforcement without
-        a usable alternative simply pushes the behaviour further out of sight, so the second half
+        a usable alternative simply pushes the behavior further out of sight, so the second half
         matters more than the first.
       </div>
       <div class="dw">
@@ -3671,10 +3671,10 @@
           <thead><tr><th>Step</th><th>How</th></tr></thead>
           <tbody>
             <tr><td>Discover</td><td>Expense reports, the identity provider's app list, egress logs, and asking teams directly</td></tr>
-            <tr><td>Rationalise</td><td>Group by job-to-be-done; pick one per job with the users, not for them</td></tr>
+            <tr><td>Rationalize</td><td>Group by job-to-be-done; pick one per job with the users, not for them</td></tr>
             <tr><td>Reclaim</td><td>Seats inactive for 60–90 days, before every renewal</td></tr>
             <tr><td>Consolidate identity</td><td>Everything behind single sign-on, so offboarding actually works</td></tr>
-            <tr><td>Make the good path fast</td><td>A quick review and a catalogue entry beats a policy nobody follows</td></tr>
+            <tr><td>Make the good path fast</td><td>A quick review and a catalog entry beats a policy nobody follows</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -3796,7 +3796,7 @@
       <div class="concept-desc">
         Buying an entire fleet at once creates a spike in spend now and an identical spike three or
         four years later, plus a single enormous migration project both times. Refreshing a fraction
-        of the estate each year flattens the budget line, keeps the deployment process practised, and
+        of the estate each year flattens the budget line, keeps the deployment process practiced, and
         spreads the risk of a bad model choice.
       </div>
       <div class="dw">
@@ -3811,7 +3811,7 @@
         <div class="concept-desc verdict">
           Whichever cycle is chosen, the disposal end matters as much as the purchase: certified data
           destruction, WEEE-style disposal obligations, and residual value from resale or trade-in
-          that most organisations simply forfeit.
+          that most organizations simply forfeit.
         </div>
       </div>
     </div>
@@ -3822,7 +3822,7 @@
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🗂️</span>
-    <span class="topic-name">Portfolio &amp; Prioritisation — Deciding What Not to Do, Defensibly</span>
+    <span class="topic-name">Portfolio &amp; Prioritization — Deciding What Not to Do, Defensibly</span>
     <span class="topic-badge">IT Finance</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -3831,10 +3831,10 @@
       <div class="concept-label">Concept</div>
       <div class="concept-title">A Priority List Where Everything Is Priority One Is Not a List</div>
       <div class="concept-desc">
-        Prioritisation is not ranking work by importance; every stakeholder can argue their item is
+        Prioritization is not ranking work by importance; every stakeholder can argue their item is
         important and they are usually right. It is deciding what will not happen this year, and
         being able to say why to the person whose item it was. A portfolio that has never declined
-        anything is not prioritised — it is a queue, and the sequencing is being done implicitly by
+        anything is not prioritized — it is a queue, and the sequencing is being done implicitly by
         whoever pushes hardest.
       </div>
       <div class="dw">
@@ -3850,7 +3850,7 @@
         <div class="concept-desc verdict">
           The second row is the most treatable. Limiting work in progress finishes more per year than
           starting more does, and it is free — but it requires saying "not yet" out loud, which is
-          the part organisations find hard.
+          the part organizations find hard.
         </div>
       </div>
     </div>
@@ -3869,7 +3869,7 @@
             <tr><td>Value</td><td>Revenue, cost avoided, risk removed — in the same units across items</td></tr>
             <tr><td>Urgency</td><td>Does the value decay if it slips? A compliance date is not a preference</td></tr>
             <tr><td>Effort</td><td>Including the run cost it adds forever, not just the build</td></tr>
-            <tr><td>Confidence</td><td>How sure are we of the three above? Low confidence favours a small first slice</td></tr>
+            <tr><td>Confidence</td><td>How sure are we of the three above? Low confidence favors a small first slice</td></tr>
             <tr><td>Dependency</td><td>Does it unblock other items, or need them first?</td></tr>
           </tbody>
         </table>
@@ -3889,7 +3889,7 @@
         something planned silently slips. Committing only a portion of capacity to planned work is
         not slack — it is the acknowledgement that unplanned work is a permanent feature, and
         reserving for it is what makes the plan survive the year. This is the portfolio-level version
-        of the utilisation argument in
+        of the utilization argument in
         <span class="xref">Capacity &amp; Shift Planning — Staffing a Queue That Has a Shape</span>.
       </div>
     </div>
@@ -3977,7 +3977,7 @@
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The third row is the one worth practising. Rising absolute spend with falling unit cost is
+          The third row is the one worth practicing. Rising absolute spend with falling unit cost is
           a success story that looks like a problem, and it will be read as a problem unless you
           supply the second half of the sentence.
         </div>
@@ -4057,7 +4057,7 @@
       <div class="concept-desc">
         For roughly six months the job feels like producing nothing. There is no artifact, no commit
         history, no moment where something works that did not before — and for someone whose
-        professional identity was built on those, that absence is genuinely destabilising. It is not
+        professional identity was built on those, that absence is genuinely destabilizing. It is not
         evidence of doing it badly; it is what the job is. The signals that replace them are slower
         and indirect: people getting better, decisions happening without you, fewer surprises. Learn
         to read those, or the pull back toward the keyboard becomes irresistible.
@@ -4072,7 +4072,7 @@
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🗓️</span>
-    <span class="topic-name">The First 90 Days Leading a Team — Listen, Map, Stabilise, Then Change</span>
+    <span class="topic-name">The First 90 Days Leading a Team — Listen, Map, Stabilize, Then Change</span>
     <span class="topic-badge">Leading Teams</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -4094,8 +4094,8 @@
           <tbody>
             <tr><td>0–30</td><td>Listen</td><td>Meet everyone individually; ask what is broken and what must not be touched</td></tr>
             <tr><td>15–45</td><td>Map</td><td>Systems, dependencies, stakeholders, the informal influence, the history</td></tr>
-            <tr><td>30–60</td><td>Stabilise</td><td>Fix the one thing everyone named — visible, uncontroversial, quick</td></tr>
-            <tr><td>60–90</td><td>Change</td><td>Now, with a reason people recognise as their own</td></tr>
+            <tr><td>30–60</td><td>Stabilize</td><td>Fix the one thing everyone named — visible, uncontroversial, quick</td></tr>
+            <tr><td>60–90</td><td>Change</td><td>Now, with a reason people recognize as their own</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -4103,7 +4103,7 @@
           compresses.</strong> Arriving with changes buys a fortnight of appearing
           decisive and spends the credibility you will need for the change that
           matters — usually on a decision that was tried in a year you were not there
-          for. The stabilise row is what makes the wait affordable: fixing the one
+          for. The stabilize row is what makes the wait affordable: fixing the one
           thing everyone named earns the room to keep listening.
         </div>
       </div>
@@ -4160,7 +4160,7 @@
           <thead><tr><th>Level</th><th>Sounds like</th><th>Use when</th></tr></thead>
           <tbody>
             <tr><td>1. Do exactly this</td><td>"Run these steps and tell me when done"</td><td>Emergencies; genuinely new people</td></tr>
-            <tr><td>2. Look into it, recommend</td><td>"Investigate and bring me options"</td><td>Building judgement; you keep the decision</td></tr>
+            <tr><td>2. Look into it, recommend</td><td>"Investigate and bring me options"</td><td>Building judgment; you keep the decision</td></tr>
             <tr><td>3. Decide, tell me first</td><td>"Decide, but check with me before acting"</td><td>Growing autonomy with a safety net</td></tr>
             <tr><td>4. Decide, then inform</td><td>"Do it, tell me afterwards"</td><td>Competent and trusted; most work should live here</td></tr>
             <tr><td>5. It is yours</td><td>"Own it; tell me if you need something"</td><td>Full ownership, including the outcome</td></tr>
@@ -4279,7 +4279,7 @@
         <table class="ref-table">
           <thead><tr><th>Rule</th><th>Why</th></tr></thead>
           <tbody>
-            <tr><td>Never cancel; reschedule instead</td><td>Cancelling says this is what gets dropped when things are busy</td></tr>
+            <tr><td>Never cancel; reschedule instead</td><td>Canceling says this is what gets dropped when things are busy</td></tr>
             <tr><td>They bring the agenda; you bring a fallback</td><td>Ownership, with a safety net for the quiet weeks</td></tr>
             <tr><td>Keep a shared running document</td><td>Continuity, and it makes review season a summary rather than an archaeology dig</td></tr>
             <tr><td>End with an action, even a small one</td><td>Otherwise it becomes a pleasant chat with no consequence</td></tr>
@@ -4307,10 +4307,10 @@
   <div class="topic-body">
     <div class="concept-card">
       <div class="concept-label">Technique</div>
-      <div class="concept-title">Situation, Behaviour, Impact — and Then Stop Talking</div>
+      <div class="concept-title">Situation, Behavior, Impact — and Then Stop Talking</div>
       <div class="concept-desc">
         Feedback fails by being vague, late, or about the person rather than the act. Naming the
-        situation, the observable behaviour and its effect gives the other person something specific
+        situation, the observable behavior and its effect gives the other person something specific
         they can actually do differently — and then leaving silence gives them room to respond rather
         than defend.
       </div>
@@ -4441,7 +4441,7 @@
             <tr><td>Name the gap specifically, early</td><td>With examples, and check they have understood it as serious</td></tr>
             <tr><td>Agree what "fixed" looks like</td><td>Observable, with a date — not a feeling at the end</td></tr>
             <tr><td>Provide genuine support</td><td>If the plan is a formality, everyone can tell and it poisons the team</td></tr>
-            <tr><td>Involve HR early</td><td>Process protects the person as much as the organisation</td></tr>
+            <tr><td>Involve HR early</td><td>Process protects the person as much as the organization</td></tr>
             <tr><td>Decide, and act without drift</td><td>Extending it repeatedly is the cruelty, not the decision</td></tr>
           </tbody>
         </table>
@@ -4469,7 +4469,7 @@
             <tr><td>Not learning any more</td><td>Enthusiasm falls; scope has not changed in a year</td><td>Yes — the most preventable of all</td></tr>
             <tr><td>Their manager</td><td>Withdrawal in one-to-ones; going quiet in groups</td><td>Yes, if you are willing to hear it</td></tr>
             <tr><td>Blocked and frustrated</td><td>Repeatedly raising the same friction</td><td>Yes — and the fix usually helps everyone</td></tr>
-            <tr><td>Unrecognised work</td><td>Doing the invisible work nobody names</td><td>Yes — start naming it publicly</td></tr>
+            <tr><td>Unrecognized work</td><td>Doing the invisible work nobody names</td><td>Yes — start naming it publicly</td></tr>
             <tr><td>Life change, or a genuinely better role</td><td>Often none</td><td>No, and that is fine</td></tr>
           </tbody>
         </table>
@@ -4570,7 +4570,7 @@
         </table>
         <div class="concept-desc verdict">
           The loop is also the candidate's clearest view of what working here is like. A
-          disorganised, rude or endlessly delayed process tells them something accurate, and the best
+          disorganized, rude or endlessly delayed process tells them something accurate, and the best
           candidates act on it. General preparation from the other side of the table is in
           <span class="xref">Interview Preparation — Getting the Job</span> in the IT Career domain.
         </div>
@@ -4621,7 +4621,7 @@
       <div class="concept-title">The New Person Is Your Best Documentation Reviewer, Once</div>
       <div class="concept-desc">
         For about a month, a new joiner can see everything that is confusing, undocumented or
-        illogical. After that they are acclimatised and the sight is gone permanently. Asking them to
+        illogical. After that they are acclimatized and the sight is gone permanently. Asking them to
         fix the setup documentation as they follow it converts that brief window into a permanent
         asset — and it is genuine work, not a chore.
       </div>
@@ -4661,7 +4661,7 @@
       <div class="concept-title">The Org Chart Is an Architecture Diagram</div>
       <div class="concept-desc">
         Conway's law observes that systems come to mirror the communication structures of the
-        organisations that build them. It is not a curiosity — it is the most reliable prediction
+        organizations that build them. It is not a curiosity — it is the most reliable prediction
         available about a design. Two teams that must coordinate constantly will produce a tightly
         coupled interface no matter what the architecture document says, and a boundary drawn between
         teams becomes a boundary in the system whether or not it belongs there.
@@ -4688,7 +4688,7 @@
       <div class="concept-title">Using the Law Deliberately</div>
       <div class="concept-desc">
         Since the structure will shape the system regardless, the productive move is to choose the
-        structure that produces the system you want — sometimes called the inverse manoeuvre. It is
+        structure that produces the system you want — sometimes called the inverse maneuver. It is
         one of the few levers a leader has that changes architecture without writing any code.
       </div>
       <div class="dw">
@@ -4768,7 +4768,7 @@
       <div class="concept-title">Cross-Team Friction, and Which Battles Are Worth It</div>
       <div class="concept-desc">
         Most inter-team conflict is structural rather than personal: two teams with incompatible
-        incentives, both behaving rationally. Recognising that changes the approach from persuasion
+        incentives, both behaving rationally. Recognizing that changes the approach from persuasion
         to finding the arrangement where both can be right — and it stops the conflict being read as
         a character problem in a colleague.
       </div>
@@ -4796,7 +4796,7 @@
       <div class="concept-label">Concept</div>
       <div class="concept-title">Culture Is What You Tolerate</div>
       <div class="concept-desc">
-        Stated values shape a team far less than the behaviour a leader lets pass. The engineer who
+        Stated values shape a team far less than the behavior a leader lets pass. The engineer who
         is brilliant and dismissive, the deadline met by skipping review, the incident nobody wrote
         up — each unaddressed instance is a statement about what actually matters here, and everyone
         reads it correctly. Culture is not built with posters; it is the accumulated record of what
@@ -4859,7 +4859,7 @@
           <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
           <tbody>
             <tr><td>Cluster team meetings into fewer days</td><td>Leaves whole days intact rather than three broken ones</td></tr>
-            <tr><td>Attend on their behalf, and summarise</td><td>One person's fragmented hour instead of six people's</td></tr>
+            <tr><td>Attend on their behalf, and summarize</td><td>One person's fragmented hour instead of six people's</td></tr>
             <tr><td>Decline on the team's behalf</td><td>They often cannot; you can</td></tr>
             <tr><td>Default meetings to 25 or 50 minutes</td><td>Recovers the gap that back-to-back scheduling destroys</td></tr>
             <tr><td>Ask "does this need a meeting?"</td><td>A written update is frequently better and always cheaper</td></tr>
@@ -4906,7 +4906,7 @@
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          <strong>Both columns are diagnosed by the team's behaviour rather than by
+          <strong>Both columns are diagnosed by the team's behavior rather than by
           your own sense of it.</strong> If they have stopped explaining, you have
           drifted; if they have stopped deciding, you are too close — and neither
           symptom is visible from the inside. Ask a senior engineer directly which way
@@ -5026,7 +5026,7 @@
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🗺️</span>
-    <span class="topic-name">Planning Without Theatre — Roadmaps, Velocity &amp; Honest Estimates</span>
+    <span class="topic-name">Planning Without Theater — Roadmaps, Velocity &amp; Honest Estimates</span>
     <span class="topic-badge">Leading Teams</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -5035,7 +5035,7 @@
       <div class="concept-label">Concept</div>
       <div class="concept-title">A Roadmap Is a Statement of Intent, and Everyone Reads It as a Promise</div>
       <div class="concept-desc">
-        The gap between those two readings causes most planning conflict in technical organisations.
+        The gap between those two readings causes most planning conflict in technical organizations.
         Engineering produces a roadmap meaning "this is the order we intend to work in"; the business
         receives dates. Neither side is being unreasonable, and the fix is presentational: express
         confidence explicitly, so the document says what it means. <strong>"Our estimates are always
@@ -5056,7 +5056,7 @@
         <div class="concept-desc verdict">
           Publishing the confidence level alongside each item makes an honest roadmap possible.
           Without it, the only way to be safe is to pad everything, which is how a plan becomes
-          theatre that nobody believes and everybody performs.
+          theater that nobody believes and everybody performs.
         </div>
       </div>
     </div>
@@ -5068,7 +5068,7 @@
         much a stable team gets through, so plans can be sized. The moment velocity becomes a target
         or a comparison between teams, points inflate, and the number keeps rising while nothing
         changes. This is the same failure as the service-desk metrics and the machine-learning loss
-        function, and it is worth recognising as one pattern rather than three coincidences.
+        function, and it is worth recognizing as one pattern rather than three coincidences.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -5320,7 +5320,7 @@
       <div class="concept-label">Concept</div>
       <div class="concept-title">You Reviewed the One You Chose; You Installed Several Hundred</div>
       <div class="concept-desc">
-        A team adopts a library after a genuine discussion — maintainership, licence, activity,
+        A team adopts a library after a genuine discussion — maintainership, license, activity,
         whether it does more than needed. That discussion covers one node. Installing it pulls its
         dependencies, and theirs, typically two orders of magnitude more code than the thing that
         was evaluated. Nobody chose those. Nobody reviewed them. Each one can execute at install
@@ -5351,7 +5351,7 @@
             <tr><td>Dependency confusion</td><td>A public package matching an internal name, higher version</td><td>Scoped names you own; a resolver configured never to fall back to public</td></tr>
             <tr><td>Maintainer account takeover</td><td>Real package, real name, hijacked publishing credential</td><td>Pinning, plus a cooling-off delay before adopting new versions</td></tr>
             <tr><td>Malicious handover</td><td>An exhausted maintainer accepts help from a stranger</td><td>Nothing technical — watch for ownership changes and stay pinned</td></tr>
-            <tr><td>Protestware and sabotage</td><td>The genuine author ships harmful behaviour deliberately</td><td>Pinning; a mirror that does not re-resolve on its own</td></tr>
+            <tr><td>Protestware and sabotage</td><td>The genuine author ships harmful behavior deliberately</td><td>Pinning; a mirror that does not re-resolve on its own</td></tr>
             <tr><td>Abandonment</td><td>No malice, no patches, no response to reports</td><td>Track maintenance signals; budget replacement before it is urgent</td></tr>
           </tbody>
         </table>
@@ -5512,7 +5512,7 @@
       <div class="concept-desc">
         The traditional obstacle to signing was never the cryptography; it was owning a long-lived
         private key. It has to be stored somewhere, reachable by CI, rotated, and recovered when the
-        person who generated it leaves. Most organisations that "do signing" have a key in a
+        person who generated it leaves. Most organizations that "do signing" have a key in a
         variable that has not moved in four years.
       </div>
       <div class="dw">
@@ -5582,7 +5582,7 @@ cosign verify $IMAGE \
       <div class="concept-desc">
         Everything upstream produces evidence. None of it constrains anything until some system
         declines to run an artifact whose evidence is missing or wrong. That refusal is the entire
-        control, and it is the step most programmes never reach — because generating attestations
+        control, and it is the step most programs never reach — because generating attestations
         breaks nothing and enforcing them can stop a deploy at four in the afternoon.
       </div>
       <div class="dw">
@@ -5640,7 +5640,7 @@ cosign verify $IMAGE \
           <thead><tr><th>What breaks reproducibility</th><th>Usual fix</th></tr></thead>
           <tbody>
             <tr><td>Embedded build timestamps</td><td>Set <code>SOURCE_DATE_EPOCH</code> from the commit date</td></tr>
-            <tr><td>Filesystem ordering in archives</td><td>Sort entries explicitly; normalise permissions and ownership</td></tr>
+            <tr><td>Filesystem ordering in archives</td><td>Sort entries explicitly; normalize permissions and ownership</td></tr>
             <tr><td>Absolute paths baked into binaries</td><td>Build in a fixed path, or strip the prefix</td></tr>
             <tr><td>Unpinned toolchain or base image</td><td>Pin by digest, including the compiler</td></tr>
             <tr><td>Dependency resolution at build time</td><td>Lockfiles with hashes; a mirror that does not drift</td></tr>
@@ -5675,12 +5675,12 @@ cosign verify $IMAGE \
         A software bill of materials is an inventory of what is inside an artifact. Its value is not
         the document — it is the answer to one question, asked on a bad morning:
         <em>which of our services contain this component, at which version, and which of those are
-        actually in production right now?</em> Organisations without an SBOM answer that by asking
+        actually in production right now?</em> Organizations without an SBOM answer that by asking
         every team and waiting two days. That delay is the entire cost being avoided.
       </div>
       <div class="dw">
         <div class="concept-desc">
-          Which means the test of an SBOM programme is not whether documents are generated. It is
+          Which means the test of an SBOM program is not whether documents are generated. It is
           whether someone can run that query. An SBOM attached to a registry artifact and never
           indexed is a file; an SBOM in a store you can query across every deployed version is an
           incident-response capability. Generation is the easy half and gets all the attention.
@@ -5708,7 +5708,7 @@ cosign verify $IMAGE \
         </table>
         <div class="concept-desc verdict">
           <strong>Generate at build time, or the inventory answers a different
-          question from the one you will ask.</strong> A scan of a finished artefact
+          question from the one you will ask.</strong> A scan of a finished artifact
           reconstructs what it thinks is inside; a bill of materials produced by the
           build knows. And the last row is what makes it operational rather than
           contractual: tied to deployed digests, "are we affected" is a query, and
@@ -5723,7 +5723,7 @@ cosign verify $IMAGE \
         An SBOM plus a vulnerability feed produces a list dominated by findings that do not apply:
         the vulnerable function is never called, the affected code path is compiled out, the feature
         is disabled. A Vulnerability Exploitability eXchange document is a machine-readable
-        statement of that judgement, attached to the artifact, so downstream consumers and scanners
+        statement of that judgment, attached to the artifact, so downstream consumers and scanners
         stop re-raising it — and so the reasoning survives the person who made it.
       </div>
       <div class="dw">
@@ -5766,7 +5766,7 @@ cosign verify $IMAGE \
         has never seen your system. Working that list top-down is how teams spend a quarter on
         critical-rated issues in code paths their application never executes, while a medium-rated
         flaw sits in the request handler on the public endpoint. The score is an input to
-        prioritisation, not the prioritisation.
+        prioritization, not the prioritization.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -5804,7 +5804,7 @@ cosign verify $IMAGE \
             <tr><td>Raise major versions individually, with the changelog</td><td>These are migrations; they need a human and a moment</td></tr>
             <tr><td>Apply a cooling-off delay before adopting a new release</td><td>Most malicious releases are pulled within days of publication</td></tr>
             <tr><td>Update continuously rather than in a quarterly sweep</td><td>Small diffs are reviewable; a year of drift is a project</td></tr>
-            <tr><td>Treat a red update pull request as a real signal</td><td>It is the earliest, cheapest warning that a dependency changed behaviour</td></tr>
+            <tr><td>Treat a red update pull request as a real signal</td><td>It is the earliest, cheapest warning that a dependency changed behavior</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -5861,7 +5861,7 @@ cosign verify $IMAGE \
       <div class="concept-desc">
         The build system holds deployment credentials, signing identities, registry write access and
         cloud roles, and it executes code from every branch anyone pushes. By capability it is one
-        of the most privileged systems in the organisation. By governance it is normally a
+        of the most privileged systems in the organization. By governance it is normally a
         configuration file that any contributor can edit, reviewed with the same attention as a
         change to a README.
       </div>
@@ -5939,37 +5939,37 @@ cosign verify $IMAGE \
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">⚖️</span>
-    <span class="topic-name">Open Source Licences — Permissive, Copyleft &amp; What Actually Obliges You</span>
+    <span class="topic-name">Open Source Licenses — Permissive, Copyleft &amp; What Actually Obliges You</span>
     <span class="topic-badge">ENG • Governance</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
     <div class="concept-card">
       <div class="concept-label">Concept</div>
-      <div class="concept-title">The Question Is Not "Which Licence" — It Is "Are You Distributing?"</div>
+      <div class="concept-title">The Question Is Not "Which License" — It Is "Are You Distributing?"</div>
       <div class="concept-desc">
         Almost every anxious conversation about open-source licensing skips the step that decides
-        the answer. Most obligations in most licences are triggered by <em>distribution</em> —
-        giving software to someone outside your organisation. Running it internally, on your own
-        servers, for your own staff, triggers very little in most licences. Ship a product, an
+        the answer. Most obligations in most licenses are triggered by <em>distribution</em> —
+        giving software to someone outside your organization. Running it internally, on your own
+        servers, for your own staff, triggers very little in most licenses. Ship a product, an
         installer, a container image to a customer, or firmware in a device, and the same code
-        carries real requirements. Establish which of those you are doing first; the licence
+        carries real requirements. Establish which of those you are doing first; the license
         matrix only means something afterwards.
       </div>
       <div class="dw">
         <table class="ref-table">
           <thead><tr><th>What you are doing</th><th>Typically triggers</th></tr></thead>
           <tbody>
-            <tr><td>Running it on your own servers, internal users</td><td>Almost nothing, in most licences</td></tr>
+            <tr><td>Running it on your own servers, internal users</td><td>Almost nothing, in most licenses</td></tr>
             <tr><td>Offering it as a network service to others</td><td>Nothing — <em>except</em> under AGPL-style terms, which is the whole point of them</td></tr>
-            <tr><td>Shipping a binary, an installer or an image</td><td>Attribution, licence text, and for copyleft the corresponding source</td></tr>
+            <tr><td>Shipping a binary, an installer or an image</td><td>Attribution, license text, and for copyleft the corresponding source</td></tr>
             <tr><td>Shipping hardware with software on it</td><td>The same, plus installation information under some copyleft terms</td></tr>
-            <tr><td>Publishing your own source that includes theirs</td><td>The licence's compatibility rules now bind your project</td></tr>
+            <tr><td>Publishing your own source that includes theirs</td><td>The license's compatibility rules now bind your project</td></tr>
             <tr><td>Internal modifications you never release</td><td>Usually nothing at all</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The second row is why the AGPL exists and why some organisations ban it outright: ordinary
+          The second row is why the AGPL exists and why some organizations ban it outright: ordinary
           copyleft was written when software was shipped, so running a modified version as a hosted
           service created an obligation-free loophole. AGPL closes it by treating network use as
           distribution. Whether that is a problem for you depends entirely on whether you would
@@ -5981,7 +5981,7 @@ cosign verify $IMAGE \
       <div class="concept-label">Reference</div>
       <div class="concept-title">The Families, and What Each Asks For</div>
       <div class="concept-desc">
-        Dozens of licences exist; they cluster into four groups, and knowing the group is most of
+        Dozens of licenses exist; they cluster into four groups, and knowing the group is most of
         what a practitioner needs. This is orientation, not legal advice — for anything you ship
         commercially, the answer comes from a lawyer who has read your actual situation.
       </div>
@@ -5989,10 +5989,10 @@ cosign verify $IMAGE \
         <table class="ref-table">
           <thead><tr><th>Family</th><th>Examples</th><th>Asks of you</th></tr></thead>
           <tbody>
-            <tr><td>Permissive</td><td>MIT, BSD, ISC</td><td>Keep the notice and the licence text. That is broadly it</td></tr>
+            <tr><td>Permissive</td><td>MIT, BSD, ISC</td><td>Keep the notice and the license text. That is broadly it</td></tr>
             <tr><td>Permissive with a patent grant</td><td>Apache 2.0</td><td>The above, plus state changes; gives explicit patent rights</td></tr>
             <tr><td>Weak copyleft</td><td>LGPL, MPL 2.0, EPL</td><td>Changes <em>to that component</em> must be shared; your own code need not be</td></tr>
-            <tr><td>Strong copyleft</td><td>GPL 2.0/3.0, AGPL</td><td>Distribute a combined work and the whole thing carries the licence</td></tr>
+            <tr><td>Strong copyleft</td><td>GPL 2.0/3.0, AGPL</td><td>Distribute a combined work and the whole thing carries the license</td></tr>
             <tr><td>Not open source at all</td><td>SSPL, BUSL, "source available", most vendor community editions</td><td>Read them properly — several forbid exactly the use you had in mind</td></tr>
           </tbody>
         </table>
@@ -6000,7 +6000,7 @@ cosign verify $IMAGE \
           That last row has grown in importance. A number of well-known projects have relicensed to
           source-available terms that restrict offering the software as a service or require a
           commercial agreement above a threshold. They are frequently still described as "open
-          source" in blog posts and dashboards. The practical habit: <strong>check the licence file
+          source" in blog posts and dashboards. The practical habit: <strong>check the license file
           in the version you are actually pulling</strong>, not the one you remember from three
           years ago.
         </div>
@@ -6018,11 +6018,11 @@ cosign verify $IMAGE \
           <thead><tr><th>Practice</th><th>Detail</th></tr></thead>
           <tbody>
             <tr><td>Know what you ship versus what you run</td><td>The single distinction that scopes everything else</td></tr>
-            <tr><td>Generate an SBOM <span class="acro-exp">(Software Bill of Materials)</span> and keep the licence field</td><td>Most tooling reports licences alongside versions; that report *is* your inventory</td></tr>
+            <tr><td>Generate an SBOM <span class="acro-exp">(Software Bill of Materials)</span> and keep the license field</td><td>Most tooling reports licenses alongside versions; that report *is* your inventory</td></tr>
             <tr><td>Have a policy with a small allow list</td><td>"Permissive and weak copyleft, ask before strong copyleft" fits on one page and answers 95% of cases</td></tr>
             <tr><td>Ship a notices file</td><td>Attribution is the most commonly breached obligation and the easiest to satisfy</td></tr>
-            <tr><td>Watch for transitive licences</td><td>Your permissive dependency may pull a copyleft one four levels down</td></tr>
-            <tr><td>Re-check on relicensing</td><td>A dependency changing licence in a minor version has happened repeatedly</td></tr>
+            <tr><td>Watch for transitive licenses</td><td>Your permissive dependency may pull a copyleft one four levels down</td></tr>
+            <tr><td>Re-check on relicensing</td><td>A dependency changing license in a minor version has happened repeatedly</td></tr>
             <tr><td>Never paste licensed code into your own without checking</td><td>Including code an assistant suggested — the obligation follows the code, not the route it took</td></tr>
             <tr><td>Get advice before shipping copyleft in a product</td><td>This is the one where being wrong is expensive</td></tr>
           </tbody>
@@ -6030,7 +6030,7 @@ cosign verify $IMAGE \
         <div class="concept-desc verdict">
           The transitive row is where teams are usually surprised, and it is the same mechanism as
           the security problem next door — you did not choose that dependency, and you carry it
-          anyway. The inventory that answers both questions is the same artefact:
+          anyway. The inventory that answers both questions is the same artifact:
           <span class="xref">SBOM in Practice &amp; VEX — Querying It, and Saying "Not Affected" Credibly</span>,
           alongside <span class="xref">Dependency Risk — Transitive Depth, Typosquatting &amp; the Abandoned Package</span>.
           The commercial equivalent of the whole conversation is
@@ -6097,7 +6097,7 @@ cosign verify $IMAGE \
                     The section people cut for length is <strong>non-goals</strong>, and it is the one that saves
                     the most time. Half the comments on a design doc are about scope somebody assumed was included;
                     three lines of non-goals removes them before they are written. Keep the whole thing under two
-                    pages &mdash; a document nobody finishes is not reviewable at any level of rigour.
+                    pages &mdash; a document nobody finishes is not reviewable at any level of rigor.
                   </div>
                 </div>
               </div>
@@ -6139,7 +6139,7 @@ cosign verify $IMAGE \
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Core Concept</div>
-                <div class="concept-title">It Is Never Build Cost Against Licence Cost</div>
+                <div class="concept-title">It Is Never Build Cost Against License Cost</div>
                 <div class="concept-desc">
                   The comparison as usually presented &mdash; six months of engineering time against an annual
                   subscription &mdash; is not the comparison. It is <strong class="c-cyan">total cost against
@@ -6155,7 +6155,7 @@ cosign verify $IMAGE \
                     <tr><td>&mdash;</td><td>The person who wrote it leaving, and the six months of nobody understanding it</td></tr>
                     <tr><td>&mdash;</td><td>Features the vendor ships that you will now be asked for</td></tr>
                     <tr><td>&mdash;</td><td>Security patching of a thing nobody is watching for CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></td></tr>
-                    <tr><td>The licence cost, accurately</td><td>Integration effort, and the exit cost when you eventually leave</td></tr>
+                    <tr><td>The license cost, accurately</td><td>Integration effort, and the exit cost when you eventually leave</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     The rule of thumb that survives contact with reality: <strong>the build estimate is the
@@ -6181,13 +6181,13 @@ cosign verify $IMAGE \
                     <tr><td>Your differentiator</td><td><strong>Build.</strong> Even at a cost premium &mdash; this is the thing you are for</td></tr>
                     <tr><td>Undifferentiated but critical</td><td>Buy, and integrate well. Identity, payments, email delivery, observability</td></tr>
                     <tr><td>Undifferentiated and non-critical</td><td>Buy the cheapest adequate thing, and do not think about it again</td></tr>
-                    <tr><td>A commodity you keep customising</td><td><strong>The trap.</strong> You are building, slowly, while paying a licence</td></tr>
+                    <tr><td>A commodity you keep customizing</td><td><strong>The trap.</strong> You are building, slowly, while paying a license</td></tr>
                     <tr><td>Something no vendor does</td><td>Check that again. &ldquo;Nobody sells this&rdquo; is usually &ldquo;we have not looked&rdquo;</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    The fourth row is where most of the regret is. <strong>A bought system customised past
-                    recognition has both costs</strong>: the licence, and a maintenance burden on integration code
-                    that upgrades will keep breaking. When customisation exceeds roughly the effort of building the
+                    The fourth row is where most of the regret is. <strong>A bought system customized past
+                    recognition has both costs</strong>: the license, and a maintenance burden on integration code
+                    that upgrades will keep breaking. When customization exceeds roughly the effort of building the
                     part you actually need, the decision has already been made and nobody has admitted it.
                   </div>
                 </div>
@@ -6204,7 +6204,7 @@ cosign verify $IMAGE \
                     <tr><th>Direction</th><th>The obligation</th></tr>
                     <tr><td>Buy</td><td><strong>Know the exit.</strong> How does the data come out, in what format, and how long would migrating take?</td></tr>
                     <tr><td>Buy</td><td>Avoid the deepest integrations where a shallow one suffices &mdash; every hook is exit cost</td></tr>
-                    <tr><td>Build</td><td><strong>A named owning team, funded past the launch.</strong> Unowned internal tools are the most expensive things an organisation runs</td></tr>
+                    <tr><td>Build</td><td><strong>A named owning team, funded past the launch.</strong> Unowned internal tools are the most expensive things an organization runs</td></tr>
                     <tr><td>Build</td><td>A deprecation plan from the start. What would make us stop, and what happens to users then?</td></tr>
                     <tr><td>Either</td><td>Revisit on a date. Both decisions are correct under conditions that change</td></tr>
                   </table>
@@ -6232,18 +6232,18 @@ cosign verify $IMAGE \
                 <div class="concept-label">Core Concept</div>
                 <div class="concept-title">The Track Is Real and Badly Defined Nearly Everywhere</div>
                 <div class="concept-desc">
-                  Most organisations write a Staff+ ladder by taking the management ladder and removing the
+                  Most organizations write a Staff+ ladder by taking the management ladder and removing the
                   people management, which produces a description of a senior engineer with more adjectives.
                   The actual difference is not seniority, it is <strong class="c-cyan">scope of
                   impact</strong> &mdash; and specifically, work that requires no direct authority and that
-                  nobody else in the organisation is positioned to do.
+                  nobody else in the organization is positioned to do.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Level</th><th>The unit of work</th></tr>
                     <tr><td>Senior</td><td>A feature, a service, a project. Delivered well, largely alone or leading a couple of people</td></tr>
                     <tr><td>Staff</td><td><strong>A problem that crosses teams</strong> and that nobody owns, because it belongs to no single team</td></tr>
-                    <tr><td>Principal</td><td>A problem that crosses the organisation, often multi-year, often about direction rather than delivery</td></tr>
+                    <tr><td>Principal</td><td>A problem that crosses the organization, often multi-year, often about direction rather than delivery</td></tr>
                     <tr><td>The common mistake</td><td>Defining Staff as &ldquo;a very good senior&rdquo;, which makes the promotion about tenure</td></tr>
                     <tr><td>The other mistake</td><td>Defining it as &ldquo;a manager who codes&rdquo;, which is a fourth job nobody wanted</td></tr>
                   </table>
@@ -6292,9 +6292,9 @@ cosign verify $IMAGE \
                     <tr><th>Failure</th><th>What it looks like</th></tr>
                     <tr><td>No scope granted</td><td>Given the title and left on one team. The work requires access to problems, and access is granted rather than taken</td></tr>
                     <tr><td>Becoming a bottleneck</td><td>Every design routed through one person. <strong>Influence that does not scale is just a queue</strong></td></tr>
-                    <tr><td>Drifting into management without the title</td><td>Coordination expands to fill the day, and the technical judgement that justified the role decays</td></tr>
-                    <tr><td>No visible artefacts</td><td>Influence is invisible in a promotion packet unless it left documents behind &mdash; see <span class="xref">Staff+ Archetypes</span></td></tr>
-                    <tr><td>Loneliness</td><td>The honest one. The role has no peers on the team and no cohort, and organisations rarely build one</td></tr>
+                    <tr><td>Drifting into management without the title</td><td>Coordination expands to fill the day, and the technical judgment that justified the role decays</td></tr>
+                    <tr><td>No visible artifacts</td><td>Influence is invisible in a promotion packet unless it left documents behind &mdash; see <span class="xref">Staff+ Archetypes</span></td></tr>
+                    <tr><td>Loneliness</td><td>The honest one. The role has no peers on the team and no cohort, and organizations rarely build one</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     The advice that most reliably helps someone in the role: <strong>write things down, and make
@@ -6310,7 +6310,7 @@ cosign verify $IMAGE \
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🎯</span>
-              <span class="topic-name">Goals That Survive the Quarter — OKRs <span class="acro-exp">(Objectives and Key Results)</span> Without the Theatre</span>
+              <span class="topic-name">Goals That Survive the Quarter — OKRs <span class="acro-exp">(Objectives and Key Results)</span> Without the Theater</span>
               <span class="topic-badge">Leading Teams</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -6328,7 +6328,7 @@ cosign verify $IMAGE \
                     <tr><th>Failure</th><th>What it looks like</th></tr>
                     <tr><td><strong>Outputs written as outcomes</strong></td><td>&ldquo;Ship the new dashboard&rdquo; is a task with a date. &ldquo;Support answers 30% fewer 'where is my order' tickets&rdquo; is an outcome</td></tr>
                     <tr><td><strong>Targets set to be achievable</strong></td><td>If every goal lands at 100%, they were commitments. A measure that cannot go the wrong way is not a measure</td></tr>
-                    <tr><td><strong>A review nobody attends</strong></td><td>Set in January, read in December. The value is in the mid-quarter conversation, which is the part that gets cancelled</td></tr>
+                    <tr><td><strong>A review nobody attends</strong></td><td>Set in January, read in December. The value is in the mid-quarter conversation, which is the part that gets canceled</td></tr>
                     <tr><td>Too many</td><td>Six goals is a list of everything the team was going to do anyway, relabelled</td></tr>
                     <tr><td>No named owner</td><td>&ldquo;The team&rdquo; owns it, so nobody reports on it</td></tr>
                   </table>
@@ -6349,7 +6349,7 @@ cosign verify $IMAGE \
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Fix</th><th>Why it works</th></tr>
-                    <tr><td><strong>Two or three goals, not six</strong></td><td>Forces the prioritisation conversation that the list was avoiding</td></tr>
+                    <tr><td><strong>Two or three goals, not six</strong></td><td>Forces the prioritization conversation that the list was avoiding</td></tr>
                     <tr><td>A metric with a plausible bad outcome</td><td>&ldquo;p95 latency under 300ms&rdquo; can fail. &ldquo;Improve performance&rdquo; cannot</td></tr>
                     <tr><td>One named person per goal</td><td>Not an owner of the work &mdash; an owner of <em>reporting the number</em></td></tr>
                     <tr><td>A mid-quarter checkpoint in the calendar</td><td>Booked at the same time the goals are set, or it does not happen</td></tr>
@@ -6367,7 +6367,7 @@ cosign verify $IMAGE \
                 <div class="concept-label">Practice</div>
                 <div class="concept-title">What to Do When a Goal Is Going to Miss</div>
                 <div class="concept-desc">
-                  The response to a goal that is failing is where the framework earns its keep or becomes theatre,
+                  The response to a goal that is failing is where the framework earns its keep or becomes theater,
                   and the honest options are three rather than one.
                 </div>
                 <div class="dw">
@@ -6383,7 +6383,7 @@ cosign verify $IMAGE \
                     The cultural precondition is the fourth row and it cannot be added later:
                     <strong>if missing a goal is punished, every goal will be set to be met</strong>, and the
                     framework converts into an elaborate way of writing down what was going to happen anyway. That
-                    is a leadership behaviour rather than a process choice, and no amount of tooling substitutes for
+                    is a leadership behavior rather than a process choice, and no amount of tooling substitutes for
                     it.
                   </div>
                 </div>
@@ -6420,7 +6420,7 @@ cosign verify $IMAGE \
                   <div class="concept-desc verdict">
                     <strong>The clause that makes these trade-offs is the clause that gets dropped.</strong>
                     Each line names two goods and ranks them; the manifesto states outright that the right-hand
-                    side still has value. An organisation reading the four lines as &ldquo;we do not do the
+                    side still has value. An organization reading the four lines as &ldquo;we do not do the
                     right-hand things&rdquo; has not adopted anything — it has removed a counterweight, which is
                     why the failures are so uniform: no written decisions anybody can find, no plan finance can
                     budget against, and a contract nobody is allowed to vary.
@@ -6439,11 +6439,11 @@ cosign verify $IMAGE \
                   <table class="ref-table">
                     <tr><th>Principle</th><th>What it rules out</th></tr>
                     <tr><td><strong>Working software is the primary measure of progress</strong></td><td>Progress reported as percentage complete. A plan 80% done is not 80% of the value, and everyone has met the last 20%</td></tr>
-                    <tr><td><strong>Welcome changing requirements, even late</strong></td><td>Change control as the defence. Absorbing late change is an <em>architectural</em> capability you pay for in design, not a promise you make in a meeting</td></tr>
+                    <tr><td><strong>Welcome changing requirements, even late</strong></td><td>Change control as the defense. Absorbing late change is an <em>architectural</em> capability you pay for in design, not a promise you make in a meeting</td></tr>
                     <tr><td><strong>Continuous attention to technical excellence enhances agility</strong></td><td>Trading quality for speed and calling it pragmatism. The principle is a claim about cause: quality is what keeps you fast later</td></tr>
                     <tr><td><strong>A constant pace, maintained indefinitely</strong></td><td>The crunch that hits the date. Sustainable pace is stated as a principle, not offered as a perk</td></tr>
-                    <tr><td>The best designs emerge from self-organising teams</td><td>An architecture handed down complete to a team that must then own it</td></tr>
-                    <tr><td>At regular intervals the team tunes its own behaviour</td><td>A process imposed from outside and never adjusted — the only principle that changes the process itself</td></tr>
+                    <tr><td>The best designs emerge from self-organizing teams</td><td>An architecture handed down complete to a team that must then own it</td></tr>
+                    <tr><td>At regular intervals the team tunes its own behavior</td><td>A process imposed from outside and never adjusted — the only principle that changes the process itself</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong>The four that bite are the four nobody puts on a poster.</strong> Sustainable pace,
@@ -6459,7 +6459,7 @@ cosign verify $IMAGE \
                 <div class="concept-title">What Gets Adopted, and What Gets Quietly Left Behind</div>
                 <div class="concept-desc">
                   Adoptions fail in a pattern rather than at random. The visible half — the events, the board,
-                  the vocabulary — is compatible with a plan-driven organisation (the waterfall the manifesto
+                  the vocabulary — is compatible with a plan-driven organization (the waterfall the manifesto
                   was written against) and survives contact with one.
                   The half that would have changed something does not.
                 </div>
@@ -6475,7 +6475,7 @@ cosign verify $IMAGE \
                   <div class="concept-desc verdict">
                     <strong>One question settles it: can the team change what is being built?</strong> If the
                     answer to &ldquo;we have found a better thing to build&rdquo; is a change request, the
-                    organisation is waterfall with agile decoration — which is a legitimate way to run a
+                    organization is waterfall with agile decoration — which is a legitimate way to run a
                     project, and there are contracts and regulators that require it. The dishonest position is
                     keeping the ceremonies that imply otherwise. Naming it plan-driven costs a word and buys
                     back every meeting that was pretending.
@@ -6564,12 +6564,12 @@ cosign verify $IMAGE \
                     <tr><td><strong>A Sprint anyone may interrupt</strong></td><td>Scope changes mid-Sprint by request; the Sprint Goal becomes a label on a period of time</td><td><strong>Fatal</strong> — nothing is being held still long enough to learn from</td></tr>
                     <tr><td>Scrum Master as administrator</td><td>Books rooms, chases the board, updates the tool. Nobody is accountable for removing impediments</td><td>Degrading — the blockers stay</td></tr>
                     <tr><td>Developers who cannot finish alone</td><td>Every Sprint ends waiting on a separate test, database or release team</td><td>Degrading — the Sprint length is now someone else's queue</td></tr>
-                    <tr><td>Estimates read as commitments</td><td>The forecast is quoted back as a promise, so forecasts get padded and stop carrying information</td><td>Degrading — see <span class="xref">Planning Without Theatre — Roadmaps, Velocity &amp; Honest Estimates</span></td></tr>
+                    <tr><td>Estimates read as commitments</td><td>The forecast is quoted back as a promise, so forecasts get padded and stop carrying information</td><td>Degrading — see <span class="xref">Planning Without Theater — Roadmaps, Velocity &amp; Honest Estimates</span></td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     The three fatal rows share one shape and it is the shape named in
                     <span class="xref">Agile — The Four Trade-offs, and What Gets Sold as Agile</span>:
-                    <strong>each removes the organisation's ability to change what is being built, while leaving
+                    <strong>each removes the organization's ability to change what is being built, while leaving
                     the ceremony that implies it can</strong>. A team can run every event perfectly with a
                     Product Owner who cannot say no, and produce nothing but a well-documented queue. Fix the
                     authority, the Definition of Done and the interruptions in that order; the other three are
@@ -6593,18 +6593,18 @@ cosign verify $IMAGE \
                 <div class="concept-title">A Board Is Not Kanban Until Something on It Says No</div>
                 <div class="concept-desc">
                   Almost every team has columns and cards. Almost none has Kanban, because the board is the
-                  visualisation and the method is the set of policies attached to it. The distinguishing feature
+                  visualization and the method is the set of policies attached to it. The distinguishing feature
                   is a number written above a column that stops work being started.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Practice</th><th>What it means in the room</th></tr>
-                    <tr><td>Visualise the work</td><td>Every item anyone is spending time on is on the board, including the interrupts and the favour for another team</td></tr>
+                    <tr><td>Visualize the work</td><td>Every item anyone is spending time on is on the board, including the interrupts and the favor for another team</td></tr>
                     <tr><td><strong>Limit work in progress</strong></td><td>A column will not accept a new card while it is full. The only way to start something is to finish something</td></tr>
                     <tr><td>Manage flow</td><td>The subject of the standing meeting is the ages of the items on the board, not the people standing around it</td></tr>
                     <tr><td>Make policies explicit</td><td>&ldquo;Ready for review&rdquo; has a written definition, so the board cannot be argued with</td></tr>
                     <tr><td>Implement feedback loops</td><td>A cadence for replenishing, for delivering, and for changing the policies themselves</td></tr>
-                    <tr><td>Improve collaboratively, evolve experimentally</td><td>Start from the process you have and change it in small steps &mdash; no reorganisation on day one</td></tr>
+                    <tr><td>Improve collaboratively, evolve experimentally</td><td>Start from the process you have and change it in small steps &mdash; no reorganization on day one</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     The second practice is the one that is quietly dropped, and dropping it removes the method.
@@ -6632,7 +6632,7 @@ cosign verify $IMAGE \
                     <tr><td>Throughput does not rise with items started</td><td>Starting a second thing does not add a second worker. It splits one</td></tr>
                     <tr><td>Every switch costs re-entry</td><td>The cost is not the switch, it is rebuilding the context that was in someone's head</td></tr>
                     <tr><td><strong>Waiting dominates</strong></td><td>Measure flow efficiency — touch time over total time. Teams that measure it for the first time usually find 5&ndash;15%, which means the improvement is never in typing faster</td></tr>
-                    <tr><td>Utilisation near 100% explodes the wait</td><td>The queueing result, applied to people: a team booked solid has no capacity to absorb variation, so everything queues</td></tr>
+                    <tr><td>Utilization near 100% explodes the wait</td><td>The queueing result, applied to people: a team booked solid has no capacity to absorb variation, so everything queues</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     The rows above are all one claim seen from different sides:
@@ -6835,7 +6835,7 @@ cosign verify $IMAGE \
                     <tbody>
                       <tr><td>Queue depth, or backlog age</td><td>Leads</td><td>Anything with a queue in front of it. The best default there is</td></tr>
                       <tr><td>Concurrent requests in flight</td><td>Leads</td><td>Request-driven services; it saturates before CPU does</td></tr>
-                      <tr><td>CPU utilisation</td><td>Lags</td><td>Genuinely CPU-bound work, and nothing else</td></tr>
+                      <tr><td>CPU utilization</td><td>Lags</td><td>Genuinely CPU-bound work, and nothing else</td></tr>
                       <tr><td>Memory</td><td>Neither, usually</td><td>Rarely a scaling signal. A rising floor is a leak, and more instances hide it</td></tr>
                       <tr><td>p99 latency</td><td>Lags badly</td><td>An alerting signal. By the time it moves, users have already felt it</td></tr>
                     </tbody>

@@ -808,7 +808,7 @@ user@hop1:port1,user@hop2:port2 user@target
                     you set yourself.
                   </div>
                   <div class="code-label">
-                    ~/.tmux.conf — USEFUL CUSTOMISATIONS
+                    ~/.tmux.conf — USEFUL CUSTOMIZATIONS
                   </div>
                   <pre class="code-block"><span class="com"># Change prefix key from Ctrl+b to Ctrl+a (screen-style)</span>
 <span class="kw">unbind</span> C-b
@@ -1654,7 +1654,7 @@ volumes:
   <div class="topic-body">
     <div class="concept-card">
       <div class="concept-label">YAML Ain't Markup Language</div>
-      <div class="concept-title">Human-Readable Data Serialisation — Docker, K8s, Ansible, GitHub Actions</div>
+      <div class="concept-title">Human-Readable Data Serialization — Docker, K8s, Ansible, GitHub Actions</div>
       <div class="concept-desc">
         YAML is the config language of modern infrastructure. Used by
         Docker Compose, Kubernetes, GitHub Actions, Ansible, and hundreds
@@ -1804,7 +1804,7 @@ jobs:
           require sharing a password, which is the whole argument; and a syntax error
           written directly into the sudoers file locks everybody out of privilege on
           that machine, which visudo exists to prevent. The shadow row is the other
-          thing to internalise: password hashes live in a root-only file for a reason,
+          thing to internalize: password hashes live in a root-only file for a reason,
           and anything that reads it is a finding.
         </div></div></div>
 <div class="topic" data-reviewed="2026-07"><div class="topic-header"><span class="topic-icon">⚙️</span><span class="topic-name">Processes &amp; Services</span><span class="topic-badge">Linux+ • A+</span><span class="topic-chev">▶</span></div><div class="topic-body"><div class="concept-card"><div class="concept-label">PROCESSES</div><div class="concept-title">Inspect &amp; Signal</div><div class="concept-desc">ps / top / htop show running processes. kill sends signals: SIGTERM(15) asks nicely, SIGKILL(9) forces. nohup / &amp; / bg / fg manage jobs.</div><pre class="code-block"><span class='com'># Find and stop a process</span>
@@ -1862,7 +1862,7 @@ jobs:
 <span class='fn'>chmod</span> +x script.sh   <span class='com'># make a file runnable</span></pre></div><div class="concept-card"><div class="concept-label">APP STORE FOR THE TERMINAL</div><div class="concept-title">Package Managers</div><div class="concept-desc">You don’t download installers in Linux — a package manager fetches, installs, and updates software from trusted repositories, handling all the pieces it depends on. apt (Debian/Ubuntu), dnf (Fedora), and pacman (Arch) are the common ones.</div></div><table class="ai-table"><thead><tr><th>You Want To…</th><th>Command (Ubuntu/Debian)</th></tr></thead><tbody><tr><td>Refresh the catalog</td><td>sudo apt update</td></tr><tr><td>Install a program</td><td>sudo apt install name</td></tr><tr><td>Update everything</td><td>sudo apt upgrade</td></tr><tr><td>Remove a program</td><td>sudo apt remove name</td></tr><tr><td>Search for one</td><td>apt search keyword</td></tr></tbody></table>
         <div class="concept-desc verdict">
           <strong>The first row is not optional, and skipping it is why "package not
-          found" happens on a fresh machine.</strong> Update refreshes the catalogue
+          found" happens on a fresh machine.</strong> Update refreshes the catalog
           and installs nothing; upgrade installs. Learn that pair as one action, and
           be careful with the remove row — it commonly leaves configuration behind,
           which is a feature when you reinstall and a puzzle when you were trying to
@@ -2143,7 +2143,7 @@ lsof -p PID</pre>
         <strong>The hang-up signal is the useful one nobody remembers.</strong>
         Reloading configuration without dropping connections is what it is for, and
         reaching for a restart instead is why a config change costs an outage on a busy
-        web server. Learn which of your daemons honour it — most of the common ones do —
+        web server. Learn which of your daemons honor it — most of the common ones do —
         and keep SIGKILL for the process that has already ignored a polite request.
       </div>
       <pre class="code-block"><span class="com"># Polite stop (give process time to clean up)</span>
@@ -2308,7 +2308,7 @@ sudo systemctl enable --now myapp</pre>
       </table>
       <div class="concept-desc verdict">
         <strong>Pick by the security row when the workload is not yours, and by the
-        startup row when it is.</strong> Everything else on this table favours
+        startup row when it is.</strong> Everything else on this table favors
         containers, which is why they win by default and why the exception matters: a
         shared kernel means the boundary is only as strong as the kernel's isolation,
         and that is the wrong bet for untrusted code. For your own services, the
@@ -3036,7 +3036,7 @@ sudo apt install fail2ban
         <strong>The failure column is the diagnostic, and it narrows the problem before
         you touch anything.</strong> A kernel panic, a GRUB prompt and a hang on a
         service are three completely different problems with three different tools, and
-        knowing which stage you are in is most of the work. Learn to recognise stage 4
+        knowing which stage you are in is most of the work. Learn to recognize stage 4
         in particular: emergency mode with a failing unit is the commonest of these and
         is nearly always a bad mount in `/etc/fstab`.
       </div>
@@ -3235,7 +3235,7 @@ sudo resize2fs /dev/data_vg/data_lv   <span class="com"># grow the filesystem to
         <strong>Learn the new column; the old one will not be installed on the machine
         where you need it.</strong> Minimal images and modern distributions ship without
         net-tools entirely, so muscle memory for `ifconfig` becomes "command not found"
-        at the worst moment. The `ss` row is the one worth practising first — it is what
+        at the worst moment. The `ss` row is the one worth practicing first — it is what
         you reach for when something is listening and you need to know what.
       </div>
     </div>
@@ -4040,7 +4040,7 @@ sudo lvremove /dev/data_vg/app_data_snap
       <div class="concept-label">Core Concept</div>
       <div class="concept-title">How Email Actually Travels</div>
       <div class="concept-desc">
-        Email involves more moving parts than people realise. Three
+        Email involves more moving parts than people realize. Three
         protocols and two server roles cover almost everything:<br><br>
         &bull; <strong>MTA (Mail Transfer Agent)</strong> — moves mail
           between servers using <strong>SMTP</strong> (Simple Mail
@@ -5182,13 +5182,13 @@ systemd-analyze blame           <span class="com"># what slowed boot?</span></pr
                   running in the foreground and letting systemd supervise it, which is what it wants. And
                   the <strong class="c-cyan">cgroup</strong>: systemd puts every process a service spawns
                   into one, which is how it reliably stops all of them — the orphaned-child leak SysV
-                  suffered is gone — so a service that daemonises itself out of its cgroup
+                  suffered is gone — so a service that daemonizes itself out of its cgroup
                   <strong class="c-amber">escapes the very supervision you wanted</strong>.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>The instinct</th><th>The systemd-native answer</th></tr>
-                    <tr><td>Daemonise with a custom PID file</td><td>Run in the foreground; <code>Type=notify</code> or <code>simple</code> — systemd is the supervisor</td></tr>
+                    <tr><td>Daemonize with a custom PID file</td><td>Run in the foreground; <code>Type=notify</code> or <code>simple</code> — systemd is the supervisor</td></tr>
                     <tr><td>A cron job</td><td>A <code>.timer</code> — journal logging, missed-run handling, dependencies</td></tr>
                     <tr><td><code>nohup</code> / <code>&amp;</code> to keep it alive</td><td>A <code>.service</code> with <code>Restart=</code> — supervision is the point</td></tr>
                     <tr><td><code>ulimit</code> / <code>nice</code> wrappers</td><td>Unit resource controls (<code>MemoryMax</code>, <code>CPUQuota</code>) via cgroups</td></tr>
@@ -5548,10 +5548,10 @@ reboot
                     <tr><td>Use UUIDs in <code>fstab</code>, with <code>nofail</code> on non-essential mounts</td><td>A missing data disk stops being a boot failure</td></tr>
                     <tr><td>Know where your rescue media is</td><td>The ISO <span class="acro-exp">(International Organization for Standardization)</span> you cannot download because the machine will not boot</td></tr>
                     <tr><td>Record the disk layout somewhere off the host</td><td><code>lsblk -f</code> output in the runbook. Guessing partitions under pressure is how the wrong one gets formatted</td></tr>
-                    <tr><td>Practise once, on a VM <span class="acro-exp">(Virtual Machine)</span> you can break</td><td>The same argument as evidence handling: a procedure never performed is not a capability</td></tr>
+                    <tr><td>Practice once, on a VM <span class="acro-exp">(Virtual Machine)</span> you can break</td><td>The same argument as evidence handling: a procedure never performed is not a capability</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    On a virtualised or cloud estate there is usually a faster path than any of this:
+                    On a virtualized or cloud estate there is usually a faster path than any of this:
                     <strong>detach the disk, attach it to a working instance, fix it there, and reattach</strong>.
                     It skips the rescue media and the chroot entirely, and it is worth knowing as the first option
                     rather than the clever one &mdash; the sequence above is for physical hardware and for the
@@ -5574,7 +5574,7 @@ reboot
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">Two Separate Stacks That People Conflate</div>
                 <div class="concept-desc">
-                  Authentication asks <em>who are you</em>; authorisation asks <em>what may you do</em>. On
+                  Authentication asks <em>who are you</em>; authorization asks <em>what may you do</em>. On
                   Linux those are two different systems that fail in two different ways, and the confusion between
                   them produces the two mistakes that lock everybody out of a machine.
                   <strong class="c-cyan">PAM decides whether you get in. sudoers decides what you can do once you
@@ -5626,7 +5626,7 @@ bob       ALL = (ALL) NOPASSWD: /usr/bin/less     <span class="com"># !sh</span>
 sudo -l -U bob
 </pre>
                   <div class="concept-desc verdict">
-                    The bottom block is the part worth internalising, and it is the whole content of GTFOBins:
+                    The bottom block is the part worth internalizing, and it is the whole content of GTFOBins:
                     <strong class="c-amber">granting <code>NOPASSWD</code> on any program that can spawn a shell,
                     execute a command or write an arbitrary file is granting root</strong>. <code>vim</code>,
                     <code>find</code>, <code>less</code>, <code>awk</code>, <code>tar</code>, <code>git</code> and
@@ -5640,7 +5640,7 @@ sudo -l -U bob
                 <div class="concept-title">PAM Is a Stack, and the Control Field Decides What a Failure Means</div>
                 <div class="concept-desc">
                   A PAM configuration is a list of modules evaluated in order, and the second column &mdash; the
-                  control &mdash; is what makes the behaviour non-obvious. <strong>The order matters and so does
+                  control &mdash; is what makes the behavior non-obvious. <strong>The order matters and so does
                   the word</strong>, and one <code>sufficient</code> in the wrong place makes the modules below it
                   unreachable.
                 </div>
@@ -6003,7 +6003,7 @@ ltrace ./myprogram
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Where the files live</th><th>Behaviour</th></tr>
+                    <tr><th>Where the files live</th><th>Behavior</th></tr>
                     <tr><td><code>~/project</code> (inside WSL)</td><td><strong>Fast.</strong> Native ext4. This is where code should live</td></tr>
                     <tr><td><code>/mnt/c/Users/you/project</code></td><td>Slow for many small files &mdash; the git, node_modules and build case</td></tr>
                     <tr><td>Editing WSL files from Windows</td><td>Fine &mdash; <code>\\wsl$\</code> works, and editors with a WSL mode handle it properly</td></tr>
@@ -6040,7 +6040,7 @@ ltrace ./myprogram
                     with no commitment; the second gives you a machine you can destroy, which is the only way to
                     learn recovery &mdash; and the card on
                     <span class="xref">Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot</span>
-                    is considerably easier to practise on something you are allowed to break.
+                    is considerably easier to practice on something you are allowed to break.
                   </div>
                 </div>
               </div>

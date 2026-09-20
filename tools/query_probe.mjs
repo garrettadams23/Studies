@@ -237,7 +237,7 @@ const READERS = [
     ["mailbox full", "", "m365/retention-litigation-hold-archiving-legals-requirements-in-m"],
     ["onboarding a new starter", "", "m365/joiner-mover-leaver-in-m365-terms-the-process-that-prevents-"],
     ["leaver checklist", "", "m365/joiner-mover-leaver-in-m365-terms-the-process-that-prevents-"],
-    ["asset tagging", "", "infra/labelling-asset-tagging-the-boring-discipline-that-pays-out-"],
+    ["asset tagging", "", "infra/labeling-asset-tagging-the-boring-discipline-that-pays-out-a"],
     ["writing a ticket", "", "ops/writing-a-ticket-someone-else-can-solve"],
     ["angry user on the phone", "", "ops/difficult-conversations-angry-users-vip-pressure-saying-no"],
     ["explaining to a non technical manager", "",
@@ -245,7 +245,7 @@ const READERS = [
     ["wifi keeps dropping", "", "net/wireless-troubleshooting-roaming-sticky-clients-its-slow"],
     ["vpn keeps disconnecting", "", "net/vpns-tunneling-secure-connections-over-untrusted-networks"],
     ["laptop won't turn on", "", "hw/post-beep-codes-diagnostic-leds-reading-a-machine-that-will-"],
-    ["outlook won't connect", "", "m365/the-m365-troubleshooting-playbook-tenant-identity-licence-po"],
+    ["outlook won't connect", "", "m365/the-m365-troubleshooting-playbook-tenant-identity-license-po"],
     // ── batch two ──
     ["bitlocker recovery key", "", "endpoint/bitlocker-at-scale-silent-enablement-key-escrow-recovery"],
     ["reset a user's mfa"],
@@ -483,7 +483,7 @@ const READERS = [
     ["standups", "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
     // ── batch six ──
     ["our estimates are always wrong", "",
-     "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+     "eng/planning-without-theater-roadmaps-velocity-honest-estimates"],
     ["nobody reads the documentation", "",
      "career/documentation-types-docs-as-code-four-kinds-and-why-mixing-t"],
     ["too many alerts", "",
@@ -492,7 +492,7 @@ const READERS = [
      "kind 3, same cause — 'standups' carries the query and misses for the reason above; 'our standup is useless' reaches the Daily Scrum row that answers it",
      "eng/scrum-three-accountabilities-five-events-three-artifacts"],
     // ── batch two ──
-    ["estimating", "", "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+    ["estimating", "", "eng/planning-without-theater-roadmaps-velocity-honest-estimates"],
     ["incident postmortem", "", "ops/writing-a-postmortem-people-actually-learn-from"],
     ["on call", "", "ops/on-call-done-humanely"],
     // ── batch nine ──
@@ -500,7 +500,7 @@ const READERS = [
      "ops/knowledge-management-kcs-in-practice-and-keeping-articles-fr"],
     // ── batch ten ──
     ["my manager wants an estimate", "",
-     "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+     "eng/planning-without-theater-roadmaps-velocity-honest-estimates"],
     // ── batch eleven ──
     ["somebody deleted the wrong thing", "",
      "ops/writing-a-postmortem-people-actually-learn-from"],
@@ -598,7 +598,7 @@ const READERS = [
     ["computer randomly restarts", "",
      "hw/intermittent-faults-heat-vibration-marginal-power-how-to-rep"],
     ["no display on the monitor", "",
-     "hw/displays-panel-types-scaling-colour-the-multi-monitor-pitfal"],
+     "hw/displays-panel-types-scaling-color-the-multi-monitor-pitfall"],
     ["raid array degraded", "",
      "infra/raid-erasure-coding-what-redundancy-buys-and-the-rebuild-win"],
     ["the server is out of memory", "",
@@ -615,7 +615,7 @@ const READERS = [
     ["the fans are always loud"],
     // ── batch thirteen ──
     ["the screen is flickering", "",
-     "hw/displays-panel-types-scaling-colour-the-multi-monitor-pitfal"],
+     "hw/displays-panel-types-scaling-color-the-multi-monitor-pitfall"],
     ["it will not boot from usb"],
     // ── batch fourteen ──
     ["the keyboard types the wrong characters"],
@@ -670,7 +670,7 @@ const READERS = [
     ["asking for a raise", "", "career/asking-for-a-raise-the-case-not-the-conversation"],
     ["impostor syndrome", "", "mind/imposter-syndrome-you-belong-here"],
     ["first week as a manager", "",
-     "eng/the-first-90-days-leading-a-team-listen-map-stabilise-then-c"],
+     "eng/the-first-90-days-leading-a-team-listen-map-stabilize-then-c"],
     ["i keep procrastinating", "",
      "productivity/procrastination-what-it-actually-is-and-the-moves-that-work"],
     ["which cert should i do first", "",

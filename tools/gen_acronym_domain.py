@@ -250,7 +250,7 @@ def main():
             "Overview",
             f"{len(entries)} acronyms · {total_meanings} meanings",
             "Every acronym used anywhere on this site is expanded inline the first "
-            "time it appears in a topic — the grey text in brackets beside it. This "
+            "time it appears in a topic — the gray text in brackets beside it. This "
             "domain is the full lookup table: browse "
             "<strong>A&nbsp;–&nbsp;Z</strong> below, jump to a subject area, or use "
             "the search box at the top of the page (it matches both the acronym and "

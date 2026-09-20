@@ -56,15 +56,15 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Reader questions answered | **255 of 273**, **0 unexplained** — sixteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 17 remaining zeros, the 1 wrong-card and the 4 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,595 steps, 1,497 of 1,557 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,497 topics, 4,860 links, 0 one-way** — one mainland of **1,481 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~791 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~790 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,142 chars**, median 3,740 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,142 chars**, median 3,739 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
-| Gates | **43**, and the same 43 in `make all` and in CI | `check_gates.py` |
+| Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **43** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **44** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4532,4 +4532,132 @@ self-test 12 -> 23 fixtures · 4 of the 11 new ones fail a naive containment
 proved by restoring the real drifted cell: named both wrong numbers, exit 1
 plan preamble corrected: eleven of fifteen -> thirteen of seventeen, +1 elsewhere
 43 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — the convention was stated site-wide and enforced for two words
+
+### What the measurement found
+
+`CONTRIBUTING.md` has said, without qualification, *"The site is written in
+**American English**"*, and named `data/renames.json` as the mechanism. The
+registry carried **two** spelling rows: `centre` and `datacentre`, added by the
+session that fixed 93 occurrences of one word.
+
+A count across the site's prose of forty-two British/American pairs:
+
+| | | | | | |
+|---|---|---|---|---|---|
+| behaviour **246** | organise **252** | programme **138** | licence **115** |
+| artefact **88** | authorise **78** | optimise **73** | colour **65** |
+| defence **62** | judgement **58** | catalogue **54** | enrolment **50** |
+
+**2,192 occurrences**, across 37 files, with the build green the whole time.
+
+### The evidence that made it a correctness fix rather than a preference
+
+The `centre` record's argument was that the site's own acronym dictionary had
+*always* expanded KDC, NOC and ISAC the American way, so the prose had been
+disagreeing with the reference it ships. The same argument holds here and is
+sharper, because both halves are **inside one object**:
+
+```json
+"CAL": { "e": "Client Access License",
+         "n": "Per-user or per-device licence to connect to a Windows Server" }
+```
+
+The expansion is the canonical name of a real thing and is American. The note
+one line below it is British. The file disagrees with itself field by field, and
+it does it in `D3FEND` (*Network Defense*), `DISA` (*Defense Information Systems
+Agency*), `EULA` (*End User License Agreement*) and `ISO` (*International
+Organization for Standardization*) too, every one of them beside prose spelling
+the same word the other way.
+
+### Three rules and a dictionary that says it is one
+
+The registry was the wrong mechanism and that is the finding, not the count. **A
+spelling is not a vendor rename** — it has no vendor and no month, and both rows
+carried a `since` that was the date somebody decided. Enforcing a spelling by
+row enforces exactly the words somebody thought of, which is how a site-wide
+convention came to cover two.
+
+`tools/check_spelling.py` enforces it by rule instead:
+
+| | Exceptions | Why that shape |
+|---|---|---|
+| `-ise` → `-ize` | ~40 named | The words where `ise` is not a suffix are a closed set English will not extend — *compromise*, *enterprise*, *otherwise*, and `malvertise`, which is a coinage spelled that way in both dialects |
+| `-yse` → `-yze` | `analyses` | It is also the plural of *analysis*, identical in both dialects, and nothing in the string says which. **A miss taken on purpose**, for the reason `plurals()` in `script.js` already gives: a wrong guess is a card the reader never sees, a wrong alternate matches nothing |
+| `-our` → `-or` | `detour`, `glamour` | A three-character stem floor does the rest, and it is load-bearing: it is what excludes `four`, `hour`, `tour`, `pour`, `sour`, `your`, `our` and `flour` **without naming one of them** |
+| the irregulars | — | **A dictionary, and the docstring says so.** There is a rule under the doubled `l` and it turns on stress: `cancelled` and `installed` are not separable by any regex, so they are not separated by one |
+
+One `ALLOW` phrase on the whole site: **Fibre Channel**, which is the standard's
+name. `ThinkCentre` needed no allow-list because `\b` cannot match inside it —
+Fibre Channel has a space where ThinkCentre has nothing, which is the edge the
+registry's own note predicted for compounds and got backwards for phrases.
+
+### Three defects the tool had, and each one is a shape this file records
+
+**The report and the fix disagreed.** `prose_of()` concatenated the text between
+tags, so `<b>machine</b>otherwise` read as **machineotherwise** — not in the
+exception list, so the rule offered *machineotherwize*. Thirty-odd findings were
+that shape, including `corefour` and `linkyour`, the two `-our` words the stem
+floor exists to exclude. **An element boundary is a word boundary**, which this
+repository learned when `script.js` indexed `…modal editingvim starts…` and
+could not find the topic named Vim. The fix always rewrote each chunk alone, so
+only the census was wrong — the half a person reads. They are one code path now.
+
+**`practise` became `practize`.** It belongs to the `-ise` rule *and* the
+dictionary, the rules ran first, and the dictionary never saw it. The self-test
+had eleven hand-picked dictionary fixtures and not that one, because it tested
+each mechanism on its own words and this defect was in the **ordering**. The
+fixture is derived now — every one of the 83 entries through the whole pipeline
+— and reverting the order fails five of them by name.
+
+**Hardcoding `indent=2` reformatted `domain-intros.json`**: 604 changed lines for
+ten replacements. A diff nobody can read is a diff nobody reviews, and this
+tool's whole claim is that its 2,192 edits were looked at.
+
+### What the sweep then uncovered, which is the part worth keeping
+
+`infra` had **`INFRA • Virtualization` ×4** beside **`Infra • Virtualisation`
+×3**, and the linter's one-badge-two-spellings check could not see it: the two
+badges differed in a *word*, so they were two badges. Americanizing the word left
+them differing only in case, and the check fired immediately. The domain's own
+form is `Infra •` — eight of its other badges use it — so five uppercase badges
+were corrected. **A latent inconsistency was being hidden by a second one.**
+
+And the generated artifacts went stale, both of them, exactly as the ordering
+table says: `CALCULUS-CHEAT-SHEET.md` builds from `data/math.html`, and
+`data/acronym.html` from `tools/gen_acronym_domain.py` — whose template says *"the
+grey text in brackets beside it."* That last British spelling on the site was in a
+**generator**, and fixing the artifact would have been undone by the next build.
+
+### The slug half, and the five the first attempt missed
+
+37 topic titles moved, and 41 slugs with them. The map was built by reading
+`<span class="topic-name">([^<]+)</span>` — and **five titles contain a nested
+`acro-exp` span**, put there by the annotator, so `[^<]+` skipped them. The
+symptom was 20 one-way related links and 16 dangling path steps.
+
+`fix_topic_names.py --aliases-only` had the right answer the whole time: it
+computes slugs the way the browser does and had recorded all 41. The lesson is
+narrow and reusable — **derive a slug from the tool that owns slugs**, never from
+a regex over the markup, because the markup has an annotator writing into it.
+
+### The gate built in the previous wave caught this wave
+
+`query_probe.mjs --check-plan`, three hours old, failed with *8 unexplained, 9
+wrong-card*: eight of the probe's `want` targets were retitled slugs. Nothing
+else in `make all` could see it — the queries still returned cards, just not the
+ones somebody had decided were right. That is the middle row of this file's
+three-shapes table, caught by a check whose whole argument was that naming a row
+as unchecked is not checking it.
+
+```
+2,192 replacements · 37 files · 83 dictionary entries, 3 rules, 1 allow phrase
+every <pre>/<code> block byte-identical across all 35 content files, asserted
+41 slugs moved · 41 aliases · 152 related targets and 45 path steps remapped
+5 badges corrected in infra — a defect the sweep exposed, not one it caused
+check_spelling.py: 145 fixtures · reverting the rule order fails 5 by name
+renames.json 27 -> 25: a spelling is not a rename, and now says so
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```
