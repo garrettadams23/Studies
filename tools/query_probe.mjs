@@ -280,6 +280,11 @@ const READERS = [
     ["the user cannot sign in on their phone"],
     ["the meeting room screen is blank", "",
      "hw/conference-room-technology-the-av-stack-and-why-it-always-br"],
+    // ── batch seventeen ──
+    ["how do i prove it is not the network",
+     "wide and inherent, and the widest noun this site has: `network` is the only word left after the stop list drops `how do i prove it is not the`, and it is in a fifth of the corpus. The answer is inside the set — `ops` *Troubleshooting Like a Pro* and `net`'s own troubleshooting cards are all in the 83. Ranking would pick between them; this matcher is a filter"],
+    ["the user has two accounts"],
+    ["the software installed but does not appear"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -345,6 +350,13 @@ const READERS = [
     ["a user got a weird text message",
      "kind 3 — the card lacks only `weird`, which is the reader's **verdict on** the message rather than anything about it. A card describing a smishing attempt has no reason to call it weird, and the card already says `text messages`",
      "sec/phishing-beyond-email-smishing-vishing-and-qr-code-scams"],
+    // ── batch seventeen ──
+    ["the alert has no hostname"],
+    ["which of these two alerts do i work first",
+     "wide and inherent — `work` and `first` are function-shaped words this site uses constantly, and `alerts` alone reaches most of `blueteam`. The wanted card is in the set: `alert-triage-working-the-queue-from-alert-to-verdict`, which is about exactly this decision",
+     "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
+    ["a domain admin logged in at 2am",
+     "kind 3 — `2am` at 15 is the binding word and it is the reader's detail rather than the site's. The fault is covered as a mechanism: UEBA *baselines normal activity per user/host, then scores deviations*, and `off-hours` and `out of hours` appear ten times across `blueteam` and `threat`. Writing `2am` into a card would be the keyword stuffing kind 3 forbids"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -409,6 +421,11 @@ const READERS = [
     // ── batch sixteen ──
     ["what does stateless mean"],
     ["what is a container registry"],
+    // ── batch seventeen ──
+    ["what is a semaphore"],
+    ["what is a foreign key"],
+    ["why do we need message queues"],
+    ["what is a null pointer"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -463,6 +480,11 @@ const READERS = [
     // ── batch sixteen ──
     ["how do i see what changed on this server"],
     ["i cannot find the big files"],
+    // ── batch seventeen ──
+    ["the mount disappeared after reboot",
+     "kind 3, checked at fault level rather than keyword level — `linux` covers the whole fault: *make it permanent, add to /etc/fstab*, UUIDs over `/dev/sdb1` because *device names can change between boots*, `mount -a` to test without rebooting, and `nofail` on non-essential mounts so a missing disk is not a boot failure. `disappeared` at 2 is the binding word and it is the reader's verb for a mount that was never persisted"],
+    ["my container image is not updating"],
+    ["which process is writing to the disk"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -528,6 +550,10 @@ const READERS = [
      "blueteam/shift-handover-in-a-soc"],
     ["nobody owns this service",
      "wide and inherent — `service` is in a fifth of the site and every use is correct. The subject is real and covered from three sides: `ops` asset and configuration management, `eng` on ownership, and `sec` non-human identity on the population nobody owns. Ranking would pick between them; this matcher is a filter"],
+    // ── batch seventeen ──
+    ["we have a process and nobody follows it"],
+    ["everything is urgent who decides"],
+    ["the change board blocks everything"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -593,6 +619,11 @@ const READERS = [
     ["i cannot reproduce the bug"],
     ["the stack trace is useless",
      "kind 3, same binding word as the handover row — `useless` is the reader's verdict and cannot be stopped. The nearby subject is real and narrower: a trace that points only at framework or async frames"],
+    // ── batch seventeen ──
+    ["it works the first time and fails after that",
+     "wide and inherent — every word is a function word or nearly one. **And the `want` is not decidable, which is the honest half:** the symptom spans `eng` *Idempotency & Exactly-Once*, configuration-management idempotence in `script`, and plain leftover state, and idempotency alone is in ten files. Naming one target to make the number move would be the measurement lying in the other direction"],
+    ["the error points at the wrong line"],
+    ["my unit test passes but the feature is broken"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -625,6 +656,9 @@ const READERS = [
     // ── batch sixteen ──
     ["the wifi adapter disappeared",
      "kind 3 — `disappeared` at 2 is the binding word and it is the reader's narration. `wifi` reads 44 once folded, which the per-word line reported as 4 until it folded both sides the way the matcher does"],
+    // ── batch seventeen ──
+    ["one stick of ram or two"],
+    ["the drive is clicking"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -658,12 +692,20 @@ const READERS = [
     ["the alert fired and nothing was wrong"],
     ["terraform plan shows changes i did not make"],
     // ── batch fourteen ──
-    ["the deploy succeeded but nothing changed"],
+    // Scored answered by count alone since it was added, and it reached five cards
+    // none of which was about a deploy that did not deploy. It has a target now,
+    // and the card that answers it was written the day this was noticed.
+    ["the deploy succeeded but nothing changed", "",
+     "devops/artifact-registry-management"],
     ["the autoscaler keeps flapping", "",
      "eng/autoscaling-in-practice-the-metric-the-lag-and-why-it-oscill"],
     // ── batch sixteen ──
     ["my costs doubled overnight",
      "kind 3 — `doubled` at 4 is the binding word. `devops` FinOps and `cloud` cover cost spikes; nothing has a reason to say a bill doubled"],
+    // ── batch seventeen ──
+    ["we are paying for something nobody uses"],
+    ["the alert pages the wrong person"],
+    ["staging costs as much as production"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -710,6 +752,9 @@ const READERS = [
     // watching.
     ["should i specialise or generalise", "",
      "career/specialist-or-generalist-the-choice-and-when-you-actually-ge"],
+    // ── batch seventeen ──
+    ["i have no portfolio"],
+    ["should i take a pay cut to change field"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -741,6 +786,10 @@ const READERS = [
     ["we have no asset inventory"],
     // ── batch sixteen ──
     ["what is our data retention policy"],
+    // ── batch seventeen ──
+    ["the auditor wants a screenshot"],
+    ["we cannot prove who had access last year"],
+    ["the policy says one thing and we do another"],
   ]],
 ];
 

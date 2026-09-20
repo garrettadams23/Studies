@@ -31749,8 +31749,8 @@ The professional-judgment side of this is in
 <span class="ctag ctag-general">CKA</span>
 </div>
 <span class="domain-sub">CI/CD · IaC · Containers · Kubernetes · GitOps · Secrets · Supply Chain · Serverless · Architecture</span>
-<span class="domain-meta" aria-label="51 topics, about 2h 40m to read"
->51 topics · ~2h 40m</span>
+<span class="domain-meta" aria-label="51 topics, about 2h 45m to read"
+>51 topics · ~2h 45m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -34637,12 +34637,12 @@ than anyone cleans it &mdash; into a dated commitment somebody has to actively p
 </div>
 </div>
 </div>
-<div class="topic" id="artifact-registry-management" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="artifact-registry-management" data-reviewed="2026-08" data-read="8" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗄️</span>
 <span class="topic-name">Artifact &amp; Registry Management</span>
 <span class="topic-badge">Delivery</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -34687,8 +34687,58 @@ The fingerprint is a rollback that does not roll back. Somebody deploys the prev
 tag, the incident continues, and the reason is that the tag no longer names the image
 it named last week &mdash; or names nothing at all, because retention pruned it.
 <strong class="c-amber">If an incident ever ends with &ldquo;that is not the build we
-thought it was&rdquo;, the cause is upstream of the deploy: a mutable tag was treated
-as an identity.</strong>
+thought it was&rdquo;, the root is a mutable tag treated as an identity &mdash; but it
+reaches you from one of two directions, and they need different fixes. This one is
+upstream of the deploy, in the registry. The card below is the other.</strong>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Mirror Image</div>
+<div class="concept-title">The Deploy That Shipped Nothing: the Tag Moved and the Node Never Looked</div>
+<div class="concept-desc">
+The card above is a tag that moved and gave you a build you did not expect. This is
+the same root arriving from the other end: the tag moved, and the node
+<em>did not go and look</em>, so the rollout succeeded and the bytes are last
+week's.<br><br>
+The mechanism is a default almost nobody sets. Kubernetes reads
+<code>imagePullPolicy</code>, which is <code>IfNotPresent</code> for every tag
+except <code>:latest</code> &mdash; and <em>present</em> is judged by the tag, not
+by the digest. <strong>So the convention that makes tags safe is the one that turns
+the cache on:</strong> pin to <code>:v1.2.3</code> instead of <code>:latest</code>,
+as every hardening guide says, and a node that has ever seen <code>:v1.2.3</code>
+will never fetch it again.
+</div>
+<div class="concept-desc">
+Everything that could report the problem reports success. The pod is
+<code>Running</code>, the Deployment is <code>Available</code>,
+<code>kubectl rollout status</code> returns 0, and every dashboard reads v1.2.3
+because that is genuinely the tag it is running.<br><br>
+<strong>The fingerprint is that the fix works for some requests and not others,
+and it correlates with the node rather than the user.</strong> Nodes that already
+had the tag keep the old layers; nodes that joined the cluster afterwards pull the
+new ones. A fleet halfway through a rollout that has already been declared complete
+is the state nothing in the system has a word for.<br><br>
+The sentence people arrive with is <em>the image is not updating</em>, and it is
+exactly right: the image is not updating, on that node, and nothing in the rollout
+is going to say so.
+</div>
+<table class="ref-table">
+<thead><tr><th>Fix</th><th>What it does</th><th>What it does not do</th></tr></thead>
+<tbody>
+<tr><td>Deploy the digest, not the tag</td><td>Ends the question: the identity in the manifest <em>is</em> the bytes, and a node cannot satisfy it from a cache under a different name</td><td>Leaves a manifest no human can read at a glance, and needs the pipeline to write it</td></tr>
+<tr><td>Immutable tags, enforced by the registry</td><td>Removes the cause rather than the symptom &mdash; if a tag can never be re-pushed, a cached tag is always correct</td><td>Nothing, where the registry supports it. As a team rule rather than a setting it lasts until the first hotfix at 2am</td></tr>
+<tr><td><code>imagePullPolicy: Always</code></td><td>Forces a registry check every time a container starts</td><td>Turns a registry outage into a scheduling outage, and still only checks at start &mdash; a pod that is already running is not rechecked</td></tr>
+<tr><td>Delete the pods and let them restart</td><td>What everyone actually does, and it works</td><td>Fixes this afternoon and reproduces next week, because nothing about the cause changed</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong>Deploy by digest and let the tag be a label for humans.</strong> The other
+three are all worth having and none of them is the answer on its own. And the
+diagnosis costs one command rather than an afternoon:
+<code>kubectl get pods -o jsonpath='{..imageID}'</code> prints the digest each node
+actually ran &mdash; <strong>two digests under one Deployment is the whole
+finding</strong>, and it is visible before anybody argues about whether the deploy
+went out.
 </div>
 </div>
 <div class="concept-card">
@@ -117920,7 +117970,10 @@ available.
 <div class="concept-title">Which Slots You Use Changes Performance Substantially</div>
 <div class="concept-desc">
 Memory controllers address several channels in parallel, and populating them correctly
-roughly doubles available bandwidth compared with putting everything on one. The slots are
+roughly doubles available bandwidth compared with putting everything on one. This is what
+decides <strong>one stick of RAM or two</strong> at the point of buying: for the same
+capacity and the same money, two modules beat one, and the table below is the whole
+argument. The slots are
 color-coded in pairs to indicate this, and the pairs are usually <em>not</em> adjacent —
 which is exactly why people fill the two slots next to the processor and unknowingly halve
 their memory bandwidth. On systems where the graphics processor shares system memory, the

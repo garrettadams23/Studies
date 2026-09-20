@@ -50,13 +50,13 @@ the row needs was already running. Three are left, and all three want a stopwatc
 |---|---|---|
 | Topics | **1,557** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,394**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,394**, or **1,125 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **255 of 273**, **0 unexplained** — sixteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 17 remaining zeros, the 1 wrong-card and the 4 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **282 of 302**, **0 unexplained** — seventeen batches. The two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batch seventeen opened at 22 of 29, which is the same two thirds again. The 19 remaining zeros, the 1 wrong-card and the 7 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **102 paths, 1,595 steps, 1,497 of 1,557 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,497 topics, 4,860 links, 0 one-way** — one mainland of **1,481 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~790 more topics | `page_budget.py` |
+| Page budget | **34% raw** headroom — room for ~789 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
 | Depth tail | **10th percentile 2,142 chars**, median 3,739 — the number a deepening wave has to move | `depth_report.py` |
@@ -64,7 +64,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **44** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **45** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
 if the two lists ever diverge again. Before this was true, the workflow had been red on
@@ -4659,5 +4659,125 @@ every <pre>/<code> block byte-identical across all 35 content files, asserted
 5 badges corrected in infra — a defect the sweep exposed, not one it caused
 check_spelling.py: 145 fixtures · reverting the rule order fails 5 by name
 renames.json 27 -> 25: a spelling is not a rename, and now says so
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — batch seventeen, and the card that already ruled out half of what I found
+
+### The queue was empty again, so the questions were new
+
+Every census clean: thin 7 at 0%, 0 deep orphans, 0 unread duplicate pairs, 0
+unexplained probe rows, 0 one-way links, 0 topics off a path, 45 gates green.
+That is the state this file says means the work has to come from asking
+something nobody has asked. **Batch seventeen: 29 fresh questions**, spread
+across all ten reader groups rather than concentrated.
+
+**22 of 29 answered.** Two thirds, again — the sixteen batches before it opened
+at the same fraction for symptom-shaped questions, and this file has now
+predicted that number three times running.
+
+The seven, after ruling the matcher out on each:
+
+| Query | Verdict |
+|---|---|
+| `my container image is not updating` | **kind 2.** Real gap, written — see below |
+| `one stick of ram or two` | **kind 1.** The card answers it in a table and says *module* |
+| `a domain admin logged in at 2am` | kind 3 — `2am` at 15 is the reader's detail; UEBA covers the mechanism and `off-hours` appears ten times |
+| `the mount disappeared after reboot` | kind 3, checked at fault level — `linux` has fstab, UUIDs over `/dev/sdb1`, `mount -a`, and `nofail` |
+| `how do i prove it is not the network` | wide and inherent — `network` is the widest noun this site has, and the answer is in the 83 |
+| `which of these two alerts do i work first` | wide and inherent, and the Alert Triage card is in the 106 |
+| `it works the first time and fails after that` | wide, **and the `want` is not decidable** — the symptom spans idempotency, config-management idempotence and plain leftover state |
+
+### The gap was real, and the card that covers it was already half-written
+
+`imagePullPolicy` appeared **zero times** on the site. `pushed a new image same
+tag` and `container running old code after deploy` both returned nothing. So:
+kind 2, and `near_duplicates.py --title` said *clear to write*.
+
+Then the habit this file calls the first of the three — **read the neighbours'
+concept-card titles, not their topic titles** — found that `devops`'s *Artifact
+& Registry Management* already carries a card called **"A Tag Is a Pointer, So
+'We Run v1.2.3 Everywhere' Is a Claim About a Name."** It is a good card. It
+covers the whole of one half: a tag can be moved, re-pushing it silently
+repoints it, the digest is the version, and the fingerprint is *a rollback that
+does not roll back*.
+
+It does not cover the other half, and the two are **mirror images** — the same
+shape as the TLS finding this file already records, where the incomplete chain
+and the renewed-and-not-reloaded certificate turned out to be one root arriving
+from two directions:
+
+> The moved tag deploys **something you did not expect**. The cached tag deploys
+> **nothing at all, while reporting that it did.**
+
+### And its verdict was a falsifiable claim that the second half falsifies
+
+The card ended on this:
+
+> *If an incident ever ends with "that is not the build we thought it was", the
+> cause is **upstream of the deploy**: a mutable tag was treated as an identity.*
+
+That is exactly the kind of sentence this file likes — a claim that can be wrong
+— and it is wrong for the case I had just found. In the pull-cache failure the
+registry is right, the manifest is right, the tag is right, and the cause is
+**downstream of the deploy**, on one node, in a layer cache. So the verdict was
+**rewritten rather than appended to**, which is the rule the TLS wave set: when
+a new row breaks the claim under the table, the claim goes.
+
+**The mechanism is a default nobody sets.** `imagePullPolicy` is `IfNotPresent`
+for every tag except `:latest`, and *present* is judged by the tag rather than
+the digest — so **the convention that makes tags safe is the one that turns the
+cache on.** Pin to `:v1.2.3` as every hardening guide says, and a node that has
+ever seen `:v1.2.3` will never fetch it again.
+
+The fingerprint is the part worth keeping: **the fix works for some requests and
+not others, and it correlates with the node rather than the user.** Nodes that
+already had the tag keep the old layers; nodes that joined afterwards pull the
+new ones, so a fleet is halfway through a rollout that has already been declared
+complete — a state nothing in the system has a word for. The verdict is *deploy
+the digest and let the tag be a label for humans*, and the diagnosis is one
+command: two `imageID` digests under one Deployment is the whole finding.
+
+### The same mistake as last time, caught one step earlier
+
+The card was written mechanism-first and `my container image is not updating`
+**still returned zero** — the fourth time this file has recorded that sequence.
+The card said *cached*, *did not go and look*, *never fetch it again*, and never
+the reader's phrase. The fix is a sentence that is better writing than what it
+replaced, which is what the kind-1 rule promises:
+
+> The sentence people arrive with is *the image is not updating*, and it is
+> exactly right: the image is not updating, on that node, and nothing in the
+> rollout is going to say so.
+
+The `hw` fix is the same shape. The memory card has a table that answers *one
+stick or two* precisely — single channel is half the bandwidth, two matched
+modules are the target — and the word the whole consumer world uses for a
+module is **stick**, which appeared in that domain once, inside *Sticky*. Naming
+it is not an accommodation to a matcher; a card about buying RAM that will not
+say *stick* is being precious.
+
+### A query that had been scored answered for a year
+
+`the deploy succeeded but nothing changed` has been on this census with **no
+`want`**, scored by result count, returning five cards — none about a deploy
+that did not deploy. That is the middle row of this file's three-shapes table,
+still sitting here after the pass that was supposed to have cleared it:
+
+| Asserts | Passes when |
+|---|---|
+| it did not throw | the feature is broken |
+| **it returned something** | **the something is wrong** |
+| it returned the right thing | — |
+
+It has a target now, and the card that answers it was written the day the gap
+was noticed rather than named for later.
+
+```
+1 concept card (devops Artifact & Registry) · 1 verdict rewritten, not appended
+2 prose fixes: the reader's phrase for the fault, and `stick` for a memory module
+probe 273 -> 302 questions · 282 answered · 0 unexplained · 19 zeros · 1 wrong · 7 wide
+batch seventeen opened at 22 of 29 — two thirds, the third batch running to predict it
+mean/card 1,394 unchanged, excluding verdicts 1,124 -> 1,125: one long card, not padding
 45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```
