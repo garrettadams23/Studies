@@ -26,6 +26,7 @@ What is left here is what a session actually reads.
 | **The card rubric** | What the good cards have, measured from forty written in one session | 📘 reference |
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
+| **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked | 📥 **queue** |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -64,7 +65,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **49** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **50** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -632,6 +633,105 @@ written for a category tends not to be applied to the case that motivated it.**
 `check_css_vars` read only the stylesheet because its own example was in the stylesheet;
 `script.js` was the one file missing a convention three others had; and the register's
 reopen-condition rule was applied to every risk except the one that proved it was needed.
+
+
+# Knowledge integration — a batch of study notes, and the seven destinations it named
+
+> Source: an integration plan written against the live site from a batch of newly
+> summarized notes (*Add to Garrett's study website.md*). It is filed here as **a queue,
+> not a record** — nothing below has shipped. It is also the first incoming work in a
+> while that arrived as a *list* rather than from a census, which is worth saying out
+> loud, because the first thing a list gets is the treatment this file gives every other
+> hand-written number: it was checked against the tool.
+
+**Seven items, seven destinations, and three of them moved.** Every target the plan named
+was looked up in `data/domains.json` and grepped for in `data/*.html` before anything was
+written down. Two destinations stand exactly as filed, three move to a different domain,
+one splits in two, and one does not point at this repository at all.
+
+**The reason they moved is worth more than the corrections.** The destinations were
+derived from the site's **chip subtitles**, and the subtitles overlap. `devops` advertises
+*"… Serverless · Architecture"* and `eng` is called **Software Engineering &amp;
+Architecture**. `linux` advertises *"… RAID · Hardware"* and `hw` is a 28-topic domain
+called **Hardware, Electronics &amp; Embedded**. A reader picking a home from the chip
+row lands on the first domain that says the word — the same shape as *the card I wrote to
+close a query used the site's words, not the reader's*, one layer up: the site's own
+vocabulary is what a person navigates by, and two domains claiming one word is a
+navigation bug before it is a filing error.
+
+## 1. The seven items, as filed and as checked
+
+| # | Source material | Destination as filed | Checked |
+|---|---|---|---|
+| 1 | AI in development (NLP, Copilot, code generation); AI accountability and ethical oversight | **AI &amp; Machine Learning** → the existing *AI Ethics* topic | ✅ **stands.** `ai` exists, its subtitle names *AI Ethics*, and the phrase appears in `data/ai.html` |
+| 2 | Computer networks &amp; spanning trees — redundant paths, network loops | **Networking**, beside *Topologies* and *OSI* | ✅ **stands** — and is already written. `net`'s subtitle names both, and `Spanning Tree — Why a Loop Is Catastrophic, and What STP Does About It` is a live topic. This one is a **deepening**, not a card |
+| 3 | Hardware architecture (multi-core, parallel computing); logic design (Karnaugh maps, NAND gates) | **Linux &amp; Systems**, under a *Hardware* sub-topic | ↪ **moves to `hw`.** `linux` does end its subtitle in *Hardware*, which is why it was picked, but `hw` is 28 topics and names *CPU &amp; memory*. Digital logic is `hw`; parallel computing as theory is `cs` |
+| 4 | UML sequence diagrams, data flow diagrams, class/inheritance design, component-based software engineering (CBSE) | **DevOps, Platform &amp; Delivery**, to expand *Architecture* | ↪ **moves to `eng`.** `devops` ends its subtitle in *Architecture* — but `eng` **is** *Software Engineering &amp; Architecture*, 86 topics, subtitle *System Design · Architecture · Craft*. Delivery pipelines are `devops`; design notation is `eng` |
+| 5 | Verification vs validation; SDLC methodologies (Agile, Waterfall, Spiral, Iterative); reliability metrics (MTBF, safety-critical) | **IT &amp; Security Operations**, enriching *ITIL*, *SRE*, *Observability* | ✂️ **splits.** MTBF and safety-critical go to `ops`, which already carries MTBF in prose. V&amp;V and the four methodologies go to `eng`, where `Agile — The Four Trade-offs, and What Gets Sold as Agile` and the Waterfall prose already are |
+| 6 | WCAG, cognitive load theory, user/task analysis, UI heuristics (affordance, simplicity, feedback) | **Human** domain → a new *UX/UI &amp; Accessibility* module | ↪ **moves, and the named destination does not exist.** *Human* is a **nav chip-group**, not a domain, and it holds `philosophy` and `military`. Accessibility already lives in `web` (subtitle *… Performance · A11y*, two live topics, one of them the WCAG card). Cognitive load is prose in five files. See §3 |
+| 7 | Site → notes: the security frameworks (MITRE ATT&amp;CK, NIST CSF 2.0, Zero Trust) back into the markdown | **The markdown notes**, fleshing out *Product Validation* | ↗️ **points outward.** Nothing in this repository changes. Recorded so the next session does not go looking for a card to write. See §4 |
+
+## 2. What the site already has — grepped, not assumed
+
+The plan describes the notes. This describes the site, which is the half that decides
+whether an item is a card, a deepening, or a duplicate. Every row is a `grep` over
+`data/*.html`, not a recollection:
+
+| Concept | Where it is today | What that makes it |
+|---|---|---|
+| Spanning tree / loops | `net` — a full topic, plus the acronym dictionary | **Written.** Item 2 is a deepening at most |
+| WCAG / accessibility | **six topics across five domains** — `web` (*WCAG &amp; ARIA*, *Accessibility Remediation*), `grc` (*Section 508*), `hw` (*Input Devices &amp; Accessibility Hardware*), `ops` (*Accessible IT*), `script` (*Building for Everyone*) | **Written, and scattered.** A new module would have to justify itself against `near_duplicates.py` before it wrote a line |
+| Agile / Waterfall | `eng` — an Agile topic; Waterfall in prose in `eng`, `ops`, `web` | **Partial.** Spiral and Iterative are absent |
+| MTBF / safety-critical | `grc`, `ops`, and the acronym dictionary — prose only | **Partial.** No topic owns it |
+| Cognitive load | prose in `career`, `devops`, `eng`, `script`, `web` | **Partial**, and the five mentions are the argument for one card the others link to |
+| UML / sequence diagrams | the acronym dictionary, and one `career` card | **Absent as content.** An expansion is not a card |
+| Karnaugh maps · data flow diagrams · CBSE · the spiral model · affordance | **nowhere in `data/*.html`** | **Absent.** These five are the real new content in the batch |
+
+**The batch is smaller than it looks, and the small part is the valuable part.** Of the
+six inbound items, two are already written, three are partial, and the genuine gaps are
+five named concepts. That ratio is the same one the reader-question census keeps
+reporting: *what a list asks for and what the site is missing are different sets*, and
+only the grep tells them apart.
+
+## 3. Item 6 is a domain decision, not a filing decision
+
+A new **UX/UI &amp; Accessibility** domain is the one item here that cannot be done by
+appending cards. `scaffold_domain.py` exists for exactly this, and the cost is the rest of
+the checklist: a chip in a group in `index-shell.html`, a color class, a `domain-intros`
+entry, learning-path steps (`check_paths.py` gates *0 hand-written topics off a path*),
+and enough related links to avoid becoming the site's second island — `math` is the first,
+and is a **decision** rather than a backlog.
+
+The honest reading of the grep is that **the accessibility half is already written and
+scattered, and the UX half is not written at all.** Those are two different problems: the
+first is a connectivity problem, and §3 of *Domain shape* below — the See-also layer in
+`related.json` — is what it is solved with rather than by moving cards; the
+second is four or five cards in `web`. A new domain is what you build when the cards
+exist and cannot be filed — not before. **Deferred, with the condition stated: revisit if
+the UX half reaches six or more cards in `web` and the see-also layer is still carrying
+them.**
+
+## 4. Item 7 points at the notes, and is the one to do first
+
+Reverse integration — the site's `sec`, `threat` and `grc` material (MITRE ATT&amp;CK,
+NIST CSF 2.0, Zero Trust) going *back* into the markdown notes — changes nothing in this
+repository and needs nothing measured. It is also the cheapest item in the batch and the
+only one with no dependency on any of the others, which is the ordering argument.
+
+## 5. Before any of this is written
+
+The rubric applies unchanged, and three of its checks bite this batch specifically:
+
+1. **`query_probe.mjs` first, not last.** The question *does a reader asking this get
+   nothing today* is answerable before the card is written, and four waves running have
+   ended with a card that did not close its own query until the reader's word went in.
+2. **`near_duplicates.py` for items 2, 5 and 6.** Three of the seven land next to content
+   that already exists. A card that restates a live one is the failure mode this batch is
+   most exposed to, and the register's *0 unread pairs* is the number it would move.
+3. **A definition is not a card.** The source material is *"extensive definitions"* by its
+   own description. The one test in the card rubric — that a card answers a question
+   somebody actually has — is the filter that decides how many of the five absent concepts
+   are worth writing, and the answer is allowed to be fewer than five.
 
 
 # Domain shape — the connectivity measurement, and what it says
