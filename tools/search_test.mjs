@@ -143,6 +143,16 @@ const FIXTURES = [
   // digit; ten number-word pairs bridge that, and nothing larger is wanted.
   ["three way handshake",  "net/tcp-vs-udp-transport-layer", 12],
   ["the 5 whys",           "ops/writing-a-postmortem-people-actually-learn-from", 6],
+  // The same shape one alphabet over: the site is written in American English,
+  // so it says "specialize", and a reader who learned to write anywhere else
+  // types "specialise". Both fixtures are here because the rule has to be
+  // symmetric — the first is the reader's spelling against the site's, the
+  // second is the site's own, and a rule that only widened in one direction
+  // would pass one of them and look fixed.
+  ["should i specialise or generalise",
+   "career/specialist-or-generalist-the-choice-and-when-you-actually-ge", 4],
+  ["should i specialize or generalize",
+   "career/specialist-or-generalist-the-choice-and-when-you-actually-ge", 4],
   // Contractions. A reader typing a question types them, and until WIDE_STOP
   // learned the contracted forms each one survived into the all-your-words
   // conjunction as a hard requirement almost no card could satisfy — so

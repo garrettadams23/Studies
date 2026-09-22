@@ -47,6 +47,27 @@
  * report produces edits to more than two or three cards, it has stopped being
  * an audit.
  *
+ * ## The one kind-1 zero whose kind-1 remedy is wrong
+ *
+ * Kind 1's example is a spelling — the site writes *imposter*, the reader types
+ * *impostor* — and its remedy is to name both words in the card. That works
+ * because it is **one word**, chosen once, in one place.
+ *
+ * `should i specialise or generalise` looks identical and is not. The site is
+ * written in American English by convention (`CONTRIBUTING.md`, enforced through
+ * `data/renames.json`), so the disagreement is not a word the writer picked; it
+ * is an orthographic rule applied to every word of its shape. Naming both
+ * spellings in the card closes exactly this query and no other, and doing it
+ * everywhere is the keyword stuffing kind 3 forbids, dressed as an accommodation
+ * to readers.
+ *
+ * So the test that separates them: **could the writer have chosen the reader's
+ * word without changing anything else?** If yes it is kind 1 and belongs in the
+ * prose. If the reader's word is the site's own word under a spelling rule, the
+ * card is not the place — the matcher is, and `script.js` carries the
+ * `-ise`/`-ize` equivalence for the same reason it carries `3-way`/`three-way`:
+ * the site and the reader disagree and neither of them is wrong.
+ *
  * ## Telling kind 2 from kind 3, because the first version of this got one wrong
  *
  * `wifi keeps dropping` was listed above as kind 3 — *the site has the
@@ -160,10 +181,31 @@
  *   node tools/query_probe.mjs --self-test   # the staleness check, on fixtures
  */
 
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 
-const chromium = await (async () => {
+/**
+ * The browser, resolved at the moment one is needed rather than at import.
+ *
+ * It used to be a top-level `await` beside the imports, and that is a real
+ * failure rather than a style point: `--self-test` needs no browser and no
+ * built page — it runs `staleReason` and the plan-row reader over fixtures —
+ * but the resolution ran first and `process.exit(2)` before the flag was ever
+ * read. `make check` is deliberately browser-free, so the workflow job that
+ * runs it installs no Node toolchain, and the step went red on every push:
+ *
+ *     Run node tools/query_probe.mjs --self-test
+ *     error: playwright not found. Run: npm install playwright
+ *     Process completed with exit code 2.
+ *
+ * **A self-test that cannot run without the dependency it is there to avoid
+ * is not a self-test**, and this one had been failing on `main` for four runs
+ * while `make all` was green on every machine that had Playwright — which is
+ * the same green-locally-red-on-the-server split `check_gates.py` was written
+ * for, arriving through a different door: the two lists agreed, and one entry
+ * on them needed something one job did not have.
+ */
+async function browserFor(what) {
   try {
     return (await import("playwright")).chromium;
   } catch {
@@ -173,20 +215,31 @@ const chromium = await (async () => {
         return (await import(`${base}/playwright/index.mjs`)).chromium;
       } catch { /* try the next one */ }
     }
-    console.error("error: playwright not found. Run: npm install playwright");
+    console.error(`error: playwright not found, and ${what} needs a browser. `
+                  + `Run: npm install playwright`);
     process.exit(2);
   }
-})();
+}
 
 const ROOT = resolve(new URL("..", import.meta.url).pathname);
 const PAGE = `file://${ROOT}/index.html`;
-if (!existsSync(`${ROOT}/index.html`)) {
-  console.error("error: index.html does not exist — run 'python build.py' first.");
-  process.exit(2);
+
+// Deferred for the same reason, and it is the same bug one line down: a
+// fixture run does not read the built page, so requiring one turns a fresh
+// clone into an exit 2 before the first fixture.
+function requireBuiltPage() {
+  if (!existsSync(`${ROOT}/index.html`)) {
+    console.error("error: index.html does not exist — run 'python build.py' first.");
+    process.exit(2);
+  }
 }
 
 const args = process.argv.slice(2);
 const ONLY_ZERO = args.includes("--zero");
+// Checking the plan row against a filtered run would compare the whole row to
+// part of a census, and pass or fail for the wrong reason.
+const CHECK_PLAN = args.includes("--check-plan");
+const READER_ARG = args.includes("--reader");
 const READER = args.includes("--reader") ? args[args.indexOf("--reader") + 1] : "";
 
 // Grouped by who is asking, because that is how the gaps cluster. A query that
@@ -212,7 +265,7 @@ const READERS = [
     ["mailbox full", "", "m365/retention-litigation-hold-archiving-legals-requirements-in-m"],
     ["onboarding a new starter", "", "m365/joiner-mover-leaver-in-m365-terms-the-process-that-prevents-"],
     ["leaver checklist", "", "m365/joiner-mover-leaver-in-m365-terms-the-process-that-prevents-"],
-    ["asset tagging", "", "infra/labelling-asset-tagging-the-boring-discipline-that-pays-out-"],
+    ["asset tagging", "", "infra/labeling-asset-tagging-the-boring-discipline-that-pays-out-a"],
     ["writing a ticket", "", "ops/writing-a-ticket-someone-else-can-solve"],
     ["angry user on the phone", "", "ops/difficult-conversations-angry-users-vip-pressure-saying-no"],
     ["explaining to a non technical manager", "",
@@ -220,7 +273,7 @@ const READERS = [
     ["wifi keeps dropping", "", "net/wireless-troubleshooting-roaming-sticky-clients-its-slow"],
     ["vpn keeps disconnecting", "", "net/vpns-tunneling-secure-connections-over-untrusted-networks"],
     ["laptop won't turn on", "", "hw/post-beep-codes-diagnostic-leds-reading-a-machine-that-will-"],
-    ["outlook won't connect", "", "m365/the-m365-troubleshooting-playbook-tenant-identity-licence-po"],
+    ["outlook won't connect", "", "m365/the-m365-troubleshooting-playbook-tenant-identity-license-po"],
     // ── batch two ──
     ["bitlocker recovery key", "", "endpoint/bitlocker-at-scale-silent-enablement-key-escrow-recovery"],
     ["reset a user's mfa"],
@@ -255,6 +308,16 @@ const READERS = [
     ["the user cannot sign in on their phone"],
     ["the meeting room screen is blank", "",
      "hw/conference-room-technology-the-av-stack-and-why-it-always-br"],
+    // ── batch seventeen ──
+    ["how do i prove it is not the network",
+     "wide and inherent, and the widest noun this site has: `network` is the only word left after the stop list drops `how do i prove it is not the`, and it is in a fifth of the corpus. The answer is inside the set — `ops` *Troubleshooting Like a Pro* and `net`'s own troubleshooting cards are all in the 83. Ranking would pick between them; this matcher is a filter"],
+    ["the user has two accounts"],
+    ["the software installed but does not appear"],
+    // ── batch eighteen ──
+    ["the user changed their name"],
+    ["everyone in one office cannot print"],
+    ["the new starter is missing from teams",
+     "kind 3 — `starter` at 12 is the binding word and it is the reader's noun for a joiner. `m365` covers the fault as a mechanism: group-based licensing, license assignment, and the joiner half of joiner-mover-leaver. The lag between an account existing and Teams showing it is licensing, and the card says so in the site's words"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -320,6 +383,17 @@ const READERS = [
     ["a user got a weird text message",
      "kind 3 — the card lacks only `weird`, which is the reader's **verdict on** the message rather than anything about it. A card describing a smishing attempt has no reason to call it weird, and the card already says `text messages`",
      "sec/phishing-beyond-email-smishing-vishing-and-qr-code-scams"],
+    // ── batch seventeen ──
+    ["the alert has no hostname"],
+    ["which of these two alerts do i work first",
+     "wide and inherent — `work` and `first` are function-shaped words this site uses constantly, and `alerts` alone reaches most of `blueteam`. The wanted card is in the set: `alert-triage-working-the-queue-from-alert-to-verdict`, which is about exactly this decision",
+     "blueteam/alert-triage-working-the-queue-from-alert-to-verdict"],
+    ["a domain admin logged in at 2am",
+     "kind 3 — `2am` at 15 is the binding word and it is the reader's detail rather than the site's. The fault is covered as a mechanism: UEBA *baselines normal activity per user/host, then scores deviations*, and `off-hours` and `out of hours` appear ten times across `blueteam` and `threat`. Writing `2am` into a card would be the keyword stuffing kind 3 forbids"],
+    // ── batch eighteen ──
+    ["the same alert fires every night at the same time"],
+    ["we have no logs from before last week"],
+    ["the malware sample is password protected"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -384,6 +458,16 @@ const READERS = [
     // ── batch sixteen ──
     ["what does stateless mean"],
     ["what is a container registry"],
+    // ── batch seventeen ──
+    ["what is a semaphore"],
+    ["what is a foreign key"],
+    ["why do we need message queues"],
+    ["what is a null pointer"],
+    // ── batch eighteen ──
+    ["why is base64 not encryption"],
+    ["what is a service principal"],
+    ["what is dns propagation"],
+    ["what is a bloom filter"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -438,6 +522,21 @@ const READERS = [
     // ── batch sixteen ──
     ["how do i see what changed on this server"],
     ["i cannot find the big files"],
+    // ── batch seventeen ──
+    ["the mount disappeared after reboot",
+     "kind 3, checked at fault level rather than keyword level — `linux` covers the whole fault: *make it permanent, add to /etc/fstab*, UUIDs over `/dev/sdb1` because *device names can change between boots*, `mount -a` to test without rebooting, and `nofail` on non-essential mounts so a missing disk is not a boot failure. `disappeared` at 2 is the binding word and it is the reader's verb for a mount that was never persisted"],
+    ["my container image is not updating"],
+    ["which process is writing to the disk"],
+    // ── batch eighteen ──
+    ["sudo stopped working"],
+    // kind 2, and written: `defunct` returned zero site-wide, and every one of
+    // the nine `zombie` mentions was a cloud-cost zombie — an unattached disk,
+    // not a process. The card is in `Processes & Signals`, where the signals
+    // table already ends on "keep SIGKILL for the process that has already
+    // ignored a polite request", which is the one case where it does nothing.
+    ["the process is defunct", "",
+     "linux/processes-signals-running-programs-in-linux"],
+    ["too many redirects"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -458,7 +557,7 @@ const READERS = [
     ["standups", "", "eng/scrum-three-accountabilities-five-events-three-artifacts"],
     // ── batch six ──
     ["our estimates are always wrong", "",
-     "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+     "eng/planning-without-theater-roadmaps-velocity-honest-estimates"],
     ["nobody reads the documentation", "",
      "career/documentation-types-docs-as-code-four-kinds-and-why-mixing-t"],
     ["too many alerts", "",
@@ -467,7 +566,7 @@ const READERS = [
      "kind 3, same cause — 'standups' carries the query and misses for the reason above; 'our standup is useless' reaches the Daily Scrum row that answers it",
      "eng/scrum-three-accountabilities-five-events-three-artifacts"],
     // ── batch two ──
-    ["estimating", "", "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+    ["estimating", "", "eng/planning-without-theater-roadmaps-velocity-honest-estimates"],
     ["incident postmortem", "", "ops/writing-a-postmortem-people-actually-learn-from"],
     ["on call", "", "ops/on-call-done-humanely"],
     // ── batch nine ──
@@ -475,7 +574,7 @@ const READERS = [
      "ops/knowledge-management-kcs-in-practice-and-keeping-articles-fr"],
     // ── batch ten ──
     ["my manager wants an estimate", "",
-     "eng/planning-without-theatre-roadmaps-velocity-honest-estimates"],
+     "eng/planning-without-theater-roadmaps-velocity-honest-estimates"],
     // ── batch eleven ──
     ["somebody deleted the wrong thing", "",
      "ops/writing-a-postmortem-people-actually-learn-from"],
@@ -503,6 +602,14 @@ const READERS = [
      "blueteam/shift-handover-in-a-soc"],
     ["nobody owns this service",
      "wide and inherent — `service` is in a fifth of the site and every use is correct. The subject is real and covered from three sides: `ops` asset and configuration management, `eng` on ownership, and `sec` non-human identity on the population nobody owns. Ranking would pick between them; this matcher is a filter"],
+    // ── batch seventeen ──
+    ["we have a process and nobody follows it"],
+    ["everything is urgent who decides"],
+    ["the change board blocks everything"],
+    // ── batch eighteen ──
+    ["the ticket bounces between teams"],
+    ["nobody comes to the postmortem"],
+    ["we approve everything because saying no is hard"],
   ]],
   // ── batch three ──────────────────────────────────────────────────────────
   // Aimed at the domains the first two batches barely touched — data, web, cs,
@@ -568,12 +675,22 @@ const READERS = [
     ["i cannot reproduce the bug"],
     ["the stack trace is useless",
      "kind 3, same binding word as the handover row — `useless` is the reader's verdict and cannot be stopped. The nearby subject is real and narrower: a trace that points only at framework or async frames"],
+    // ── batch seventeen ──
+    ["it works the first time and fails after that",
+     "wide and inherent — every word is a function word or nearly one. **And the `want` is not decidable, which is the honest half:** the symptom spans `eng` *Idempotency & Exactly-Once*, configuration-management idempotence in `script`, and plain leftover state, and idempotency alone is in ten files. Naming one target to make the number move would be the measurement lying in the other direction"],
+    ["the error points at the wrong line"],
+    ["my unit test passes but the feature is broken"],
+    // ── batch eighteen ──
+    ["the test suite takes forty minutes"],
+    ["i changed one line and fifty tests failed",
+     "kind 3, and the thinnest of the five — `eng` has *Over-mocking* and *Test Doubles*, which is the cause, but the site names it from the writer's side (a test coupled to the implementation) and never from the reader's (fifty red tests after a one-line change). The nearby gap is narrower than a card: the symptom sentence is missing from a subject that is otherwise covered"],
+    ["the log says success and the data is wrong"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
      "hw/intermittent-faults-heat-vibration-marginal-power-how-to-rep"],
     ["no display on the monitor", "",
-     "hw/displays-panel-types-scaling-colour-the-multi-monitor-pitfal"],
+     "hw/displays-panel-types-scaling-color-the-multi-monitor-pitfall"],
     ["raid array degraded", "",
      "infra/raid-erasure-coding-what-redundancy-buys-and-the-rebuild-win"],
     ["the server is out of memory", "",
@@ -590,7 +707,7 @@ const READERS = [
     ["the fans are always loud"],
     // ── batch thirteen ──
     ["the screen is flickering", "",
-     "hw/displays-panel-types-scaling-colour-the-multi-monitor-pitfal"],
+     "hw/displays-panel-types-scaling-color-the-multi-monitor-pitfall"],
     ["it will not boot from usb"],
     // ── batch fourteen ──
     ["the keyboard types the wrong characters"],
@@ -600,6 +717,13 @@ const READERS = [
     // ── batch sixteen ──
     ["the wifi adapter disappeared",
      "kind 3 — `disappeared` at 2 is the binding word and it is the reader's narration. `wifi` reads 44 once folded, which the per-word line reported as 4 until it folded both sides the way the matcher does"],
+    // ── batch seventeen ──
+    ["one stick of ram or two"],
+    ["the drive is clicking"],
+    // ── batch eighteen ──
+    ["it posts but windows will not start"],
+    ["the usb ports on one side stopped working",
+     "kind 3 — the reader's fault is *a whole controller or front-panel header, not a port*, which is the right diagnosis and is the shape `hw` teaches throughout: isolate, swap, halve. `usb` at 31 and `header` at 33 are both in the corpus; no card carries them with `side`, which is the reader's word for a physical grouping the site describes electrically"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -633,19 +757,38 @@ const READERS = [
     ["the alert fired and nothing was wrong"],
     ["terraform plan shows changes i did not make"],
     // ── batch fourteen ──
-    ["the deploy succeeded but nothing changed"],
+    // Scored answered by count alone since it was added, and it reached five cards
+    // none of which was about a deploy that did not deploy. It has a target now,
+    // and the card that answers it was written the day this was noticed.
+    ["the deploy succeeded but nothing changed", "",
+     "devops/artifact-registry-management"],
     ["the autoscaler keeps flapping", "",
      "eng/autoscaling-in-practice-the-metric-the-lag-and-why-it-oscill"],
     // ── batch sixteen ──
     ["my costs doubled overnight",
      "kind 3 — `doubled` at 4 is the binding word. `devops` FinOps and `cloud` cover cost spikes; nothing has a reason to say a bill doubled"],
+    // ── batch seventeen ──
+    ["we are paying for something nobody uses"],
+    ["the alert pages the wrong person"],
+    ["staging costs as much as production"],
+    // ── batch eighteen ──
+    ["we cannot tell which team owns this spend"],
+    ["the pager fires for things nobody fixes"],
+    // kind 2, named in one wave and written in the next. `cloud`'s *Commitment
+    // Discounts* was thorough on **buying** — a commitment is a bet on your own
+    // forecast, commit the floor and never the ceiling — and had nothing on the
+    // other end. Expiry is a diary problem rather than a forecast one, and it
+    // is diagnosed as a technical incident for days because the usage graph is
+    // flat across the step.
+    ["our reserved instances expired", "",
+     "cloud/commitment-discounts-reserved-savings-plans-the-forecast-the"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
     ["asking for a raise", "", "career/asking-for-a-raise-the-case-not-the-conversation"],
     ["impostor syndrome", "", "mind/imposter-syndrome-you-belong-here"],
     ["first week as a manager", "",
-     "eng/the-first-90-days-leading-a-team-listen-map-stabilise-then-c"],
+     "eng/the-first-90-days-leading-a-team-listen-map-stabilize-then-c"],
     ["i keep procrastinating", "",
      "productivity/procrastination-what-it-actually-is-and-the-moves-that-work"],
     ["which cert should i do first", "",
@@ -675,8 +818,27 @@ const READERS = [
     ["rejected with no feedback"],
     ["how long should i stay in a job"],
     // ── batch sixteen ──
-    ["should i specialise or generalise",
-     "kind 2, named and not written — the only genuine content gap in batch sixteen. `specialise` 6 and `generalise` 8 are scattered and no card is about the choice; `specialist or generalist` returns zero and `t-shaped` returns four, none of them `career`. One of the commonest questions in an IT career, and the domain has 45 topics without it"],
+    // Batch sixteen's one genuine content gap, and it took three fixes to
+    // close rather than the one it looked like. The card was written; the
+    // query stayed at zero because the card said `specialist` and
+    // `specialization` and never the verb — ordinary kind 1, fixed in prose.
+    // It stayed at zero in *this* spelling after that, which is the dialect
+    // case the docstring sets out. Kept in the reader's spelling on purpose:
+    // it is the half the site cannot fix in prose, so it is the half worth
+    // watching.
+    ["should i specialise or generalise", "",
+     "career/specialist-or-generalist-the-choice-and-when-you-actually-ge"],
+    // ── batch seventeen ──
+    ["i have no portfolio"],
+    ["should i take a pay cut to change field"],
+    // ── batch eighteen ──
+    // kind 1, fixed in prose: `mind` has a whole topic on it and said *goes
+    // through this*, while `laid` returned zero site-wide. It now says what the
+    // reader says, which is also the plainer sentence.
+    ["i got laid off", "",
+     "mind/layoffs-job-loss-the-first-week-and-the-ones-after"],
+    ["the job ad wants ten years of a five year old tool",
+     "kind 3 — every word is in the corpus, `job description` and `years of experience` both appear, and `career` covers reading an advert as a wish list rather than a specification. The query is a joke with a real question inside it, and the joke is what carries it: no card has a reason to contain `ten` and `five` about the same tool"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -708,6 +870,14 @@ const READERS = [
     ["we have no asset inventory"],
     // ── batch sixteen ──
     ["what is our data retention policy"],
+    // ── batch seventeen ──
+    ["the auditor wants a screenshot"],
+    ["we cannot prove who had access last year"],
+    ["the policy says one thing and we do another"],
+    // ── batch eighteen ──
+    ["who signed off on this exception"],
+    ["the vendor will not fill in the questionnaire",
+     "kind 3, checked at fault level — `grc` has the whole answer and files it under the phase where the leverage is created rather than the phase where it is missed: *bake security requirements into the contract — SLAs, breach notification, right to audit*. It also ranks the alternative evidence a refusing vendor can still be held to, with what each one is worth. `questionnaire` at 13 is the reader's word for the artefact; the site's word is the clause"],
   ]],
 ];
 
@@ -775,6 +945,50 @@ function staleReason(keep, hits, want) {
   return null;
 }
 
+/**
+ * The plan row that quotes this census, checked against what it just counted.
+ *
+ * `check_plan_numbers.py` derives thirteen rows of plan.md's measured-state
+ * table and names the four it cannot, *rather than letting them pass as
+ * verified*. **Naming is not checking**, and this row proved it: its headline
+ * was kept current at *254 of 273* while the three sub-counts in the same
+ * sentence said **10 zeros, 1 wrong-card and 3 wide** against a tool printing
+ * 18, 1 and 4. The last record to touch them incremented the zeros from 9 to
+ * 10 on a run that reported 18.
+ *
+ * Nothing could see it because the row needs a browser, and `make check` has
+ * none by design. But the browser is here, seventeen seconds after this file
+ * starts, holding every one of those numbers at the moment it prints them — so
+ * the check belongs beside the count, not in the tool that cannot take one.
+ *
+ * Containment, on digit boundaries, exactly as `present()` does it in the
+ * sibling tool: the row is prose and the wording should stay free. That does
+ * mean a number the cell mentions for another reason would satisfy it, which is
+ * why the drift narrative for this row lives in its session record and the cell
+ * carries only the current state. A measured-state row that quotes its own
+ * history is a row that can be right about the past and wrong about now.
+ */
+const PLAN = `${ROOT}/plan.md`;
+const PLAN_ROW = "Reader questions answered";
+
+function planCell(text) {
+  const header = "| Measure | Value | Tool |";
+  const start = text.indexOf(header);
+  if (start < 0) return null;
+  for (const line of text.slice(start).split("\n").slice(2)) {
+    if (!line.startsWith("|")) break;
+    const cells = line.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+    if (cells[0] === PLAN_ROW) return cells[1];
+  }
+  return null;
+}
+
+// 6 must not satisfy 60, and 17 must not satisfy 173.
+function carries(cell, value) {
+  const forms = [String(value), value.toLocaleString("en-US")];
+  return forms.some(f => new RegExp(`(?<![\\d,])${f.replace(/,/g, ",")}(?![\\d,])`).test(cell));
+}
+
 const stale = [];
 
 // ── self-test ───────────────────────────────────────────────────────────────
@@ -803,10 +1017,43 @@ if (args.includes("--self-test")) {
     const got = Boolean(staleReason(keep, hits, want));
     if (got !== expect) { bad++; console.log(`FAIL : ${name} — expected ${expect}, got ${got}`); }
   }
-  console.log(`query_probe self-test: ${F.length} fixtures, ${bad} failure(s).`);
+
+  // The row reader, on fixtures, for the same reason: `--check-plan` exists
+  // because a number nothing derived drifted by eight, and a deriver nobody
+  // has watched fail is a deriver nobody should trust. The digit-boundary
+  // cases are the ones that would make it pass while the row was wrong.
+  const TABLE = [
+    "| Measure | Value | Tool |",
+    "|---|---|---|",
+    "| Topics | **1,557** across 30 domains | `depth_report.py` |",
+    `| ${PLAN_ROW} | **255 of 273** — 17 zeros, 1 wrong-card, 4 wide | \`query_probe.mjs\` |`,
+    "| Gates | **42** | `check_gates.py` |",
+  ].join("\n");
+  const G = [
+    ["the row is found in the table", () => planCell(TABLE).startsWith("**255 of 273**")],
+    ["a table without the row reads null", () => planCell(TABLE.replace(PLAN_ROW, "Something else")) === null],
+    ["a file without the table reads null", () => planCell("nothing here") === null],
+    ["the row stops at the table's end", () => planCell(TABLE + "\n\nprose\n| x | y | z |") !== null],
+    ["a number the row carries", () => carries(planCell(TABLE), 17)],
+    ["a number it does not", () => !carries(planCell(TABLE), 18)],
+    ["a thousands-separated number", () => carries("**1,557** across 30", 1557)],
+    ["4 must not be satisfied by 42", () => !carries("| **42** |", 4)],
+    ["17 must not be satisfied by 173", () => !carries("173 things", 17)],
+    ["nor by 2,173", () => !carries("2,173 things", 173)],
+    ["0 is a value like any other", () => carries("**0 unexplained**", 0)],
+  ];
+  for (const [name, fn] of G) {
+    let got;
+    try { got = fn(); } catch (e) { got = `threw ${e.message}`; }
+    if (got !== true) { bad++; console.log(`FAIL : ${name} — got ${got}`); }
+  }
+
+  console.log(`query_probe self-test: ${F.length + G.length} fixtures, ${bad} failure(s).`);
   process.exit(bad ? 1 : 0);
 }
 
+requireBuiltPage();
+const chromium = await browserFor("the census");
 const browser = await chromium.launch();
 const page = await browser.newPage();
 await page.goto(PAGE, { waitUntil: "load" });
@@ -929,8 +1176,10 @@ for (const [reader, queries] of READERS) {
     const absent = (!hits.length && !keep) ? await wordsFor(q, want) : null;
     rows.push([q, hits, keep, missed, want, absent]);
   }
-  const show = ONLY_ZERO
-    ? rows.filter(r => !r[1].length || r[3] || r[1].length > WIDE) : rows;
+  // A gate prints what failed, not 273 lines of what did not.
+  const show = CHECK_PLAN ? []
+    : ONLY_ZERO ? rows.filter(r => !r[1].length || r[3] || r[1].length > WIDE)
+    : rows;
   if (!show.length) continue;
   console.log(`\n${reader}\n`);
   for (const [q, hits, keep, missed, want, absent] of show) {
@@ -992,5 +1241,36 @@ if (unexplained.length) {
 if (stale.length) {
   console.log(`\n${stale.length} of the recorded verdicts above are stale, and they are the ` +
               `first thing to fix: the counts on this page are read through them.`);
+}
+if (CHECK_PLAN) {
+  if (READER_ARG) {
+    console.log("\n::error::--check-plan cannot run with --reader: the row describes the whole census.");
+    process.exit(2);
+  }
+  const cell = planCell(readFileSync(PLAN, "utf-8"));
+  if (cell === null) {
+    console.log(`\n::error::plan.md no longer has a ${JSON.stringify(PLAN_ROW)} row to check.`);
+    process.exit(2);
+  }
+  const expected = [
+    ["answered", total - zeros - wrong],
+    ["queries", total],
+    ["unexplained", unexplained.length],
+    ["zeros", zeros],
+    ["wrong-card", wrong],
+    ["wide", wide],
+  ];
+  const gone = expected.filter(([, v]) => !carries(cell, v));
+  if (gone.length) {
+    console.log(`\n${JSON.stringify(PLAN_ROW)}: the row does not carry ` +
+                gone.map(([n, v]) => `${v} (${n})`).join(", "));
+    console.log(`    row says  ${cell}`);
+    console.log(`    this run  ${expected.map(([n, v]) => `${n} ${v}`).join(" · ")}`);
+    console.log("\nThe row is one of the four `check_plan_numbers.py` cannot derive. " +
+                "This is where it is derived.");
+    process.exit(1);
+  }
+  console.log(`\nplan.md's ${JSON.stringify(PLAN_ROW)} row carries all six of this run's numbers.`);
+  process.exit(0);
 }
 console.log("\nA census, not a gate — see this file's docstring.");

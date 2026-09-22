@@ -263,7 +263,7 @@ deactivate</pre>
         One failure is worth naming because the error message points at the wrong place. A
         <strong>circular import</strong> &mdash; <code>a.py</code> imports <code>b.py</code>, which
         imports <code>a.py</code> &mdash; fails with <em>cannot import name X from partially
-        initialised module</em>, and the module it names is usually the innocent one: it is the
+        initialized module</em>, and the module it names is usually the innocent one: it is the
         module that was half-built when the loop came back round to it. Moving the import inside
         the function that needs it breaks the cycle at import time and is a legitimate fix, but it
         is also a signal &mdash; two modules that each need the other are usually one module, or
@@ -274,7 +274,7 @@ deactivate</pre>
         most people assume.</strong> Path handling, JSON, dates, subprocess and HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span>
         clients are all present, and a dependency avoided is a dependency you never have
         to update, audit or explain. Reach outside for the things the library genuinely
-        lacks — and `requests` remains the honourable exception everybody makes.
+        lacks — and `requests` remains the honorable exception everybody makes.
       </div>
     </div>
   </div>
@@ -1362,7 +1362,7 @@ urls = [<span class="str">"https://example.com"</span>] * <span class="num">10</
           <tr><td>$</td><td>End of string</td><td><code>world$</code> → "hello world"</td></tr>
           <tr><td>*</td><td>0 or more of previous</td><td><code>ab*c</code> → "ac", "abc", "abbc"</td></tr>
           <tr><td>+</td><td>1 or more of previous</td><td><code>ab+c</code> → "abc", "abbc" (not "ac")</td></tr>
-          <tr><td>?</td><td>0 or 1 of previous (optional)</td><td><code>colou?r</code> → "color", "colour"</td></tr>
+          <tr><td>?</td><td>0 or 1 of previous (optional)</td><td><code>colou?r</code> → "color", "color"</td></tr>
           <tr><td>{n,m}</td><td>Between n and m repetitions</td><td><code>\d{3,5}</code> → "123", "1234", "12345"</td></tr>
           <tr><td>[abc]</td><td>Character class (a, b, or c)</td><td><code>[aeiou]</code> matches any vowel</td></tr>
           <tr><td>[^abc]</td><td>NOT a, b, or c</td><td><code>[^0-9]</code> matches non-digit</td></tr>
@@ -1658,7 +1658,7 @@ x = <span class="num">42</span>
       </table>
       <div class="concept-desc verdict">
         <strong>The second row is the one that costs whole afternoons later.</strong> A
-        bare except that passes turns a crash into silent wrong behaviour, and the bug
+        bare except that passes turns a crash into silent wrong behavior, and the bug
         then appears somewhere unrelated with no trace of the original — which is the
         hardest kind of problem to work backwards from. Catch what you can handle, let
         the rest propagate, and always log before re-raising.
@@ -2320,7 +2320,7 @@ top_attackers.to_csv(<span class="str">"top_attackers.csv"</span>)</pre>
       <div class="concept-desc verdict">
         <strong>Adopt the formatter first; it ends the arguments and makes every diff
         smaller.</strong> Automatic formatting is the one tool on this list with no
-        judgement attached and an immediate payoff in review. Add the linter next, the
+        judgment attached and an immediate payoff in review. Add the linter next, the
         type checker on new code only, and the test runner from the first day of the
         project — retrofitting tests is far harder than starting with one.
       </div>
@@ -2684,7 +2684,7 @@ for f in /var/log/*.log; do ./logcheck.py "$f"; done</pre>
         <strong>The last row is the only one that lets you grant access without handing
         over a credential.</strong> Everything above it means the caller holds a secret
         that is as good as the account it belongs to, which is fine inside a system and
-        wrong between organisations. Whatever the method, put it in the header rather
+        wrong between organizations. Whatever the method, put it in the header rather
         than the query string: URLs <span class="acro-exp">(Uniform Resource Locator)</span> end up in logs, proxies and browser history.
       </div>
       <pre class="code-block"><span class="kw">import</span> requests, os
@@ -3342,7 +3342,7 @@ r = subprocess.run([<span class="str">"pdfinfo"</span>, filename],
                     Notice what the safe version does <em>not</em> need: no escaping, no allowlist of characters,
                     no regex to strip semicolons. <strong>The metacharacters stop being special because nothing is
                     parsing them</strong> &mdash; and that is why this is a design fix rather than a mitigation.
-                    Every attempt to sanitise a shell string is a race against a language with many ways to say the
+                    Every attempt to sanitize a shell string is a race against a language with many ways to say the
                     same thing.
                   </div>
                 </div>
@@ -3370,7 +3370,7 @@ r = subprocess.run([<span class="str">"pdfinfo"</span>, filename],
                     and clearer; <strong>pipelines</strong> are two processes connected with
                     <code>stdout=subprocess.PIPE</code>. And the general principle:
                     <strong>if you find yourself escaping, you are on the wrong path</strong> &mdash; the same
-                    lesson as parameterised SQL <span class="acro-exp">(Structured Query Language)</span>, one layer down.
+                    lesson as parameterized SQL <span class="acro-exp">(Structured Query Language)</span>, one layer down.
                   </div>
                 </div>
               </div>
@@ -3600,7 +3600,7 @@ p.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">T
                   <table class="ref-table">
                     <tr><th>Model</th><th>How it goes wrong</th></tr>
                     <tr><td><code>async</code></td><td><strong>One blocking call poisons the whole loop.</strong> A synchronous library, a CPU-heavy function, or <code>time.sleep</code> stalls every task. Use <code>run_in_executor</code></td></tr>
-                    <tr><td><code>async</code></td><td>Colouring: an async function can only be awaited by async callers, so adoption spreads through the codebase</td></tr>
+                    <tr><td><code>async</code></td><td>Coloring: an async function can only be awaited by async callers, so adoption spreads through the codebase</td></tr>
                     <tr><td>Threads</td><td>Shared mutable state, and races that only appear under load. Prefer a queue to a shared object</td></tr>
                     <tr><td>Threads</td><td>No cheap cancellation. A thread stuck in a blocking call cannot be interrupted</td></tr>
                     <tr><td>Processes</td><td>Pickling costs, and the object that cannot be pickled. Also: the child that inherits state it should not</td></tr>
@@ -3611,7 +3611,7 @@ p.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">T
                     works</strong> and requires no rewrite; reach for <code>asyncio</code> when the concurrency is
                     in the thousands or the libraries are already async. For CPU-bound work,
                     <strong><code>ProcessPoolExecutor</code> with chunked inputs</strong> &mdash; and check whether
-                    the library you are using (numpy, polars, a compression codec) already parallelises internally,
+                    the library you are using (numpy, polars, a compression codec) already parallelizes internally,
                     because wrapping it in processes then makes it slower.
                   </div>
                 </div>
@@ -3631,7 +3631,7 @@ p.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">T
                 <div class="concept-label">Core Concept</div>
                 <div class="concept-title">The Gap Between &ldquo;Works on My Machine&rdquo; and &ldquo;Installs&rdquo;</div>
                 <div class="concept-desc">
-                  A script becomes software the moment somebody else has to run it, and the two artefacts that
+                  A script becomes software the moment somebody else has to run it, and the two artifacts that
                   close that gap are a <strong class="c-cyan">project file</strong> (what this needs, roughly)
                   and a <strong class="c-cyan">lockfile</strong> (exactly what was installed when it last
                   worked). They answer different questions and

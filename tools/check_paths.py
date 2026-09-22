@@ -41,6 +41,7 @@ to pad a syllabus to clear a build.
 
 Usage:
   python3 tools/check_paths.py
+  python3 tools/check_paths.py --ordering    # pairs two paths order differently
   python3 tools/check_paths.py --self-test   # the off-path split, on fixtures
 """
 
@@ -63,6 +64,57 @@ REQUIRED = ("id", "name", "icon", "blurb", "for", "steps")
 # visible decision, which is the lesson from a category field in a generated
 # taxonomy moving the site's topic count.
 GENERATED_DOMAINS = {"acronym"}
+
+
+def orderings(paths):
+    """(pairs ordered by two or more paths, the ones ordered both ways).
+
+    A path lists topics in an order, and 95 of the 1,497 topics on a path are on
+    more than one. Wherever two paths share a **pair**, they are both making a
+    claim about which comes first — and it is worth knowing how often those
+    claims agree, because the answer decides what `paths.json` can be used for.
+
+    It is 30%: of the 56 pairs that two or more paths both order, **17 are
+    ordered in opposite directions**. Read one at a time, every one of them is
+    two legitimate stories:
+
+        `cryptography-end-to-end` puts encryption basics before password
+        hashing, because the track builds from primitives. `security-for-
+        everyone` puts hashing first, because it is the concrete thing a reader
+        has met. Neither is wrong, and no third path can arbitrate.
+
+    **So a path is a narrative order, not a prerequisite graph**, and the
+    disagreement rate is the evidence rather than the problem. A global ordering
+    derived from `paths.json` — a generated curriculum, a "what should I read
+    first" feature — would be building on a relation this data does not carry,
+    and would contradict itself on a third of the pairs it found. That is the
+    reason this reports and does not gate: there is nothing here to fix.
+
+    Printed rather than left to be re-derived, on this repository's own rule
+    that a diagnosis reached by hand more than once should be printed.
+    """
+    order = collections.defaultdict(set)
+    for p in paths:
+        steps = p.get("steps") or []
+        for i, x in enumerate(steps):
+            for y in steps[i + 1:]:
+                order[(x, y)].add(p.get("id", "<no id>"))
+    # Normalise first. Iterating the keys and skipping `x > y` misses every pair
+    # that only ever appears in the reverse lexical direction — it reported 38
+    # shared pairs against a hand count of 56, which is the kind of quiet
+    # undercount a report is worst at showing you.
+    shared, both = [], []
+    for x, y in sorted({tuple(sorted(k)) for k in order}):
+        fwd, rev = order.get((x, y), set()), order.get((y, x), set())
+        # Distinct *paths*, not assertions. A path that repeats a step orders
+        # the same pair both ways on its own, and counting that as two paths
+        # disagreeing would turn a copy-paste — which the duplicate warning
+        # above already reports — into a second, wronger finding.
+        if len(fwd | rev) > 1:
+            shared.append((x, y))
+            if fwd and rev:
+                both.append((x, y, sorted(fwd), sorted(rev)))
+    return shared, sorted(both)
 
 
 def off_path(rows, covered):
@@ -91,7 +143,26 @@ def self_test():
         if got != expect:
             bad += 1
             print(f"FAIL : {name} — expected {expect}, got {got}")
-    print(f"check_paths self-test: {len(cases)} fixtures, {bad} failure(s).")
+
+    # orderings(), and the fixture that matters is the third: `b` before `a` is
+    # a pair whose only key is ("b", "a"), and a loop that skips `x > y` never
+    # visits it. That undercounted the live report by eighteen pairs.
+    ocases = [
+        ("one path asserts nothing shared", [["a", "b"]], 0, 0),
+        ("two paths agreeing", [["a", "b"], ["a", "b", "c"]], 1, 0),
+        ("two paths disagreeing", [["a", "b"], ["b", "a"]], 1, 1),
+        ("…in reverse lexical order only", [["b", "a"], ["b", "a"]], 1, 0),
+        ("a pair one path orders twice is not shared", [["a", "b", "a"]], 0, 0),
+        ("three paths, one dissenting", [["a", "b"], ["a", "b"], ["b", "a"]], 1, 1),
+    ]
+    for name, steps, want_shared, want_both in ocases:
+        shared, both = orderings([{"id": f"p{i}", "steps": s} for i, s in enumerate(steps)])
+        if (len(shared), len(both)) != (want_shared, want_both):
+            bad += 1
+            print(f"FAIL : {name} — expected {(want_shared, want_both)}, "
+                  f"got {(len(shared), len(both))}")
+
+    print(f"check_paths self-test: {len(cases) + len(ocases)} fixtures, {bad} failure(s).")
     return 1 if bad else 0
 
 
@@ -139,6 +210,16 @@ def main():
     print(f"\n{len(paths)} paths, {total_steps} steps, {len(covered)} distinct topics "
           f"of {len(rows)} on the site.")
     print("  " + ", ".join(f"{d} {n}" for d, n in domains.most_common()))
+
+    if "--ordering" in sys.argv:
+        shared, both = orderings(paths)
+        print(f"\n{len(shared)} topic pair(s) ordered by two or more paths · "
+              f"{len(both)} ordered both ways "
+              f"({len(both) / len(shared):.0%} — see orderings() on why that is not a defect)")
+        for x, y, fwd, rev in both:
+            print(f"  {x[:58]}\n  {y[:58]}")
+            print(f"     first in {', '.join(fwd)}   ·   second in {', '.join(rev)}")
+        return 1 if errors else 0
 
     stranded = off_path(rows, covered)
     print(f"\n{len(stranded)} hand-written topic(s) on no path "

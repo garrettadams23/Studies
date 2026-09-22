@@ -8,7 +8,7 @@
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Concept</div>
-                <div class="concept-title">Unix Pipes Text and Re-Parses It; PowerShell Never Serialises in the First Place</div>
+                <div class="concept-title">Unix Pipes Text and Re-Parses It; PowerShell Never Serializes in the First Place</div>
                 <div class="concept-desc">
                   <code>awk</code>, <code>cut</code> and <code>sed</code> exist because a Unix pipe
                   throws the structure away: every program prints a formatted string and every
@@ -53,7 +53,7 @@ Get-Process |
                     <tr><td><code>Group-Object</code></td><td>Buckets by a property value</td><td><code>GroupInfo</code> objects with <code>Name</code>, <code>Count</code>, <code>Group</code></td></tr>
                     <tr><td><code>Measure-Object</code></td><td>Count, sum, average, min/max over a property</td><td>One <code>GenericMeasureInfo</code>, not a number — use <code>.Sum</code></td></tr>
                     <tr><td><code>ForEach-Object</code></td><td>Runs a block per object, streaming</td><td>Whatever the block emits</td></tr>
-                    <tr><td><code>Export-Csv</code> / <code>ConvertTo-Json</code></td><td>Serialises at the end of the line</td><td>A file or a string — this is where structure is meant to be lost</td></tr>
+                    <tr><td><code>Export-Csv</code> / <code>ConvertTo-Json</code></td><td>Serializes at the end of the line</td><td>A file or a string — this is where structure is meant to be lost</td></tr>
                     <tr><td><code>Format-Table</code> / <code>Format-List</code></td><td>Renders for a human</td><td class="c-red">Format records, not your data — nothing may follow it but the screen</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -79,7 +79,7 @@ Get-Process |
                 </div>
                 <div class="concept-desc">
                   <strong class="c-red">Objects that crossed a remoting boundary.</strong>
-                  <code>Invoke-Command</code> and PSSessions serialise on the wire and rehydrate as
+                  <code>Invoke-Command</code> and PSSessions serialize on the wire and rehydrate as
                   <code>Deserialized.System.*</code> property bags. Properties survive; <em>methods do
                   not</em>. The fingerprint is a script that works locally and fails only against
                   remote hosts, with "method invocation failed because …
@@ -96,7 +96,7 @@ Get-Process |
                 </div>
                 <div class="concept-desc">
                   <strong class="c-red">Collecting when you meant to stream.</strong> Wrapping a
-                  pipeline in <code>$(…)</code> or assigning it to a variable materialises every
+                  pipeline in <code>$(…)</code> or assigning it to a variable materializes every
                   object in memory; so does <code>Sort-Object</code>, which cannot emit anything until
                   it has seen everything. That is fine for a thousand mailboxes and fatal for a
                   hundred thousand log rows. <code>ForEach-Object</code> and
@@ -106,7 +106,7 @@ Get-Process |
                 <div class="concept-desc verdict">
                   The decision is one question at every stage: <strong class="c-cyan">does the next
                   thing in this line need data, or is the next thing a person?</strong> Data means the
-                  objects stay objects and serialisation waits until the end. A person means you are
+                  objects stay objects and serialization waits until the end. A person means you are
                   finished — render, and stop. Automation that ignores that boundary is the source of
                   the export nobody can read and the script that only fails in production; the wider
                   discipline around that is in
@@ -155,7 +155,7 @@ Invoke-MgGraphRequest -Method GET `
                   <table class="ref-table">
                     <tr><th>Issue</th><th>What to know</th></tr>
                     <tr><td>Paging</td><td>Graph returns pages, not everything — <code>-All</code> follows @odata.nextLink; without it you silently get the first page only</td></tr>
-                    <tr><td>Throttling</td><td>Heavy loops hit HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 — honour the Retry-After header, add backoff; do not hammer</td></tr>
+                    <tr><td>Throttling</td><td>Heavy loops hit HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 — honor the Retry-After header, add backoff; do not hammer</td></tr>
                     <tr><td>Permissions &amp; consent</td><td>Delegated (as you) vs application (unattended); the scope must be consented, not just requested</td></tr>
                     <tr><td>v1.0 vs beta</td><td class="c-red">beta endpoints change without notice — never build a scheduled job on beta</td></tr>
                   </table>
@@ -316,7 +316,7 @@ Invoke-MgGraphRequest -Method GET `
                     <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
                     <tbody>
                       <tr><td>Prefer a module over a shell command, always</td><td>Modules check state; commands do not</td></tr>
-                      <tr><td>Where a command is unavoidable, guard it with a condition</td><td>Restores the "only if needed" behaviour by hand</td></tr>
+                      <tr><td>Where a command is unavoidable, guard it with a condition</td><td>Restores the "only if needed" behavior by hand</td></tr>
                       <tr><td>Run in check mode and read what it would change</td><td>The dry run that makes a change reviewable before it lands</td></tr>
                       <tr><td>A second run should report zero changes</td><td>The simplest possible idempotency test, and it catches most failures</td></tr>
                       <tr><td>Treat unexpected "changed" as a defect</td><td>Constant noise trains everyone to ignore the one that matters</td></tr>
@@ -367,7 +367,7 @@ Invoke-MgGraphRequest -Method GET `
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">The Structure of an Image Pipeline</div>
                 <div class="concept-desc">
-                  Packer is the common tool and the pattern generalises to whatever you use — the stages are
+                  Packer is the common tool and the pattern generalizes to whatever you use — the stages are
                   the same and the discipline is in the stages, not the syntax.
                 </div>
                 <div class="dw">
@@ -378,7 +378,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Build</td><td>Boots a temporary machine</td><td>Runs somewhere isolated — this machine is unpatched for a while</td></tr>
                       <tr><td>Provision</td><td>Applies configuration — usually the same Ansible or DSC <span class="acro-exp">(Desired State Configuration)</span> you already have</td><td>Reuse the configuration; do not maintain a second definition of "configured"</td></tr>
                       <tr><td>Harden and clean</td><td>Baseline, remove logs, remove build credentials</td><td>Build-time secrets left in an image are a classic finding</td></tr>
-                      <tr><td>Generalise</td><td>sysprep, cloud-init prep, machine-ID reset</td><td>Missing this is how a fleet ends up sharing one identity</td></tr>
+                      <tr><td>Generalize</td><td>sysprep, cloud-init prep, machine-ID reset</td><td>Missing this is how a fleet ends up sharing one identity</td></tr>
                       <tr><td>Test</td><td>Boot it and assert it is what you asked for</td><td>The stage most often skipped; see the testing card</td></tr>
                       <tr><td>Publish</td><td>Versioned artifact, immutable, dated</td><td>Never overwrite an existing version — that breaks reproducibility</td></tr>
                     </tbody>
@@ -412,7 +412,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Keep the previous version deployable</td><td>Rollback for images, and you will need it</td></tr>
                       <tr><td>Record the base version and patch level in image metadata</td><td>Answers "what is running out there?" without logging in</td></tr>
                       <tr><td>Keep the image thin; configure at deploy time</td><td>Every application baked in is another reason to rebuild for someone else's change</td></tr>
-                      <tr><td>One definition per platform family, parameterised</td><td>Nine near-identical definitions drift apart within a year</td></tr>
+                      <tr><td>One definition per platform family, parameterized</td><td>Nine near-identical definitions drift apart within a year</td></tr>
                       <tr><td>Expire old images deliberately</td><td>Otherwise something is still deploying the one from two years ago</td></tr>
                     </tbody>
                   </table>
@@ -514,7 +514,7 @@ Invoke-MgGraphRequest -Method GET `
                       <tr><td>Passed as a command-line argument</td><td>Visible in the process list to every user on the box — use stdin or the environment</td></tr>
                       <tr><td>Written to a log by verbose or debug output</td><td>Wrap secrets in a type that refuses to print; scan logs for patterns</td></tr>
                       <tr><td>Captured by shell history or a transcript</td><td>Never type one interactively into a logged session</td></tr>
-                      <tr><td>Included in an error message or stack trace</td><td>Sanitise exceptions before they reach a ticket or a chat channel</td></tr>
+                      <tr><td>Included in an error message or stack trace</td><td>Sanitize exceptions before they reach a ticket or a chat channel</td></tr>
                       <tr><td>Committed in an earlier revision, then removed</td><td>Still in history — rotate it, do not merely delete it</td></tr>
                       <tr><td>Left in a build artifact or a golden image</td><td>Clean build-time credentials as an explicit pipeline stage</td></tr>
                       <tr><td>Sitting in a scheduled task's stored password</td><td>The classic on-premises finding; replace with a managed account</td></tr>
@@ -585,7 +585,7 @@ Invoke-MgGraphRequest -Method GET `
                 <div class="concept-label">Reference</div>
                 <div class="concept-title">What to Test, and How</div>
                 <div class="concept-desc">
-                  Testing automation feels impossible because the interesting behaviour involves systems you
+                  Testing automation feels impossible because the interesting behavior involves systems you
                   cannot spin up. The resolution is the same as in application testing: separate the logic
                   from the calls, test the logic properly, and mock the calls.
                 </div>

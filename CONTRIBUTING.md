@@ -89,21 +89,35 @@ all 30 domains while one is rendered. `tools/smoke_test.mjs` checks exactly that
 if it starts failing "search still reaches unopened domains", something started
 reading the DOM again.
 
-## Spelling: American, and checked
+## Spelling: American, and checked by rule
 
-The site is written in **American English**. `data/renames.json` carries the words
-this matters for and `check_renames.py` fails the build on them, the same mechanism
-that has enforced *allowlist* over *whitelist* since 2020.
+The site is written in **American English**, and `tools/check_spelling.py` fails the
+build on anything else. Run it before you push; `make check` does.
 
-`centre` → `center` was applied across 93 occurrences in 22 files. The site's own
-acronym dictionary had always expanded KDC, NOC, ISAC and CIS the American way, so
-the prose had been disagreeing with the dictionary it ships for as long as both
-existed — which is what made this a correctness fix rather than only a preference.
+It is **three rules and a dictionary**, and the split is the point:
 
-Two registry rows are needed for a spelling, not one. The pattern is anchored with
-`\b`, so `centre` cannot match inside `datacentre`; that same anchor is why Lenovo's
-**ThinkCentre** needs no allow-list entry. If you add a spelling rule, add the
-compound forms too, and confirm the guard actually fires before trusting it.
+| | Covers | How |
+|---|---|---|
+| `-ise` → `-ize` | `organise`, `authorisation`, `prioritised` | a rule, with ~40 named exceptions where `ise` is not a suffix (*compromise*, *enterprise*, *otherwise*) |
+| `-yse` → `-yze` | `analyse`, `analyser` | a rule. `analyses` is excluded — it is also the plural of *analysis*, identical in both dialects |
+| `-our` → `-or` | `behaviour`, `colour`, `favourite` | a rule with a three-character stem floor, which is what keeps `four`, `hour`, `tour` and `your` out without naming one of them |
+| the irregulars | `licence`, `defence`, `programme`, `judgement`, `artefact`, `catalogue`, `grey`, `practise`, the doubled-`l` inflections | **a dictionary, and it says so.** There is a rule under the doubled `l` and it turns on which syllable is stressed: `cancelled` and `installed` are not separable by regex |
+
+This replaced two rows in `data/renames.json`. A spelling is not a vendor rename — it
+has no vendor and no month — and enforcing it by row enforced exactly the words
+somebody had thought of: the convention was stated site-wide, applied to `centre`, and
+**2,192 British spellings sat in the content with the build green**, including a
+`licence` in the note beside an acronym expanding to *Client Access License*.
+
+If a British string is genuinely correct, add it to `ALLOW` in the checker with the
+reason. There is one: **Fibre Channel**, which is the standard's own name. Unlike
+Lenovo's *ThinkCentre*, the word boundary does not save it — there is a space where
+ThinkCentre has nothing.
+
+**Watch the generated files.** `data/acronym.html` and `CALCULUS-CHEAT-SHEET.md` are
+built from `tools/gen_acronym_domain.py` and `data/math.html`; fixing the artifact is
+undone by the next build. Both went stale in this sweep, which is what the ordering
+table at the top of this file is for.
 
 ## Class conventions (use these, not one-off variants)
 

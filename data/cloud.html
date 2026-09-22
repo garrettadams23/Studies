@@ -240,7 +240,7 @@ gcloud projects get-iam-policy PROJECT_ID \
                     roles it needs, and strip the default one.</strong> That is three commands at
                     project creation and an argument you cannot win afterwards, because by then
                     something in production depends on the broad token and nobody knows which
-                    thing. Organisation policy constraints
+                    thing. Organization policy constraints
                     (<code>automaticIamGrantsForDefaultServiceAccounts</code>) make it the default
                     for every future project, which is the version that survives the next team.
                   </div>
@@ -364,7 +364,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     one managed relational database in each — so a second
                     cloud is a translation exercise rather than a second
                     career. Where the mapping breaks down is networking and
-                    identity, which differ in behaviour and not only in
+                    identity, which differ in behavior and not only in
                     name; treat those two rows as genuinely new.
                   </div>
                 </div>
@@ -563,7 +563,7 @@ gcloud compute instances list --project my-prod-project</pre>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>AWS habit</th><th>GCP reality</th></tr>
-                    <tr><td>Attach a managed policy to a role</td><td>Bind a predefined role to a principal at organisation, folder, project or resource level</td></tr>
+                    <tr><td>Attach a managed policy to a role</td><td>Bind a predefined role to a principal at organization, folder, project or resource level</td></tr>
                     <tr><td>Read a user's permissions from their policies</td><td>There is no single place. You must inspect bindings at every level above the resource</td></tr>
                     <tr><td>Explicit <code>Deny</code> in an identity policy</td><td>Allow policies are additive with no deny. IAM <strong>deny policies</strong> exist as a separate object and are far narrower</td></tr>
                     <tr><td>Fine-grained resource ARNs <span class="acro-exp">(Amazon Resource Name)</span> in one policy</td><td>Granularity comes from <em>where</em> you bind, and many services only support project-level binding</td></tr>
@@ -705,7 +705,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <strong>writes to IAM itself as a separate, tiny, heavily-guarded tier</strong> —
                     because almost every escalation path runs through a permission that edits identity.
                     Grant IAM-write to as few principals as possible, alert on every use, and run a graph
-                    analyser in CI so a new policy's reachable blast radius is reviewed before it ships,
+                    analyzer in CI so a new policy's reachable blast radius is reviewed before it ships,
                     not after an attacker maps it for you.
                   </div>
                 </div>
@@ -806,14 +806,14 @@ gcloud compute instances list --project my-prod-project</pre>
                 <div class="concept-label">The Failure Mode</div>
                 <div class="concept-title">Failover Is as Fast as the Slowest Cache Between You and the User</div>
                 <div class="concept-desc">
-                  Health checks and DNS-based failover are described in seconds and experienced in minutes, because the record's time-to-live is only the first of several caches and several of them do not honour it.
+                  Health checks and DNS-based failover are described in seconds and experienced in minutes, because the record's time-to-live is only the first of several caches and several of them do not honor it.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <thead><tr><th>Layer</th><th>What it adds to failover time</th></tr></thead>
                     <tbody>
                       <tr><td>The record's own time-to-live</td><td>What you configured. The floor, not the answer</td></tr>
-                      <tr><td>Recursive resolvers</td><td>Usually honour it. Some clamp very low values upward</td></tr>
+                      <tr><td>Recursive resolvers</td><td>Usually honor it. Some clamp very low values upward</td></tr>
                       <tr><td>The operating system's stub resolver</td><td>Caches independently, often for longer than the record says</td></tr>
                       <tr><td>The application runtime</td><td>Some configurations cache DNS <em>for the life of the process</em> &mdash; the classic multi-hour failover</td></tr>
                       <tr><td>Long-lived connections</td><td>An established connection does not re-resolve at all. It fails when it fails</td></tr>
@@ -942,7 +942,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Terminates at the Google edge</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> ends near the user; the long haul rides Google's backbone</td></tr>
                     <tr><td>Health checks come from fixed ranges</td><td><strong><code>35.191.0.0/16</code> and <code>130.211.0.0/22</code> must be allowed</strong>, or every backend reads as unhealthy</td></tr>
                     <tr><td>Backend services, not target groups</td><td>Capacity and balancing mode are set on the backend service, per region</td></tr>
-                    <tr><td>Regional vs global load balancer</td><td>They are different products. Choosing the regional one gives up the anycast behaviour</td></tr>
+                    <tr><td>Regional vs global load balancer</td><td>They are different products. Choosing the regional one gives up the anycast behavior</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                   The health-check row is the single most common &ldquo;everything is unhealthy and the
@@ -1073,7 +1073,7 @@ gcloud compute instances list --project my-prod-project</pre>
                   compute charge and very little else. <strong class="c-amber">The storage, the snapshots and the
                   address keep billing</strong>, which is why an account full of &ldquo;stopped&rdquo; instances
                   still produces an invoice, and why the tidy-up nobody schedules is usually worth more than the
-                  instance-type optimisation everybody discusses.
+                  instance-type optimization everybody discusses.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -1180,10 +1180,10 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Sustained-use discount</td><td>Automatic; no reservation needed</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong>The last row is the one that changes behaviour
+                    <strong>The last row is the one that changes behavior
                     rather than vocabulary.</strong> Discounts applied
                     automatically for sustained use mean you are not
-                    penalised for failing to predict next year, which
+                    penalized for failing to predict next year, which
                     removes a whole planning exercise that the other
                     providers require — and it is the reason cost
                     comparisons between clouds are harder than the list
@@ -1423,7 +1423,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tbody>
                       <tr><td>Patching, backups, replica provisioning, failover mechanics</td><td><strong>Whether the backup restores</strong> &mdash; testing it is still yours, and the button existing is not evidence</td></tr>
                       <tr><td>Hardware, storage growth, availability-zone placement</td><td>Schema, indexes and query plans. The majority of real database incidents live here</td></tr>
-                      <tr><td>Minor version upgrades on a schedule</td><td>Major version upgrades, which change planner behaviour and need a real test</td></tr>
+                      <tr><td>Minor version upgrades on a schedule</td><td>Major version upgrades, which change planner behavior and need a real test</td></tr>
                       <tr><td>Metrics and basic alarms</td><td>Knowing which metric predicts <em>your</em> outage</td></tr>
                       <tr><td>Encryption at rest and in transit</td><td>Who can read the data, which is an access-control question the service cannot answer for you</td></tr>
                     </tbody>
@@ -1671,9 +1671,9 @@ gcloud compute instances list --project my-prod-project</pre>
                   <table class="ref-table">
                     <tr><th>Default</th><th>What it costs you</th><th>The deliberate setting</th></tr>
                     <tr><td>Management events only</td><td>No record of object reads or Lambda invocations</td><td>Data events on the buckets and functions that matter</td></tr>
-                    <tr><td>A single-region trail</td><td>Activity in an unused region is invisible — which is where mining happens</td><td>An organisation trail, all regions, including future ones</td></tr>
+                    <tr><td>A single-region trail</td><td>Activity in an unused region is invisible — which is where mining happens</td><td>An organization trail, all regions, including future ones</td></tr>
                     <tr><td>Trail logs in the same account</td><td>An attacker with admin deletes the evidence of being admin</td><td>A separate log-archive account, write-only, with object lock</td></tr>
-                    <tr><td>GuardDuty enabled in one region</td><td class="c-red">Per-region service — an unenabled region has no detection at all</td><td>Enable everywhere via the organisation delegated admin</td></tr>
+                    <tr><td>GuardDuty enabled in one region</td><td class="c-red">Per-region service — an unenabled region has no detection at all</td><td>Enable everywhere via the organization delegated admin</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-cyan">The test is not "is CloudTrail on" but "could we answer
@@ -1796,7 +1796,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>System Event</td><td>Always on, free</td><td>What Google itself did to your resources</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-cyan">Enable Data Access logging at the organisation level for
+                    <strong class="c-cyan">Enable Data Access logging at the organization level for
                     the services that hold real data, and accept the bill for those.</strong>
                     Setting it per project guarantees the one project created next quarter will not
                     have it. Security Command Center sits on top of these logs, so its coverage
@@ -1857,7 +1857,7 @@ gcloud compute instances list --project my-prod-project</pre>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-cyan">VPC Service Controls is the genuinely distinctive
-                    control here and it is a programme, not a checkbox.</strong> A perimeter that
+                    control here and it is a program, not a checkbox.</strong> A perimeter that
                     stops a stolen credential exfiltrating data also stops your CI job, your analyst's
                     notebook and the partner integration nobody documented — so it goes in as a dry
                     run first, and the ingress and egress rules you end up writing are an inventory
@@ -1911,7 +1911,7 @@ gcloud compute instances list --project my-prod-project</pre>
                 <div class="concept-label">The Trap</div>
                 <div class="concept-title">Four Thousand Findings Is the Same as Zero Findings</div>
                 <div class="concept-desc">
-                  Point one of these at an estate that has never been scanned and it returns thousands of results. That is the tool working correctly, and it is also where most posture programmes quietly end, because nobody can act on a list that long and nobody wants to say so.
+                  Point one of these at an estate that has never been scanned and it returns thousands of results. That is the tool working correctly, and it is also where most posture programs quietly end, because nobody can act on a list that long and nobody wants to say so.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -1925,7 +1925,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-green">Start with one control, across every account, and drive it to zero.</strong> Public storage, or root without MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, or logging disabled &mdash; pick one, fix it everywhere, and put a guardrail behind it so it cannot return. That produces a closed control and a repeatable method; a prioritised spreadsheet of four thousand rows produces a meeting.
+                    <strong class="c-green">Start with one control, across every account, and drive it to zero.</strong> Public storage, or root without MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, or logging disabled &mdash; pick one, fix it everywhere, and put a guardrail behind it so it cannot return. That produces a closed control and a repeatable method; a prioritized spreadsheet of four thousand rows produces a meeting.
                   </div>
                 </div>
               </div>
@@ -1967,7 +1967,7 @@ gcloud compute instances list --project my-prod-project</pre>
                 <div class="concept-label">The Failure Mode</div>
                 <div class="concept-title">State Is the Thing That Breaks, and Drift Is How You Find Out</div>
                 <div class="concept-desc">
-                  Terraform's model is that the state file describes reality. Everything painful about running it in a real organisation follows from the ways that stops being true.
+                  Terraform's model is that the state file describes reality. Everything painful about running it in a real organization follows from the ways that stops being true.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -2023,7 +2023,7 @@ gcloud compute instances list --project my-prod-project</pre>
                 <div class="concept-label">Silently wrong</div>
                 <div class="concept-title">"No State File to Manage" Means AWS Manages It — Including the Rollback That Deletes Your Database</div>
                 <div class="concept-desc">
-                  The managed stack is a genuine advantage and it hands you a behaviour Terraform
+                  The managed stack is a genuine advantage and it hands you a behavior Terraform
                   does not have: <strong>automatic rollback</strong>. When an update fails partway,
                   CloudFormation reverts the stack to its previous state, and for resources it
                   created during that update, reverting means deleting them. A stack update that
@@ -2047,7 +2047,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <strong class="c-cyan">And CDK does not remove any of this — it generates
                     it.</strong> Real code producing templates is a large ergonomic win and it puts
                     a compiler between you and the diff, so the discipline that matters is reading
-                    the synthesised change set rather than trusting the constructs. Keep stateful
+                    the synthesized change set rather than trusting the constructs. Keep stateful
                     resources in their own stack with their own policy, so the stack you iterate on
                     daily has nothing in it that cannot be recreated.
                   </div>
@@ -2106,7 +2106,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-amber">The controls that actually bound spend are quotas and policies, not budgets.</strong> A service quota refuses the resource; a policy refuses the instance family or the region. Budgets are for <em>noticing</em>, and are worth having for that &mdash; but an organisation whose only cost control is an alert has a notification system, not a control.
+                    <strong class="c-amber">The controls that actually bound spend are quotas and policies, not budgets.</strong> A service quota refuses the resource; a policy refuses the instance family or the region. Budgets are for <em>noticing</em>, and are worth having for that &mdash; but an organization whose only cost control is an alert has a notification system, not a control.
                   </div>
                 </div>
               </div>
@@ -2148,7 +2148,7 @@ gcloud compute instances list --project my-prod-project</pre>
                 <div class="concept-label">The Failure Mode</div>
                 <div class="concept-title">Retrofitting a Landing Zone Is a Different Project Entirely</div>
                 <div class="concept-desc">
-                  Landing zones are described as a starting point and adopted by organisations that already have accounts. Those are two very different exercises, and the second is where the cost is.
+                  Landing zones are described as a starting point and adopted by organizations that already have accounts. Those are two very different exercises, and the second is where the cost is.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -2216,7 +2216,7 @@ gcloud compute instances list --project my-prod-project</pre>
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Behaviour</th><th>Consequence</th><th>The control</th></tr>
+                    <tr><th>Behavior</th><th>Consequence</th><th>The control</th></tr>
                     <tr><td>Constant reconciliation</td><td>Console changes revert silently</td><td>Pause the controller, or make Git the only path — and document which</td></tr>
                     <tr><td>Deleting the resource object</td><td class="c-red">Default deletion policy deletes the real cloud resource — including the database</td><td><code>cnrm.cloud.google.com/deletion-policy: abandon</code> on anything stateful</td></tr>
                     <tr><td>Adopting existing resources</td><td>An object created for a resource that already exists may fight it or take it over</td><td>Import deliberately; test on something disposable first</td></tr>
@@ -2438,7 +2438,7 @@ aws ec2 get-console-output --instance-id i-0abc --output text</pre>
                   <table class="ref-table mb-14">
                     <tr><th>Error</th><th>Real cause</th><th>First move</th></tr>
                     <tr><td><code>AccessDenied</code></td><td>Either no policy allows it, or one explicitly denies it — the message does not say which</td><td>Simulate the action; an explicit deny usually means an SCP or a permission boundary</td></tr>
-                    <tr><td><code>UnauthorizedOperation</code></td><td>The EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> flavour of the same thing, with the reason encoded</td><td><code>sts decode-authorization-message</code> on the blob</td></tr>
+                    <tr><td><code>UnauthorizedOperation</code></td><td>The EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> flavor of the same thing, with the reason encoded</td><td><code>sts decode-authorization-message</code> on the blob</td></tr>
                     <tr><td>S3 <span class="acro-exp">(Simple Storage Service)</span> returns <code>404</code> where you expected <code>403</code></td><td>You lack <code>ListBucket</code>, so S3 will not confirm the object exists</td><td>Fix the list permission before concluding the object is missing</td></tr>
                     <tr><td><code>InvalidClientTokenId</code></td><td>Credentials from another account or partition, or a deleted key</td><td>Check the caller identity, not the key value</td></tr>
                     <tr><td><code>RequestTimeTooSkewed</code></td><td>The client's clock has drifted beyond the signature window</td><td>Fix time sync; it is never the credentials</td></tr>
@@ -2448,7 +2448,7 @@ aws ec2 get-console-output --instance-id i-0abc --output text</pre>
                     <tr><td><code>ExpiredToken</code> mid-run</td><td>An assumed-role session that outlived its duration</td><td>Refresh inside the loop rather than once at the start</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong>The pattern worth internalising: when something that worked yesterday
+                    <strong>The pattern worth internalizing: when something that worked yesterday
                     fails today and nothing in the account changed, look above the
                     account.</strong> A service control policy applied at the organisational unit
                     denies actions no account-level administrator can grant back, and it leaves no
@@ -2543,7 +2543,7 @@ aws ec2 get-console-output --instance-id i-0abc --output text</pre>
                     <tr><th>#</th><th>Question</th><th>Where to look</th></tr>
                     <tr><td>1</td><td>Is the API enabled on <em>this</em> project?</td><td>Services list. Enabling is per project and per service, and nothing is on by default</td></tr>
                     <tr><td>2</td><td>Which project, and is billing attached?</td><td>The active configuration, not the console tab you have open</td></tr>
-                    <tr><td>3</td><td>Is the principal allowed, at whatever level it inherits from?</td><td>Policy Troubleshooter, remembering that organisation and folder grants flow down</td></tr>
+                    <tr><td>3</td><td>Is the principal allowed, at whatever level it inherits from?</td><td>Policy Troubleshooter, remembering that organization and folder grants flow down</td></tr>
                     <tr><td>4</td><td>Can the packets get there?</td><td>Connectivity Tests; VPC <span class="acro-exp">(Virtual Private Cloud)</span> firewall is default-deny inbound and rules are priority-ordered</td></tr>
                     <tr><td>5</td><td>Am I against a quota rather than a bug?</td><td>Quotas page — many are per-project, per-region and small until raised</td></tr>
                   </table>
@@ -2588,7 +2588,7 @@ gcloud logging read <span class="str">'severity&gt;=ERROR AND protoPayload.statu
   --format=<span class="str">"table(timestamp,protoPayload.authenticationInfo.principalEmail,protoPayload.status.message)"</span></pre>
                   <div class="concept-desc verdict">
                     <strong class="c-amber">Policy Troubleshooter is the tool that ends the
-                    argument.</strong> Inheritance from organisation to folder to project means
+                    argument.</strong> Inheritance from organization to folder to project means
                     the grant that matters is often nowhere near the project you are looking at,
                     and reading three levels of policy by hand is how people conclude a
                     permission exists when it does not.
@@ -2613,7 +2613,7 @@ gcloud logging read <span class="str">'severity&gt;=ERROR AND protoPayload.statu
                     <tr><td><code>Precondition check failed</code> on delete</td><td>Something still references the resource, or a lien is set</td><td>Find the dependant; liens exist to stop exactly this</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong>The pattern worth internalising: on this platform a permission error
+                    <strong>The pattern worth internalizing: on this platform a permission error
                     is a hypothesis, not a diagnosis.</strong> Three different causes — a disabled
                     API, absent billing, and a genuinely missing role — all surface as the same
                     shape of denial, and only one of them is fixed by granting anything. Ruling
@@ -2664,7 +2664,7 @@ gcloud logging read <span class="str">'severity&gt;=ERROR AND protoPayload.statu
                 <div class="concept-desc">
                   The pillars read like a checklist to max out, and that is the misread. They
                   <strong class="c-amber">pull against each other</strong>: reliability (multi-region,
-                  redundancy) costs money and fights cost optimisation; performance can add both cost and
+                  redundancy) costs money and fights cost optimization; performance can add both cost and
                   complexity; security adds operational friction. You cannot be maximal on all of them at
                   once, and you are not meant to be. The framework's value is not the score — it is
                   <strong class="c-cyan">forcing the trade-offs to be explicit and deliberate for this
@@ -3054,7 +3054,7 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                 <div class="concept-title">Federated Credentials Remove the Last Secret</div>
                 <div class="concept-desc">
                   A pipeline outside Azure has traditionally held a client secret, which means a secret
-                  in a settings store, an expiry nobody diarised, and an outage the morning it lapses.
+                  in a settings store, an expiry nobody diarized, and an outage the morning it lapses.
                   Federation replaces it: the external system already issues its own signed token, and
                   a federated credential says <em>this issuer, this subject, this audience may become
                   this identity</em>. Nothing is stored, so nothing expires and nothing leaks.
@@ -3100,7 +3100,7 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                     <strong class="c-amber">Audit which identities are attached to compute, not just
                     who holds which role.</strong> A permissions review that reads role assignments
                     alone will pronounce an estate healthy while a broadly-scoped identity sits on a
-                    machine half the organisation can run commands on. The question to ask of every
+                    machine half the organization can run commands on. The question to ask of every
                     managed identity is not what it can do, but who can make it do it.
                   </div>
                 </div>
@@ -3500,14 +3500,14 @@ az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScrip
                       <tr><td>ScopeLocked</td><td>A CanNotDelete or ReadOnly lock is in the way</td><td>Remove the lock deliberately, then put it back</td></tr>
                       <tr><td>QuotaExceeded / SkuNotAvailable</td><td>Subscription vCPU quota, or that size isn't offered in the region/zone</td><td>Request a quota increase, or pick another size or region</td></tr>
                       <tr><td>ZonalAllocationFailed</td><td>Capacity in that specific zone, right now</td><td>Retry, try another zone, or use a different VM <span class="acro-exp">(Virtual Machine)</span> family</td></tr>
-                      <tr><td>429 / TooManyRequests</td><td>Resource Manager or a data plane is throttling you</td><td>Honour <code>Retry-After</code>, back off exponentially, batch the calls</td></tr>
+                      <tr><td>429 / TooManyRequests</td><td>Resource Manager or a data plane is throttling you</td><td>Honor <code>Retry-After</code>, back off exponentially, batch the calls</td></tr>
                       <tr><td>InvalidTemplateDeployment</td><td>A nested or dependent resource failed, not the template syntax</td><td>Read the <em>inner</em> error from the deployment operations</td></tr>
                       <tr><td>Name resolves to a public IP <span class="acro-exp">(Internet Protocol)</span></td><td>Private endpoint exists, private DNS <span class="acro-exp">(Domain Name System)</span> zone isn't linked to the VNet <span class="acro-exp">(Virtual Network)</span></td><td>Link the zone, confirm with <code>nslookup</code> from inside the VNet</td></tr>
                       <tr><td>Public network access is disabled</td><td>The PaaS <span class="acro-exp">(Platform as a Service)</span> firewall is on and your client isn't on the allow list</td><td>Add the IP or subnet, or go through the private endpoint</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
-                    <strong class="c-green">A pattern worth internalising:</strong> if something
+                    <strong class="c-green">A pattern worth internalizing:</strong> if something
                     worked yesterday and fails today with no deployment in between, check the
                     Activity Log for a policy or lock added at a <em>parent</em> scope. Inheritance
                     means someone can break your resource group without ever touching it.
@@ -3564,20 +3564,20 @@ az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScrip
                   <strong>DTU</strong> is a blended unit — processor, memory and I/O <span class="acro-exp">(Input/Output)</span> bundled at a fixed
                   ratio — so you cannot buy more of one without buying more of all three. <strong>vCore</strong>
                   separates them, which is what makes the two things people actually want possible:
-                  paying for the cores your licence already covers, and scaling storage without scaling
+                  paying for the cores your license already covers, and scaling storage without scaling
                   compute.
                 </div>
                 <div class="dw">
                   <table class="ref-table mb-14">
                     <tr><th>Question</th><th>DTU answer</th><th>vCore answer</th></tr>
                     <tr><td>Need more I/O only</td><td>Buy a bigger bundle of everything</td><td>Raise storage or change tier</td></tr>
-                    <tr><td>Already own SQL Server licences</td><td>No mechanism to use them</td><td>Azure Hybrid Benefit applies</td></tr>
+                    <tr><td>Already own SQL Server licenses</td><td>No mechanism to use them</td><td>Azure Hybrid Benefit applies</td></tr>
                     <tr><td>Sizing from an on-prem server</td><td>Guesswork — the unit has no on-prem equivalent</td><td>Cores map to cores</td></tr>
                     <tr><td>Predicting the bill</td><td>Simple, one number</td><td>More lines, more control</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong>Start on vCore unless the database is small and the estate has no
-                    licences.</strong> DTU is not wrong — it is genuinely simpler for a small
+                    licenses.</strong> DTU is not wrong — it is genuinely simpler for a small
                     workload — but it is a one-way simplification, and the moment somebody asks
                     &ldquo;why are we paying for cores we own?&rdquo; the answer is a purchasing-model
                     change rather than a setting.
@@ -3625,7 +3625,7 @@ az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScrip
                 <div class="dw">
                   <table class="ref-table mb-14">
                     <tr><th>Symptom</th><th>Usually is</th><th>Where to look</th></tr>
-                    <tr><td>Intermittent timeouts under load, fine when quiet</td><td>Hitting the tier's ceiling, not a slow query</td><td>Resource utilisation against the tier limit; raise the tier to test the theory</td></tr>
+                    <tr><td>Intermittent timeouts under load, fine when quiet</td><td>Hitting the tier's ceiling, not a slow query</td><td>Resource utilization against the tier limit; raise the tier to test the theory</td></tr>
                     <tr><td>Works from a VM, fails from the office</td><td>Firewall rules or the public-endpoint switch</td><td>Server firewall, private endpoint, and whether public access is disabled outright</td></tr>
                     <tr><td>&ldquo;Login failed&rdquo; for a working account</td><td>Connecting to the wrong database or a contained user</td><td>The database name in the connection string; contained users exist per database, not per server</td></tr>
                     <tr><td>Sudden failover, no change deployed</td><td>Planned maintenance on the service</td><td>Expected: the client must retry. A managed database reboots without asking</td></tr>
@@ -3834,11 +3834,11 @@ dsregcmd /status
                       <tr><td>Cloud</td><td>Node identity, network boundaries, managed control plane, key management</td><td>A pod borrowing the node's cloud role and reading a whole bucket</td></tr>
                       <tr><td>Cluster</td><td>RBAC <span class="acro-exp">(Role-Based Access Control)</span>, admission, network policy, namespaces, secrets</td><td>A service account that can create pods, and therefore can become anything</td></tr>
                       <tr><td>Container</td><td>Image contents, runtime privileges, filesystem, capabilities</td><td>A privileged pod with the host filesystem mounted</td></tr>
-                      <tr><td>Code</td><td>The application, its dependencies, its handling of input</td><td>The SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> or deserialisation bug that started the whole chain</td></tr>
+                      <tr><td>Code</td><td>The application, its dependencies, its handling of input</td><td>The SSRF <span class="acro-exp">(Server-Side Request Forgery)</span> or deserialization bug that started the whole chain</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
-                    Read it outside-in for defence and inside-out for attack. The layers nest, so a control at
+                    Read it outside-in for defense and inside-out for attack. The layers nest, so a control at
                     an outer layer contains failures at inner ones — which is the argument for spending
                     effort on cluster and cloud configuration rather than on making every application perfect.
                   </div>
@@ -4079,7 +4079,7 @@ dsregcmd /status
                 </div>
                 <div class="dw">
                   <div class="concept-desc">
-                    Which is good news for defence: these are visible in the manifest, checkable before
+                    Which is good news for defense: these are visible in the manifest, checkable before
                     deployment, and enforceable by admission policy. The vulnerability class you cannot see is
                     the small one; the configuration class you can see is the large one.
                   </div>
@@ -4275,7 +4275,7 @@ dsregcmd /status
                       <tr><td>Nodes and their kernel</td><td>Two tenants' pods run side by side; one breakout reaches both</td></tr>
                       <tr><td>The API <span class="acro-exp">(Application Programming Interface)</span> server and etcd</td><td>One RBAC mistake spans everything</td></tr>
                       <tr><td>Cluster-scoped objects</td><td>CRDs <span class="acro-exp">(Custom Resource Definition)</span>, webhooks, storage classes, node state — no namespace at all</td></tr>
-                      <tr><td>Node resources</td><td>A noisy neighbour is also an availability attack</td></tr>
+                      <tr><td>Node resources</td><td>A noisy neighbor is also an availability attack</td></tr>
                       <tr><td>The DNS <span class="acro-exp">(Domain Name System)</span> service</td><td>Service discovery reveals what other tenants run</td></tr>
                     </tbody>
                   </table>
@@ -4296,7 +4296,7 @@ dsregcmd /status
                 <div class="concept-title">Choosing a Model by Who the Tenants Are</div>
                 <div class="concept-desc">
                   The right answer follows entirely from one question, and it is not a technical one: what
-                  happens if one tenant runs hostile code on purpose? Teams inside one organisation and
+                  happens if one tenant runs hostile code on purpose? Teams inside one organization and
                   customers running arbitrary workloads are different problems, and only the first is served
                   by a shared cluster.
                 </div>
@@ -4304,7 +4304,7 @@ dsregcmd /status
                   <table class="ref-table">
                     <thead><tr><th>Tenants</th><th>Model</th><th>Reasoning</th></tr></thead>
                     <tbody>
-                      <tr><td>Teams in one organisation, trusted, non-hostile</td><td>Namespaces plus network policy, quotas, RBAC, PSA</td><td>Protects against mistakes, which is the real threat</td></tr>
+                      <tr><td>Teams in one organization, trusted, non-hostile</td><td>Namespaces plus network policy, quotas, RBAC, PSA</td><td>Protects against mistakes, which is the real threat</td></tr>
                       <tr><td>Separate environments — dev, staging, prod</td><td>Separate clusters</td><td>The blast radius is the point; sharing a control plane defeats it</td></tr>
                       <tr><td>Business units with distinct compliance scope</td><td>Separate clusters, or dedicated node pools with strict scheduling</td><td>Auditors ask about shared kernels, correctly</td></tr>
                       <tr><td>Customers running code you did not write</td><td>Separate clusters, or a sandboxed runtime, or both</td><td>The shared kernel is the boundary, and a container is not one</td></tr>
@@ -4416,7 +4416,7 @@ dsregcmd /status
                   eBPF-based sensors — Falco, Tetragon and their commercial equivalents — observe kernel
                   events from outside the container, so a compromised workload cannot hide from them. The
                   difficulty is never collection; it is that container workloads are so uniform that the
-                  default rule sets fire constantly on legitimate behaviour.
+                  default rule sets fire constantly on legitimate behavior.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -4457,7 +4457,7 @@ dsregcmd /status
                 <div class="concept-title">The Platform's Best Feature Is Working Against You</div>
                 <div class="concept-desc">
                   Kubernetes exists to replace unhealthy workloads automatically. During an incident that
-                  behaviour destroys evidence faster than any anti-forensic technique an attacker would
+                  behavior destroys evidence faster than any anti-forensic technique an attacker would
                   bother with: kill the compromised pod and the controller schedules a fresh one, the
                   original filesystem is gone, its logs may be gone with it, and the replacement is running
                   the same vulnerable image. The instinct that works on a server — isolate it, then
@@ -4493,7 +4493,7 @@ dsregcmd /status
 
           <span class="com"># 4. Snapshot the node's disk through the cloud provider, not the cluster</span></pre>
                   <div class="concept-desc verdict">
-                    Step 1 is the one worth memorising. Removing the label that the controller's selector
+                    Step 1 is the one worth memorizing. Removing the label that the controller's selector
                     matches orphans the pod: the workload heals, users see a brief blip, and the evidence
                     stays alive. Without it you are choosing between service availability and knowing what
                     happened, and under pressure availability wins every time.
@@ -4639,7 +4639,7 @@ dsregcmd /status
                 <div class="concept-desc">
                   Every provider publishes a diagram with a diagonal line: they secure the cloud, you secure
                   what you put in it. Correct, and it has never prevented a single breach, because the line
-                  moves for every service and the diagram does not say where. The same organisation is
+                  moves for every service and the diagram does not say where. The same organization is
                   responsible for guest OS <span class="acro-exp">(Operating System)</span> patching on a virtual machine, for nothing of the sort on a managed
                   database, and for something in between on a managed Kubernetes cluster.
                 </div>
@@ -4850,7 +4850,7 @@ dsregcmd /status
                       <tr><td>Snapshot copied to an unknown account</td><td>Data theft that never touches the data plane</td></tr>
                       <tr><td>Console login without multi-factor, or from a new region</td><td>Credential compromise, before it is used for anything</td></tr>
                       <tr><td>Enumeration bursts — many describe or list calls, mostly denied</td><td>Reconnaissance, which precedes everything else</td></tr>
-                      <tr><td>Service used in a region the organisation never uses</td><td>The cryptomining signature, and it is common</td></tr>
+                      <tr><td>Service used in a region the organization never uses</td><td>The cryptomining signature, and it is common</td></tr>
                     </tbody>
                   </table>
                   <div class="concept-desc verdict">
@@ -4879,10 +4879,10 @@ dsregcmd /status
                     <tbody>
                       <tr><td>Split by identity type — human, CI role, service, third party</td><td>The same call means different things from each; this alone removes most noise</td></tr>
                       <tr><td>Alert on a human doing what only automation should do, and the reverse</td><td>Very high signal, and cheap to express</td></tr>
-                      <tr><td>Baseline per account and per role, not globally</td><td>A build account and a finance account share no normal behaviour</td></tr>
+                      <tr><td>Baseline per account and per role, not globally</td><td>A build account and a finance account share no normal behavior</td></tr>
                       <tr><td>Use the user-agent field</td><td>Console versus SDK <span class="acro-exp">(Software Development Kit)</span> versus a known offensive tool is often the whole detection</td></tr>
                       <tr><td>Correlate sequences, not single calls</td><td>Enumerate, then escalate, then exfiltrate — the shape is the signal</td></tr>
-                      <tr><td>Treat organisation-wide changes as always-alert</td><td>They are rare, deliberate, and catastrophic when they are not yours</td></tr>
+                      <tr><td>Treat organization-wide changes as always-alert</td><td>They are rare, deliberate, and catastrophic when they are not yours</td></tr>
                       <tr><td>Route control-plane logs to an account nobody's workload can write to</td><td>Otherwise the first detection is also the one an attacker deletes</td></tr>
                     </tbody>
                   </table>
@@ -4923,7 +4923,7 @@ dsregcmd /status
                     what did it actually do?</em> The first is in the log, the second is computable from
                     policy, and the third is the rest of the investigation. The general process still applies —
                     <span class="xref">Incident Response — What to Do When It Goes Wrong</span> — but the
-                    artefacts are identities and API <span class="acro-exp">(Application Programming Interface)</span> calls rather than hosts and files.
+                    artifacts are identities and API <span class="acro-exp">(Application Programming Interface)</span> calls rather than hosts and files.
                   </div>
                 </div>
               </div>
@@ -4966,7 +4966,7 @@ dsregcmd /status
                   <table class="ref-table">
                     <thead><tr><th>Prerequisite</th><th>Without it</th></tr></thead>
                     <tbody>
-                      <tr><td>Organisation-wide logging to a separate, locked account</td><td>The evidence is in the account being investigated, and may be gone</td></tr>
+                      <tr><td>Organization-wide logging to a separate, locked account</td><td>The evidence is in the account being investigated, and may be gone</td></tr>
                       <tr><td>Log retention longer than your detection lag</td><td>The initial access falls outside the window you can see</td></tr>
                       <tr><td>Data-plane logging on sensitive stores</td><td>You can prove access was possible, never whether data was read</td></tr>
                       <tr><td>A responder role with snapshot and read rights, pre-provisioned</td><td>An access request during the incident, at three in the morning</td></tr>
@@ -5055,7 +5055,7 @@ dsregcmd /status
                 <div class="concept-label">The Inversion</div>
                 <div class="concept-title">Retro-Tagging Never Completes</div>
                 <div class="concept-desc">
-                  Every organisation eventually tries to allocate cloud spend and discovers half its resources have
+                  Every organization eventually tries to allocate cloud spend and discovers half its resources have
                   no owner tag. The instinct is a clean-up project — go back and tag everything — and that project
                   <strong class="c-amber">never finishes</strong>, because resources are created faster than a
                   human backfills them and nobody remembers who owns a two-year-old orphan. The only tag policy
@@ -5127,7 +5127,7 @@ dsregcmd /status
                   <div class="concept-desc verdict">
                     The order is the method: run on-demand long enough to <em>measure</em> a stable baseline, commit
                     only to that floor, and leave the variable top on-demand or spot. Committing to peak is how
-                    organisations end up paying for capacity they no longer run.
+                    organizations end up paying for capacity they no longer run.
                   </div>
                 </div>
               </div>
@@ -5144,6 +5144,47 @@ dsregcmd /status
                   Treat commitments as a rolling instrument tied to a forecast someone owns, not a one-off
                   purchase: cover the stable base load, review coverage quarterly, and accept that the last slice
                   of variable demand is cheaper left flexible than locked cheap and stranded.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Other End</div>
+                <div class="concept-title">A Commitment Expires, and Nothing Tells You</div>
+                <div class="concept-desc">
+                  Everything above is about buying one. The failure at the other end is more common and gets
+                  diagnosed for days as a technical problem, because <strong>expiry is a diary problem wearing a
+                  cost incident's clothes.</strong> A one- or three-year term ends, the discount stops, the same
+                  machines keep running, and the bill goes up by the discount rate overnight.<br><br>
+                  <strong>The fingerprint is a cost jump with a flat usage graph.</strong> Nothing was deployed,
+                  nothing scaled, no region was added &mdash; and the increase is suspiciously round, because it is
+                  exactly the 30&ndash;70% that was being taken off. When the usage line does not move across the
+                  step, the cause is commercial rather than technical, and hours spent in the architecture diagram
+                  are hours spent in the wrong document. The invoice does eventually explain itself &mdash; a line
+                  saying the reserved instances expired &mdash; and it arrives a month after that would have been
+                  useful.
+                </div>
+                <div class="concept-desc">
+                  It is missed for a structural reason rather than a careless one. A commitment is bought by one
+                  person in one quarter and lapses twelve or thirty-six months later, by which time that person
+                  has changed roles or employers. <strong>Nothing in the console raises a hand:</strong> coverage
+                  is a percentage on a dashboard nobody opens, and it falls silently rather than alerting. The
+                  closest thing this site has to a sibling failure is a certificate &mdash; bought once, silent
+                  until the day it is not, and fixed by a date with an owner rather than by any technical control.
+                </div>
+                <table class="ref-table">
+                  <thead><tr><th>Control</th><th>What it buys</th><th>What it costs</th></tr></thead>
+                  <tbody>
+                    <tr><td>Alert on coverage percentage, not on spend</td><td>The only one that fires <em>before</em> the bill does &mdash; coverage falls on the expiry date, spend rises on the invoice weeks later</td><td>Somebody has to own the threshold, and a threshold nobody owns is a dashboard</td></tr>
+                    <tr><td>The expiry date in the same calendar as certificate renewals</td><td>Puts it where an organization already looks, which beats inventing a process for one date a year</td><td>Nothing, and it is the cheapest row here</td></tr>
+                    <tr><td>Stagger the terms deliberately</td><td>Turns one cliff into several small steps, so a missed renewal is a rounding error instead of an incident</td><td>More renewals to track, and it gives up a little of the longest-term discount</td></tr>
+                    <tr><td>Auto-renew</td><td>Removes the cliff entirely, and for a genuinely stable baseline it is the right answer</td><td>It renews a commitment nobody re-forecast &mdash; which is precisely the failure the card above this one is about, arriving on a timer</td></tr>
+                  </tbody>
+                </table>
+                <div class="concept-desc verdict">
+                  <strong>Auto-renew is the wrong default for the same reason buying without a forecast is: it
+                  turns a decision into a subscription.</strong> The right default is the second row plus the
+                  first &mdash; a dated review that fires before the term ends, owned by whoever owns the
+                  forecast, with auto-renew switched on only where the baseline has already been stable across a
+                  full previous term. That is the one case where the decision has genuinely already been made.
                 </div>
               </div>
             </div>
@@ -5439,7 +5480,7 @@ dsregcmd /status
             <tr><td>TLS <span class="acro-exp">(Transport Layer Security)</span> termination and certificate lifecycle</td><td>One automation, one renewal path, one place to get the cipher policy right</td></tr>
             <tr><td>Rate limiting</td><td>Per client, before your application spends a database query on it</td></tr>
             <tr><td>Request size and timeout limits</td><td>A default that protects every service, including ones nobody remembered</td></tr>
-            <tr><td>Authentication at the edge</td><td>Useful for internal tools; never a substitute for the service's own authorisation</td></tr>
+            <tr><td>Authentication at the edge</td><td>Useful for internal tools; never a substitute for the service's own authorization</td></tr>
             <tr><td>Header hygiene</td><td>Strip inbound spoofed headers, add security headers outbound</td></tr>
             <tr><td>WAF <span class="acro-exp">(Web Application Firewall)</span> or bot rules</td><td>Where a shared rule set can exist at all</td></tr>
             <tr><td>Consistent logging</td><td>One access log format for every request that enters the cluster</td></tr>
@@ -5458,7 +5499,7 @@ dsregcmd /status
       <div class="concept-title">Ingress, Gateway API and Service Mesh — Which Layer Does What</div>
       <div class="concept-desc">
         Three overlapping things, frequently deployed together without a clear division of
-        responsibility, which is how a request ends up being routed twice and authorised nowhere.
+        responsibility, which is how a request ends up being routed twice and authorized nowhere.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -5534,7 +5575,7 @@ dsregcmd /status
                 <div class="concept-title">Four Reasons People Give, and Two of Them Are Real</div>
                 <div class="concept-desc">
                   Multi-cloud is the most-asked question in this domain and the one with the least written down,
-                  partly because the answer is uncomfortable. Nearly every multi-cloud programme is justified by
+                  partly because the answer is uncomfortable. Nearly every multi-cloud program is justified by
                   one of four arguments, and <strong class="c-amber">only two of them survive contact with an
                   invoice</strong>.
                 </div>
@@ -5606,7 +5647,7 @@ dsregcmd /status
                     multi-cloud &mdash; blast-radius isolation, per-team autonomy, environment separation &mdash; is
                     delivered by good account and project structure inside one provider, at a fraction of the cost.
                     See <span class="xref">Landing Zones &amp; Multi-Account Structure</span>: that is
-                    the decision worth agonising over, and it is the one people skip while debating this one.
+                    the decision worth agonizing over, and it is the one people skip while debating this one.
                   </div>
                 </div>
               </div>
@@ -5641,7 +5682,7 @@ dsregcmd /status
                     <tr><td>Arc-enabled <strong>servers</strong> (Windows/Linux, on-prem or another cloud)</td><td>Policy, RBAC, tags, Monitor, Defender for Cloud, Update Manager, extensions</td></tr>
                     <tr><td>Arc-enabled <strong>Kubernetes</strong></td><td>GitOps <span class="acro-exp">(Git Operations)</span> configuration, Policy, Defender, Monitor — on any conformant cluster</td></tr>
                     <tr><td>Arc-enabled <strong>data services</strong> (SQL Managed Instance, PostgreSQL)</td><td>Run Azure data services on your own hardware, updated from Azure</td></tr>
-                    <tr><td>Arc-enabled <strong>SQL <span class="acro-exp">(Structured Query Language)</span> Server</strong></td><td>Inventory, best-practice assessment, Defender, licence visibility</td></tr>
+                    <tr><td>Arc-enabled <strong>SQL <span class="acro-exp">(Structured Query Language)</span> Server</strong></td><td>Inventory, best-practice assessment, Defender, license visibility</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     The unlock is a <strong>single pane and a single policy model across a hybrid estate</strong> —
@@ -5737,7 +5778,7 @@ dsregcmd /status
                     matter — the same tool for cloud and on-prem servers, which is exactly what
                     <span class="xref">Azure Arc — Governing What Isn't in Azure From Inside Azure</span> exists to
                     enable. (Note the lineage: the older Log-Analytics-based Automation Update Management has been
-                    retired in favour of Update Manager, which needs neither the workspace nor the extra agent.)
+                    retired in favor of Update Manager, which needs neither the workspace nor the extra agent.)
                   </div>
                 </div>
               </div>
@@ -5817,7 +5858,7 @@ dsregcmd /status
                   <strong class="c-cyan">both satisfy the same rule</strong>. Entra ID Protection adds a
                   <strong class="c-amber">risk dimension</strong>: it scores each sign-in (impossible travel, an
                   anonymous or malware-linked IP, token and property anomalies) and each user (leaked credentials, a
-                  pattern of risky behaviour) in real time, and lets Conditional Access branch on that score. So the
+                  pattern of risky behavior) in real time, and lets Conditional Access branch on that score. So the
                   same user gets a frictionless sign-in when risk is low and a step-up — or a block — when risk is
                   high. The control becomes conditional on the <em>threat</em>, not only the context.
                 </div>

@@ -13,7 +13,7 @@
       <div class="concept-desc">
         Voltage is electrical pressure — the push. Current is flow — how much actually moves.
         Resistance opposes that flow. The water analogy holds well enough to reason with: voltage is
-        the pressure in the pipe, current is litres per second, resistance is how narrow the pipe is.
+        the pressure in the pipe, current is liters per second, resistance is how narrow the pipe is.
         Ohm's law ties them together, and almost every practical electrical question in IT is one
         rearrangement of it.
       </div>
@@ -87,7 +87,7 @@ runtime falls non-linearly with load — read the vendor curve, do not divide</p
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The general lesson generalises past electronics: <strong>measure at the point of use, under
+          The general lesson generalizes past electronics: <strong>measure at the point of use, under
           the conditions that fail.</strong> A voltage reading taken at the supply with the device
           idle is the electrical equivalent of testing an application with no load, and it will look
           fine every time.
@@ -124,7 +124,7 @@ runtime falls non-linearly with load — read the vendor curve, do not divide</p
             <tr><td>Cooling itself consumes power</td><td>Total facility draw exceeds IT draw — this is what PUE <span class="acro-exp">(Power Usage Effectiveness)</span> measures</td></tr>
             <tr><td>Every 10 °C rise roughly halves electrolytic capacitor life</td><td>Why hot equipment fails early rather than immediately</td></tr>
             <tr><td>Silicon throttles rather than fails</td><td>A hot machine is slow before it is broken — check thermals on performance complaints</td></tr>
-            <tr><td>Airflow direction is front-to-back, consistently</td><td>One reversed device recirculates hot air into its neighbours</td></tr>
+            <tr><td>Airflow direction is front-to-back, consistently</td><td>One reversed device recirculates hot air into its neighbors</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -169,7 +169,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           above their rated draw, and a supply chosen to sit near its efficiency sweet
           spot on paper will trip its own protection under them — which presents as
           random reboots that get blamed on everything else for weeks. The efficiency
-          badge says nothing about that behaviour; the review does.
+          badge says nothing about that behavior; the review does.
         </div>
       </div>
     </div>
@@ -219,7 +219,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-label">Reference</div>
       <div class="concept-title">Five Components Explain Most of What You Will Meet</div>
       <div class="concept-desc">
-        Board-level electronics uses a small vocabulary repeatedly. Recognising these five and what
+        Board-level electronics uses a small vocabulary repeatedly. Recognizing these five and what
         each is for is enough to read most schematics well enough to reason about a fault, which is
         the realistic goal for someone in IT rather than in electronics design.
       </div>
@@ -249,7 +249,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-desc">
         A schematic is not a picture of the board; it is a map of connections, drawn for clarity
         rather than for physical layout. Two components adjacent on the diagram may be at opposite
-        ends of the board, and a net drawn as three separate stubs labelled <code>3V3</code> is one
+        ends of the board, and a net drawn as three separate stubs labeled <code>3V3</code> is one
         electrical connection.
       </div>
       <div class="dw">
@@ -293,7 +293,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          That last row is the one where this knowledge pays for itself in an enterprise. Recognising
+          That last row is the one where this knowledge pays for itself in an enterprise. Recognizing
           that eleven identical machines failed the same way at the same age turns "unlucky
           hardware" into a warranty claim or a recall conversation, and it is a claim vendors take
           much more seriously when it comes with a component-level observation attached.
@@ -307,7 +307,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">📟</span>
-    <span class="topic-name">Test Gear — Multimeter, Oscilloscope, Logic Analyser: What Each One Answers</span>
+    <span class="topic-name">Test Gear — Multimeter, Oscilloscope, Logic Analyzer: What Each One Answers</span>
     <span class="topic-badge">Electronics</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -319,7 +319,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         The three instruments are frequently ranked by cost or sophistication, which is the wrong
         axis. What separates them is the timescale of the question. A multimeter tells you a value
         <em>now</em>, averaged. An oscilloscope shows you a voltage <em>changing</em>, so you can see
-        shape, noise and timing. A logic analyser ignores voltage shape entirely and decodes many
+        shape, noise and timing. A logic analyzer ignores voltage shape entirely and decodes many
         digital lines into <em>meaning</em> — bytes, addresses, protocol transactions.
       </div>
       <div class="dw">
@@ -328,14 +328,14 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Multimeter</td><td>Is the voltage right? Is this connected? Is this fuse good?</td><td>Anything about shape, noise or brief events</td></tr>
             <tr><td>Oscilloscope</td><td>What does this signal look like over microseconds?</td><td>What the data means, across many lines at once</td></tr>
-            <tr><td>Logic analyser</td><td>What did these eight lines actually say, decoded as I²C or SPI <span class="acro-exp">(Serial Peripheral Interface)</span>?</td><td>Signal quality — it sees ones and zeros, not marginal edges</td></tr>
+            <tr><td>Logic analyzer</td><td>What did these eight lines actually say, decoded as I²C or SPI <span class="acro-exp">(Serial Peripheral Interface)</span>?</td><td>Signal quality — it sees ones and zeros, not marginal edges</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
           The practical division: if the question is "is power reaching this", reach for a
           multimeter. If it is "why is this data corrupted sometimes", an oscilloscope, because the
           answer is usually in the shape of the edges. If it is "what is this device sending", a
-          logic analyser, which turns a wire into a transcript.
+          logic analyzer, which turns a wire into a transcript.
         </div>
       </div>
     </div>
@@ -361,7 +361,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           Two safety notes worth stating plainly. Current measurement requires breaking the circuit
           and putting the meter in the path; connecting a meter set to current across a voltage
           source is a direct short through the meter, and it is the single most common way they are
-          destroyed. And mains work is a category apart — if you are not trained and authorised for
+          destroyed. And mains work is a category apart — if you are not trained and authorized for
           it, the correct action is to stop and call someone who is.
         </div>
       </div>
@@ -386,7 +386,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          A cheap USB <span class="acro-exp">(Universal Serial Bus)</span> logic analyser deserves a specific recommendation for anyone touching embedded
+          A cheap USB <span class="acro-exp">(Universal Serial Bus)</span> logic analyzer deserves a specific recommendation for anyone touching embedded
           or serial devices: for the price of a couple of network cables it decodes I²C, SPI and
           UART <span class="acro-exp">(Universal Asynchronous Receiver/Transmitter)</span> directly into readable transactions, and it converts "the device is not responding"
           from a guess into a transcript showing whether anything was sent, whether it was
@@ -447,7 +447,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>CPU socket</td><td>Determines which processors fit at all; changes between generations</td></tr>
             <tr><td>Chipset</td><td>Determines features — lane count, USB, overclocking, sometimes CPU support</td></tr>
-            <tr><td>Memory slots</td><td>Colour-coded in pairs; the pairing is the channel, and it matters</td></tr>
+            <tr><td>Memory slots</td><td>Color-coded in pairs; the pairing is the channel, and it matters</td></tr>
             <tr><td>PCIe slots</td><td>Physical size and electrical width differ — an x16 slot may be wired x4</td></tr>
             <tr><td>M.2 slots</td><td>Check keying and whether the slot is NVMe, SATA, or both</td></tr>
             <tr><td>24-pin and 8-pin power connectors</td><td>The 8-pin CPU connector is the one people forget; the machine will not post</td></tr>
@@ -462,7 +462,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           reports where it stopped during power-on turns "it does nothing" into a two-
           minute diagnosis, and every other feature on this list matters less on the
           day the machine will not start. The processor power connector is the other
-          one worth memorising, because forgetting it produces exactly the same
+          one worth memorizing, because forgetting it produces exactly the same
           symptom as a dead board.
         </div>
       </div>
@@ -478,7 +478,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <table class="ref-table">
           <thead><tr><th>Mistake</th><th>Consequence</th></tr></thead>
           <tbody>
-            <tr><td>Assuming a socket match means CPU support</td><td>The board needs a firmware update to recognise a newer CPU — and may need an older CPU to apply it</td></tr>
+            <tr><td>Assuming a socket match means CPU support</td><td>The board needs a firmware update to recognize a newer CPU — and may need an older CPU to apply it</td></tr>
             <tr><td>Not checking for flashback or firmware-update-without-CPU support</td><td>The above becomes a chicken-and-egg problem needing a borrowed processor</td></tr>
             <tr><td>Ignoring form factor and mounting holes</td><td>ATX <span class="acro-exp">(Advanced Technology eXtended)</span>, microATX and mini-ITX fit different cases; standoffs must match exactly</td></tr>
             <tr><td>A standoff where there is no mounting hole</td><td>Shorts the board underneath — a genuine and easily-missed build fault</td></tr>
@@ -512,7 +512,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-title">TDP Is a Cooling Design Target, Not a Power Consumption Figure</div>
       <div class="concept-desc">
         Thermal design power is widely read as "how many watts this chip uses". It is not. It is the
-        sustained heat a cooler must be able to remove for the chip to hold its base behaviour, and
+        sustained heat a cooler must be able to remove for the chip to hold its base behavior, and
         modern processors routinely exceed it — sometimes by a large multiple — during boost, by
         design. A processor rated at 65 W can draw well over 200 W briefly, which is why a cooler
         sized to the rated figure produces a machine that is fast for thirty seconds and then is not.
@@ -581,7 +581,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Watch temperature and clock speed together, under load</td><td>Clocks dropping as temperature peaks is the whole diagnosis</td></tr>
             <tr><td>Note the temperature at which it drops</td><td>Near 95–100 °C is thermal; much lower is a power limit</td></tr>
-            <tr><td>Check fan behaviour</td><td>Fan not spinning up, or spinning at full constantly, are different faults</td></tr>
+            <tr><td>Check fan behavior</td><td>Fan not spinning up, or spinning at full constantly, are different faults</td></tr>
             <tr><td>Inspect for dust in the fins</td><td>The most common cause by a wide margin, especially in laptops</td></tr>
             <tr><td>Check the ambient temperature and airflow</td><td>A machine in a cupboard is a thermal problem the machine cannot fix</td></tr>
             <tr><td>Consider paste age on machines over four years old</td><td>Pump-out and drying are real and gradual</td></tr>
@@ -614,8 +614,11 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-title">Which Slots You Use Changes Performance Substantially</div>
       <div class="concept-desc">
         Memory controllers address several channels in parallel, and populating them correctly
-        roughly doubles available bandwidth compared with putting everything on one. The slots are
-        colour-coded in pairs to indicate this, and the pairs are usually <em>not</em> adjacent —
+        roughly doubles available bandwidth compared with putting everything on one. This is what
+        decides <strong>one stick of RAM or two</strong> at the point of buying: for the same
+        capacity and the same money, two modules beat one, and the table below is the whole
+        argument. The slots are
+        color-coded in pairs to indicate this, and the pairs are usually <em>not</em> adjacent —
         which is exactly why people fill the two slots next to the processor and unknowingly halve
         their memory bandwidth. On systems where the graphics processor shares system memory, the
         effect is dramatic and looks like a faulty machine.
@@ -659,8 +662,8 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          ECC is the row worth understanding rather than memorising. Bit flips happen — from cosmic
-          rays, from marginal voltage, from ageing chips — and on a desktop the result is an
+          ECC is the row worth understanding rather than memorizing. Bit flips happen — from cosmic
+          rays, from marginal voltage, from aging chips — and on a desktop the result is an
           occasional crash or a silently corrupted file that nobody attributes to memory. On a
           server holding a database, silent corruption is far worse than a crash, and ECC turns
           most single-bit errors into a logged, corrected event. That log is the point: it tells you
@@ -718,7 +721,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         protocol built around a device that has a head to move. NVMe was designed for flash, which
         has no moving parts and enormous internal parallelism — thousands of queues, thousands of
         commands each, and far less overhead per operation. The bandwidth increase gets the
-        attention, and the queue model is what actually transforms behaviour under concurrent load.
+        attention, and the queue model is what actually transforms behavior under concurrent load.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -780,12 +783,12 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Drive nearly full</td><td>Flash performance degrades sharply above roughly 80–90% capacity</td></tr>
             <tr><td>Thermal throttling of the drive itself</td><td>NVMe drives get hot; sustained transfers slow, then recover when idle</td></tr>
             <tr><td>Running at a lower generation or lane width than expected</td><td>Check what the slot actually negotiated, not what the box claimed</td></tr>
-            <tr><td>The bottleneck is elsewhere entirely</td><td>Network, CPU, or the application's own single-threaded behaviour</td></tr>
+            <tr><td>The bottleneck is elsewhere entirely</td><td>Network, CPU, or the application's own single-threaded behavior</td></tr>
             <tr><td>A cheap drive with no DRAM <span class="acro-exp">(Dynamic Random Access Memory)</span> cache</td><td>Fine when idle, poor under sustained mixed load</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The first row is the one worth internalising, and it connects directly to
+          The first row is the one worth internalizing, and it connects directly to
           <span class="xref">Storage Performance — IOPS, Throughput, Latency &amp; Which One Is Your Limit</span>:
           sequential benchmark figures describe a workload almost nobody has. A drive that copies a
           film at 7 GB/s and opens a project in the same time as the old one is behaving normally,
@@ -869,7 +872,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-desc">
         In a professional context the decision to stop diagnosing is as important as the diagnosis,
         and it should be made on cost rather than on curiosity. An hour of a technician's time
-        against a replacement part is an arithmetic problem, and the answer usually favours the part.
+        against a replacement part is an arithmetic problem, and the answer usually favors the part.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -907,7 +910,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-title">A Machine With No Display Is Still Telling You Things</div>
       <div class="concept-desc">
         Power-on self test runs before anything you can see. The firmware checks the processor,
-        initialises memory, brings up the chipset, finds a display adapter, then finally puts an
+        initializes memory, brings up the chipset, finds a display adapter, then finally puts an
         image on screen — and if it fails before that last step there is nothing to read. The
         machine has not gone silent; it is reporting through the only channels it has left, which
         are beeps, LEDs and a two-digit code display. Knowing that these exist is what turns "it is
@@ -922,10 +925,10 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <thead><tr><th>Channel</th><th>Where</th><th>Reading it</th></tr></thead>
           <tbody>
             <tr><td>Beep codes</td><td>Internal speaker or buzzer</td><td>Count the pattern; look it up for that firmware vendor</td></tr>
-            <tr><td>Diagnostic LEDs</td><td>Row of labelled LEDs on the board — CPU <span class="acro-exp">(Central Processing Unit)</span>, DRAM <span class="acro-exp">(Dynamic Random Access Memory)</span>, VGA <span class="acro-exp">(Video Graphics Array)</span>, BOOT</td><td>The one that stays lit is where POST stopped</td></tr>
+            <tr><td>Diagnostic LEDs</td><td>Row of labeled LEDs on the board — CPU <span class="acro-exp">(Central Processing Unit)</span>, DRAM <span class="acro-exp">(Dynamic Random Access Memory)</span>, VGA <span class="acro-exp">(Video Graphics Array)</span>, BOOT</td><td>The one that stays lit is where POST stopped</td></tr>
             <tr><td>POST code display</td><td>Two-digit hex readout on better boards</td><td>Look up the code in the board manual</td></tr>
             <tr><td>Laptop LED patterns</td><td>Power or caps-lock LED blinking a pattern</td><td>Vendor-specific; documented in their service manual</td></tr>
-            <tr><td>Fan behaviour</td><td>Full speed, or stopping and restarting</td><td>Full speed constantly often means POST never completed</td></tr>
+            <tr><td>Fan behavior</td><td>Full speed, or stopping and restarting</td><td>Full speed constantly often means POST never completed</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -952,12 +955,12 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>CPU LED</td><td>Seating, unsupported CPU needing a firmware update, cooler over-tightened</td></tr>
             <tr><td>DRAM LED</td><td>Reseat memory; try one module; try a different slot; check the supported list</td></tr>
             <tr><td>VGA LED</td><td>Graphics card seating and power; try integrated graphics; try another card</td></tr>
-            <tr><td>BOOT LED</td><td>POST passed — this is now a storage or bootloader problem, not hardware initialisation</td></tr>
+            <tr><td>BOOT LED</td><td>POST passed — this is now a storage or bootloader problem, not hardware initialization</td></tr>
             <tr><td>Posts, then reboots in a loop</td><td>Overheating, unstable memory profile, marginal power</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The BOOT row is the important dividing line. Once POST completes, hardware initialisation
+          The BOOT row is the important dividing line. Once POST completes, hardware initialization
           succeeded and you have moved into a different category of problem — boot order, a failed
           drive, a corrupted bootloader, or a firmware setting. Everything before it is hardware.
         </div>
@@ -1302,7 +1305,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🖥️</span>
-    <span class="topic-name">Displays — Panel Types, Scaling, Colour &amp; the Multi-Monitor Pitfalls</span>
+    <span class="topic-name">Displays — Panel Types, Scaling, Color &amp; the Multi-Monitor Pitfalls</span>
     <span class="topic-badge">Peripherals</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -1312,7 +1315,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-title">Panel Type Decides More Than Any Specification on the Box</div>
       <div class="concept-desc">
         Resolution and refresh rate get quoted; panel technology determines whether someone is happy
-        with the monitor. For office work the relevant properties are viewing angle and colour
+        with the monitor. For office work the relevant properties are viewing angle and color
         consistency, because a screen that shifts when you lean back is a daily irritation that no
         specification captures.
       </div>
@@ -1320,9 +1323,9 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <table class="ref-table">
           <thead><tr><th>Panel</th><th>Strength</th><th>Weakness</th><th>Suits</th></tr></thead>
           <tbody>
-            <tr><td>IPS <span class="acro-exp">(In-Plane Switching)</span></td><td>Wide viewing angles, consistent colour</td><td>Some backlight bleed; contrast lower than VA</td><td>The default for office and design work</td></tr>
-            <tr><td>VA</td><td>Deep contrast</td><td>Slower transitions; colour shift off-axis</td><td>Dark environments, video</td></tr>
-            <tr><td>TN</td><td>Fast, inexpensive</td><td>Poor angles and colour</td><td>Little now, outside budget or high-refresh niches</td></tr>
+            <tr><td>IPS <span class="acro-exp">(In-Plane Switching)</span></td><td>Wide viewing angles, consistent color</td><td>Some backlight bleed; contrast lower than VA</td><td>The default for office and design work</td></tr>
+            <tr><td>VA</td><td>Deep contrast</td><td>Slower transitions; color shift off-axis</td><td>Dark environments, video</td></tr>
+            <tr><td>TN</td><td>Fast, inexpensive</td><td>Poor angles and color</td><td>Little now, outside budget or high-refresh niches</td></tr>
             <tr><td>OLED <span class="acro-exp">(Organic Light Emitting Diode)</span></td><td>True blacks, excellent response</td><td>Burn-in risk with static interfaces</td><td>Not a first choice for a fixed desktop layout</td></tr>
           </tbody>
         </table>
@@ -1388,7 +1391,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The practical estate advice: standardise on one monitor model and one scaling setting where
+          The practical estate advice: standardize on one monitor model and one scaling setting where
           you can. A fleet with three densities in circulation produces a steady trickle of tickets
           that no individual fix resolves, and the cost of that trickle exceeds the saving from
           buying whatever was cheapest each year.
@@ -1400,7 +1403,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-title">Cables, Bandwidth and the Multi-Monitor Failures</div>
       <div class="concept-desc">
         Display problems that look like a faulty monitor are usually a bandwidth or a topology
-        problem. Resolution multiplied by refresh rate multiplied by colour depth has to fit through
+        problem. Resolution multiplied by refresh rate multiplied by color depth has to fit through
         the cable and the port, and a cable that works at one setting fails at another.
       </div>
       <div class="dw">
@@ -1412,12 +1415,12 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Third monitor will not light up on a dock</td><td>Dock or GPU <span class="acro-exp">(Graphics Processing Unit)</span> output limit, or DisplayPort daisy-chaining not enabled</td></tr>
             <tr><td>Two monitors work, both drop when a third is added</td><td>Total bandwidth exceeded across a shared link</td></tr>
             <tr><td>Monitor not detected after sleep</td><td>Handshake failure — common; try a different port or disable deep sleep</td></tr>
-            <tr><td>Colours wrong or washed out</td><td>Limited versus full RGB <span class="acro-exp">(Red, Green, Blue)</span> range mismatch, often over HDMI <span class="acro-exp">(High-Definition Multimedia Interface)</span></td></tr>
+            <tr><td>Colors wrong or washed out</td><td>Limited versus full RGB <span class="acro-exp">(Red, Green, Blue)</span> range mismatch, often over HDMI <span class="acro-exp">(High-Definition Multimedia Interface)</span></td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The limited-versus-full range mismatch in the last row is worth recognising by eye: blacks
-          look grey and whites look dull, and the monitor appears defective. It is a setting on the
+          The limited-versus-full range mismatch in the last row is worth recognizing by eye: blacks
+          look gray and whites look dull, and the monitor appears defective. It is a setting on the
           graphics driver or the display, it takes ten seconds to change, and it saves a warranty
           return.
         </div>
@@ -1437,7 +1440,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
   <div class="topic-body">
     <div class="concept-card">
       <div class="concept-label">Concept</div>
-      <div class="concept-title">Printing Is the Most Complained-About Service in Most Organisations</div>
+      <div class="concept-title">Printing Is the Most Complained-About Service in Most Organizations</div>
       <div class="concept-desc">
         It is worth understanding why, because the reasons are structural rather than a failure of
         effort. Printing spans a driver on every endpoint, a queue on a server, a network path, a
@@ -1450,7 +1453,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <thead><tr><th>Technology</th><th>Strength</th><th>Watch for</th></tr></thead>
           <tbody>
             <tr><td>Laser</td><td>Fast, cheap per page, reliable at volume</td><td>Warm-up power draw; toner and drum are separate consumables</td></tr>
-            <tr><td>Inkjet</td><td>Cheap device, good colour and photos</td><td>Ink cost per page; heads clog when idle — poor for occasional office use</td></tr>
+            <tr><td>Inkjet</td><td>Cheap device, good color and photos</td><td>Ink cost per page; heads clog when idle — poor for occasional office use</td></tr>
             <tr><td>Thermal</td><td>No consumable but the media; ideal for labels and receipts</td><td>Print fades with heat and light; not for records</td></tr>
             <tr><td>Impact / dot matrix</td><td>Multi-part carbon forms — genuinely irreplaceable for these</td><td>Loud, slow, and still in service in logistics for exactly this reason</td></tr>
           </tbody>
@@ -1478,7 +1481,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Traditional print server</td><td>Queues centrally, drivers distributed to clients</td><td>Control and accounting; the model most affected by driver hardening</td></tr>
             <tr><td>Universal or class drivers</td><td>One driver covers many models</td><td>Loses device-specific features; enormously simplifies the estate</td></tr>
             <tr><td>Cloud print management</td><td>Queues and drivers managed as a service</td><td>Where most estates are heading; suits remote and hybrid work</td></tr>
-            <tr><td>Driverless — IPP, Mopria, AirPrint</td><td>Standardised protocols, no vendor driver</td><td>The cleanest answer where devices support it well</td></tr>
+            <tr><td>Driverless — IPP, Mopria, AirPrint</td><td>Standardized protocols, no vendor driver</td><td>The cleanest answer where devices support it well</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -1556,7 +1559,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           And one estate-level note that belongs with security rather than with printing: MFPs store
           scanned and printed documents on internal drives, are frequently leased, and are returned
           at end of term with that storage intact unless someone asks — the point made in
-          <span class="xref">Media Sanitisation &amp; Disposal — What "Wiped" Actually Means</span>.
+          <span class="xref">Media Sanitization &amp; Disposal — What "Wiped" Actually Means</span>.
         </div>
       </div>
     </div>
@@ -1631,7 +1634,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          Practical guidance for an estate: buy certified cables, label them, and standardise on one
+          Practical guidance for an estate: buy certified cables, label them, and standardize on one
           specification rather than accumulating whatever came in each box. Most "the dock is
           broken" tickets are a charge-only cable that came with a phone, and the cost of good
           cables is trivial against the tickets they prevent.
@@ -1675,7 +1678,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         getting power</em> — is the piece that does not narrow anything, and it is the reason
         the cable stops being a suspect long before it should. The user's own report is
         usually the operating system's wording rather than theirs — <em>USB device not
-        recognised</em>, or a device that is simply absent from the list — and neither
+        recognized</em>, or a device that is simply absent from the list — and neither
         phrasing distinguishes between the causes below.
       </div>
       <div class="dw">
@@ -1685,8 +1688,8 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Charges, never appears</td><td>Charge-only cable — two conductors and no data pair. The commonest cause and the cheapest to rule out</td></tr>
             <tr><td>Works direct, not through the dock</td><td>The hub chain: bandwidth or power shared across downstream ports, or a dock firmware bug</td></tr>
             <tr><td>Worked until the fourth device went in</td><td>Bus power budget spent. An unpowered hub divides one port's supply among everything on it</td></tr>
-            <tr><td>Works in one port, not its neighbour</td><td>Ports on one machine differ by generation and by mode; a device needing full speed on a slower port may not come up at all</td></tr>
-            <tr><td>"USB device not recognised" — the unknown-device notification</td><td>Enumeration started and the descriptor exchange failed — marginal cable, marginal power, or genuinely faulty hardware</td></tr>
+            <tr><td>Works in one port, not its neighbor</td><td>Ports on one machine differ by generation and by mode; a device needing full speed on a slower port may not come up at all</td></tr>
+            <tr><td>"USB device not recognized" — the unknown-device notification</td><td>Enumeration started and the descriptor exchange failed — marginal cable, marginal power, or genuinely faulty hardware</td></tr>
             <tr><td>Intermittent, and worse when moved</td><td>The connector or the cable, not the device. Reproduce it by flexing the cable at each end</td></tr>
           </tbody>
         </table>
@@ -1716,7 +1719,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Dock firmware out of date</td><td>Docks have firmware and it fixes real bugs; include them in patching</td></tr>
             <tr><td>Displays not detected after undock and redock</td><td>Common; firmware and driver updates on both dock and host</td></tr>
-            <tr><td>Network drops when docked</td><td>The dock's network adapter and its MAC-address behaviour; check MAC <span class="acro-exp">(Media Access Control)</span> pass-through</td></tr>
+            <tr><td>Network drops when docked</td><td>The dock's network adapter and its MAC-address behavior; check MAC <span class="acro-exp">(Media Access Control)</span> pass-through</td></tr>
             <tr><td>Works for one laptop model, not another</td><td>Alt-mode and Thunderbolt support differ per model — validate before fleet purchase</td></tr>
             <tr><td>Intermittent everything</td><td>Cable, nine times out of ten; swap it first</td></tr>
             <tr><td>Third display refuses</td><td>Host GPU <span class="acro-exp">(Graphics Processing Unit)</span> or dock output limit, not a fault</td></tr>
@@ -1817,7 +1820,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <table class="ref-table">
           <thead><tr><th>Practice</th><th>Effect</th></tr></thead>
           <tbody>
-            <tr><td>A small catalogue of pre-approved alternatives, orderable without justification</td><td>Removes disclosure from a routine request; most needs are met here</td></tr>
+            <tr><td>A small catalog of pre-approved alternatives, orderable without justification</td><td>Removes disclosure from a routine request; most needs are met here</td></tr>
             <tr><td>Try-before-commit — a loan pool</td><td>Ergonomic kit is personal; the right device cannot be chosen from a page</td></tr>
             <tr><td>A request route that does not go through the line manager</td><td>Many people will not ask if it means disclosing a condition to their manager</td></tr>
             <tr><td>Named contact who owns adjustments</td><td>Prevents the request bouncing between IT, HR and facilities</td></tr>
@@ -1826,7 +1829,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The pre-approved catalogue is the highest-leverage item. A vertical mouse and a split
+          The pre-approved catalog is the highest-leverage item. A vertical mouse and a split
           keyboard cost less than an hour of most people's time, and a policy requiring a case to be
           made for them guarantees that some people work in pain rather than ask. Making the ordinary
           case frictionless also leaves the formal process free for the genuinely complex ones — the
@@ -1892,10 +1895,10 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <table class="ref-table">
           <thead><tr><th>Choice</th><th>Effect</th></tr></thead>
           <tbody>
-            <tr><td>Standardise room types — small, medium, large — and build each identically</td><td>One set of instructions, one spares list, one troubleshooting path</td></tr>
+            <tr><td>Standardize room types — small, medium, large — and build each identically</td><td>One set of instructions, one spares list, one troubleshooting path</td></tr>
             <tr><td>A dedicated room system rather than bring-your-own-laptop</td><td>Removes the largest source of variability at a stroke</td></tr>
             <tr><td>One-touch join from the calendar</td><td>The single feature users notice most</td></tr>
-            <tr><td>Leave one clearly-labelled cable for guests</td><td>Guests will always exist; make their path obvious</td></tr>
+            <tr><td>Leave one clearly-labeled cable for guests</td><td>Guests will always exist; make their path obvious</td></tr>
             <tr><td>Wired network for room systems</td><td>Wireless in a full meeting room is where quality problems begin</td></tr>
             <tr><td>Acoustic treatment before better microphones</td><td>A reverberant room defeats good hardware; soft furnishings beat upgrades</td></tr>
             <tr><td>Remote monitoring of every room</td><td>Know a room is broken before a meeting discovers it</td></tr>
@@ -1931,7 +1934,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          Step 1 is the professional judgement that distinguishes room support from room repair. The
+          Step 1 is the professional judgment that distinguishes room support from room repair. The
           meeting is the thing that matters; the room is not. Getting people talking on any channel
           and returning to fix the room properly afterwards is a better outcome than a perfect
           diagnosis delivered fifteen minutes into a meeting that should have started.
@@ -1972,7 +1975,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Power</td><td>Milliwatts; runs for months on a battery</td><td>Watts; effectively needs mains</td></tr>
             <tr><td>Loss of power</td><td>Harmless — no filesystem to corrupt</td><td>Can corrupt the card; needs graceful shutdown or a read-only root</td></tr>
             <tr><td>Networking, storage, video</td><td>Bolted on, with effort</td><td>Built in</td></tr>
-            <tr><td>Debugging</td><td>Serial output, a logic analyser, sometimes JTAG <span class="acro-exp">(Joint Test Action Group)</span></td><td>SSH <span class="acro-exp">(Secure Shell)</span> in and use ordinary Linux tools</td></tr>
+            <tr><td>Debugging</td><td>Serial output, a logic analyzer, sometimes JTAG <span class="acro-exp">(Joint Test Action Group)</span></td><td>SSH <span class="acro-exp">(Secure Shell)</span> in and use ordinary Linux tools</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -2127,7 +2130,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>For I²C: run a bus scan</td><td>Tells you whether the device is present at all, and at which address</td></tr>
             <tr><td>For I²C: two devices at the same address?</td><td>Common with two identical sensors; many have an address-select pin</td></tr>
             <tr><td>For SPI: is chip-select asserted, and is the mode right?</td><td>Clock polarity and phase must match the peripheral</td></tr>
-            <tr><td>Put a logic analyser on it</td><td>Shows whether anything was sent, and whether it was acknowledged</td></tr>
+            <tr><td>Put a logic analyzer on it</td><td>Shows whether anything was sent, and whether it was acknowledged</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -2135,7 +2138,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           or a standard utility walks every address and reports what answered. "Nothing at any
           address" and "present at 0x76, not 0x77 as documented" are completely different problems,
           and the scan tells them apart in seconds. The instrument choice behind this is in
-          <span class="xref">Test Gear — Multimeter, Oscilloscope, Logic Analyser: What Each One Answers</span>.
+          <span class="xref">Test Gear — Multimeter, Oscilloscope, Logic Analyzer: What Each One Answers</span>.
         </div>
       </div>
     </div>
@@ -2196,7 +2199,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Soft brick</td><td>Bad application, bootloader intact</td><td>Reflash normally; sometimes a button held at power-on</td></tr>
             <tr><td>Bootloader damaged</td><td>Nothing responds over the usual route</td><td>SWD or JTAG</td></tr>
             <tr><td>Debug interface disabled</td><td>Security fuses set, deliberately or accidentally</td><td>Often none; some parts allow a full erase that clears everything</td></tr>
-            <tr><td>Wrong fuse or config bits</td><td>Clock source or reset behaviour misconfigured</td><td>Sometimes recoverable with an external clock supplied to the part</td></tr>
+            <tr><td>Wrong fuse or config bits</td><td>Clock source or reset behavior misconfigured</td><td>Sometimes recoverable with an external clock supplied to the part</td></tr>
             <tr><td>Physical damage</td><td>Over-voltage, reverse polarity, heat</td><td>None</td></tr>
           </tbody>
         </table>
@@ -2230,7 +2233,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The rollback point generalises well beyond hobby hardware, and the security framing is in
+          The rollback point generalizes well beyond hobby hardware, and the security framing is in
           <span class="xref">Firmware Update Mechanisms — The Feature That Is Also the Attack Path</span>:
           the update path is simultaneously the most important reliability feature a device has and
           one of its most attractive attack surfaces, which is why it deserves more design attention
@@ -2259,7 +2262,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         quickly. A system that responds in a guaranteed two milliseconds every single time is
         real-time; one that usually responds in fifty microseconds and occasionally takes thirty
         milliseconds is not, and is unusable for the jobs that need the guarantee. What matters is
-        the worst case, and general-purpose operating systems optimise the average.
+        the worst case, and general-purpose operating systems optimize the average.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -2314,7 +2317,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-title">RTOS, Bare Metal, or Linux — and What an RTOS Actually Gives You</div>
       <div class="concept-desc">
         A real-time operating system sits between bare metal and Linux: it provides tasks,
-        priorities, timers and synchronisation with a scheduler whose behaviour is predictable and
+        priorities, timers and synchronization with a scheduler whose behavior is predictable and
         documented, in a few tens of kilobytes.
       </div>
       <div class="dw">
@@ -2365,9 +2368,9 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <thead><tr><th>Goal</th><th>What it actually needs</th></tr></thead>
           <tbody>
             <tr><td>Linux, containers, scripting, self-hosting</td><td>Any machine with 16 GB of memory — including one you already own</td></tr>
-            <tr><td>Virtualisation and clustering</td><td>Memory above all; two or three small nodes beat one large one</td></tr>
+            <tr><td>Virtualization and clustering</td><td>Memory above all; two or three small nodes beat one large one</td></tr>
             <tr><td>Networking — VLANs <span class="acro-exp">(Virtual Local Area Network)</span>, routing, firewalls</td><td>A managed switch and a router you can configure; compute is irrelevant</td></tr>
-            <tr><td>Windows Server, Active Directory, MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span></td><td>Memory and disk; runs fine virtualised on one host</td></tr>
+            <tr><td>Windows Server, Active Directory, MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span></td><td>Memory and disk; runs fine virtualized on one host</td></tr>
             <tr><td>Storage, RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span>, backup</td><td>Several drives and the ability to attach them; the rest is software</td></tr>
             <tr><td>Security lab — attack and detect</td><td>Isolated networking, and snapshots you can revert quickly</td></tr>
             <tr><td>AI <span class="acro-exp">(Artificial Intelligence)</span> and GPU <span class="acro-exp">(Graphics Processing Unit)</span> workloads</td><td>The one case where a specific expensive component is the requirement</td></tr>
@@ -2394,8 +2397,8 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <table class="ref-table">
           <thead><tr><th>Tier</th><th>Build</th><th>Reaches</th></tr></thead>
           <tbody>
-            <tr><td>Nothing</td><td>The machine you own, plus virtualisation software</td><td>Linux, containers, scripting, most certification labs</td></tr>
-            <tr><td>Minimal</td><td>One second-hand mini PC or small-form-factor desktop, memory maxed; a managed switch</td><td>Virtualisation, a small AD <span class="acro-exp">(Active Directory)</span> lab, VLANs, self-hosted services</td></tr>
+            <tr><td>Nothing</td><td>The machine you own, plus virtualization software</td><td>Linux, containers, scripting, most certification labs</td></tr>
+            <tr><td>Minimal</td><td>One second-hand mini PC or small-form-factor desktop, memory maxed; a managed switch</td><td>Virtualization, a small AD <span class="acro-exp">(Active Directory)</span> lab, VLANs, self-hosted services</td></tr>
             <tr><td>Comfortable</td><td>Two or three mini PCs, a proper switch, a router appliance, a small NAS <span class="acro-exp">(Network Attached Storage)</span></td><td>Clustering, high availability, shared storage, segmented security labs</td></tr>
           </tbody>
         </table>
@@ -2484,7 +2487,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-title">Sampling — the Rules That Decide What You Can Measure</div>
       <div class="concept-desc">
         Converting an analogue signal to numbers has two knobs and one famous trap, and they explain
-        a surprising amount of everyday IT behaviour.
+        a surprising amount of everyday IT behavior.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -2492,9 +2495,9 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Sample rate</td><td>How often you look</td><td>Audio at 44.1 kHz; a scope's timebase; a monitoring interval</td></tr>
             <tr><td>Nyquist limit</td><td>You must sample at more than twice the highest frequency present</td><td>Sample too slowly and a fast signal reappears as a slow one that was never there</td></tr>
-            <tr><td>Aliasing</td><td>The false slow signal that results</td><td>Wagon wheels spinning backwards; a CPU <span class="acro-exp">(Central Processing Unit)</span> graph showing a trend that is an artefact of the polling interval</td></tr>
+            <tr><td>Aliasing</td><td>The false slow signal that results</td><td>Wagon wheels spinning backwards; a CPU <span class="acro-exp">(Central Processing Unit)</span> graph showing a trend that is an artifact of the polling interval</td></tr>
             <tr><td>Bit depth / resolution</td><td>How finely each sample is graded</td><td>8-bit versus 24-bit audio; a sensor reporting whole degrees</td></tr>
-            <tr><td>Quantisation error</td><td>The rounding, at every sample</td><td>The noise floor you cannot get below</td></tr>
+            <tr><td>Quantization error</td><td>The rounding, at every sample</td><td>The noise floor you cannot get below</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -2521,7 +2524,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Hum or buzz in audio and video</td><td>Ground loop — two ends at different ground potentials</td><td>An isolator, or feed both ends from one power source</td></tr>
             <tr><td>Serial link works on the bench, fails on site</td><td>No common ground between separately-powered devices</td><td>One wire, and the single most common embedded fault</td></tr>
-            <tr><td>Errors on a copper run near machinery</td><td>Induced interference on an unbalanced or unshielded cable</td><td>Shielded cable grounded at one end, or fibre, which does not care</td></tr>
+            <tr><td>Errors on a copper run near machinery</td><td>Induced interference on an unbalanced or unshielded cable</td><td>Shielded cable grounded at one end, or fiber, which does not care</td></tr>
             <tr><td>A link that fails only under load</td><td>Marginal signal integrity; more traffic means more chances to be wrong</td><td>Shorter run, better cable, check terminations</td></tr>
             <tr><td>Random resets when a motor starts</td><td>Voltage sag or a spike on the supply</td><td>Separate supplies, decoupling, and do not power motors from the logic rail</td></tr>
             <tr><td>Intermittent faults that follow the weather</td><td>Moisture and connector oxidation changing resistance</td><td>Reseat and clean; outdoor runs need outdoor-rated hardware</td></tr>
@@ -2532,10 +2535,10 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           Two rules carry most of this. <strong>Ground shields at one end only</strong> — grounding
           both creates the loop you were trying to avoid — and <strong>separately powered devices
           exchanging data need a shared ground reference</strong>, because a signal voltage is
-          meaningless without one. Fibre sidesteps the entire category by carrying light instead of
+          meaningless without one. Fiber sidesteps the entire category by carrying light instead of
           voltage, which is why it is the right answer for a run between buildings regardless of the
           distance involved. The instrument for seeing any of this is in
-          <span class="xref">Test Gear — Multimeter, Oscilloscope, Logic Analyser: What Each One Answers</span>.
+          <span class="xref">Test Gear — Multimeter, Oscilloscope, Logic Analyzer: What Each One Answers</span>.
         </div>
       </div>
     </div>
@@ -2593,7 +2596,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Touch bare metal on the chassis before touching a component</td><td>High</td><td>Do it <em>again</em> after walking across the room — the walk is what recharges you</td></tr>
             <tr><td>Hold boards by the edges, cards by the bracket</td><td>High</td><td>Never the gold contacts, never the chips. Skin oil on contacts is a separate, slower problem</td></tr>
-            <tr><td>Wrist strap clipped to the chassis</td><td>High on a bench</td><td>It must be a <strong>path to the same ground as the board</strong>. A strap clipped to nothing is theatre</td></tr>
+            <tr><td>Wrist strap clipped to the chassis</td><td>High on a bench</td><td>It must be a <strong>path to the same ground as the board</strong>. A strap clipped to nothing is theater</td></tr>
             <tr><td>Antistatic bags for transport and storage</td><td>High</td><td>The shielding is the <em>outside</em>. A board resting <em>on</em> a bag is unprotected — it goes inside</td></tr>
             <tr><td>Leave the power supply connected but switched off</td><td>Moderate</td><td>Common advice for grounding, and the caveat matters: modern boards keep rails live, so unplug before removing anything</td></tr>
             <tr><td>Antistatic mat</td><td>Moderate</td><td>Only if grounded. Ungrounded, it is a place to put things</td></tr>
@@ -2653,7 +2656,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           <tbody>
             <tr><td>Hard, non-carpeted surface with room to lay parts flat</td><td>Charge build-up, and boards balanced on other boards</td></tr>
             <tr><td>Light from in front, not overhead behind you</td><td>Working in your own shadow, which is how pins get bent</td></tr>
-            <tr><td>Magnetic tray or a screw mat with labelled cells</td><td>The screw that ends up under the board, and the reassembly with three left over</td></tr>
+            <tr><td>Magnetic tray or a screw mat with labeled cells</td><td>The screw that ends up under the board, and the reassembly with three left over</td></tr>
             <tr><td>Photographs before disassembly</td><td>Cable routing you will not remember, on a machine you see once a year</td></tr>
             <tr><td>The right screwdriver, seated fully</td><td>Cammed-out, rounded screws — the single most common way a simple job becomes a long one</td></tr>
             <tr><td>Somewhere to put the old part immediately</td><td>Rebuilding with the failed component, which happens more often than anyone admits</td></tr>
@@ -2745,7 +2748,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
         <table class="ref-table">
           <thead><tr><th>Belief</th><th>Reality</th></tr></thead>
           <tbody>
-            <tr><td>"Fully discharge it regularly to stop memory effect"</td><td>Nickel-cadmium behaviour. Deep discharges <em>accelerate</em> lithium ageing</td></tr>
+            <tr><td>"Fully discharge it regularly to stop memory effect"</td><td>Nickel-cadmium behavior. Deep discharges <em>accelerate</em> lithium aging</td></tr>
             <tr><td>"Leaving it plugged in ruins the battery"</td><td>Overcharging is prevented in hardware. What ages it is sitting at 100% and warm — which is why vendors ship charge limits</td></tr>
             <tr><td>"Calibrating restores capacity"</td><td>It re-syncs the <em>gauge</em>, so the percentage becomes honest again. The capacity does not change</td></tr>
             <tr><td>"Swelling means it is faulty"</td><td>Swelling is normal end-of-life gassing. It is also a <strong>safety issue</strong> — stop using it, do not puncture it, do not put it in general waste</td></tr>
@@ -2767,7 +2770,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
       <div class="concept-title">"It Got Slow" Is Usually a Thermal Story</div>
       <div class="concept-desc">
         A three-year-old laptop that feels slow under load, runs its fan constantly, and is fine
-        when idle is describing a cooling problem, not an ageing processor.
+        when idle is describing a cooling problem, not an aging processor.
         <span class="xref">CPU &amp; Cooling — Sockets, TDP, Thermal Paste &amp; Throttling Diagnosis</span>
         has the mechanism; this is what it looks like in a chassis.
       </div>
@@ -2808,7 +2811,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
             <tr><td>Will the operating system still be supported for the life you are buying?</td><td>A perfect repair on a machine that loses updates in six months is a six-month repair</td></tr>
             <tr><td>Is this the second failure?</td><td>Two unrelated failures on an old chassis usually predicts a third</td></tr>
             <tr><td>What is the user's actual workload?</td><td>Storage and memory fix "slow" far more often than a new machine does — and cost a tenth as much</td></tr>
-            <tr><td>What happens to the data?</td><td>Plan the migration and the wipe before ordering. See <span class="xref">Media Sanitisation &amp; Disposal — What "Wiped" Actually Means</span></td></tr>
+            <tr><td>What happens to the data?</td><td>Plan the migration and the wipe before ordering. See <span class="xref">Media Sanitization &amp; Disposal — What "Wiped" Actually Means</span></td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -2860,7 +2863,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
                 <div class="concept-desc">
                   Refurbished hardware is treated as either obviously smart or obviously risky, and neither reflex
                   is right — the answer is entirely about <em>provenance and warranty</em>. Manufacturer-refurbished
-                  kit with a real warranty is often the best value in the catalogue; an anonymous &ldquo;grade
+                  kit with a real warranty is often the best value in the catalog; an anonymous &ldquo;grade
                   B&rdquo; unit from a marketplace with a 30-day return is a gamble with no support behind it. The
                   price is not the signal; the warranty and the source are.
                 </div>
@@ -2888,9 +2891,9 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
                 <div class="concept-title">The Consumables Decide Whether the Next Person Can Work on It</div>
                 <div class="concept-desc">
                   The bench glamour is in the diagnosis; the thing that actually saves time is the boring
-                  discipline around it — a labelled cable, a photographed teardown, a screw tray that kept the
+                  discipline around it — a labeled cable, a photographed teardown, a screw tray that kept the
                   M2s separate from the M3s. <strong class="c-amber">An hour of a later repair is decided by whether
-                  the last person labelled the cables and bagged the screws</strong>, and that person is often you,
+                  the last person labeled the cables and bagged the screws</strong>, and that person is often you,
                   six months on, remembering nothing.
                 </div>
                 <div class="dw">

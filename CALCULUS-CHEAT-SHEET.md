@@ -16,7 +16,7 @@ Every formula here also lives on the site as a flashcard and quiz question. 16 t
 - [Trigonometry — The Unit Circle, Identities & Inverses](#trigonometry-the-unit-circle-identities-inverses) — MATH • Formulas
 - [The Two Pictures — Derivative as Slope, Integral as Area](#the-two-pictures-derivative-as-slope-integral-as-area) — MATH • Diagrams
 - [Algebra & Geometry Formulas — The Prerequisites](#algebra-geometry-formulas-the-prerequisites) — MATH • Formulas
-- [Shape Formulas — Labelled Diagrams](#shape-formulas-labelled-diagrams) — MATH • Formulas
+- [Shape Formulas — Labeled Diagrams](#shape-formulas-labeled-diagrams) — MATH • Formulas
 - [TI-84 Plus CE — The Keys That Matter for Calculus](#ti-84-plus-ce-the-keys-that-matter-for-calculus) — MATH • Ch 5 Calculator
 - [The Named Theorems — Rolle, MVT, IVT, EVT & Squeeze](#the-named-theorems-rolle-mvt-ivt-evt-squeeze) — MATH • Theorems
 - [sin, cos, tan & sec — What They Actually Are](#sin-cos-tan-sec-what-they-actually-are) — MATH • Trig Foundations
@@ -39,7 +39,7 @@ Every formula here also lives on the site as a flashcard and quiz question. 16 t
 | Chain | d/dx f(g(x)) = f′(g(x)) · g′(x) |
 | Implicit | Differentiate both sides in x, write dy/dx whenever you differentiate a y, then solve for dy/dx |
 
-> **The chain rule is the one that appears inside all the others, and forgetting the inner derivative is the commonest error in the subject.** Product and quotient are mechanical once memorised; chain has to be recognised, and it is hiding in most exam questions that look like the power rule. Underline the inside function before you differentiate anything — it costs a second and removes the error entirely.
+> **The chain rule is the one that appears inside all the others, and forgetting the inner derivative is the commonest error in the subject.** Product and quotient are mechanical once memorized; chain has to be recognized, and it is hiding in most exam questions that look like the power rule. Underline the inside function before you differentiate anything — it costs a second and removes the error entirely.
 
 ### The ones to know cold — Derivatives
 
@@ -52,7 +52,7 @@ Every formula here also lives on the site as a flashcard and quiz question. 16 t
 | csc x | −csc x · cot x | arcsin x | 1 / √(1 − x²) |
 | cot x | −csc²x | arctan x | 1 / (1 + x²) |
 
-Pattern worth noticing: every co-function derivative (cos, csc, cot) carries a minus sign. That one observation halves what you have to memorise.
+Pattern worth noticing: every co-function derivative (cos, csc, cot) carries a minus sign. That one observation halves what you have to memorize.
 
 ### Antiderivatives — every one gets + C — Integrals
 
@@ -83,7 +83,7 @@ Pattern worth noticing: every co-function derivative (cos, csc, cot) carries a m
 | **By parts** | ∫ u dv = uv − ∫ v du. Choose u by **LIATE**: Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential — earliest in the list becomes u |
 | **Partial fractions** | For a rational function with the degree of the numerator lower than the denominator: factor the denominator, split into simpler fractions, integrate each. If the degree is not lower, do polynomial long division first |
 
-> **Try substitution first, always; most integrals a course sets are substitutions in disguise.** Parts is for products of unlike things and the ordering mnemonic exists because choosing the wrong part turns a soluble integral into a harder one; partial fractions is for rational functions and nothing else. Recognising which of the three applies is most of the skill — the execution is bookkeeping.
+> **Try substitution first, always; most integrals a course sets are substitutions in disguise.** Parts is for products of unlike things and the ordering mnemonic exists because choosing the wrong part turns a soluble integral into a harder one; partial fractions is for rational functions and nothing else. Recognizing which of the three applies is most of the skill — the execution is bookkeeping.
 
 ### Area, volume, length, average — Applications
 
@@ -166,7 +166,7 @@ The one that gets missed on tests: **dot gives a number, cross gives a vector.**
 
 **Degrees versus radians is the single most common avoidable error in a calculus course.** Calculus is done in radians. If your calculator is in degree mode, sin(π) returns about 0.0548 instead of 0. Check the mode indicator before every test — this costs one second and has ended many otherwise-correct attempts.
 
-Two more calculator habits worth building: parenthesise the whole denominator (1/(2+3), never 1/2+3), and remember that −2² is −4 while (−2)² is 4 — the minus sign is not part of the base unless you make it so.
+Two more calculator habits worth building: parenthesize the whole denominator (1/(2+3), never 1/2+3), and remember that −2² is −4 while (−2)² is 4 — the minus sign is not part of the base unless you make it so.
 
 ---
 
@@ -203,7 +203,7 @@ Position → velocity → acceleration is the same fact applied twice: v = s′,
 
 **Second derivative test:** at a critical point, f″ > 0 means local minimum, f″ < 0 means local maximum, and f″ = 0 tells you nothing — fall back to the first derivative sign chart.
 
-### Optimisation and related rates — the same four steps — Ch 10
+### Optimization and related rates — the same four steps — Ch 10
 
 ```
 # OPTIMISATION
@@ -356,7 +356,7 @@ And the one that costs marks quietly: a log of a negative number or of zero is u
 
 Each point is (cos θ, sin θ). Reading it beats recalling a table: the **x-coordinate is the cosine**, the **y-coordinate is the sine**, and the tangent is their ratio. Where the x-coordinate is 0 — at π/2 and 3π/2 — the tangent is undefined, which is exactly where tan has its vertical asymptotes.
 
-Only the first quadrant needs memorising. Everything else is those values with signs from **ASTC**: All positive in QI, only Sine in QII, only Tangent in QIII, only Cosine in QIV.
+Only the first quadrant needs memorizing. Everything else is those values with signs from **ASTC**: All positive in QI, only Sine in QII, only Tangent in QIII, only Cosine in QIV.
 
 ### Identities worth knowing by heart — Reference
 
@@ -369,7 +369,7 @@ Only the first quadrant needs memorising. Everything else is those values with s
 | Double angle | sin 2θ = 2 sinθ cosθ; cos 2θ = cos²θ − sin²θ = 2cos²θ − 1 = 1 − 2sin²θ |
 | Power reduction | sin²θ = (1 − cos 2θ)/2 \| cos²θ = (1 + cos 2θ)/2 — the ones that make ∫ sin²x dx doable |
 
-The second and third Pythagorean identities are just the first divided through by cos²θ and by sin²θ. Derive them in ten seconds instead of memorising three separate facts.
+The second and third Pythagorean identities are just the first divided through by cos²θ and by sin²θ. Derive them in ten seconds instead of memorizing three separate facts.
 
 And the first one is the Pythagorean theorem itself. On the unit circle the legs are cos θ and sin θ and the hypotenuse is 1, so a² + b² = c² becomes cos²θ + sin²θ = 1. That is why the family is named after him — it is one theorem in trigonometric clothing.
 
@@ -381,14 +381,14 @@ And the first one is the Pythagorean theorem itself. On the unit circle the legs
 | arccos x | [0, π] — QI and QII |
 | arctan x | (−π/2, π/2) — QIV and QI, never reaching the ends |
 
-Those ranges are why arcsin(sin(3π/4)) is π/4, not 3π/4 — the answer has to land inside the range. It is a favourite exam question precisely because the obvious answer is wrong.
+Those ranges are why arcsin(sin(3π/4)) is π/4, not 3π/4 — the answer has to land inside the range. It is a favorite exam question precisely because the obvious answer is wrong.
 
 | Law | Formula | Use when |
 |---|---|---|
 | Sines — the law of sines | a/sin A = b/sin B = c/sin C | You have an angle paired with the side opposite it |
 | Cosines — the law of cosines | c² = a² + b² − 2ab·cos C | Three sides, or two sides and the angle between them |
 
-> **Pick the law by what you have, not by what you want.** An angle paired with its opposite side means sines; three sides or an included angle means cosines — and trying to force the first where the second belongs is the standard wasted five minutes. The range point above the table is the exam favourite precisely because the obvious answer is wrong.
+> **Pick the law by what you have, not by what you want.** An angle paired with its opposite side means sines; three sides or an included angle means cosines — and trying to force the first where the second belongs is the standard wasted five minutes. The range point above the table is the exam favorite precisely because the obvious answer is wrong.
 
 ---
 
@@ -400,7 +400,7 @@ Those ranges are why arcsin(sin(3π/4)) is π/4, not 3π/4 — the answer has to
 
 Take two points on the curve. The line through them — the **secant** — has slope Δy/Δx = [f(x+h) − f(x)] / h, the average rate of change across that interval. Now slide the second point toward the first. The secant pivots, and in the limit as h → 0 it becomes the **tangent**, whose slope is f′(x) — the instantaneous rate.
 
-That is the whole definition, and it is worth being able to sketch, because it turns several memorised rules into obvious consequences: f′ = 0 at a peak because the tangent is flat there; a corner has no derivative because the secants approach different slopes from each side; and a vertical tangent means f′ is undefined rather than zero.
+That is the whole definition, and it is worth being able to sketch, because it turns several memorized rules into obvious consequences: f′ = 0 at a peak because the tangent is flat there; a corner has no derivative because the secants approach different slopes from each side; and a vertical tangent means f′ is undefined rather than zero.
 
 ### The integral is a limit of sums — Diagram
 
@@ -422,7 +422,7 @@ One consequence to carry into the tests: a definite integral is a signed area. R
 |---|---|
 | Quadratic formula | x = (−b ± √(b² − 4ac)) / 2a, for ax² + bx + c = 0 |
 | Discriminant | b² − 4ac — positive gives two real roots, zero gives one, negative gives none real |
-| **Pythagorean theorem** | a² + b² = c² — legs a, b, hypotenuse c. Only for right triangles; otherwise use the law of cosines, which is its generalisation |
+| **Pythagorean theorem** | a² + b² = c² — legs a, b, hypotenuse c. Only for right triangles; otherwise use the law of cosines, which is its generalization |
 | Difference of squares | a² − b² = (a + b)(a − b) |
 | Perfect square | (a ± b)² = a² ± 2ab + b² |
 | Sum / difference of cubes | a³ ± b³ = (a ± b)(a² ∓ ab + b²) |
@@ -435,7 +435,7 @@ One consequence to carry into the tests: a definite integral is a signed area. R
 
 > **Point-slope is the row that earns its place in a calculus course.** Every tangent-line question reduces to a point and a slope, which is exactly what a derivative gives you — so the formula that takes those two directly is the one you will type most. The discriminant is the other: it answers "how many real roots" without solving anything.
 
-### Geometry — the ones optimisation keeps asking for — Reference
+### Geometry — the ones optimization keeps asking for — Reference
 
 | Shape | Area / Volume | Perimeter / Surface |
 |---|---|---|
@@ -447,13 +447,13 @@ One consequence to carry into the tests: a definite integral is a signed area. R
 | Cone | V = ⅓πr²h | SA = πr² + πrl |
 | Sphere | V = ⁴⁄₃πr³ | SA = 4πr² |
 
-Optimisation and related-rates questions nearly always hand you one of these plus a constraint. "A cylindrical can holds 355 cm³ — minimise the material" is the volume formula as the constraint and the surface-area formula as the thing to minimise. Working out which is which is most of the problem.
+Optimization and related-rates questions nearly always hand you one of these plus a constraint. "A cylindrical can holds 355 cm³ — minimize the material" is the volume formula as the constraint and the surface-area formula as the thing to minimize. Working out which is which is most of the problem.
 
 Worth noticing the pattern in the last rows: differentiating a sphere's volume with respect to r gives 4πr² — its surface area. Same for a circle, where d/dr(πr²) = 2πr is the circumference. Growing a shape outward adds a shell of exactly its surface, which is both a sanity check and a reminder that these formulas are related rather than arbitrary.
 
 ---
 
-## Shape Formulas — Labelled Diagrams
+## Shape Formulas — Labeled Diagrams
 
 ### What each letter refers to — Diagram
 
@@ -494,7 +494,7 @@ Notice the pattern: cone and pyramid both carry a ⅓ against the prism or cylin
 
 | Question type | What the shape formula is doing |
 |---|---|
-| Optimisation | One formula is the **constraint** (fixed volume), the other is the **objective** (minimise material). "A can holds 355 cm³ — least aluminium" is V = πr²h fixed, SA minimised |
+| Optimization | One formula is the **constraint** (fixed volume), the other is the **objective** (minimize material). "A can holds 355 cm³ — least aluminium" is V = πr²h fixed, SA minimized |
 | Related rates | Differentiate the formula with respect to time. A cone draining gives dV/dt in terms of dh/dt — and usually needs similar triangles first to write r in terms of h |
 | Volumes of revolution | Disk, washer and shell are just πr² and the cylinder's side, integrated. That is why the formulas look familiar |
 
@@ -541,7 +541,7 @@ The tiny number is not an error — sin(π) can come back as something like −3
 
 The TI-84 has **two different keys** and they are not interchangeable. (−), next to ENTER, makes a number negative. −, above +, subtracts. Using the wrong one gives ERR: SYNTAX at best and a wrong answer at worst. If you get a syntax error you cannot explain, this is the first thing to check.
 
-Two more that bite: −2² evaluates as −4 because the square binds tighter than the negation — type (−2)² if you mean 4. And always parenthesise a whole denominator: 1/(2+3) is 0.2, while 1/2+3 is 3.5.
+Two more that bite: −2² evaluates as −4 because the square binds tighter than the negation — type (−2)² if you mean 4. And always parenthesize a whole denominator: 1/(2+3) is 0.2, while 1/2+3 is 3.5.
 
 ### Derivatives and integrals numerically — Hands-on
 
@@ -709,8 +709,8 @@ sin is not something you do to an angle the way squaring is something you do to 
 
 | Function | Ratio | Reciprocal of | Read it as |
 |---|---|---|---|
-| **sin θ** | opposite / hypotenuse | csc | How high, per unit of distance travelled |
-| **cos θ** | adjacent / hypotenuse | sec | How far across, per unit travelled |
+| **sin θ** | opposite / hypotenuse | csc | How high, per unit of distance traveled |
+| **cos θ** | adjacent / hypotenuse | sec | How far across, per unit traveled |
 | **tan θ** | opposite / adjacent | cot | **Slope.** Rise over run — this is why tan shows up in every tangent-line question |
 | csc θ | hypotenuse / opposite | sin | — |
 | **sec θ** | hypotenuse / adjacent | cos | — |
@@ -861,7 +861,7 @@ A rectangle's flat top is wrong almost everywhere — it matches the curve at on
 | **Midpoint** | Δx·[f(m₁) + f(m₂) + … + f(m_n)], where each m is the center of its slice |
 | **Simpson's** | (Δx/3)·[f(x₀) + 4f(x₁) + 2f(x₂) + 4f(x₃) + … + 4f(x_n−1) + f(x_n)] |
 
-The coefficient pattern is the thing to memorise, and each is different. Trapezoid: **1, 2, 2, …, 2, 1**. Simpson's: **1, 4, 2, 4, 2, …, 4, 1** — ends are 1, then alternate 4 and 2, always ending on a 4 before the final 1.
+The coefficient pattern is the thing to memorize, and each is different. Trapezoid: **1, 2, 2, …, 2, 1**. Simpson's: **1, 4, 2, 4, 2, …, 4, 1** — ends are 1, then alternate 4 and 2, always ending on a 4 before the final 1.
 
 **Simpson's requires n to be even.** It fits a parabola through each pair of slices, so an odd number leaves one stranded. If a problem gives you n = 5 and asks for Simpson's, re-read it — something is wrong.
 
@@ -872,7 +872,7 @@ The coefficient pattern is the thing to memorise, and each is different. Trapezo
 | Concave **up** | **Over**estimates — the chord sits above the curve | **Under**estimates |
 | Concave **down** | **Under**estimates | **Over**estimates |
 
-Derive it rather than memorise it: on a concave-up curve the straight chord joining two points lies above the arc between them, so trapezoids include area that is not there. Midpoint errs the other way for the mirror-image reason. Questions asking "is this an over- or under-estimate?" are asking about concavity, which means they are asking about f″.
+Derive it rather than memorize it: on a concave-up curve the straight chord joining two points lies above the arc between them, so trapezoids include area that is not there. Midpoint errs the other way for the mirror-image reason. Questions asking "is this an over- or under-estimate?" are asking about concavity, which means they are asking about f″.
 
 **Simpson's is exact for any polynomial of degree 3 or lower.** That surprises people — it fits parabolas, yet handles cubics perfectly, because the cubic error terms cancel between the pairs. If a problem asks you to approximate ∫x³dx by Simpson's and compare with the exact value, the answer is that they match.
 
@@ -880,7 +880,7 @@ Derive it rather than memorise it: on a concave-up curve the straight chord join
 
 Numerical rules are not a fallback for weak algebra — they are the only option when there is **no elementary antiderivative**. ∫e^(−x²)dx is the standard example: it is central to statistics and has no answer in elementary functions, so every value of it anyone has ever used was computed numerically.
 
-They are also how you integrate **data** rather than a formula. Given a table of speed readings every 10 seconds, the distance travelled is a trapezoidal sum — there is no function to antidifferentiate. That is the form these questions usually take on a test.
+They are also how you integrate **data** rather than a formula. Given a table of speed readings every 10 seconds, the distance traveled is a trapezoidal sum — there is no function to antidifferentiate. That is the form these questions usually take on a test.
 
 On a TI-84, fnInt( does this for you numerically, so it is a good check on a hand computation — see **TI-84 Plus CE**. But the exam wants the hand version with the coefficient pattern shown.
 

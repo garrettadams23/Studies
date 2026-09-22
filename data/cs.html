@@ -23,7 +23,7 @@
       </div>
       <div class="concept-desc">
         The definition throws away constant factors and lower-order terms because it describes
-        behaviour as <em>n</em> grows without bound. Real inputs are finite, often small, and
+        behavior as <em>n</em> grows without bound. Real inputs are finite, often small, and
         run on hardware with a memory hierarchy that the model does not represent at all.
       </div>
     </div>
@@ -65,14 +65,14 @@
 
     <div class="concept-card">
       <div class="concept-label">Failure mode</div>
-      <div class="concept-title">Optimising the Term That Was Never the Problem</div>
+      <div class="concept-title">Optimizing the Term That Was Never the Problem</div>
       <div class="concept-desc">
         The most common waste in performance work is improving an O(n²) loop over 200 items —
         microseconds — inside a request that spends 40 milliseconds waiting on a database. The
         complexity analysis was correct and the work was pointless.
       </div>
       <div class="concept-desc">
-        Before optimising an algorithm, establish that computation is the cost. In most
+        Before optimizing an algorithm, establish that computation is the cost. In most
         application code it is not: input/output dominates, and the useful numbers are the ones in
         <span class="xref">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span> —
         roughly nanoseconds for memory, microseconds for local storage, milliseconds for a
@@ -175,7 +175,7 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
       <div class="concept-label">The pattern</div>
       <div class="concept-title">Nearly Every Speed-Up Is Memory You Agreed to Spend</div>
       <div class="concept-desc">
-        Precomputation, indexes, memoisation, lookup tables and caches are one idea in different
+        Precomputation, indexes, memoization, lookup tables and caches are one idea in different
         clothes: store an answer so you do not compute it twice. The cost is memory, and — far
         more often the real problem — the obligation to keep the stored answer correct.
       </div>
@@ -185,10 +185,10 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
             <tr><th>Technique</th><th>Buys</th><th>Costs</th></tr>
           </thead>
           <tbody>
-            <tr><td>Memoisation</td><td>Repeated calls become free</td><td>Unbounded growth unless evicted; wrong if the function is not pure</td></tr>
+            <tr><td>Memoization</td><td>Repeated calls become free</td><td>Unbounded growth unless evicted; wrong if the function is not pure</td></tr>
             <tr><td>Database index</td><td>Lookups go from scan to seek</td><td>Slower writes, more disk, and a planner that may ignore it</td></tr>
             <tr><td>Lookup table</td><td>Arithmetic becomes an array read</td><td>Only wins if the table stays in cache</td></tr>
-            <tr><td>Denormalised copy</td><td>No join at read time</td><td>Two sources of truth to reconcile</td></tr>
+            <tr><td>Denormalized copy</td><td>No join at read time</td><td>Two sources of truth to reconcile</td></tr>
           </tbody>
         </table>
       </div>
@@ -327,11 +327,11 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
 
     <div class="concept-card">
       <div class="concept-label">Why you care</div>
-      <div class="concept-title">Recognising One Saves You From Promising a Delivery Date</div>
+      <div class="concept-title">Recognizing One Saves You From Promising a Delivery Date</div>
       <div class="concept-desc">
         <strong>NP-complete</strong> problems are the hardest in NP: solve one efficiently and
         you have solved all of them. Nobody has, in over fifty years of trying. The practical
-        consequence is that recognising your problem as one of them is a
+        consequence is that recognizing your problem as one of them is a
         <em>result</em>, not a defeat — it tells you to stop searching for an exact efficient
         algorithm and change what you are promising.
       </div>
@@ -342,8 +342,8 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
           </thead>
           <tbody>
             <tr><td>Fitting jobs onto machines or VMs <span class="acro-exp">(Virtual Machine)</span> onto hosts</td><td>Bin packing</td></tr>
-            <tr><td>Rostering staff or timetabling rooms</td><td>Graph colouring</td></tr>
-            <tr><td>Routing a vehicle through many stops</td><td>Travelling salesman</td></tr>
+            <tr><td>Rostering staff or timetabling rooms</td><td>Graph coloring</td></tr>
+            <tr><td>Routing a vehicle through many stops</td><td>Traveling salesman</td></tr>
             <tr><td>Choosing what fits in a fixed budget</td><td>Knapsack</td></tr>
             <tr><td>Dependency resolution with version constraints</td><td>Boolean satisfiability</td></tr>
           </tbody>
@@ -408,7 +408,7 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
       </div>
       <div class="concept-desc">
         Memory does not arrive one byte at a time. It arrives in <strong>cache lines</strong>,
-        typically 64 bytes. Reading one integer from main memory fetches its fifteen neighbours
+        typically 64 bytes. Reading one integer from main memory fetches its fifteen neighbors
         whether you want them or not — so a structure whose elements sit next to each other gets
         the next fifteen reads nearly free.
       </div>
@@ -491,7 +491,7 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
           </thead>
           <tbody>
             <tr><td>Chaining</td><td>Each bucket holds a list</td><td>Pointer chasing; degrades to a list under attack</td></tr>
-            <tr><td>Linear probing</td><td>Try the next slot along</td><td>Clustering, but excellent cache behaviour</td></tr>
+            <tr><td>Linear probing</td><td>Try the next slot along</td><td>Clustering, but excellent cache behavior</td></tr>
             <tr><td>Robin Hood</td><td>Probe, stealing slots from luckier keys</td><td>Complex deletion; very even probe lengths</td></tr>
           </tbody>
         </table>
@@ -516,7 +516,7 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
       <div class="concept-desc">
         This broke essentially every web framework simultaneously in 2011, because they all
         parsed request parameters straight into a hash table. The fix is
-        <strong>hash randomisation</strong>: seed the hash function per process, so an attacker
+        <strong>hash randomization</strong>: seed the hash function per process, so an attacker
         cannot precompute colliding keys.
       </div>
       <pre class="code-block"><span class="com"># Python randomises string hashing per process by default since 3.3.</span>
@@ -528,7 +528,7 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       <div class="concept-desc verdict">
         <strong>Never hard-code a hash seed in production, and never rely on iteration order.</strong>
         If you need a stable order, sort explicitly. Code that depends on dictionary ordering
-        works until the day someone enables randomisation, and then fails somewhere unrelated.
+        works until the day someone enables randomization, and then fails somewhere unrelated.
       </div>
     </div>
 
@@ -583,7 +583,7 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> if you only need "is this present?", a hash table beats
         all of them. Trees earn their place when <em>order</em> matters — range scans, nearest
-        neighbours, or reading everything sorted without a sort.
+        neighbors, or reading everything sorted without a sort.
       </div>
     </div>
 
@@ -633,11 +633,11 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
   <div class="topic-body">
 
     <div class="concept-card">
-      <div class="concept-label">Recognising one</div>
+      <div class="concept-label">Recognizing one</div>
       <div class="concept-title">Most Hard Problems Are Graph Problems Wearing a Costume</div>
       <div class="concept-desc">
         Package dependencies, network topology, permission inheritance, build pipelines, service
-        call chains, Active Directory attack paths — all graphs. Recognising the shape is most
+        call chains, Active Directory attack paths — all graphs. Recognizing the shape is most
         of the work, because the algorithms are standard once you have.
       </div>
       <div class="dw">
@@ -655,7 +655,7 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       </div>
       <div class="concept-desc verdict">
         <strong>Dijkstra with negative weights does not produce a slightly worse answer — it
-        produces a wrong one</strong>, because it finalises a node's distance on first visit and
+        produces a wrong one</strong>, because it finalizes a node's distance on first visit and
         a negative edge can invalidate that later. This is a genuine trap: the code runs, returns
         a path, and the path is not shortest.
       </div>
@@ -672,12 +672,12 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
           <tbody>
             <tr><td>Space</td><td class="c-green">O(V + E)</td><td class="c-red">O(V²) regardless of edges</td></tr>
             <tr><td>"Is there an edge u→v?"</td><td>O(degree)</td><td class="c-green">O(1)</td></tr>
-            <tr><td>Iterate a node's neighbours</td><td class="c-green">Optimal</td><td>O(V) even for one neighbour</td></tr>
+            <tr><td>Iterate a node's neighbors</td><td class="c-green">Optimal</td><td>O(V) even for one neighbor</td></tr>
           </tbody>
         </table>
       </div>
       <div class="concept-desc verdict">
-        Real graphs are overwhelmingly sparse — a machine has a handful of neighbours, not
+        Real graphs are overwhelmingly sparse — a machine has a handful of neighbors, not
         thousands — so adjacency lists win almost always. A matrix over 100,000 nodes is 10
         billion entries for a graph that probably has a few hundred thousand edges.
       </div>
@@ -767,7 +767,7 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       </div>
       <div class="concept-desc verdict">
         Use one when a false positive costs only a wasted lookup, never where it costs
-        correctness or safety. "Probably breached password" is a fine use; "probably authorised"
+        correctness or safety. "Probably breached password" is a fine use; "probably authorized"
         is not.
       </div>
     </div>
@@ -852,14 +852,14 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🗝️</span>
-    <span class="topic-name">Divide &amp; Conquer, Greedy, Dynamic Programming — Recognising Which Applies</span>
+    <span class="topic-name">Divide &amp; Conquer, Greedy, Dynamic Programming — Recognizing Which Applies</span>
     <span class="topic-badge">CS • Algorithms</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
 
     <div class="concept-card">
-      <div class="concept-label">Recognising</div>
+      <div class="concept-label">Recognizing</div>
       <div class="concept-title">Three Strategies, and the Question That Separates Them</div>
       <div class="concept-desc">
         These are not interchangeable techniques to try in turn. Each requires a specific
@@ -889,7 +889,7 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
 
     <div class="concept-card">
       <div class="concept-label">DP in practice</div>
-      <div class="concept-title">Memoise the Recursion; Do Not Start With the Table</div>
+      <div class="concept-title">Memoize the Recursion; Do Not Start With the Table</div>
       <div class="concept-desc">
         Dynamic programming is taught bottom-up, with a table and indices, which is why it has a
         reputation for being impenetrable. The practical route is the opposite: write the naive
@@ -908,7 +908,7 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
       <div class="concept-desc verdict">
         Convert to a bottom-up table only when you need it — to avoid recursion depth, or to
         drop memory from O(n) to O(1) by keeping just the rows still in use. Both are
-        optimisations of a working solution, not the starting point.
+        optimizations of a working solution, not the starting point.
       </div>
     </div>
 
@@ -948,7 +948,7 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
         </table>
       </div>
       <div class="concept-desc verdict">
-        Aho-Corasick is the one worth recognising operationally: it is how a signature engine
+        Aho-Corasick is the one worth recognizing operationally: it is how a signature engine
         scans traffic for ten thousand indicators in a single pass rather than ten thousand.
       </div>
     </div>
@@ -986,7 +986,7 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
         Edit distance counts the insertions, deletions and substitutions needed to turn one
         string into another. It powers spelling suggestions, "did you mean", fuzzy record
         matching and command-line typo correction, and it is the clearest small example of
-        dynamic programming — a table where each cell depends on three neighbours.
+        dynamic programming — a table where each cell depends on three neighbors.
       </div>
       <div class="concept-desc verdict">
         It costs O(n·m) time and memory, so it does not scale to comparing one string against
@@ -1002,24 +1002,24 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🎰</span>
-    <span class="topic-name">Randomised Algorithms — Sampling, Reservoirs &amp; Monte Carlo</span>
+    <span class="topic-name">Randomized Algorithms — Sampling, Reservoirs &amp; Monte Carlo</span>
     <span class="topic-badge">CS • Algorithms</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
 
     <div class="concept-card">
-      <div class="concept-label">Why randomise</div>
+      <div class="concept-label">Why randomize</div>
       <div class="concept-title">Randomness Removes the Adversary's Advantage</div>
       <div class="concept-desc">
         A deterministic algorithm has a worst case, and anything that can choose your input can
-        find it. Randomising a choice the algorithm makes means no fixed input is reliably bad —
-        the same reasoning behind hash seed randomisation, and behind picking a random pivot in
+        find it. Randomizing a choice the algorithm makes means no fixed input is reliably bad —
+        the same reasoning behind hash seed randomization, and behind picking a random pivot in
         quicksort.
       </div>
       <div class="concept-desc">
         Two families worth telling apart: <strong>Las Vegas</strong> algorithms are always
-        correct and take a random amount of time (randomised quicksort). <strong>Monte
+        correct and take a random amount of time (randomized quicksort). <strong>Monte
         Carlo</strong> algorithms take bounded time and are occasionally wrong, with a
         probability you choose (primality testing).
       </div>
@@ -1096,8 +1096,8 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
       <div class="concept-label">The patterns</div>
       <div class="concept-title">Recognition Beats Recall</div>
       <div class="concept-desc">
-        Interview questions are drawn from a small set of shapes. Memorising solutions does not
-        transfer; recognising the shape does, because the shape tells you the data structure and
+        Interview questions are drawn from a small set of shapes. Memorizing solutions does not
+        transfer; recognizing the shape does, because the shape tells you the data structure and
         the data structure writes most of the code.
       </div>
       <div class="dw">
@@ -1120,7 +1120,7 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
       <div class="concept-desc verdict">
         <strong>Sliding window and two pointers cover a surprising share alone.</strong> Both
         turn an O(n²) nested loop into O(n) by never re-examining what the window already
-        summarised — and both are far easier to derive live than to remember.
+        summarized — and both are far easier to derive live than to remember.
       </div>
     </div>
 
@@ -1130,7 +1130,7 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
       <div class="concept-desc">
         Candidates routinely stay silent hunting for the clever answer. Saying "the brute force
         is O(n²) — I check every pair; let me see whether I can avoid re-scanning" establishes a
-        correct baseline, shows the analysis, and frequently leads to the optimisation. It also
+        correct baseline, shows the analysis, and frequently leads to the optimization. It also
         leaves something working if time runs out.
       </div>
       <div class="concept-desc">
@@ -1201,7 +1201,7 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
         much higher for I/O-bound work, where threads are blocked rather than competing.
       </div>
       <div class="concept-desc verdict">
-        Measure switches directly before theorising: <code>vmstat 1</code> reports context
+        Measure switches directly before theorizing: <code>vmstat 1</code> reports context
         switches per second in the <code>cs</code> column, and <code>pidstat -w</code> attributes
         them per process. A high <em>voluntary</em> switch count means blocking on I/O <span class="acro-exp">(Input/Output)</span>; a high
         <em>involuntary</em> count means CPU <span class="acro-exp">(Central Processing Unit)</span> contention. Those two point at opposite fixes.
@@ -1240,7 +1240,7 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
       <div class="concept-title">Swap Is Not the Problem — Thrashing Is</div>
       <div class="concept-desc">
         "Disable swap for performance" is common advice and mostly wrong. Swap lets the kernel
-        evict pages that are genuinely never touched — initialisation code, an idle daemon —
+        evict pages that are genuinely never touched — initialization code, an idle daemon —
         and use the reclaimed memory as cache. A system with swap and no swapping is healthier
         than one without swap.
       </div>
@@ -1276,7 +1276,7 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
         <table class="ref-table">
           <thead><tr><th>Primitive</th><th>Answers</th><th>Typical misuse</th></tr></thead>
           <tbody>
-            <tr><td>Mutex</td><td>Only one at a time in here</td><td>Held across an I/O <span class="acro-exp">(Input/Output)</span> call, serialising everything</td></tr>
+            <tr><td>Mutex</td><td>Only one at a time in here</td><td>Held across an I/O <span class="acro-exp">(Input/Output)</span> call, serializing everything</td></tr>
             <tr><td>Semaphore</td><td>At most N at a time</td><td>Used as a mutex, losing the "who owns it" check</td></tr>
             <tr><td>Condition variable</td><td>Wait until something is true</td><td>Waiting without a loop — spurious wakeups are real</td></tr>
             <tr><td>Atomic</td><td>This one operation is indivisible</td><td>Assuming two atomics compose atomically</td></tr>
@@ -1311,7 +1311,7 @@ value = transform(row)
     cache[key] = value           <span class="com"># may overwrite a concurrent write — usually fine</span></pre>
       <div class="concept-desc verdict">
         The second version can do duplicate work under contention. That is nearly always the
-        right trade: duplicated computation is cheap, and a serialised service is not. Decide
+        right trade: duplicated computation is cheap, and a serialized service is not. Decide
         deliberately rather than by where the <code>with</code> happened to go.
       </div>
     </div>
@@ -1360,7 +1360,7 @@ value = transform(row)
       <div class="concept-desc">
         The usual cause is a naive retry: detect a conflict, back off, retry immediately, collide
         again. Fix it the same way networks did — <strong>exponential backoff with
-        jitter</strong>. Without jitter, retries stay synchronised and collide in lockstep
+        jitter</strong>. Without jitter, retries stay synchronized and collide in lockstep
         forever.
       </div>
       <div class="concept-desc verdict">
@@ -1391,7 +1391,7 @@ value = transform(row)
         the same inode — hard links — and the data survives until the last one is removed.
       </div>
       <div class="concept-desc verdict">
-        Two consequences that explain real behaviour. Deleting a file being held open by a
+        Two consequences that explain real behavior. Deleting a file being held open by a
         process frees no space, because the descriptor is still a reference — which is why a
         disk can stay full after deleting a log, until the writer is restarted. And "disk full"
         with free space showing means <strong>inode</strong> exhaustion: millions of tiny files,
@@ -1537,7 +1537,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
     </div>
     <div class="concept-card">
       <div class="concept-label">Failure mode</div>
-      <div class="concept-title">Losing Quorum Is Correct Behaviour, and It Looks Like an Outage</div>
+      <div class="concept-title">Losing Quorum Is Correct Behavior, and It Looks Like an Outage</div>
       <div class="concept-desc">
         When enough nodes fail that no majority remains, the cluster stops accepting writes. It
         is not broken — it is refusing to risk divergence. Under CAP it has chosen consistency
@@ -1592,7 +1592,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
         may write. That is split-brain, and it corrupts data rather than causing downtime.
       </div>
       <div class="concept-desc">
-        The standard defence is a <strong>fencing token</strong>: every leadership term carries
+        The standard defense is a <strong>fencing token</strong>: every leadership term carries
         a monotonically increasing number, and the storage layer rejects any write bearing a
         number lower than the highest it has seen. The stale leader's writes are refused by the
         resource itself rather than by agreement it cannot participate in.
@@ -1646,7 +1646,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
         <strong>These are order-of-magnitude figures, not benchmarks</strong> — they shift with
         hardware, and the ratios matter far more than the values. The practical conclusion is
         blunt: no amount of algorithmic cleverness recovers a network round trip you did not
-        need. Remove the trip before optimising the loop.
+        need. Remove the trip before optimizing the loop.
       </div>
     </div>
     <div class="concept-card">
@@ -1690,7 +1690,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
       </div>
       <div class="concept-desc verdict">
         So <code>abs(INT_MIN)</code> is negative. Negating the minimum overflows, and in C that
-        is undefined behaviour the optimiser may assume cannot happen. The classic exploitable
+        is undefined behavior the optimizer may assume cannot happen. The classic exploitable
         form is a length check passing because an attacker-supplied size overflowed to negative,
         and the subsequent allocation being far too small.
       </div>
@@ -1781,7 +1781,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
         <strong>Spectre is the one that matters, because it is a property of speculation
         itself.</strong> Meltdown was an implementation bug and was fixed. Spectre is mitigated
         per-pattern — compiler barriers, index masking, isolating untrusted code in its own
-        process — and new variants keep arriving, because the underlying optimisation is not
+        process — and new variants keep arriving, because the underlying optimization is not
         going away.
       </div>
     </div>
@@ -1826,7 +1826,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
       <div class="concept-desc">
         Superscalar designs go further and issue several instructions per cycle across
         duplicated units, and out-of-order execution reorders them around stalls. The
-        consequence worth internalising: <strong>instruction count is a poor predictor of
+        consequence worth internalizing: <strong>instruction count is a poor predictor of
         speed</strong>. What matters is whether the pipeline stays full.
       </div>
     </div>
@@ -1958,7 +1958,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
             <tr><td>Lexing</td><td>Tokens</td><td>Unterminated string; stray character</td></tr>
             <tr><td>Parsing</td><td>A syntax tree</td><td>"Unexpected token" — grammar broken</td></tr>
             <tr><td>Semantic analysis</td><td>A checked, typed tree</td><td>Undefined name; type mismatch</td></tr>
-            <tr><td>Optimise &amp; generate</td><td>Machine code</td><td class="c-amber">Rarely an error — usually a slow binary or a miscompile</td></tr>
+            <tr><td>Optimize &amp; generate</td><td>Machine code</td><td class="c-amber">Rarely an error — usually a slow binary or a miscompile</td></tr>
           </tbody>
         </table>
       </div>
@@ -1978,8 +1978,8 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
         emitting one IR.
       </div>
       <div class="concept-desc verdict">
-        It also explains a practical asymmetry: optimisations written once in the middle benefit
-        every language using it. A new front-end inherits decades of optimisation work for free,
+        It also explains a practical asymmetry: optimizations written once in the middle benefit
+        every language using it. A new front-end inherits decades of optimization work for free,
         which is why modern languages start faster than their authors could have made them
         alone.
       </div>
@@ -2017,7 +2017,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
       <div class="concept-desc verdict">
         <strong>A JIT can beat ahead-of-time compilation</strong>, which surprises people. It
         observes what actually happens — which branch is taken, which concrete type flows
-        through — and specialises for it, then de-optimises if the assumption breaks. That
+        through — and specializes for it, then de-optimizes if the assumption breaks. That
         information does not exist at build time.
       </div>
     </div>
@@ -2181,7 +2181,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">💥</span>
-    <span class="topic-name">Undefined Behaviour &amp; Memory Safety — The Class Behind Most CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></span>
+    <span class="topic-name">Undefined Behavior &amp; Memory Safety — The Class Behind Most CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span></span>
     <span class="topic-badge">CS • Languages</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -2190,7 +2190,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
       <div class="concept-label">The category</div>
       <div class="concept-title">Roughly Two Thirds of Serious Vulnerabilities Are One Bug Class</div>
       <div class="concept-desc">
-        Buffer overflows, use-after-free, double-free and uninitialised reads share a root:
+        Buffer overflows, use-after-free, double-free and uninitialized reads share a root:
         languages where the programmer manually guarantees that memory access is valid.
         Microsoft and Google have each reported that around 70% of their high-severity
         vulnerabilities are memory-safety issues — a figure worth treating as an order of
@@ -2203,14 +2203,14 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
             <tr><td>Buffer overflow</td><td>Write past an allocation, corrupting adjacent memory</td></tr>
             <tr><td>Use-after-free</td><td>Access memory already returned — an attacker may control what is there now</td></tr>
             <tr><td>Double free</td><td>Corrupts the allocator's own bookkeeping</td></tr>
-            <tr><td>Uninitialised read</td><td>Reads whatever the previous occupant left</td></tr>
+            <tr><td>Uninitialized read</td><td>Reads whatever the previous occupant left</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
           <strong>These are one bug with four faces, and the fix is not care.</strong>
           Every row is a manual guarantee about memory validity that a human is
           expected to maintain across a whole codebase, forever — which is why decades
-          of review, sanitisers and fuzzing have moved the proportion so little. The
+          of review, sanitizers and fuzzing have moved the proportion so little. The
           durable answer is a language that makes the guarantee for you, applied to
           new code first; rewriting what already works is rarely the best available
           trade.
@@ -2218,11 +2218,11 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
       </div>
     </div>
     <div class="concept-card">
-      <div class="concept-label">Undefined behaviour</div>
+      <div class="concept-label">Undefined behavior</div>
       <div class="concept-title">The Compiler Is Allowed to Assume It Never Happens</div>
       <div class="concept-desc">
-        In C and C++, undefined behaviour does not mean "unpredictable result" — it means the
-        standard imposes no requirement at all, so the optimiser may assume it cannot occur and
+        In C and C++, undefined behavior does not mean "unpredictable result" — it means the
+        standard imposes no requirement at all, so the optimizer may assume it cannot occur and
         reason from there. This is why a null check <em>after</em> a dereference can be deleted:
         the dereference already implied the pointer was non-null.
       </div>
@@ -2231,25 +2231,25 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
 <span class="kw">int</span> v = *p;
 <span class="kw">if</span> (p == NULL) <span class="kw">return</span> ERROR;   <span class="com">// deleted at -O2</span></pre>
       <div class="concept-desc verdict">
-        <strong>Undefined behaviour is not a runtime concept.</strong> It changes what the
-        compiler emits, which is why a bug can appear only at higher optimisation levels, or
+        <strong>Undefined behavior is not a runtime concept.</strong> It changes what the
+        compiler emits, which is why a bug can appear only at higher optimization levels, or
         only after a compiler upgrade, and why "it works in debug" proves nothing.
       </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">What to do</div>
-      <div class="concept-title">Sanitisers Now, Safer Languages at the Boundary</div>
+      <div class="concept-title">Sanitizers Now, Safer Languages at the Boundary</div>
       <div class="concept-desc">
         Rewriting a working C codebase is rarely justified. The standard advice — from the same
-        organisations that published the 70% figure — is to write <em>new</em> code in a
-        memory-safe language and prioritise the parts that parse untrusted input, which is where
+        organizations that published the 70% figure — is to write <em>new</em> code in a
+        memory-safe language and prioritize the parts that parse untrusted input, which is where
         the exploitable bugs concentrate.
       </div>
       <pre class="code-block"><span class="com"># Catch it in CI rather than in a CVE. Both are cheap to enable.</span>
 clang -fsanitize=address,undefined -g -O1 prog.c
 valgrind --leak-check=full ./prog</pre>
       <div class="concept-desc verdict">
-        Sanitisers find these bugs only on code paths your tests actually execute — so their
+        Sanitizers find these bugs only on code paths your tests actually execute — so their
         value is bounded by coverage, and pairing them with fuzzing is what makes the
         combination effective. Rust's guarantee is stronger precisely because it is a property
         of the type system rather than of the tests.
@@ -2290,7 +2290,7 @@ valgrind --leak-check=full ./prog</pre>
                   <div class="concept-desc verdict">
                     The recursive rule is the whole idea: <strong>if two subtree hashes are equal, everything under
                     them is equal — skip it entirely.</strong> You only descend into the parts that changed, which
-                    is why a Merkle tree makes synchronising two nearly-identical copies cost a function of the
+                    is why a Merkle tree makes synchronizing two nearly-identical copies cost a function of the
                     <em>difference</em>, not of the total size.
                   </div>
                 </div>
@@ -2314,7 +2314,7 @@ valgrind --leak-check=full ./prog</pre>
                   </table>
                   <div class="concept-desc verdict">
                     The unifying property is <strong>tamper-evidence plus cheap diffing</strong>: any change,
-                    anywhere, changes the root, and the tree localises the change without a linear scan. That is why
+                    anywhere, changes the root, and the tree localizes the change without a linear scan. That is why
                     the structure recurs anywhere data must be verified or reconciled across a slow or untrusted link.
                   </div>
                 </div>
@@ -2443,7 +2443,7 @@ valgrind --leak-check=full ./prog</pre>
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">The Inversion</div>
-                <div class="concept-title">The Ceiling on Speedup Is Set by the Part You Cannot Parallelise</div>
+                <div class="concept-title">The Ceiling on Speedup Is Set by the Part You Cannot Parallelize</div>
                 <div class="concept-desc">
                   The instinct is that doubling the cores should roughly halve the time. It does not, and the reason
                   is brutally simple: <strong class="c-cyan">some fraction of the work must run in sequence</strong> —
@@ -2472,9 +2472,9 @@ valgrind --leak-check=full ./prog</pre>
                 <div class="concept-label">The Decision</div>
                 <div class="concept-title">Attack the Serial Fraction, Not the Core Count</div>
                 <div class="concept-desc">
-                  The law reframes the whole optimisation. If the ceiling is the serial part, then more hardware is
+                  The law reframes the whole optimization. If the ceiling is the serial part, then more hardware is
                   the <em>wrong</em> lever past a point, and the win is in shrinking what must run in sequence —
-                  removing the global lock, cutting the coordination round-trip, parallelising the setup. This is
+                  removing the global lock, cutting the coordination round-trip, parallelizing the setup. This is
                   where Amdahl meets <span class="xref">Concurrency Primitives — Mutexes, Semaphores, Conditions &amp; Atomics</span>:
                   a single coarse lock is often the serial fraction, and splitting it is worth more than any number
                   of extra threads contending on it.
@@ -2483,7 +2483,7 @@ valgrind --leak-check=full ./prog</pre>
                   <table class="ref-table">
                     <tr><th>Instinct</th><th>What Amdahl says instead</th></tr>
                     <tr><td>It's slow — add more cores</td><td>Measure the serial fraction first; cores past the knee do nothing</td></tr>
-                    <tr><td>Parallelise the hot loop</td><td>Worth it only if the loop is a big share of the total; a fast 90% barely helps</td></tr>
+                    <tr><td>Parallelize the hot loop</td><td>Worth it only if the loop is a big share of the total; a fast 90% barely helps</td></tr>
                     <tr><td>More threads = more speed</td><td>Overhead and contention make real speedup <em>worse</em> than the ceiling, never better</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -2739,7 +2739,7 @@ valgrind --leak-check=full ./prog</pre>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          XOR is the row worth memorising separately: it is "exactly one", it is its own inverse, and
+          XOR is the row worth memorizing separately: it is "exactly one", it is its own inverse, and
           that self-inverse property is why it appears in parity checks, RAID <span class="acro-exp">(Redundant Array of Independent Disks)</span>, and every toy cipher
           that turns out to be breakable.
         </div>
@@ -2750,7 +2750,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-title">Short-Circuit Evaluation Is a Security Property, Not Just a Speed One</div>
       <div class="concept-desc">
         Most languages stop evaluating <code>A AND B</code> the moment A is false. That is usually
-        discussed as an optimisation, and it has two consequences that matter more: a side effect in
+        discussed as an optimization, and it has two consequences that matter more: a side effect in
         B may never happen, and the <em>time taken</em> reveals which operand decided the result.
         The second is how timing side channels leak information from comparisons, which is why
         cryptographic code uses constant-time equality rather than the ordinary kind.
@@ -2890,7 +2890,7 @@ valgrind --leak-check=full ./prog</pre>
           <tbody>
             <tr><td>Raise the true-positive rate 99% → 99.9%</td><td>Almost none — 99 becomes 99.9</td></tr>
             <tr><td>Cut the false-positive rate 1% → 0.1%</td><td>Tenfold improvement; this is the lever</td></tr>
-            <tr><td>Raise the base rate by narrowing scope</td><td>Large — run the rule only where the behaviour is abnormal</td></tr>
+            <tr><td>Raise the base rate by narrowing scope</td><td>Large — run the rule only where the behavior is abnormal</td></tr>
             <tr><td>Require two independent signals</td><td>Multiplies the false-positive rates together</td></tr>
           </tbody>
         </table>
@@ -2961,7 +2961,7 @@ valgrind --leak-check=full ./prog</pre>
         </table>
         <div class="concept-desc verdict">
           Latency is the one that catches people. It is not normal, it has no meaningful "average
-          case", and its tail is where the user experience actually lives — so summarising it with a
+          case", and its tail is where the user experience actually lives — so summarizing it with a
           mean and a standard deviation discards precisely the information that mattered.
         </div>
       </div>
@@ -3400,7 +3400,7 @@ valgrind --leak-check=full ./prog</pre>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The last row is why the curves in common use are few and heavily scrutinised, and why
+          The last row is why the curves in common use are few and heavily scrutinized, and why
           "we designed our own curve" is a statement that should end a procurement conversation.
         </div>
       </div>
@@ -3514,7 +3514,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-label">Concept</div>
       <div class="concept-title">Walking Downhill on a Surface You Cannot See</div>
       <div class="concept-desc">
-        Training is an optimisation: there is a loss function measuring how wrong the model currently
+        Training is an optimization: there is a loss function measuring how wrong the model currently
         is, and the parameters are adjusted to make it smaller. The gradient is the direction of
         steepest increase, so stepping against it goes downhill. The model never sees the whole
         landscape — it only ever knows the slope where it is standing, and takes a small step.
@@ -3550,11 +3550,11 @@ valgrind --leak-check=full ./prog</pre>
             <tr><td>Loss oscillates or explodes to infinity</td><td>Learning rate too high — the step overshoots the valley</td></tr>
             <tr><td>Loss falls painfully slowly</td><td>Learning rate too low</td></tr>
             <tr><td>Loss plateaus early and stays</td><td>A flat region, a dead activation, or a vanishing gradient</td></tr>
-            <tr><td>Training loss falls, validation loss rises</td><td>Not an optimisation problem — it is memorising the training set</td></tr>
+            <tr><td>Training loss falls, validation loss rises</td><td>Not an optimization problem — it is memorizing the training set</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The last row is the one that matters most in practice: the optimiser is succeeding
+          The last row is the one that matters most in practice: the optimizer is succeeding
           perfectly at the task it was given, and the task was the wrong one. That is a statement
           about the loss function and the data, not about the descent.
         </div>
@@ -3589,7 +3589,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-desc">
         Geometric intuition is trained in two and three dimensions and stops working in hundreds. The
         specific failure that matters: as dimensions increase, the distances between random points
-        concentrate — the nearest and the farthest neighbour become nearly the same distance away.
+        concentrate — the nearest and the farthest neighbor become nearly the same distance away.
         Since "nearest" is what similarity search, clustering and anomaly detection all rest on, this
         undermines them from below.
       </div>
@@ -3597,7 +3597,7 @@ valgrind --leak-check=full ./prog</pre>
         <table class="ref-table">
           <thead><tr><th>Effect</th><th>Consequence</th></tr></thead>
           <tbody>
-            <tr><td>Distances concentrate</td><td>Nearest-neighbour becomes less meaningful as dimensions grow</td></tr>
+            <tr><td>Distances concentrate</td><td>Nearest-neighbor becomes less meaningful as dimensions grow</td></tr>
             <tr><td>Volume moves to the shell</td><td>Almost all of a high-dimensional ball's volume is near its surface</td></tr>
             <tr><td>Sampling gets exponentially sparse</td><td>Covering a space needs data growing exponentially with dimension</td></tr>
             <tr><td>Everything is nearly orthogonal</td><td>Random vectors are almost always close to perpendicular</td></tr>
@@ -3624,7 +3624,7 @@ valgrind --leak-check=full ./prog</pre>
           <tbody>
             <tr><td>Reduce dimensions before clustering</td><td>Distance concentration</td></tr>
             <tr><td>Cosine rather than Euclidean distance</td><td>Magnitude noise; angles stay informative for longer</td></tr>
-            <tr><td>Approximate nearest-neighbour indexes</td><td>Exact search being both slow and barely more meaningful</td></tr>
+            <tr><td>Approximate nearest-neighbor indexes</td><td>Exact search being both slow and barely more meaningful</td></tr>
             <tr><td>Feature selection over feature accumulation</td><td>Sparsity — every added dimension needs more data to justify</td></tr>
             <tr><td>Learned embeddings rather than raw features</td><td>Training concentrates the useful structure into fewer dimensions</td></tr>
           </tbody>
@@ -3653,7 +3653,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-title">A Table Is a Set, and a Join Is a Set Operation</div>
       <div class="concept-desc">
         The relational model is called relational because a table <em>is</em> a relation: a set of
-        tuples. Once that lands, SQL stops being a list of clauses to memorise and becomes a small
+        tuples. Once that lands, SQL stops being a list of clauses to memorize and becomes a small
         algebra — every query is a composition of set operations, and the operators behave the way
         set operators behave.
       </div>
@@ -3708,7 +3708,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-desc">
         Set theory assumes every element either is or is not in a set. SQL's NULL introduces a third
         answer — unknown — and the algebra stops being two-valued. This is the source of the join and
-        filter behaviour that reliably surprises people.
+        filter behavior that reliably surprises people.
       </div>
       <div class="dw">
         <pre class="code-block">   NULL = NULL       ->  UNKNOWN, not TRUE
@@ -3855,7 +3855,7 @@ valgrind --leak-check=full ./prog</pre>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The third row is the one worth internalising. A million rows from one region tells you
+          The third row is the one worth internalizing. A million rows from one region tells you
           about that region very precisely and about everywhere else not at all. Sampling
           <em>bias</em> and sampling <em>error</em> are different problems, and only one of them
           shrinks with more data.
@@ -3878,7 +3878,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-label">Concept</div>
       <div class="concept-title">Describing What Happened, and Claiming Why</div>
       <div class="concept-desc">
-        Descriptive statistics summarise the data you have: totals, averages, percentiles, trends.
+        Descriptive statistics summarize the data you have: totals, averages, percentiles, trends.
         Inferential statistics make a claim beyond the data: that a difference is real, that a
         pattern will continue, that one thing caused another. Dashboards are built from the first and
         are read as the second, and the gap between those two is where most bad decisions from good
@@ -4296,7 +4296,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-label">Reference</div>
       <div class="concept-title">Where the Same Operation Turns Up</div>
       <div class="concept-desc">
-        One operation, many disciplines. Recognising it makes several unrelated-looking performance
+        One operation, many disciplines. Recognizing it makes several unrelated-looking performance
         problems the same performance problem.
       </div>
       <div class="dw">
@@ -4311,10 +4311,10 @@ valgrind --leak-check=full ./prog</pre>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          <strong>Recognising it collapses several unrelated-looking performance
+          <strong>Recognizing it collapses several unrelated-looking performance
           problems into one.</strong> When the profile of a graphics workload, a
           recommender and a neural network all bottleneck in the same place, the
-          optimisation you learn in one transfers directly to the others — which is
+          optimization you learn in one transfers directly to the others — which is
           why the next card is worth more than it looks. The insight is worth having
           even if you never write the loop yourself.
         </div>
@@ -4346,7 +4346,7 @@ valgrind --leak-check=full ./prog</pre>
           <strong>Use the tuned library, and take the lesson anyway.</strong> Hand-
           written loops lose by an order of magnitude to something that walks memory
           the way the cache wants — and that principle applies far beyond matrices, to
-          every hot loop over a large array you will ever write. The generalisation is
+          every hot loop over a large array you will ever write. The generalization is
           the point: the arithmetic is rarely the cost, the memory order is.
         </div>
       </div>
@@ -4358,7 +4358,7 @@ valgrind --leak-check=full ./prog</pre>
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
     <span class="topic-icon">🎯</span>
-    <span class="topic-name">Loss Functions — What the Model Is Being Told to Minimise</span>
+    <span class="topic-name">Loss Functions — What the Model Is Being Told to Minimize</span>
     <span class="topic-badge">Applied Maths</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -4367,8 +4367,8 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-label">Concept</div>
       <div class="concept-title">The Loss Is the Specification, and the Model Will Obey It Literally</div>
       <div class="concept-desc">
-        A model does not learn the task; it minimises the loss. Where those two come apart, the loss
-        wins, every time and without complaint. Most surprising model behaviour is not a training
+        A model does not learn the task; it minimizes the loss. Where those two come apart, the loss
+        wins, every time and without complaint. Most surprising model behavior is not a training
         failure — it is a model succeeding precisely at an objective that did not say what its
         authors meant.
       </div>
@@ -4384,17 +4384,17 @@ valgrind --leak-check=full ./prog</pre>
         </table>
         <div class="concept-desc verdict">
           The imbalance case is the one that bites in security and fraud work. With 99.9% benign
-          data, a model minimising plain accuracy learns to answer "benign" always — 99.9% accurate,
+          data, a model minimizing plain accuracy learns to answer "benign" always — 99.9% accurate,
           and completely useless. The fix is in the loss, not in more training.
         </div>
       </div>
     </div>
     <div class="concept-card">
       <div class="concept-label">Concept</div>
-      <div class="concept-title">Regularisation — Paying the Model to Stay Simple</div>
+      <div class="concept-title">Regularization — Paying the Model to Stay Simple</div>
       <div class="concept-desc">
-        Left alone, an over-parameterised model will memorise the training data, which drives training
-        loss to zero and generalisation with it. Regularisation adds a penalty for complexity to the
+        Left alone, an over-parameterized model will memorize the training data, which drives training
+        loss to zero and generalization with it. Regularization adds a penalty for complexity to the
         objective, so the model must trade fitting the data against staying simple — and simplicity
         is what transfers to data it has not seen.
       </div>
@@ -4402,18 +4402,18 @@ valgrind --leak-check=full ./prog</pre>
         <table class="ref-table">
           <thead><tr><th>Method</th><th>Mechanism</th></tr></thead>
           <tbody>
-            <tr><td>L2 penalty</td><td>Penalises large weights; keeps everything small and smooth</td></tr>
+            <tr><td>L2 penalty</td><td>Penalizes large weights; keeps everything small and smooth</td></tr>
             <tr><td>L1 penalty</td><td>Drives weights to exactly zero — selects features by discarding them</td></tr>
             <tr><td>Dropout</td><td>Randomly disables units so no single path can be relied on</td></tr>
             <tr><td>Early stopping</td><td>Stop when validation loss turns upward — the cheapest of all</td></tr>
-            <tr><td>More and better data</td><td>Not regularisation, and usually the strongest option available</td></tr>
+            <tr><td>More and better data</td><td>Not regularization, and usually the strongest option available</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
           <strong>The last row is not on the list by accident, and it is usually the
           strongest move available.</strong> More and better data beats every penalty
-          term here, and reaching for regularisation first is how teams tune
-          hyperparameters for a fortnight to recover what a thousand more labelled
+          term here, and reaching for regularization first is how teams tune
+          hyperparameters for a fortnight to recover what a thousand more labeled
           examples would have given them. Among the actual methods, early stopping is
           nearly free and should be the default.
         </div>
@@ -4425,7 +4425,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-desc">
         Training needs a loss that is smooth and differentiable; the business cares about things that
         are neither — precision at a chosen threshold, revenue, whether an analyst had to look at it.
-        Those cannot be optimised directly, so a proxy is trained and the real thing is measured
+        Those cannot be optimized directly, so a proxy is trained and the real thing is measured
         afterwards. Keeping the gap between proxy and goal in view is most of what separates a model
         that helps from one that scores well. It is the same pattern as the service-desk metrics in
         the Operations domain: the moment a proxy becomes the target, it stops measuring what it was
@@ -4473,16 +4473,16 @@ valgrind --leak-check=full ./prog</pre>
     </div>
     <div class="concept-card">
       <div class="concept-label">The Knee</div>
-      <div class="concept-title">Utilisation Does Not Trade Off Linearly Against Latency</div>
+      <div class="concept-title">Utilization Does Not Trade Off Linearly Against Latency</div>
       <div class="concept-desc">
-        The second half is why a system at 90% utilisation is not &ldquo;10% away from trouble&rdquo;.
+        The second half is why a system at 90% utilization is not &ldquo;10% away from trouble&rdquo;.
         For a simple queue, the average wait scales roughly with <strong>1 / (1 &minus; &rho;)</strong>,
-        where &rho; is utilisation. <strong class="c-amber">The curve is flat and then it is a
+        where &rho; is utilization. <strong class="c-amber">The curve is flat and then it is a
         wall</strong> &mdash; and the wall arrives a long way before the server is full.
       </div>
       <div class="dw">
         <table class="ref-table">
-          <tr><th>Utilisation &rho;</th><th>Relative queueing delay</th><th>What it feels like</th></tr>
+          <tr><th>Utilization &rho;</th><th>Relative queueing delay</th><th>What it feels like</th></tr>
           <tr><td>50%</td><td>2&times;</td><td>Comfortable. Spare capacity absorbs bursts</td></tr>
           <tr><td>80%</td><td>5&times;</td><td>Still fine on average; the tail has started to spread</td></tr>
           <tr><td>90%</td><td>10&times;</td><td><strong>The knee.</strong> Small load increases now produce large latency increases</td></tr>
@@ -4494,7 +4494,7 @@ valgrind --leak-check=full ./prog</pre>
           about efficiency</strong> &mdash; and it is a defensible one for batch work and a poor one for
           anything a human waits on. Variability makes it worse: bursty arrivals hit the wall earlier
           than the average suggests. And this is why <strong>adding one worker sometimes fixes
-          everything</strong> &mdash; moving from 95% to 80% utilisation is not a 15% improvement, it is
+          everything</strong> &mdash; moving from 95% to 80% utilization is not a 15% improvement, it is
           a four-fold reduction in queueing delay.
         </div>
       </div>
@@ -4541,7 +4541,7 @@ valgrind --leak-check=full ./prog</pre>
       <div class="concept-desc">
         Every compressor works by finding structure and describing it more briefly: repeated bytes,
         predictable patterns, skewed symbol frequencies. That single fact explains all the surprising
-        behaviour. <strong class="c-amber">Data with no discoverable structure cannot be
+        behavior. <strong class="c-amber">Data with no discoverable structure cannot be
         compressed</strong> &mdash; and a counting argument proves no algorithm can compress every
         input, because there are more possible files of length <em>n</em> than of length less than
         <em>n</em>.
@@ -4644,7 +4644,7 @@ valgrind --leak-check=full ./prog</pre>
           <tr><td><code>% 4</code> &rarr; <code>% 5</code></td><td>~80%</td><td>The cache is effectively cold</td></tr>
           <tr><td><code>% 100</code> &rarr; <code>% 101</code></td><td>~99%</td><td>It gets <em>worse</em> with scale, not better</td></tr>
           <tr><td>Consistent hashing, 4 &rarr; 5</td><td><strong>~1/5 of keys</strong></td><td>Only the share the new node takes over</td></tr>
-          <tr><td>Consistent hashing, node fails</td><td>Only that node's share</td><td>Its neighbour absorbs it; everyone else is untouched</td></tr>
+          <tr><td>Consistent hashing, node fails</td><td>Only that node's share</td><td>Its neighbor absorbs it; everyone else is untouched</td></tr>
           <tr><td>Rendezvous hashing</td><td>Same guarantee, different mechanism</td><td>Simpler to implement, no ring to maintain</td></tr>
         </table>
         <div class="concept-desc verdict">
@@ -4670,8 +4670,8 @@ valgrind --leak-check=full ./prog</pre>
           <tr><td>Servers placed once each</td><td>Arcs are uneven by luck. One node gets twice the load of another</td></tr>
           <tr><td><strong>Virtual nodes</strong> — each server at 100&ndash;200 points</td><td>Averages the arcs out. <strong>Without this the balance is poor enough to matter</strong></td></tr>
           <tr><td>Weighted nodes</td><td>A bigger machine gets more virtual points. Heterogeneous clusters work naturally</td></tr>
-          <tr><td>A node fails</td><td>Its arcs pass to the next node clockwise &mdash; concentrated on neighbours, which is why virtual nodes spread the failure too</td></tr>
-          <tr><td>Rendezvous (HRW) hashing</td><td>For each key, pick the server maximising <code>hash(key, server)</code>. No ring, no virtual nodes, same properties</td></tr>
+          <tr><td>A node fails</td><td>Its arcs pass to the next node clockwise &mdash; concentrated on neighbors, which is why virtual nodes spread the failure too</td></tr>
+          <tr><td>Rendezvous (HRW) hashing</td><td>For each key, pick the server maximizing <code>hash(key, server)</code>. No ring, no virtual nodes, same properties</td></tr>
         </table>
         <div class="concept-desc verdict">
           If you are implementing this rather than using a library, <strong>the number of virtual nodes
@@ -4768,13 +4768,13 @@ struct.calcsize(<span class="str">"&lt;cic"</span>)       <span class="com"># 6 
           <tr><th>Fact</th><th>Consequence</th></tr>
           <tr><td>Fields are aligned to their own size</td><td>A 4-byte int starts at a multiple of 4. Bytes are inserted before it if needed</td></tr>
           <tr><td>Field <em>order</em> changes the size</td><td><code>char, int, char</code> is 12 bytes; <code>int, char, char</code> is 8. Same fields</td></tr>
-          <tr><td>Padding bytes are uninitialised</td><td><strong>Writing a struct to disk or a socket leaks whatever was in memory</strong> &mdash; a genuine information-disclosure bug</td></tr>
+          <tr><td>Padding bytes are uninitialized</td><td><strong>Writing a struct to disk or a socket leaks whatever was in memory</strong> &mdash; a genuine information-disclosure bug</td></tr>
           <tr><td><code>#pragma pack</code> / <code>__attribute__((packed))</code></td><td>Removes padding, and can make access slower or fault on architectures that require alignment</td></tr>
           <tr><td>Two compilers, two layouts</td><td>A struct is not a wire format. It never was</td></tr>
         </table>
         <div class="concept-desc verdict">
           The third row is a security bug, not a formatting curiosity. <strong>Padding bytes are never
-          initialised</strong>, so writing a struct straight to a socket or a file sends whatever was
+          initialized</strong>, so writing a struct straight to a socket or a file sends whatever was
           previously in that memory — which has leaked keys and pointers from real systems, and which no
           test will ever notice.
         </div>
@@ -4784,7 +4784,7 @@ struct.calcsize(<span class="str">"&lt;cic"</span>)       <span class="com"># 6 
       <div class="concept-label">Practice</div>
       <div class="concept-title">The Rule That Prevents All of It</div>
       <div class="concept-desc">
-        <strong class="c-cyan">Never send a struct. Serialise fields explicitly.</strong> Everything
+        <strong class="c-cyan">Never send a struct. Serialize fields explicitly.</strong> Everything
         above is a symptom of treating an in-memory layout as if it were a defined format, and the
         layout belongs to the compiler, the architecture and the flags &mdash; none of which the reader
         on the other end shares.
@@ -4793,7 +4793,7 @@ struct.calcsize(<span class="str">"&lt;cic"</span>)       <span class="com"># 6 
         <table class="ref-table">
           <tr><th>Approach</th><th>Verdict</th></tr>
           <tr><td><code>write(fd, &amp;struct, sizeof(struct))</code></td><td>Works until the other end differs. Then it is the bug in the first card</td></tr>
-          <tr><td>Explicit field-by-field serialisation</td><td>Verbose, correct, and reviewable</td></tr>
+          <tr><td>Explicit field-by-field serialization</td><td>Verbose, correct, and reviewable</td></tr>
           <tr><td>A schema format &mdash; Protobuf, Avro, MessagePack, CBOR</td><td>Handles endianness, alignment and versioning. <strong>The right default</strong></td></tr>
           <tr><td>Text formats &mdash; JSON <span class="acro-exp">(JavaScript Object Notation)</span>, CSV <span class="acro-exp">(Comma-Separated Values)</span></td><td>Immune to all of this. Larger and slower, and usually fine</td></tr>
           <tr><td>Reading a foreign binary format</td><td>The specification will state the byte order. Believe it over your machine</td></tr>
@@ -4918,7 +4918,7 @@ r<span class="str">"^[^,]*,[^,]*,[^,]*$"</span>   <span class="com"># 2. make ea
   <div class="topic-body">
     <div class="concept-card">
       <div class="concept-label">The Inversion</div>
-      <div class="concept-title">Nobody Announces It to Everyone — Each Node Tells a Few Random Peers, and It Spreads Like a Rumour</div>
+      <div class="concept-title">Nobody Announces It to Everyone — Each Node Tells a Few Random Peers, and It Spreads Like a Rumor</div>
       <div class="concept-desc">
         The instinct for &ldquo;get this fact to all N nodes&rdquo; is a <strong class="c-cyan">broadcast</strong>
         — one sender messaging everyone — or a central registry every node checks. Both break at scale: a
@@ -4949,7 +4949,7 @@ r<span class="str">"^[^,]*,[^,]*,[^,]*$"</span>   <span class="com"># 2. make ea
       <div class="concept-desc">
         The properties are the tell. Spread is exponential — each round roughly doubles the set of nodes that
         know — so time to full coverage grows only <strong>logarithmically</strong> with cluster size, and it is
-        stubbornly <strong class="c-cyan">robust</strong>: lose a third of the nodes mid-spread and the rumour
+        stubbornly <strong class="c-cyan">robust</strong>: lose a third of the nodes mid-spread and the rumor
         still gets through, because it never depended on a single path. The costs are the same coin's other
         face: delivery is only <strong class="c-amber">probabilistic and eventual</strong> — there is no instant
         at which a node knows everyone has heard — redundant messages are constant as peers re-hear what they
@@ -4985,7 +4985,7 @@ r<span class="str">"^[^,]*,[^,]*,[^,]*$"</span>   <span class="com"># 2. make ea
         a transport and a membership mechanism, not an arbiter.
       </div>
       <div class="concept-desc verdict">
-        So the division of labour is clean. Use gossip for what tolerates &ldquo;eventually&rdquo; and must
+        So the division of labor is clean. Use gossip for what tolerates &ldquo;eventually&rdquo; and must
         survive nodes dying — cluster membership, failure detection (the SWIM family gossips <em>suspicions</em>,
         which is the scalable answer to the problem
         <span class="xref">Failure Detection &amp; FLP — Why "Is It Down?" Has No Perfect Answer</span> proves

@@ -80,7 +80,12 @@ HEADER = "| Measure | Value | Tool |"
 
 # Rows that need Chromium or a stopwatch. Named so a run says what it did not do.
 UNCHECKED = {
-    "Reader questions answered": "query_probe.mjs drives a real browser",
+    # Not "unchecked" any more — checked somewhere else, which is a different
+    # sentence and the one this row earned. Naming a row as underivable here
+    # let its three sub-counts drift by eight while the headline beside them
+    # stayed current. `query_probe.mjs --check-plan` has the browser and the
+    # numbers at the same moment, and gates on them in `make all` and CI.
+    "Reader questions answered": "derived by `query_probe.mjs --check-plan`, which has the browser",
     "Throttled load": "a timing run, and the row itself says 'this container only'",
     "Search &amp; heap at 3x the content": "a synthetic timing run",
     "Gate results": "the per-suite counts come from a full `make all`",
@@ -443,7 +448,7 @@ def main():
     print(
         f"\n{len(derived)} derivable row(s) · {len(missing) + len(unknown)} drifted · "
         f"README: {len(readme)} problem(s).\n"
-        f"{len(UNCHECKED)} row(s) not checked here — they need a browser or a stopwatch:"
+        f"{len(UNCHECKED)} row(s) not derived here — the note says why, or what derives one instead:"
     )
     for measure, why in UNCHECKED.items():
         print(f"  {measure:<38} {why}")

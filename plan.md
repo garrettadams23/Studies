@@ -37,34 +37,45 @@ twice.
 
 **The measured state, as of the last session record.** Every number below is produced by a
 tool in `tools/`, not by anybody's recollection, and `make census` prints the first four.
-Eleven of the fifteen rows are now *checked* by `check_plan_numbers.py` in `make check` —
-when it was first run, **nine of those eleven were wrong**, the page budget by a factor of
-twelve. The four it cannot derive need a browser or a stopwatch, and it names them on every
-run rather than letting them pass as verified:
+**Thirteen of the seventeen rows** are checked by `check_plan_numbers.py` in `make check`.
+When it first ran there were eleven, and **nine of the eleven were wrong**, the page budget
+by a factor of twelve. It names the four it cannot derive on every run rather than letting
+them pass as verified — and **naming is not checking**, which one of the four then proved:
+that row's headline stayed current for four waves while the three sub-counts in the same
+sentence drifted by eight, because nothing read them. A fourteenth row is checked now,
+by `query_probe.mjs --check-plan` in `make all` and CI, on the argument that the browser
+the row needs was already running. Three are left, and all three want a stopwatch:
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,556** across 30 domains | `depth_report.py` |
+| Topics | **1,557** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,394**, or **1,124 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,395**, or **1,126 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **254 of 273**, **0 unexplained** — sixteen batches. The two subject-shaped ones opened at a third missing; the nine symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding. The 10 remaining zeros, the 1 wrong-card and the 3 wide results are recorded verdicts, and `--self-test` checks that a verdict still describes its row — it caught one this wave, on a note of its own author's, and the note was right: `\bzeros?\b` was matching *zero* inside **zero-touch**. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,594 steps, 1,496 of 1,556 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,496 topics, 4,850 links, 0 one-way** — one mainland of **1,480 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~794 more topics | `page_budget.py` |
+| Reader questions answered | **305 of 330**, **0 unexplained** — eighteen batches. The two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 7 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,595 steps, 1,497 of 1,557 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,497 topics, 4,860 links, 0 one-way** — one mainland of **1,481 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **34% raw** headroom — room for ~787 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,142 chars**, median 3,739 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,142 chars**, median 3,740 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
-| Gates | **42**, and the same 42 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **56** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
+| Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
+| Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **41** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **49** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
-**`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
-if the two lists ever diverge again. Before this was true, the workflow had been red on
-every push for nine commits and `make check` had been green the whole time.
+**`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
+passes* was written when `check_gates.py` was added, because the workflow had been red on
+every push for nine commits while `make check` was green. The gate makes the two **lists**
+agree and it did. It says nothing about whether every command on the agreed list can run in
+the job it is listed in, and one could not: `query_probe.mjs --self-test` resolved Playwright
+at import, `make check` is deliberately browser-free so its CI job installs no Node
+toolchain, and the step exited 2 before it read its own flag. **CI was red on `main` for four
+runs while `make all` was green on every machine that had Playwright installed.** Fixed by
+resolving the browser at the point of use; the contract is true again, and the lesson is that
+*the same gates* is a weaker guarantee than it reads as.
 
 **Where new work comes from now.** The content programmes (Phases 7–10) are closed and the
 navigation ones are complete, so the queue is no longer a list — it is whichever census
@@ -221,6 +232,32 @@ contribution to it.
 | 3 | **Ranks honestly, with the limits** | Not a list of mitigations but a ranked one, each with what it does *not* do. The ranking is the content; an unranked list is a search result |
 | 4 | **Says what it is not** | The scope sentence. "This is not a diagnosis." "DMARC is worth doing and is not a BEC control." Naming the boundary is what makes the rest trustworthy |
 | 5 | **Ends on a decision** | The verdict is an instruction or a judgement, never a summary. If the last sentence restates the card, delete it and promote the second-to-last |
+
+### How property 5 actually gets done, which nobody had written down
+
+A verdict has to refer to the table above it without repeating it, and this site
+solved that a long time ago in a way no file here had ever stated. **It names a
+row by position.**
+
+> *The last row is the one to design around.* · *Only the second row actually
+> bounds the damage; the rest raise the effort.* · *Work down this table in
+> order and stop at the first row that works.* · *The last row is the one that
+> ruins a Friday.* · *Only one of these rows can fine you, and it is the one
+> with dates attached.*
+
+**431 of 2,716 verdicts — 16%, in 32 of the 35 domain files.** Measured, not
+recalled, and the spread is the interesting half: this is not one author's tic
+in one domain, it is the house form.
+
+It works because it does the two things at once that a verdict has to. It is a
+*judgement* — a claim about which row matters, which is the one thing a table
+cannot state about itself — and it is a *pointer*, so the verdict never has to
+restate the content it is ranking. A verdict that begins "The last row" has
+already committed to saying something the table does not.
+
+The practical rule: **if you cannot name which row matters, the table is
+probably unranked**, and §3's listicle row applies to it rather than to the
+verdict.
 
 ## 3. The failure modes, with their tells
 
@@ -749,6 +786,33 @@ audit → the major regimes → the governance machinery). Paths went **6 → 12
 the entry point they lacked. The remaining zero-path domains are either small enough that the
 chip is entry enough or are the islands §4 says want prose, not a forced sequence — so the
 paths programme, like the connectivity one, stops where a genuine reader-sequence does.
+
+### And the ordering is a narrative, which is now measured rather than assumed
+
+This section's title has always said a path is *one domain's story*, and meant it
+about **coverage** — which domains had a path at all. It turns out to be true of
+**ordering** too, and the number is the evidence.
+
+95 of the 1,497 topics on a path are on more than one, so two paths can disagree
+about which of a pair comes first. `check_paths.py --ordering` counts it: **56
+pairs are ordered by two or more paths, and 17 of them — 30% — are ordered in
+opposite directions.** They cluster: eight between `ai-at-work` and
+`ai-safety-and-governance`, four between `ransomware-end-to-end` and
+`threat-landscape`.
+
+Read one at a time, every one is two legitimate stories.
+`cryptography-end-to-end` puts encryption basics before password hashing because
+the track builds from primitives; `security-for-everyone` puts hashing first
+because it is the concrete thing a reader has already met. **Neither is wrong and
+no third path can arbitrate**, which is exactly what it means for these to be
+narratives rather than prerequisites.
+
+So the 30% is the finding and not a defect, and it has one consequence worth
+writing down before somebody spends a wave on it: **a global ordering cannot be
+derived from `paths.json`.** A generated curriculum, or a "what should I read
+first" feature, would be building on a relation this data does not carry, and
+would contradict itself on a third of the pairs it found. The report exists so
+the next session reads the number instead of re-deriving it.
 
 ## 4. What this does not mean
 
@@ -4307,4 +4371,923 @@ say about a threshold it set for itself two hundred records earlier.
 plan.md 8,020 -> 4,227 · archive 20,972 -> 24,765 · 28,992 lines before and after
 45 records moved, 40 kept · nothing deleted, reordered or edited
 the fifth risk: reopened by its own condition, acted on, and closed again
+```
+
+## Session — the card the census named, and the two fixes it took after that
+
+### The gap was real, and writing it was a third of the work
+
+`should i specialise or generalise` had carried a **kind 2** verdict since batch
+sixteen — *named and not written, the only genuine content gap in batch sixteen* —
+with the evidence already filed: `specialist or generalist` returned zero,
+`t-shaped` returned four and none of them was `career`, and the domain had 45
+topics without one on the commonest question in an IT career.
+
+Verified before writing, the way step 1 of the loop says: `Growing Into Senior`
+carries a concept card titled **Two Valid Ladders**, which is the
+individual-contributor-or-manager axis and a different question. The four
+`t-shaped` hits are `cloud`, `data`, `infra` and `web`, and every one is a JSON
+shape or a traversal. Nothing covered the choice.
+
+**`career` — Specialist or Generalist.** Five concept cards. The sentence:
+*nobody gets to choose this in year one, and when the choice arrives it is much
+narrower than the debate.* The two failure modes are the content —
+the specialist's arrives all at once and has a date, the generalist's never
+arrives at all — and the verdict is which one that makes dangerous: **the one
+with no date is the one that gets left**, because a skill that stops being
+bought produces a bad month and a bad month produces a plan.
+
+The last card is the one that changes what a reader does: the shape is mostly an
+**employer decision wearing a study plan**. Under ~50 people you are a
+generalist by enforcement; at 500+ you are a specialist by org chart. *If you
+want to be broader, change employers; if you want to be deeper, change teams* —
+a curriculum is competing with forty hours a week and loses.
+
+### Then the query was still zero, which this file has already recorded once
+
+The previous time was verbatim: *"I wrote the USB card using enumerate,
+descriptor exchange and unnamed or unknown device — and re-ran the probe, and
+`usb device not recognised` **still returned zero**. The card was correct,
+mechanism-first, and unreachable by the person it was written for."*
+
+Same shape here, one word narrower. The card said `specialist` eleven times and
+`specialization` twice and **never the verb**. That is an ordinary kind 1, and
+the kind-1 rule is *fix in prose, it is better writing anyway* — so the opening
+sentence became the reader's question rather than a paraphrase of it:
+
+> *Should I specialize or generalize?* is asked as though it were a fork in the
+> road at the start, and it is not.
+
+`should i specialize or generalize` went from 0 to **1, the right card and
+nothing else**. The British spelling stayed at 0.
+
+### And the third fix is the one worth keeping
+
+That residual is a clean claim, because everything else had been ruled out: same
+card, same words, same matcher, one letter apart. The site is written in
+American English by convention, `CONTRIBUTING.md` says so, and
+`check_renames.py` enforces it — for `centre` and `datacentre`, which are the two
+rows the registry has.
+
+**Kind 1's own example is a spelling** — the site writes *imposter*, the reader
+types *impostor* — and its remedy is to name both words in the card. That works
+because it is one word, chosen once, in one place. It does not work here, and
+the reason is the test this session added to the probe's docstring:
+
+> could the writer have chosen the reader's word without changing anything
+> else? If yes it is kind 1 and belongs in the prose. If the reader's word is
+> the site's own word under a spelling **rule**, the card is not the place.
+
+Naming both spellings in one card closes exactly one query; doing it everywhere
+is the keyword stuffing kind 3 forbids, wearing an accommodation to readers as a
+costume. So it went where `3-way`/`three-way` already lives: `dialectForms` in
+`script.js`, beside `numberForms`, for the same stated reason — **the site and
+the reader disagree and neither of them is wrong.**
+
+### What joined, and the two families that did not
+
+| Family | Joins | Why |
+|---|---|---|
+| `-ise`/`-ize`, `-isation`, `-yse`/`-yze` | **yes** | No English word means one thing with an `s` and another with a `z`. A stem that only looks like the suffix — *advise*, *exercise*, *franchise* — offers `advize`, which matches nothing: one wasted alternate, the bargain `plurals()` already makes |
+| `-our`/`-or` | **no** | `four`→`for` and `tour`→`tor` are real words, so a wrong guess **widens** instead of missing, and widening is what this matcher recovers from worst. A length floor that excludes them also excludes `color` and `favor`, which are five characters |
+| `-ce`/`-se` | **no** | `advice`→`advise` is a different word. A wrong card the reader never sees is worse than a miss they can retype |
+
+Six characters is the floor, and it is what keeps `prize`/`prise` out — two
+words, not one word twice, and the only pair short enough to collide.
+
+### Proved in both directions, because a check that cannot fail is not a check
+
+The 56 gated search fixtures were captured with the rule and again with
+`dialectForms` stubbed to a no-op, and the two runs are **byte-identical** —
+every count, every fixture. The rule is purely additive at the gate. Then the
+two new fixtures were run against the stub: `should i specialise or generalise`
+**FAIL, 0 results, NOT FOUND**, and 57/58. Restored: 58/58.
+
+Both spellings are fixtures, and the comment says why: the American one passes
+on the prose fix alone, so a rule that widened in only one direction would pass
+it and look finished.
+
+### The staleness check caught its own author again
+
+The note written for this query two hours earlier said it returns nothing. By
+then it returned 1, and the census said so by name. The note was retired rather
+than reworded — the query is answered, so it keeps a `want` and no verdict.
+
+**That is the second time this check has reported a note by the person who wrote
+it, and the two outcomes are opposite**: the first time the note was right and
+the check was wrong, and the guard was fixed. This time the note was simply out
+of date, which is the case it exists for.
+
+### And the row it reads through had drifted the same way
+
+`Reader questions answered` is one of the four rows `check_plan_numbers.py`
+names as **not checked here — they need a browser or a stopwatch**. Its headline
+had been kept current at *254 of 273*. The three sub-counts in the same sentence
+had not: they said **10 zeros, 1 wrong-card, 3 wide** while the tool was printing
+**18, 1 and 4**. The last record to touch them incremented the zeros by one, from
+9 to 10, on a run that reported 18.
+
+So the row is both halves of this file's own argument in one sentence: the number
+a tool checks stayed right, and the number beside it, in the same cell, drifted
+eight. It is corrected here. **Making it derivable is the next wave**, and it is
+tractable — `query_probe.mjs` already has every one of those numbers at the
+moment it prints them.
+
+```
+1 topic added (1,556 -> 1,557) · 5 related pairs · 1 path step
+probe 273 questions · 254 -> 255 answered · 0 unexplained · 17 zeros · 1 wrong · 4 wide
+dialectForms joins script.js: -ise/-ize only, 6-char floor, -our/-or and -ce/-se refused
+search 56 -> 58 · the 56 byte-identical with the rule stubbed out · new fixture fails without it
+plan row corrected: 10/1/3 -> 17/1/4, the sub-counts of an unchecked row
+42 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — naming a row as unchecked, and calling that checking it
+
+### The row the last wave named
+
+The previous record ended on a specific claim: *"Making it derivable is the next
+wave, and it is tractable — `query_probe.mjs` already has every one of those
+numbers at the moment it prints them."* This is that wave, and the claim held
+with nothing discovered on the way that changed it.
+
+`check_plan_numbers.py` derives thirteen of the measured-state table's rows and
+prints the four it cannot, with a reason each, *"rather than letting them pass
+as verified."* That sentence is the whole defect. **Naming a row as underivable
+is not a check on it**, and the row it names first is the one that drifted: its
+headline was kept current at *254 of 273* across four waves while the three
+sub-counts in the same sentence said **10 zeros, 1 wrong-card, 3 wide** against a
+tool printing **18, 1 and 4**. One record incremented the zeros from 9 to 10 on a
+run that reported 18.
+
+### The argument for where it goes
+
+The reason given for not deriving it is true and is not a reason: *`query_probe.mjs`
+drives a real browser*, and `make check` has none by design — its docstring says
+so, and that is why four generated artefacts moved into it. But **the browser is
+already running**, seventeen seconds into a census that holds all six numbers at
+the moment it prints them. So the check went beside the count rather than into
+the tool that cannot take one:
+
+```
+node tools/query_probe.mjs --check-plan
+```
+
+It reads plan.md, finds the row, and requires the cell to carry all six of the
+run's numbers — answered, queries, unexplained, zeros, wrong-card and wide — by
+containment on digit boundaries, which is exactly how `present()` does it one
+file over. Same convention, because a second convention for the same job is a
+second thing to learn.
+
+**It gates.** `make all` runs it, `build-check.yml` runs it, and
+`check_gates.py` now agrees on **43**. The census itself still exits 0 whatever
+it finds — a zero is a finding, not a failure — and that is untouched: a row
+misquoting a tool is not a finding about the site, it is drift, which is what
+the sibling tool has always exited 1 for.
+
+### Proved by reproducing the original drift
+
+The row was set back to **10 zeros … 3 wide**, the values it actually carried,
+and the gate printed:
+
+```
+"Reader questions answered": the row does not carry 17 (zeros), 4 (wide)
+    this run  answered 255 · queries 273 · unexplained 0 · zeros 17 · wrong-card 1 · wide 4
+```
+
+and exited 1. Not a constructed fixture — the exact sentence that was in this
+file this morning, failing the check that did not exist then.
+
+Eleven fixtures for the row reader joined the self-test, and four of them fail
+against a naive `cell.includes(String(value))`: **4 satisfied by 42**, **17 by
+173**, **173 by 2,173**, and `1,557` not found at all. Those four are the ones
+that would let the gate pass while the row was wrong, which is the only failure
+mode a containment check has.
+
+### One thing the row had to give up
+
+The cell briefly carried its own drift story — *"had drifted to 10, 1 and 3"* —
+and that had to come out, because a containment check cannot tell a current
+number from a historical one, and a cell quoting both can be satisfied by the
+wrong one. **A measured-state row that quotes its own history is a row that can
+be right about the past and wrong about now.** The history is three paragraphs
+up, in the record, where it cannot be mistaken for a measurement.
+
+### And the sentence above the table was wrong in the same way
+
+*"Eleven of the fifteen rows are now checked."* The table has **seventeen** rows
+and thirteen are checked. The sentence was accurate when written and had been
+read past ever since, one paragraph above the table whose drift it was
+describing — which is the fourth time this file has recorded a rule stated in
+prose beside the thing that enforces it, and not applied to itself.
+
+It now says thirteen of seventeen, plus a fourteenth in `make all`, and **three
+left, all of which want a stopwatch**. That is a claim a future session can
+check by counting the rows, which the old one was too.
+
+```
+query_probe.mjs --check-plan: 6 numbers, containment on digit boundaries, exit 1 on drift
+gates 42 -> 43, agreeing in `make all` and build-check.yml
+self-test 12 -> 23 fixtures · 4 of the 11 new ones fail a naive containment
+proved by restoring the real drifted cell: named both wrong numbers, exit 1
+plan preamble corrected: eleven of fifteen -> thirteen of seventeen, +1 elsewhere
+43 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — the convention was stated site-wide and enforced for two words
+
+### What the measurement found
+
+`CONTRIBUTING.md` has said, without qualification, *"The site is written in
+**American English**"*, and named `data/renames.json` as the mechanism. The
+registry carried **two** spelling rows: `centre` and `datacentre`, added by the
+session that fixed 93 occurrences of one word.
+
+A count across the site's prose of forty-two British/American pairs:
+
+| | | | | | |
+|---|---|---|---|---|---|
+| behaviour **246** | organise **252** | programme **138** | licence **115** |
+| artefact **88** | authorise **78** | optimise **73** | colour **65** |
+| defence **62** | judgement **58** | catalogue **54** | enrolment **50** |
+
+**2,192 occurrences**, across 37 files, with the build green the whole time.
+
+### The evidence that made it a correctness fix rather than a preference
+
+The `centre` record's argument was that the site's own acronym dictionary had
+*always* expanded KDC, NOC and ISAC the American way, so the prose had been
+disagreeing with the reference it ships. The same argument holds here and is
+sharper, because both halves are **inside one object**:
+
+```json
+"CAL": { "e": "Client Access License",
+         "n": "Per-user or per-device licence to connect to a Windows Server" }
+```
+
+The expansion is the canonical name of a real thing and is American. The note
+one line below it is British. The file disagrees with itself field by field, and
+it does it in `D3FEND` (*Network Defense*), `DISA` (*Defense Information Systems
+Agency*), `EULA` (*End User License Agreement*) and `ISO` (*International
+Organization for Standardization*) too, every one of them beside prose spelling
+the same word the other way.
+
+### Three rules and a dictionary that says it is one
+
+The registry was the wrong mechanism and that is the finding, not the count. **A
+spelling is not a vendor rename** — it has no vendor and no month, and both rows
+carried a `since` that was the date somebody decided. Enforcing a spelling by
+row enforces exactly the words somebody thought of, which is how a site-wide
+convention came to cover two.
+
+`tools/check_spelling.py` enforces it by rule instead:
+
+| | Exceptions | Why that shape |
+|---|---|---|
+| `-ise` → `-ize` | ~40 named | The words where `ise` is not a suffix are a closed set English will not extend — *compromise*, *enterprise*, *otherwise*, and `malvertise`, which is a coinage spelled that way in both dialects |
+| `-yse` → `-yze` | `analyses` | It is also the plural of *analysis*, identical in both dialects, and nothing in the string says which. **A miss taken on purpose**, for the reason `plurals()` in `script.js` already gives: a wrong guess is a card the reader never sees, a wrong alternate matches nothing |
+| `-our` → `-or` | `detour`, `glamour` | A three-character stem floor does the rest, and it is load-bearing: it is what excludes `four`, `hour`, `tour`, `pour`, `sour`, `your`, `our` and `flour` **without naming one of them** |
+| the irregulars | — | **A dictionary, and the docstring says so.** There is a rule under the doubled `l` and it turns on stress: `cancelled` and `installed` are not separable by any regex, so they are not separated by one |
+
+One `ALLOW` phrase on the whole site: **Fibre Channel**, which is the standard's
+name. `ThinkCentre` needed no allow-list because `\b` cannot match inside it —
+Fibre Channel has a space where ThinkCentre has nothing, which is the edge the
+registry's own note predicted for compounds and got backwards for phrases.
+
+### Three defects the tool had, and each one is a shape this file records
+
+**The report and the fix disagreed.** `prose_of()` concatenated the text between
+tags, so `<b>machine</b>otherwise` read as **machineotherwise** — not in the
+exception list, so the rule offered *machineotherwize*. Thirty-odd findings were
+that shape, including `corefour` and `linkyour`, the two `-our` words the stem
+floor exists to exclude. **An element boundary is a word boundary**, which this
+repository learned when `script.js` indexed `…modal editingvim starts…` and
+could not find the topic named Vim. The fix always rewrote each chunk alone, so
+only the census was wrong — the half a person reads. They are one code path now.
+
+**`practise` became `practize`.** It belongs to the `-ise` rule *and* the
+dictionary, the rules ran first, and the dictionary never saw it. The self-test
+had eleven hand-picked dictionary fixtures and not that one, because it tested
+each mechanism on its own words and this defect was in the **ordering**. The
+fixture is derived now — every one of the 83 entries through the whole pipeline
+— and reverting the order fails five of them by name.
+
+**Hardcoding `indent=2` reformatted `domain-intros.json`**: 604 changed lines for
+ten replacements. A diff nobody can read is a diff nobody reviews, and this
+tool's whole claim is that its 2,192 edits were looked at.
+
+### What the sweep then uncovered, which is the part worth keeping
+
+`infra` had **`INFRA • Virtualization` ×4** beside **`Infra • Virtualisation`
+×3**, and the linter's one-badge-two-spellings check could not see it: the two
+badges differed in a *word*, so they were two badges. Americanizing the word left
+them differing only in case, and the check fired immediately. The domain's own
+form is `Infra •` — eight of its other badges use it — so five uppercase badges
+were corrected. **A latent inconsistency was being hidden by a second one.**
+
+And the generated artifacts went stale, both of them, exactly as the ordering
+table says: `CALCULUS-CHEAT-SHEET.md` builds from `data/math.html`, and
+`data/acronym.html` from `tools/gen_acronym_domain.py` — whose template says *"the
+grey text in brackets beside it."* That last British spelling on the site was in a
+**generator**, and fixing the artifact would have been undone by the next build.
+
+### The slug half, and the five the first attempt missed
+
+37 topic titles moved, and 41 slugs with them. The map was built by reading
+`<span class="topic-name">([^<]+)</span>` — and **five titles contain a nested
+`acro-exp` span**, put there by the annotator, so `[^<]+` skipped them. The
+symptom was 20 one-way related links and 16 dangling path steps.
+
+`fix_topic_names.py --aliases-only` had the right answer the whole time: it
+computes slugs the way the browser does and had recorded all 41. The lesson is
+narrow and reusable — **derive a slug from the tool that owns slugs**, never from
+a regex over the markup, because the markup has an annotator writing into it.
+
+### The gate built in the previous wave caught this wave
+
+`query_probe.mjs --check-plan`, three hours old, failed with *8 unexplained, 9
+wrong-card*: eight of the probe's `want` targets were retitled slugs. Nothing
+else in `make all` could see it — the queries still returned cards, just not the
+ones somebody had decided were right. That is the middle row of this file's
+three-shapes table, caught by a check whose whole argument was that naming a row
+as unchecked is not checking it.
+
+```
+2,192 replacements · 37 files · 83 dictionary entries, 3 rules, 1 allow phrase
+every <pre>/<code> block byte-identical across all 35 content files, asserted
+41 slugs moved · 41 aliases · 152 related targets and 45 path steps remapped
+5 badges corrected in infra — a defect the sweep exposed, not one it caused
+check_spelling.py: 145 fixtures · reverting the rule order fails 5 by name
+renames.json 27 -> 25: a spelling is not a rename, and now says so
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — batch seventeen, and the card that already ruled out half of what I found
+
+### The queue was empty again, so the questions were new
+
+Every census clean: thin 7 at 0%, 0 deep orphans, 0 unread duplicate pairs, 0
+unexplained probe rows, 0 one-way links, 0 topics off a path, 45 gates green.
+That is the state this file says means the work has to come from asking
+something nobody has asked. **Batch seventeen: 29 fresh questions**, spread
+across all ten reader groups rather than concentrated.
+
+**22 of 29 answered.** Two thirds, again — the sixteen batches before it opened
+at the same fraction for symptom-shaped questions, and this file has now
+predicted that number three times running.
+
+The seven, after ruling the matcher out on each:
+
+| Query | Verdict |
+|---|---|
+| `my container image is not updating` | **kind 2.** Real gap, written — see below |
+| `one stick of ram or two` | **kind 1.** The card answers it in a table and says *module* |
+| `a domain admin logged in at 2am` | kind 3 — `2am` at 15 is the reader's detail; UEBA covers the mechanism and `off-hours` appears ten times |
+| `the mount disappeared after reboot` | kind 3, checked at fault level — `linux` has fstab, UUIDs over `/dev/sdb1`, `mount -a`, and `nofail` |
+| `how do i prove it is not the network` | wide and inherent — `network` is the widest noun this site has, and the answer is in the 83 |
+| `which of these two alerts do i work first` | wide and inherent, and the Alert Triage card is in the 106 |
+| `it works the first time and fails after that` | wide, **and the `want` is not decidable** — the symptom spans idempotency, config-management idempotence and plain leftover state |
+
+### The gap was real, and the card that covers it was already half-written
+
+`imagePullPolicy` appeared **zero times** on the site. `pushed a new image same
+tag` and `container running old code after deploy` both returned nothing. So:
+kind 2, and `near_duplicates.py --title` said *clear to write*.
+
+Then the habit this file calls the first of the three — **read the neighbours'
+concept-card titles, not their topic titles** — found that `devops`'s *Artifact
+& Registry Management* already carries a card called **"A Tag Is a Pointer, So
+'We Run v1.2.3 Everywhere' Is a Claim About a Name."** It is a good card. It
+covers the whole of one half: a tag can be moved, re-pushing it silently
+repoints it, the digest is the version, and the fingerprint is *a rollback that
+does not roll back*.
+
+It does not cover the other half, and the two are **mirror images** — the same
+shape as the TLS finding this file already records, where the incomplete chain
+and the renewed-and-not-reloaded certificate turned out to be one root arriving
+from two directions:
+
+> The moved tag deploys **something you did not expect**. The cached tag deploys
+> **nothing at all, while reporting that it did.**
+
+### And its verdict was a falsifiable claim that the second half falsifies
+
+The card ended on this:
+
+> *If an incident ever ends with "that is not the build we thought it was", the
+> cause is **upstream of the deploy**: a mutable tag was treated as an identity.*
+
+That is exactly the kind of sentence this file likes — a claim that can be wrong
+— and it is wrong for the case I had just found. In the pull-cache failure the
+registry is right, the manifest is right, the tag is right, and the cause is
+**downstream of the deploy**, on one node, in a layer cache. So the verdict was
+**rewritten rather than appended to**, which is the rule the TLS wave set: when
+a new row breaks the claim under the table, the claim goes.
+
+**The mechanism is a default nobody sets.** `imagePullPolicy` is `IfNotPresent`
+for every tag except `:latest`, and *present* is judged by the tag rather than
+the digest — so **the convention that makes tags safe is the one that turns the
+cache on.** Pin to `:v1.2.3` as every hardening guide says, and a node that has
+ever seen `:v1.2.3` will never fetch it again.
+
+The fingerprint is the part worth keeping: **the fix works for some requests and
+not others, and it correlates with the node rather than the user.** Nodes that
+already had the tag keep the old layers; nodes that joined afterwards pull the
+new ones, so a fleet is halfway through a rollout that has already been declared
+complete — a state nothing in the system has a word for. The verdict is *deploy
+the digest and let the tag be a label for humans*, and the diagnosis is one
+command: two `imageID` digests under one Deployment is the whole finding.
+
+### The same mistake as last time, caught one step earlier
+
+The card was written mechanism-first and `my container image is not updating`
+**still returned zero** — the fourth time this file has recorded that sequence.
+The card said *cached*, *did not go and look*, *never fetch it again*, and never
+the reader's phrase. The fix is a sentence that is better writing than what it
+replaced, which is what the kind-1 rule promises:
+
+> The sentence people arrive with is *the image is not updating*, and it is
+> exactly right: the image is not updating, on that node, and nothing in the
+> rollout is going to say so.
+
+The `hw` fix is the same shape. The memory card has a table that answers *one
+stick or two* precisely — single channel is half the bandwidth, two matched
+modules are the target — and the word the whole consumer world uses for a
+module is **stick**, which appeared in that domain once, inside *Sticky*. Naming
+it is not an accommodation to a matcher; a card about buying RAM that will not
+say *stick* is being precious.
+
+### A query that had been scored answered for a year
+
+`the deploy succeeded but nothing changed` has been on this census with **no
+`want`**, scored by result count, returning five cards — none about a deploy
+that did not deploy. That is the middle row of this file's three-shapes table,
+still sitting here after the pass that was supposed to have cleared it:
+
+| Asserts | Passes when |
+|---|---|
+| it did not throw | the feature is broken |
+| **it returned something** | **the something is wrong** |
+| it returned the right thing | — |
+
+It has a target now, and the card that answers it was written the day the gap
+was noticed rather than named for later.
+
+```
+1 concept card (devops Artifact & Registry) · 1 verdict rewritten, not appended
+2 prose fixes: the reader's phrase for the fault, and `stick` for a memory module
+probe 273 -> 302 questions · 282 answered · 0 unexplained · 19 zeros · 1 wrong · 7 wide
+batch seventeen opened at 22 of 29 — two thirds, the third batch running to predict it
+mean/card 1,394 unchanged, excluding verdicts 1,124 -> 1,125: one long card, not padding
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — a measurement of verdict quality that did not work, and what it found anyway
+
+### The thing nobody had measured
+
+The register's standing habit is *once a phase, measure something nobody has
+measured*, and the card rubric names the target itself. Its §5 table has two
+columns, **Checked mechanically** and **Not checked, ever**, and the second
+column's first entry is *whether the card is interesting*. One row down from
+that is the one that looked reachable:
+
+> **Restated verdict** — the closing sentence says what the table said. *Cut it.
+> A missing verdict is better than a redundant one.*
+
+`lint_content.py` counts tables with **no** verdict — ten, all deliberate. It
+has never had anything to say about the 2,716 verdicts that **do** exist. So the
+question was: is a restatement detectable?
+
+### Attempt one: lexical novelty. It ranks good verdicts at both ends
+
+For each verdict, the fraction of its distinct content words absent from the
+table it follows. A restatement should score low.
+
+Median **0.86**. And the bottom of the distribution is not restatements:
+
+> *Mounting pressure is the row that matters and the one nobody argues about.*
+> *The named blocker is the row that turns a report into a request.*
+> *Row three is the whole intervention; the rest is measurement and housekeeping.*
+
+Those are three of the twelve lowest-novelty verdicts on the site and all three
+are doing exactly what the rubric asks. They score low **because a verdict that
+picks a row has to name the row**, and naming it means reusing the table's
+words.
+
+The other tail is no better. Fourteen verdicts score a flat **1.00** — no
+content word in common with their table — and they include *The last row is the
+one to design around* and *Every row leaves hardware behind on somebody's
+site*. Zero lexical overlap, and both are plainly about the table.
+
+**The metric is orthogonal to the property.** A restatement can be written
+entirely in fresh words, and a good verdict can be written almost entirely in
+the table's. That is not a tuning problem; it is the wrong axis.
+
+### Attempt two: judgement markers. 21% lack them and are fine
+
+A lexicon of forty decision words — *worth*, *never*, *instead*, *prefer*, *the
+row that*, *rather than*, *the test is*. A verdict carrying none of them is a
+candidate summary. **574 of 2,716, 21%.**
+
+Twelve read at random from that bucket, and every one is a judgement:
+
+> *Good fit: a fleet of reasonably standard devices where update babysitting is
+> eating a person. Poor fit: heavily regulated change windows…*
+> *Record the timezone explicitly.*
+> *Quick test: if the installer works from an elevated PsExec -s shell with no
+> desktop, it will work in system context.*
+
+The lexicon was a dictionary pretending to be a rule, and English has more ways
+to give an instruction than anybody enumerates on a Tuesday.
+
+### The conclusion, and it is the phase-11 one
+
+**Verdict quality is not lexically measurable, and no third attempt is planned.**
+Both proxies failed for the same underlying reason — restatement is a *semantic*
+relation and every cheap handle on it is syntactic — and a hand-read of the
+likeliest bucket found nothing to catch. Phase 11 reached this about the
+freshness denominator after three attempts and wrote the reasoning down instead
+of the tool; this is the same shape and gets the same treatment.
+
+**No tool shipped, on purpose.** A census with no decision attached to it is the
+decoration this file already warned about once. The number that would have gone
+in the measured-state table — *574 verdicts with no judgement marker* — is a
+number nobody should act on, and putting it in a table is how it becomes a
+number somebody eventually does act on.
+
+### And the thing the failure found, which is the actual deliverable
+
+Reading the tails to work out why the metric was lying produced a house form
+that no file here had ever stated. **431 verdicts — 16%, across 32 of 35 domain
+files — point at their table by naming a row by position.**
+
+> *The last row is the one that ruins a Friday.* · *Only the second row actually
+> bounds the damage.* · *Work down this table in order and stop at the first row
+> that works.*
+
+It is the mechanism under the rubric's property 5, and it is in the rubric now.
+It does both halves of a verdict's job at once: a claim about **which row
+matters** is the one thing a table cannot say about itself, and a pointer means
+the verdict never has to restate what it is ranking. The practical rule that
+falls out is testable by the writer: **if you cannot name which row matters, the
+table is probably unranked**, and the listicle failure applies to the table
+rather than to the verdict.
+
+That is worth more than the check would have been. The check would have
+reported candidates a person then had to read; this changes what gets written.
+
+```
+2,716 verdicts measured two ways · 0 restatements found by either, or by reading
+attempt 1 lexical novelty — median 0.86, and both tails are good verdicts
+attempt 2 judgement lexicon — 574 without one, 12 read, 12 were judgements
+no tool shipped: a census with no decision attached is decoration
+431 of 2,716 (16%) in 32 of 35 domains name a row by position — now in the rubric
+```
+
+## Session — 102 stories that disagree about the order a third of the time
+
+### The measurement
+
+A path is an ordered list. 95 of the 1,497 topics on a path are on more than
+one, so two paths can make competing claims about which of a pair comes first,
+and nothing had ever asked whether they agree.
+
+**They disagree 30% of the time.** 56 topic pairs are ordered by two or more
+paths; **17 are ordered both ways.** Eight of the seventeen are one path pair —
+`ai-at-work` against `ai-safety-and-governance` — and four are
+`ransomware-end-to-end` against `threat-landscape`.
+
+### Why 30% is the finding and not seventeen bugs
+
+Read one at a time, each is two legitimate stories:
+
+> `cryptography-end-to-end` puts encryption basics before password hashing,
+> because the track builds from primitives. `security-for-everyone` puts hashing
+> first, because it is the concrete thing the reader has already met.
+
+Neither is wrong. `ransomware-end-to-end` leads with ransomware because the path
+is *about* ransomware; `threat-landscape` reaches it after infostealers because
+it is working through an ecosystem. **No third path can arbitrate**, and that is
+the definition of a narrative rather than a prerequisite.
+
+If these were prerequisite claims, 30% would be alarming. The fact that every
+case reads as defensible is what tells you they are not prerequisite claims —
+the disagreement rate is the *evidence for* the section's long-standing title,
+not a contradiction of it.
+
+**The consequence is worth more than the count**, and it is written into the
+paths section so a future session finds it before starting: a global ordering
+cannot be derived from `paths.json`. A generated curriculum would be building on
+a relation the data does not carry and would contradict itself on a third of the
+pairs it found.
+
+### The three decidable defects, all at zero
+
+Worth stating because they are what a person would assume this was checking:
+
+| | Count |
+|---|---|
+| a topic listed twice in one path | 0 — and already warned on, so this was not new |
+| a path that is an ordered subsequence of another | 0 |
+| a step pointing at a topic that does not exist | 0, gated |
+
+So the ordering report gates nothing, which is consistent with the rest of this
+file: *topics off a path are reported, never failed*, because a topic does not
+owe a path. There is nothing here to fail on either.
+
+### The report was wrong twice before it was right, and the fixtures are why
+
+**It undercounted by eighteen.** Iterating the pair keys and skipping `x > y`
+never visits a pair whose only key is the reverse — two paths that both say
+`b` then `a` produce only `("b","a")`, and the loop skipped it. 38 against a
+hand count of 56, and a report that quietly undercounts is the one thing a
+report is worst at showing you. Normalising the pair before the lookup fixed it.
+
+**And it counted one path as two.** A path that repeats a step orders that pair
+in both directions by itself, so `["a","b","a"]` scored as a disagreement. That
+is a copy-paste, the duplicate warning four lines up already reports it, and
+turning it into a second and wronger finding is how a census loses trust. The
+rule is distinct *paths*, not assertions.
+
+The second one was caught by a fixture written for it — `a pair one path orders
+twice is not shared` — which failed on the first run. **Six fixtures for a
+function that gates nothing** is the right ratio here, because a report nobody
+can check is worse than no report: it gets quoted.
+
+```
+56 pairs ordered by two or more paths · 17 both ways (30%) · 0 defects
+check_paths.py --ordering, reporting only — the number is the finding
++6 self-test fixtures; two of them are the two bugs the first version had
+consequence recorded: no global ordering can be derived from paths.json
+45 gates green · make all clean
+```
+
+## Session — batch eighteen, and two words the site had never written down
+
+### Two thirds again, for the third batch running
+
+**28 questions, 20 answered.** Batch seventeen was 22 of 29. Batch sixteen's
+symptom-shaped half was the same fraction. This file has now predicted the
+opening rate three times and been right three times, which makes it the one
+number here that behaves like a forecast rather than a measurement.
+
+Eight zeros, and the per-word diagnostic split them in one read, because **two
+of the eight contained a word the site does not have at all**:
+
+| Query | Binding word | Corpus |
+|---|---|---|
+| `the process is defunct` | `defunct` | **0** |
+| `i got laid off` | `laid` | **0** |
+
+Everything else in both queries was present in the hundreds. A word at zero is
+the report's clearest signal and it separated the real gaps from the phrasing
+misses before any card was opened.
+
+### `defunct` — and nine zombies, none of them a process
+
+`zombie` returns nine mentions on this site and **every one is a cloud-cost
+zombie**: an unattached disk, an idle load balancer, a forgotten dev
+environment. `grep zombie data/linux.html` returns nothing. So the classic Unix
+zombie — a child that exited and a parent that never reaped it — was absent from
+a domain with sixty-two topics, while its name was in use elsewhere for
+something else entirely.
+
+**`linux` — The Process You Cannot Kill Is Already Dead**, added to *Processes &
+Signals*, which is where it belongs for a reason the existing card supplied. That
+topic's signal table ends on a verdict: *keep SIGKILL for the process that has
+already ignored a polite request.* The zombie is the one state on the whole page
+where SIGKILL does nothing, because **a zombie is not a stuck process; it is a
+death certificate nobody has collected.**
+
+The fingerprint is the half worth having, and it is why this hides: memory flat,
+CPU flat, machine not slowing down. What fills is the process table, and the
+failure lands somewhere else and much later — the next `fork()` anywhere on the
+box returns **`Cannot allocate memory` on a machine with gigabytes free**. An
+out-of-memory error that is not about memory is the tell.
+
+Two things the card insists on because everybody gets them backwards. An
+**orphan is fine** — the parent died, PID 1 adopts and reaps correctly — so the
+intuition inverts: the one that still has a living parent is the broken one. And
+`<defunct>` is in the card because it is **the string `ps` prints on the
+reader's screen**, which is the rule this file set after the USB card: a card
+about a failure quotes the words the reader is looking at.
+
+### `laid` — a whole topic on it, and it would not say the word
+
+`mind` has *Layoffs & Job Loss — The First Week, and the Ones After*, and it is
+a good card. Its opening sentence was *"Almost everyone in a long IT career goes
+through this at least once"* — and `laid` returned zero across the entire site.
+
+The fix is four words and it is **better writing than what it replaced**: *almost
+everyone in a long IT career gets laid off at least once*. That is the promise
+the kind-1 rule makes and it keeps making good on it. `i got laid off` now
+returns one card, the right one.
+
+### Named and not written, with the word that is missing
+
+`our reserved instances expired`. `cloud`'s *Commitment Discounts* is thorough
+on **buying** one — a commitment is a bet on your own capacity forecast, commit
+the floor and never the ceiling — and has nothing on the other end. **Expiry is
+a diary problem, not a forecast problem:** the bill rises 30–70% overnight with
+nothing deployed, nothing changed and no alert, because the discount stopped
+rather than the usage starting. `expired` appears 29 times and not one is a
+commitment.
+
+Recorded with its evidence rather than written, because the wave had spent its
+card — and named as a **missing word plus a missing owner**, which is the form
+this file has twice found to be pickable up cold.
+
+### The six that were not gaps, and one that is thinner than kind 3 usually is
+
+`the new starter is missing from teams` (licensing, and `starter` is the
+reader's noun for a joiner) · `the usb ports on one side stopped working` (a
+controller or a front-panel header, which is exactly the isolate-and-halve shape
+`hw` teaches) · `the job ad wants ten years of a five year old tool` (a joke
+with a real question inside it, and no card has a reason to contain *ten* and
+*five* about one tool) · `the vendor will not fill in the questionnaire` — the
+best of the six, because `grc` files the answer under **the phase where the
+leverage is created rather than the phase where it is missed**: *bake security
+requirements into the contract — right to audit*. The reader's word is the
+artefact; the site's word is the clause.
+
+The thin one is `i changed one line and fifty tests failed`. `eng` has
+*Over-mocking* and *Test Doubles*, which is the cause — but the site names it
+from the writer's side, a test coupled to an implementation, and never from the
+reader's, fifty red tests after a one-line change. It is recorded as kind 3 and
+flagged as the thinnest of the five, because the gap is a sentence rather than a
+card and the next session should know that before it opens the file.
+
+```
+1 concept card (linux Processes & Signals) · 1 prose fix (mind) · 0 new topics
+probe 302 -> 330 questions · 304 answered · 0 unexplained · 25 zeros · 1 wrong · 7 wide
+batch eighteen opened at 20 of 28 — two thirds, the third batch in a row
+2 of 8 zeros had a word at 0 in the corpus; both were the real gaps
+1 named and not written: `our reserved instances expired`, with its missing word
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — writing the card the last wave named, and the gate that caught its author
+
+### The gap, closed the wave after it was named
+
+The previous record named `our reserved instances expired` as kind 2 and wrote
+the evidence instead of the card, because the wave had spent its edit. That form
+— **the missing word plus the missing owner**, rather than the missing subject —
+has now got three cards written by a later wave, and this is the fourth.
+
+**`cloud` — A Commitment Expires, and Nothing Tells You**, added to *Commitment
+Discounts*, which was thorough on buying one and silent on the other end. The
+sentence: **expiry is a diary problem wearing a cost incident's clothes.**
+
+The fingerprint is what makes it findable and is the reason it gets misdiagnosed
+for days: **a cost jump with a flat usage graph.** Nothing was deployed, nothing
+scaled, no region was added — and the rise is suspiciously round, because it is
+exactly the 30–70% that had been coming off. When the usage line does not move
+across the step, the cause is commercial and every hour in the architecture
+diagram is an hour in the wrong document.
+
+It is missed structurally rather than carelessly. A commitment is bought by one
+person in one quarter and lapses twelve or thirty-six months later, by which time
+that person has moved. **Coverage is a percentage on a dashboard nobody opens,
+and it falls silently rather than alerting.** The nearest sibling on this site is
+a certificate: bought once, silent until the day it is not, fixed by a date with
+an owner rather than by any technical control.
+
+The verdict is the row that surprised me while writing it. **Auto-renew is the
+wrong default for the same reason buying without a forecast is — it turns a
+decision into a subscription**, and renews a commitment nobody re-forecast, which
+is the exact failure of the card directly above it, arriving on a timer. The
+right default is a dated review owned by whoever owns the forecast, with
+auto-renew on only where the baseline has already held across a full previous
+term.
+
+### And the reader's word, on the fourth consecutive wave to need it
+
+`our reserved instances expired` returned **zero against the card written to
+answer it**. The card said *expires*, *expiry* and *lapses*; the reader says
+**expired**, and the matcher's plural rule reaches `expireds` rather than
+`expires`.
+
+The fix is a clause that adds something rather than repeating anything — *the
+invoice does eventually explain itself, a line saying the reserved instances
+expired, and it arrives a month after that would have been useful* — which is
+both the reader's phrasing and a fact the card did not previously carry. Four
+waves in a row have now ended with this step, and the pattern is stable enough
+to be a prediction: **a card written mechanism-first will not close its own
+query, and the fix is always a sentence that is better than what it replaced.**
+
+### The gate from two waves ago failed the build on its author
+
+`make all` went red on **one word**: *organisation*, in a row of the table I had
+just written. `check_spelling.py` named the file, the word and the sentence.
+
+That is worth a paragraph because of what it says about the sweep it came from.
+Two waves ago the argument for building a rule-based checker rather than adding
+registry rows was that **enforcing a convention by row enforces exactly the words
+somebody thought of** — and the evidence was 2,192 spellings accumulated with the
+build green. The first thing the rule caught after that sweep was not a legacy
+card. It was new prose, written by the session that built it, three days after
+the convention was supposedly settled.
+
+A convention with a gate is a convention. Without one it is a paragraph in
+`CONTRIBUTING.md` that everybody agrees with and nobody satisfies.
+
+```
+1 concept card (cloud Commitment Discounts) · the gap the last wave named
+probe 330 questions · 305 answered · 0 unexplained · 24 zeros · 1 wrong · 7 wide
+the card did not close its own query until the reader's word went in — fourth wave running
+check_spelling.py failed the build on its own author's new prose, one word
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — the contract said "if it passes, CI passes", and CI had been red for four runs
+
+### Found by looking, not by being told
+
+PR #60 opened on this branch and the first thing worth checking was the base.
+`main` at `4d2ae9c` — this PR's own base commit — had **failed its last four
+workflow runs**, and so had the two pull-request runs before that. `make all`
+has been green on this machine throughout.
+
+That combination is the exact thing `check_gates.py` exists to prevent, and the
+measured-state preamble says so in a sentence written when it was added:
+
+> **`make all` is the contract.** If it passes, CI passes.
+
+It was not true, and had not been for four runs.
+
+### One step, and it is the one that had no reason to need a browser
+
+```
+Run node tools/query_probe.mjs --self-test
+error: playwright not found. Run: npm install playwright
+Process completed with exit code 2.
+```
+
+`query_probe.mjs` resolved Chromium in a **top-level `await`, at import**, so it
+ran before `process.argv` was ever consulted. `--self-test` needs no browser and
+no built page — it runs `staleReason()` and the plan-row reader over fixtures —
+but the process was already gone.
+
+And `make check` is **deliberately browser-free**: its own comment says the
+generated-artefact checks are cheap and first and *none of them needs a
+browser*, which is why the `verify-build` job installs Python and no Node
+toolchain at all. So the one command on that list that did need one exited 2
+every time, on every push, while every developer machine had Playwright
+installed and saw green.
+
+### What `check_gates.py` actually guarantees, which is less than it reads as
+
+The gate compares two **lists** and they agreed — 42 then, 45 now. It has never
+had anything to say about whether a command on the agreed list can *run in the
+job it is listed in*. That is a second, unstated assumption, and it is the one
+that broke.
+
+The nine-commit outage that motivated `check_gates.py` was *a step in one list
+and not the other*. This is *a step in both lists and impossible in one job* —
+the same red-on-the-server, green-locally split arriving through a door the
+guard does not cover. The preamble is corrected rather than deleted: the claim
+was worth making and it was wrong, and both halves are the record.
+
+### The sibling tool already had it right
+
+`gen_og_image.mjs` sits in the same browser-free job, imports Playwright the
+same way, and **launches a browser at the top level too** — and its step has
+been green throughout. It handles `--check` and `process.exit(0)`s at line 154;
+the browser is resolved at 162. The early exit precedes the dependency.
+
+So this is *the check that already existed, one file over* for the fourth time
+in this file. One of two tools in one job got the ordering right, nothing
+compared them, and the one that got it wrong was red on every push for a month.
+
+### The fix, proved against a reproduction rather than against reasoning
+
+`browserFor()` resolves at the point of use, and `requireBuiltPage()` does the
+same for the `index.html` guard one line below it — the identical defect, which
+would turn a fresh clone into an exit 2 before the first fixture.
+
+Reproduced first, because a CI fix asserted rather than reproduced is the
+*asserts it did not throw* row of this file's own table. A copy of the tool with
+the module-search fallback emptied is precisely what "not installed" means to
+this code:
+
+```
+before   node tools/_nopw_probe.mjs --self-test  ->  exit 2, "playwright not found"
+after    node tools/_nopw_probe.mjs --self-test  ->  23 fixtures, 0 failures, exit 0
+after    node tools/_nopw_probe.mjs --zero       ->  exit 2, and now says why:
+         "playwright not found, and the census needs a browser"
+```
+
+The third line matters as much as the second. A census that cannot open a
+browser must still fail loudly; what changed is that it fails when it is asked
+for a census, not when it is asked for a fixture run.
+
+```
+root cause: a top-level await resolved a browser before argv was read
+red on main for 4 runs · green in `make all` throughout · 1 file, 2 deferrals
+reproduced with the fallback list emptied, then fixed, then re-proved both ways
+gen_og_image.mjs, same job, same import, exits on --check first — and was green
+the contract sentence in the preamble is corrected, not deleted
+45 gates green · CI green is the one this wave has to wait for
 ```

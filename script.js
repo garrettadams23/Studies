@@ -2055,6 +2055,56 @@ function numberForms(term) {
   return other ? [term, other] : [term];
 }
 
+/**
+ * A word spelled both ways, because the site and the reader disagree.
+ *
+ * The same bargain `numberForms` makes, one alphabet over. The site is written
+ * in American English by convention, so it says *specialize*; a reader who
+ * learned to write anywhere else types *specialise*, and the two strings share
+ * no substring long enough for any stage of this matcher to bridge. `should i
+ * specialise or generalise` returned **nothing** against a card titled
+ * *Specialist or Generalist* whose opening sentence is the reader's question in
+ * the other dialect.
+ *
+ * The reason this is here and not in the prose is the reason `numberForms` is
+ * here: **neither side is wrong.** A card can name both words when the site
+ * happened to pick one — `imposter`/`impostor` was fixed that way and should
+ * have been. A card cannot name both spellings of every word of its shape, and
+ * the attempt is keyword stuffing with a rationale attached.
+ *
+ * Only the `-ise`/`-ize` family joins, and the boundary is a rule rather than a
+ * preference:
+ *
+ *   * `-ise`/`-ize` and `-yse`/`-yze`, with their inflections and `-isation`.
+ *     Unambiguous: no English word means one thing with an `s` and another with
+ *     a `z`. A stem that is not really a suffix — *advise*, *exercise*,
+ *     *franchise* — offers a form no corpus contains, which costs one
+ *     alternate and matches nothing, exactly as `plurals` already gambles.
+ *   * **`-our`/`-or` does not join.** `four`→`for` and `tour`→`tor` are real
+ *     words, so the wrong guess would *widen* rather than miss, and widening is
+ *     the failure this matcher is least able to recover from. Length thresholds
+ *     that exclude them also exclude `color` and `favor`, which are five.
+ *   * **`-ce`/`-se` does not join.** `advice`→`advise` is a different word, and
+ *     a wrong guess a reader never sees is worse than a miss they can retype.
+ *
+ * Six characters is the floor, and it is what keeps `prize`/`prise` out: those
+ * are two words, not one word twice, and they are the only pair short enough to
+ * collide.
+ */
+const RE_ISE = /is(e|ed|es|ing|er|ers|ation|ations)$/;
+const RE_IZE = /iz(e|ed|es|ing|er|ers|ation|ations)$/;
+const RE_YSE = /ys(e|ed|es|ing|er|ers)$/;
+const RE_YZE = /yz(e|ed|es|ing|er|ers)$/;
+
+function dialectForms(term) {
+  if (term.length < 6) return [term];
+  if (RE_ISE.test(term)) return [term, term.replace(RE_ISE, "iz$1")];
+  if (RE_IZE.test(term)) return [term, term.replace(RE_IZE, "is$1")];
+  if (RE_YSE.test(term)) return [term, term.replace(RE_YSE, "yz$1")];
+  if (RE_YZE.test(term)) return [term, term.replace(RE_YZE, "ys$1")];
+  return [term];
+}
+
 // `s` is deliberately absent: a term ending in one is handled by the branches
 // above this is used in, so it could only ever produce `passs`.
 const RE_SIBILANT = /(?:x|z|ch|sh)$/;
@@ -2394,7 +2444,8 @@ function runSearch(raw) {
   const gapPhrase = allWords.length
     ? new RegExp((guard ? "(?<![a-z0-9])" : "")
         + allWords.map(w => {
-            const forms = numberForms(foldSeparators(foldCase(w))).map(escape);
+            const forms = numberForms(foldSeparators(foldCase(w)))
+                            .flatMap(dialectForms).map(escape);
             return forms.length > 1 ? `(?:${forms.join("|")})` : forms[0];
           }).join("[\\s-]*")
         + (guard ? "(?![a-z0-9])" : ""))
@@ -2415,6 +2466,7 @@ function runSearch(raw) {
     // offers "why", which as a conjunction term matches most of the site and
     // narrows nothing. The word the reader typed is always kept.
     const alts = searchTerms(w).flatMap(t => numberForms(foldSeparators(foldCase(t))))
+                               .flatMap(dialectForms)
                                .flatMap(plurals)
                                .filter((t, i) => i === 0 || !WIDE_STOP.has(t))
                                .map(matcher);
