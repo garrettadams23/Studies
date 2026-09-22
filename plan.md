@@ -66,9 +66,16 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
 | Session records | **49** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
-**`make all` is the contract.** If it passes, CI passes — `check_gates.py` fails the build
-if the two lists ever diverge again. Before this was true, the workflow had been red on
-every push for nine commits and `make check` had been green the whole time.
+**`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
+passes* was written when `check_gates.py` was added, because the workflow had been red on
+every push for nine commits while `make check` was green. The gate makes the two **lists**
+agree and it did. It says nothing about whether every command on the agreed list can run in
+the job it is listed in, and one could not: `query_probe.mjs --self-test` resolved Playwright
+at import, `make check` is deliberately browser-free so its CI job installs no Node
+toolchain, and the step exited 2 before it read its own flag. **CI was red on `main` for four
+runs while `make all` was green on every machine that had Playwright installed.** Fixed by
+resolving the browser at the point of use; the contract is true again, and the lesson is that
+*the same gates* is a weaker guarantee than it reads as.
 
 **Where new work comes from now.** The content programmes (Phases 7–10) are closed and the
 navigation ones are complete, so the queue is no longer a list — it is whichever census
@@ -5192,4 +5199,95 @@ probe 330 questions · 305 answered · 0 unexplained · 24 zeros · 1 wrong · 7
 the card did not close its own query until the reader's word went in — fourth wave running
 check_spelling.py failed the build on its own author's new prose, one word
 45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — the contract said "if it passes, CI passes", and CI had been red for four runs
+
+### Found by looking, not by being told
+
+PR #60 opened on this branch and the first thing worth checking was the base.
+`main` at `4d2ae9c` — this PR's own base commit — had **failed its last four
+workflow runs**, and so had the two pull-request runs before that. `make all`
+has been green on this machine throughout.
+
+That combination is the exact thing `check_gates.py` exists to prevent, and the
+measured-state preamble says so in a sentence written when it was added:
+
+> **`make all` is the contract.** If it passes, CI passes.
+
+It was not true, and had not been for four runs.
+
+### One step, and it is the one that had no reason to need a browser
+
+```
+Run node tools/query_probe.mjs --self-test
+error: playwright not found. Run: npm install playwright
+Process completed with exit code 2.
+```
+
+`query_probe.mjs` resolved Chromium in a **top-level `await`, at import**, so it
+ran before `process.argv` was ever consulted. `--self-test` needs no browser and
+no built page — it runs `staleReason()` and the plan-row reader over fixtures —
+but the process was already gone.
+
+And `make check` is **deliberately browser-free**: its own comment says the
+generated-artefact checks are cheap and first and *none of them needs a
+browser*, which is why the `verify-build` job installs Python and no Node
+toolchain at all. So the one command on that list that did need one exited 2
+every time, on every push, while every developer machine had Playwright
+installed and saw green.
+
+### What `check_gates.py` actually guarantees, which is less than it reads as
+
+The gate compares two **lists** and they agreed — 42 then, 45 now. It has never
+had anything to say about whether a command on the agreed list can *run in the
+job it is listed in*. That is a second, unstated assumption, and it is the one
+that broke.
+
+The nine-commit outage that motivated `check_gates.py` was *a step in one list
+and not the other*. This is *a step in both lists and impossible in one job* —
+the same red-on-the-server, green-locally split arriving through a door the
+guard does not cover. The preamble is corrected rather than deleted: the claim
+was worth making and it was wrong, and both halves are the record.
+
+### The sibling tool already had it right
+
+`gen_og_image.mjs` sits in the same browser-free job, imports Playwright the
+same way, and **launches a browser at the top level too** — and its step has
+been green throughout. It handles `--check` and `process.exit(0)`s at line 154;
+the browser is resolved at 162. The early exit precedes the dependency.
+
+So this is *the check that already existed, one file over* for the fourth time
+in this file. One of two tools in one job got the ordering right, nothing
+compared them, and the one that got it wrong was red on every push for a month.
+
+### The fix, proved against a reproduction rather than against reasoning
+
+`browserFor()` resolves at the point of use, and `requireBuiltPage()` does the
+same for the `index.html` guard one line below it — the identical defect, which
+would turn a fresh clone into an exit 2 before the first fixture.
+
+Reproduced first, because a CI fix asserted rather than reproduced is the
+*asserts it did not throw* row of this file's own table. A copy of the tool with
+the module-search fallback emptied is precisely what "not installed" means to
+this code:
+
+```
+before   node tools/_nopw_probe.mjs --self-test  ->  exit 2, "playwright not found"
+after    node tools/_nopw_probe.mjs --self-test  ->  23 fixtures, 0 failures, exit 0
+after    node tools/_nopw_probe.mjs --zero       ->  exit 2, and now says why:
+         "playwright not found, and the census needs a browser"
+```
+
+The third line matters as much as the second. A census that cannot open a
+browser must still fail loudly; what changed is that it fails when it is asked
+for a census, not when it is asked for a fixture run.
+
+```
+root cause: a top-level await resolved a browser before argv was read
+red on main for 4 runs · green in `make all` throughout · 1 file, 2 deferrals
+reproduced with the fallback list emptied, then fixed, then re-proved both ways
+gen_og_image.mjs, same job, same import, exits on --check first — and was green
+the contract sentence in the preamble is corrected, not deleted
+45 gates green · CI green is the one this wave has to wait for
 ```

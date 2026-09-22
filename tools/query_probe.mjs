@@ -184,7 +184,28 @@
 import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 
-const chromium = await (async () => {
+/**
+ * The browser, resolved at the moment one is needed rather than at import.
+ *
+ * It used to be a top-level `await` beside the imports, and that is a real
+ * failure rather than a style point: `--self-test` needs no browser and no
+ * built page — it runs `staleReason` and the plan-row reader over fixtures —
+ * but the resolution ran first and `process.exit(2)` before the flag was ever
+ * read. `make check` is deliberately browser-free, so the workflow job that
+ * runs it installs no Node toolchain, and the step went red on every push:
+ *
+ *     Run node tools/query_probe.mjs --self-test
+ *     error: playwright not found. Run: npm install playwright
+ *     Process completed with exit code 2.
+ *
+ * **A self-test that cannot run without the dependency it is there to avoid
+ * is not a self-test**, and this one had been failing on `main` for four runs
+ * while `make all` was green on every machine that had Playwright — which is
+ * the same green-locally-red-on-the-server split `check_gates.py` was written
+ * for, arriving through a different door: the two lists agreed, and one entry
+ * on them needed something one job did not have.
+ */
+async function browserFor(what) {
   try {
     return (await import("playwright")).chromium;
   } catch {
@@ -194,16 +215,23 @@ const chromium = await (async () => {
         return (await import(`${base}/playwright/index.mjs`)).chromium;
       } catch { /* try the next one */ }
     }
-    console.error("error: playwright not found. Run: npm install playwright");
+    console.error(`error: playwright not found, and ${what} needs a browser. `
+                  + `Run: npm install playwright`);
     process.exit(2);
   }
-})();
+}
 
 const ROOT = resolve(new URL("..", import.meta.url).pathname);
 const PAGE = `file://${ROOT}/index.html`;
-if (!existsSync(`${ROOT}/index.html`)) {
-  console.error("error: index.html does not exist — run 'python build.py' first.");
-  process.exit(2);
+
+// Deferred for the same reason, and it is the same bug one line down: a
+// fixture run does not read the built page, so requiring one turns a fresh
+// clone into an exit 2 before the first fixture.
+function requireBuiltPage() {
+  if (!existsSync(`${ROOT}/index.html`)) {
+    console.error("error: index.html does not exist — run 'python build.py' first.");
+    process.exit(2);
+  }
 }
 
 const args = process.argv.slice(2);
@@ -1024,6 +1052,8 @@ if (args.includes("--self-test")) {
   process.exit(bad ? 1 : 0);
 }
 
+requireBuiltPage();
+const chromium = await browserFor("the census");
 const browser = await chromium.launch();
 const page = await browser.newPage();
 await page.goto(PAGE, { waitUntil: "load" });
