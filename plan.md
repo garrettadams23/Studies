@@ -27,6 +27,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked | 📥 **queue** |
+| **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap | 📥 **queue** |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -732,6 +733,146 @@ The rubric applies unchanged, and three of its checks bite this batch specifical
    own description. The one test in the card rubric — that a card answers a question
    somebody actually has — is the filter that decides how many of the five absent concepts
    are worth writing, and the answer is allowed to be fewer than five.
+
+
+# csvistool — one outbound link, and the forty-one concepts behind it
+
+> Source: a one-line request to link **[csvistool.com](https://csvistool.com/)** and add its
+> concepts, **in this file only for now**. Filed as **a queue, not a record**, because nothing
+> has shipped. The tool is the *CS 1332 Data Structures and Algorithms Visualizations* site
+> from Georgia Tech: step-by-step animations with pseudocode, open source at
+> [`csvistool/visualization-tool`](https://github.com/csvistool/visualization-tool), adapted
+> from David Galles' USF visualizations and maintained by course TAs under Prof. Mary
+> Hudachek-Buswell. **The concept list below comes from the tool's own registry,
+> `src/AlgoList.js` at commit `4549799` (2026-04-23), not from its home page.** This
+> container's network policy blocks `csvistool.com`, and the registry is what the home page
+> renders from anyway.
+
+**Two jobs, and one of them is a single line of HTML.** The link needs one `.extlink`
+anchor. The concepts are 41 visualizations. About half already have a card on the site that
+explains *when and why*, 12 of 40 searches for them return nothing, and one cluster is a
+real gap.
+
+**The tool and the site do different things, and that decides how the work is shaped.** Our
+cards answer *which one, and why*. `Four Trees, Four Different Jobs` and `You Will Never Write
+a Sort; You Will Choose One By Accident` are the model. The tool answers *how it moves*: step
+through an AVL rotation, watch a probe sequence fill a table. **So the link goes on the card
+that already explains the concept, and no card should narrate an animation in prose.** A
+paragraph walking through a heap's sift-down step by step is the thing the tool exists to
+make unnecessary.
+
+## 1. The link: where it can go, and a trap for a link checker
+
+**The convention exists and needs nothing new.** `.extlink` in `style.css` came in with the
+DSM-5-TR fix: accent colour, dotted underline, `↗`, and the href printed on paper, with
+`target="_blank" rel="noopener noreferrer"`. The content has three external links today: the
+APA's DSM page from `mind` and `philosophy`, and one in `script`. An href is not a fetch, so the smoke test's *no off-site requests* check is
+unaffected. **Embedding is not an option and should not be proposed:** `netlify.toml`
+sets `default-src 'none'` with no `frame-src`, so an iframe of the tool is blocked by the
+site's own CSP.
+
+**The obvious home for a domain-wide link cannot hold one.** The `cs` landing card is built
+from `data/domain-intros.json`, and `script.js` renders every field with `textContent`. A
+link there means a new field and a renderer change, and then the axe, mobile and visual gates
+all get a say. **Deep links on cards need no code at all.** The tool routes `/:algo` on its
+registry keys, so `https://csvistool.com/AVL` opens the AVL animation directly.
+
+| Order | Where | Cost |
+|---|---|---|
+| **1st** | Deep links on the eight topics that already teach a concept (seven in `cs`, one in `script`), placed where the concept is named, e.g. *watch it: [AVL](https://csvistool.com/AVL) · [2-4 tree](https://csvistool.com/BTree)* | Content only. Lint, build and check, nothing else |
+| 2nd | One home-page link on the `cs` landing card | A `domain-intros.json` field **and** a `script.js` renderer. Only worth it if the deep links earn clicks, and nothing here measures that |
+
+**The trap, found while reading the tool's source, and worth recording before anyone builds
+a checker.** csvistool is a React single-page app on GitHub Pages. Deep paths are served by
+`public/404.html`, the *spa-github-pages* redirect trick, which rewrites `/AVL` to `/?p=/AVL`
+in JavaScript. A deep link should therefore **answer HTTP 404 and still work in every
+browser**. That is GitHub Pages' documented behaviour for a custom 404 page, and it could not
+be checked live from here because the host is blocked. The link-rot check was measured away
+at *one external link on the whole site*. The thirty-odd deep links §2 calls for would reopen
+that item, and **a naive checker would report every one of them dead.** If it gets built, it checks this host's
+root and not its paths, or it follows the redirect the way a browser does.
+
+**The tool's key names disagree with the textbook, so link by label and not by key.**
+`OpenHash` is labelled *HashMap (Probing)* and `ClosedHash` is *HashMap (Chaining)*. That
+follows the *open/closed addressing* naming, the reverse of *open/closed hashing*, where
+"open hashing" means chaining. Anchor text copied from the keys would say the opposite of what
+the page shows. This is also the one sentence the `Hash Tables` card is missing (see §2).
+
+**Every deep link is a dated claim.** A route is a registry key in someone else's repository,
+and one rename would break it silently. Each link gets a Phase 11 fact anchor:
+`<!-- fact: csvistool route /AVL | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->`.
+`check_volatility.py` counts those, which moves the *Dated claims* row. That is the point: the
+row goes up for a reason somebody can read.
+
+## 2. The concepts, as the tool files them and as the site has them
+
+Every row below was checked two ways: a grep over `data/*.html` with `acronym.html`
+excluded, and **a search probe of the built page**, meaning `runSearch()` driven in Chromium
+the way `query_probe.mjs` does it, over 40 queries a CS 1332 student would type. **12 of the
+40 return nothing.** Paths are the tool's routes, all under `https://csvistool.com/`.
+
+| Tool category | Concepts → route | On the site today | What that makes it |
+|---|---|---|---|
+| **Lists** (4) | ArrayList `/ArrayList` · Singly `/LinkedList` · Doubly `/DoublyLinkedList` · Circularly `/CircularlyLinkedList` | `cs` *Amortized Analysis — Why a Dynamic Array Is O(1)*; `cs` *Memory Layout & Cache Locality — Why Arrays Beat Linked Lists*; `script` *Data Structures — How Data is Organized in Memory*. Doubly linked: one mention, in a Rust card. Circular: **0** | **Link targets** for the first two. Doubly linked has one real hook the site lacks, the **LRU cache** (a hash map plus a doubly linked list). `LRU` appears only in the acronym dictionary and a Redis eviction table, so the hook is a sentence in `Memory Layout`, not a card. Circular: leave to the tool |
+| **Stacks, Queues & Deques** (6) | array- and linked-backed each: `/StackArray` `/StackLL` `/QueueArray` `/QueueLL` `/DequeArray` `/DequeLL` | `script` *Choosing the Right Data Structure* (List · Tuple · Dict · Set · Queue · Stack). `LIFO` and `FIFO` appear twice each, both in `script`. The array-versus-linked split: **absent** | **Link targets** on the `script` card. The finding is the vocabulary: `stack data structure` returns **35 results, 0 in `cs`**, and the first is the OSI model. `queue data structure` returns 35, and the top three are `sec`/`threat`. *Stack* means tech stack, network stack and ELK stack across **141** mentions, and *queue* means message queue and triage queue across **228**. The same shape as the last batch's chip subtitles: a word the reader navigates by, already owned by another sense |
+| **Trees & SkipList** (5) | BST `/BST` · Heap `/Heap` · AVL `/AVL` · 2-4 tree `/BTree` · SkipList `/SkipList` | `cs` *Trees — BST, Balanced, Heap, Trie*: `Four Trees, Four Different Jobs`, and `An Unbalanced BST Is a Linked List With Extra Steps`, which names AVL and red-black as the fix. 2-4 tree: **0**. Skip list: **0**, and `skip list` returns 31 results with none in `cs` because the words match separately | **Link targets** for BST, heap and AVL. 2-4 tree is one sentence in the existing B-tree card: it is a B-tree of order 4, and the structure a red-black tree encodes. **Skip list is a candidate card.** It has an operational hook: Redis sorted sets and the LSM memtable in LevelDB and RocksDB. It still has to pass the rubric's *a question somebody has* |
+| **Maps** (3) | Chaining `/ClosedHash` · Probing `/OpenHash` · TreeMap `/TreeMap` | `cs` *Hash Tables — Collisions, Load Factor & the DoS*: `open addressing` twice, `separate chaining` **0**. `hashmap` → **0**; `treemap` → **0** | **Link target**, plus two **kind-1 zeros**. The site says *hash table* and *ordered map*, and the reader types Java's `HashMap` and `TreeMap`. Name both words in the prose. Add the open-hashing-versus-open-addressing sentence from §1 |
+| **Sorting & Quickselect** (9) | Bubble `/BubbleSort` · Cocktail shaker `/CocktailSort` · Insertion `/InsertionSort` · Selection `/SelectionSort` · Quicksort `/Quicksort` · Quickselect `/Quickselect` · Merge `/MergeSort` · LSD radix `/LSDRadix` · Heapsort `/HeapSort` | `cs` *Sorting & Searching — Why Your Language Picked the One It Did*: quicksort, merge sort, heapsort and insertion sort sit under its Timsort / introsort / pdqsort table. Bubble: one mention. Selection: **0** (its only search result is an injection card). Cocktail: **0**. `quickselect` → **0**; `radix sort` → **0** | **Link targets** for the four the card covers. **Leave bubble, selection and cocktail to the tool.** They are teaching sorts, and the card's own thesis is *you will never write a sort*. **Quickselect is a candidate.** It finds the median or top-k without sorting everything, which is exactly what `cs` *Percentiles & Latency* needs to compute a p99. **Radix sort** is a section of the sorting card, not a topic: the one sort that is not a comparison sort, and so not bound by *n* log *n* |
+| **Pattern Matching** (4) | Brute force `/BruteForce` · Boyer-Moore `/BoyerMoore` · KMP `/KMP` · Rabin-Karp `/RabinKarp` | All four are in `cs` *String Algorithms*, in the table under `Naive Search Is Usually Fine, Until the Data Is Adversarial`. `kmp` → **0**: the card writes *Knuth-Morris-Pratt* and never the three letters | **Link targets**, and the cheapest fix in the batch: one kind-1 zero closed by writing `(KMP)` |
+| **Graphs** (7) | Representations `/CreateGraph` · Disjoint set `/DisjointSet` · BFS `/BFS` · DFS `/DFS` · Dijkstra `/Dijkstra` · Prim `/Prim` · Kruskal `/Kruskal` | `cs` *Graphs — Representation, Traversal & the Four Algorithms Worth Knowing*: `Adjacency List Unless the Graph Is Dense`, BFS, topological sort, Dijkstra, Bellman-Ford. **Depth-first search is not named in it.** `dfs` → 13 results, **0 in `cs`**: on this site DFS means Windows Distributed File System. `prim`, `kruskal`, `minimum spanning tree`, `disjoint set` → **0 each**, and `union find` returns four Python cards | **Link targets** for representation, BFS and Dijkstra. Depth-first is a **missing row** in a card that exists. **Minimum spanning trees and union-find are the batch's one real gap, see §3** |
+| **DP & Extras** (3, plus 5 joke sorts) | LCS `/LCS` · Floyd-Warshall `/Floyd` · Splay tree `/SplayTree` · Drop, Sleep, Miracle, Bogo and Fred sort | `longest common subsequence` → **0**, `floyd-warshall` → **0**, `splay` → **0** (a first grep that said 96 was matching *display*). `cs` has edit distance as `Levenshtein Is Dynamic Programming You Will Actually Use` | **LCS is one sentence in the string card: it is what `diff` computes**, and every reader has run `git diff`. Floyd-Warshall is a row in the graphs table (all-pairs shortest paths, O(V³)), not a card. Splay tree and the joke sorts: **leave to the tool**. Two more joke entries, *LVA* and *Non-Linear Probing*, only appear on April 1–2 |
+
+**The batch is 41 concepts, and it comes down to far fewer edits.** Each concept is counted
+once, by what it needs besides its link:
+
+| Needs | Concepts | Count |
+|---|---|---|
+| **Only the link.** Already taught, on one of **eight existing topics** (seven in `cs`, plus `script`'s *Choosing the Right Data Structure*) | ArrayList, singly linked list, the six stack / queue / deque routes, BST, heap, AVL, insertion sort, quicksort, merge sort, heapsort, brute force, Boyer-Moore, Rabin-Karp, graph representations, BFS, Dijkstra | **21** |
+| **One word**, a kind-1 zero in `query_probe.mjs`'s terms | KMP, TreeMap, chaining and probing (the site says *hash table*, and neither `HashMap` nor `separate chaining` appears) | **4** |
+| **One sentence or one table row** in a card that exists | depth-first search, 2-4 tree as a B-tree of order 4, LCS as `diff`, Floyd-Warshall, LSD radix, doubly linked list as half of an LRU cache | **6** |
+| **A candidate card** that has to pass the rubric | Prim, Kruskal and disjoint set as one card (§3), then quickselect and skip list | **5**, in 1 to 3 cards |
+| **Nothing written.** Linked from the nearest card at most, because the animation *is* the explanation and our "when" is "almost never" | bubble, selection and cocktail shaker sort, circular linked list, splay tree | **5** |
+
+The five joke sorts are not counted. The open-hashing naming trap from §1 is one more
+sentence, in the same edit as the chaining and probing words.
+
+## 3. The one real gap: minimum spanning trees and union-find
+
+Four of the twelve zeros are one topic: **`prim`, `kruskal`, `minimum spanning tree` and
+`disjoint set`**. It is the fifth graph question, *what is the cheapest way to connect
+everything?*, beside the four the graphs card already answers. It has an operational hook,
+and a trap the site is well placed to explain:
+
+- **The hook is `net`'s own spanning-tree card.** *Spanning Tree — Why a Loop Is
+  Catastrophic, and What STP Does About It* builds a spanning tree, but not a minimum one.
+  STP keeps each bridge's least-cost path **to the root**, which is a shortest-path tree.
+  The two are routinely confused, and the difference is one sentence each way. It is a
+  `related.json` pair between `cs` and `net`, the kind the connectivity section counts.
+- **Union-find is the part that outlives the algorithm.** Kruskal needs it to reject an edge
+  that would close a cycle. The same near-O(1) *are these two already connected?* is how
+  duplicate accounts get merged and how network partitions get counted. That is the "when"
+  the rubric asks for.
+
+**Where it goes:** a concept card inside the existing `Graphs` topic, or a new `cs` topic if
+`depth_report.py` says the host card is already long. `near_duplicates.py --title` goes
+against the STP card before anything is written.
+
+## 4. Before any of this is written
+
+1. **Put the zeros into `query_probe.mjs` first.** Add a reader, *a student with a data
+   structures course*, with the 12 zero queries from §2. That makes the zeros a tracked number,
+   so every fix above can be seen to close its own query. The probe used here was a scratch
+   copy of the census loop, and **a scratch file is how queries evaporated before**
+   (`query_probe.mjs`'s own docstring).
+2. **Deep links are content, so the loop applies unchanged:** lint, build, check, and
+   `make og` only if the topic count moves. Fact anchors go in the same commit as the links,
+   not in a later pass.
+3. **The link-rot item reopens only once there are deep links.** Record the count it reopens
+   at, and the 404 trap in §1, in the same commit, so the next session does not build a
+   checker that fails on its first run.
+4. **Card candidates face the rubric, not the tool's menu.** The tool covers a semester's
+   syllabus, and that is no reason for the site to. Of the three candidates, the answer is
+   allowed to be one.
 
 
 # Domain shape — the connectivity measurement, and what it says
