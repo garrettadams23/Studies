@@ -28,6 +28,7 @@ What is left here is what a session actually reads.
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked | 📥 **queue** |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap | 📥 **queue** |
+| **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | 📥 **queue** |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -873,6 +874,407 @@ against the STP card before anything is written.
 4. **Card candidates face the rubric, not the tool's menu.** The tool covers a semester's
    syllabus, and that is no reason for the site to. Of the three candidates, the answer is
    allowed to be one.
+
+
+# Study notes, batch two — database, SQL and Java knowledge written in another dialect
+
+> Source: study notes on databases, SQL, regex, pandas and Java, filed under the same name as
+> the batch in *Knowledge integration* above (*Add to Garrett's study website.md*). That
+> batch arrived as a plan with destinations. **This one arrives as the knowledge itself**, so
+> the source names no destinations: every destination below is a lookup in
+> `data/domains.json`, and every "on the site" is a grep over `data/*.html` with
+> `acronym.html` excluded. Every zero is a search of the built page: `runSearch()` driven in
+> Chromium the way `query_probe.mjs` does it, over 57 queries taken from the notes' own
+> words. Filed as **a queue, not a record**, because nothing has shipped. The knowledge is kept
+> in §7, grouped by subject.
+
+**The notes use one dialect and the site uses another.** The notes were written against
+SQL Server, Oracle and Java. The site is written against Postgres and Python:
+
+| Across `data/*.html` | Mentions |
+|---|---|
+| Postgres | **106**, 39 of them in `data` |
+| MySQL | 33 |
+| SQL Server / T-SQL | **7**, and only 1 in `data` |
+| Oracle | 9 |
+| Python | **221** |
+| Java, not JavaScript | **36**. The `script` Java card is about the JVM as a deployment choice |
+
+So most of the batch's *concepts* are already on the site, and most of its *words* are not.
+`clustered index` returns nothing. The site's four uses of *clustered* are about BigQuery
+tables, policy exceptions bunching up in one department, and packet loss. *Indexes Explained*, the one card where
+the term belongs, has **0**. `datediff`, `sp_executesql`, `pivot unpivot`,
+`uml class diagram`, `markov decision process` and `smote` also return nothing. This is the
+third batch in a row with the same shape, one layer further down each time. First the chip
+subtitles overlapped, then *stack* and *queue* turned out to mean something else, and now it
+is a whole dialect. **`data` has topics for Postgres, MySQL and SQLite, and none for SQL
+Server.** Meanwhile `endpoint` describes MECM, which keeps its site database in
+SQL Server and reports through SSRS. The site already depends on the one engine its data
+domain never describes.
+
+## 1. The knowledge by subject, and where each part lands
+
+| # | Subject | Lands in | On the site today | What that makes it |
+|---|---|---|---|---|
+| 1 | **Database fundamentals, security and UML**: fields, data models, documentation, distributed databases, ACID, information classification, SQL injection, UML object and class diagrams, the composition diamond, persistence, schema theory | `data` · `grc` · `sec` · `eng` · `productivity` | ACID is a `data` topic. Information classification has 13 mentions, 10 of them in `grc` and `sec`. SQL injection has 21, and its home card is `sec` *The Injection Family*. **UML: 0, site-wide.** Schema theory: **0**, and *Learning How to Learn* has 0 each for *schema*, *prior knowledge* and *chunk* | **Written**, except UML and schema theory. UML has now been asked for by **both** batches, see §3 |
+| 2 | **Database tools, formats and SQL facts**: Access, SQL\*Plus, SQL Server components, reporting tools, XML, JSON Schema, DQL, `REAL`, dynamic SQL, ERIC, UML association, foreign keys | `data`, and dynamic SQL goes to `sec` | Foreign keys are in `data` *The Relational Model*, JSON Schema in `ai` *Structured Output*, and DQL in `script` *SQL Query Reference*. Access, SQL\*Plus, PL/SQL, Tableau, Crystal Reports, Alteryx, ERIC, *controlled vocabulary* and `sp_executesql`: **0 each** | **Mostly product trivia.** Dynamic SQL is the exception, because it is the injection sink. The site shows that sink in Python and never in T-SQL, §2 |
+| 3 | **SQL data types, DDL, joins and indexes**: BLOB, Boolean, column syntax, `DROP COLUMN`, `DATEDIFF`, right joins, where subqueries go, clustered indexes, temp tables, `DELETE` without `WHERE`, `UNIQUE` | `data` | 1NF is in *Normalization*, and right outer joins in *SQL Joins — Every Type, and the NULL Traps*. `UNIQUE` on existing rows is in *Indexes Explained*, which also has the sharper half the note misses, *A UNIQUE Index Does Not Stop Duplicate NULLs*. `DELETE` without `WHERE` is named in the first sentence of *Backups & Point-in-Time Recovery*. Clustered index: **0**. `DATEDIFF`: **0**. Temp tables: 1 mention, a connection-pooling caveat. BLOB: 12 mentions, 7 of them in `cloud` meaning Azure Blob Storage | **Written for the portable half, absent for the T-SQL half.** The clustered index is the one that matters, §2 |
+| 4 | **SQL writes, set operations, pivoting and regex**: `INSERT … SELECT`, CTAS, Oracle `INSERT ALL`, set operators, `ROLLUP`/`CUBE`/`GROUPING SETS`, `PIVOT`/`UNPIVOT`, regex quantifiers and anchors, `LIKE` with bracket sets, binary collation | `data` · `script` | The set operators, `MINUS` included, are in *Subqueries, EXISTS & Set Operations* along with the NULL trap. `ROLLUP`/`CUBE`/`GROUPING SETS` is a row in *Aggregation*. Regex quantifiers, anchors, alternation and classes are in `script` *Regular Expressions (Regex)*. The subqueries card has **0** `INSERT` and **0** `UPDATE`. `PIVOT` has 2 case-sensitive hits, both in `pentest`, where pivoting means moving between hosts. `UNPIVOT`: **0** | **Written for the query half, absent for the DML half.** It needs one example in the subqueries card and one row in the aggregation card |
+| 5 | **Python, pandas and AI**: `describe()`, `dropna()`, `def`, `**`, AI, reinforcement learning, MDPs, embeddings, confidence scoring, fraud detection and SMOTE, robotics, PUE, technological unemployment | `script` · `ai` · `ops` | `describe()` is in `script` *Data Analysis with pandas*. `dropna` appears once, in an `ai` card, not in the pandas one. RL: 4 mentions in `ai`. Embeddings: 37 mentions, 20 in `ai`. PUE is in `ops` *Green IT*, in a table that says what each metric leaves out. MDP, SMOTE, *technological unemployment* and *learning from demonstration*: **0 each** | **Written**, apart from two sentences in `ai` and one in the pandas card, §2 |
+| 6 | **Java operators, types, algorithms and classes**: operators, identifiers, imports, primitives, widening, array memory, `Random`, binary search, selection and merge sort, O(M+N), interfaces, `final`, `String[] args`, `LinkedList`/`Deque`/`Queue`, graph loops, Dijkstra, base cases, Swing, zero-based indexing | `script` for Java, `cs` for the algorithms | Binary search, merge sort, Dijkstra and O(M+N) are in `cs`. Deque is in `script` *Choosing the Right Data Structure*. The `script` Java card has **0** each for *primitive*, `char`, `switch`, `final`, `import`, `javac` and *Unicode*, because it is about JIT warm-up and GC. Selection sort: **0**, and its one search result is an injection card | **The algorithms are written; the language is absent.** Selection sort stays with the tool, as csvistool §2 already decided |
+| 7 | **Programming fundamentals in Java**: SDLC, case sensitivity, file naming, camelCase, immutable strings, `long`, `int` and `switch`, `char` values, `if`/`while`/`do-while`/`for`, infinite loops, methods, `Random`, operators | `script` beginner track | *Programming from Zero*, *Control Flow*, *Variables & Data Types*, *Working with Text* and *Programming Fundamentals* cover the language-neutral half. `do-while`: **0**, site-wide. *Control Flow* is a short JavaScript card with `for` and `while` only. *SDLC* has 7 mentions, all in `grc` and `sec`, all in the security and compliance sense | **Written.** `do-while` is one row in *Control Flow* |
+
+## 2. What is worth writing, counted by what each item needs
+
+| Needs | Items | Count |
+|---|---|---|
+| **Nothing.** Already on the site | ACID, distributed databases, foreign keys, 1NF, right outer join, the set operators, `ROLLUP`/`CUBE`/`GROUPING SETS`, regex quantifiers and anchors, `DELETE` without `WHERE`, `describe()`, embeddings, class imbalance, reinforcement learning, PUE, binary search, merge sort, Dijkstra, deque, SQL injection, information classification, JSON Schema, `UNIQUE` on existing rows | **22** |
+| **A row or a sentence** in a card that exists | a clustered index, `PIVOT`, `INSERT … SELECT` and CTAS, `DATEDIFF`, `sp_executesql`, `dropna()`, MDP, SMOTE, `do-while`, schema theory | **10** |
+| **A candidate card** that has to pass the rubric | UML (§3), SQL Server (§4), Java the language (§4) | **3** |
+| **Nothing written.** Product facts and definitions: *a definition is not a card* | Access 1.0's release date, SQL\*Plus `serveroutput`, SQL Server's component list, Tableau / Crystal Reports / Alteryx, ERIC's controlled vocabulary, XML's angle brackets, `REAL`'s 7 digits, what database documentation holds, Swing's `fillOval` and `GridLayout`, robotics versus AI, technological unemployment as a definition | **11** |
+
+`DELETE` without `WHERE` is in the first row because it is written: the PITR card names it
+in its first sentence. The search misses it for another reason. The query returns **102**
+results, because *delete*, *without* and *where* are all common words. That is a wide
+result, not a gap.
+
+The ten rows, each with the judgement that makes it more than a definition:
+
+- **Clustered index**, in *Indexes Explained*. A clustered index means the table is stored
+  in index order, so there is one per table. SQL Server and InnoDB cluster on the primary
+  key. **Postgres has no clustered index:** `CLUSTER` reorders the table once, and later
+  writes do not keep that order. A reader moving between the two engines needs that last
+  clause, and the card is written for Postgres.
+- **`sp_executesql`**, in *The Injection Family*. The note describes building a query in
+  string variables and running it with `EXEC`, and that is the injectable form.
+  `sp_executesql` with a parameter list is how T-SQL parameterizes a query. The card's own
+  rule, *never string formatting*, is only shown in Python. The notes need this correction
+  more than the site does, but the site needs it too.
+- **`DATEDIFF`**, in *Time-Series & Event Data*, which already does date arithmetic with
+  `date_trunc`. MySQL's version takes two arguments,
+  `(end, start)`, and returns days. SQL Server's takes three, `(datepart, start, end)`, and
+  counts **boundaries crossed**: `DATEDIFF(year, '2025-12-31', '2026-01-01')` is 1. The
+  note's billing-cycle example is exactly where that difference bites.
+- **`PIVOT`**, in *Aggregation*. In T-SQL and Oracle, `PIVOT` is shorthand for
+  `SUM(CASE WHEN …)`. Postgres has neither and uses `FILTER` or `crosstab`. The card already
+  shows `FILTER`, so this is one row. Keep the note's point that `UNPIVOT` cannot undo an
+  aggregating `PIVOT`, and add that it also drops NULLs.
+- **`INSERT … SELECT` and CTAS**, in *Subqueries*. One example. The note's real point, that
+  a subquery can feed a write as well as a read, is the half the card is missing.
+- **`dropna()`**, in the pandas card. The card shows `info()`'s non-null counts and never
+  says what to do about them. Add `dropna()` beside `fillna()`, with the judgement that
+  dropping rows silently changes the denominator of every later average.
+- **SMOTE**, beside class imbalance in `ai`. The useful sentence is *resample the training
+  split only.* SMOTE builds synthetic rows from neighboring real ones. If it runs before the
+  train/test split, test rows help build the training data, and the score is a leak.
+- **MDP**, one clause in the RL row: states, actions, a transition model and a reward. Most
+  textbooks list the discount factor as a fifth element.
+- **`do-while`**, in *Control Flow*. The loop that runs its body once before it checks the
+  condition. JavaScript has it, so the card's own language can show it.
+- **Schema theory**, in *Learning How to Learn*. New material sticks when it attaches to
+  something already known. That is also the argument for this site's learning paths and
+  related links, and the card could say so.
+
+## 3. UML is the gap both batches named
+
+Batch one's item 4 asked for UML sequence diagrams, data flow diagrams and class and
+inheritance design. *Knowledge integration* §2 recorded UML as *absent as content: an
+expansion is not a card*. This batch asks for class diagrams, object diagrams, the
+composition diamond and association lines. **Two separate batches of notes asking for the
+same missing thing is the strongest evidence this file has for a card.** It is stronger
+than any single zero, because the reader-question census only ever counts one asker at a
+time.
+
+The rubric still decides what the card says. A notation reference is a definition. The
+question somebody actually has is *which diagram do I draw, and when is one worth drawing
+at all?* The site already has the hook: `script` *Object-Oriented Programming — Classes,
+Objects & the 4 Pillars* never mentions composition. *Composition over inheritance* is the
+design judgement that makes the solid-versus-hollow diamond matter. **Destination: `eng`**,
+per batch one's §1 correction. It should be one topic covering class, sequence and object
+diagrams, not three. Before writing, run `near_duplicates.py --title` against `eng`
+*Schema & Data Modeling Patterns* and `data` *ER Modeling*. An ER diagram and a class
+diagram overlap enough that readers will ask which one to draw.
+
+## 4. Two more candidates the dialect raises, and why neither is decided here
+
+- **SQL Server in `data`.** Postgres, MySQL and SQLite have topics and SQL Server has none.
+  Yet SQL Server holds MECM's site database in `endpoint`, it is under Azure SQL in `cloud`,
+  and it is the dialect of every T-SQL row in §2. That argument comes from the site's own
+  dependencies, not from the notes. The case against: a product card is the shape the rubric
+  distrusts most, and the T-SQL rows in §2 might carry the dialect without one.
+  **Condition: write it if the §2 rows cannot be written without each one saying "in SQL
+  Server". At that point the dialect is the topic.** Temp tables (`#` for local, `##` for
+  global), bracket sets in `LIKE` and `_BIN` collations would go on that card and nowhere
+  else.
+- **Java the language in `script`.** The Java card answers *should this service run on the
+  JVM?* The notes ask *why won't this compile?* The beginner track answers that question in
+  JavaScript and Python, not Java, and a first-course Java card would be a second beginner track
+  squeezed into one card. §5 is the argument for it anyway. The notes' most confident Java
+  claims are the ones that are wrong, and a card on *what the course states too strongly*
+  answers a question a student really has. **Not decided. Zero cards is an allowed answer.**
+
+## 5. Claims in the notes that should not reach a card as written
+
+Every claim was checked against the language or engine's documentation, or against a
+counterexample. Most are right. The ones below are wrong, or right in only one dialect.
+Several read like quiz answers, where the wording that earns the mark is stronger than the
+fact:
+
+| Note says | Actually | Where it would land |
+|---|---|---|
+| *SET statements do not allow for subqueries* | `UPDATE t SET c = (SELECT …)` is standard SQL, and T-SQL's `SET @v = (SELECT …)` works | `data` *Subqueries* |
+| `^[S](haw\|ea)[n]` matches names *ending* with n | There is no `$`, so it also matches *Shawna* and *Seanna*. The pattern the note means is `^S(haw\|ea)n$`, and the brackets around single letters do nothing | `script` regex |
+| *The standard SQL `LIKE` operator pairs with … bracketed character sets* | Standard `LIKE` has only `%` and `_`. Brackets are T-SQL (and Access). In Postgres and MySQL, `LIKE '%[7]%'` looks for a literal bracket | `data` |
+| BLOB: *standard database management systems supporting maximum capacities up to 4 gigabytes* | 4 GB is MySQL's `LONGBLOB`. SQL Server's `varbinary(max)` is 2 GB, Postgres's `bytea` is 1 GB, and Oracle's `BLOB` runs to terabytes | `data` |
+| A 10 × 5 array of 4-byte elements *allocates 200 bytes* | True in C. In Java, `int[10][5]` is eleven objects: one array of ten references and ten `int[5]` rows, each with its own header. The total is more than twice 200 | `script` Java |
+| `int` *is required for switch statements* | Java can switch on `byte`, `short`, `char`, `int`, their wrappers, `String`, enums, and, since Java 21, patterns. It cannot switch on `long` | `script` Java |
+| *A standard for loop requires three distinct components* | All three are optional. `for (;;)` is the idiomatic infinite loop | `script` *Control Flow* |
+| *A Java source file must exactly match the name of the class it contains* | Only a **public** top-level class has to match. One file can hold several non-public classes | `script` Java |
+| `char` *allocates 16 bits … which allows Java to natively support Unicode* | A `char` is one UTF-16 code unit. Characters outside the Basic Multilingual Plane, including most emoji, take two, so `"😀".length()` is 2 | `script` Java, beside *Encoding — Bytes, Text, and Why "It Works on My Machine"* |
+| Selection sort *requires zero additional or auxiliary memory* | It needs O(1) extra memory, not zero: a temporary for the swap and two indices | `cs` |
+| *Sorted lists provide the highest searching efficiency* | Only among lists. A hash table averages O(1), and `cs` *Hash Tables* covers it | `cs` |
+| Merge sort's best case *remains tightly bound at θ(n log n)* | True of the textbook top-down merge sort. Timsort is a merge sort, and Java's sort for objects, and it is O(n) on already-sorted input. That is the thesis of `cs` *Sorting & Searching* | `cs` |
+
+In two places the site is ahead of the notes, which is the reverse direction batch one's
+item 7 opened:
+
+- **`UNIQUE`.** The note says adding the constraint fails if duplicates exist. The site's
+  *A UNIQUE Index Does Not Stop Duplicate NULLs* adds that Postgres allows any number of
+  NULLs and SQL Server allows one. That is the half that bites in SQL Server, which is the
+  note's own dialect.
+- **Binary search.** The note says it halves the search space. The site's card says the
+  classic `mid = (lo + hi) / 2` overflows in Java, which is the note's other language.
+
+## 6. Before any of this is written
+
+1. **First, fix the regex examples that the spelling sweep broke, because they are wrong
+   now.** Checking the note's quantifier examples against `script` turned up two cards whose
+   optional-quantifier example reads `colou?r → "color" or "color"`:
+   `data/script.01-references.html:133`, and `data/script.03-python.html:1365` with a comma
+   instead of *or*. The whole point of the pattern is the second spelling. Commit `656c1de`,
+   the American-spelling sweep, rewrote *colour* wherever it counted as prose. In the first
+   card nothing was in `<code>`, and in the second only the pattern was. The third copy, in
+   `script.04`, survived because its whole table is a `<pre>`, which the checker skips. The
+   fix is `<code>` around the whole example, not an `ALLOW` entry. The allow list is for
+   names like *Fibre Channel*, and this is a quoted example of the very rule the checker
+   enforces. Add a `check_spelling.py --self-test` fixture so the next sweep cannot do it
+   again. **This is a correctness fix, and it does not depend on anything else in this
+   section.**
+2. **Put the zeros into `query_probe.mjs` before fixing anything.** Add a reader, *a student
+   on a SQL Server and Java course*, with the zero queries from §1: `clustered index`,
+   `datediff`, `sp_executesql`, `pivot unpivot`, `uml class diagram`,
+   `composition vs aggregation`, `markov decision process`, `smote`, `widening conversion`,
+   `sql like wildcard`, `case sensitive collation`, `schema theory`. The probe for this
+   section ran from a scratch copy of the census loop, and scratch files are how queries
+   went missing before.
+3. **§5 is a gate on the notes, not a list of cards.** None of its rows is a card. They are
+   claims that must not be copied across. The three that are also gaps in the site (`LIKE`
+   brackets, `DATEDIFF`, Java's `char`) go in as the *caveat* in their row, not as the
+   note's sentence.
+4. **The notes are the source, and §5 corrects them.** §7 keeps their wording unchanged.
+   Whether to correct them is up to the person who owns them. That is the same outward
+   direction as batch one's item 7.
+
+## 7. The knowledge, by subject
+
+This is the knowledge from the notes, grouped by subject. The dates and titles the notes
+arrived with are left out, because the knowledge is what goes on the site. The Java part
+arrived with its Markdown escaped (`\*\*`, `\$`), and that is repaired. No bullet's wording
+has changed.
+
+<details>
+<summary>Databases, SQL, regex, pandas, AI and Java</summary>
+
+### Databases, SQL and regex
+
+#### Database fundamentals, security and UML
+
+* **Database Fundamentals & Modeling**
+  * A field is the foundational building block of a database table, representing a single piece of data or attribute.
+  * Tables can be sorted by different fields to arrange and view records in specific sequences.
+  * Data models and abstract data models are conceptual tools that simplify ideas, define specific subjects, and represent data and its underlying relationships.
+  * Typical database documentation maintains static information like structural layouts, data dictionaries, security matrices, and operational schedules, rather than dynamic metrics like exact record counts or table sizes.
+  * In a distributed database, data is intended to be shared and accessed by authorized users across multiple connected network sites, not restricted solely to a local site.
+  * Database transactions adhere strictly to the ACID model properties: Atomicity, Consistency, Isolation, and Durability.
+* **Database Security**
+  * Information classification defines and categorizes the specific types of data that must be secured under a database security policy.
+  * Hackers and SQL injection attacks are direct malicious threats to the integrity of database systems.
+* **UML & Object-Oriented Principles**
+  * An object diagram captures a specific snapshot of instances, their values, and their relationships at a discrete point in time.
+  * The bottom compartment of a UML class diagram box contains methods or operations (executable functions), which are generally denoted by parentheses.
+  * A solid diamond in a UML class diagram represents a composition relationship, indicating a strong whole-part connection where parts are strictly dependent on the parent object's lifecycle.
+  * Persistence denotes an object's lifetime, describing its ability to retain its state and exist beyond the execution period of the process that created it.
+* **Cognitive Theory**
+  * Schema theory proposes that human knowledge is structured and stored in memory as cognitive frameworks or units (schemata) that organize, interpret, and process information.
+
+#### Database tools, formats and SQL facts
+
+* **Microsoft Access:** The first version of the software (Access 1.0) was officially released in November 1992\.
+* **SQL\*Plus Commands:** The instruction set serveroutput ON is an environment setting for the SQL\*Plus client tool used to display PL/SQL block output; it is not a native SQL or PL/SQL command.
+* **MS SQL Server Components:** The platform includes the core Database Engine for storage, Reporting Services (SSRS) for report management, and Full-Text Search for advanced character data querying.
+* **Relational Database Design:** Establishing inter-relationships between records links disparate data points, enabling complex queries that retrieve contextualized and relevant information tailored to specific tasks.
+* **Database Reporting Tools:** Applications such as Tableau, Crystal Reports, and Alteryx connect to existing data sources to extract, analyze, and visualize information, rather than acting as raw data storage.
+* **XML Structure:** Elements are the structural components defined by tags (e.g., \<color\>, \<brand\>) and are distinct from the actual data values they contain. These markup tags are enclosed within less-than (\<) and greater-than (\>) angle brackets.
+* **JSON Schemas:** A schema serves as a foundational blueprint, providing a standardized method to dictate and validate the expected data format, required fields, and structural hierarchy within a JSON payload.
+* **Data Query Language (DQL):** DQL is a subset of SQL focused exclusively on data retrieval, distinguished by consisting primarily of the single SELECT statement.
+* **SQL Data Types:** The REAL data type is a floating-point format that provides 7 digits of precision.
+* **Dynamic SQL:** This technique involves declaring string and integer variables to construct a SQL query dynamically at runtime, which is then executed using commands like EXEC.
+* **Bibliographic Databases:** Systems like ERIC utilize a controlled vocabulary—an indexed list of standardized, specialized terminology—to ensure accurate and consistent subject retrieval.
+* **UML Diagrams:** An association represents a general relationship between classes and is visually depicted as a simple connecting line.
+* **Relational Keys:** A foreign key is a column in a database table that references the primary key of another table (e.g., an Artist table containing a genreID to link to a Genre table).
+
+#### SQL data types, DDL, joins and indexes
+
+* **BLOB Capacity:** A Binary Large Object (BLOB) stores large binary data objects, with standard database management systems supporting maximum capacities up to 4 gigabytes.
+* **Boolean Data Type:** A Boolean data type is a primitive programming and database type designed to store binary logic values representing true or false.
+* **Table Definition Syntax:** In SQL table definitions, the column name comes first, followed by the data type and optional constraints. A comma is required at the end of the line if it is not the last column in the sequence.
+* **Dropping Columns:** The ALTER TABLE statement combined with the DROP COLUMN clause is standard SQL used to delete an existing column and its data from a table.
+* **Date Differences:** The DATEDIFF function calculates the difference between two date values, making it ideal for determining elapsed days for events like billing cycles.
+* **Right Outer Joins:** A right outer join returns all records from the right table and only the matched records from the left table, guaranteeing the inclusion of right-table records regardless of matches.
+* **Subquery Placement:** Subqueries are valid and commonly used within SELECT, FROM, and WHERE clauses. SET statements do not allow for subqueries.
+* **Index Categories:** Clustered and non-clustered indexes are the two primary structural categories used in relational databases to organize and accelerate data retrieval.
+* **Temporary Tables:** Temporary tables store transient session data and are meant to be dropped or cleared regularly. In systems like SQL Server, they are prefixed with a hash symbol (e.g., `#table_name`) and are removed using the standard DROP TABLE command including that prefix.
+* **DELETE Statements:** Omitting the WHERE clause in a DELETE statement removes every single record from the target table because there is no condition to filter the rows.
+* **SQL Purpose:** SQL is a comprehensive language used to store, retrieve, and search or query information within relational database management systems.
+* **UNIQUE Constraints:** Adding a UNIQUE constraint to an existing table requires all current rows to have unique values in that column. If duplicates already exist, the database cannot enforce the constraint and the statement will fail.
+
+#### SQL Subqueries & Data Manipulation
+
+* Subqueries can be integrated directly into Data Manipulation Language (DML) statements (`INSERT`, `UPDATE`, `DELETE`) instead of standard `SELECT` retrieval queries.
+* An `INSERT` subquery selects a specific subset of rows from a source table and adds them into a destination table.
+* The `CREATE TABLE AS SELECT` (CTAS) statement creates a new table and populates it using the filtered results of a query from an original table.
+* Multi-table inserts allow a single source query to distribute rows across multiple target tables simultaneously, which eliminates repetitive queries and reduces redundant code.
+* In Oracle, the conditional `INSERT ALL` statement routes and inserts rows into multiple separate target tables based on specified logical criteria.
+* If a database system lacks native multi-table insert support, the behavior can be simulated using database triggers or stored procedures/functions.
+
+#### SQL Set Operations
+
+* Standard SQL set operators include `UNION`, `INTERSECT`, and `EXCEPT` (or `MINUS`).
+* The `UNION` operator combines result sets from multiple queries vertically into a single dataset (analogous to adding names to the bottom of a list), whereas a `JOIN` combines columns horizontally.
+* A `UNION` command combines `SELECT` statements and supports standard clauses like `WHERE`.
+* The `EXCEPT` operator isolates data by returning only the rows from the first query that are not present in the second query's results.
+
+#### SQL Grouping & Data Pivoting
+
+* `ROLLUP`, `CUBE`, and `GROUPING SETS` are extensions used exclusively with the `GROUP BY` clause (not `ORDER BY`) to generate aggregate subtotals and grand totals.
+* `ROLLUP` specifically generates hierarchical subtotals for the specified groupings along with a grand total row where all grouped columns evaluate to `NULL`.
+* The `PIVOT` operator rotates data by converting unique values from rows into separate columns in the output table.
+* Because the `PIVOT` operator typically aggregates data and collapses granular records, executing `UNPIVOT` cannot fully reverse the transformation and restores only a portion of the original information.
+
+#### Regular Expressions (Regex) & Pattern Matching
+
+* Regular expressions are specialized patterns used to search, match, and manipulate text data; they cannot evaluate, compute, or validate mathematical equation answers.
+* A single period (`.`) acts as a wildcard representing any single character.
+* Quantifiers dictate repetition: `{2,3}` requires the preceding character to appear two to three consecutive times; `{5,}` requires five or more occurrences; `{2}` requires exactly two.
+* Grouping combined with a quantifier, such as `(Ma){2}`, matches the exact consecutive repetition of a substring sequence (e.g., "MaMa").
+* Anchors and alternations like `^[S](haw|ea)[n]` filter for records starting (`^`) with 'S', followed by either "haw" or "ea" (`|`), and ending with 'n'.
+* Character ranges like `[0-9]` match any single digit and can be integrated with exact strings to form strict patterns (e.g., `91[0-9]4`).
+* The standard SQL `LIKE` operator pairs with wildcards (`%`) and bracketed character sets/ranges (e.g., `%[7][8][9]%` or `%[P][A-Z][T]%`) to find specific consecutive sequences anywhere within a string.
+* The `NOT LIKE` operator explicitly excludes records containing a specified substring sequence.
+* Case sensitivity in SQL pattern matching can be strictly enforced by applying a binary collation (e.g., `COLLATE Latin1_General_BIN`) to the query.
+
+### Python, pandas and AI
+
+* **Python & Pandas for Data Science**
+  * **Pandas** is the standard Python library for 2D tabular data manipulation, operating fundamentally on the DataFrame structure.
+  * The **`describe()`** method calculates key descriptive statistics (count, mean, standard deviation, min, max, quartiles) for a rapid numerical overview of dataset distributions.
+  * The **`dropna()`** method filters datasets by removing any rows or columns containing null values.
+  * Python functions are declared using the **`def`** keyword, and the **`**`** operator executes exponentiation.
+* **Machine Learning & Artificial Intelligence**
+  * **Artificial Intelligence** is a core branch of computer science focused on algorithms and systems that perform tasks requiring human intelligence.
+  * **Reinforcement Learning** relies on agents learning optimal decision-making by interacting with an environment and receiving feedback via rewards or penalties.
+  * A **Markov Decision Process (MDP)** requires four essential elements: states, a transition model, available actions, and a reward function.
+  * **NLP Embeddings** map discrete text tokens into continuous dense vectors to capture semantic meaning and relationships.
+  * **Confidence Scoring** allows individual AI subsystems to communicate uncertainty, enabling integrated systems to safely navigate ambiguous scenarios by weighing inputs appropriately.
+  * **Fraud Detection Models** effectively minimize false positives while catching complex patterns by combining feature engineering, addressing class imbalance (e.g., using SMOTE), and deploying hybrid architectures like gradient boosting paired with autoencoders.
+* **Robotics, Infrastructure & Economics**
+  * **Robotics vs. AI:** Robotics is the physical machinery, while AI provides the cognitive software; AI integration shifts robot programming from rigid, line-by-line manual scripting to data-driven adaptability and learning from demonstration.
+  * **Power Usage Effectiveness (PUE)** is the standard metric for data center energy efficiency, calculated as the ratio of total facility energy consumption to the energy used strictly by computing equipment.
+  * **Technological Unemployment** is a primary economic concern as advanced AI and automation algorithms displace human workers across various sectors.
+
+### Java, algorithms and programming fundamentals
+
+#### Java operators, types and complexity
+
+* **Operators & Syntax:**
+  * The forward slash (`/`) is used for division, while the percent sign (`%`) is the modulo operator used to calculate the remainder of a division operation.
+  * A single equal sign (`=`) is an assignment operator; a double equal sign (`==`) is required to evaluate equality within conditional boolean expressions (e.g., `if` statements).
+  * Valid Java identifiers cannot contain spaces or reserved keywords. A string like `ifElse` compiles successfully as a name, even though it bypasses the all-caps convention for constants.
+  * Utilizing external APIs, such as the `File` class from `java.io`, requires an explicit import statement to prevent the compiler from throwing a "cannot find symbol" error.
+
+* **Data Types & Memory Allocation:**
+  * `boolean` is a built-in primitive data type in Java, strictly holding true or false values.
+  * The `char` primitive allocates 16 bits of memory, which allows Java to natively support Unicode character encoding.
+  * Java implicitly handles widening conversions, automatically safely promoting smaller primitive types (like `short`) into larger ones (like `int`) without manual casting.
+  * The total memory allocation for a multi-dimensional array is the product of its dimensions and the byte size of its data type (e.g., a $10 \times 5$ array of 4-byte elements allocates $10 \times 5 \times 4 = 200$ bytes).
+  * The Java `Random` class generates pseudorandom numbers, meaning it relies on a deterministic mathematical algorithm rather than true environmental randomness.
+
+* **Algorithms & Time Complexity:**
+  * **Binary Search:** Initiates by isolating the middle element of a strictly sorted array to recursively eliminate half the search space, yielding an optimal time complexity of $O(\log n)$.
+  * **Selection Sort:** Operates strictly in-place, meaning it swaps elements within the original array boundaries and requires zero additional or auxiliary memory.
+  * **Merge Sort:** Because its recursive divide-and-conquer logic executes identically regardless of initial element arrangement, its best-case (and average/worst-case) time complexity remains tightly bound at $\theta(n \log n)$.
+  * **Linear Iteration:** When sequentially executing two unnested loops of independent sizes ($M$ and $N$), the time complexity scales additively to $O(M+N)$.
+
+#### Java Object-Oriented Programming & Classes
+
+* A Java class implements an interface by matching the interface name and providing the required method implementations.
+* Classes use the implements keyword to incorporate an interface.
+* Declaring a class as final prevents other classes from creating subclasses from it.
+* To instantiate a new class object in Java, declare the type, variable name, and assign it using the new keyword and constructor.
+* The main method uses String\[\] args to accept and process command-line arguments.
+
+#### Data Structures & Algorithms
+
+* Sorted lists provide the highest searching efficiency by enabling binary search algorithms ($O(\log n)$).
+* The addLast() method appends a new element specifically to the tail of a LinkedList.
+* The poll method in the Queue interface retrieves and removes the front element.
+* A double-ended queue (deque) allows insertion and removal at both ends, operating as either a queue or a stack.
+* A graph loop is defined as an edge that originates and terminates at the same vertex.
+* Dijkstra's algorithm is used to find the shortest path between two vertices on a weighted graph.
+* Recursive search methods require a proper base case or exit point to prevent infinite recursion.
+* A browser history serves as a real-world example of a doubly-linked list due to bidirectional traversal.
+* A Map functions as an associative array by storing data in key-value pairs.
+* A two-dimensional array can be conceptualized as a matrix of rows and columns.
+
+#### Java Syntax, Arrays & Control Flow
+
+* The fillOval graphics method fills an elliptical shape with the current color using specified bounds.
+* The \!= operator checks if two variables are not equal.
+* Layout managers like GridLayout are applied directly to a container using setLayout().
+* The Java Random class uses a pseudorandom number generator algorithm.
+* Java arrays use zero-based indexing, meaning the fifth element is accessed at index 4\.
+* The LinkedList class can be used to instantiate a Deque.
+* A standard array iteration loop starts at index 0 and iterates while less than myArray.length.
+* The long primitive data type is appropriate for storing extremely large integer values.
+* Placing one while loop inside the body of another creates a nested loop structure.
+
+#### Programming fundamentals in Java
+
+* **Programming Fundamentals & SDLC**
+  * A computer program is a set of step-by-step instructions designed to complete a specific task or solve a problem.
+  * Programming encompasses describing a problem in code and giving the computer specific instructions to solve it.
+  * After writing code, the immediate next phase in the software development lifecycle is testing and debugging.
+* **Java Syntax & Structure**
+  * Java is strictly case-sensitive (e.g., keywords like public must be lowercase), and string literals require double quotes (") rather than single quotes (').
+  * A Java source file must exactly match the name of the class it contains (e.g., class WelcomeWorld compiles via javac WelcomeWorld.java).
+  * Standard Java naming conventions dictate that method names use camelCase and start with a lowercase letter (e.g., updateRates).
+  * Strings are immutable in Java; methods like .toUpperCase() return a newly created string rather than modifying the original variable.
+* **Data Types & Variables**
+  * The long data type is used for large 64-bit integers (e.g., numbers in the billions) to prevent calculation overflow.
+  * The int data type stores standard whole numbers without decimals, and is required for switch statements that evaluate integer cases.
+  * The char data type represents characters based on their underlying integer ASCII/Unicode values (e.g., 65 maps to the uppercase letter 'A').
+* **Control Flow & Loops**
+  * An if statement block is skipped entirely if its controlling condition evaluates to false.
+  * A while loop executes its code block continuously as long as its condition remains true.
+  * A do-while loop evaluates its condition at the very end of the statement, guaranteeing that the code block executes at least one time.
+  * A standard for loop requires three distinct components enclosed in parentheses and separated by semicolons: initialization, boolean condition, and an increment/decrement step (e.g., for(i=0; i\<10; i++)).
+  * Infinite loops occur when a condition never evaluates to false. This typically happens if the control variable is missing an update step inside the loop or is incremented/decremented in the wrong direction.
+* **Object-Oriented Programming & Built-in Classes**
+  * Methods define the behaviors and specific actions that an object can perform when invoked.
+  * The Java Random class uses a deterministic algorithm to generate sequences, meaning it produces *pseudorandom* numbers rather than truly random ones.
+  * An operator is a specific symbol that represents a mathematical, logical, or relational operation and instructs the compiler to execute that action.
+
+</details>
 
 
 # Domain shape — the connectivity measurement, and what it says
