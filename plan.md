@@ -28,7 +28,7 @@ What is left here is what a session actually reads.
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked | 📥 **queue** |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap | 📥 **queue** |
-| **Study notes, batch two** | Seven study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | 📥 **queue** |
+| **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | 📥 **queue** |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -876,17 +876,17 @@ against the STP card before anything is written.
    allowed to be one.
 
 
-# Study notes, batch two — seven notes written in another dialect
+# Study notes, batch two — database, SQL and Java knowledge written in another dialect
 
-> Source: seven study notes summarized 23–28 September 2026, filed under the same name as
+> Source: study notes on databases, SQL, regex, pandas and Java, filed under the same name as
 > the batch in *Knowledge integration* above (*Add to Garrett's study website.md*). That
-> batch arrived as a plan with destinations. **This one arrives as the notes themselves**, so
+> batch arrived as a plan with destinations. **This one arrives as the knowledge itself**, so
 > the source names no destinations: every destination below is a lookup in
 > `data/domains.json`, and every "on the site" is a grep over `data/*.html` with
 > `acronym.html` excluded. Every zero is a search of the built page: `runSearch()` driven in
 > Chromium the way `query_probe.mjs` does it, over 57 queries taken from the notes' own
-> words. Filed as **a queue, not a record**, because nothing has shipped. The notes are kept
-> in §7 with only their formatting repaired.
+> words. Filed as **a queue, not a record**, because nothing has shipped. The knowledge is kept
+> in §7, grouped by subject.
 
 **The notes use one dialect and the site uses another.** The notes were written against
 SQL Server, Oracle and Java. The site is written against Postgres and Python:
@@ -912,17 +912,17 @@ Server.** Meanwhile `endpoint` describes MECM, which keeps its site database in
 SQL Server and reports through SSRS. The site already depends on the one engine its data
 domain never describes.
 
-## 1. The seven notes, and where each lands
+## 1. The knowledge by subject, and where each part lands
 
-| # | Note, and date | Lands in | On the site today | What that makes it |
+| # | Subject | Lands in | On the site today | What that makes it |
 |---|---|---|---|---|
-| 1 | *Database Management System Functions* (09/23): fields, data models, documentation, distributed databases, ACID, information classification, SQL injection, UML object and class diagrams, the composition diamond, persistence, schema theory | `data` · `grc` · `sec` · `eng` · `productivity` | ACID is a `data` topic. Information classification has 13 mentions, 10 of them in `grc` and `sec`. SQL injection has 21, and its home card is `sec` *The Injection Family*. **UML: 0, site-wide.** Schema theory: **0**, and *Learning How to Learn* has 0 each for *schema*, *prior knowledge* and *chunk* | **Written**, except UML and schema theory. UML has now been asked for by **both** batches, see §3 |
-| 2 | *Microsoft Access 1.0 Release Date* (09/23): Access, SQL\*Plus, SQL Server components, reporting tools, XML, JSON Schema, DQL, `REAL`, dynamic SQL, ERIC, UML association, foreign keys | `data`, and dynamic SQL goes to `sec` | Foreign keys are in `data` *The Relational Model*, JSON Schema in `ai` *Structured Output*, and DQL in `script` *SQL Query Reference*. Access, SQL\*Plus, PL/SQL, Tableau, Crystal Reports, Alteryx, ERIC, *controlled vocabulary* and `sp_executesql`: **0 each** | **Mostly product trivia.** Dynamic SQL is the exception, because it is the injection sink. The site shows that sink in Python and never in T-SQL, §2 |
-| 3 | *Understanding Database First Normal Form* (09/25): BLOB, Boolean, column syntax, `DROP COLUMN`, `DATEDIFF`, right joins, where subqueries go, clustered indexes, temp tables, `DELETE` without `WHERE`, `UNIQUE` | `data` | 1NF is in *Normalization*, and right outer joins in *SQL Joins — Every Type, and the NULL Traps*. `UNIQUE` on existing rows is in *Indexes Explained*, which also has the sharper half the note misses, *A UNIQUE Index Does Not Stop Duplicate NULLs*. `DELETE` without `WHERE` is named in the first sentence of *Backups & Point-in-Time Recovery*. Clustered index: **0**. `DATEDIFF`: **0**. Temp tables: 1 mention, a connection-pooling caveat. BLOB: 12 mentions, 7 of them in `cloud` meaning Azure Blob Storage | **Written for the portable half, absent for the T-SQL half.** The clustered index is the one that matters, §2 |
-| 4 | *Understanding SQL Subqueries in DML* (09/25): `INSERT … SELECT`, CTAS, Oracle `INSERT ALL`, set operators, `ROLLUP`/`CUBE`/`GROUPING SETS`, `PIVOT`/`UNPIVOT`, regex quantifiers and anchors, `LIKE` with bracket sets, binary collation | `data` · `script` | The set operators, `MINUS` included, are in *Subqueries, EXISTS & Set Operations* along with the NULL trap. `ROLLUP`/`CUBE`/`GROUPING SETS` is a row in *Aggregation*. Regex quantifiers, anchors, alternation and classes are in `script` *Regular Expressions (Regex)*. The subqueries card has **0** `INSERT` and **0** `UPDATE`. `PIVOT` has 2 case-sensitive hits, both in `pentest`, where pivoting means moving between hosts. `UNPIVOT`: **0** | **Written for the query half, absent for the DML half.** It needs one example in the subqueries card and one row in the aggregation card |
-| 5 | *Pandas Summary Statistics Function* (09/25): `describe()`, `dropna()`, `def`, `**`, AI, reinforcement learning, MDPs, embeddings, confidence scoring, fraud detection and SMOTE, robotics, PUE, technological unemployment | `script` · `ai` · `ops` | `describe()` is in `script` *Data Analysis with pandas*. `dropna` appears once, in an `ai` card, not in the pandas one. RL: 4 mentions in `ai`. Embeddings: 37 mentions, 20 in `ai`. PUE is in `ops` *Green IT*, in a table that says what each metric leaves out. MDP, SMOTE, *technological unemployment* and *learning from demonstration*: **0 each** | **Written**, apart from two sentences in `ai` and one in the pandas card, §2 |
-| 6 | *Java Case Sensitivity Compilation Error* (09/26): operators, identifiers, imports, primitives, widening, array memory, `Random`, binary search, selection and merge sort, O(M+N), interfaces, `final`, `String[] args`, `LinkedList`/`Deque`/`Queue`, graph loops, Dijkstra, base cases, Swing, zero-based indexing | `script` for Java, `cs` for the algorithms | Binary search, merge sort, Dijkstra and O(M+N) are in `cs`. Deque is in `script` *Choosing the Right Data Structure*. The `script` Java card has **0** each for *primitive*, `char`, `switch`, `final`, `import`, `javac` and *Unicode*, because it is about JIT warm-up and GC. Selection sort: **0**, and its one search result is an injection card | **The algorithms are written; the language is absent.** Selection sort stays with the tool, as csvistool §2 already decided |
-| 7 | *Defining a Computer Program* (09/28): SDLC, case sensitivity, file naming, camelCase, immutable strings, `long`, `int` and `switch`, `char` values, `if`/`while`/`do-while`/`for`, infinite loops, methods, `Random`, operators | `script` beginner track | *Programming from Zero*, *Control Flow*, *Variables & Data Types*, *Working with Text* and *Programming Fundamentals* cover the language-neutral half. `do-while`: **0**, site-wide. *Control Flow* is a short JavaScript card with `for` and `while` only. *SDLC* has 7 mentions, all in `grc` and `sec`, all in the security and compliance sense | **Written.** `do-while` is one row in *Control Flow* |
+| 1 | **Database fundamentals, security and UML**: fields, data models, documentation, distributed databases, ACID, information classification, SQL injection, UML object and class diagrams, the composition diamond, persistence, schema theory | `data` · `grc` · `sec` · `eng` · `productivity` | ACID is a `data` topic. Information classification has 13 mentions, 10 of them in `grc` and `sec`. SQL injection has 21, and its home card is `sec` *The Injection Family*. **UML: 0, site-wide.** Schema theory: **0**, and *Learning How to Learn* has 0 each for *schema*, *prior knowledge* and *chunk* | **Written**, except UML and schema theory. UML has now been asked for by **both** batches, see §3 |
+| 2 | **Database tools, formats and SQL facts**: Access, SQL\*Plus, SQL Server components, reporting tools, XML, JSON Schema, DQL, `REAL`, dynamic SQL, ERIC, UML association, foreign keys | `data`, and dynamic SQL goes to `sec` | Foreign keys are in `data` *The Relational Model*, JSON Schema in `ai` *Structured Output*, and DQL in `script` *SQL Query Reference*. Access, SQL\*Plus, PL/SQL, Tableau, Crystal Reports, Alteryx, ERIC, *controlled vocabulary* and `sp_executesql`: **0 each** | **Mostly product trivia.** Dynamic SQL is the exception, because it is the injection sink. The site shows that sink in Python and never in T-SQL, §2 |
+| 3 | **SQL data types, DDL, joins and indexes**: BLOB, Boolean, column syntax, `DROP COLUMN`, `DATEDIFF`, right joins, where subqueries go, clustered indexes, temp tables, `DELETE` without `WHERE`, `UNIQUE` | `data` | 1NF is in *Normalization*, and right outer joins in *SQL Joins — Every Type, and the NULL Traps*. `UNIQUE` on existing rows is in *Indexes Explained*, which also has the sharper half the note misses, *A UNIQUE Index Does Not Stop Duplicate NULLs*. `DELETE` without `WHERE` is named in the first sentence of *Backups & Point-in-Time Recovery*. Clustered index: **0**. `DATEDIFF`: **0**. Temp tables: 1 mention, a connection-pooling caveat. BLOB: 12 mentions, 7 of them in `cloud` meaning Azure Blob Storage | **Written for the portable half, absent for the T-SQL half.** The clustered index is the one that matters, §2 |
+| 4 | **SQL writes, set operations, pivoting and regex**: `INSERT … SELECT`, CTAS, Oracle `INSERT ALL`, set operators, `ROLLUP`/`CUBE`/`GROUPING SETS`, `PIVOT`/`UNPIVOT`, regex quantifiers and anchors, `LIKE` with bracket sets, binary collation | `data` · `script` | The set operators, `MINUS` included, are in *Subqueries, EXISTS & Set Operations* along with the NULL trap. `ROLLUP`/`CUBE`/`GROUPING SETS` is a row in *Aggregation*. Regex quantifiers, anchors, alternation and classes are in `script` *Regular Expressions (Regex)*. The subqueries card has **0** `INSERT` and **0** `UPDATE`. `PIVOT` has 2 case-sensitive hits, both in `pentest`, where pivoting means moving between hosts. `UNPIVOT`: **0** | **Written for the query half, absent for the DML half.** It needs one example in the subqueries card and one row in the aggregation card |
+| 5 | **Python, pandas and AI**: `describe()`, `dropna()`, `def`, `**`, AI, reinforcement learning, MDPs, embeddings, confidence scoring, fraud detection and SMOTE, robotics, PUE, technological unemployment | `script` · `ai` · `ops` | `describe()` is in `script` *Data Analysis with pandas*. `dropna` appears once, in an `ai` card, not in the pandas one. RL: 4 mentions in `ai`. Embeddings: 37 mentions, 20 in `ai`. PUE is in `ops` *Green IT*, in a table that says what each metric leaves out. MDP, SMOTE, *technological unemployment* and *learning from demonstration*: **0 each** | **Written**, apart from two sentences in `ai` and one in the pandas card, §2 |
+| 6 | **Java operators, types, algorithms and classes**: operators, identifiers, imports, primitives, widening, array memory, `Random`, binary search, selection and merge sort, O(M+N), interfaces, `final`, `String[] args`, `LinkedList`/`Deque`/`Queue`, graph loops, Dijkstra, base cases, Swing, zero-based indexing | `script` for Java, `cs` for the algorithms | Binary search, merge sort, Dijkstra and O(M+N) are in `cs`. Deque is in `script` *Choosing the Right Data Structure*. The `script` Java card has **0** each for *primitive*, `char`, `switch`, `final`, `import`, `javac` and *Unicode*, because it is about JIT warm-up and GC. Selection sort: **0**, and its one search result is an injection card | **The algorithms are written; the language is absent.** Selection sort stays with the tool, as csvistool §2 already decided |
+| 7 | **Programming fundamentals in Java**: SDLC, case sensitivity, file naming, camelCase, immutable strings, `long`, `int` and `switch`, `char` values, `if`/`while`/`do-while`/`for`, infinite loops, methods, `Random`, operators | `script` beginner track | *Programming from Zero*, *Control Flow*, *Variables & Data Types*, *Working with Text* and *Programming Fundamentals* cover the language-neutral half. `do-while`: **0**, site-wide. *Control Flow* is a short JavaScript card with `for` and `while` only. *SDLC* has 7 mentions, all in `grc` and `sec`, all in the security and compliance sense | **Written.** `do-while` is one row in *Control Flow* |
 
 ## 2. What is worth writing, counted by what each item needs
 
@@ -1071,23 +1071,23 @@ item 7 opened:
    claims that must not be copied across. The three that are also gaps in the site (`LIKE`
    brackets, `DATEDIFF`, Java's `char`) go in as the *caveat* in their row, not as the
    note's sentence.
-4. **The notes are the source, and §5 corrects them.** §7 keeps them exactly as received.
+4. **The notes are the source, and §5 corrects them.** §7 keeps their wording unchanged.
    Whether to correct them is up to the person who owns them. That is the same outward
    direction as batch one's item 7.
 
-## 7. The notes, as received
+## 7. The knowledge, by subject
 
-Only the formatting has been repaired. The Java note arrived with its Markdown escaped
-(`\*\*`, `\$`), so its bold, code and maths did not render. Its sub-headings, and those of
-the SQL note, were at `##`, which would have made them sections of this file. They are
-now at `####`. No wording has changed.
+This is the knowledge from the notes, grouped by subject. The dates and titles the notes
+arrived with are left out, because the knowledge is what goes on the site. The Java part
+arrived with its Markdown escaped (`\*\*`, `\$`), and that is repaired. No bullet's wording
+has changed.
 
 <details>
-<summary>Seven notes, 23–28 September 2026</summary>
+<summary>Databases, SQL, regex, pandas, AI and Java</summary>
 
-### Database Management System Functions
+### Databases, SQL and regex
 
-Database & UML Concepts : 09/23/26 06:32
+#### Database fundamentals, security and UML
 
 * **Database Fundamentals & Modeling**
   * A field is the foundational building block of a database table, representing a single piece of data or attribute.
@@ -1107,9 +1107,7 @@ Database & UML Concepts : 09/23/26 06:32
 * **Cognitive Theory**
   * Schema theory proposes that human knowledge is structured and stored in memory as cognitive frameworks or units (schemata) that organize, interpret, and process information.
 
-### Microsoft Access 1.0 Release Date
-
-Database Study Notes Summary : 09/23/26 07:41
+#### Database tools, formats and SQL facts
 
 * **Microsoft Access:** The first version of the software (Access 1.0) was officially released in November 1992\.
 * **SQL\*Plus Commands:** The instruction set serveroutput ON is an environment setting for the SQL\*Plus client tool used to display PL/SQL block output; it is not a native SQL or PL/SQL command.
@@ -1125,9 +1123,7 @@ Database Study Notes Summary : 09/23/26 07:41
 * **UML Diagrams:** An association represents a general relationship between classes and is visually depicted as a simple connecting line.
 * **Relational Keys:** A foreign key is a column in a database table that references the primary key of another table (e.g., an Artist table containing a genreID to link to a Genre table).
 
-### Understanding Database First Normal Form
-
-Database Concepts Summary : 09/25/26 11:12
+#### SQL data types, DDL, joins and indexes
 
 * **BLOB Capacity:** A Binary Large Object (BLOB) stores large binary data objects, with standard database management systems supporting maximum capacities up to 4 gigabytes.
 * **Boolean Data Type:** A Boolean data type is a primitive programming and database type designed to store binary logic values representing true or false.
@@ -1141,10 +1137,6 @@ Database Concepts Summary : 09/25/26 11:12
 * **DELETE Statements:** Omitting the WHERE clause in a DELETE statement removes every single record from the target table because there is no condition to filter the rows.
 * **SQL Purpose:** SQL is a comprehensive language used to store, retrieve, and search or query information within relational database management systems.
 * **UNIQUE Constraints:** Adding a UNIQUE constraint to an existing table requires all current rows to have unique values in that column. If duplicates already exist, the database cannot enforce the constraint and the statement will fail.
-
-### Understanding SQL Subqueries in DML
-
-SQL & Regular Expressions : 09/25/26 11:55
 
 #### SQL Subqueries & Data Manipulation
 
@@ -1181,9 +1173,7 @@ SQL & Regular Expressions : 09/25/26 11:55
 * The `NOT LIKE` operator explicitly excludes records containing a specified substring sequence.
 * Case sensitivity in SQL pattern matching can be strictly enforced by applying a binary collation (e.g., `COLLATE Latin1_General_BIN`) to the query.
 
-### Pandas Summary Statistics Function
-
-Study Database Summary : 09/25/26 22:02
+### Python, pandas and AI
 
 * **Python & Pandas for Data Science**
   * **Pandas** is the standard Python library for 2D tabular data manipulation, operating fundamentally on the DataFrame structure.
@@ -1202,9 +1192,9 @@ Study Database Summary : 09/25/26 22:02
   * **Power Usage Effectiveness (PUE)** is the standard metric for data center energy efficiency, calculated as the ratio of total facility energy consumption to the energy used strictly by computing equipment.
   * **Technological Unemployment** is a primary economic concern as advanced AI and automation algorithms displace human workers across various sectors.
 
-### Java Case Sensitivity Compilation Error
+### Java, algorithms and programming fundamentals
 
-Java & Algorithms : 09/26/26 09:24
+#### Java operators, types and complexity
 
 * **Operators & Syntax:**
   * The forward slash (`/`) is used for division, while the percent sign (`%`) is the modulo operator used to calculate the remainder of a division operation.
@@ -1258,9 +1248,7 @@ Java & Algorithms : 09/26/26 09:24
 * The long primitive data type is appropriate for storing extremely large integer values.
 * Placing one while loop inside the body of another creates a nested loop structure.
 
-### Defining a Computer Program
-
-Java Basics Study Guide : 09/28/26 20:47
+#### Programming fundamentals in Java
 
 * **Programming Fundamentals & SDLC**
   * A computer program is a set of step-by-step instructions designed to complete a specific task or solve a problem.
