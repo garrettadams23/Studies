@@ -486,7 +486,7 @@ const READERS = [
     ["dropna", "", "script/data-analysis-with-pandas-spreadsheets-in-code"],
     ["do while loop", "", "script/control-flow-decisions-repetition"],
     ["schema theory", "", "productivity/learning-how-to-learn-build-the-skill-behind-all-skills"],
-    ["widening conversion"],
+    ["widening conversion", "", "script/java-the-enterprise-workhorse"],
     ["sql like wildcard", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
     ["case sensitive collation", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
   ]],

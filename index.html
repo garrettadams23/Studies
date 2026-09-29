@@ -48147,8 +48147,8 @@ separated by design rather than by filtering.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Regex · PowerShell · Bash · HTML · CSS · JavaScript · JSON · SQL</span>
-<span class="domain-meta" aria-label="149 topics, about 4h 55m to read"
->149 topics · ~4h 55m</span>
+<span class="domain-meta" aria-label="149 topics, about 5h 00m to read"
+>149 topics · ~5h 00m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -58689,12 +58689,12 @@ which is usually the database.
 </div>
 </div>
 </div>
-<div class="topic" id="java-the-enterprise-workhorse" data-reviewed="2026-09" data-read="4" data-level="core">
+<div class="topic" id="java-the-enterprise-workhorse" data-reviewed="2026-09" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">☕</span>
 <span class="topic-name">Java — The Enterprise Workhorse</span>
 <span class="topic-badge">Language</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -58755,6 +58755,47 @@ longer resembles the one you debug. Virtual threads (Loom) make blocking code
 scale like async code without the coloring problem, which is the biggest
 change to the language's concurrency story in twenty years — and it removes the
 main reason teams reached for a different runtime.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Silently wrong</div>
+<div class="concept-title">The Rules a First Java Course States Too Strongly</div>
+<div class="concept-desc">
+An introductory course states rules in the form that is safe to memorize, and several of
+Java's are true only most of the time. The exceptions below matter because none of them is a
+compile error: the program builds, runs, and gives an answer that is slightly wrong.
+<strong class="c-amber">"Widening is always safe" is the one that costs real money.</strong>
+<code>int</code> to <code>float</code>, and <code>long</code> to <code>float</code> or
+<code>double</code>, are widening conversions: they happen without a cast, and they can lose
+precision.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="kw">long</span> id = <span class="num">9_007_199_254_740_993L</span>;    <span class="com">// 2^53 + 1</span>
+<span class="kw">double</span> d = id;                       <span class="com">// widening: no cast, no warning</span>
+System.out.<span class="fn">println</span>((<span class="kw">long</span>) d == id);  <span class="com">// false: d is 9007199254740992.0</span>
+
+String a = <span class="str">"report"</span>;
+String b = <span class="kw">new</span> String(<span class="str">"report"</span>);
+System.out.<span class="fn">println</span>(a == b);          <span class="com">// false: two different objects</span>
+System.out.<span class="fn">println</span>(a.<span class="fn">equals</span>(b));     <span class="com">// true: the same characters</span></pre>
+<table class="ref-table">
+<thead><tr><th>The course says</th><th>What is actually true</th></tr></thead>
+<tbody>
+<tr><td>Widening conversions are automatic and safe</td><td>Automatic, yes. Safe only between integer types. A <code>float</code> holds about 7 significant digits, so <code>16777217</code> becomes <code>1.6777216E7</code> on the way in, silently</td></tr>
+<tr><td><code>==</code> tests equality</td><td>For primitives. For objects it tests identity: whether two references point at the same object. Strings need <code>.equals()</code>, and <code>==</code> works on them just often enough to pass a test</td></tr>
+<tr><td>A <code>char</code> is one character, and 16 bits covers Unicode</td><td>A <code>char</code> is one UTF-16 code unit. Characters outside the Basic Multilingual Plane, most emoji included, take two, so <code>"😀".length()</code> is 2</td></tr>
+<tr><td><code>switch</code> needs an <code>int</code></td><td>It takes <code>byte</code>, <code>short</code>, <code>char</code>, <code>int</code>, their wrappers, <code>String</code>, enums and, since Java 21, patterns. It does not take <code>long</code></td></tr>
+<tr><td>The file must be named after the class</td><td>After the <strong>public</strong> top-level class. One file can hold other classes that are not public</td></tr>
+<tr><td>A 10 &times; 5 array of <code>int</code> is 200 bytes</td><td>True in C. In Java, <code>new int[10][5]</code> is eleven objects: an array of ten references and ten separate rows, each with its own header. The rows need not even be the same length</td></tr>
+<tr><td>A <code>for</code> loop needs three parts</td><td>All three are optional. <code>for (;;)</code> is the idiomatic infinite loop</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+The first two rows are the ones that reach production, because both compile and both usually
+give the right answer. Treat any conversion into <code>float</code> or <code>double</code> as a
+rounding step, and keep money in <code>long</code> cents or <code>BigDecimal</code>. Compare
+objects with <code>.equals()</code> every time, including the times <code>==</code> happens to work.
 </div>
 </div>
 </div>
@@ -96483,7 +96524,7 @@ diagram is describing a design the program does not have.
 </div>
 </div>
 <div class="concept-card">
-<div class="concept-label">Design judgement</div>
+<div class="concept-label">Design judgment</div>
 <div class="concept-title">Composition Over Inheritance Is What the Diamond Is For</div>
 <div class="concept-desc">
 Inheritance ties a subclass to every detail of its parent, permanently. Composition ties a class
