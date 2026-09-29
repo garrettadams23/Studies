@@ -1305,6 +1305,106 @@
               </div>
             </div>
           </div>
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">📐</span>
+              <span class="topic-name">UML <span class="acro-exp">(Unified Modeling Language)</span> — Class, Object &amp; Sequence Diagrams, and the Diamond Everybody Draws Backwards</span>
+              <span class="topic-badge">Design</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">A Class Diagram Is Mostly Arrows, and the Arrows Are Claims About Lifetime</div>
+                <div class="concept-desc">
+                  A UML class box has three compartments: the name, the attributes, and the operations, which
+                  are the methods and are written with parentheses. Visibility is one character: <code>+</code>
+                  public, <code>-</code> private, <code>#</code> protected. The boxes are the easy half.
+                  <strong class="c-amber">The design is in the lines between them</strong>, and every line style
+                  is a specific claim about how two classes are bound, including one the code often cannot show.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Line</th><th>Relationship</th><th>What it claims</th><th>In code</th></tr></thead>
+                    <tbody>
+                      <tr><td>Solid line</td><td>Association</td><td>One class knows about another. The numbers at each end (<code>1</code>, <code>0..1</code>, <code>*</code>) are the multiplicity</td><td>A field or a parameter</td></tr>
+                      <tr><td>Hollow diamond, at the whole</td><td>Aggregation</td><td>Has-a, and the part can outlive the whole: a team and its players</td><td>A field holding an object made elsewhere</td></tr>
+                      <tr><td>Filled diamond, at the whole</td><td>Composition</td><td>Owns: the part is made and destroyed with the whole, and belongs to one whole at a time: an order and its line items</td><td>A field the whole creates itself and never hands out</td></tr>
+                      <tr><td>Hollow triangle, solid line, at the parent</td><td>Inheritance (generalization)</td><td>Is-a, everywhere the parent is used</td><td><code>extends</code></td></tr>
+                      <tr><td>Hollow triangle, dashed line, at the interface</td><td>Realization</td><td>Keeps the interface's promises</td><td><code>implements</code></td></tr>
+                      <tr><td>Dashed arrow</td><td>Dependency</td><td>Uses the other class briefly and keeps nothing</td><td>A parameter, a local, an import</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The diamond sits at the <strong>whole</strong>, not the part, and it is the mark most often
+                    drawn the wrong way round. The second and third rows are the ones code does not show: both are a
+                    field holding a reference, and the difference is who creates the part and whether anything else
+                    may hold it. <strong>A filled diamond is a promise the code has to keep by construction.</strong>
+                    If the part is ever passed out and kept somewhere else, it was aggregation all along, and the
+                    diagram is describing a design the program does not have.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Design judgement</div>
+                <div class="concept-title">Composition Over Inheritance Is What the Diamond Is For</div>
+                <div class="concept-desc">
+                  Inheritance ties a subclass to every detail of its parent, permanently. Composition ties a class
+                  to the interface of a part it can replace. That is the whole argument for the rule, and it is
+                  why the filled diamond appears in good designs far more often than the triangle.
+                  <strong>Inherit only when is-a is true in every context the parent is used in</strong>, which is
+                  the Liskov substitution principle, and not merely true of today's two subclasses.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Signal</th><th>What it tells you</th></tr></thead>
+                    <tbody>
+                      <tr><td>A subclass overrides a method to do nothing, or to throw</td><td>The is-a was false. The parent promised something this child cannot do: the penguin under <code>Bird.fly()</code></td></tr>
+                      <tr><td>Changing the parent breaks a child you never opened</td><td>The fragile base class. The children depend on how the parent works, not just on what it promises</td></tr>
+                      <tr><td>The hierarchy multiplies: <code>RedCircle</code>, <code>BlueCircle</code>, <code>RedSquare</code></td><td>Two independent variations are being expressed as one tree. Each belongs in a part</td></tr>
+                      <tr><td>Three or more levels deep</td><td>The behavior of one object is spread across files nobody reads together</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The first row is the reliable one: an override that throws is the hierarchy admitting it is
+                    wrong. Move the behavior that varies into a part the class holds, which is a filled diamond on
+                    the diagram and a constructor argument in the code, and the tree usually collapses to one level.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The other views</div>
+                <div class="concept-title">Object and Sequence Diagrams Show One Moment and One Conversation</div>
+                <div class="concept-desc">
+                  A class diagram shows what <em>can</em> exist. An <strong>object diagram</strong> is a snapshot of
+                  what <em>does</em> exist at one moment: named instances, underlined as <code>order42 : Order</code>,
+                  with real attribute values and the links between them. It is the diagram for explaining one bug in
+                  one state, and a cheap test of a class diagram: if a real case cannot be drawn without breaking a
+                  multiplicity, the class diagram is wrong. A <strong>sequence diagram</strong> shows one interaction
+                  over time, with a lifeline down the page for each participant and messages across it: a filled
+                  arrowhead for a call that waits, an open one for a message that does not, a dashed line for the
+                  return.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>The question</th><th>Draw</th></tr></thead>
+                    <tbody>
+                      <tr><td>What kinds of thing exist, and how are they bound?</td><td>A class diagram</td></tr>
+                      <tr><td>What did the data look like when it broke?</td><td>An object diagram</td></tr>
+                      <tr><td>Who calls whom, in what order, and who waits?</td><td>A sequence diagram</td></tr>
+                      <tr><td>What does the database store?</td><td>An ER diagram, not a class diagram. The persistent classes, the ones whose objects outlive the process that made them, are where the two meet</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Most teams need the first and third rows, sketched on a whiteboard, and that is fine: the value of
+                    UML is not the tooling but that an arrow means the same thing to everyone in the room. The second
+                    row is the one most people never draw and should, because a snapshot of the broken state settles
+                    arguments that the class diagram only frames.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔌</span>
