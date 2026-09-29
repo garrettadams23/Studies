@@ -231,6 +231,27 @@ ALLOW = ["Fibre Channel"]
 ALLOW_RE = re.compile("|".join(re.escape(a) for a in ALLOW), re.I)
 HOLD_RE = re.compile("\x00(\d+)\x00")
 
+# A British spelling with its own American form a few words away is not a
+# spelling mistake. It is a sentence *about* the two spellings, and rewriting it
+# turns a contrast into a tautology. The sweep did exactly that to two regex
+# cards: `colou?r → "color" or "colour"` became `→ "color" or "color"`, an
+# example of the optional quantifier that no longer shows what `?` is for. It
+# passed every gate afterwards, because the result was perfectly American.
+#
+# So such a pair is reported and never rewritten. There is no safe automatic
+# edit: the fix is to put the pair in `<code>`, which this file does not read,
+# and only a person can tell a contrast from a sentence that is merely
+# inconsistent. The window is one short clause wide, enough for `X or Y` and
+# `X, Y` without reaching into the next sentence.
+CONTRAST_WINDOW = 40
+
+
+def contrasts(text, m, new):
+    """True when `new`, the American form, sits within a clause of the match."""
+    lo, hi = max(0, m.start() - CONTRAST_WINDOW), m.end() + CONTRAST_WINDOW
+    near = text[lo:m.start()] + " " + text[m.end():hi]
+    return re.search(rf"\b{re.escape(new)}\b", near, re.I) is not None
+
 
 def apply_rules(text):
     """(rewritten, [(rule, found, replacement, offset)]).
@@ -250,9 +271,12 @@ def apply_rules(text):
     text = ALLOW_RE.sub(hold, text)
     found = []
     for name, rx, fn in RULES:
-        def swap(m, name=name, fn=fn):
+        def swap(m, name=name, fn=fn, text=text):
             new = fn(m)
             if not new or new == m.group(0):
+                return m.group(0)
+            if contrasts(text, m, new):
+                found.append(("contrast", m.group(0), new, m.start()))
                 return m.group(0)
             found.append((name, m.group(0), new, m.start()))
             return new
@@ -453,7 +477,24 @@ def self_test():
         bad += 1
         print(f"FAIL : a word split by a tag was read as one word — {rewrite_html(SPLIT)!r}")
 
-    print(f"check_spelling self-test: {len(F) + 5} fixtures, {bad} failure(s).")
+    # A sentence about the two spellings is reported and never rewritten. The
+    # first two are the regex cards the sweep broke, as they read before it.
+    CONTRAST = ['<td>colou?r → "color" or "colour"</td>',
+                '<td><code>colou?r</code> → "color", "colour"</td>',
+                "gray or grey", "organize (organise in British English)"]
+    for src in CONTRAST:
+        hit = [f for f in findings(prose_of(src)) if f[0] == "contrast"]
+        if rewrite_html(src) != src or not hit:
+            bad += 1
+            print(f"FAIL : a contrast between spellings was rewritten or missed — "
+                  f"{src!r} -> {rewrite_html(src)!r}")
+    # …and a window, not a paragraph: the same word a sentence away is prose.
+    FAR = "The colour is set here. " + "Nothing about spelling. " * 3 + "Pick a color."
+    if "colour" in rewrite_html(FAR):
+        bad += 1
+        print(f"FAIL : the contrast window reached into another sentence — {FAR!r}")
+
+    print(f"check_spelling self-test: {len(F) + len(CONTRAST) + 6} fixtures, {bad} failure(s).")
     return 1 if bad else 0
 
 
@@ -488,6 +529,11 @@ def main():
         return 1 if hits else 0
 
     for label, found, new, rule, ctx in hits[:400]:
+        if rule == "contrast":
+            print(f"{label}: {found} sits beside {new} — a sentence about the two spellings. "
+                  f"--fix leaves it alone; put the pair in <code>\n"
+                  f"    …{' '.join(ctx.split())}…")
+            continue
         print(f"{label}: {found} -> {new}  [{rule}]\n    …{' '.join(ctx.split())}…")
     if len(hits) > 400:
         print(f"\n… and {len(hits) - 400:,} more. Run --census for the distinct words.")

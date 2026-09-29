@@ -360,7 +360,8 @@ const READERS = [
      "threat/mfa-bypass-in-practice-adversary-in-the-middle-push-fatigue-"],
     ["how long to keep logs", "", "blueteam/log-retention-as-a-design-decision"],
     // ── batch twelve ──
-    ["is the attacker still in"],
+    ["is the attacker still in",
+     "wide by one, and inherent — only `attacker` and `still` survive the stop list, and `still` is an ordinary adverb, so the set is every card that names an attacker and happens to say still. It crossed 60 when a T-SQL example in The Injection Family said an identifier `still cannot be bound`, which is the word doing its ordinary job. The answer is inside the set — threat hunting, and cloud incident response's contain step. Ranking would pick between them; this matcher is a filter"],
     ["a laptop is beaconing out",
      "kind 3 — 'beaconing' alone reaches 11 cards; 'laptop' and 'out' are the reader's words"],
     ["data is leaving over dns", "",
@@ -468,6 +469,27 @@ const READERS = [
     ["what is a service principal"],
     ["what is dns propagation"],
     ["what is a bloom filter"],
+  ]],
+  // Added from a batch of study notes (plan.md, *Study notes, batch two*) before
+  // any of them was fixed, so each fix can be seen to close its own query. The
+  // notes were written against SQL Server and Java and the site against Postgres
+  // and Python: the concepts were mostly here and the words mostly were not.
+  ["a student on a SQL Server and Java course", [
+    ["clustered index", "", "data/indexes-explained-b-tree-hash-covering"],
+    ["datediff", "", "data/time-series-event-data"],
+    ["sp_executesql", "", "sec/the-injection-family-one-bug-class-six-costumes"],
+    ["pivot unpivot", "", "data/aggregation-group-by-having-rollup"],
+    ["insert into select", "", "data/subqueries-exists-set-operations"],
+    ["uml class diagram", "", "eng/uml-class-object-sequence-diagrams-and-the-diamond-everybody"],
+    ["composition vs aggregation", "", "eng/uml-class-object-sequence-diagrams-and-the-diamond-everybody"],
+    ["markov decision process", "", "ai/ml-foundations"],
+    ["smote", "", "ai/ml-pipeline-from-raw-data-to-a-serving-model"],
+    ["dropna", "", "script/data-analysis-with-pandas-spreadsheets-in-code"],
+    ["do while loop", "", "script/control-flow-decisions-repetition"],
+    ["schema theory", "", "productivity/learning-how-to-learn-build-the-skill-behind-all-skills"],
+    ["widening conversion", "", "script/java-the-enterprise-workhorse"],
+    ["sql like wildcard", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
+    ["case sensitive collation", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],

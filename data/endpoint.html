@@ -2780,14 +2780,14 @@ mstsc /v:workstation01.corp.example.com
 Enable-PSRemoting -Force
 
 <span class="com"># Connect to a remote session</span>
-Enter-PSSession -ComputerName workstation01 -Credential CORPlice
+Enter-PSSession -ComputerName workstation01 -Credential CORP\alice
 
 <span class="com"># Run a command on multiple machines at once</span>
 Invoke-Command -ComputerName srv01, srv02, srv03 `
   -ScriptBlock { Get-Service -Name Spooler | Select Name, Status }
 
 <span class="com"># Copy a file to a remote machine</span>
-$s = New-PSSession -ComputerName srv01 -Credential CORPlice
+$s = New-PSSession -ComputerName srv01 -Credential CORP\alice
 Copy-Item -Path C:\patch.msi -Destination C:\Temp\ -ToSession $s
 Remove-PSSession $s
       </pre>

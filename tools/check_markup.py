@@ -20,6 +20,7 @@ What this checks, per file:
   * every element that needs closing is closed, in the right order
   * no closing tag arrives without a matching open one
   * void elements are not given a closing tag
+  * no C0 control character sits in the text (see `control_chars`)
 
 What it deliberately does *not* check is which classes appear where — that is
 `lint_content.py`'s job, and the two should not drift into checking each other's
@@ -43,6 +44,7 @@ Usage:
   python3 tools/check_markup.py --self-test
 """
 
+import re
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
@@ -109,11 +111,40 @@ class Checker(HTMLParser):
         return self.errors
 
 
+# A C0 control character is a parse error in HTML, and it is invisible: the
+# browser draws nothing for it. Every one this check found on its first run was
+# a backslash escape that went through a non-raw Python string on its way into a
+# file. `\bcat\b` in a regex card became a backspace either side of `cat`, so
+# the word-boundary row showed an empty token and then said `cat` won't match
+# "concatenate", which without the boundaries it does; `\a`
+# in `CORP\alice` became a bell, twice, so a PowerShell example read
+# `CORP` + an invisible byte + `lice`. Five lines, three cards, one mechanism,
+# and nothing else here could see any of it, because each is well-formed markup
+# around a character nobody can type.
+CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+ESCAPE_FOR = {"\x00": r"\0", "\x07": r"\a", "\x08": r"\b",
+              "\x0b": r"\v", "\x0c": r"\f"}
+
+
+def control_chars(name, text):
+    """Every control character but tab, newline and carriage return, by line."""
+    errors = []
+    for n, line in enumerate(text.split("\n"), 1):
+        for m in CONTROL.finditer(line):
+            ch = m.group()
+            hint = (f" — the escape {ESCAPE_FOR[ch]} through a non-raw Python string?"
+                    if ch in ESCAPE_FOR else "")
+            errors.append(f"{name}:{n}:{m.start()}: control character "
+                          f"U+{ord(ch):04X} in the text{hint}")
+    return errors
+
+
 def check_file(path):
+    text = path.read_text(encoding="utf-8")
     p = Checker(path.name)
-    p.feed(path.read_text(encoding="utf-8"))
+    p.feed(text)
     p.close()
-    return p.finish()
+    return p.finish() + control_chars(path.name, text)
 
 
 # Each fragment is broken in one specific way, paired with what the checker has
@@ -125,6 +156,8 @@ BROKEN = [
     ("<div>hi</div></div>", "nothing open to close"),
     ("<div><br></br></div>", "void element"),
     ('<div><span class="x">a<span class="y">b</span></div>', "never closed"),
+    ("<td>\x08</td><td><code>\x08cat\x08</code></td>", "escape \\b"),
+    ("<pre>-Credential CORP\x07lice</pre>", "escape \\a"),
 ]
 
 
@@ -134,7 +167,7 @@ def self_test():
         p = Checker(f"fixture-{n}")
         p.feed(fragment)
         p.close()
-        errors = p.finish()
+        errors = p.finish() + control_chars(f"fixture-{n}", fragment)
         got = " ".join(errors)
         if not errors:
             print(f"SELF-TEST {n} FAILED: no error reported for {fragment!r}")
@@ -143,10 +176,13 @@ def self_test():
             print(f"SELF-TEST {n} FAILED: wanted {wanted!r}, got {got!r}")
             failures += 1
     ok = Checker("fixture-ok")
-    ok.feed('<div class="topic"><span class="topic-name">X</span><br></div>')
+    # Tab, newline and carriage return are whitespace, not control characters.
+    clean = '<div class="topic">\t<span class="topic-name">X</span>\r\n<br></div>'
+    ok.feed(clean)
     ok.close()
-    if ok.finish():
-        print(f"SELF-TEST FAILED: well-formed markup reported errors: {ok.finish()}")
+    errors = ok.finish() + control_chars("fixture-ok", clean)
+    if errors:
+        print(f"SELF-TEST FAILED: well-formed markup reported errors: {errors}")
         failures += 1
     print(f"self-test: {len(BROKEN) + 1} fixtures, {failures} failure(s).")
     return 1 if failures else 0
