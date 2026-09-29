@@ -4057,6 +4057,12 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
         names, sort direction — because those change what the query <em>is</em>, not what it
         operates on. So dynamic sorting and dynamic table selection get built by string
         formatting, in code that otherwise looks parameterized and safe.
+        <br><br>
+        The same split exists inside the database, and it is where "we use stored procedures"
+        stops being a defense. <strong>A procedure that builds its query with <code>+</code> and runs
+        it with <code>EXEC</code> is string formatting with a database at both ends.</strong> T-SQL's
+        parameterized form is <code>sp_executesql</code>, which binds values exactly the way
+        <code>%s</code> does below.
       </div>
       <pre class="code-block"><span class="com"># Safe — the value is bound</span>
 cur.execute(<span class="m">"SELECT * FROM users WHERE email = %s"</span>, (email,))
@@ -4068,6 +4074,17 @@ cur.execute(<span class="m">f"SELECT * FROM users ORDER BY {sort_col} {direction
 COLS = {<span class="m">"name"</span>, <span class="m">"created_at"</span>, <span class="m">"email"</span>}
 <span class="kw">if</span> sort_col <span class="kw">not in</span> COLS: <span class="kw">raise</span> ValueError(sort_col)
 direction = <span class="m">"DESC"</span> <span class="kw">if</span> direction.upper() == <span class="m">"DESC"</span> <span class="kw">else</span> <span class="m">"ASC"</span></pre>
+      <pre class="code-block"><span class="com">-- The same three cases in T-SQL, inside a stored procedure</span>
+<span class="com">-- Injectable: the value is pasted into the string that EXEC runs</span>
+<span class="kw">EXEC</span>(<span class="m">'SELECT * FROM users WHERE email = '''</span> + @email + <span class="m">''''</span>);
+
+<span class="com">-- Safe: sp_executesql binds @e as a parameter</span>
+<span class="kw">EXEC</span> sp_executesql <span class="m">N'SELECT * FROM users WHERE email = @e'</span>,
+     <span class="m">N'@e nvarchar(320)'</span>, @e = @email;
+
+<span class="com">-- An identifier still cannot be bound. QUOTENAME makes it a name and never code;</span>
+<span class="com">-- the allow-list above still decides which names are allowed</span>
+<span class="kw">SET</span> @sql = <span class="m">N'SELECT * FROM users ORDER BY '</span> + QUOTENAME(@sort_col);</pre>
       <div class="concept-desc verdict">
         Same rule for shell commands: arguments can be passed as a list, but the
         <em>program name</em> and any flags cannot come from user input. If the shape of the

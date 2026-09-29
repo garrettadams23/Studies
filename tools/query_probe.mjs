@@ -487,8 +487,8 @@ const READERS = [
     ["do while loop", "", "script/control-flow-decisions-repetition"],
     ["schema theory", "", "productivity/learning-how-to-learn-build-the-skill-behind-all-skills"],
     ["widening conversion"],
-    ["sql like wildcard"],
-    ["case sensitive collation"],
+    ["sql like wildcard", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
+    ["case sensitive collation", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],

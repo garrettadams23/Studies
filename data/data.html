@@ -646,6 +646,49 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">PIVOT Freezes Its Column List on the Day You Write It</div>
+                <div class="concept-desc">
+                  <code>PIVOT</code> turns values in a column into columns of their own: one row per region,
+                  one column per month. Underneath it is an aggregate with a <code>CASE</code> inside, and that
+                  is how Postgres and MySQL write it, because neither has the keyword. SQL Server and Oracle add
+                  <code>PIVOT</code> and <code>UNPIVOT</code> as syntax for the same thing, and the syntax makes
+                  you list the output columns by value. <strong class="c-amber">A value that is not in the list
+                  is not an error. Its rows are simply left out.</strong>
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">-- SQL Server: the IN list is the whole output, decided at write time</span>
+<span class="kw">SELECT</span> region, [Jan], [Feb], [Mar]
+<span class="kw">FROM</span> (<span class="kw">SELECT</span> region, month, amount <span class="kw">FROM</span> sales) <span class="kw">AS</span> s
+<span class="kw">PIVOT</span> (<span class="fn">SUM</span>(amount) <span class="kw">FOR</span> month <span class="kw">IN</span> ([Jan], [Feb], [Mar])) <span class="kw">AS</span> p;
+
+<span class="com">-- Every engine: what PIVOT does, plus the column PIVOT cannot have</span>
+<span class="kw">SELECT</span> region,
+       <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> month = <span class="str">'Jan'</span> <span class="kw">THEN</span> amount <span class="kw">END</span>) <span class="kw">AS</span> jan,
+       <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> month = <span class="str">'Feb'</span> <span class="kw">THEN</span> amount <span class="kw">END</span>) <span class="kw">AS</span> feb,
+       <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> month = <span class="str">'Mar'</span> <span class="kw">THEN</span> amount <span class="kw">END</span>) <span class="kw">AS</span> mar,
+       <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> month <span class="kw">IN</span> (<span class="str">'Jan'</span>, <span class="str">'Feb'</span>, <span class="str">'Mar'</span>) <span class="kw">THEN NULL ELSE</span> amount <span class="kw">END</span>) <span class="kw">AS</span> other
+<span class="kw">FROM</span> sales
+<span class="kw">GROUP BY</span> region;</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Trap</th><th>What you see</th><th>Fix</th></tr></thead>
+                    <tbody>
+                      <tr><td>The <code>IN</code> list is fixed</td><td>A new region or month appears in the data and is missing from the report, with no error</td><td>The <code>CASE</code> form with a catch-all column, or a column list built at run time with dynamic SQL, every name passed through <code>QUOTENAME</code></td></tr>
+                      <tr><td>PIVOT groups by every column it was not told about</td><td>One output row per source row, mostly NULL, because an id column came along in the source</td><td>Pivot from a subquery that selects only the grouping, spreading and value columns, as above</td></tr>
+                      <tr><td><code>UNPIVOT</code> is not the inverse</td><td>Values that were summed come back as the sum, and NULL cells do not come back at all</td><td>Keep the source rows. Do not round-trip data through a pivot</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The first row is the one that reaches a meeting: a report missing a category looks exactly
+                    like a report in which that category sold nothing. Where the categories can change,
+                    <strong>write the <code>CASE</code> form with an explicit catch-all column</strong>. It runs on
+                    every engine, and the <code>ELSE</code> branch makes a new value visible instead of absent. It
+                    also catches a NULL month, which <code>NOT IN</code> would have dropped for the reason the
+                    subqueries card explains.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 <div class="topic" data-reviewed="2026-08">
@@ -711,6 +754,47 @@
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">A Subquery That Writes Keeps Every Trap, and Stores the Result</div>
+                <div class="concept-desc">
+                  Everything above is a subquery feeding a <code>SELECT</code>. The same subqueries feed writes:
+                  <code>INSERT INTO … SELECT</code> copies rows between tables, <code>CREATE TABLE … AS SELECT</code>
+                  builds a new table from a query, and <code>UPDATE … SET col = (SELECT …)</code> sets a column
+                  from another table. The NULL and row-count behavior is identical.
+                  <strong class="c-amber">A wrong read is a wrong answer on a screen. A wrong write is the new
+                  contents of the table.</strong>
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">-- The EXISTS limits the update to rows that have a match</span>
+<span class="kw">UPDATE</span> customers c
+<span class="kw">SET</span>    region = (<span class="kw">SELECT</span> a.region <span class="kw">FROM</span> addresses a <span class="kw">WHERE</span> a.customer_id = c.id)
+<span class="kw">WHERE  EXISTS</span> (<span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> addresses a <span class="kw">WHERE</span> a.customer_id = c.id);
+
+<span class="com">-- Name the columns on both sides; never rely on position</span>
+<span class="kw">INSERT INTO</span> archive_orders (id, customer_id, total, placed_at)
+<span class="kw">SELECT</span> id, customer_id, total, placed_at
+<span class="kw">FROM</span>   orders
+<span class="kw">WHERE</span>  placed_at &lt; <span class="str">'2025-01-01'</span>;</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Statement</th><th>The trap</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>UPDATE t SET c = (SELECT … WHERE s.id = t.id)</code> with no <code>WHERE</code></td><td>Every row with no match is set to NULL, with no error, because the subquery returned nothing for it</td></tr>
+                      <tr><td>The same subquery returning two rows</td><td>An error, which is the good outcome: it fails before it writes</td></tr>
+                      <tr><td><code>INSERT INTO t SELECT * FROM s</code></td><td>Columns match by position, not by name. Add or reorder a column and values of a compatible type land in the wrong place</td></tr>
+                      <tr><td><code>CREATE TABLE new AS SELECT …</code></td><td>Copies rows and column types, not the primary key or the indexes. SQL Server spells it <code>SELECT … INTO new</code></td></tr>
+                      <tr><td>Oracle <code>INSERT ALL</code></td><td>One source query, several target tables, routed by <code>WHEN</code> conditions. Elsewhere it is several <code>INSERT … SELECT</code> statements in one transaction</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The first row is the one that loses data: it is the only one that runs cleanly, changes rows
+                    nobody meant to touch, and leaves them empty. <strong>Give the update its match condition
+                    twice</strong>, once in the subquery and once in a <code>WHERE EXISTS</code>, or use a join form
+                    (<code>UPDATE … FROM</code>, <code>MERGE</code>). Then run the <code>SELECT</code> on its own first
+                    and count the rows the write is about to change.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 <div class="topic" data-reviewed="2026-08">
@@ -772,6 +856,37 @@
                   thought the index guaranteed uniqueness, it never did. The general lesson is broader than
                   indexes: <strong>every constraint in SQL has a NULL-shaped hole, and the constraint will not
                   tell you.</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Engine difference</div>
+                <div class="concept-title">A Clustered Index Is the Table Itself, and Postgres Does Not Have One</div>
+                <div class="concept-desc">
+                  Every index above is a separate structure that points back at the table. A
+                  <strong>clustered index</strong> is not: it <em>is</em> the table, with the rows stored in the
+                  leaf pages of a B-tree in key order. That is why a table can have only one, and why SQL Server's
+                  two categories, clustered and non-clustered, are really a statement about where the rows live.
+                  <strong class="c-amber">The clustered key is a storage decision that every other index
+                  inherits</strong>, because a non-clustered index finds its row by carrying a copy of that key.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Engine</th><th>Where the rows live</th><th>How other indexes find a row</th></tr></thead>
+                    <tbody>
+                      <tr><td>SQL Server</td><td>In the clustered index, which <code>PRIMARY KEY</code> creates by default. A table without one is a heap</td><td>The clustered key, or a row id on a heap</td></tr>
+                      <tr><td>MySQL (InnoDB)</td><td>Always clustered: on the primary key, else the first <code>UNIQUE NOT NULL</code> index, else a hidden row id</td><td>The primary key value</td></tr>
+                      <tr><td>PostgreSQL</td><td>A heap, roughly in insertion order. <code>CLUSTER</code> reorders it once, under an exclusive lock, and later writes do not keep the order</td><td>A physical location, the <code>ctid</code></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>How you would notice a bad clustered key:</strong> inserts slow down as the table grows
+                    while reads stay fine, and every index is bigger than its own columns explain. A random key such
+                    as a <code>UNIQUEIDENTIFIER</code> from <code>NEWID()</code> or a UUIDv4 sends each insert to a
+                    random page, splitting pages and fragmenting the table, and a wide key is copied into every
+                    other index. On the first two rows, <strong>cluster on something narrow that only ever
+                    increases</strong>: an identity column, <code>NEWSEQUENTIALID()</code>, or a UUIDv7. On the
+                    third the question does not arise, and <code>CLUSTER</code> is a one-off tidy, not a design.
                   </div>
                 </div>
               </div>
@@ -1356,6 +1471,77 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
                   in front of SQLite covers an enormous range of real applications, and it keeps the properties
                   that make it attractive: no server to run, one file to back up, and a copy that is trivially
                   reproducible.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🗣️</span>
+              <span class="topic-name">SQL <span class="acro-exp">(Structured Query Language)</span> Dialects — The Differences That Run Without an Error</span>
+              <span class="topic-badge">SQL</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Dangerous Differences Are the Ones That Parse</div>
+                <div class="concept-desc">
+                  Every engine speaks standard SQL with an accent, and most of the accent announces itself.
+                  <code>TOP</code> against <code>LIMIT</code>, <code>GETDATE()</code> against <code>NOW()</code>,
+                  <code>#temp</code> against <code>CREATE TEMP TABLE</code>: the query fails, the error names the
+                  word, and the fix takes a minute. <strong class="c-amber">The differences worth learning are the
+                  queries that run on both engines and return different rows</strong>, because nothing will ever
+                  report them. They are how a query copied from a SQL Server course, or from an answer written
+                  for MySQL, comes back from Postgres with fewer rows and no complaint.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Written</th><th>SQL Server</th><th>PostgreSQL</th><th>MySQL</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>WHERE name = 'alice'</code></td><td>Also matches <em>Alice</em>. The default collation ignores case</td><td>Only <em>alice</em></td><td>Also matches <em>Alice</em> and <em>ÁLICE</em>. The default collation ignores case and accents</td></tr>
+                      <tr><td><code>LIKE '%[0-9]%'</code></td><td>Any value containing a digit</td><td>Only values containing the literal text <code>[0-9]</code></td><td>Same as Postgres. Brackets in <code>LIKE</code> are T-SQL. Standard SQL has two wildcard characters, <code>%</code> and <code>_</code>, and nothing else</td></tr>
+                      <tr><td><code>SELECT "name" FROM users</code></td><td>The column</td><td>The column</td><td>The string <em>name</em>, once per row. Double quotes are string literals unless <code>ANSI_QUOTES</code> is set</td></tr>
+                      <tr><td><code>SELECT 'a' || 'b'</code></td><td>Concatenation is written <code>+</code>; <code>||</code> arrived only in SQL Server 2025</td><td><code>ab</code></td><td><code>0</code>. <code>||</code> is logical OR unless <code>PIPES_AS_CONCAT</code> is set</td></tr>
+                      <tr><td><code>SELECT 1 / 2</code></td><td><code>0</code></td><td><code>0</code></td><td><code>0.5000</code></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Oracle adds one more that catches everybody once: it stores an empty string as NULL, so
+                    <code>WHERE code = ''</code> matches nothing, ever. Of the rows above, <strong>the first two are
+                    the ones a SQL Server habit carries into Postgres</strong>, and they fail the same way: a
+                    lookup that used to find a row finds nothing, and the query looks as if it worked.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Saying the Same Thing on Every Engine</div>
+                <div class="concept-desc">
+                  The fix for the silent differences is to stop relying on a default and say what you mean.
+                  Case sensitivity lives in the <strong>collation</strong>, the rule set that decides how text
+                  compares and sorts. It is set per server, per database and per column, and a binary collation
+                  compares code points, which is the strictest comparison there is.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>You need</th><th>SQL Server</th><th>PostgreSQL</th><th>MySQL</th></tr></thead>
+                    <tbody>
+                      <tr><td>A case-sensitive comparison</td><td><code>COLLATE Latin1_General_CS_AS</code>, or a binary <code>_BIN2</code> collation</td><td>The default</td><td><code>COLLATE utf8mb4_bin</code></td></tr>
+                      <tr><td>A case-insensitive comparison</td><td>The default</td><td><code>ILIKE</code>, <code>lower()</code> on both sides, or the <code>citext</code> type</td><td>The default</td></tr>
+                      <tr><td>A character class in a pattern</td><td><code>LIKE '%[0-9]%'</code></td><td><code>~ '[0-9]'</code></td><td><code>REGEXP '[0-9]'</code></td></tr>
+                      <tr><td>Parameterized dynamic SQL</td><td><code>sp_executesql</code> with a parameter list</td><td><code>EXECUTE … USING</code> in PL/pgSQL</td><td><code>PREPARE … EXECUTE … USING</code></td></tr>
+                      <tr><td>A true/false column</td><td><code>BIT</code>. There is no <code>BOOLEAN</code></td><td><code>BOOLEAN</code></td><td><code>BOOLEAN</code>, which is <code>TINYINT(1)</code></td></tr>
+                      <tr><td>A temporary table</td><td><code>#t</code> for the session, <code>##t</code> for everyone</td><td><code>CREATE TEMP TABLE</code></td><td><code>CREATE TEMPORARY TABLE</code></td></tr>
+                      <tr><td>The first n rows</td><td><code>TOP (n)</code>, or <code>OFFSET … FETCH</code></td><td><code>LIMIT n</code>, or <code>FETCH FIRST n ROWS ONLY</code></td><td><code>LIMIT n</code></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The first row is the one to decide before the table exists, not after. A column's collation is
+                    fixed when it is created, and changing it later means dropping or rebuilding every index on it.
+                    The last three rows are the loud ones, and an error message will teach them faster than this
+                    table can.
                   </div>
                 </div>
               </div>
@@ -2624,6 +2810,7 @@ p99                 =  4,000 ms  ← this is what a user experiences
                     <tr><th>Cause</th><th>Effect on the number</th></tr>
                     <tr><td><code>date_trunc('day', ts)</code> on a UTC column</td><td>Days boundaries in UTC. For UTC&minus;8 that is 4pm to 4pm local</td></tr>
                     <tr><td>Daylight saving transitions</td><td>One local day has 23 hours and another 25. A fixed offset gets both wrong</td></tr>
+                    <tr><td><code>DATEDIFF</code> for elapsed time</td><td>SQL <span class="acro-exp">(Structured Query Language)</span> Server's counts <em>boundaries crossed</em>, not time elapsed: 11:59 pm to 12:01 am is one day, and Dec 31 to Jan 1 is one year. MySQL's takes <code>(end, start)</code>, the other order, and returns whole days. Postgres has neither; <code>date - date</code> is a number of days</td></tr>
                     <tr><td>Late-arriving events</td><td>Yesterday's total rises after it was reported. The report does not know</td></tr>
                     <tr><td>Retries and at-least-once delivery</td><td>The same event counted twice unless something de-duplicates on an event id</td></tr>
                     <tr><td>Clock skew on the producer</td><td>Events with timestamps in the future, which land in a bucket nobody looks at yet</td></tr>
