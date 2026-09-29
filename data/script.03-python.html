@@ -2285,6 +2285,17 @@ df[<span class="str">"action"</span>].value_counts()      <span class="com"># DE
 <span class="com"># Export results</span>
 top_attackers.to_csv(<span class="str">"top_attackers.csv"</span>)</pre>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">SILENTLY WRONG</div>
+      <div class="concept-title">dropna() Does Not Clean the Data, It Changes the Question</div>
+      <div class="concept-desc"><code>df.info()</code> shows the non-null counts, and the first instinct is <code>df.dropna()</code>. By default it drops every row with a missing value in <em>any</em> column, including columns the analysis never reads. Every average computed afterwards is an average over the rows that happened to be complete, and those are rarely a random sample: the rows missing a field are often the ones from one site, one device or one failure. <strong>pandas' own aggregates already skip missing values</strong> — <code>df["bytes"].mean()</code> ignores them without being asked — so a blanket <code>dropna()</code> often throws rows away to fix a problem the calculation did not have.</div>
+      <pre class="code-block">df.isna().sum()                          <span class="com"># missing values per column: look first</span>
+df.dropna()                              <span class="com"># drops a row if ANY column is missing</span>
+df.dropna(subset=[<span class="str">"src_ip"</span>, <span class="str">"action"</span>])   <span class="com"># only the columns this question needs</span>
+df[<span class="str">"bytes"</span>].fillna(<span class="num">0</span>)                  <span class="com"># only when missing really means zero</span>
+<span class="fn">len</span>(df), <span class="fn">len</span>(df.dropna())               <span class="com"># how many rows the question just lost</span></pre>
+      <div class="concept-desc verdict">Print the row count before and after, and report it with the result: "4,210 of 5,000 rows had both fields." A number without its denominator hides the one decision in the analysis that nobody else can see.</div>
+    </div>
   </div>
 </div>
 
