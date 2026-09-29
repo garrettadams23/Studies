@@ -48262,7 +48262,7 @@ world$ matches "Hello world" but not "world class"
 <tr>
 <td><span class="c-purple">?</span></td>
 <td>0 or 1 (optional)</td>
-<td>colou?r → "color" or "color"</td>
+<td>colou?r → <code>color</code> or <code>colour</code></td>
 </tr>
 <tr>
 <td><span class="c-purple">{n}</span></td>
@@ -52533,7 +52533,7 @@ python3 -m venv .venv
 
 <span class="com"># Activate it</span>
 source .venv/bin/activate       <span class="com"># macOS/Linux</span>
-.venv\Scriptsctivate          <span class="com"># Windows</span>
+.venv\Scripts\activate          <span class="com"># Windows</span>
 
 <span class="com"># Now pip installs go into .venv only</span>
 pip install requests
@@ -53658,14 +53658,14 @@ urls = [<span class="str">"https://example.com"</span>] * <span class="num">10</
 <tr><td>$</td><td>End of string</td><td><code>world$</code> → "hello world"</td></tr>
 <tr><td>*</td><td>0 or more of previous</td><td><code>ab*c</code> → "ac", "abc", "abbc"</td></tr>
 <tr><td>+</td><td>1 or more of previous</td><td><code>ab+c</code> → "abc", "abbc" (not "ac")</td></tr>
-<tr><td>?</td><td>0 or 1 of previous (optional)</td><td><code>colou?r</code> → "color", "color"</td></tr>
+<tr><td>?</td><td>0 or 1 of previous (optional)</td><td><code>colou?r</code> → <code>color</code>, <code>colour</code></td></tr>
 <tr><td>{n,m}</td><td>Between n and m repetitions</td><td><code>\d{3,5}</code> → "123", "1234", "12345"</td></tr>
 <tr><td>[abc]</td><td>Character class (a, b, or c)</td><td><code>[aeiou]</code> matches any vowel</td></tr>
 <tr><td>[^abc]</td><td>NOT a, b, or c</td><td><code>[^0-9]</code> matches non-digit</td></tr>
 <tr><td>\d</td><td>Digit [0-9]</td><td><code>\d+</code> → one or more digits</td></tr>
 <tr><td>\w</td><td>Word char [a-zA-Z0-9_]</td><td><code>\w+</code> → word</td></tr>
 <tr><td>\s</td><td>Whitespace</td><td><code>\s+</code> → spaces, tabs, newlines</td></tr>
-<tr><td></td><td>Word boundary</td><td><code>cat</code> won't match "concatenate"</td></tr>
+<tr><td>\b</td><td>Word boundary</td><td><code>\bcat\b</code> won't match "concatenate"</td></tr>
 <tr><td>(group)</td><td>Capture group</td><td><code>(\d{4})-(\d{2})</code> captures year, month</td></tr>
 <tr><td>a|b</td><td>a or b</td><td><code>cat|dog</code> → "cat" or "dog"</td></tr>
 </tbody>
@@ -53733,7 +53733,7 @@ m = pattern.match(log_line)
 email_re = re.compile(<span class="str">r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'</span>)
 
 <span class="com"># IPv4 address</span>
-ipv4_re = re.compile(<span class="str">r'(?:\d{1,3}\.){3}\d{1,3}'</span>)
+ipv4_re = re.compile(<span class="str">r'\b(?:\d{1,3}\.){3}\d{1,3}\b'</span>)
 
 <span class="com"># URL extraction</span>
 url_re = re.compile(<span class="str">r'https?://[^\s]+'</span>)
@@ -111260,14 +111260,14 @@ mstsc /v:workstation01.corp.example.com
 Enable-PSRemoting -Force
 
 <span class="com"># Connect to a remote session</span>
-Enter-PSSession -ComputerName workstation01 -Credential CORPlice
+Enter-PSSession -ComputerName workstation01 -Credential CORP\alice
 
 <span class="com"># Run a command on multiple machines at once</span>
 Invoke-Command -ComputerName srv01, srv02, srv03 `
   -ScriptBlock { Get-Service -Name Spooler | Select Name, Status }
 
 <span class="com"># Copy a file to a remote machine</span>
-$s = New-PSSession -ComputerName srv01 -Credential CORPlice
+$s = New-PSSession -ComputerName srv01 -Credential CORP\alice
 Copy-Item -Path C:\patch.msi -Destination C:\Temp\ -ToSession $s
 Remove-PSSession $s
       </pre>
