@@ -469,6 +469,27 @@ const READERS = [
     ["what is dns propagation"],
     ["what is a bloom filter"],
   ]],
+  // Added from a batch of study notes (plan.md, *Study notes, batch two*) before
+  // any of them was fixed, so each fix can be seen to close its own query. The
+  // notes were written against SQL Server and Java and the site against Postgres
+  // and Python: the concepts were mostly here and the words mostly were not.
+  ["a student on a SQL Server and Java course", [
+    ["clustered index", "", "data/indexes-explained-b-tree-hash-covering"],
+    ["datediff", "", "data/time-series-event-data"],
+    ["sp_executesql", "", "sec/the-injection-family-one-bug-class-six-costumes"],
+    ["pivot unpivot", "", "data/aggregation-group-by-having-rollup"],
+    ["insert into select", "", "data/subqueries-exists-set-operations"],
+    ["uml class diagram"],
+    ["composition vs aggregation"],
+    ["markov decision process", "", "ai/ml-foundations"],
+    ["smote", "", "ai/ml-pipeline-from-raw-data-to-a-serving-model"],
+    ["dropna", "", "script/data-analysis-with-pandas-spreadsheets-in-code"],
+    ["do while loop", "", "script/control-flow-decisions-repetition"],
+    ["schema theory", "", "productivity/learning-how-to-learn-build-the-skill-behind-all-skills"],
+    ["widening conversion"],
+    ["sql like wildcard"],
+    ["case sensitive collation"],
+  ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],
