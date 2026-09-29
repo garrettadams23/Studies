@@ -360,7 +360,8 @@ const READERS = [
      "threat/mfa-bypass-in-practice-adversary-in-the-middle-push-fatigue-"],
     ["how long to keep logs", "", "blueteam/log-retention-as-a-design-decision"],
     // ── batch twelve ──
-    ["is the attacker still in"],
+    ["is the attacker still in",
+     "wide by one, and inherent — only `attacker` and `still` survive the stop list, and `still` is an ordinary adverb, so the set is every card that names an attacker and happens to say still. It crossed 60 when a T-SQL example in The Injection Family said an identifier `still cannot be bound`, which is the word doing its ordinary job. The answer is inside the set — threat hunting, and cloud incident response's contain step. Ranking would pick between them; this matcher is a filter"],
     ["a laptop is beaconing out",
      "kind 3 — 'beaconing' alone reaches 11 cards; 'laptop' and 'out' are the reader's words"],
     ["data is leaving over dns", "",

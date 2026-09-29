@@ -28,7 +28,7 @@ What is left here is what a session actually reads.
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked | 📥 **queue** |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap | 📥 **queue** |
-| **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | 📥 **queue** |
+| **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -51,23 +51,23 @@ the row needs was already running. Three are left, and all three want a stopwatc
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,557** across 30 domains | `depth_report.py` |
+| Topics | **1,559** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,395**, or **1,126 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,398**, or **1,128 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **306 of 345**, **14 unexplained** — nineteen batches. The fourteen are the newest reader's, *a student on a SQL Server and Java course*, added from *Study notes, batch two* before any of its fixes so each fix can be seen to close its own query: a subject-shaped reader that opened at 14 of 15 missing, worse than any symptom-shaped batch, because the concepts were on the site and the words were not. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. Of the 36 zeros, 3 wrong-card and 7 wide results, everything outside the newest reader is a recorded verdict, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,595 steps, 1,497 of 1,557 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,497 topics, 4,860 links, 0 one-way** — one mainland of **1,481 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **34% raw** headroom — room for ~787 more topics | `page_budget.py` |
+| Reader questions answered | **320 of 345**, **0 unexplained** — nineteen batches. The newest reader, *a student on a SQL Server and Java course*, was added from *Study notes, batch two* before any of its fixes: a subject-shaped reader that opened at 14 of 15 missing, worse than any symptom-shaped batch, because the concepts were on the site and the words were not. It closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 8 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,597 steps, 1,499 of 1,559 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,499 topics, 4,878 links, 0 one-way** — one mainland of **1,483 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **33% raw** headroom — room for ~779 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,142 chars**, median 3,740 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,154 chars**, median 3,747 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **50** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **51** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -995,7 +995,7 @@ diagrams, not three. Before writing, run `near_duplicates.py --title` against `e
 *Schema & Data Modeling Patterns* and `data` *ER Modeling*. An ER diagram and a class
 diagram overlap enough that readers will ask which one to draw.
 
-## 4. Two more candidates the dialect raises, and why neither is decided here
+## 4. Two more candidates the dialect raises — both decided since, see §8
 
 - **SQL Server in `data`.** Postgres, MySQL and SQLite have topics and SQL Server has none.
   Yet SQL Server holds MECM's site database in `endpoint`, it is under Azure SQL in `cloud`,
@@ -1275,6 +1275,23 @@ has changed.
   * An operator is a specific symbol that represents a mathematical, logical, or relational operation and instructs the compiler to execute that action.
 
 </details>
+
+## 8. What shipped
+
+Conducted in one session, in the order §6 set, and recorded below as *Session — conducting
+batch two*. The student reader opened at **1 of 15** and closed at **15 of 15**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 6.1 | The broken `colou?r` examples | Fixed in two `script` cards, plus a contrast guard in `check_spelling.py`. Reading the table beside them found an older class of the same bug: eight control bytes where `\b` and `\a` had gone through non-raw Python strings. `check_markup.py` now fails on them |
+| 6.2 | The zeros in `query_probe.mjs` | A reader, *a student on a SQL Server and Java course*, committed before any fix |
+| 2 | Clustered index, `PIVOT`, `INSERT … SELECT`, `DATEDIFF` | A concept card each in *Indexes Explained*, *Aggregation* and *Subqueries*; a row in *Time-Series & Event Data* |
+| 2 | `sp_executesql` | *The Injection Family*: a stored procedure that builds its query with `+` and runs it with `EXEC` is string formatting with a database at both ends |
+| 2 | MDP, SMOTE, `dropna()`, `do-while`, schema theory | A sentence or a card in `ai`, `script` and `productivity`. Reading the RL cards found **DPO** expanded as *Data Protection Officer* in an RLHF title; the dictionary has both meanings now |
+| 3 | UML | A new `eng` topic: the six line styles as claims about lifetime, composition over inheritance, object and sequence diagrams |
+| 4 | SQL Server | **Not a product card.** The §2 rows could each be written as a comparison, so the dialect was the topic: a new `data` topic, *SQL Dialects — The Differences That Run Without an Error* |
+| 4 | Java the language | One concept card on the existing Java topic, *The Rules a First Java Course States Too Strongly*, which is §5 turned into the question a student has |
+| 5 | Claims not to copy | Each went in as the caveat in its row, never as the note's sentence: `SET` and subqueries, `LIKE` brackets, `DATEDIFF`, the Java rows |
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -5934,3 +5951,62 @@ gen_og_image.mjs, same job, same import, exits on --check first — and was gree
 the contract sentence in the preamble is corrected, not deleted
 45 gates green · CI green is the one this wave has to wait for
 ```
+
+## Session — conducting batch two: the notes were a dialect, not a list of definitions
+
+The queue section *Study notes, batch two* was conducted end to end, in its own §6 order: the
+correctness fix first, the zeros into the census before any fix, then the writing. Seven
+commits, two new topics (1,557 → 1,559), and a student reader that went from **1 of 15**
+answered to **15 of 15**. Its §8 says what went where. This records what the plan did not predict.
+
+### The bug beside the bug
+
+The `colou?r` examples were known before the session began. Reading the table they sat in turned
+up the word-boundary row showing an empty token and saying `cat` won't match *concatenate*, which
+without the boundaries it does. The `\b`s were **backspace bytes**. One scan of every source found
+five lines, three topics and eight bytes, all one mechanism: a backslash escape through a non-raw
+Python string. `\a` in `CORP\alice` had become a bell, twice. The browser draws nothing for
+either, and every one was well-formed markup, so no gate here could have seen them. Now
+`check_markup.py` fails on a C0 control character and names the escape that probably made it.
+
+Both guards were proved the way the manual asks, by switching them off. With the contrast window
+at 0, the four spelling fixtures fail with the exact *color or color* tautology. Against the
+pre-fix files, the markup check reports all eight bytes.
+
+### The census opened worse than any symptom batch, and for a different reason
+
+Symptom-shaped readers open at two thirds missing because readers describe what they see.
+This subject-shaped reader opened at 14 of 15 because it spoke **another dialect**. The probe's
+own diagnosis split the twelve zeros: five were words the site had never written (`datediff`,
+`sp_executesql`, `unpivot`, `markov`, `smote`) and seven were words it had, never together on one
+card. None of the fixes was a synonym. Each was the dialect's actual behavior, written as the trap
+it sets: PIVOT's frozen column list, the `UPDATE` that NULLs every unmatched row, `DATEDIFF`
+counting boundaries. One query did need the reader's word: `sql like wildcard` closed only when
+the card said *wildcard*.
+
+### §4's condition decided itself
+
+§4 said to write a SQL Server card if the rows could not be written without each saying "in SQL
+Server". They could. Every row came out as a comparison across engines, so the dialect was the
+topic. The rows that had nowhere else to go (bracket patterns, collations, `BIT`, `#temp`) became
+a card whose inversion is that **the dangerous differences are the ones that parse**. A product
+card would have repeated what the comparison already carried.
+
+### Three misses, two of them mine
+
+1. **DPO**, expanded as *Data Protection Officer* in an RLHF title. It was found by reading, the
+   same class as failure 10 in the manual: well-formed markup, a defined acronym, and wrong.
+2. **"Design judgement"** went into the UML card, and the wave was committed without a full
+   `make check`, the one wave where it was skipped. It was caught on the next wave. The lesson is
+   the ratio the manual already states: the static gates cost a minute and caught the only
+   slip. When usage has to come down, batch the browser suites, not the static ones.
+3. **`is the attacker still in`** crossed the wide threshold by one. A T-SQL comment in the
+   injection card said an identifier *still* cannot be bound, and the card already said
+   *attacker*. Rewording the comment would have been editing prose to satisfy a counter. The query
+   carries a verdict now: `still` is an ordinary adverb, and the answer is inside the set.
+
+### What is left in this section
+
+Nothing from §6, and the §5 table stays as the gate it was written to be. The notes themselves
+are unchanged in §7. Correcting them is the owner's call, the same outward direction as batch
+one's item 7.
