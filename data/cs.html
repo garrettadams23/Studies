@@ -762,6 +762,75 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The fifth question</div>
+      <div class="concept-title">Minimum Spanning Trees — the Cheapest Way to Connect Everything</div>
+      <div class="concept-desc">
+        A spanning tree connects every node and has no cycles, so for V nodes it has exactly V − 1
+        edges. A <strong>minimum spanning tree</strong> is the one whose edges cost least in total:
+        the cheapest cabling that reaches every building, the fewest leased circuits that still
+        connect every site. It is the fifth graph question beside the four above. Two greedy
+        algorithms answer it, and both are correct for the same reason, the cut property: split
+        the nodes into any two groups, and the cheapest edge between the groups belongs to some
+        minimum spanning tree.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Algorithm</th><th>How it grows the tree</th><th>Cost</th><th>Reach for it when</th></tr></thead>
+          <tbody>
+            <tr><td>Kruskal</td><td>Sort every edge by weight, then take each one unless it would close a cycle</td><td>O(E log E), most of it the sort</td><td>The graph is sparse, or its edges already arrive as a list</td></tr>
+            <tr><td>Prim</td><td>Grow one tree from any node, always adding the cheapest edge that leaves it</td><td>O(E log V) with a binary heap</td><td>The graph is dense, or stored as adjacency lists. It is Dijkstra's loop with a different priority</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The trap is in the name.</strong> A minimum spanning tree minimizes what the whole tree
+          costs, not what any path through it costs, and the route between two nodes along it can be far
+          longer than the shortest path, which is Dijkstra's question and a different tree. Network
+          engineers meet the difference in
+          <span class="xref">Spanning Tree — Why a Loop Is Catastrophic, and What STP Does About It</span>:
+          the protocol keeps each switch's cheapest path to the root, which builds a shortest-path tree,
+          not a minimum one. Choose between the rows by how the graph is stored, and choose a minimum
+          spanning tree at all only when the question is total cost rather than distance.
+          <!-- fact: csvistool routes /Prim /Kruskal | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+          Watch <a class="extlink" href="https://csvistool.com/Prim" target="_blank" rel="noopener noreferrer">Prim</a> and <a class="extlink" href="https://csvistool.com/Kruskal" target="_blank" rel="noopener noreferrer">Kruskal</a> build the same tree two ways.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The part that outlives it</div>
+      <div class="concept-title">Union-Find — Are These Two Already Connected?</div>
+      <div class="concept-desc">
+        Kruskal has to know, for every edge, whether its two ends are already connected, and it asks
+        E times. The structure that answers is <strong>union-find</strong>, also called a disjoint set.
+        Each element points toward a representative of its group. <em>Find</em> follows the pointers to
+        that representative, and <em>union</em> joins two groups by pointing one representative at the
+        other. Two small tricks make it nearly free: attach the shorter tree under the taller one
+        (union by rank), and point every node a find walks past straight at the root (path
+        compression). With both, each operation costs O(α(n)), where α is the inverse Ackermann
+        function, which stays below 5 for any input that could physically exist.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Where it turns up</th><th>The question it answers</th></tr></thead>
+          <tbody>
+            <tr><td>Merging duplicate records</td><td>This account shares an email with that one, which shares a phone with a third. Which records are one customer?</td></tr>
+            <tr><td>Counting network partitions</td><td>After these links failed, how many islands are left, and which hosts are in each?</td></tr>
+            <tr><td>Labeling an image or a map</td><td>Which pixels or cells form one connected region?</td></tr>
+            <tr><td>Single-linkage clustering</td><td>It is Kruskal stopped early: skip the last k − 1 edges and the pieces left are the k clusters</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The first row is the one to recognize at work. Any problem shaped like "these two are the same,
+          and that is the same as this one" is union-find, and solving it with a fresh graph search per
+          question turns a near-linear job into a quadratic one. <strong>It only ever joins.</strong> It
+          cannot split a group again, so when a failed link comes back, rebuild it rather than patch it.
+          <!-- fact: csvistool routes /DisjointSet | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+          The <a class="extlink" href="https://csvistool.com/DisjointSet" target="_blank" rel="noopener noreferrer">disjoint set</a> animation shows the paths flattening.
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
