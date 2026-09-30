@@ -491,6 +491,41 @@ const READERS = [
     ["sql like wildcard", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
     ["case sensitive collation", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
   ]],
+  // The first batch of study notes (plan.md, *Knowledge integration*), added
+  // before any of its items was written, for the reason the reader above was.
+  // Where the answering card is still to be written, `want` names the topic it
+  // is being written into. Without one, a query that finds the wrong sense of
+  // its words scores as answered by count: `logic gates` reaches twelve cards
+  // about pipeline gates, and `multi core processor` reaches the GDPR's data
+  // processor before it reaches a CPU.
+  ["a student on a software engineering course", [
+    ["ai code generation"],
+    ["ai accountability", "", "ai/ai-ethics-the-human-side-of-machine-intelligence"],
+    ["human oversight of ai", "", "ai/ai-ethics-the-human-side-of-machine-intelligence"],
+    ["spanning tree protocol", "", "net/spanning-tree-why-a-loop-is-catastrophic-and-what-stp-does-a"],
+    ["network loop", "", "net/spanning-tree-why-a-loop-is-catastrophic-and-what-stp-does-a"],
+    ["multi core processor", "", "cs/amdahls-law-why-more-cores-stop-helping"],
+    ["parallel computing", "", "cs/amdahls-law-why-more-cores-stop-helping"],
+    ["logic gates", "", "cs/boolean-algebra-truth-tables-de-morgan-firewall-logic"],
+    ["nand gate", "", "cs/boolean-algebra-truth-tables-de-morgan-firewall-logic"],
+    ["karnaugh map", "", "cs/boolean-algebra-truth-tables-de-morgan-firewall-logic"],
+    ["uml sequence diagram", "", "eng/uml-class-object-sequence-diagrams-and-the-diamond-everybody"],
+    ["data flow diagram", "", "career/diagrams-that-explain-the-small-number-of-shapes-worth-using"],
+    ["component based software engineering", "",
+     "eng/dependency-risk-transitive-depth-typosquatting-the-abandoned"],
+    ["sdlc methodologies", "", "eng/sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"],
+    ["waterfall vs agile"],
+    ["spiral model", "", "eng/sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"],
+    ["iterative development", "", "eng/sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"],
+    ["verification vs validation", "", "eng/sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"],
+    ["mtbf", "", "ops/bcp-dr-key-metrics-recovery-strategies"],
+    ["safety critical systems", "", "ops/failure-modes-effects-analysis-for-systems-thinking-it-throu"],
+    ["wcag", "", "web/web-accessibility-a11y-wcag-aria"],
+    ["usability heuristics", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
+    ["affordance", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
+    ["cognitive load", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
+    ["task analysis", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
+  ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],
