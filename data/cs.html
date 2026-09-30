@@ -650,6 +650,42 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The alternative</div>
+      <div class="concept-title">A Skip List Balances by Coin Flip, and Redis Chose It Over a Tree</div>
+      <div class="concept-desc">
+        A <strong>skip list</strong> is a sorted linked list with express lanes. Every node sits in
+        the bottom list, and each one is also promoted to the lane above with probability one half,
+        and again from there, so a search runs along the top lane and drops down whenever it would
+        overshoot. That gives O(log n) search, insert and delete in expectation, with no rotations and
+        no rebalancing: the coin flips do the balancing. It does not beat a balanced tree on speed.
+        It wins on the code. An insert or a delete changes a few pointers in one place, a range scan
+        is a walk along the bottom list, and a concurrent version without locks is practical, which a
+        concurrent balanced tree is not.
+        <!-- fact: csvistool routes /SkipList | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/SkipList" target="_blank" rel="noopener noreferrer">Watch the lanes form</a>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Where it runs</th><th>Why a skip list</th></tr></thead>
+          <tbody>
+            <tr><td>Redis sorted sets</td><td>A leaderboard's range by score is a walk along the bottom list. Redis pairs it with a hash table for lookup by member, and its author chose it over a balanced tree for simplicity</td></tr>
+            <tr><td>LevelDB and RocksDB memtables</td><td>Every write lands in a sorted in-memory table first. Readers of the skip list take no lock at all, and RocksDB's version accepts concurrent writers too</td></tr>
+            <tr><td>Java's <code>ConcurrentSkipListMap</code></td><td>The standard library's sorted map for many threads at once, where <code>TreeMap</code> would need a lock</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The second row is the one to recognize, and
+          <span class="xref">LSM Trees — Turning Random Writes Into Sequential Ones</span> explains the
+          memtable it sits in. The O(log n) is a probability, not a bound: a run of unlucky flips
+          makes a slow list, and the chance of it is too small to design around but never zero.
+          <strong>Reach for a skip list when many threads write one sorted structure at once.</strong>
+          Otherwise your language's ordered map is the better default, and the second card on this
+          page says what that is.
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -967,6 +1003,42 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         Reach for it when keys are short and fixed-width: integers, IP <span class="acro-exp">(Internet Protocol)</span> addresses, dates,
         fixed-length IDs. For long or variable-length strings k grows until the advantage is
         gone, which is why no general-purpose library sort is a radix sort.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Selection</div>
+      <div class="concept-title">Quickselect — the Median Without Sorting Everything</div>
+      <div class="concept-desc">
+        Finding the median, or the 99th percentile, of a list feels like it needs the list sorted.
+        It does not. <strong>Quickselect</strong> partitions around a pivot the way quicksort
+        does, then recurses into the one side that holds the position it wants and ignores the
+        other. Sorting does O(n log n) work to put every element in place; selection puts one
+        element in place and costs O(n) on average. The catch is quicksort's catch: a run of bad
+        pivots makes it O(n²), which is why C++'s <code>nth_element</code> and NumPy's
+        <code>partition</code> use introselect, quickselect with a fallback that caps the worst
+        case, the same trick introsort plays in the table above.
+        <!-- fact: csvistool routes /Quickselect | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/Quickselect" target="_blank" rel="noopener noreferrer">Watch it discard half the list</a>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>You have</th><th>Use</th><th>Cost</th><th>Its limit</th></tr></thead>
+          <tbody>
+            <tr><td>Every value in memory, and one percentile to find</td><td>Quickselect</td><td>O(n) on average</td><td>Reorders the array, and needs all of it at once</td></tr>
+            <tr><td>Every value in memory, and many percentiles</td><td>Sort once</td><td>O(n log n)</td><td>Pays off once you want more than a handful</td></tr>
+            <tr><td>A stream, and the top k</td><td>A heap holding k items</td><td>O(n log k)</td><td>Keeps the k largest, not the distribution</td></tr>
+            <tr><td>A stream, and p99 over time and across servers</td><td>A histogram or a sketch</td><td>Constant per value</td><td>Approximate, by design</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the one production uses</strong>, because monitoring data is never all
+          in memory at once, and why is in
+          <span class="xref">Percentiles &amp; Latency — Why p99 Beats the Mean, and How to Aggregate It Wrongly</span>.
+          The first row is the answer for everything else: one log file, one array, one batch job. Reach
+          for a selection function before a sort whenever the question is a single position rather than
+          the whole order.
+        </div>
       </div>
     </div>
 
