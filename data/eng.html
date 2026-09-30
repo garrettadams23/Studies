@@ -5408,7 +5408,7 @@
 </div>
 
 <!-- ── TOPIC: DEPENDENCY RISK ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">📦</span>
     <span class="topic-name">Dependency Risk — Transitive Depth, Typosquatting &amp; the Abandoned Package</span>
@@ -5490,6 +5490,42 @@
           lines yourself is frequently cheaper over five years than carrying the tree.
           Where you do adopt, the maintainer-count and install-script rows are the two
           that predict trouble.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Where It Came From</div>
+      <div class="concept-title">Component-Based Software Engineering Got Its Market, and Left the Contract Behind</div>
+      <div class="concept-desc">
+        This topic describes the world component-based software engineering (CBSE) planned for. Doug
+        McIlroy argued for it at the 1968 NATO <span class="acro-exp">(North Atlantic Treaty Organization)</span> software engineering conference, in a paper titled
+        <em>Mass Produced Software Components</em>: software assembled from catalog parts, the way hardware
+        is built from chips. By the late 1990s it was a discipline with a textbook definition, Clemens
+        Szyperski's: a component is a unit of composition with <strong>contractually specified interfaces
+        and explicit context dependencies only</strong>, deployed independently and composed by third
+        parties. COM, CORBA and Enterprise JavaBeans were its platforms. The market it expected was
+        commercial: components sold, certified and supported. The market arrived as package registries
+        instead, and it kept the reuse and dropped most of the rest.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>CBSE assumed</th><th>What arrived</th><th>What that costs</th></tr></thead>
+          <tbody>
+            <tr><td>Components are bought from a vendor</td><td>They are free, published by strangers to npm, PyPI and Maven Central</td><td>Nobody has a contract with the maintainer, so nobody is owed a fix</td></tr>
+            <tr><td>Each component is chosen and evaluated</td><td>Most arrive transitively, chosen by other components</td><td>The evaluation covers one node of hundreds, which is this topic's first card</td></tr>
+            <tr><td>The interface is a contract, specified and stable</td><td>Semantic versioning, a promise nothing enforces</td><td>A minor version can break you, so you pin, and pinning needs an update process</td></tr>
+            <tr><td>A component is certified before anyone relies on it</td><td>Provenance is being built now: signing, attestation, SBOMs <span class="acro-exp">(Software Bill of Materials)</span></td><td>The trust question the textbooks left open is the one the supply-chain work is answering</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The last row is the one CBSE got right and the industry skipped. Sommerville's textbook lists the
+          discipline's open problems as trusting a component you cannot inspect, certifying it, and
+          predicting how components behave together, and the component market arrived with all three
+          unsolved. <strong>So supply-chain security is not a new problem. It is the certification step of
+          component-based software engineering, done a generation late, for free code.</strong> Hold each
+          dependency to the standard CBSE set for a component, an interface you depend on and a provenance
+          you can verify, and check both before adoption, because afterward it is part of everything that
+          depends on you.
         </div>
       </div>
     </div>
@@ -6485,6 +6521,118 @@ cosign verify $IMAGE \
                     framework converts into an elaborate way of writing down what was going to happen anyway. That
                     is a leadership behavior rather than a process choice, and no amount of tooling substitutes for
                     it.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🌀</span>
+              <span class="topic-name">SDLC <span class="acro-exp">(Software Development Life Cycle)</span> Models — Waterfall, V-Model, Spiral &amp; Iterative, and What Each One Bets On</span>
+              <span class="topic-badge">Ways of Working</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Paper That Introduced Waterfall Argued Against It</div>
+                <div class="concept-desc">
+                  The waterfall model is usually credited to Winston Royce's 1970 paper, <em>Managing the
+                  Development of Large Software Systems</em>. The paper does draw the sequential stages
+                  (requirements, analysis, design, coding, testing, operations) and then says of that approach
+                  that it <strong>"is risky and invites failure."</strong> The problem is timing. Testing is the
+                  first stage that runs the system as a whole, and it comes last, when a design flaw is most
+                  expensive to fix. The rest of the paper is the repair: feedback between stages, a pilot version
+                  built first, and the customer involved throughout. The word <em>waterfall</em> does not appear in
+                  it. The name was attached later, to the diagram Royce drew in order to criticize it. Every model a
+                  course lists as one of the SDLC methodologies is a different answer to the question that paper
+                  asked, and each one is a bet about where the uncertainty is.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Model</th><th>The bet</th><th>Fits when</th><th>Fails when</th></tr></thead>
+                    <tbody>
+                      <tr><td>Waterfall</td><td>The requirements can be known up front and will not change</td><td>Scope is fixed by a contract, or the system is a rebuild of one that already exists</td><td>Users see the product only at the end, and the requirements were wrong</td></tr>
+                      <tr><td>V-model</td><td>Every requirement can be paired, in advance, with the test that will prove it</td><td>Safety-critical and regulated work, where tracing each requirement to its test is itself a deliverable</td><td>The requirements move, and every change ripples down one side of the V and back up the other</td></tr>
+                      <tr><td>Spiral</td><td>The biggest risk can be named, and bought down before anything else is built</td><td>Large, novel, expensive projects where a single unknown could sink the rest</td><td>Nobody can actually assess risk, and the loops turn into ceremony</td></tr>
+                      <tr><td>Iterative and incremental</td><td>Nobody knows the requirements yet, and working software is how you find out</td><td>Most product work. Agile is this family's best-known branch</td><td>The architecture never gets a turn, because every iteration is spent on features</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Choose by where the uncertainty is, not by fashion.</strong> If it is in the
+                    requirements, only the last row finds out in time. If it is in the technology, the third. If
+                    a regulator or a contract has fixed the requirements and demands proof against them, the second
+                    row is the one that produces the evidence. The first row is right less often than it is used, and
+                    more often than an agile team will admit, which is the case
+                    <span class="xref">Agile — The Four Trade-offs, and What Gets Sold as Agile</span> makes from the
+                    other side.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Core Concept</div>
+                <div class="concept-title">Verification vs Validation — Building It Right, and Building the Right Thing</div>
+                <div class="concept-desc">
+                  Barry Boehm put the difference as two questions in 1979. Verification asks <em>"are we building
+                  the product right?"</em>: does it match its specification. Validation asks <em>"are we building
+                  the right product?"</em>: does it meet the need the specification was written for. The V-model
+                  draws both as a V. Each specification stage on the way down the left side is paired with the test
+                  stage that checks it on the way up the right side, and the pairs are planned before any code is
+                  written.
+                </div>
+                <div class="dw">
+                  <pre class="code-block">Requirements ─────────────────────────── Acceptance testing    <span class="com">← validation</span>
+   System design ────────────────── System testing
+      Architecture ─────────── Integration testing           <span class="com">← verification</span>
+         Module design ──── Unit testing
+                     Coding</pre>
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Verification</th><th>Validation</th></tr></thead>
+                    <tbody>
+                      <tr><td>Asks</td><td>Did we build what the specification says?</td><td>Is what the specification says what the users need?</td></tr>
+                      <tr><td>Checked against</td><td>The specification, the design and the standards</td><td>The users, doing their real work</td></tr>
+                      <tr><td>Done by</td><td>Reviews, inspections, static analysis, unit and integration tests</td><td>Acceptance tests, user trials, a pilot in production</td></tr>
+                      <tr><td>Catches</td><td>A system that does not do what was written</td><td>A system that does exactly what was written, and it was the wrong thing</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The last row is why both exist. A test suite can pass in full while the product fails, because
+                    every test was derived from the same specification as the code, and a wrong requirement is
+                    invisible to anything derived from it. <strong>Only validation can find a wrong
+                    requirement</strong>, which is why it cannot wait for the top of the V. Put something in front of
+                    users early, even in a plan-driven project, which is what Royce's paper asked for in 1970.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Design judgment</div>
+                <div class="concept-title">The Spiral Model Is a Rule for Choosing the Others</div>
+                <div class="concept-desc">
+                  Boehm's spiral model (1986) runs a project as loops. Each loop starts by naming the biggest
+                  remaining risk and buying it down, often with a prototype, before more is built. It is less a
+                  process than a rule for choosing one. Iterative development is older than any of these models:
+                  NASA's Project Mercury ran time-boxed half-day iterations around 1960. Iterative means revisiting and
+                  refining the same parts, incremental means delivering in slices, and most modern processes do
+                  both.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>The loop's biggest risk</th><th>What the loop builds</th><th>What the spiral becomes</th></tr></thead>
+                    <tbody>
+                      <tr><td>Nobody agrees what the users need</td><td>A prototype they can react to</td><td>Iterative, until the need settles</td></tr>
+                      <tr><td>The technology may not be able to do it</td><td>A spike or a benchmark on the hard part</td><td>Spiral, until the unknown is gone</td></tr>
+                      <tr><td>A regulator fixes the requirements and wants proof</td><td>The evidence, traced from each requirement to its test</td><td>V-model</td></tr>
+                      <tr><td>Nothing risky is left</td><td>The rest of the build</td><td>Waterfall, and that is fine</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    Each row is a kind of risk and the model that retires it, which is why the spiral contains the
+                    other three: each is what the spiral becomes once one kind of risk dominates.
+                    <strong>The last row is the one agile teams forget exists.</strong> When nothing risky is left,
+                    finishing to a plan is the correct engineering choice, not a relapse, and a team that still runs
+                    discovery rituals on a solved problem is spending the budget the first row will need next time.
                   </div>
                 </div>
               </div>
