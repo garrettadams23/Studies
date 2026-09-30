@@ -26,7 +26,7 @@ What is left here is what a session actually reads.
 | **The card rubric** | What the good cards have, measured from forty written in one session | 📘 reference |
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
-| **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked | 📥 **queue** |
+| **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap | 📥 **queue** |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
@@ -67,7 +67,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **51** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **52** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -640,8 +640,8 @@ reopen-condition rule was applied to every risk except the one that proved it wa
 # Knowledge integration — a batch of study notes, and the seven destinations it named
 
 > Source: an integration plan written against the live site from a batch of newly
-> summarized notes (*Add to Garrett's study website.md*). It is filed here as **a queue,
-> not a record** — nothing below has shipped. It is also the first incoming work in a
+> summarized notes (*Add to Garrett's study website.md*). It was filed here as **a queue,
+> not a record**, and has since been conducted: §6 says what went where. It is also the first incoming work in a
 > while that arrived as a *list* rather than from a census, which is worth saying out
 > loud, because the first thing a list gets is the treatment this file gives every other
 > hand-written number: it was checked against the tool.
@@ -735,6 +735,23 @@ The rubric applies unchanged, and three of its checks bite this batch specifical
    somebody actually has — is the filter that decides how many of the five absent concepts
    are worth writing, and the answer is allowed to be fewer than five.
 
+
+## 6. What shipped
+
+Conducted in one session, in §4's order where there was one, and recorded below as *Session —
+conducting the first batch*. The reader, *a student on a software engineering course*, opened at
+**9 of 25** and closed at **25 of 25**.
+
+| # | Item | Where it went |
+|---|---|---|
+| 5.1 | The queries, before anything | A reader of 25, committed before any item was written. Where the answering card did not exist yet, its `want` named the topic being written into, so a result in the wrong sense of a word scored as the miss it was |
+| 7 | Security frameworks back into the notes | A Markdown section for *Product Validation*, handed to the notes' owner. Nothing in this repository changed, as §4 said |
+| 1 | AI accountability and ethical oversight | One card in *AI Ethics — The Human Side*: oversight fails by agreement. Automation bias, and five controls ranked by what each can prove. AI in development was already written |
+| 3 | Multi-core, parallel computing, Karnaugh maps, NAND | **Moved again, to `cs`.** Truth tables and De Morgan are in *Boolean Algebra*, and the architecture stack is `cs` too. Two cards there: NAND as the primitive, and the Karnaugh map with the glitch its minimal circuit can make. *Amdahl's Law* already taught parallel computing and gained the reader's two phrases |
+| 4 | UML, data flow diagrams, class design, CBSE | UML and class design shipped with batch two. **Data flow diagrams were written all along**: *Diagrams That Explain* spells it *data-flow*, and §2's grep did not allow for the hyphen. CBSE became a card in *Dependency Risk*: the component market arrived, and the contract did not |
+| 5 | V&V, the SDLC methodologies, MTBF, safety-critical | A new `eng` topic, *SDLC Models*, before Agile. MTBF as a rate, with MTTR as the lever, in *BCP / DR — Key Metrics*; reliable is not safe, in *FMEA* |
+| 6 | WCAG, cognitive load, task analysis, heuristics | The UX half, as a new `web` topic, *Usability*. **The domain stays deferred**: four cards in one topic, not the six §3's condition names. Cognitive load was not prose in five files: two were concept cards, and the new card points at them |
+| 2 | Spanning trees | Written, and both of the reader's queries answered. The deepening is that a spanning tree is not a *minimum* one, which csvistool §3 needed from the other side, so it ships with that card |
 
 # csvistool — one outbound link, and the forty-one concepts behind it
 
@@ -6010,3 +6027,80 @@ card would have repeated what the comparison already carried.
 Nothing from §6, and the §5 table stays as the gate it was written to be. The notes themselves
 are unchanged in §7. Correcting them is the owner's call, the same outward direction as batch
 one's item 7.
+
+## Session — conducting the first batch: the words it asked for already meant something else
+
+The queue section *Knowledge integration* was conducted end to end: the reader first, then item 7
+because §4 said it was the cheapest, then items 1, 3, 4, 5 and 6. Six content commits, two new
+topics (1,559 → 1,561), and a reader that went from **9 of 25** answered to **25 of 25**. Its §6
+says what went where. This records what the plan did not predict.
+
+### Nine misses had results, and a `want` is what counted them
+
+The last two queue sections found the same shape by hand: a word the reader navigates by, already
+owned by another sense. Chip subtitles first, then *stack* and *queue*. This reader counted it.
+Nine of its sixteen opening misses returned cards, just not the right ones: `logic gates` reached
+twelve cards about pipeline and approval gates, `multi core processor` reached the GDPR's data
+processor first, and `task analysis` reached sixteen cards about log and malware analysis.
+
+Counting them needed a target for cards that did not exist yet. So the `want` named the topic being
+written into, fixed by its title before the reader was committed. Without it a wrong-sense result
+scores as answered by count, which is the `printer offline` failure in the probe's docstring
+arriving through a new door. **A `want` may name a topic that the same session is about to write**;
+the commit that writes the card is where it gets checked, and every one of them closed.
+
+### The plan's grep was wrong once, and it was a hyphen
+
+§2 listed five concepts as nowhere in `data/*.html`. Four were absent. The data-flow diagram is a row
+in *Diagrams That Explain*, spelled *data-flow*, which the grep did not allow for and the search
+does, because it folds separators. The reader found `data flow diagram` answered on its first run.
+It is the probe's own `wifi 4` mistake, where the per-word line reported *wifi* at 4 until it
+folded the way the matcher folds. **Decide "absent" with the matcher, not with a grep.**
+
+### An inventory that says "prose" means go and look
+
+§2 also called cognitive load *prose in five files*, and two of the five were whole concept cards:
+`career`'s on training, and `devops`'s *Three Kinds of Cognitive Load*, with the same three-row table
+the first draft of the new `web` card repeated. The card now points at it and keeps only the
+interface half. It is the manual's habit #1, read the neighbours' concept-card titles, and this time
+the neighbour list was the plan's own inventory, which had counted files rather than cards.
+
+### Item 3 moved twice
+
+The plan moved it from `linux` to `hw` by chip subtitle, correctly. One level further down, truth
+tables and De Morgan are in `cs` *Boolean Algebra*, and so is the architecture stack from number
+representation to pipelining. Gates are that algebra in silicon, so they went beside it, and the
+glitch card points back at `hw`'s *Signals* for the analogue underneath.
+
+### Found by reading, twice
+
+`blueteam`'s *Normalization Schemas* expanded **ECS** as Elastic Container Service in a card about
+log schemas, where it is the Elastic Common Schema: the manual's failure 10, well-formed and wrong.
+And `ops`'s incident-metrics table had a row reading *MTBF (Mean Time Between Failures) between
+failures* beside a replacement that splits recovery time into detection and repair. The cell was
+garbled when it was written, in one squash commit, and now names the metric the row is about.
+
+### My own three
+
+1. **`judgement`**, in the automation-bias table. `check_spelling.py` failed the wave on it, the
+   same word batch two slipped into its UML card.
+2. **Two commit messages quoted query counts I had added up rather than read.** The `eng` wave
+   claimed six closes and made five, because `waterfall vs agile` was already answered; the `ops`
+   wave claimed two and made one. Both were caught by reading the census against the message
+   before pushing, and amended. It is *a number I incremented fifteen times*, again, and the guard
+   is the same: the number comes from the tool, never from the writer's arithmetic.
+3. **The stamper moved topics nobody touched.** `stamp_freshness.py --only <domain>` re-dated dozens
+   of topics per domain, because the blame derivation drifts with the git version, and `--check`
+   would rewrite all 34 files. Each wave kept only the moves for topics it edited.
+
+### What is left in this section
+
+Nothing. The §3 domain decision stays deferred with its condition unmet: the UX half is one topic
+of four cards, not six. `axe-core` was missing from this container and was installed globally at
+CI's pinned version, so `make a11y` runs here as it does on the server.
+
+```
+7 commits · 2 new topics (1,559 -> 1,561) · 6 concept cards in existing topics · 2 fixes found by reading
+reader 9 of 25 -> 25 of 25 · census 345 of 370, 0 unexplained
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
