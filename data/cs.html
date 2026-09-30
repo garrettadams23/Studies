@@ -2433,7 +2433,7 @@ valgrind --leak-check=full ./prog</pre>
 
 
           <!-- ── TOPIC: AMDAHL'S LAW ──────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
               <span class="topic-icon">📉</span>
               <span class="topic-name">Amdahl's Law — Why More Cores Stop Helping</span>
@@ -2450,7 +2450,9 @@ valgrind --leak-check=full ./prog</pre>
                   setup, coordination, the one lock everyone waits on — and no number of cores speeds that part up.
                   <strong class="c-amber">A task that is 10% serial can never run more than 10× faster, on ten
                   cores or ten thousand.</strong> The serial fraction, not the core count, is what sets the limit,
-                  and it does so long before you run out of cores to add.
+                  and it does so long before you run out of cores to add. Gene Amdahl made the argument in 1967,
+                  decades before the first multi-core processor, and it is still the first limit parallel computing
+                  runs into.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -2684,7 +2686,7 @@ valgrind --leak-check=full ./prog</pre>
 </div>
 
 <!-- ── TOPIC: BOOLEAN ALGEBRA ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🔲</span>
     <span class="topic-name">Boolean Algebra — Truth Tables, De Morgan &amp; Firewall Logic</span>
@@ -2754,6 +2756,86 @@ valgrind --leak-check=full ./prog</pre>
         B may never happen, and the <em>time taken</em> reveals which operand decided the result.
         The second is how timing side channels leak information from comparisons, which is why
         cryptographic code uses constant-time equality rather than the ordinary kind.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Logic Gates Are This Algebra in Silicon, and NAND Is the One the Chip Is Built From</div>
+      <div class="concept-desc">
+        Every operator on this page is also a logic gate: a circuit whose output voltage is the operator
+        applied to its input voltages. A half adder is one XOR and one AND, and a processor is billions of gates.
+        The surprise is which gate is the primitive. <strong>A NAND gate alone can build any Boolean
+        function.</strong> Tie its two inputs together and it is NOT. Follow it with NOT and it is AND. Feed it
+        inverted inputs and, by De Morgan, it is OR. NOR is universal in the same way. So a chip needs one gate
+        type, not five, and in CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span> the cheap one is NAND. Its pull-up transistors sit side by side and only
+        its fast pull-down transistors are stacked in series. A NOR gate stacks the slow pull-up kind, so it
+        has to be built larger to switch as quickly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Gate</th><th>CMOS transistors</th><th>Built as</th></tr></thead>
+          <tbody>
+            <tr><td>NOT</td><td>2</td><td>The inverter, the smallest gate there is</td></tr>
+            <tr><td>NAND</td><td>4</td><td>A primitive, and the preferred one</td></tr>
+            <tr><td>NOR</td><td>4</td><td>A primitive, but slower for its size</td></tr>
+            <tr><td>AND</td><td>6</td><td>A NAND followed by a NOT</td></tr>
+            <tr><td>OR</td><td>6</td><td>A NOR followed by a NOT</td></tr>
+            <tr><td>XOR</td><td>8 to 12, by circuit style</td><td>The most expensive two-input gate, and the one every adder needs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The AND row is the inversion to keep: the gate every truth table starts from costs more than the one
+          that negates it, because it is a NAND with an inverter added. Universality is not only a textbook
+          result either. The Apollo Guidance Computer that flew to the Moon built its logic almost entirely from one
+          chip type, a dual three-input NOR gate. And flash memory is called NAND because its cells
+          are wired in series, the way a NAND gate's pull-down transistors are, which is what makes it
+          dense enough to be cheap.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">A Karnaugh Map Finds the Smallest Circuit, and the Smallest Circuit Can Glitch</div>
+      <div class="concept-desc">
+        A Karnaugh map is a truth table redrawn so that simplification becomes something you can see. Its rows
+        and columns run in Gray-code order (00, 01, 11, 10), so neighboring cells differ in exactly one
+        variable, including across the edges, which wrap. Circle a rectangle of 1s whose size is a power of two
+        and the variables that change inside it drop out: a pair removes one, a group of four removes two. The
+        fewest, largest rectangles give the minimal sum of products, the smallest two-level circuit. Cells
+        marked X are <strong>don't-cares</strong>, input combinations that cannot occur, and they may count as
+        1 or 0, whichever makes a rectangle bigger. That idea outlives the method: a case that cannot happen is
+        free simplification, in a circuit, a firewall rule set or an if-statement.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># F = 1 for inputs 001, 011, 110, 111 (A B C)</span>
+             BC = 00   01   11   10
+     A = 0         0    1    1    0      A'C covers the pair in the top row
+     A = 1         0    0    1    1      AB  covers the pair in the bottom row
+
+  minimal:   F = A'C + AB
+  glitch:    B = C = 1 and A falls. AB switches off at once; A'C switches on one
+             inverter delay later. For that moment both terms are 0, and F
+             drops to 0 and back although it should stay at 1.
+  fix:       F = A'C + AB + BC    <span class="com"># BC covers the step between the two pairs</span></pre>
+        <table class="ref-table">
+          <thead><tr><th>Where the output goes</th><th>Does the glitch matter?</th></tr></thead>
+          <tbody>
+            <tr><td>Into a flip-flop that samples it on the next clock edge</td><td>No. Timing analysis guarantees it settles first, which covers most digital logic and is one reason synchronous design won</td></tr>
+            <tr><td>A clock, an asynchronous reset, a chip select or an interrupt line</td><td>Yes. That input acts on every edge, so a glitch is an event: a counter that counts twice, a reset that fires on its own</td></tr>
+            <tr><td>Off the chip, or across into another clock domain</td><td>Yes. Nothing on the far side waits for it to settle</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The first row is why most engineers never meet a hazard, and the second is why the ones who design
+          clock and reset logic think about little else. <strong>Either add the consensus term, the gate the
+          algebra says you can delete, or register the signal before it drives anything edge-sensitive.</strong>
+          On a logic analyzer the fingerprint is a pulse narrower than any clock period on a line that should
+          be steady, and it is the analogue underneath the digital abstraction showing through, which
+          <span class="xref">Signals — Analogue, Digital, Noise &amp; the Grounding Problem</span> explains. Past
+          four or five variables the maps stop being usable and tools take over: Quine–McCluskey does the same
+          minimization exactly, and heuristics such as Espresso do it at scale. The map is where you learn what
+          the tool is doing.
+        </div>
       </div>
     </div>
   </div>

@@ -90251,8 +90251,8 @@ now reacting to the threat rather than only the context.
 <span class="ctag ctag-general">Theory</span>
 </div>
 <span class="domain-sub">Complexity · Data structures · Algorithms · Graphs · Probabilistic structures</span>
-<span class="domain-meta" aria-label="66 topics, about 2h 35m to read"
->66 topics · ~2h 35m</span>
+<span class="domain-meta" aria-label="66 topics, about 2h 40m to read"
+>66 topics · ~2h 40m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -92620,7 +92620,7 @@ the few operations that need an invariant, CRDTs for the many that only need to 
 </div>
 </div>
 <!-- ── TOPIC: AMDAHL'S LAW ──────────────────────────────── -->
-<div class="topic" id="amdahls-law-why-more-cores-stop-helping" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="amdahls-law-why-more-cores-stop-helping" data-reviewed="2026-09" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📉</span>
 <span class="topic-name">Amdahl's Law — Why More Cores Stop Helping</span>
@@ -92638,7 +92638,9 @@ is brutally simple: <strong class="c-cyan">some fraction of the work must run in
 setup, coordination, the one lock everyone waits on — and no number of cores speeds that part up.
 <strong class="c-amber">A task that is 10% serial can never run more than 10× faster, on ten
 cores or ten thousand.</strong> The serial fraction, not the core count, is what sets the limit,
-and it does so long before you run out of cores to add.
+and it does so long before you run out of cores to add. Gene Amdahl made the argument in 1967,
+decades before the first multi-core processor, and it is still the first limit parallel computing
+runs into.
 </div>
 <div class="dw">
 <table class="ref-table">
@@ -92869,12 +92871,12 @@ bucketing code, where a hash function returning a negative value produces a nega
 </div>
 </div>
 <!-- ── TOPIC: BOOLEAN ALGEBRA ────────────────────────────────── -->
-<div class="topic" id="boolean-algebra-truth-tables-de-morgan-firewall-logic" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="boolean-algebra-truth-tables-de-morgan-firewall-logic" data-reviewed="2026-09" data-read="8" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔲</span>
 <span class="topic-name">Boolean Algebra — Truth Tables, De Morgan &amp; Firewall Logic</span>
 <span class="topic-badge">Applied Maths</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">8 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -92940,6 +92942,86 @@ discussed as an optimization, and it has two consequences that matter more: a si
 B may never happen, and the <em>time taken</em> reveals which operand decided the result.
 The second is how timing side channels leak information from comparisons, which is why
 cryptographic code uses constant-time equality rather than the ordinary kind.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Inversion</div>
+<div class="concept-title">Logic Gates Are This Algebra in Silicon, and NAND Is the One the Chip Is Built From</div>
+<div class="concept-desc">
+Every operator on this page is also a logic gate: a circuit whose output voltage is the operator
+applied to its input voltages. A half adder is one XOR and one AND, and a processor is billions of gates.
+The surprise is which gate is the primitive. <strong>A NAND gate alone can build any Boolean
+function.</strong> Tie its two inputs together and it is NOT. Follow it with NOT and it is AND. Feed it
+inverted inputs and, by De Morgan, it is OR. NOR is universal in the same way. So a chip needs one gate
+type, not five, and in CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span> the cheap one is NAND. Its pull-up transistors sit side by side and only
+its fast pull-down transistors are stacked in series. A NOR gate stacks the slow pull-up kind, so it
+has to be built larger to switch as quickly.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Gate</th><th>CMOS transistors</th><th>Built as</th></tr></thead>
+<tbody>
+<tr><td>NOT</td><td>2</td><td>The inverter, the smallest gate there is</td></tr>
+<tr><td>NAND</td><td>4</td><td>A primitive, and the preferred one</td></tr>
+<tr><td>NOR</td><td>4</td><td>A primitive, but slower for its size</td></tr>
+<tr><td>AND</td><td>6</td><td>A NAND followed by a NOT</td></tr>
+<tr><td>OR</td><td>6</td><td>A NOR followed by a NOT</td></tr>
+<tr><td>XOR</td><td>8 to 12, by circuit style</td><td>The most expensive two-input gate, and the one every adder needs</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+The AND row is the inversion to keep: the gate every truth table starts from costs more than the one
+that negates it, because it is a NAND with an inverter added. Universality is not only a textbook
+result either. The Apollo Guidance Computer that flew to the Moon built its logic almost entirely from one
+chip type, a dual three-input NOR gate. And flash memory is called NAND because its cells
+are wired in series, the way a NAND gate's pull-down transistors are, which is what makes it
+dense enough to be cheap.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Technique</div>
+<div class="concept-title">A Karnaugh Map Finds the Smallest Circuit, and the Smallest Circuit Can Glitch</div>
+<div class="concept-desc">
+A Karnaugh map is a truth table redrawn so that simplification becomes something you can see. Its rows
+and columns run in Gray-code order (00, 01, 11, 10), so neighboring cells differ in exactly one
+variable, including across the edges, which wrap. Circle a rectangle of 1s whose size is a power of two
+and the variables that change inside it drop out: a pair removes one, a group of four removes two. The
+fewest, largest rectangles give the minimal sum of products, the smallest two-level circuit. Cells
+marked X are <strong>don't-cares</strong>, input combinations that cannot occur, and they may count as
+1 or 0, whichever makes a rectangle bigger. That idea outlives the method: a case that cannot happen is
+free simplification, in a circuit, a firewall rule set or an if-statement.
+</div>
+<div class="dw">
+<pre class="code-block"><span class="com"># F = 1 for inputs 001, 011, 110, 111 (A B C)</span>
+             BC = 00   01   11   10
+     A = 0         0    1    1    0      A'C covers the pair in the top row
+     A = 1         0    0    1    1      AB  covers the pair in the bottom row
+
+  minimal:   F = A'C + AB
+  glitch:    B = C = 1 and A falls. AB switches off at once; A'C switches on one
+             inverter delay later. For that moment both terms are 0, and F
+             drops to 0 and back although it should stay at 1.
+  fix:       F = A'C + AB + BC    <span class="com"># BC covers the step between the two pairs</span></pre>
+<table class="ref-table">
+<thead><tr><th>Where the output goes</th><th>Does the glitch matter?</th></tr></thead>
+<tbody>
+<tr><td>Into a flip-flop that samples it on the next clock edge</td><td>No. Timing analysis guarantees it settles first, which covers most digital logic and is one reason synchronous design won</td></tr>
+<tr><td>A clock, an asynchronous reset, a chip select or an interrupt line</td><td>Yes. That input acts on every edge, so a glitch is an event: a counter that counts twice, a reset that fires on its own</td></tr>
+<tr><td>Off the chip, or across into another clock domain</td><td>Yes. Nothing on the far side waits for it to settle</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+The first row is why most engineers never meet a hazard, and the second is why the ones who design
+clock and reset logic think about little else. <strong>Either add the consensus term, the gate the
+algebra says you can delete, or register the signal before it drives anything edge-sensitive.</strong>
+On a logic analyzer the fingerprint is a pulse narrower than any clock period on a line that should
+be steady, and it is the analogue underneath the digital abstraction showing through, which
+<span class="xref" data-xref="signals-analogue-digital-noise-the-grounding-problem" role="link" tabindex="0">Signals — Analogue, Digital, Noise &amp; the Grounding Problem</span> explains. Past
+four or five variables the maps stop being usable and tools take over: Quine–McCluskey does the same
+minimization exactly, and heuristics such as Espresso do it at scale. The map is where you learn what
+the tool is doing.
+</div>
 </div>
 </div>
 </div>
@@ -130264,6 +130346,6 @@ progress in localStorage — no content of its own, just an order. -->
 taken from the data-reviewed stamps at build time. Shown on the domain's
 landing card, because "is anyone still maintaining this?" is a question a
 reference site should answer without being asked. -->
-<script type="application/json" id="changelog">{"net":{"month":"2026-09","topics":["network-topologies","dhcp-dora-process","cabling-connectors-ethernet-standards"]},"sec":{"month":"2026-09","topics":["access-control-models","cryptography-algorithm-reference","cloud-service-deployment-models"]},"threat":{"month":"2026-09","topics":["diamond-model-of-intrusion-analysis","malware-types-reference","dos-ddos-network-attack-types"]},"grc":{"month":"2026-09","topics":["defense-in-depth-layered-security","risk-management-lifecycle","risk-management-101-threat-vulnerability-impact"]},"ops":{"month":"2026-09","topics":["vulnerability-management-lifecycle","prometheus-grafana-metrics-dashboards","golden-signals-red-use-what-to-measure"]},"devops":{"month":"2026-09","topics":["terraform-infrastructure-as-code-in-practice","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning"]},"pentest":{"month":"2026-09","topics":["owasp-top-10-2021","recon-methodology-intelligence-before-attack","penetration-testing-phases"]},"linux":{"month":"2026-09","topics":["linux-file-permissions-model","linux-boot-process-biosuefi-systemd","podman-rootless-containers"]},"ai":{"month":"2026-09","topics":["machine-learning-pipeline","ml-learning-paradigms","ai-ethics-responsible-ai-nist-ai-rmf"]},"script":{"month":"2026-09","topics":["regular-expressions-pattern-matching-that-pays-off-forever","rust-safe-systems-programming","java-the-enterprise-workhorse"]},"shortcut":{"month":"2026-08","topics":["vs-code-editing-superpowers","vs-code-remote-dev-dev-containers","dotfiles-environment-management"]},"philosophy":{"month":"2026-09","topics":["philosophy-schools-of-thought","qigong-the-three-regulations-what-it-is-good-for","stoicism-the-art-of-rational-endurance"]},"productivity":{"month":"2026-08","topics":["habits-time","learning-how-to-learn-build-the-skill-behind-all-skills","time-management-making-your-hours-count"]},"mind":{"month":"2026-09","topics":["imposter-syndrome-you-belong-here","cbt-and-dbt-what-each-one-trains-and-which-problem-each-is-f","survival-mindsets-hard-won-wisdom-for-a-long-it-career"]},"career":{"month":"2026-09","topics":["mentorship-the-fastest-way-to-grow","your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r","certification-roadmap-charting-a-path-through-the-alphabet-s"]},"military":{"month":"2026-08","topics":["prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","quick-reference-full-cross-matrix"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-09","topics":["tcpdump-capture-from-the-command-line","arkime-ntopng-full-capture-traffic-analytics","wazuh-open-source-xdrsiem"]},"cloud":{"month":"2026-09","topics":["aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started"]},"cs":{"month":"2026-08","topics":["big-o-in-practice-what-the-notation-hides","amortized-analysis-why-a-dynamic-array-is-o1-on-average","time-vs-space-trade-offs-what-caching-actually-costs"]},"eng":{"month":"2026-09","topics":["scalability-101-vertical-vs-horizontal","load-balancing-sharding","the-system-design-interview-a-framework"]},"data":{"month":"2026-09","topics":["how-a-database-actually-works","the-relational-model-keys-integrity","er-modeling-entities-relationships-cardinality"]},"web":{"month":"2026-09","topics":["devtools-mastery","the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi","design-systems-tokens-tailwind"]},"endpoint":{"month":"2026-09","topics":["autopilot-device-preparation-the-newer-flow-that-deletes-the","glossary-acronyms-logs-task-sequence-variables","mecm-at-scale-site-design-boundary-groups-collections-that-d"]},"infra":{"month":"2026-09","topics":["restore-testing-dr-design-turning-backups-into-a-recovery-ca","windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-"]},"hw":{"month":"2026-08","topics":["voltage-current-resistance-ohms-law-with-worked-it-examples","power-thermals-watts-heat-and-why-the-psu-calculation-matter","components-schematics-resistors-capacitors-diodes-transistor"]},"m365":{"month":"2026-09","topics":["exchange-hybrid-the-coexistence-nobody-meant-to-keep","exchange-server-on-prem-dag-transport-the-server-you-cant-qu","calendar-time-zones-why-the-invite-lands-an-hour-out"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-08","topics":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon"]}}</script>
+<script type="application/json" id="changelog">{"net":{"month":"2026-09","topics":["network-topologies","dhcp-dora-process","cabling-connectors-ethernet-standards"]},"sec":{"month":"2026-09","topics":["access-control-models","cryptography-algorithm-reference","cloud-service-deployment-models"]},"threat":{"month":"2026-09","topics":["diamond-model-of-intrusion-analysis","malware-types-reference","dos-ddos-network-attack-types"]},"grc":{"month":"2026-09","topics":["defense-in-depth-layered-security","risk-management-lifecycle","risk-management-101-threat-vulnerability-impact"]},"ops":{"month":"2026-09","topics":["vulnerability-management-lifecycle","prometheus-grafana-metrics-dashboards","golden-signals-red-use-what-to-measure"]},"devops":{"month":"2026-09","topics":["terraform-infrastructure-as-code-in-practice","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning"]},"pentest":{"month":"2026-09","topics":["owasp-top-10-2021","recon-methodology-intelligence-before-attack","penetration-testing-phases"]},"linux":{"month":"2026-09","topics":["linux-file-permissions-model","linux-boot-process-biosuefi-systemd","podman-rootless-containers"]},"ai":{"month":"2026-09","topics":["machine-learning-pipeline","ml-learning-paradigms","ai-ethics-responsible-ai-nist-ai-rmf"]},"script":{"month":"2026-09","topics":["regular-expressions-pattern-matching-that-pays-off-forever","rust-safe-systems-programming","java-the-enterprise-workhorse"]},"shortcut":{"month":"2026-08","topics":["vs-code-editing-superpowers","vs-code-remote-dev-dev-containers","dotfiles-environment-management"]},"philosophy":{"month":"2026-09","topics":["philosophy-schools-of-thought","qigong-the-three-regulations-what-it-is-good-for","stoicism-the-art-of-rational-endurance"]},"productivity":{"month":"2026-08","topics":["habits-time","learning-how-to-learn-build-the-skill-behind-all-skills","time-management-making-your-hours-count"]},"mind":{"month":"2026-09","topics":["imposter-syndrome-you-belong-here","cbt-and-dbt-what-each-one-trains-and-which-problem-each-is-f","survival-mindsets-hard-won-wisdom-for-a-long-it-career"]},"career":{"month":"2026-09","topics":["mentorship-the-fastest-way-to-grow","your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r","certification-roadmap-charting-a-path-through-the-alphabet-s"]},"military":{"month":"2026-08","topics":["prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","quick-reference-full-cross-matrix"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-09","topics":["tcpdump-capture-from-the-command-line","arkime-ntopng-full-capture-traffic-analytics","wazuh-open-source-xdrsiem"]},"cloud":{"month":"2026-09","topics":["aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started"]},"cs":{"month":"2026-09","topics":["amdahls-law-why-more-cores-stop-helping","boolean-algebra-truth-tables-de-morgan-firewall-logic","big-o-in-practice-what-the-notation-hides"]},"eng":{"month":"2026-09","topics":["scalability-101-vertical-vs-horizontal","load-balancing-sharding","the-system-design-interview-a-framework"]},"data":{"month":"2026-09","topics":["how-a-database-actually-works","the-relational-model-keys-integrity","er-modeling-entities-relationships-cardinality"]},"web":{"month":"2026-09","topics":["devtools-mastery","the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi","design-systems-tokens-tailwind"]},"endpoint":{"month":"2026-09","topics":["autopilot-device-preparation-the-newer-flow-that-deletes-the","glossary-acronyms-logs-task-sequence-variables","mecm-at-scale-site-design-boundary-groups-collections-that-d"]},"infra":{"month":"2026-09","topics":["restore-testing-dr-design-turning-backups-into-a-recovery-ca","windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-"]},"hw":{"month":"2026-08","topics":["voltage-current-resistance-ohms-law-with-worked-it-examples","power-thermals-watts-heat-and-why-the-psu-calculation-matter","components-schematics-resistors-capacitors-diodes-transistor"]},"m365":{"month":"2026-09","topics":["exchange-hybrid-the-coexistence-nobody-meant-to-keep","exchange-server-on-prem-dag-transport-the-server-you-cant-qu","calendar-time-zones-why-the-invite-lands-an-hour-out"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-08","topics":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon"]}}</script>
 </body>
 </html>
