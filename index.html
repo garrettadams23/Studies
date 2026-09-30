@@ -24942,8 +24942,8 @@ and the design-side principle is
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Service Desk · SOC · Incident Response · Vulnerability Mgmt · BCP/DR · Forensics · ITIL · SRE · Observability</span>
-<span class="domain-meta" aria-label="78 topics, about 4h 00m to read"
->78 topics · ~4h 00m</span>
+<span class="domain-meta" aria-label="78 topics, about 4h 05m to read"
+>78 topics · ~4h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -25335,12 +25335,12 @@ exploiting it this week.
 NEW TOPIC: BCP / DR Key Metrics
 Source: CISSP + Net+ Cheat Sheet PDFs
 ═══════════════════════════════════════════════════════════════ -->
-<div class="topic" id="bcp-dr-key-metrics-recovery-strategies" data-reviewed="2026-07" data-read="6" data-level="core">
+<div class="topic" id="bcp-dr-key-metrics-recovery-strategies" data-reviewed="2026-09" data-read="9" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏢</span>
 <span class="topic-name">BCP <span class="acro-exp">(Business Continuity Plan)</span> / DR — Key Metrics &amp; Recovery Strategies</span>
 <span class="topic-badge">REFERENCE TABLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">9 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -25519,6 +25519,41 @@ objective chosen without that number is a preference dressed as a requirement. T
 cloud row is the one that changed the arithmetic: it reads as a warm site at a cold
 site's standing cost, but only if the build is genuinely scripted and has been run,
 and an unscripted cloud plan is a cold site with a larger invoice.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Inversion</div>
+<div class="concept-title">MTBF Is a Failure Rate, Not a Lifespan, and MTTR Is the Half You Control</div>
+<div class="concept-desc">
+The terms above define MTBF as the average time a repairable system runs between failures, and it
+is the most misread number on a datasheet. A drive rated at 1,200,000 hours has not been promised
+137 years. The figure comes from running a large population for a short time, in the flat middle of
+the bathtub curve, after the early failures and before wear-out, so it describes a rate across a
+fleet and says nothing about one unit's life. Divide the 8,760 hours in a year by it and it says
+that about 0.7% of those drives fail each year. Vendors print it on parts nobody repairs, where
+MTTF is the exact term. Even as a rate it flatters: a study of about 100,000 drives in production
+(Schroeder and Gibson, 2007) found datasheets implying at most 0.88% a year, while replacement
+rates of 2–4% were common and some systems reached 13%.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Availability = MTBF ÷ (MTBF + MTTR)</th><th>MTBF</th><th>MTTR</th><th>Availability</th></tr></thead>
+<tbody>
+<tr><td>Where you start</td><td>1,000 hours</td><td>10 hours</td><td>99.0%</td></tr>
+<tr><td>Buy hardware that fails half as often</td><td>2,000 hours</td><td>10 hours</td><td>99.5%</td></tr>
+<tr><td>Repair in half the time</td><td>1,000 hours</td><td>5 hours</td><td>99.5%</td></tr>
+<tr><td>Repair within the hour</td><td>1,000 hours</td><td>1 hour</td><td>99.9%</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong>The second and third rows are the point:</strong> halving the time to repair buys exactly
+what doubling the time between failures does, and it is the half you control. MTBF is set by what
+you bought. MTTR is set by a spare on the shelf, monitoring that notices, and a runbook somebody has
+practiced, and the last row costs less than new hardware. The formula also assumes failures are
+independent, which is the assumption real outages break, and
+<span class="xref" data-xref="probability-fundamentals-independence-conditional-probabilit" role="link" tabindex="0">Probability Fundamentals — Independence, Conditional Probability &amp; Expectation</span>
+works through what that does to redundancy.
 </div>
 </div>
 </div>
@@ -30395,12 +30430,12 @@ shuffle sharding over workers that all share one database contains nothing at al
 </div>
 </div>
 <!-- ── TOPIC: FMEA FOR SYSTEMS ───────────────────────────────── -->
-<div class="topic" id="failure-modes-effects-analysis-for-systems-thinking-it-throu" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="failure-modes-effects-analysis-for-systems-thinking-it-throu" data-reviewed="2026-09" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📋</span>
 <span class="topic-name">Failure Modes &amp; Effects Analysis for Systems — Thinking It Through Before It Happens</span>
 <span class="topic-badge">Reliability</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -30477,6 +30512,41 @@ The last row is where this pays off twice. FMEA produces hypotheses — "if the 
 unavailable we degrade gracefully" — and a chaos experiment is how you find out whether
 that is true. The two practices are the same loop: predict the behavior, then verify it.
 Prediction alone is how teams acquire confident, wrong beliefs about their own systems.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Where It Came From</div>
+<div class="concept-title">Reliable Is Not Safe — What Safety-Critical Systems Rely On Instead</div>
+<div class="concept-desc">
+FMEA comes from engineering where failure kills. The US military standardized it in 1949, and
+aerospace, cars and medical devices run it today. Safety-critical systems taught those industries
+something IT rarely has to learn: reliability and safety are different properties. A reliable system
+does what it was specified to do; a safe one does not cause harm, and a system can be either without
+the other. NASA's Mars Polar Lander was lost in 1999 with no component failing: its software read the
+jolt of the landing legs deploying as touchdown and shut the engine off while the lander was still
+descending. The software did what its requirements said, and the requirements had missed that case.
+The opposite is the railway air brake. Lose the air pressure and the brakes apply, so the commonest
+failure stops the train.
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Design choice</th><th>What happens on failure</th><th>Where it is used</th></tr></thead>
+<tbody>
+<tr><td>Fail-safe</td><td>The system drops into a state that cannot hurt anyone</td><td>The air brake; a machine guard that cuts power when opened</td></tr>
+<tr><td>Fail-operational</td><td>It keeps working through the failure, because stopping is not safe</td><td>Fly-by-wire flight controls. An aircraft cannot stop in the air, so it carries redundant computers, some running independently written software</td></tr>
+<tr><td>Fail-secure</td><td>It stays locked</td><td>An electric door strike in a power cut. A maglock that releases instead is fail-safe, so for one door the two are opposite choices, and life-safety codes, not the security team, decide what an exit gets</td></tr>
+<tr><td>Certify the process</td><td>Evidence is demanded in proportion to the harm a failure can do</td><td>DO-178C for aircraft software, IEC <span class="acro-exp">(International Electrotechnical Commission)</span> 61508 for industrial systems, ISO <span class="acro-exp">(International Organization for Standardization)</span> 26262 for cars</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+The last row exists because testing cannot prove the numbers these systems need. Aircraft
+certification asks that a catastrophic failure be less likely than one in a billion flight hours,
+and Butler and Finelli showed in 1993 that demonstrating a rate like that by testing would take over
+a hundred thousand years of it. So the standards certify how the software was built and analyzed,
+including the FMEA this topic describes, rather than a measured MTBF <span class="acro-exp">(Mean Time Between Failures)</span>. <strong>The row that carries over to IT
+is fail-secure against fail-safe:</strong> decide in advance which state each failure leaves you in,
+because otherwise it is whatever the code happened to do.
 </div>
 </div>
 </div>
@@ -30664,7 +30734,7 @@ minutes without touching production.
 </div>
 </div>
 <!-- ── TOPIC: NEAR-MISSES & INCIDENT METRICS ─────────────────── -->
-<div class="topic" id="near-misses-incident-metrics-what-mttr-does-and-does-not-tel" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="near-misses-incident-metrics-what-mttr-does-and-does-not-tel" data-reviewed="2026-09" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📈</span>
 <span class="topic-name">Near-Misses &amp; Incident Metrics — What MTTR <span class="acro-exp">(Mean Time To Repair)</span> Does and Does Not Tell You</span>
@@ -30727,7 +30797,7 @@ in the period.
 <tbody>
 <tr><td>Mean time to recovery</td><td>The distribution — median and worst case</td><td>One nine-hour outage swamps twenty short ones</td></tr>
 <tr><td>Incident count</td><td>Count by severity, and user-minutes affected</td><td>Counting treats a blip and an outage as equal</td></tr>
-<tr><td>MTBF <span class="acro-exp">(Mean Time Between Failures)</span> between failures</td><td>Time to detect, separately from time to resolve</td><td>Detection and repair have different fixes</td></tr>
+<tr><td>Recovery time as a single figure</td><td>Time to detect, separately from time to resolve</td><td>Detection and repair have different fixes</td></tr>
 <tr><td>"Was there an incident?"</td><td>Error-budget consumption</td><td>Continuous, and already tied to the user's experience</td></tr>
 <tr><td>Action items created</td><td>Action items completed, and time to completion</td><td>Creation is free; completion is the improvement</td></tr>
 <tr><td>Repeat-incident rate</td><td>Same, and it is the most honest number here</td><td>Recurrence means the last fix addressed a symptom</td></tr>
@@ -130494,6 +130564,6 @@ progress in localStorage — no content of its own, just an order. -->
 taken from the data-reviewed stamps at build time. Shown on the domain's
 landing card, because "is anyone still maintaining this?" is a question a
 reference site should answer without being asked. -->
-<script type="application/json" id="changelog">{"net":{"month":"2026-09","topics":["network-topologies","dhcp-dora-process","cabling-connectors-ethernet-standards"]},"sec":{"month":"2026-09","topics":["access-control-models","cryptography-algorithm-reference","cloud-service-deployment-models"]},"threat":{"month":"2026-09","topics":["diamond-model-of-intrusion-analysis","malware-types-reference","dos-ddos-network-attack-types"]},"grc":{"month":"2026-09","topics":["defense-in-depth-layered-security","risk-management-lifecycle","risk-management-101-threat-vulnerability-impact"]},"ops":{"month":"2026-09","topics":["vulnerability-management-lifecycle","prometheus-grafana-metrics-dashboards","golden-signals-red-use-what-to-measure"]},"devops":{"month":"2026-09","topics":["terraform-infrastructure-as-code-in-practice","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning"]},"pentest":{"month":"2026-09","topics":["owasp-top-10-2021","recon-methodology-intelligence-before-attack","penetration-testing-phases"]},"linux":{"month":"2026-09","topics":["linux-file-permissions-model","linux-boot-process-biosuefi-systemd","podman-rootless-containers"]},"ai":{"month":"2026-09","topics":["machine-learning-pipeline","ml-learning-paradigms","ai-ethics-responsible-ai-nist-ai-rmf"]},"script":{"month":"2026-09","topics":["regular-expressions-pattern-matching-that-pays-off-forever","rust-safe-systems-programming","java-the-enterprise-workhorse"]},"shortcut":{"month":"2026-08","topics":["vs-code-editing-superpowers","vs-code-remote-dev-dev-containers","dotfiles-environment-management"]},"philosophy":{"month":"2026-09","topics":["philosophy-schools-of-thought","qigong-the-three-regulations-what-it-is-good-for","stoicism-the-art-of-rational-endurance"]},"productivity":{"month":"2026-08","topics":["habits-time","learning-how-to-learn-build-the-skill-behind-all-skills","time-management-making-your-hours-count"]},"mind":{"month":"2026-09","topics":["imposter-syndrome-you-belong-here","cbt-and-dbt-what-each-one-trains-and-which-problem-each-is-f","survival-mindsets-hard-won-wisdom-for-a-long-it-career"]},"career":{"month":"2026-09","topics":["mentorship-the-fastest-way-to-grow","your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r","certification-roadmap-charting-a-path-through-the-alphabet-s"]},"military":{"month":"2026-08","topics":["prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","quick-reference-full-cross-matrix"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-09","topics":["tcpdump-capture-from-the-command-line","arkime-ntopng-full-capture-traffic-analytics","wazuh-open-source-xdrsiem"]},"cloud":{"month":"2026-09","topics":["aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started"]},"cs":{"month":"2026-09","topics":["amdahls-law-why-more-cores-stop-helping","boolean-algebra-truth-tables-de-morgan-firewall-logic","big-o-in-practice-what-the-notation-hides"]},"eng":{"month":"2026-09","topics":["scalability-101-vertical-vs-horizontal","load-balancing-sharding","the-system-design-interview-a-framework"]},"data":{"month":"2026-09","topics":["how-a-database-actually-works","the-relational-model-keys-integrity","er-modeling-entities-relationships-cardinality"]},"web":{"month":"2026-09","topics":["devtools-mastery","the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi","design-systems-tokens-tailwind"]},"endpoint":{"month":"2026-09","topics":["autopilot-device-preparation-the-newer-flow-that-deletes-the","glossary-acronyms-logs-task-sequence-variables","mecm-at-scale-site-design-boundary-groups-collections-that-d"]},"infra":{"month":"2026-09","topics":["restore-testing-dr-design-turning-backups-into-a-recovery-ca","windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-"]},"hw":{"month":"2026-08","topics":["voltage-current-resistance-ohms-law-with-worked-it-examples","power-thermals-watts-heat-and-why-the-psu-calculation-matter","components-schematics-resistors-capacitors-diodes-transistor"]},"m365":{"month":"2026-09","topics":["exchange-hybrid-the-coexistence-nobody-meant-to-keep","exchange-server-on-prem-dag-transport-the-server-you-cant-qu","calendar-time-zones-why-the-invite-lands-an-hour-out"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-08","topics":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon"]}}</script>
+<script type="application/json" id="changelog">{"net":{"month":"2026-09","topics":["network-topologies","dhcp-dora-process","cabling-connectors-ethernet-standards"]},"sec":{"month":"2026-09","topics":["access-control-models","cryptography-algorithm-reference","cloud-service-deployment-models"]},"threat":{"month":"2026-09","topics":["diamond-model-of-intrusion-analysis","malware-types-reference","dos-ddos-network-attack-types"]},"grc":{"month":"2026-09","topics":["defense-in-depth-layered-security","risk-management-lifecycle","risk-management-101-threat-vulnerability-impact"]},"ops":{"month":"2026-09","topics":["vulnerability-management-lifecycle","bcp-dr-key-metrics-recovery-strategies","prometheus-grafana-metrics-dashboards"]},"devops":{"month":"2026-09","topics":["terraform-infrastructure-as-code-in-practice","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning"]},"pentest":{"month":"2026-09","topics":["owasp-top-10-2021","recon-methodology-intelligence-before-attack","penetration-testing-phases"]},"linux":{"month":"2026-09","topics":["linux-file-permissions-model","linux-boot-process-biosuefi-systemd","podman-rootless-containers"]},"ai":{"month":"2026-09","topics":["machine-learning-pipeline","ml-learning-paradigms","ai-ethics-responsible-ai-nist-ai-rmf"]},"script":{"month":"2026-09","topics":["regular-expressions-pattern-matching-that-pays-off-forever","rust-safe-systems-programming","java-the-enterprise-workhorse"]},"shortcut":{"month":"2026-08","topics":["vs-code-editing-superpowers","vs-code-remote-dev-dev-containers","dotfiles-environment-management"]},"philosophy":{"month":"2026-09","topics":["philosophy-schools-of-thought","qigong-the-three-regulations-what-it-is-good-for","stoicism-the-art-of-rational-endurance"]},"productivity":{"month":"2026-08","topics":["habits-time","learning-how-to-learn-build-the-skill-behind-all-skills","time-management-making-your-hours-count"]},"mind":{"month":"2026-09","topics":["imposter-syndrome-you-belong-here","cbt-and-dbt-what-each-one-trains-and-which-problem-each-is-f","survival-mindsets-hard-won-wisdom-for-a-long-it-career"]},"career":{"month":"2026-09","topics":["mentorship-the-fastest-way-to-grow","your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r","certification-roadmap-charting-a-path-through-the-alphabet-s"]},"military":{"month":"2026-08","topics":["prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","quick-reference-full-cross-matrix"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-09","topics":["tcpdump-capture-from-the-command-line","arkime-ntopng-full-capture-traffic-analytics","wazuh-open-source-xdrsiem"]},"cloud":{"month":"2026-09","topics":["aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started"]},"cs":{"month":"2026-09","topics":["amdahls-law-why-more-cores-stop-helping","boolean-algebra-truth-tables-de-morgan-firewall-logic","big-o-in-practice-what-the-notation-hides"]},"eng":{"month":"2026-09","topics":["scalability-101-vertical-vs-horizontal","load-balancing-sharding","the-system-design-interview-a-framework"]},"data":{"month":"2026-09","topics":["how-a-database-actually-works","the-relational-model-keys-integrity","er-modeling-entities-relationships-cardinality"]},"web":{"month":"2026-09","topics":["devtools-mastery","the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi","design-systems-tokens-tailwind"]},"endpoint":{"month":"2026-09","topics":["autopilot-device-preparation-the-newer-flow-that-deletes-the","glossary-acronyms-logs-task-sequence-variables","mecm-at-scale-site-design-boundary-groups-collections-that-d"]},"infra":{"month":"2026-09","topics":["restore-testing-dr-design-turning-backups-into-a-recovery-ca","windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-"]},"hw":{"month":"2026-08","topics":["voltage-current-resistance-ohms-law-with-worked-it-examples","power-thermals-watts-heat-and-why-the-psu-calculation-matter","components-schematics-resistors-capacitors-diodes-transistor"]},"m365":{"month":"2026-09","topics":["exchange-hybrid-the-coexistence-nobody-meant-to-keep","exchange-server-on-prem-dag-transport-the-server-you-cant-qu","calendar-time-zones-why-the-invite-lands-an-hour-out"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-08","topics":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon"]}}</script>
 </body>
 </html>
