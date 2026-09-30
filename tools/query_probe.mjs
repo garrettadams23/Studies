@@ -526,6 +526,30 @@ const READERS = [
     ["cognitive load", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
     ["task analysis", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
   ]],
+  // plan.md, *csvistool*: the zeros its §2 found, from a scratch copy of this
+  // loop, put where they are tracked before any is fixed. `splay` is here as
+  // `splay tree`, which is what a student types. On its own it no longer
+  // returns nothing: five letters match as a substring, and it finds *display*
+  // in 58 cards. The last four found cards in the wrong sense or the wrong
+  // domain rather than nothing.
+  ["a student with a data structures course", [
+    ["hashmap", "", "cs/hash-tables-collisions-load-factor-the-dos-that-exploits-the"],
+    ["treemap", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
+    ["quickselect", "", "cs/sorting-searching-why-your-language-picked-the-one-it-did"],
+    ["radix sort", "", "cs/sorting-searching-why-your-language-picked-the-one-it-did"],
+    ["kmp", "", "cs/string-algorithms-matching-edit-distance-where-regex-fits"],
+    ["prim", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["kruskal", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["minimum spanning tree", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["disjoint set", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["longest common subsequence", "", "cs/string-algorithms-matching-edit-distance-where-regex-fits"],
+    ["floyd-warshall", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["splay tree", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
+    ["depth first search", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["union find", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["2-4 tree", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
+    ["skip list", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
+  ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],
