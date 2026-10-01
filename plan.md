@@ -26,8 +26,8 @@ What is left here is what a session actually reads.
 | **The card rubric** | What the good cards have, measured from forty written in one session | 📘 reference |
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
-| **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked | 📥 **queue** |
-| **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap | 📥 **queue** |
+| **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
+| **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
@@ -51,23 +51,23 @@ the row needs was already running. Three are left, and all three want a stopwatc
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,559** across 30 domains | `depth_report.py` |
+| Topics | **1,561** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,398**, or **1,128 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,403**, or **1,132 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **320 of 345**, **0 unexplained** — nineteen batches. The newest reader, *a student on a SQL Server and Java course*, was added from *Study notes, batch two* before any of its fixes: a subject-shaped reader that opened at 14 of 15 missing, worse than any symptom-shaped batch, because the concepts were on the site and the words were not. It closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 8 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,597 steps, 1,499 of 1,559 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,499 topics, 4,878 links, 0 one-way** — one mainland of **1,483 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **33% raw** headroom — room for ~779 more topics | `page_budget.py` |
+| Reader questions answered | **361 of 386**, **0 unexplained** — twenty-one batches. The newest reader, *a student with a data structures course*, was added from *csvistool* before any of its fixes. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The reader before it, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. The one before that, *a student on a SQL Server and Java course*, opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 8 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,599 steps, 1,501 of 1,561 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,501 topics, 4,896 links, 0 one-way** — one mainland of **1,485 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **33% raw** headroom — room for ~764 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,154 chars**, median 3,747 — the number a deepening wave has to move | `depth_report.py` |
-| Dated claims | **47 volatile spans and 12 fact anchors: 59 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world | `check_volatility.py` |
+| Depth tail | **10th percentile 2,154 chars**, median 3,759 — the number a deepening wave has to move | `depth_report.py` |
+| Dated claims | **47 volatile spans and 30 fact anchors: 77 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **51** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **53** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -640,8 +640,8 @@ reopen-condition rule was applied to every risk except the one that proved it wa
 # Knowledge integration — a batch of study notes, and the seven destinations it named
 
 > Source: an integration plan written against the live site from a batch of newly
-> summarized notes (*Add to Garrett's study website.md*). It is filed here as **a queue,
-> not a record** — nothing below has shipped. It is also the first incoming work in a
+> summarized notes (*Add to Garrett's study website.md*). It was filed here as **a queue,
+> not a record**, and has since been conducted: §6 says what went where. It is also the first incoming work in a
 > while that arrived as a *list* rather than from a census, which is worth saying out
 > loud, because the first thing a list gets is the treatment this file gives every other
 > hand-written number: it was checked against the tool.
@@ -736,11 +736,28 @@ The rubric applies unchanged, and three of its checks bite this batch specifical
    are worth writing, and the answer is allowed to be fewer than five.
 
 
+## 6. What shipped
+
+Conducted in one session, in §4's order where there was one, and recorded below as *Session —
+conducting the first batch*. The reader, *a student on a software engineering course*, opened at
+**9 of 25** and closed at **25 of 25**.
+
+| # | Item | Where it went |
+|---|---|---|
+| 5.1 | The queries, before anything | A reader of 25, committed before any item was written. Where the answering card did not exist yet, its `want` named the topic being written into, so a result in the wrong sense of a word scored as the miss it was |
+| 7 | Security frameworks back into the notes | A Markdown section for *Product Validation*, handed to the notes' owner. Nothing in this repository changed, as §4 said |
+| 1 | AI accountability and ethical oversight | One card in *AI Ethics — The Human Side*: oversight fails by agreement. Automation bias, and five controls ranked by what each can prove. AI in development was already written |
+| 3 | Multi-core, parallel computing, Karnaugh maps, NAND | **Moved again, to `cs`.** Truth tables and De Morgan are in *Boolean Algebra*, and the architecture stack is `cs` too. Two cards there: NAND as the primitive, and the Karnaugh map with the glitch its minimal circuit can make. *Amdahl's Law* already taught parallel computing and gained the reader's two phrases |
+| 4 | UML, data flow diagrams, class design, CBSE | UML and class design shipped with batch two. **Data flow diagrams were written all along**: *Diagrams That Explain* spells it *data-flow*, and §2's grep did not allow for the hyphen. CBSE became a card in *Dependency Risk*: the component market arrived, and the contract did not |
+| 5 | V&V, the SDLC methodologies, MTBF, safety-critical | A new `eng` topic, *SDLC Models*, before Agile. MTBF as a rate, with MTTR as the lever, in *BCP / DR — Key Metrics*; reliable is not safe, in *FMEA* |
+| 6 | WCAG, cognitive load, task analysis, heuristics | The UX half, as a new `web` topic, *Usability*. **The domain stays deferred**: four cards in one topic, not the six §3's condition names. Cognitive load was not prose in five files: two were concept cards, and the new card points at them |
+| 2 | Spanning trees | Written, and both of the reader's queries answered. The deepening is that a spanning tree is not a *minimum* one, which csvistool §3 needed from the other side, so it shipped with that card: one sentence in the STP card, and a link each way |
+
 # csvistool — one outbound link, and the forty-one concepts behind it
 
 > Source: a one-line request to link **[csvistool.com](https://csvistool.com/)** and add its
-> concepts, **in this file only for now**. Filed as **a queue, not a record**, because nothing
-> has shipped. The tool is the *CS 1332 Data Structures and Algorithms Visualizations* site
+> concepts, **in this file only for now**. It was filed as **a queue, not a record**, and has
+> since been conducted: §5 says what went where. The tool is the *CS 1332 Data Structures and Algorithms Visualizations* site
 > from Georgia Tech: step-by-step animations with pseudocode, open source at
 > [`csvistool/visualization-tool`](https://github.com/csvistool/visualization-tool), adapted
 > from David Galles' USF visualizations and maintained by course TAs under Prof. Mary
@@ -792,6 +809,8 @@ be checked live from here because the host is blocked. The link-rot check was me
 at *one external link on the whole site*. The thirty-odd deep links §2 calls for would reopen
 that item, and **a naive checker would report every one of them dead.** If it gets built, it checks this host's
 root and not its paths, or it follows the redirect the way a browser does.
+
+**Reopened, and at what count.** The deep links shipped with fact anchors, one per line of links, and the link-rot item reopened at **37 external links, 34 of them on `csvistool.com`**, one per route. It closed the queue at **42, 39 of them on that host**, once the candidate cards had theirs. The trap above is the reason it is still not a gate: every one of them answers 404 by design, and the routes were checked against the tool's registry (`src/AlgoList.js` on `master`) rather than by fetching them, because this container cannot reach the host.
 
 **The tool's key names disagree with the textbook, so link by label and not by key.**
 `OpenHash` is labelled *HashMap (Probing)* and `ClosedHash` is *HashMap (Chaining)*. That
@@ -875,6 +894,24 @@ against the STP card before anything is written.
    syllabus, and that is no reason for the site to. Of the three candidates, the answer is
    allowed to be one.
 
+
+## 5. What shipped
+
+Conducted in one session, after *Knowledge integration*, in §4's order, and recorded below as
+*Session — conducting csvistool*. The reader, *a student with a data structures course*, opened at
+**0 of 16** and closed at **16 of 16**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.1 | The zeros, tracked first | A reader of 16: §2's twelve zeros, with `splay tree` for `splay`, and four queries that found the wrong card |
+| 1 | The link | **39 deep links**, on the cards that already teach each concept, labelled by what the page shows and never by the tool's key. One fact anchor per line of links rather than per link: 18, each naming its routes. The home-page link on the `cs` landing card, §1's second row, is not built: its condition was that the deep links earn clicks, and nothing here measures clicks |
+| 2 | The link-only concepts | Linked where the card names them, including the six stack, queue and deque routes on `script`'s chooser |
+| 2 | Four words | `HashMap` and `TreeMap`, `(KMP)`, and *separate chaining*, beside the open-hashing trap. The tool itself files chaining under the route `ClosedHash` |
+| 2 | Six sentences | Depth-first search as the BFS loop with a stack, in the traversal card, because the Graphs title promises four algorithms. Floyd-Warshall in the negative-weights verdict; the 2-4 tree as what a red-black tree encodes; LCS as what `diff` computes; LSD radix as the one sort not bound by *n* log *n*; the LRU cache as the linked list's famous resident |
+| 3 | Minimum spanning trees and union-find | Two cards in *Graphs*, and the STP sentence from the other side, which was also *Knowledge integration*'s item 2 |
+| 2 | The candidates | **Both passed**: quickselect in *Sorting & Searching*, pointing at *Percentiles & Latency* for streams, and the skip list in *Trees*. Neither narrates its animation |
+| 2 | The five left to the tool | Bubble, selection and cocktail shaker sort, the circular list and the splay tree: linked, not written about, as §2 decided |
+| 4.3 | Link rot | Reopened at 37 external links and closed the queue at **42, 39 of them on one host**, recorded beside §1's 404 trap. Still not a gate, for the reason the trap gives |
 
 # Study notes, batch two — database, SQL and Java knowledge written in another dialect
 
@@ -6010,3 +6047,154 @@ card would have repeated what the comparison already carried.
 Nothing from §6, and the §5 table stays as the gate it was written to be. The notes themselves
 are unchanged in §7. Correcting them is the owner's call, the same outward direction as batch
 one's item 7.
+
+## Session — conducting the first batch: the words it asked for already meant something else
+
+The queue section *Knowledge integration* was conducted end to end: the reader first, then item 7
+because §4 said it was the cheapest, then items 1, 3, 4, 5 and 6. Six content commits, two new
+topics (1,559 → 1,561), and a reader that went from **9 of 25** answered to **25 of 25**. Its §6
+says what went where. This records what the plan did not predict.
+
+### Nine misses had results, and a `want` is what counted them
+
+The last two queue sections found the same shape by hand: a word the reader navigates by, already
+owned by another sense. Chip subtitles first, then *stack* and *queue*. This reader counted it.
+Nine of its sixteen opening misses returned cards, just not the right ones: `logic gates` reached
+twelve cards about pipeline and approval gates, `multi core processor` reached the GDPR's data
+processor first, and `task analysis` reached sixteen cards about log and malware analysis.
+
+Counting them needed a target for cards that did not exist yet. So the `want` named the topic being
+written into, fixed by its title before the reader was committed. Without it a wrong-sense result
+scores as answered by count, which is the `printer offline` failure in the probe's docstring
+arriving through a new door. **A `want` may name a topic that the same session is about to write**;
+the commit that writes the card is where it gets checked, and every one of them closed.
+
+### The plan's grep was wrong once, and it was a hyphen
+
+§2 listed five concepts as nowhere in `data/*.html`. Four were absent. The data-flow diagram is a row
+in *Diagrams That Explain*, spelled *data-flow*, which the grep did not allow for and the search
+does, because it folds separators. The reader found `data flow diagram` answered on its first run.
+It is the probe's own `wifi 4` mistake, where the per-word line reported *wifi* at 4 until it
+folded the way the matcher folds. **Decide "absent" with the matcher, not with a grep.**
+
+### An inventory that says "prose" means go and look
+
+§2 also called cognitive load *prose in five files*, and two of the five were whole concept cards:
+`career`'s on training, and `devops`'s *Three Kinds of Cognitive Load*, with the same three-row table
+the first draft of the new `web` card repeated. The card now points at it and keeps only the
+interface half. It is the manual's habit #1, read the neighbours' concept-card titles, and this time
+the neighbour list was the plan's own inventory, which had counted files rather than cards.
+
+### Item 3 moved twice
+
+The plan moved it from `linux` to `hw` by chip subtitle, correctly. One level further down, truth
+tables and De Morgan are in `cs` *Boolean Algebra*, and so is the architecture stack from number
+representation to pipelining. Gates are that algebra in silicon, so they went beside it, and the
+glitch card points back at `hw`'s *Signals* for the analogue underneath.
+
+### Found by reading, twice
+
+`blueteam`'s *Normalization Schemas* expanded **ECS** as Elastic Container Service in a card about
+log schemas, where it is the Elastic Common Schema: the manual's failure 10, well-formed and wrong.
+And `ops`'s incident-metrics table had a row reading *MTBF (Mean Time Between Failures) between
+failures* beside a replacement that splits recovery time into detection and repair. The cell was
+garbled when it was written, in one squash commit, and now names the metric the row is about.
+
+### My own three
+
+1. **`judgement`**, in the automation-bias table. `check_spelling.py` failed the wave on it, the
+   same word batch two slipped into its UML card.
+2. **Two commit messages quoted query counts I had added up rather than read.** The `eng` wave
+   claimed six closes and made five, because `waterfall vs agile` was already answered; the `ops`
+   wave claimed two and made one. Both were caught by reading the census against the message
+   before pushing, and amended. It is *a number I incremented fifteen times*, again, and the guard
+   is the same: the number comes from the tool, never from the writer's arithmetic.
+3. **The stamper moved topics nobody touched.** `stamp_freshness.py --only <domain>` re-dated dozens
+   of topics per domain, because the blame derivation drifts with the git version, and `--check`
+   would rewrite all 34 files. Each wave kept only the moves for topics it edited.
+
+### What is left in this section
+
+Nothing. The §3 domain decision stays deferred with its condition unmet: the UX half is one topic
+of four cards, not six. `axe-core` was missing from this container and was installed globally at
+CI's pinned version, so `make a11y` runs here as it does on the server.
+
+```
+7 commits · 2 new topics (1,559 -> 1,561) · 6 concept cards in existing topics · 2 fixes found by reading
+reader 9 of 25 -> 25 of 25 · census 345 of 370, 0 unexplained
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — conducting csvistool: an answer that rested on 647 against 644
+
+The queue section *csvistool* was conducted after *Knowledge integration*, in its own §4 order: the
+reader first, then the links, words and sentences, then §3's gap, then the candidates. Four
+commits, no new topics, five concept cards, 39 deep links, and a reader that went from **0 of 16**
+to **16 of 16**. Its §5 says what went where. This records what the plan did not predict.
+
+### A zero that was 58 cards
+
+§2 recorded `splay` as a zero from its search probe, and footnoted that a grep for it had matched
+*display*. Today the search does the same: a term longer than four letters matches as a substring,
+and *splay* sits inside *display* on 58 cards. Whether the matcher or the scratch copy changed
+since, a zero written down in prose is exactly what a checked-in reader exists to stop being. The
+reader carries `splay tree`, which is what a student types, and it opened on three cards about LVM,
+page rendering and the acronym index.
+
+### A title is a count
+
+§2 called depth-first search "a missing row" and Floyd-Warshall "a row in the graphs table". The
+topic is *Graphs — Representation, Traversal & the Four Algorithms Worth Knowing*, its table has
+four rows, and a sixth would contradict the title, while renaming it moves a permalink that
+people's progress is keyed to. So DFS went into the traversal card, where it is the same loop with
+a stack instead of a queue, and Floyd-Warshall into the negative-weights verdict as the answer for
+every pair at once. The plan placed them from the card's content; the title is content too.
+
+### The answer that rested on a ratio
+
+The minimum-spanning-tree wave broke a service-desk query nobody was watching. `user left who gets
+their files` was answered only by the relaxation stage, which drops the commonest word while it is
+at least four times as common as the rarest. *gets* was on 647 cards and *left* on 161, and
+4 × 161 is 644. The union-find card asked how many islands are **left**, *left* went to 162, the
+threshold went to 648, relaxation stopped, and the JML card fell out of the result.
+
+It had been balanced on that edge all along, under half a percent from the line, and nothing in the
+census reports that distance. The fix was the probe's kind 1, not a rewording of the new card:
+the JML row now says *decide who gets the leaver's OneDrive files*, the reader's verb for what the
+row is about, so the card holds all four words and answers from either stage. **Named and not
+built:** a census column for queries answered only by relaxation, with how far each sits from the
+ratio. Until it exists, the next one will also be found by accident, by whichever wave happens to
+add a common word.
+
+### Links are dated claims, and the count was a choice
+
+§1 asked for a fact anchor on every deep link. One per line of links carries the same information,
+because each anchor names every route it covers, and costs 18 anchors instead of 39. The first
+draft of this paragraph said sixteen, added up across the waves; `grep` said eighteen, which is the
+first batch's lesson a third time: the number comes from the tool. Phase 11's
+counter-discipline says a rising count of dated claims is not automatically progress. This rise is
+real, since a route is a key in someone else's repository, and it is the smallest one that keeps
+every route findable with one grep.
+
+### Checked, and one sentence that was not true as drafted
+
+The routes were checked against the registry on the tool's `master` branch, all 41 of §2's keys,
+and `/:algo` and the 404 redirect against its router and `public/404.html`. `csvistool.com` is
+still blocked from this container, so the routes are checked and the pages are not. The skip-list
+card's first draft said LevelDB's memtable takes concurrent inserts. It serializes writers, and
+only its readers go without locks; RocksDB's version is the one that takes concurrent writers.
+Caught before the commit, by checking the one sentence that was a claim about someone else's code.
+
+### What is left in this section
+
+The home-page link on the `cs` landing card, §1's second row. Its condition was that the deep links
+earn clicks, and the site measures nothing about clicks, by design, since it makes no third-party
+requests. So the condition cannot fire, and it is recorded as the register records a risk with no
+reopen condition: honestly, as having none.
+
+```
+4 commits · 0 new topics · 5 concept cards · 39 deep links · 18 fact anchors
+reader 0 of 16 -> 16 of 16 · census 361 of 386, 0 unexplained · dated claims 59 -> 77
+1 regression, found by the census and fixed in the same wave: a relaxation at 647 against 644
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```

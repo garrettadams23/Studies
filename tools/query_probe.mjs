@@ -491,6 +491,65 @@ const READERS = [
     ["sql like wildcard", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
     ["case sensitive collation", "", "data/sql-dialects-the-differences-that-run-without-an-error"],
   ]],
+  // The first batch of study notes (plan.md, *Knowledge integration*), added
+  // before any of its items was written, for the reason the reader above was.
+  // Where the answering card is still to be written, `want` names the topic it
+  // is being written into. Without one, a query that finds the wrong sense of
+  // its words scores as answered by count: `logic gates` reaches twelve cards
+  // about pipeline gates, and `multi core processor` reaches the GDPR's data
+  // processor before it reaches a CPU.
+  ["a student on a software engineering course", [
+    ["ai code generation"],
+    ["ai accountability", "", "ai/ai-ethics-the-human-side-of-machine-intelligence"],
+    ["human oversight of ai", "", "ai/ai-ethics-the-human-side-of-machine-intelligence"],
+    ["spanning tree protocol", "", "net/spanning-tree-why-a-loop-is-catastrophic-and-what-stp-does-a"],
+    ["network loop", "", "net/spanning-tree-why-a-loop-is-catastrophic-and-what-stp-does-a"],
+    ["multi core processor", "", "cs/amdahls-law-why-more-cores-stop-helping"],
+    ["parallel computing", "", "cs/amdahls-law-why-more-cores-stop-helping"],
+    ["logic gates", "", "cs/boolean-algebra-truth-tables-de-morgan-firewall-logic"],
+    ["nand gate", "", "cs/boolean-algebra-truth-tables-de-morgan-firewall-logic"],
+    ["karnaugh map", "", "cs/boolean-algebra-truth-tables-de-morgan-firewall-logic"],
+    ["uml sequence diagram", "", "eng/uml-class-object-sequence-diagrams-and-the-diamond-everybody"],
+    ["data flow diagram", "", "career/diagrams-that-explain-the-small-number-of-shapes-worth-using"],
+    ["component based software engineering", "",
+     "eng/dependency-risk-transitive-depth-typosquatting-the-abandoned"],
+    ["sdlc methodologies", "", "eng/sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"],
+    ["waterfall vs agile"],
+    ["spiral model", "", "eng/sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"],
+    ["iterative development", "", "eng/sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"],
+    ["verification vs validation", "", "eng/sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"],
+    ["mtbf", "", "ops/bcp-dr-key-metrics-recovery-strategies"],
+    ["safety critical systems", "", "ops/failure-modes-effects-analysis-for-systems-thinking-it-throu"],
+    ["wcag", "", "web/web-accessibility-a11y-wcag-aria"],
+    ["usability heuristics", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
+    ["affordance", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
+    ["cognitive load", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
+    ["task analysis", "", "web/usability-affordances-heuristics-why-the-user-pushed-the-pul"],
+  ]],
+  // plan.md, *csvistool*: the zeros its §2 found, from a scratch copy of this
+  // loop, put where they are tracked before any is fixed. `splay` is here as
+  // `splay tree`, which is what a student types. On its own it no longer
+  // returns nothing: five letters match as a substring, and it finds *display*
+  // in 58 cards. The last four found cards in the wrong sense or the wrong
+  // domain rather than nothing.
+  ["a student with a data structures course", [
+    ["hashmap", "", "cs/hash-tables-collisions-load-factor-the-dos-that-exploits-the"],
+    ["treemap", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
+    ["quickselect", "", "cs/sorting-searching-why-your-language-picked-the-one-it-did"],
+    ["radix sort", "", "cs/sorting-searching-why-your-language-picked-the-one-it-did"],
+    ["kmp", "", "cs/string-algorithms-matching-edit-distance-where-regex-fits"],
+    ["prim", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["kruskal", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["minimum spanning tree", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["disjoint set", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["longest common subsequence", "", "cs/string-algorithms-matching-edit-distance-where-regex-fits"],
+    ["floyd-warshall", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["splay tree", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
+    ["depth first search", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["union find", "", "cs/graphs-representation-traversal-the-four-algorithms-worth-kn"],
+    ["2-4 tree", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
+    ["skip list", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
+  ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],

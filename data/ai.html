@@ -524,7 +524,7 @@ out = <span class="fn">relu</span>(z)        <span class="com"># activation</spa
 
 <!-- BEGINNER14-AI v1 -->
 <!-- ── TOPIC: AI ETHICS AND RESPONSIBLE AI ────────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">⚖️</span>
     <span class="topic-name">AI <span class="acro-exp">(Artificial Intelligence)</span> Ethics — The Human Side of Machine Intelligence</span>
@@ -582,6 +582,44 @@ out = <span class="fn">relu</span>(z)        <span class="com"># activation</spa
         become values in a document — which is the normal outcome. Put a person's name
         against each high-stakes model, give them the authority to stop it, and the
         audits and red-teaming follow because somebody now needs them.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">HUMAN OVERSIGHT</div>
+      <div class="concept-title">Oversight Fails by Agreement, Not by Absence — Automation Bias</div>
+      <div class="concept-desc">
+        The accountability row above asks for a named person with the authority to stop the model.
+        Human oversight of AI is usually built that way: somebody reviews each recommendation before it
+        becomes a decision. It has a documented failure, and the failure is not the person being absent.
+        <strong>Automation bias</strong> is the tendency to accept an automated recommendation over
+        contrary evidence, and to stop looking for problems the system did not flag. Its two errors
+        have names. <em>Commission</em> is acting on a wrong recommendation; <em>omission</em> is missing
+        what nothing flagged. It is strongest exactly where oversight gets asked for: high volume, time
+        pressure, and a model that is right most of the time, because every correct recommendation
+        teaches the reviewer to trust the next one. The EU AI Act names it: the people overseeing a
+        high-risk system must be able to stay aware of the tendency to over-rely on its output.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>What it does</th><th>What it does not do</th></tr></thead>
+          <tbody>
+            <tr><td>Seed cases with a known answer</td><td>Mixes in cases the model is known to get wrong and counts how many the reviewer catches. The only direct measure of whether the oversight works</td><td>Costs reviewer time, and the seeded cases have to be indistinguishable from real ones</td></tr>
+            <tr><td>Decide first, then show the model</td><td>The reviewer records a judgment before seeing the recommendation, so the recommendation cannot anchor it</td><td>Slows every case, so most teams can only afford it on a sample</td></tr>
+            <tr><td>Track the override rate</td><td>How often the human changes the model's answer. Free, and already in the logs</td><td>Cannot tell a model that is never wrong from a reviewer who never looks</td></tr>
+            <tr><td>Show the evidence, not only the verdict</td><td>Puts the inputs and reasons in front of the reviewer, so there is something to disagree with</td><td>Explanations and confidence scores can raise acceptance of wrong answers as well as right ones. Test that they help before relying on them</td></tr>
+            <tr><td>Time and standing to say no</td><td>Makes an override possible. A reviewer with a quota of thirty seconds a case cannot disagree, whatever the policy says</td><td>Detect anything. It is the precondition for the rows above, not a control of its own</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Start with the third row, and do not stop there.</strong> An override rate near zero is
+          the fingerprint: either the model is never wrong or nobody is checking, and the log cannot say
+          which. Only the first row can, which is why it heads the table even though it costs the most. A
+          human in the loop who has never disagreed is a signature on the model's output: the name the
+          accountability row asks for, without the authority it assumes. The approval prompt an agent
+          raises on every step is a different failure, fatigue from volume, and
+          <span class="xref">Agent Safety &amp; Sandboxing — Permissions, Blast Radius &amp; Human-in-the-Loop</span>
+          covers it.
+        </div>
       </div>
     </div>
     <div class="concept-card">

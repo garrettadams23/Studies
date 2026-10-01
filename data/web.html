@@ -2769,6 +2769,145 @@ Right:  robots.txt: (allow the crawl)       +  &lt;meta name="robots" content="n
           </div>
 
 
+          <div class="topic" data-reviewed="2026-09">
+            <div class="topic-header">
+              <span class="topic-icon">🚪</span>
+              <span class="topic-name">Usability — Affordances, Heuristics &amp; Why the User Pushed the Pull Door</span>
+              <span class="topic-badge">UX</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">When the User Gets It Wrong, the Design Told Them To</div>
+                <div class="concept-desc">
+                  A door with a pull handle that has to be pushed is called a Norman door, after Don Norman, whose
+                  <em>The Design of Everyday Things</em> is where this vocabulary comes from. The handle says pull.
+                  The sign taped above it saying PUSH is the design admitting it failed, and every interface has its
+                  equivalents. An <strong>affordance</strong> is what an object allows: a plate can be pushed, a
+                  button pressed. A <strong>signifier</strong> is what tells you so. Norman added the second word in
+                  2013 because designers had been saying affordance when they meant a visible cue. On a screen the
+                  distinction does real work: pixels afford nothing physically, so a control can only be found by
+                  how it looks.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Principle</th><th>What it means</th><th>The fingerprint when it is missing</th></tr></thead>
+                    <tbody>
+                      <tr><td>Signifier</td><td>Something visible says what can be done, and where</td><td>A help article explaining how to find a control</td></tr>
+                      <tr><td>Feedback</td><td>Every action gets a visible response, quickly</td><td>The button pressed twice because the first press showed nothing: a double charge, a duplicate ticket</td></tr>
+                      <tr><td>Mapping</td><td>The layout of the controls matches the layout of their effects</td><td>The wrong light switch, every time, in a room you know</td></tr>
+                      <tr><td>Constraint</td><td>The wrong action is impossible, not merely discouraged</td><td>A confirmation dialog people click through without reading</td></tr>
+                      <tr><td>Conceptual model</td><td>The user's picture of how it works matches how it works</td><td>"It saved, I saw it", said about a draft that was never sent</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>Fix the second row first, because its failure multiplies.</strong> A press that shows
+                    nothing gets pressed again, and duplicate orders, double charges and second tickets are feedback
+                    failures that ship as data problems. The limits are old and stable: about 0.1 seconds feels
+                    instant, about one second keeps a train of thought, and around ten seconds loses attention. Past a
+                    second, show progress; past ten, let people leave and come back.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Ten Heuristics, and What Each Way of Finding Problems Misses</div>
+                <div class="concept-desc">
+                  Jakob Nielsen's ten usability heuristics (1994) are the checklist most reviews use: visibility of
+                  system status; match between the system and the real world; user control and freedom; consistency
+                  and standards; error prevention; recognition rather than recall; flexibility and efficiency of use;
+                  aesthetic and minimalist design; helping users recognize, diagnose and recover from errors; and help
+                  and documentation. A heuristic evaluation is experts walking an interface against the list. In
+                  Nielsen's measurements one evaluator found about a third of the problems and five, working
+                  separately, about three quarters, because different people notice different things.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Method</th><th>Finds</th><th>Misses</th><th>Costs</th></tr></thead>
+                    <tbody>
+                      <tr><td>Heuristic evaluation, three to five experts</td><td>What an expert can see: missing feedback, inconsistent controls, jargon</td><td>Problems that only appear doing real work with real data</td><td>Hours</td></tr>
+                      <tr><td>Usability test, five users doing real tasks aloud</td><td>Where real people get stuck, and why</td><td>Rare paths, and anything the tasks did not cover</td><td>Days</td></tr>
+                      <tr><td>Task analysis in the field</td><td>Whether the product fits the work at all</td><td>Screen-level detail</td><td>Days to weeks</td></tr>
+                      <tr><td>Analytics</td><td>Where people drop out, at scale</td><td>Why they drop out</td><td>Continuous, once built</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>The second row is the one that settles arguments.</strong> Five users find most of what
+                    one round of testing can find, about 85% in Nielsen and Landauer's model, and a team that watched a
+                    single session argues less about the design than one that read the report of ten. The first row
+                    is cheap enough to run on every release, which is its real value: a gate, not research. The third
+                    row is the only one that can say the screen is solving the wrong problem.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">Cognitive Load — Working Memory Is the Budget Every Screen Spends</div>
+                <div class="concept-desc">
+                  Cognitive load theory comes from teaching (John Sweller, 1988), and this site already applies it
+                  to training and to platform teams, where
+                  <span class="xref">Why Platform Engineering Exists — The Cognitive-Load Argument, Stated Honestly</span>
+                  sorts it into intrinsic, extraneous and germane load. An interface is the third place it applies
+                  unchanged. Working memory holds only a few things at once. Miller's famous "seven, plus or minus
+                  two" (1956) measured something narrower, and later work puts the practical limit nearer four
+                  chunks. A screen can remove only one kind of load, the <strong>extraneous</strong> kind that its
+                  presentation adds on top of the task, and every unit it removes is capacity handed back to the
+                  work.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Extraneous load</th><th>What it looks like</th><th>The fix</th></tr></thead>
+                    <tbody>
+                      <tr><td>Recall where recognition would do</td><td>A code the user must copy from one screen and type into the next</td><td>Carry it forward, or let them pick it from a list: recognition rather than recall</td></tr>
+                      <tr><td>Choices without defaults</td><td>Twelve equal options on the first screen</td><td>A sensible default, and the rest behind "more options". Hick's law has decision time rising with the number of choices</td></tr>
+                      <tr><td>Split attention</td><td>The instructions in one place and the field they explain in another</td><td>Put the guidance where the action is</td></tr>
+                      <tr><td>Inconsistency</td><td>Save at the top right on one screen and the bottom left on the next</td><td>One pattern everywhere, so nothing has to be relearned</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    The first row has a fingerprint anyone can see: <strong>the sticky note on the monitor</strong>,
+                    or a notepad open beside the application, holding what the interface made its user carry between
+                    screens. Each one is extraneous load the design handed to a person. The same theory runs the other
+                    way in teaching, where the aim is to spend the budget on the germane kind, and
+                    <span class="xref">How Adults Actually Learn — Relevance, Practice, Feedback &amp; Spacing</span>
+                    applies it there.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Technique</div>
+                <div class="concept-title">Task Analysis — Watch the Work Before You Design the Screen</div>
+                <div class="concept-desc">
+                  User analysis asks who the users are: their experience, their devices, how often they come. Task
+                  analysis asks what they are doing: the goals, steps and decisions of the work. For the second, the
+                  only reliable source is watching. Asked, people describe the process as it is supposed to run.
+                  Watched, they do what works, including the steps the official process forgot. Contextual inquiry,
+                  from Beyer and Holtzblatt's <em>Contextual Design</em>, formalizes this: sit with people at their own
+                  desks, as an apprentice to a master, and ask about the work while it happens.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>What you observe</th><th>What it tells you</th></tr></thead>
+                    <tbody>
+                      <tr><td>A spreadsheet kept beside the system</td><td>The system lacks a view, a field or a calculation the job needs</td></tr>
+                      <tr><td>A sticky note on the monitor</td><td>Something the interface makes people remember</td></tr>
+                      <tr><td>A step done out of order, every time</td><td>The designed order does not match the order the information arrives in</td></tr>
+                      <tr><td>A colleague asked to "just do it for me"</td><td>A permission or a role the design did not model</td></tr>
+                      <tr><td>Printing a screen to retype it elsewhere</td><td>Two systems the work joins and the software does not</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>The first row is the most valuable find in any observation session</strong>, and the one
+                    teams most often try to fix by banning it. A workaround is a requirement somebody has already paid
+                    for: the user built it, maintains it, and trusts it more than the system. Design against it and
+                    people keep the spreadsheet. Design from it and it goes away on its own.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔠</span>

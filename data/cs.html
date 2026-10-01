@@ -85,7 +85,7 @@
 </div>
 
 <!-- ── TOPIC: AMORTIZED ANALYSIS ──────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">📊</span>
     <span class="topic-name">Amortized Analysis — Why a Dynamic Array Is O(1) "On Average"</span>
@@ -98,8 +98,8 @@
       <div class="concept-label">The idea</div>
       <div class="concept-title">Averaging an Expensive Operation Across the Cheap Ones That Earned It</div>
       <div class="concept-desc">
-        Appending to a dynamic array — a Python list, a Go slice, a C++ vector — is usually
-        writing one value: O(1). Occasionally the backing store is full, and the whole thing is
+        Appending to a dynamic array — a Python list, a Go slice, a C++ vector, a Java
+        <code>ArrayList</code> — is usually writing one value: O(1). Occasionally the backing store is full, and the whole thing is
         copied to a larger one: O(n). Calling append O(n) because of that would be true and
         useless.
       </div>
@@ -108,6 +108,8 @@
         grows by a constant <strong>factor</strong> — typically doubling — each resize is twice
         as expensive as the last but happens half as often. The copying work across n appends
         sums to less than 2n, so the average cost per append is constant.
+        <!-- fact: csvistool routes /ArrayList | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/ArrayList" target="_blank" rel="noopener noreferrer">Watch the copy happen</a>.
       </div>
       <div class="concept-desc verdict">
         <strong>The load-bearing detail is "by a factor".</strong> Growing by a fixed
@@ -389,7 +391,7 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: MEMORY LAYOUT ───────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🧱</span>
     <span class="topic-name">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>
@@ -417,6 +419,13 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
     <div class="concept-card">
       <div class="concept-label">The consequence</div>
       <div class="concept-title">Same Big-O, Order-of-Magnitude Difference</div>
+      <div class="concept-desc">
+        The three linked lists a data structures course draws are easier watched than described:
+        <!-- fact: csvistool routes /LinkedList /DoublyLinkedList /CircularlyLinkedList | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/LinkedList" target="_blank" rel="noopener noreferrer">singly</a> · <a class="extlink" href="https://csvistool.com/DoublyLinkedList" target="_blank" rel="noopener noreferrer">doubly</a> ·
+        <a class="extlink" href="https://csvistool.com/CircularlyLinkedList" target="_blank" rel="noopener noreferrer">circularly linked</a>. The table is what the animation leaves
+        out.
+      </div>
       <div class="dw">
         <table class="ref-table">
           <thead>
@@ -435,7 +444,10 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
         <strong>The verdict:</strong> linked lists are taught early and used rarely. Unless you
         need stable references to elements or O(1) splice with a node already in hand, an array
         or dynamic array wins — including for insert-in-the-middle at small sizes, because
-        memmove of a contiguous block is extremely fast.
+        memmove of a contiguous block is extremely fast. The exception has one famous resident:
+        an <strong>LRU <span class="acro-exp">(Least Recently Used)</span> cache</strong> is a hash map whose entries point into a doubly linked
+        list, so a hit can move its entry to the front in O(1), because the lookup has already
+        handed it the node.
       </div>
     </div>
 
@@ -466,7 +478,7 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
 </div>
 
 <!-- ── TOPIC: HASH TABLES ─────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">#️⃣</span>
     <span class="topic-name">Hash Tables — Collisions, Load Factor &amp; the DoS <span class="acro-exp">(Denial of Service)</span> That Exploits Them</span>
@@ -479,10 +491,19 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
       <div class="concept-label">Mechanism</div>
       <div class="concept-title">O(1) Is a Statement About Luck, Not a Guarantee</div>
       <div class="concept-desc">
-        A hash function maps a key to a bucket index. Two keys landing in the same bucket is a
+        A hash function maps a key to a bucket index. That is the structure under Python's
+        <code>dict</code>, Java's <code>HashMap</code> and C#'s <code>Dictionary</code>. Java's
+        <code>TreeMap</code> and C++'s <code>std::map</code> keep their keys in order, so they are
+        trees instead. Two keys landing in the same bucket is a
         <strong>collision</strong>, and it is not an edge case — by the birthday argument,
         collisions begin appearing once the table holds roughly the square root of its capacity
-        in items. Every real implementation is mostly collision-handling machinery.
+        in items. Every real implementation is mostly collision-handling machinery, and its two
+        families have names that trip everyone: <strong>open hashing</strong> means separate
+        chaining, and <strong>open addressing</strong> means probing, so one adjective names
+        opposite designs. Even csvistool, whose animations of both are worth watching, files its
+        chaining one under the route <code>ClosedHash</code>. Name them by what they do:
+        <!-- fact: csvistool routes /ClosedHash /OpenHash | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/ClosedHash" target="_blank" rel="noopener noreferrer">chaining</a> and <a class="extlink" href="https://csvistool.com/OpenHash" target="_blank" rel="noopener noreferrer">probing</a>.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -490,7 +511,7 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
             <tr><th>Strategy</th><th>How</th><th>Weakness</th></tr>
           </thead>
           <tbody>
-            <tr><td>Chaining</td><td>Each bucket holds a list</td><td>Pointer chasing; degrades to a list under attack</td></tr>
+            <tr><td>Separate chaining</td><td>Each bucket holds a list</td><td>Pointer chasing; degrades to a list under attack</td></tr>
             <tr><td>Linear probing</td><td>Try the next slot along</td><td>Clustering, but excellent cache behavior</td></tr>
             <tr><td>Robin Hood</td><td>Probe, stealing slots from luckier keys</td><td>Complex deletion; very even probe lengths</td></tr>
           </tbody>
@@ -551,7 +572,7 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
 </div>
 
 <!-- ── TOPIC: TREES ───────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🌳</span>
     <span class="topic-name">Trees — BST <span class="acro-exp">(Binary Search Tree)</span>, Balanced, Heap &amp; Trie, and What Each Is Actually For</span>
@@ -565,7 +586,11 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       <div class="concept-title">Four Trees, Four Different Jobs</div>
       <div class="concept-desc">
         "Tree" is not one structure. These four solve genuinely different problems, and
-        confusing them is the usual reason someone reaches for the wrong one.
+        confusing them is the usual reason someone reaches for the wrong one. Most are easier to
+        understand watched than read, and csvistool steps through them:
+        <!-- fact: csvistool routes /BST /Heap /AVL /SplayTree | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/BST" target="_blank" rel="noopener noreferrer">binary search tree</a> · <a class="extlink" href="https://csvistool.com/Heap" target="_blank" rel="noopener noreferrer">heap</a> · <a class="extlink" href="https://csvistool.com/AVL" target="_blank" rel="noopener noreferrer">AVL</a> ·
+        <a class="extlink" href="https://csvistool.com/SplayTree" target="_blank" rel="noopener noreferrer">splay tree</a>.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -598,7 +623,8 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       </div>
       <div class="concept-desc">
         Self-balancing variants (red-black, AVL) rotate on insert to keep depth logarithmic. You
-        will rarely implement one; you should know that your language's ordered map is one, and
+        will rarely implement one; you should know that your language's ordered map is one —
+        Java's <code>TreeMap</code> and C++'s <code>std::map</code> are red-black trees — and
         that a hand-rolled BST in production code is a latent O(n).
       </div>
     </div>
@@ -610,7 +636,12 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         A balanced binary tree over a million keys is about 20 levels deep. On disk that is 20
         seeks, and a seek costs roughly a hundred thousand times a memory access. B-trees fix
         this by making each node hold hundreds of keys — one page — so the same million keys sit
-        three levels deep and cost three reads.
+        three levels deep and cost three reads. The smallest B-tree worth drawing is the
+        <strong>2-4 tree</strong>, whose nodes hold one to three keys, and it is also what a
+        red-black tree is underneath: group each black node with its red children and every group
+        is one 2-4 node. Watch one split as it fills:
+        <!-- fact: csvistool routes /BTree | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/BTree" target="_blank" rel="noopener noreferrer">2-4 tree</a>.
       </div>
       <div class="concept-desc verdict">
         This is the single most important structure in databases, and <span class="xref">Indexes Explained — B-tree, Hash &amp; Covering</span> in the Data domain covers the query-planning side. The
@@ -619,11 +650,47 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The alternative</div>
+      <div class="concept-title">A Skip List Balances by Coin Flip, and Redis Chose It Over a Tree</div>
+      <div class="concept-desc">
+        A <strong>skip list</strong> is a sorted linked list with express lanes. Every node sits in
+        the bottom list, and each one is also promoted to the lane above with probability one half,
+        and again from there, so a search runs along the top lane and drops down whenever it would
+        overshoot. That gives O(log n) search, insert and delete in expectation, with no rotations and
+        no rebalancing: the coin flips do the balancing. It does not beat a balanced tree on speed.
+        It wins on the code. An insert or a delete changes a few pointers in one place, a range scan
+        is a walk along the bottom list, and a concurrent version without locks is practical, which a
+        concurrent balanced tree is not.
+        <!-- fact: csvistool routes /SkipList | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/SkipList" target="_blank" rel="noopener noreferrer">Watch the lanes form</a>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Where it runs</th><th>Why a skip list</th></tr></thead>
+          <tbody>
+            <tr><td>Redis sorted sets</td><td>A leaderboard's range by score is a walk along the bottom list. Redis pairs it with a hash table for lookup by member, and its author chose it over a balanced tree for simplicity</td></tr>
+            <tr><td>LevelDB and RocksDB memtables</td><td>Every write lands in a sorted in-memory table first. Readers of the skip list take no lock at all, and RocksDB's version accepts concurrent writers too</td></tr>
+            <tr><td>Java's <code>ConcurrentSkipListMap</code></td><td>The standard library's sorted map for many threads at once, where <code>TreeMap</code> would need a lock</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The second row is the one to recognize, and
+          <span class="xref">LSM Trees — Turning Random Writes Into Sequential Ones</span> explains the
+          memtable it sits in. The O(log n) is a probability, not a bound: a run of unlucky flips
+          makes a slow list, and the chance of it is too small to design around but never zero.
+          <strong>Reach for a skip list when many threads write one sorted structure at once.</strong>
+          Otherwise your language's ordered map is the better default, and the second card on this
+          page says what that is.
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <!-- ── TOPIC: GRAPHS ──────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🕸️</span>
     <span class="topic-name">Graphs — Representation, Traversal &amp; the Four Algorithms Worth Knowing</span>
@@ -639,6 +706,9 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         Package dependencies, network topology, permission inheritance, build pipelines, service
         call chains, Active Directory attack paths — all graphs. Recognizing the shape is most
         of the work, because the algorithms are standard once you have.
+        <!-- fact: csvistool routes /Dijkstra | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/Dijkstra" target="_blank" rel="noopener noreferrer">Watch Dijkstra</a> settle one node at a time; it makes the trap below
+        easy to see.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -657,13 +727,20 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         <strong>Dijkstra with negative weights does not produce a slightly worse answer — it
         produces a wrong one</strong>, because it finalizes a node's distance on first visit and
         a negative edge can invalidate that later. This is a genuine trap: the code runs, returns
-        a path, and the path is not shortest.
+        a path, and the path is not shortest. With negative weights, use Bellman-Ford for one
+        starting point and <strong>Floyd-Warshall</strong> for every pair at once, which costs
+        O(V³) and so stops being practical somewhere past a few thousand nodes.
       </div>
     </div>
 
     <div class="concept-card">
       <div class="concept-label">Representation</div>
       <div class="concept-title">Adjacency List Unless the Graph Is Dense</div>
+      <div class="concept-desc">
+        The same graph can be stored two ways, and the costs below decide between them.
+        <!-- fact: csvistool routes /CreateGraph | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/CreateGraph" target="_blank" rel="noopener noreferrer">Build one both ways</a> to see why.
+      </div>
       <div class="dw">
         <table class="ref-table">
           <thead>
@@ -704,10 +781,89 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
             <span class="kw">if</span> nxt <span class="kw">not in</span> seen:
                 seen.add(nxt)
                 q.append(nxt)</pre>
+      <div class="concept-desc">
+        Swap the queue for a stack, or for recursion, and the same loop is
+        <strong>depth-first search</strong>: it goes as deep as it can before backing up.
+        Breadth-first finds the fewest hops; depth-first answers whether something is reachable
+        at all, finds cycles, and is what topological sort is built on. Both are O(V + E), and
+        both need the visited set.
+        <!-- fact: csvistool routes /BFS /DFS | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/BFS" target="_blank" rel="noopener noreferrer">Breadth-first</a> and <a class="extlink" href="https://csvistool.com/DFS" target="_blank" rel="noopener noreferrer">depth-first</a> side by side make the
+        difference obvious.
+      </div>
       <div class="concept-desc verdict">
         Cycles also make "dependency resolution" fail in the field: a build system reporting a
         cycle is doing topological sort correctly, and the cycle is real. Fix the dependencies,
         not the tool.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The fifth question</div>
+      <div class="concept-title">Minimum Spanning Trees — the Cheapest Way to Connect Everything</div>
+      <div class="concept-desc">
+        A spanning tree connects every node and has no cycles, so for V nodes it has exactly V − 1
+        edges. A <strong>minimum spanning tree</strong> is the one whose edges cost least in total:
+        the cheapest cabling that reaches every building, the fewest leased circuits that still
+        connect every site. It is the fifth graph question beside the four above. Two greedy
+        algorithms answer it, and both are correct for the same reason, the cut property: split
+        the nodes into any two groups, and the cheapest edge between the groups belongs to some
+        minimum spanning tree.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Algorithm</th><th>How it grows the tree</th><th>Cost</th><th>Reach for it when</th></tr></thead>
+          <tbody>
+            <tr><td>Kruskal</td><td>Sort every edge by weight, then take each one unless it would close a cycle</td><td>O(E log E), most of it the sort</td><td>The graph is sparse, or its edges already arrive as a list</td></tr>
+            <tr><td>Prim</td><td>Grow one tree from any node, always adding the cheapest edge that leaves it</td><td>O(E log V) with a binary heap</td><td>The graph is dense, or stored as adjacency lists. It is Dijkstra's loop with a different priority</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The trap is in the name.</strong> A minimum spanning tree minimizes what the whole tree
+          costs, not what any path through it costs, and the route between two nodes along it can be far
+          longer than the shortest path, which is Dijkstra's question and a different tree. Network
+          engineers meet the difference in
+          <span class="xref">Spanning Tree — Why a Loop Is Catastrophic, and What STP Does About It</span>:
+          the protocol keeps each switch's cheapest path to the root, which builds a shortest-path tree,
+          not a minimum one. Choose between the rows by how the graph is stored, and choose a minimum
+          spanning tree at all only when the question is total cost rather than distance.
+          <!-- fact: csvistool routes /Prim /Kruskal | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+          Watch <a class="extlink" href="https://csvistool.com/Prim" target="_blank" rel="noopener noreferrer">Prim</a> and <a class="extlink" href="https://csvistool.com/Kruskal" target="_blank" rel="noopener noreferrer">Kruskal</a> build the same tree two ways.
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The part that outlives it</div>
+      <div class="concept-title">Union-Find — Are These Two Already Connected?</div>
+      <div class="concept-desc">
+        Kruskal has to know, for every edge, whether its two ends are already connected, and it asks
+        E times. The structure that answers is <strong>union-find</strong>, also called a disjoint set.
+        Each element points toward a representative of its group. <em>Find</em> follows the pointers to
+        that representative, and <em>union</em> joins two groups by pointing one representative at the
+        other. Two small tricks make it nearly free: attach the shorter tree under the taller one
+        (union by rank), and point every node a find walks past straight at the root (path
+        compression). With both, each operation costs O(α(n)), where α is the inverse Ackermann
+        function, which stays below 5 for any input that could physically exist.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Where it turns up</th><th>The question it answers</th></tr></thead>
+          <tbody>
+            <tr><td>Merging duplicate records</td><td>This account shares an email with that one, which shares a phone with a third. Which records are one customer?</td></tr>
+            <tr><td>Counting network partitions</td><td>After these links failed, how many islands are left, and which hosts are in each?</td></tr>
+            <tr><td>Labeling an image or a map</td><td>Which pixels or cells form one connected region?</td></tr>
+            <tr><td>Single-linkage clustering</td><td>It is Kruskal stopped early: skip the last k − 1 edges and the pieces left are the k clusters</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The first row is the one to recognize at work. Any problem shaped like "these two are the same,
+          and that is the same as this one" is union-find, and solving it with a fresh graph search per
+          question turns a near-linear job into a quadratic one. <strong>It only ever joins.</strong> It
+          cannot split a group again, so when a failed link comes back, rebuild it rather than patch it.
+          <!-- fact: csvistool routes /DisjointSet | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+          The <a class="extlink" href="https://csvistool.com/DisjointSet" target="_blank" rel="noopener noreferrer">disjoint set</a> animation shows the paths flattening.
+        </div>
       </div>
     </div>
 
@@ -781,7 +937,7 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: SORTING ─────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🔤</span>
     <span class="topic-name">Sorting &amp; Searching — Why Your Language Picked the One It Did</span>
@@ -794,10 +950,19 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
       <div class="concept-label">The real question</div>
       <div class="concept-title">You Will Never Write a Sort; You Will Choose One By Accident</div>
       <div class="concept-desc">
-        Implementing a sort is an interview exercise. The decision that matters in real code is
+        Implementing a sort is an interview exercise, and the teaching sorts are better watched
+        than written:
+        <!-- fact: csvistool routes /BubbleSort /SelectionSort /CocktailSort | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/BubbleSort" target="_blank" rel="noopener noreferrer">bubble</a> · <a class="extlink" href="https://csvistool.com/SelectionSort" target="_blank" rel="noopener noreferrer">selection</a> ·
+        <a class="extlink" href="https://csvistool.com/CocktailSort" target="_blank" rel="noopener noreferrer">cocktail shaker</a>. The decision that matters in real code is
         which one your runtime already calls, because that choice determines whether your sort
         is stable, how it behaves on nearly-sorted data, and whether an adversary can push it
-        into its worst case.
+        into its worst case. The hybrids below are built from four classics, Timsort from merge
+        sort and insertion sort and introsort from quicksort and heapsort, and each is worth
+        one watch:
+        <!-- fact: csvistool routes /InsertionSort /MergeSort /Quicksort /HeapSort | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/InsertionSort" target="_blank" rel="noopener noreferrer">insertion</a> · <a class="extlink" href="https://csvistool.com/MergeSort" target="_blank" rel="noopener noreferrer">merge</a> ·
+        <a class="extlink" href="https://csvistool.com/Quicksort" target="_blank" rel="noopener noreferrer">quicksort</a> · <a class="extlink" href="https://csvistool.com/HeapSort" target="_blank" rel="noopener noreferrer">heapsort</a>.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -817,6 +982,63 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         elements in their original relative order, which is what makes "sort by date, then sort
         by name" produce what users expect. Do that with an unstable sort and the second pass
         silently scrambles the first — a bug that looks like a data problem.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The exception</div>
+      <div class="concept-title">Radix Sort Beats n log n by Never Comparing Two Keys</div>
+      <div class="concept-desc">
+        Every sort in the table above compares pairs of keys, and a comparison sort needs on the
+        order of n log n comparisons in the worst case. That is a proven lower bound, not an
+        engineering limit. <strong>Radix sort escapes it by never comparing.</strong> The LSD
+        (least significant digit) form deals the keys into buckets by their last digit, then by
+        the next, and so on to the first, which costs O(n·k) for keys of k digits. It works only
+        because each pass is stable and keeps the order the previous pass made, which is the
+        property the verdict above is about.
+        <!-- fact: csvistool routes /LSDRadix | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/LSDRadix" target="_blank" rel="noopener noreferrer">Watch the passes</a>.
+      </div>
+      <div class="concept-desc verdict">
+        Reach for it when keys are short and fixed-width: integers, IP <span class="acro-exp">(Internet Protocol)</span> addresses, dates,
+        fixed-length IDs. For long or variable-length strings k grows until the advantage is
+        gone, which is why no general-purpose library sort is a radix sort.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Selection</div>
+      <div class="concept-title">Quickselect — the Median Without Sorting Everything</div>
+      <div class="concept-desc">
+        Finding the median, or the 99th percentile, of a list feels like it needs the list sorted.
+        It does not. <strong>Quickselect</strong> partitions around a pivot the way quicksort
+        does, then recurses into the one side that holds the position it wants and ignores the
+        other. Sorting does O(n log n) work to put every element in place; selection puts one
+        element in place and costs O(n) on average. The catch is quicksort's catch: a run of bad
+        pivots makes it O(n²), which is why C++'s <code>nth_element</code> and NumPy's
+        <code>partition</code> use introselect, quickselect with a fallback that caps the worst
+        case, the same trick introsort plays in the table above.
+        <!-- fact: csvistool routes /Quickselect | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/Quickselect" target="_blank" rel="noopener noreferrer">Watch it discard half the list</a>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>You have</th><th>Use</th><th>Cost</th><th>Its limit</th></tr></thead>
+          <tbody>
+            <tr><td>Every value in memory, and one percentile to find</td><td>Quickselect</td><td>O(n) on average</td><td>Reorders the array, and needs all of it at once</td></tr>
+            <tr><td>Every value in memory, and many percentiles</td><td>Sort once</td><td>O(n log n)</td><td>Pays off once you want more than a handful</td></tr>
+            <tr><td>A stream, and the top k</td><td>A heap holding k items</td><td>O(n log k)</td><td>Keeps the k largest, not the distribution</td></tr>
+            <tr><td>A stream, and p99 over time and across servers</td><td>A histogram or a sketch</td><td>Constant per value</td><td>Approximate, by design</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The last row is the one production uses</strong>, because monitoring data is never all
+          in memory at once, and why is in
+          <span class="xref">Percentiles &amp; Latency — Why p99 Beats the Mean, and How to Aggregate It Wrongly</span>.
+          The first row is the answer for everything else: one log file, one array, one batch job. Reach
+          for a selection function before a sort whenever the question is a single position rather than
+          the whole order.
+        </div>
       </div>
     </div>
 
@@ -916,7 +1138,7 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
 </div>
 
 <!-- ── TOPIC: STRING ALGORITHMS ───────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🔡</span>
     <span class="topic-name">String Algorithms — Matching, Edit Distance &amp; Where Regex Fits</span>
@@ -932,7 +1154,10 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
         Checking a pattern at every position is O(n·m) worst case and close to O(n) on natural
         text, because mismatches happen early. Real substring search in a standard library is
         already better than naive, and the classic algorithms matter mainly for knowing why the
-        worst case exists.
+        worst case exists. Each is clearer watched against a text than described:
+        <!-- fact: csvistool routes /BruteForce /KMP /BoyerMoore /RabinKarp | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/BruteForce" target="_blank" rel="noopener noreferrer">brute force</a> · <a class="extlink" href="https://csvistool.com/KMP" target="_blank" rel="noopener noreferrer">KMP</a> · <a class="extlink" href="https://csvistool.com/BoyerMoore" target="_blank" rel="noopener noreferrer">Boyer-Moore</a> ·
+        <a class="extlink" href="https://csvistool.com/RabinKarp" target="_blank" rel="noopener noreferrer">Rabin-Karp</a>.
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -940,7 +1165,7 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
             <tr><th>Algorithm</th><th>Idea</th><th>Good for</th></tr>
           </thead>
           <tbody>
-            <tr><td>Knuth-Morris-Pratt</td><td>Precompute how far to skip after a mismatch</td><td>Guaranteed O(n + m), streaming input</td></tr>
+            <tr><td>Knuth-Morris-Pratt (KMP)</td><td>Precompute how far to skip after a mismatch</td><td>Guaranteed O(n + m), streaming input</td></tr>
             <tr><td>Boyer-Moore</td><td>Match right to left, skip ahead on a bad character</td><td>Long patterns — often sublinear in practice</td></tr>
             <tr><td>Rabin-Karp</td><td>Rolling hash, compare hashes not characters</td><td>Searching many patterns at once; plagiarism detection</td></tr>
             <tr><td>Aho-Corasick</td><td>A trie of all patterns, matched in one pass</td><td>Thousands of patterns — intrusion detection, filters</td></tr>
@@ -986,7 +1211,13 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
         Edit distance counts the insertions, deletions and substitutions needed to turn one
         string into another. It powers spelling suggestions, "did you mean", fuzzy record
         matching and command-line typo correction, and it is the clearest small example of
-        dynamic programming — a table where each cell depends on three neighbors.
+        dynamic programming — a table where each cell depends on three neighbors. Its sibling,
+        the <strong>longest common subsequence</strong>, is the longest run of items two
+        sequences share in order, and it is what <code>diff</code> computes: everything outside
+        it is the change. Unix diff was built on it, and git's default algorithm finds the same
+        answer faster.
+        <!-- fact: csvistool routes /LCS | source: csvistool/visualization-tool src/AlgoList.js | checked: 2026-09 -->
+        <a class="extlink" href="https://csvistool.com/LCS" target="_blank" rel="noopener noreferrer">Fill in the table a cell at a time</a>.
       </div>
       <div class="concept-desc verdict">
         It costs O(n·m) time and memory, so it does not scale to comparing one string against
@@ -2433,7 +2664,7 @@ valgrind --leak-check=full ./prog</pre>
 
 
           <!-- ── TOPIC: AMDAHL'S LAW ──────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
               <span class="topic-icon">📉</span>
               <span class="topic-name">Amdahl's Law — Why More Cores Stop Helping</span>
@@ -2450,7 +2681,9 @@ valgrind --leak-check=full ./prog</pre>
                   setup, coordination, the one lock everyone waits on — and no number of cores speeds that part up.
                   <strong class="c-amber">A task that is 10% serial can never run more than 10× faster, on ten
                   cores or ten thousand.</strong> The serial fraction, not the core count, is what sets the limit,
-                  and it does so long before you run out of cores to add.
+                  and it does so long before you run out of cores to add. Gene Amdahl made the argument in 1967,
+                  decades before the first multi-core processor, and it is still the first limit parallel computing
+                  runs into.
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -2684,7 +2917,7 @@ valgrind --leak-check=full ./prog</pre>
 </div>
 
 <!-- ── TOPIC: BOOLEAN ALGEBRA ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">🔲</span>
     <span class="topic-name">Boolean Algebra — Truth Tables, De Morgan &amp; Firewall Logic</span>
@@ -2754,6 +2987,86 @@ valgrind --leak-check=full ./prog</pre>
         B may never happen, and the <em>time taken</em> reveals which operand decided the result.
         The second is how timing side channels leak information from comparisons, which is why
         cryptographic code uses constant-time equality rather than the ordinary kind.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Logic Gates Are This Algebra in Silicon, and NAND Is the One the Chip Is Built From</div>
+      <div class="concept-desc">
+        Every operator on this page is also a logic gate: a circuit whose output voltage is the operator
+        applied to its input voltages. A half adder is one XOR and one AND, and a processor is billions of gates.
+        The surprise is which gate is the primitive. <strong>A NAND gate alone can build any Boolean
+        function.</strong> Tie its two inputs together and it is NOT. Follow it with NOT and it is AND. Feed it
+        inverted inputs and, by De Morgan, it is OR. NOR is universal in the same way. So a chip needs one gate
+        type, not five, and in CMOS <span class="acro-exp">(Complementary Metal-Oxide-Semiconductor)</span> the cheap one is NAND. Its pull-up transistors sit side by side and only
+        its fast pull-down transistors are stacked in series. A NOR gate stacks the slow pull-up kind, so it
+        has to be built larger to switch as quickly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Gate</th><th>CMOS transistors</th><th>Built as</th></tr></thead>
+          <tbody>
+            <tr><td>NOT</td><td>2</td><td>The inverter, the smallest gate there is</td></tr>
+            <tr><td>NAND</td><td>4</td><td>A primitive, and the preferred one</td></tr>
+            <tr><td>NOR</td><td>4</td><td>A primitive, but slower for its size</td></tr>
+            <tr><td>AND</td><td>6</td><td>A NAND followed by a NOT</td></tr>
+            <tr><td>OR</td><td>6</td><td>A NOR followed by a NOT</td></tr>
+            <tr><td>XOR</td><td>8 to 12, by circuit style</td><td>The most expensive two-input gate, and the one every adder needs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The AND row is the inversion to keep: the gate every truth table starts from costs more than the one
+          that negates it, because it is a NAND with an inverter added. Universality is not only a textbook
+          result either. The Apollo Guidance Computer that flew to the Moon built its logic almost entirely from one
+          chip type, a dual three-input NOR gate. And flash memory is called NAND because its cells
+          are wired in series, the way a NAND gate's pull-down transistors are, which is what makes it
+          dense enough to be cheap.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Technique</div>
+      <div class="concept-title">A Karnaugh Map Finds the Smallest Circuit, and the Smallest Circuit Can Glitch</div>
+      <div class="concept-desc">
+        A Karnaugh map is a truth table redrawn so that simplification becomes something you can see. Its rows
+        and columns run in Gray-code order (00, 01, 11, 10), so neighboring cells differ in exactly one
+        variable, including across the edges, which wrap. Circle a rectangle of 1s whose size is a power of two
+        and the variables that change inside it drop out: a pair removes one, a group of four removes two. The
+        fewest, largest rectangles give the minimal sum of products, the smallest two-level circuit. Cells
+        marked X are <strong>don't-cares</strong>, input combinations that cannot occur, and they may count as
+        1 or 0, whichever makes a rectangle bigger. That idea outlives the method: a case that cannot happen is
+        free simplification, in a circuit, a firewall rule set or an if-statement.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># F = 1 for inputs 001, 011, 110, 111 (A B C)</span>
+             BC = 00   01   11   10
+     A = 0         0    1    1    0      A'C covers the pair in the top row
+     A = 1         0    0    1    1      AB  covers the pair in the bottom row
+
+  minimal:   F = A'C + AB
+  glitch:    B = C = 1 and A falls. AB switches off at once; A'C switches on one
+             inverter delay later. For that moment both terms are 0, and F
+             drops to 0 and back although it should stay at 1.
+  fix:       F = A'C + AB + BC    <span class="com"># BC covers the step between the two pairs</span></pre>
+        <table class="ref-table">
+          <thead><tr><th>Where the output goes</th><th>Does the glitch matter?</th></tr></thead>
+          <tbody>
+            <tr><td>Into a flip-flop that samples it on the next clock edge</td><td>No. Timing analysis guarantees it settles first, which covers most digital logic and is one reason synchronous design won</td></tr>
+            <tr><td>A clock, an asynchronous reset, a chip select or an interrupt line</td><td>Yes. That input acts on every edge, so a glitch is an event: a counter that counts twice, a reset that fires on its own</td></tr>
+            <tr><td>Off the chip, or across into another clock domain</td><td>Yes. Nothing on the far side waits for it to settle</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The first row is why most engineers never meet a hazard, and the second is why the ones who design
+          clock and reset logic think about little else. <strong>Either add the consensus term, the gate the
+          algebra says you can delete, or register the signal before it drives anything edge-sensitive.</strong>
+          On a logic analyzer the fingerprint is a pulse narrower than any clock period on a line that should
+          be steady, and it is the analogue underneath the digital abstraction showing through, which
+          <span class="xref">Signals — Analogue, Digital, Noise &amp; the Grounding Problem</span> explains. Past
+          four or five variables the maps stop being usable and tools take over: Quine–McCluskey does the same
+          minimization exactly, and heuristics such as Espresso do it at scale. The map is where you learn what
+          the tool is doing.
+        </div>
       </div>
     </div>
   </div>

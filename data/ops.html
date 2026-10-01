@@ -385,7 +385,7 @@
                NEW TOPIC: BCP / DR Key Metrics
                Source: CISSP + Net+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
               <span class="topic-icon">🏢</span>
               <span class="topic-name">BCP <span class="acro-exp">(Business Continuity Plan)</span> / DR — Key Metrics &amp; Recovery Strategies</span>
@@ -569,6 +569,41 @@
           site's standing cost, but only if the build is genuinely scripted and has been run,
           and an unscripted cloud plan is a cold site with a larger invoice.
         </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">MTBF Is a Failure Rate, Not a Lifespan, and MTTR Is the Half You Control</div>
+                <div class="concept-desc">
+                  The terms above define MTBF as the average time a repairable system runs between failures, and it
+                  is the most misread number on a datasheet. A drive rated at 1,200,000 hours has not been promised
+                  137 years. The figure comes from running a large population for a short time, in the flat middle of
+                  the bathtub curve, after the early failures and before wear-out, so it describes a rate across a
+                  fleet and says nothing about one unit's life. Divide the 8,760 hours in a year by it and it says
+                  that about 0.7% of those drives fail each year. Vendors print it on parts nobody repairs, where
+                  MTTF is the exact term. Even as a rate it flatters: a study of about 100,000 drives in production
+                  (Schroeder and Gibson, 2007) found datasheets implying at most 0.88% a year, while replacement
+                  rates of 2–4% were common and some systems reached 13%.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Availability = MTBF ÷ (MTBF + MTTR)</th><th>MTBF</th><th>MTTR</th><th>Availability</th></tr></thead>
+                    <tbody>
+                      <tr><td>Where you start</td><td>1,000 hours</td><td>10 hours</td><td>99.0%</td></tr>
+                      <tr><td>Buy hardware that fails half as often</td><td>2,000 hours</td><td>10 hours</td><td>99.5%</td></tr>
+                      <tr><td>Repair in half the time</td><td>1,000 hours</td><td>5 hours</td><td>99.5%</td></tr>
+                      <tr><td>Repair within the hour</td><td>1,000 hours</td><td>1 hour</td><td>99.9%</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong>The second and third rows are the point:</strong> halving the time to repair buys exactly
+                    what doubling the time between failures does, and it is the half you control. MTBF is set by what
+                    you bought. MTTR is set by a spare on the shelf, monitoring that notices, and a runbook somebody has
+                    practiced, and the last row costs less than new hardware. The formula also assumes failures are
+                    independent, which is the assumption real outages break, and
+                    <span class="xref">Probability Fundamentals — Independence, Conditional Probability &amp; Expectation</span>
+                    works through what that does to redundancy.
+                  </div>
                 </div>
               </div>
             </div>
@@ -5475,7 +5510,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
 </div>
 
 <!-- ── TOPIC: FMEA FOR SYSTEMS ───────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">📋</span>
     <span class="topic-name">Failure Modes &amp; Effects Analysis for Systems — Thinking It Through Before It Happens</span>
@@ -5556,6 +5591,41 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
           unavailable we degrade gracefully" — and a chaos experiment is how you find out whether
           that is true. The two practices are the same loop: predict the behavior, then verify it.
           Prediction alone is how teams acquire confident, wrong beliefs about their own systems.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Where It Came From</div>
+      <div class="concept-title">Reliable Is Not Safe — What Safety-Critical Systems Rely On Instead</div>
+      <div class="concept-desc">
+        FMEA comes from engineering where failure kills. The US military standardized it in 1949, and
+        aerospace, cars and medical devices run it today. Safety-critical systems taught those industries
+        something IT rarely has to learn: reliability and safety are different properties. A reliable system
+        does what it was specified to do; a safe one does not cause harm, and a system can be either without
+        the other. NASA's Mars Polar Lander was lost in 1999 with no component failing: its software read the
+        jolt of the landing legs deploying as touchdown and shut the engine off while the lander was still
+        descending. The software did what its requirements said, and the requirements had missed that case.
+        The opposite is the railway air brake. Lose the air pressure and the brakes apply, so the commonest
+        failure stops the train.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Design choice</th><th>What happens on failure</th><th>Where it is used</th></tr></thead>
+          <tbody>
+            <tr><td>Fail-safe</td><td>The system drops into a state that cannot hurt anyone</td><td>The air brake; a machine guard that cuts power when opened</td></tr>
+            <tr><td>Fail-operational</td><td>It keeps working through the failure, because stopping is not safe</td><td>Fly-by-wire flight controls. An aircraft cannot stop in the air, so it carries redundant computers, some running independently written software</td></tr>
+            <tr><td>Fail-secure</td><td>It stays locked</td><td>An electric door strike in a power cut. A maglock that releases instead is fail-safe, so for one door the two are opposite choices, and life-safety codes, not the security team, decide what an exit gets</td></tr>
+            <tr><td>Certify the process</td><td>Evidence is demanded in proportion to the harm a failure can do</td><td>DO-178C for aircraft software, IEC <span class="acro-exp">(International Electrotechnical Commission)</span> 61508 for industrial systems, ISO <span class="acro-exp">(International Organization for Standardization)</span> 26262 for cars</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          The last row exists because testing cannot prove the numbers these systems need. Aircraft
+          certification asks that a catastrophic failure be less likely than one in a billion flight hours,
+          and Butler and Finelli showed in 1993 that demonstrating a rate like that by testing would take over
+          a hundred thousand years of it. So the standards certify how the software was built and analyzed,
+          including the FMEA this topic describes, rather than a measured MTBF <span class="acro-exp">(Mean Time Between Failures)</span>. <strong>The row that carries over to IT
+          is fail-secure against fail-safe:</strong> decide in advance which state each failure leaves you in,
+          because otherwise it is whatever the code happened to do.
         </div>
       </div>
     </div>
@@ -5744,7 +5814,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
 </div>
 
 <!-- ── TOPIC: NEAR-MISSES & INCIDENT METRICS ─────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
     <span class="topic-icon">📈</span>
     <span class="topic-name">Near-Misses &amp; Incident Metrics — What MTTR <span class="acro-exp">(Mean Time To Repair)</span> Does and Does Not Tell You</span>
@@ -5806,7 +5876,7 @@ http_requests_total{endpoint="/orders", status="200", user_id="a91f…"}</pre>
           <tbody>
             <tr><td>Mean time to recovery</td><td>The distribution — median and worst case</td><td>One nine-hour outage swamps twenty short ones</td></tr>
             <tr><td>Incident count</td><td>Count by severity, and user-minutes affected</td><td>Counting treats a blip and an outage as equal</td></tr>
-            <tr><td>MTBF <span class="acro-exp">(Mean Time Between Failures)</span> between failures</td><td>Time to detect, separately from time to resolve</td><td>Detection and repair have different fixes</td></tr>
+            <tr><td>Recovery time as a single figure</td><td>Time to detect, separately from time to resolve</td><td>Detection and repair have different fixes</td></tr>
             <tr><td>"Was there an incident?"</td><td>Error-budget consumption</td><td>Continuous, and already tied to the user's experience</td></tr>
             <tr><td>Action items created</td><td>Action items completed, and time to completion</td><td>Creation is free; completion is the improvement</td></tr>
             <tr><td>Repeat-incident rate</td><td>Same, and it is the most honest number here</td><td>Recurrence means the last fix addressed a symptom</td></tr>
