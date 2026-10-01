@@ -27,7 +27,7 @@ What is left here is what a session actually reads.
 | **Phase 11 — the verification debt** | What is dated, and why the denominator is not countable. A standing discipline, not a queue | 📘 living |
 | **The risk register, revisited** | Four accumulation risks that only a measurement could find | 📘 living |
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
-| **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap | 📥 **queue** |
+| **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
@@ -67,7 +67,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **52** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **53** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -751,13 +751,13 @@ conducting the first batch*. The reader, *a student on a software engineering co
 | 4 | UML, data flow diagrams, class design, CBSE | UML and class design shipped with batch two. **Data flow diagrams were written all along**: *Diagrams That Explain* spells it *data-flow*, and §2's grep did not allow for the hyphen. CBSE became a card in *Dependency Risk*: the component market arrived, and the contract did not |
 | 5 | V&V, the SDLC methodologies, MTBF, safety-critical | A new `eng` topic, *SDLC Models*, before Agile. MTBF as a rate, with MTTR as the lever, in *BCP / DR — Key Metrics*; reliable is not safe, in *FMEA* |
 | 6 | WCAG, cognitive load, task analysis, heuristics | The UX half, as a new `web` topic, *Usability*. **The domain stays deferred**: four cards in one topic, not the six §3's condition names. Cognitive load was not prose in five files: two were concept cards, and the new card points at them |
-| 2 | Spanning trees | Written, and both of the reader's queries answered. The deepening is that a spanning tree is not a *minimum* one, which csvistool §3 needed from the other side, so it ships with that card |
+| 2 | Spanning trees | Written, and both of the reader's queries answered. The deepening is that a spanning tree is not a *minimum* one, which csvistool §3 needed from the other side, so it shipped with that card: one sentence in the STP card, and a link each way |
 
 # csvistool — one outbound link, and the forty-one concepts behind it
 
 > Source: a one-line request to link **[csvistool.com](https://csvistool.com/)** and add its
-> concepts, **in this file only for now**. Filed as **a queue, not a record**, because nothing
-> has shipped. The tool is the *CS 1332 Data Structures and Algorithms Visualizations* site
+> concepts, **in this file only for now**. It was filed as **a queue, not a record**, and has
+> since been conducted: §5 says what went where. The tool is the *CS 1332 Data Structures and Algorithms Visualizations* site
 > from Georgia Tech: step-by-step animations with pseudocode, open source at
 > [`csvistool/visualization-tool`](https://github.com/csvistool/visualization-tool), adapted
 > from David Galles' USF visualizations and maintained by course TAs under Prof. Mary
@@ -894,6 +894,24 @@ against the STP card before anything is written.
    syllabus, and that is no reason for the site to. Of the three candidates, the answer is
    allowed to be one.
 
+
+## 5. What shipped
+
+Conducted in one session, after *Knowledge integration*, in §4's order, and recorded below as
+*Session — conducting csvistool*. The reader, *a student with a data structures course*, opened at
+**0 of 16** and closed at **16 of 16**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.1 | The zeros, tracked first | A reader of 16: §2's twelve zeros, with `splay tree` for `splay`, and four queries that found the wrong card |
+| 1 | The link | **39 deep links**, on the cards that already teach each concept, labelled by what the page shows and never by the tool's key. One fact anchor per line of links rather than per link: 18, each naming its routes. The home-page link on the `cs` landing card, §1's second row, is not built: its condition was that the deep links earn clicks, and nothing here measures clicks |
+| 2 | The link-only concepts | Linked where the card names them, including the six stack, queue and deque routes on `script`'s chooser |
+| 2 | Four words | `HashMap` and `TreeMap`, `(KMP)`, and *separate chaining*, beside the open-hashing trap. The tool itself files chaining under the route `ClosedHash` |
+| 2 | Six sentences | Depth-first search as the BFS loop with a stack, in the traversal card, because the Graphs title promises four algorithms. Floyd-Warshall in the negative-weights verdict; the 2-4 tree as what a red-black tree encodes; LCS as what `diff` computes; LSD radix as the one sort not bound by *n* log *n*; the LRU cache as the linked list's famous resident |
+| 3 | Minimum spanning trees and union-find | Two cards in *Graphs*, and the STP sentence from the other side, which was also *Knowledge integration*'s item 2 |
+| 2 | The candidates | **Both passed**: quickselect in *Sorting & Searching*, pointing at *Percentiles & Latency* for streams, and the skip list in *Trees*. Neither narrates its animation |
+| 2 | The five left to the tool | Bubble, selection and cocktail shaker sort, the circular list and the splay tree: linked, not written about, as §2 decided |
+| 4.3 | Link rot | Reopened at 37 external links and closed the queue at **42, 39 of them on one host**, recorded beside §1's 404 trap. Still not a gate, for the reason the trap gives |
 
 # Study notes, batch two — database, SQL and Java knowledge written in another dialect
 
@@ -6104,5 +6122,79 @@ CI's pinned version, so `make a11y` runs here as it does on the server.
 ```
 7 commits · 2 new topics (1,559 -> 1,561) · 6 concept cards in existing topics · 2 fixes found by reading
 reader 9 of 25 -> 25 of 25 · census 345 of 370, 0 unexplained
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — conducting csvistool: an answer that rested on 647 against 644
+
+The queue section *csvistool* was conducted after *Knowledge integration*, in its own §4 order: the
+reader first, then the links, words and sentences, then §3's gap, then the candidates. Four
+commits, no new topics, five concept cards, 39 deep links, and a reader that went from **0 of 16**
+to **16 of 16**. Its §5 says what went where. This records what the plan did not predict.
+
+### A zero that was 58 cards
+
+§2 recorded `splay` as a zero from its search probe, and footnoted that a grep for it had matched
+*display*. Today the search does the same: a term longer than four letters matches as a substring,
+and *splay* sits inside *display* on 58 cards. Whether the matcher or the scratch copy changed
+since, a zero written down in prose is exactly what a checked-in reader exists to stop being. The
+reader carries `splay tree`, which is what a student types, and it opened on three cards about LVM,
+page rendering and the acronym index.
+
+### A title is a count
+
+§2 called depth-first search "a missing row" and Floyd-Warshall "a row in the graphs table". The
+topic is *Graphs — Representation, Traversal & the Four Algorithms Worth Knowing*, its table has
+four rows, and a sixth would contradict the title, while renaming it moves a permalink that
+people's progress is keyed to. So DFS went into the traversal card, where it is the same loop with
+a stack instead of a queue, and Floyd-Warshall into the negative-weights verdict as the answer for
+every pair at once. The plan placed them from the card's content; the title is content too.
+
+### The answer that rested on a ratio
+
+The minimum-spanning-tree wave broke a service-desk query nobody was watching. `user left who gets
+their files` was answered only by the relaxation stage, which drops the commonest word while it is
+at least four times as common as the rarest. *gets* was on 647 cards and *left* on 161, and
+4 × 161 is 644. The union-find card asked how many islands are **left**, *left* went to 162, the
+threshold went to 648, relaxation stopped, and the JML card fell out of the result.
+
+It had been balanced on that edge all along, under half a percent from the line, and nothing in the
+census reports that distance. The fix was the probe's kind 1, not a rewording of the new card:
+the JML row now says *decide who gets the leaver's OneDrive files*, the reader's verb for what the
+row is about, so the card holds all four words and answers from either stage. **Named and not
+built:** a census column for queries answered only by relaxation, with how far each sits from the
+ratio. Until it exists, the next one will also be found by accident, by whichever wave happens to
+add a common word.
+
+### Links are dated claims, and the count was a choice
+
+§1 asked for a fact anchor on every deep link. One per line of links carries the same information,
+because each anchor names every route it covers, and costs 18 anchors instead of 39. The first
+draft of this paragraph said sixteen, added up across the waves; `grep` said eighteen, which is the
+first batch's lesson a third time: the number comes from the tool. Phase 11's
+counter-discipline says a rising count of dated claims is not automatically progress. This rise is
+real, since a route is a key in someone else's repository, and it is the smallest one that keeps
+every route findable with one grep.
+
+### Checked, and one sentence that was not true as drafted
+
+The routes were checked against the registry on the tool's `master` branch, all 41 of §2's keys,
+and `/:algo` and the 404 redirect against its router and `public/404.html`. `csvistool.com` is
+still blocked from this container, so the routes are checked and the pages are not. The skip-list
+card's first draft said LevelDB's memtable takes concurrent inserts. It serializes writers, and
+only its readers go without locks; RocksDB's version is the one that takes concurrent writers.
+Caught before the commit, by checking the one sentence that was a claim about someone else's code.
+
+### What is left in this section
+
+The home-page link on the `cs` landing card, §1's second row. Its condition was that the deep links
+earn clicks, and the site measures nothing about clicks, by design, since it makes no third-party
+requests. So the condition cannot fire, and it is recorded as the register records a risk with no
+reopen condition: honestly, as having none.
+
+```
+4 commits · 0 new topics · 5 concept cards · 39 deep links · 18 fact anchors
+reader 0 of 16 -> 16 of 16 · census 361 of 386, 0 unexplained · dated claims 59 -> 77
+1 regression, found by the census and fixed in the same wave: a relaxation at 647 against 644
 45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```
