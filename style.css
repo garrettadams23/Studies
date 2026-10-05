@@ -1231,6 +1231,82 @@ header p {
 .topo-svg text {
   fill: var(--cyan);
 }
+/* ASL handshapes (productivity). Each finger is a centerline stroked twice,
+   outline then fill, so a later finger sits in front of an earlier one; the
+   palm and wrist are shapes. Every color is a role styled here, as above. */
+.asl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 8px;
+  padding: 0 18px;      /* the card's text inset, as .concept-desc has */
+  margin: 0 0 14px;
+}
+.asl-grid figure {
+  margin: 0;
+  padding: 8px 4px 6px;
+  text-align: center;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.asl-grid figcaption {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan-2);  /* --cyan is 4.33:1 on --bg3 in light mode; this clears 4.5 in both */
+  margin-top: 4px;
+}
+.asl-hand {
+  display: block;
+  height: 84px;
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+}
+.asl-hand .aslo {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 14;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.asl-hand .aslf {
+  fill: none;
+  stroke: var(--bg2);
+  stroke-width: 10.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.asl-hand .aslp {
+  fill: var(--bg2);
+  stroke: var(--text);
+  stroke-width: 1.75;
+}
+.asl-hand .aslw {
+  fill: var(--bg2);
+}
+.asl-hand .asll {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.75;
+}
+.asl-hand .asla {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (max-width: 640px) {
+  /* Three to a row on a phone rather than two: 37 pictures at two a row is a
+     long way to scroll for a chart meant to be taken in at a glance. */
+  .asl-grid {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  }
+  .asl-hand {
+    height: 64px;
+  }
+}
 .topo-name {
   font-size: 12px;
   font-weight: 700;

@@ -51,23 +51,23 @@ the row needs was already running. Three are left, and all three want a stopwatc
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,562** across 30 domains | `depth_report.py` |
+| Topics | **1,563** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
 | Mean chars per concept card | **1,406**, or **1,134 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
 | Reader questions answered | **373 of 398**, **0 unexplained** — twenty-two batches. The newest reader, *somebody looking up a character code or a handshape*, was added from a request for the ASCII character set with ASL added to it, before the card was written. It opened at **0 of 12** and closed at 12 of 12: five zeros, and seven that found cards but never the chart. `asl` was a zero the corpus counted fifteen times, every one inside another word: *asleep*, ASLR, Maslow, SASL. The reader before it, *a student with a data structures course*, was added from *csvistool* the same way. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The one before that, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. Before that, *a student on a SQL Server and Java course* opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 8 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,600 steps, 1,502 of 1,562 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,502 topics, 4,902 links, 0 one-way** — one mainland of **1,486 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **33% raw** headroom — room for ~754 more topics | `page_budget.py` |
+| Learning paths | **102 paths, 1,601 steps, 1,503 of 1,563 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,503 topics, 4,904 links, 0 one-way** — one mainland of **1,487 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **32% raw** headroom — room for ~745 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,154 chars**, median 3,760 — the number a deepening wave has to move | `depth_report.py` |
+| Depth tail | **10th percentile 2,154 chars**, median 3,761 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 31 fact anchors: 78 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently. It rose by one with the ASCII chart's source link, and that anchor records that this container could not fetch the page rather than claiming a check | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **54** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **55** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -6271,4 +6271,84 @@ last card says plainly that reading fingerspelling is learned from people, not f
 reader 0 of 12 -> 12 of 12 · census 373 of 398, 0 unexplained · dated claims 77 -> 78
 acronyms 1,103 -> 1,104 · related links 4,896 -> 4,902 · path steps 1,599 -> 1,600
 45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — pictures of the handshapes, and ASL moved to where it is learned
+
+The follow-up to the last record, the same day: **add pictures of the ASL handshapes, and ASL
+belongs in Productivity.** The ASCII topic in `cs` had carried the fingerspelling cards because the
+first request said to add ASL *to this*. They now have a topic of their own in `productivity`, after
+*Deliberate Practice*: *ASL Fingerspelling — The Alphabet, Numbers & How to Learn Them*. It has four
+cards. The alphabet and the numbers each carry a picture grid above the description table, then
+there is a drilling card built on the domain's own technique topics, and the reading card that moved
+with them.
+
+### The last record said this could not be checked, and it was half right
+
+That record closed on *drawing 36 hands in SVG would be a claim nothing here can check*. The
+request made the drawing the job, so the check had to be found. Image hosts are blocked from this
+container, as the UAH page was, and the site makes no third-party requests anyway, so the pictures
+are drawn. A one-off generator built each one from a palm, a wrist and five *tubes*, and was not
+kept: the pictures are plain inline SVG in `data/productivity.html`, and a fix is an edit there. A tube is a centerline stroked twice, outline then fill, so a folded or curled finger is
+just a path, and whatever is drawn later sits in front. Shapes that point sideways (G, H) or down
+(P, Q) are the upright drawing turned. Numbers 1 to 5 are mirrored, because counting is signed palm
+in, so the reader sees the back of the hand. Thirty-seven pictures come to about 30 KB inline,
+colored only by classes in `style.css`.
+
+**The check is weaker than a source, and it is what there was:** every picture rendered at size and
+read against its own description. That caught four on the first pass. E read as a plain fist,
+M and N showed the whole thumb where only its tip should peek out, and T hid the thumb tip it exists
+to show. It also caught a fifth kind of error, which no description would. H and the mirrored 1, 2
+and 4 show the back of the hand, and the first drawings still showed a thumb tucked against the palm,
+which nobody facing the signer can see. The thumb is gone from those four.
+
+**The one convention taken rather than checked:** J and Z are drawn as the signer would write them,
+so from the reader's side they run mirrored. The card says so. If a teacher draws them the other
+way, that is the arrow to flip.
+
+### Moving the cards moved a permalink, and the tool would not pair it
+
+The ASCII topic lost *ASL* from its title, and the slug moved. `fix_topic_names.py --aliases-only`
+records a move by pairing topics in order, and **refused while the same edit also added a topic**:
+*topic count or order changed — refusing to guess the pairing*. That is the right refusal. The new
+topic was set aside, the rename recorded alone, and the topic put back, so the link the first commit
+shipped still lands on the ASCII chart. Both new titles were shortened first: at sixty characters each slug
+had been cut just after a hyphen, and `…-explain-` is a permalink nobody would type.
+
+### What the page check caught
+
+On a phone, the grid sat flush against the card's edge while the text beside it was inset 18 px,
+and it fitted two pictures to a row: thirty-seven pictures at two a row is a long scroll for a chart
+meant to be taken in at a glance. The grid now takes the text's inset and fits three to a row under
+640 px. The first draft of that media query sat *above* the base rule, which would have won by
+coming later; it moved below before anything rendered it wrong.
+
+### A check for the thing that would quietly break
+
+The smoke test's theme check now includes the hand outline, beside `.topo-svg` and `.volatile`, with
+presence asserted before behavior as the harness requires. A hand drawn in the dark theme's text
+color would vanish on a light card, and nothing else would notice.
+
+**It failed on its first run, and the fault was older than the check.** The quick-jump step a few
+checks earlier opens the palette and never closes it, and the palette's overlay takes every click
+beneath it. The existing theme checks never clicked: both their elements live in `net`, which an
+earlier step had already opened. The hands live in a domain that was still closed, so this was the
+first click after the palette, and it timed out. The step now closes what it opened.
+
+### The contrast nobody's suite was looking at
+
+`a11y_test.mjs` scans its own fixed pages, and this topic is not one of them, so axe was run on the
+open topic by hand in both themes. Light mode failed one node: the caption *10*, cyan on the tile
+color at **4.33:1**. All 37 captions share those colors. axe flagged only the one with two characters
+because it skips single-character text, so a scan that passed every letter was not evidence about
+the letters. The captions now use `--cyan-2`, 5.04:1 in light and 5.69:1 in dark, and axe is clean in
+both. **Named and not built:** this topic in the a11y suite's scanned set. It is the site's first
+picture grid, and the next grid will have the same blind spot.
+
+```
+1 commit · 1 new topic (productivity) · 1 retitle, alias recorded · 3 cards moved, 1 written · 37 pictures, ~30 KB
+reader still 12 of 12, its five ASL queries retargeted · census 373 of 398, 0 unexplained
+related links 4,902 -> 4,904 · path steps 1,600 -> 1,601 · smoke 163 -> 164: the hands follow the theme
+1 latent test fault fixed (a palette left open) · 1 contrast failure found by hand, fixed
+45 gates green · smoke 164 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```

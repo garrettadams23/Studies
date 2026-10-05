@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **475 elements at rest instead of 146,292** — measured at 1,562 topics,
+  costs **475 elements at rest instead of 146,823** — measured at 1,563 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -67,10 +67,10 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Co-management |
 | ♾️ DevOps, Platform & Delivery | DevOps, CKA | CI/CD, Terraform & IaC, containers, Kubernetes, GitOps, secrets, supply chain, serverless, caching, queues |
 | 🏢 Windows Server & Infrastructure | AZ-800, Server | Editions & licensing, Server Core, AD DS boundaries, FSMO, replication, trusts, Group Policy, storage, RAID, backup & DR |
-| 🧮 Computer Science Fundamentals | Theory | Big-O in practice, amortized analysis, recursion, P vs NP, cache locality, hash tables, trees, graphs, probabilistic structures, the ASCII chart with ASL fingerspelling |
+| 🧮 Computer Science Fundamentals | Theory | Big-O in practice, amortized analysis, recursion, P vs NP, cache locality, hash tables, trees, graphs, probabilistic structures, the ASCII chart |
 | 🔧 Hardware, Electronics & Embedded | A+, Hands-On | Ohm's law, power & thermals, motherboards, CPU & cooling, memory & ECC, storage interfaces, test gear, firmware, systematic troubleshooting |
 | 🚀 IT Career & Craft | Career | Career paths, CVs and the ATS, interviews, certifications, home labs, mentorship, technical writing, money, remote work |
-| ⏱️ Productivity & Learning Systems | Study | Learning how to learn, spaced repetition, the memory palace, sleep, attention & task-switching, note-taking, habits, the Japanese mastery loop |
+| ⏱️ Productivity & Learning Systems | Study | Learning how to learn, spaced repetition, the memory palace, sleep, attention & task-switching, note-taking, habits, the Japanese mastery loop, ASL fingerspelling with a picture of every handshape |
 | 🧠 Mind & Wellbeing | Inner Game | Imposter syndrome, burnout, resilience, dealing with failure, surviving on-call, communication |
 | 📐 Mathematics — Calculus | Calculus | Limits, derivatives, integrals, series, differential equations, the unit circle, and a one-page cheat sheet |
 | ❝ Quotes — Sourced & Corrected | Sourced | Stoic, Eastern and existentialist quotes with the work cited — plus the famous lines nobody can source |
