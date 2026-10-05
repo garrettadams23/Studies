@@ -555,6 +555,10 @@ if (recent !== "threw") {
     recent.leaked ? "badge present under query" : "none");
 }
 await page.evaluate(() => localStorage.removeItem("recent-topics")).catch(() => {});
+// The step above leaves the palette open, and its overlay takes every click on
+// the page beneath. Nothing after it clicked until the theme check had to open
+// a domain that was not already open, and timed out on the overlay.
+await page.evaluate(() => { if (typeof stClose === "function") stClose(); }).catch(() => {});
 
 // ── theming: every marked volatile claim, and the topology diagrams ─────────
 // Both live inside domain content, so the domain that owns them has to be open
@@ -566,9 +570,12 @@ const domainWith = async (needle) => page.evaluate(sel =>
     .find(s => s.textContent.includes(sel))?.dataset.domain || null, needle);
 const topoDomain = await domainWith('class="topo-svg"');
 const volDomain = await domainWith('class="volatile"');
+// The ASL handshapes are drawn in the text color on the card color, and a hand
+// that kept its dark-mode outline would vanish on a light card.
+const aslDomain = await domainWith('class="asl-hand"');
 
 const themed = async () => {
-  const out = { body: null, line: null, circle: null, volatile: null };
+  const out = { body: null, line: null, circle: null, volatile: null, hand: null };
   out.body = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   if (topoDomain) {
     await openDomain(topoDomain);
@@ -587,10 +594,17 @@ const themed = async () => {
       return el ? getComputedStyle(el).borderBottomColor : undefined;
     });
   }
+  if (aslDomain) {
+    await openDomain(aslDomain);
+    out.hand = await page.evaluate(() => {
+      const el = document.querySelector(".asl-hand .aslo");
+      return el ? getComputedStyle(el).stroke : undefined;
+    });
+  }
   return out;
 };
-check("the themed elements are in some domain", !!topoDomain && !!volDomain,
-  `topo-svg in ${topoDomain}, volatile in ${volDomain}`);
+check("the themed elements are in some domain", !!topoDomain && !!volDomain && !!aslDomain,
+  `topo-svg in ${topoDomain}, volatile in ${volDomain}, asl-hand in ${aslDomain}`);
 const darkT = await themed();
 await page.evaluate(() => document.documentElement.setAttribute("data-theme", "light"));
 await page.waitForTimeout(250);
@@ -598,7 +612,7 @@ const lightT = await themed();
 // Assert presence separately from behaviour. Skipping a check when its element
 // is missing is how a harness reports success on a page that lost the feature:
 // renaming .topo-svg once took this file from 21 checks to 19, all passing.
-for (const k of ["body", "line", "circle", "volatile"]) {
+for (const k of ["body", "line", "circle", "volatile", "hand"]) {
   if (darkT[k] == null) {
     check(`'${k}' element is present to theme`, false, "selector matched nothing");
     continue;

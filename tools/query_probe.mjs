@@ -556,20 +556,21 @@ const READERS = [
   // table in none, and had never written the words sign language. `asl` found
   // nothing while the corpus counted it fifteen times, every one inside another
   // word: asleep, ASLR, Maslow, SASL. `carriage return` and `extended ascii`
-  // found cards, just not the chart.
+  // found cards, just not the chart. The ASL half then moved to its own topic in
+  // productivity, with a picture of each handshape, and its five queries with it.
   ["somebody looking up a character code or a handshape", [
-    ["ascii table", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["ascii code", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["control characters", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["carriage return", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["xon xoff", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["caret notation", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["extended ascii", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["sign language", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["asl", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["fingerspelling", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["asl numbers", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
-    ["manual alphabet", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["ascii table", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
+    ["ascii code", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
+    ["control characters", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
+    ["carriage return", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
+    ["xon xoff", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
+    ["caret notation", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
+    ["extended ascii", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
+    ["sign language", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
+    ["asl", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
+    ["fingerspelling", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
+    ["asl numbers", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
+    ["manual alphabet", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
