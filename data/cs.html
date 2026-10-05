@@ -1966,6 +1966,370 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
   </div>
 </div>
 
+<!-- ── TOPIC: ASCII & ASL FINGERSPELLING ─────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🔣</span>
+    <span class="topic-name">ASCII <span class="acro-exp">(American Standard Code for Information Interchange)</span> Character Set &amp; ASL <span class="acro-exp">(American Sign Language)</span> Fingerspelling — One Alphabet, Two Encodings</span>
+    <span class="topic-badge">CS • Reference</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The One Idea</div>
+      <div class="concept-title">The Table Is Arithmetic: One Bit Is Case, Four Bits Are a Digit, and Ctrl Clears Two</div>
+      <div class="concept-desc">
+        ASCII gives the numbers 0 to 127 to 33 control codes, the space and 94 printable characters, in
+        seven bits. The 1963 standard had no lowercase; the 1967 revision is the table every system since
+        has copied, and the first 128 code points of Unicode are that table unchanged. It reads like a list
+        somebody typed in order, and it is not one. The codes were placed so that the operations people
+        needed are bit operations, and with the four rules below most of the chart can be worked out
+        without looking at it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>In bits</th><th>Example</th><th>Where it bites</th></tr></thead>
+          <tbody>
+            <tr><td>Case is one bit</td><td>Bit 5, worth 32 (<code>0x20</code>)</td><td><code>A</code> is <code>100 0001</code> and <code>a</code> is <code>110 0001</code>; <code>c ^ 0x20</code> swaps case</td><td>Only for A to Z. The same flip turns <code>[</code> into <code>{</code>, and past 127 it means nothing: ß uppercases to two letters, and Turkish has an i with no dot</td></tr>
+            <tr><td>A digit carries its value in the low four bits</td><td><code>0</code> is 48 (<code>0x30</code>), <code>9</code> is 57 (<code>0x39</code>)</td><td><code>'7' - '0'</code> is 7, and so is <code>'7' &amp; 0x0F</code></td><td>The character 7 and the number 7 are 48 apart, so a reading off by exactly 48 is a digit treated as a number, or a number as a digit</td></tr>
+            <tr><td>Ctrl clears the top two bits</td><td>AND with 31 (<code>0x1F</code>)</td><td><code>M</code> is 77, so Ctrl+M is 13, carriage return; <code>[</code> is 91, so Ctrl+[ is 27, Escape</td><td>Every <code>^M</code> and <code>^[</code> a terminal prints is a key with two bits cleared. Caret notation flips bit 6 back, which is why DEL, 127, prints as <code>^?</code></td></tr>
+            <tr><td>Sorting is numeric order</td><td>Space 32, digits 48–57, uppercase 65–90, lowercase 97–122</td><td><code>Zebra</code> before <code>apple</code>; <code>file10</code> before <code>file2</code></td><td>Anything that compares bytes or code points: <code>sort</code> under <code>LC_ALL=C</code>, a binary collation, Python's plain <code>sorted()</code></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The third row is the one to memorize.</strong> It turns every caret code a terminal prints
+          into arithmetic you can do in your head: M is the thirteenth letter, so <code>^M</code> is 13, the
+          carriage return. It is also why Ctrl+[ works as Escape in vim on a keyboard whose Escape key is out
+          of reach. Distrust the first row: case folding by bit is right for exactly 26 letters, and code that
+          does it has never met a name with an accent. The space is 32 for the same reason the case bit is, so
+          in C <code>'a' - 'A' == ' '</code> is true, which is a fact to know and never a thing to write.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">All 128 Codes, Laid Out the Way the Bits Are</div>
+      <div class="concept-desc">
+        Four columns of 32. The column is the top two of the seven bits and the row is the bottom five, so a
+        character's binary code is its column's bits followed by its row's: <code>A</code> is <code>10</code>
+        then <code>00001</code>, which is <code>1000001</code>, 65. Read across a row and only the column bits
+        change, which is why Ctrl+A, <code>!</code>, <code>A</code> and <code>a</code> share one. Control codes
+        appear as their standard abbreviations, and the card after this one names them.
+      </div>
+      <div class="concept-desc">
+        The punctuation column still shows the teletype it was designed for. <code>!</code> to <code>)</code>
+        sit exactly 16 below <code>1</code> to <code>9</code>, so on a bit-paired keyboard like the Teletype
+        Model 33, Shift flipped one bit and Shift+8 typed <code>(</code>. Typewriter pairing won instead, which
+        is why <code>(</code> is over 9 on your keyboard; on a US layout only 1, 3, 4 and 5 still shift to the
+        character the chart puts 16 below them. The same 128 codes as one long list are on the
+        <!-- fact: UAH ASCII Character Set link, supplied by the site owner | source: www.cs.uah.edu, which this build container's network policy blocks, so the page was linked and not read; every table here is computed from the code points | checked: 2026-10 -->
+        <a class="extlink" href="https://www.cs.uah.edu/~rcoleman/Common/Basics/ASCIICharSet.html" target="_blank" rel="noopener noreferrer">UAH ASCII Character Set page</a>,
+        and on any Linux machine <code>man ascii</code> prints them in octal, decimal and hex.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Row bits</th><th>Dec</th><th>Hex</th><th>00 · Control</th><th>Dec</th><th>Hex</th><th>01 · Digits &amp; symbols</th><th>Dec</th><th>Hex</th><th>10 · Uppercase</th><th>Dec</th><th>Hex</th><th>11 · Lowercase</th></tr></thead>
+          <tbody>
+            <tr><td><code>00000</code></td><td>0</td><td>00</td><td><code>NUL</code></td><td>32</td><td>20</td><td><code>SP</code> (space)</td><td>64</td><td>40</td><td><code>@</code></td><td>96</td><td>60</td><td><code>`</code></td></tr>
+            <tr><td><code>00001</code></td><td>1</td><td>01</td><td><code>SOH</code></td><td>33</td><td>21</td><td><code>!</code></td><td>65</td><td>41</td><td><code>A</code></td><td>97</td><td>61</td><td><code>a</code></td></tr>
+            <tr><td><code>00010</code></td><td>2</td><td>02</td><td><code>STX</code></td><td>34</td><td>22</td><td><code>"</code></td><td>66</td><td>42</td><td><code>B</code></td><td>98</td><td>62</td><td><code>b</code></td></tr>
+            <tr><td><code>00011</code></td><td>3</td><td>03</td><td><code>ETX</code></td><td>35</td><td>23</td><td><code>#</code></td><td>67</td><td>43</td><td><code>C</code></td><td>99</td><td>63</td><td><code>c</code></td></tr>
+            <tr><td><code>00100</code></td><td>4</td><td>04</td><td><code>EOT</code></td><td>36</td><td>24</td><td><code>$</code></td><td>68</td><td>44</td><td><code>D</code></td><td>100</td><td>64</td><td><code>d</code></td></tr>
+            <tr><td><code>00101</code></td><td>5</td><td>05</td><td><code>ENQ</code></td><td>37</td><td>25</td><td><code>%</code></td><td>69</td><td>45</td><td><code>E</code></td><td>101</td><td>65</td><td><code>e</code></td></tr>
+            <tr><td><code>00110</code></td><td>6</td><td>06</td><td><code>ACK</code></td><td>38</td><td>26</td><td><code>&amp;</code></td><td>70</td><td>46</td><td><code>F</code></td><td>102</td><td>66</td><td><code>f</code></td></tr>
+            <tr><td><code>00111</code></td><td>7</td><td>07</td><td><code>BEL</code></td><td>39</td><td>27</td><td><code>'</code></td><td>71</td><td>47</td><td><code>G</code></td><td>103</td><td>67</td><td><code>g</code></td></tr>
+            <tr><td><code>01000</code></td><td>8</td><td>08</td><td><code>BS</code></td><td>40</td><td>28</td><td><code>(</code></td><td>72</td><td>48</td><td><code>H</code></td><td>104</td><td>68</td><td><code>h</code></td></tr>
+            <tr><td><code>01001</code></td><td>9</td><td>09</td><td><code>HT</code></td><td>41</td><td>29</td><td><code>)</code></td><td>73</td><td>49</td><td><code>I</code></td><td>105</td><td>69</td><td><code>i</code></td></tr>
+            <tr><td><code>01010</code></td><td>10</td><td>0A</td><td><code>LF</code></td><td>42</td><td>2A</td><td><code>*</code></td><td>74</td><td>4A</td><td><code>J</code></td><td>106</td><td>6A</td><td><code>j</code></td></tr>
+            <tr><td><code>01011</code></td><td>11</td><td>0B</td><td><code>VT</code></td><td>43</td><td>2B</td><td><code>+</code></td><td>75</td><td>4B</td><td><code>K</code></td><td>107</td><td>6B</td><td><code>k</code></td></tr>
+            <tr><td><code>01100</code></td><td>12</td><td>0C</td><td><code>FF</code></td><td>44</td><td>2C</td><td><code>,</code></td><td>76</td><td>4C</td><td><code>L</code></td><td>108</td><td>6C</td><td><code>l</code></td></tr>
+            <tr><td><code>01101</code></td><td>13</td><td>0D</td><td><code>CR</code></td><td>45</td><td>2D</td><td><code>-</code></td><td>77</td><td>4D</td><td><code>M</code></td><td>109</td><td>6D</td><td><code>m</code></td></tr>
+            <tr><td><code>01110</code></td><td>14</td><td>0E</td><td><code>SO</code></td><td>46</td><td>2E</td><td><code>.</code></td><td>78</td><td>4E</td><td><code>N</code></td><td>110</td><td>6E</td><td><code>n</code></td></tr>
+            <tr><td><code>01111</code></td><td>15</td><td>0F</td><td><code>SI</code></td><td>47</td><td>2F</td><td><code>/</code></td><td>79</td><td>4F</td><td><code>O</code></td><td>111</td><td>6F</td><td><code>o</code></td></tr>
+            <tr><td><code>10000</code></td><td>16</td><td>10</td><td><code>DLE</code></td><td>48</td><td>30</td><td><code>0</code></td><td>80</td><td>50</td><td><code>P</code></td><td>112</td><td>70</td><td><code>p</code></td></tr>
+            <tr><td><code>10001</code></td><td>17</td><td>11</td><td><code>DC1</code></td><td>49</td><td>31</td><td><code>1</code></td><td>81</td><td>51</td><td><code>Q</code></td><td>113</td><td>71</td><td><code>q</code></td></tr>
+            <tr><td><code>10010</code></td><td>18</td><td>12</td><td><code>DC2</code></td><td>50</td><td>32</td><td><code>2</code></td><td>82</td><td>52</td><td><code>R</code></td><td>114</td><td>72</td><td><code>r</code></td></tr>
+            <tr><td><code>10011</code></td><td>19</td><td>13</td><td><code>DC3</code></td><td>51</td><td>33</td><td><code>3</code></td><td>83</td><td>53</td><td><code>S</code></td><td>115</td><td>73</td><td><code>s</code></td></tr>
+            <tr><td><code>10100</code></td><td>20</td><td>14</td><td><code>DC4</code></td><td>52</td><td>34</td><td><code>4</code></td><td>84</td><td>54</td><td><code>T</code></td><td>116</td><td>74</td><td><code>t</code></td></tr>
+            <tr><td><code>10101</code></td><td>21</td><td>15</td><td><code>NAK</code></td><td>53</td><td>35</td><td><code>5</code></td><td>85</td><td>55</td><td><code>U</code></td><td>117</td><td>75</td><td><code>u</code></td></tr>
+            <tr><td><code>10110</code></td><td>22</td><td>16</td><td><code>SYN</code></td><td>54</td><td>36</td><td><code>6</code></td><td>86</td><td>56</td><td><code>V</code></td><td>118</td><td>76</td><td><code>v</code></td></tr>
+            <tr><td><code>10111</code></td><td>23</td><td>17</td><td><code>ETB</code></td><td>55</td><td>37</td><td><code>7</code></td><td>87</td><td>57</td><td><code>W</code></td><td>119</td><td>77</td><td><code>w</code></td></tr>
+            <tr><td><code>11000</code></td><td>24</td><td>18</td><td><code>CAN</code></td><td>56</td><td>38</td><td><code>8</code></td><td>88</td><td>58</td><td><code>X</code></td><td>120</td><td>78</td><td><code>x</code></td></tr>
+            <tr><td><code>11001</code></td><td>25</td><td>19</td><td><code>EM</code></td><td>57</td><td>39</td><td><code>9</code></td><td>89</td><td>59</td><td><code>Y</code></td><td>121</td><td>79</td><td><code>y</code></td></tr>
+            <tr><td><code>11010</code></td><td>26</td><td>1A</td><td><code>SUB</code></td><td>58</td><td>3A</td><td><code>:</code></td><td>90</td><td>5A</td><td><code>Z</code></td><td>122</td><td>7A</td><td><code>z</code></td></tr>
+            <tr><td><code>11011</code></td><td>27</td><td>1B</td><td><code>ESC</code></td><td>59</td><td>3B</td><td><code>;</code></td><td>91</td><td>5B</td><td><code>[</code></td><td>123</td><td>7B</td><td><code>{</code></td></tr>
+            <tr><td><code>11100</code></td><td>28</td><td>1C</td><td><code>FS</code></td><td>60</td><td>3C</td><td><code>&lt;</code></td><td>92</td><td>5C</td><td><code>\</code></td><td>124</td><td>7C</td><td><code>|</code></td></tr>
+            <tr><td><code>11101</code></td><td>29</td><td>1D</td><td><code>GS</code></td><td>61</td><td>3D</td><td><code>=</code></td><td>93</td><td>5D</td><td><code>]</code></td><td>125</td><td>7D</td><td><code>}</code></td></tr>
+            <tr><td><code>11110</code></td><td>30</td><td>1E</td><td><code>RS</code></td><td>62</td><td>3E</td><td><code>&gt;</code></td><td>94</td><td>5E</td><td><code>^</code></td><td>126</td><td>7E</td><td><code>~</code></td></tr>
+            <tr><td><code>11111</code></td><td>31</td><td>1F</td><td><code>US</code></td><td>63</td><td>3F</td><td><code>?</code></td><td>95</td><td>5F</td><td><code>_</code></td><td>127</td><td>7F</td><td><code>DEL</code></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Read the chart by row, not by column.</strong> A row answers the question you actually have,
+          such as what Ctrl plus this key sends or what the capital of that letter is, and the column is only
+          the two bits you change to get there. Hold the last two columns side by side and that is the whole
+          of case conversion for English: every capital sits on the same row as its lowercase, exactly 32
+          below it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">The 33 Control Codes, and What Still Answers to Each</div>
+      <div class="concept-desc">
+        The first column and the last code were for teleprinters, paper tape and the serial lines between
+        them: ring the bell, return the carriage, start a message, end the tape. The machines are gone and
+        the codes stayed, because a terminal emulator still pretends to be one, and the kernel's tty layer
+        still turns a handful of them into actions. That is why Ctrl+C, Ctrl+D, Ctrl+S and Ctrl+Z do what
+        they do. The key sends a control code, and the tty, not the program you are running, decides what it
+        means. The signals those keys raise are in
+        <span class="xref">Processes &amp; Signals — Running Programs in Linux</span>.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Dec</th><th>Hex</th><th>Oct</th><th>Key</th><th>Code</th><th>Name</th><th>Where it still answers</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>00</td><td>000</td><td><code>^@</code></td><td><code>NUL</code></td><td>Null</td><td>C's end-of-string marker, so a NUL inside input ends the string early: the null-byte injection that once let <code>shell.php%00.jpg</code> pass an extension check</td></tr>
+            <tr><td>1</td><td>01</td><td>001</td><td><code>^A</code></td><td><code>SOH</code></td><td>Start of Heading</td><td>Starts a block in XMODEM; the field delimiter in FIX, the trading protocol</td></tr>
+            <tr><td>2</td><td>02</td><td>002</td><td><code>^B</code></td><td><code>STX</code></td><td>Start of Text</td><td>Frames a message from serial devices: scales, barcode scanners, card readers</td></tr>
+            <tr><td>3</td><td>03</td><td>003</td><td><code>^C</code></td><td><code>ETX</code></td><td>End of Text</td><td>Ctrl+C. The tty turns it into <code>SIGINT</code></td></tr>
+            <tr><td>4</td><td>04</td><td>004</td><td><code>^D</code></td><td><code>EOT</code></td><td>End of Transmission</td><td>Ctrl+D. End of input at the start of a line: the read returns nothing, which is why it closes a shell. Not a signal</td></tr>
+            <tr><td>5</td><td>05</td><td>005</td><td><code>^E</code></td><td><code>ENQ</code></td><td>Enquiry, as the standard spells it</td><td>Asks a terminal for its answerback string. Otherwise unused</td></tr>
+            <tr><td>6</td><td>06</td><td>006</td><td><code>^F</code></td><td><code>ACK</code></td><td>Acknowledge</td><td>A positive reply in XMODEM and many serial protocols. TCP <span class="acro-exp">(Transmission Control Protocol)</span>'s ACK flag borrowed the name, not the byte</td></tr>
+            <tr><td>7</td><td>07</td><td>007</td><td><code>^G</code></td><td><code>BEL</code></td><td>Bell</td><td><code>\a</code>. The terminal beep, or a flashing tab</td></tr>
+            <tr><td>8</td><td>08</td><td>010</td><td><code>^H</code></td><td><code>BS</code></td><td>Backspace</td><td><code>\b</code>, Ctrl+H. What the Backspace key sends on some terminals; others send DEL</td></tr>
+            <tr><td>9</td><td>09</td><td>011</td><td><code>^I</code></td><td><code>HT</code></td><td>Horizontal Tab</td><td><code>\t</code>, Ctrl+I. Required before every Makefile recipe line, and forbidden as indentation in YAML <span class="acro-exp">(YAML Ain't Markup Language)</span></td></tr>
+            <tr><td>10</td><td>0A</td><td>012</td><td><code>^J</code></td><td><code>LF</code></td><td>Line Feed</td><td><code>\n</code>, Ctrl+J. The line ending on Linux and macOS</td></tr>
+            <tr><td>11</td><td>0B</td><td>013</td><td><code>^K</code></td><td><code>VT</code></td><td>Vertical Tab</td><td><code>\v</code>. Almost nothing, though Word stores a manual line break (Shift+Enter) as this code</td></tr>
+            <tr><td>12</td><td>0C</td><td>014</td><td><code>^L</code></td><td><code>FF</code></td><td>Form Feed</td><td><code>\f</code>, Ctrl+L. Ejects a printer page; Ctrl+L clears or redraws the screen in shells and editors</td></tr>
+            <tr><td>13</td><td>0D</td><td>015</td><td><code>^M</code></td><td><code>CR</code></td><td>Carriage Return</td><td><code>\r</code>, Ctrl+M. Half the Windows line ending, and required by HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> and SMTP <span class="acro-exp">(Simple Mail Transfer Protocol)</span>. Enter sends it, and the tty turns it into LF</td></tr>
+            <tr><td>14</td><td>0E</td><td>016</td><td><code>^N</code></td><td><code>SO</code></td><td>Shift Out</td><td>Switches a VT100-style terminal to its alternate character set: the garbage after you <code>cat</code> a binary</td></tr>
+            <tr><td>15</td><td>0F</td><td>017</td><td><code>^O</code></td><td><code>SI</code></td><td>Shift In</td><td>Switches back. Printing one fixes the row above</td></tr>
+            <tr><td>16</td><td>10</td><td>020</td><td><code>^P</code></td><td><code>DLE</code></td><td>Data Link Escape</td><td>Escapes framing bytes inside binary serial protocols</td></tr>
+            <tr><td>17</td><td>11</td><td>021</td><td><code>^Q</code></td><td><code>DC1</code></td><td>Device Control 1</td><td>XON, Ctrl+Q. Resumes output paused by DC3</td></tr>
+            <tr><td>18</td><td>12</td><td>022</td><td><code>^R</code></td><td><code>DC2</code></td><td>Device Control 2</td><td>Unused by terminals. Ctrl+R is bash's reverse history search, because bash reads keys itself instead of using the tty's line editing</td></tr>
+            <tr><td>19</td><td>13</td><td>023</td><td><code>^S</code></td><td><code>DC3</code></td><td>Device Control 3</td><td>XOFF, Ctrl+S. Pauses output: the terminal that looks frozen</td></tr>
+            <tr><td>20</td><td>14</td><td>024</td><td><code>^T</code></td><td><code>DC4</code></td><td>Device Control 4</td><td>Unused</td></tr>
+            <tr><td>21</td><td>15</td><td>025</td><td><code>^U</code></td><td><code>NAK</code></td><td>Negative Acknowledge</td><td>Ctrl+U: the tty's erase-the-whole-line key. XMODEM's <em>send that block again</em></td></tr>
+            <tr><td>22</td><td>16</td><td>026</td><td><code>^V</code></td><td><code>SYN</code></td><td>Synchronous Idle</td><td>Ctrl+V: the tty's <em>insert the next key literally</em>, which is how you type a real ^M. Not TCP's SYN <span class="acro-exp">(Synchronize)</span>, which shares only the name</td></tr>
+            <tr><td>23</td><td>17</td><td>027</td><td><code>^W</code></td><td><code>ETB</code></td><td>End of Transmission Block</td><td>Ctrl+W: erase the previous word</td></tr>
+            <tr><td>24</td><td>18</td><td>030</td><td><code>^X</code></td><td><code>CAN</code></td><td>Cancel</td><td>Aborts an XMODEM transfer, and an escape sequence in progress</td></tr>
+            <tr><td>25</td><td>19</td><td>031</td><td><code>^Y</code></td><td><code>EM</code></td><td>End of Medium</td><td>The end of the tape. Unused</td></tr>
+            <tr><td>26</td><td>1A</td><td>032</td><td><code>^Z</code></td><td><code>SUB</code></td><td>Substitute</td><td>Ctrl+Z. End of file in the Windows console and old DOS text files; on Unix the tty suspends the job with <code>SIGTSTP</code></td></tr>
+            <tr><td>27</td><td>1B</td><td>033</td><td><code>^[</code></td><td><code>ESC</code></td><td>Escape</td><td><code>\e</code>, <code>\033</code>, <code>\x1b</code>, Ctrl+[. Starts every ANSI escape sequence: color, cursor movement, the window title</td></tr>
+            <tr><td>28</td><td>1C</td><td>034</td><td><code>^\</code></td><td><code>FS</code></td><td>File Separator</td><td>Ctrl+\. The tty sends <code>SIGQUIT</code>, which stops the program and dumps core</td></tr>
+            <tr><td>29</td><td>1D</td><td>035</td><td><code>^]</code></td><td><code>GS</code></td><td>Group Separator</td><td>Ctrl+]. Telnet's escape key, and the field separator inside GS1 barcodes</td></tr>
+            <tr><td>30</td><td>1E</td><td>036</td><td><code>^^</code></td><td><code>RS</code></td><td>Record Separator</td><td>Starts each record in JSON <span class="acro-exp">(JavaScript Object Notation)</span> text sequences (RFC 7464)</td></tr>
+            <tr><td>31</td><td>1F</td><td>037</td><td><code>^_</code></td><td><code>US</code></td><td>Unit Separator</td><td>A field separator nobody types, which was the point. Unused</td></tr>
+            <tr><td>127</td><td>7F</td><td>177</td><td><code>^?</code></td><td><code>DEL</code></td><td>Delete</td><td>Ctrl+?, shown as ^?. All seven holes punched: paper tape could not un-punch a hole, so a character was erased by punching the rest. What Backspace sends on most Linux terminals</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Nine rows still do something the moment you press the key:</strong> <code>^C</code>,
+          <code>^\</code>, <code>^D</code>, <code>^Q</code>, <code>^S</code>, <code>^U</code>, <code>^V</code>,
+          <code>^W</code> and <code>^Z</code>. All nine belong to the terminal driver, not to the program, and
+          <code>stty -a</code> lists them. That is why Ctrl+C reaches a program that switched the terminal to
+          raw mode as a plain byte it is free to ignore, and why <code>stty -ixon</code> is the permanent fix
+          for Ctrl+S freezing a shell. Rows 28 to 31 are the ones worth knowing as history. The standard
+          shipped four delimiters that cannot appear in typed text, and the industry picked the comma instead
+          and has been escaping it in CSV <span class="acro-exp">(Comma-Separated Values)</span> ever since.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Failure Modes</div>
+      <div class="concept-title">Six Symptoms and the Bytes Behind Them — Reading a Bug by Its Code</div>
+      <div class="concept-desc">
+        Most character bugs announce themselves with one specific byte, and naming the byte is most of the
+        fix. The chart turns a symptom into a number, and the number usually names the system that put it
+        there.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>The byte</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td><code>/bin/bash^M: bad interpreter</code>, or <code>$'\r': command not found</code>, from a script that was fine on Windows</td><td>CR, 13 (<code>0x0D</code>): the file has Windows line endings, CRLF <span class="acro-exp">(Carriage Return Line Feed)</span></td><td><code>dos2unix</code> or <code>sed -i 's/\r$//'</code>, then a <code>.gitattributes</code> line, <code>*.sh text eol=lf</code>, so it does not come back</td></tr>
+            <tr><td>The terminal stops echoing and looks hung</td><td>DC3, 19 (<code>0x13</code>): Ctrl+S, XOFF</td><td>Ctrl+Q. Put <code>stty -ixon</code> in the shell profile to turn the feature off</td></tr>
+            <tr><td>After <code>cat</code> on a binary file, the prompt turns into line-drawing symbols</td><td>SO, 14 (<code>0x0E</code>), or an escape sequence that swapped the character set</td><td><code>reset</code>, typed blind if it has to be</td></tr>
+            <tr><td>Backspace prints <code>^H</code> or <code>^?</code> instead of erasing</td><td>BS, 8, against DEL, 127: the terminal sends one and the tty expects the other</td><td><code>stty erase '^?'</code> (or <code>'^H'</code>), or change the emulator's Backspace setting</td></tr>
+            <tr><td><code>â€™</code> where an apostrophe should be</td><td>None of them is ASCII: the three UTF-8 bytes of ’ (<code>E2 80 99</code>) read as Windows-1252</td><td>Decode as UTF-8. ASCII's only apostrophe is the straight one, 39, so a curly quote was never in this chart</td></tr>
+            <tr><td>A value off by exactly 48</td><td>The digit 0 is 48: a character used as a number, or a number as a character</td><td>Subtract <code>'0'</code> when parsing and add it when printing, or find which end of the protocol sends text and which sends bytes</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The first row is the one you will meet this year</strong>, usually from a script edited on
+          Windows and run in a container, and the <code>.gitattributes</code> line is the part of the fix that
+          outlives the incident. The fifth is the one most often misdiagnosed. It gets reported as ASCII
+          corruption and is the opposite: the only row here where the bytes were never ASCII at all.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Boundary</div>
+      <div class="concept-title">Extended ASCII Is Not ASCII, and UTF-8 Kept the First 128 on Purpose</div>
+      <div class="concept-desc">
+        ASCII stops at 127. The eighth bit of a byte was left for parity on the wire, and when machines began
+        spending it on characters, every vendor filled 128 to 255 differently. <em>Extended ASCII</em> is not a
+        standard. It is a family of code pages that agree only on the half that is ASCII. UTF-8, designed by
+        Ken Thompson and Rob Pike in 1992, ended the argument with one decision: code points 0 to 127 are the
+        same single byte, and every byte of a longer character has its top bit set. Any ASCII file is
+        therefore already valid UTF-8, and a <code>/</code> or a NUL can never turn up inside a multi-byte
+        character, which is why Unix tools that split on <code>/</code> and newline kept working unchanged.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Encoding</th><th>Bytes 0–127</th><th>Bytes 128–255</th><th>Where you meet it</th></tr></thead>
+          <tbody>
+            <tr><td>ASCII</td><td>The chart above</td><td>None: seven bits</td><td>Protocol keywords, source code, any spec that says ASCII</td></tr>
+            <tr><td>Code page 437</td><td>ASCII</td><td>Box drawing, the shade blocks ░▒▓, accented letters, some Greek</td><td>The original IBM PC: BIOS <span class="acro-exp">(Basic Input/Output System)</span> setup screens and DOS programs</td></tr>
+            <tr><td>ISO-8859-1, Latin-1</td><td>ASCII</td><td>Western European letters; 128–159 are more control codes</td><td>Older Unix systems, and the original HTTP/1.1 default for text</td></tr>
+            <tr><td>Windows-1252</td><td>ASCII</td><td>Latin-1, plus curly quotes, € and the em dash in 128–159</td><td>Older Windows applications and text files. Browsers decode a page labeled ISO-8859-1 as this one</td></tr>
+            <tr><td>UTF-8</td><td>ASCII, byte for byte</td><td>Never a character on its own: the lead and continuation bytes of 2- to 4-byte sequences</td><td>The web, Linux, JSON, and nearly everything new</td></tr>
+            <tr><td>EBCDIC</td><td>Control codes and punctuation, in another order</td><td>Letters in three runs, A–I, J–R and S–Z, and the digits at 240–249</td><td>IBM mainframes, where <code>A</code> is 193</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>When anyone says extended ASCII, ask which code page.</strong> The phrase covers at least the
+          second, third and fourth rows, and every mojibake bug is two systems answering that question
+          differently. Treat the last row as a separate world: in EBCDIC, J comes 8 after I, so letter
+          arithmetic by the first card's rules is wrong there. The working end of this is
+          <span class="xref">Encoding — Bytes, Text, and Why "It Works on My Machine"</span> in Scripting:
+          decode at input, encode at output. EBCDIC in practice is
+          <span class="xref">Mainframe &amp; Midrange — Why They Are Still There, and How You Integrate With One</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ASL</div>
+      <div class="concept-title">The Same 26 Letters, Encoded by Hand, With No Case Bit</div>
+      <div class="concept-desc">
+        American Sign Language has a manual alphabet: one hand, 26 handshapes, held near the shoulder with the
+        palm toward the person reading. Twenty-four are held still; J and Z are drawn in the air. It is how ASL
+        spells names, places, brands and English words that have no sign, and it is not how ASL says most
+        things. ASL is a language with its own grammar, not English on the hands, and fingerspelling is where
+        it borrows from English.
+      </div>
+      <div class="concept-desc">
+        ASCII spends a whole bit telling A from a. Fingerspelling has no case at all, and spends orientation
+        and movement instead: K and P are one handshape pointed two ways, and so are G and Q; H is U turned on
+        its side; J is I in motion. The table gives each letter's two ASCII codes beside its handshape,
+        described for the dominant hand. A left-handed signer mirrors it.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Letter</th><th>ASCII, A · a</th><th>ASL handshape</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>65 · 97<br><span class="c-muted">hex 41 · 61</span></td><td>Fist, with the thumb straight up against the side of the index finger</td></tr>
+            <tr><td>B</td><td>66 · 98<br><span class="c-muted">hex 42 · 62</span></td><td>Four fingers straight up and together; thumb folded across the palm</td></tr>
+            <tr><td>C</td><td>67 · 99<br><span class="c-muted">hex 43 · 63</span></td><td>Fingers and thumb curved into a C, seen from the side</td></tr>
+            <tr><td>D</td><td>68 · 100<br><span class="c-muted">hex 44 · 64</span></td><td>Index finger up; the other fingertips touch the thumb in a circle</td></tr>
+            <tr><td>E</td><td>69 · 101<br><span class="c-muted">hex 45 · 65</span></td><td>Fingertips curled down onto the thumb, which is tucked across the palm</td></tr>
+            <tr><td>F</td><td>70 · 102<br><span class="c-muted">hex 46 · 66</span></td><td>Thumb and index fingertip touch in a circle; the other three fingers up and spread</td></tr>
+            <tr><td>G</td><td>71 · 103<br><span class="c-muted">hex 47 · 67</span></td><td>Index finger and thumb parallel, pointing sideways; palm toward the signer</td></tr>
+            <tr><td>H</td><td>72 · 104<br><span class="c-muted">hex 48 · 68</span></td><td>Index and middle fingers together, pointing sideways: U turned on its side</td></tr>
+            <tr><td>I</td><td>73 · 105<br><span class="c-muted">hex 49 · 69</span></td><td>Little finger up; the rest a fist, thumb across the fingers</td></tr>
+            <tr><td>J</td><td>74 · 106<br><span class="c-muted">hex 4A · 6A</span></td><td>The I handshape, with the little finger drawing a J in the air</td></tr>
+            <tr><td>K</td><td>75 · 107<br><span class="c-muted">hex 4B · 6B</span></td><td>Index and middle fingers up in a V, thumb tip touching the middle finger between them</td></tr>
+            <tr><td>L</td><td>76 · 108<br><span class="c-muted">hex 4C · 6C</span></td><td>Thumb and index finger out in an L</td></tr>
+            <tr><td>M</td><td>77 · 109<br><span class="c-muted">hex 4D · 6D</span></td><td>Index, middle and ring fingers folded over the thumb</td></tr>
+            <tr><td>N</td><td>78 · 110<br><span class="c-muted">hex 4E · 6E</span></td><td>Index and middle fingers folded over the thumb</td></tr>
+            <tr><td>O</td><td>79 · 111<br><span class="c-muted">hex 4F · 6F</span></td><td>All the fingertips curved to meet the thumb in an O</td></tr>
+            <tr><td>P</td><td>80 · 112<br><span class="c-muted">hex 50 · 70</span></td><td>The K handshape, pointing down</td></tr>
+            <tr><td>Q</td><td>81 · 113<br><span class="c-muted">hex 51 · 71</span></td><td>The G handshape, pointing down</td></tr>
+            <tr><td>R</td><td>82 · 114<br><span class="c-muted">hex 52 · 72</span></td><td>Index and middle fingers crossed</td></tr>
+            <tr><td>S</td><td>83 · 115<br><span class="c-muted">hex 53 · 73</span></td><td>Fist, with the thumb across the front of the fingers</td></tr>
+            <tr><td>T</td><td>84 · 116<br><span class="c-muted">hex 54 · 74</span></td><td>Fist, with the thumb tucked between the index and middle fingers</td></tr>
+            <tr><td>U</td><td>85 · 117<br><span class="c-muted">hex 55 · 75</span></td><td>Index and middle fingers up and together</td></tr>
+            <tr><td>V</td><td>86 · 118<br><span class="c-muted">hex 56 · 76</span></td><td>Index and middle fingers up and spread</td></tr>
+            <tr><td>W</td><td>87 · 119<br><span class="c-muted">hex 57 · 77</span></td><td>Index, middle and ring fingers up and spread; thumb holds the little finger</td></tr>
+            <tr><td>X</td><td>88 · 120<br><span class="c-muted">hex 58 · 78</span></td><td>Index finger bent into a hook; the rest a fist</td></tr>
+            <tr><td>Y</td><td>89 · 121<br><span class="c-muted">hex 59 · 79</span></td><td>Thumb and little finger out; the other three folded</td></tr>
+            <tr><td>Z</td><td>90 · 122<br><span class="c-muted">hex 5A · 7A</span></td><td>Index finger drawing a Z in the air</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Drill the pairs that only direction separates, K and P, G and Q, H and U, and then the six
+          closed fists: A, E, M, N, S and T.</strong> The fists differ only in where the thumb goes, and that is
+          fingerspelling's version of the case bit: a small difference that carries the whole letter, and the
+          place a beginner's spelling goes wrong. Spoken spelling has the same problem with letters that sound
+          alike, and the radio answer is a word per letter, the NATO <span class="acro-exp">(North Atlantic Treaty Organization)</span> alphabet in
+          <span class="xref">DoD — Department of Defense</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ASL Numbers</div>
+      <div class="concept-title">Digits: ASCII Keeps Them Apart From Letters, ASL Reuses the Shapes</div>
+      <div class="concept-desc">
+        ASCII puts the digits at 48 to 57, a whole block away from the letters, so 0 and O can never share a
+        code even when a font makes them look alike. ASL makes the opposite trade. Its numbers reuse letter
+        handshapes, so 0 is O, 2 is V, 6 is W and 9 is F, and leave the difference to context: a number where
+        a number is expected. Counting adds one more cue. One to five are usually signed with the palm toward
+        the signer, and six to nine with the palm out.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Number</th><th>ASCII (dec · hex)</th><th>ASL handshape</th><th>Same shape as</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>48 · 30</td><td>Fingertips meet the thumb in a circle</td><td>O</td></tr>
+            <tr><td>1</td><td>49 · 31</td><td>Index finger up</td><td>&mdash;</td></tr>
+            <tr><td>2</td><td>50 · 32</td><td>Index and middle fingers up and spread</td><td>V</td></tr>
+            <tr><td>3</td><td>51 · 33</td><td>Thumb, index and middle fingers out</td><td>&mdash;</td></tr>
+            <tr><td>4</td><td>52 · 34</td><td>Four fingers up and spread; thumb folded into the palm</td><td>&mdash;</td></tr>
+            <tr><td>5</td><td>53 · 35</td><td>All five fingers spread</td><td>&mdash;</td></tr>
+            <tr><td>6</td><td>54 · 36</td><td>Thumb touches the little finger; the other three up</td><td>W</td></tr>
+            <tr><td>7</td><td>55 · 37</td><td>Thumb touches the ring finger; the others up</td><td>&mdash;</td></tr>
+            <tr><td>8</td><td>56 · 38</td><td>Thumb touches the middle finger; the others up</td><td>&mdash;</td></tr>
+            <tr><td>9</td><td>57 · 39</td><td>Thumb touches the index finger; the others up</td><td>F</td></tr>
+            <tr><td>10</td><td>No code: two characters, 49 then 48</td><td>Thumb up from a fist, with a small shake or twist</td><td>A, thumb pointing up</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>The one to drill is 3: thumb, index and middle finger.</strong> The way many Americans hold
+          up three fingers, index to ring, is 6 in ASL, and W, so the natural gesture says the wrong number. The
+          last row is the same trade the other way round: ASCII has no code for ten and spells it with two digits,
+          while ASL has a single sign for it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Scope</div>
+      <div class="concept-title">Fingerspelling Is Read as a Shape, and the Alphabet Is Not Universal</div>
+      <div class="concept-desc">
+        Fluent readers do not catch the letters one at a time. They see the movement of the whole word, the
+        way a fluent reader of print sees a word rather than spelling it out. Most of a beginner's trouble
+        reading comes from chasing single letters, and most of a beginner's hard-to-read spelling comes from
+        moving the hand to mark each one.
+      </div>
+      <div class="concept-desc">
+        The alphabet is not universal either. British Sign Language uses a two-handed alphabet, shared with
+        Australia and New Zealand, so a British and an American signer cannot read each other's spelling even
+        though both are spelling English. ASL's one-handed alphabet is a cousin of the French one, because ASL
+        descends partly from French Sign Language, brought to Hartford, Connecticut, in 1817 by the Deaf
+        teacher Laurent Clerc.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Hold the hand still, near the shoulder, palm toward the reader</td><td>The letters are the changes in the hand. A bouncing hand adds motion that reads as noise, or as J and Z</td></tr>
+            <tr><td>Mark a double letter with a small slide or bounce</td><td>It is the only way to tell <em>ball</em> from <em>bal</em></td></tr>
+            <tr><td>Watch the whole word, not each letter</td><td>Its outline and length carry most of it; ask for it again rather than guessing letter by letter</td></tr>
+            <tr><td>Expect some spellings to have become signs</td><td>Short English words spelled often enough turn into signs of their own, written <code>#OK</code>, <code>#JOB</code> and <code>#BACK</code> in glosses. They are signed as one movement, not as letters</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong>Learn the alphabet from the table and the reading from people.</strong> The handshapes above
+          can be memorized in an afternoon. Reading them at conversational speed cannot, because the skill is
+          recognizing the movement between letters, which no description captures. A class with a Deaf teacher
+          is the usual route, and practice reading someone else's spelling is worth more than speed spelling
+          your own name.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: SPECULATIVE EXECUTION ───────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">

@@ -550,6 +550,27 @@ const READERS = [
     ["2-4 tree", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
     ["skip list", "", "cs/trees-bst-balanced-heap-trie-and-what-each-is-actually-for"],
   ]],
+  // A request to add the ASCII character set, with ASL added to it. Put here
+  // before the card was written, as the three readers above were. It opened at
+  // 0 of 12. The site said ASCII seventeen times in seven files and showed the
+  // table in none, and had never written the words sign language. `asl` found
+  // nothing while the corpus counted it fifteen times, every one inside another
+  // word: asleep, ASLR, Maslow, SASL. `carriage return` and `extended ascii`
+  // found cards, just not the chart.
+  ["somebody looking up a character code or a handshape", [
+    ["ascii table", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["ascii code", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["control characters", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["carriage return", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["xon xoff", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["caret notation", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["extended ascii", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["sign language", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["asl", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["fingerspelling", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["asl numbers", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+    ["manual alphabet", "", "cs/ascii-character-set-asl-fingerspelling-one-alphabet-two-enco"],
+  ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],
