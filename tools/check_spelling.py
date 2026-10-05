@@ -225,9 +225,14 @@ RULES = [("irregular", IRREGULAR_RE, _irregular),
 # `renames.json`'s `allow`. **Fibre Channel** is a standard's name — ANSI T11
 # spells it that way and so does every American vendor selling it — and unlike
 # `ThinkCentre` the word boundary does not save it, because there is a space
-# where ThinkCentre has nothing. It is the one phrase on the whole site that
-# needs this, which is worth knowing: the other 2,200 hits are prose.
-ALLOW = ["Fibre Channel"]
+# where ThinkCentre has nothing. It was the one phrase on the whole site that
+# needed this, which is worth knowing: the other 2,200 hits were prose.
+#
+# The second is ASCII's control code 5, ENQ, whose name in ANSI X3.4, RFC 20 and
+# Unicode is *Enquiry*. Allowing the bare word would let every prose `enquiry`
+# through, so the allowed phrase is the whole cell that names it, which also
+# tells the reader why an American site spells it that way.
+ALLOW = ["Fibre Channel", "Enquiry, as the standard spells it"]
 ALLOW_RE = re.compile("|".join(re.escape(a) for a in ALLOW), re.I)
 HOLD_RE = re.compile("\x00(\d+)\x00")
 

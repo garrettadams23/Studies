@@ -51,23 +51,23 @@ the row needs was already running. Three are left, and all three want a stopwatc
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,561** across 30 domains | `depth_report.py` |
+| Topics | **1,562** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,403**, or **1,132 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,406**, or **1,134 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **361 of 386**, **0 unexplained** — twenty-one batches. The newest reader, *a student with a data structures course*, was added from *csvistool* before any of its fixes. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The reader before it, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. The one before that, *a student on a SQL Server and Java course*, opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 8 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,599 steps, 1,501 of 1,561 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,501 topics, 4,896 links, 0 one-way** — one mainland of **1,485 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **33% raw** headroom — room for ~764 more topics | `page_budget.py` |
+| Reader questions answered | **373 of 398**, **0 unexplained** — twenty-two batches. The newest reader, *somebody looking up a character code or a handshape*, was added from a request for the ASCII character set with ASL added to it, before the card was written. It opened at **0 of 12** and closed at 12 of 12: five zeros, and seven that found cards but never the chart. `asl` was a zero the corpus counted fifteen times, every one inside another word: *asleep*, ASLR, Maslow, SASL. The reader before it, *a student with a data structures course*, was added from *csvistool* the same way. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The one before that, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. Before that, *a student on a SQL Server and Java course* opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 8 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **102 paths, 1,600 steps, 1,502 of 1,562 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,502 topics, 4,902 links, 0 one-way** — one mainland of **1,486 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **33% raw** headroom — room for ~754 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,154 chars**, median 3,759 — the number a deepening wave has to move | `depth_report.py` |
-| Dated claims | **47 volatile spans and 30 fact anchors: 77 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently | `check_volatility.py` |
+| Depth tail | **10th percentile 2,154 chars**, median 3,760 — the number a deepening wave has to move | `depth_report.py` |
+| Dated claims | **47 volatile spans and 31 fact anchors: 78 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently. It rose by one with the ASCII chart's source link, and that anchor records that this container could not fetch the page rather than claiming a check | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **163** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **53** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **54** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -6196,5 +6196,79 @@ reopen condition: honestly, as having none.
 4 commits · 0 new topics · 5 concept cards · 39 deep links · 18 fact anchors
 reader 0 of 16 -> 16 of 16 · census 361 of 386, 0 unexplained · dated claims 59 -> 77
 1 regression, found by the census and fixed in the same wave: a relaxation at 647 against 644
+45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — the ASCII chart, with ASL added, and a spelling the standard owns
+
+A one-line request: add the ASCII character set, from
+[the UAH page](https://www.cs.uah.edu/~rcoleman/Common/Basics/ASCIICharSet.html), *if it is not
+already there*, and add ASL to it. It was not there. The site said ASCII seventeen times in seven
+files and showed the table in none, and had never written the words *sign language*. **ASL is read
+as American Sign Language**, fingerspelling and number handshapes, mapped onto the same letters
+and digits. It is the only reading under which *add it to this* makes sense of a character chart,
+and it is recorded here in case it was the wrong one.
+
+One topic in `cs`, after *Number Representation*: *ASCII Character Set & ASL Fingerspelling — One
+Alphabet, Two Encodings*. Eight concept cards. The bit arithmetic (case is one bit, a digit is its
+low nibble, Ctrl clears two bits, sorting is numeric order); the full 128 laid out as four columns
+of 32 so each row shares its low five bits; the 33 control codes with what still answers to each;
+six symptoms and the byte behind each; where ASCII stops and code pages begin; the 26 letters and
+ten digits with their ASCII codes and handshapes; and how fingerspelling is read.
+
+### The source could not be read, so nothing was copied from it
+
+`www.cs.uah.edu` is blocked by this container's network policy, as `csvistool.com` was. ASCII is a
+fixed standard, so the chart did not need the page: **102 of the topic's 122 table rows are
+generated** by a script from the code points and two hand-written dictionaries, the control
+names and the handshapes, rather than typed. The page is linked as an `.extlink` beside the chart,
+and its fact anchor says the link was supplied and not fetched instead of claiming a check. That
+is the *Dated claims* row's one-point rise.
+
+### The reader went in first, and one zero was hiding in a count
+
+*Somebody looking up a character code or a handshape* went into `query_probe.mjs` before the
+card, the order csvistool established. It opened at **0 of 12**: five zeros and seven that found
+cards, never the chart. `asl` was a zero that the corpus counted fifteen times, every one inside
+another word: *asleep*, ASLR, Maslow, SASL. A substring count is not evidence that a word is on
+the site, which is the `splay`/*display* finding from the other side. It closed at 12 of 12.
+
+### A British spelling the standard owns
+
+The spelling gate failed on **Enquiry**, control code 5's name in ANSI X3.4, RFC 20 and Unicode's
+alias. `CONTRIBUTING.md` has the precedent, *Fibre Channel*, a standard's own name and the only
+`ALLOW` entry. Allowing the bare word would have let every prose *enquiry* through, so the
+allowed phrase is the whole cell, *Enquiry, as the standard spells it*, which also answers the
+reader's question of why an American site spells it that way. Checked both ways: the cell passes
+and `Send an enquiry to the desk.` is still a finding.
+
+### One sentence that was not true as drafted, and one table that did not fit
+
+The chart card's aside on bit-paired teletypes first said that no key you press follows the chart's
+alignment any more. On a US layout, Shift with 1, 3, 4 and 5 still gives the character 16 below
+the digit. Checked pair by pair before it shipped, and the sentence now names the four. At 375 px
+the letters table had two code columns and squeezed the handshapes into a strip a word wide, so
+the codes became one column, decimal over a muted hex line. The 4-column tables scroll inside
+themselves on a phone, the site's existing behavior, and the page itself never scrolls sideways
+(checked in both themes).
+
+### What the annotator did, and why it was right
+
+`SYN` gained *(Synchronize)*. That is the TCP sense, and correct where it fell: the cell that says
+*not TCP's SYN, which shares only the name*. The ASCII code itself sits in `<code>` in the Code
+column, which the annotator does not read. **ASL** joined the dictionary under `Misc`, an existing
+category, so the generated acronym domain gained a row and no topic.
+
+### Handshapes are words, not pictures
+
+The site makes no third-party requests and self-hosts its fonts, and a fingerspelling font comes
+under someone else's license terms, which could not be read from here. Drawing 36 hands in SVG
+would be a claim nothing here can check. So each handshape is a sentence, and the
+last card says plainly that reading fingerspelling is learned from people, not from a table.
+
+```
+1 commit · 1 new topic (cs) · 8 concept cards · 122 table rows, 102 generated · 1 extlink
+reader 0 of 12 -> 12 of 12 · census 373 of 398, 0 unexplained · dated claims 77 -> 78
+acronyms 1,103 -> 1,104 · related links 4,896 -> 4,902 · path steps 1,599 -> 1,600
 45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
 ```
