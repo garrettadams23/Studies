@@ -101,7 +101,7 @@ OUR_RE = re.compile(r"(?<![A-Za-z])([A-Za-z]{3,}?)our"
 # *noise*; `mauvaise` is French and appears in `philosophy`.
 ISE_KEEP = {
     "advertise", "advise", "appraise", "braise", "chaise", "clockwise", "compromise",
-    "comprise", "concise", "cruise", "denoise", "disguise", "enterprise", "excise",
+    "comprise", "concise", "counterclockwise", "cruise", "denoise", "disguise", "enterprise", "excise",
     "exercise", "expertise", "franchise", "imprecise", "improvise", "likewise",
     "malvertise", "mauvaise", "merchandise", "otherwise", "pairwise", "paradise",
     "praise", "precise", "premise", "promise", "raise", "reprise", "revise",
@@ -430,6 +430,7 @@ def self_test():
         ("surprised", None), ("exercises", None), ("advertising", None),
         ("malvertising", None), ("denoise", None), ("expertise", None),
         ("unsupervised", None), ("wise", None), ("raise", None), ("noise", None),
+        ("counterclockwise", None),
         # -yse, and the plural that is not a verb
         ("analyse", "analyze"), ("analyser", "analyzer"), ("analyses", None),
         ("analysis", None), ("analyst", None),
