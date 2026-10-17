@@ -14,7 +14,8 @@
       <p class="concept-desc">A system of linear equations is a set of equations in the same
       unknowns, each one a line (two unknowns), a plane (three) or a hyperplane (more). A solution
       is a point on <em>all</em> of them at once, so the number of solutions is a question about how
-      the shapes meet, and there are only three possible answers. There is never exactly two.</p>
+      the shapes meet, and there are only three possible answers: exactly one solution, no solution,
+      or infinitely many solutions. There is never exactly two.</p>
       <table class="ref-table">
         <tr><th>Two lines…</th><th>Solutions</th><th>What the algebra shows</th></tr>
         <tr><td>Cross at one point</td><td>Exactly one</td><td>Different slopes. Row reduction gives a pivot for every unknown</td></tr>
@@ -584,6 +585,26 @@ CHECK: A(−2, 1, 0) = (−2 + 2 + 0, −4 + 4 + 0, −2 + 2 + 0) = (0, 0, 0) �
       </div>
     </div>
 
+    <div class="concept-card">
+      <span class="concept-label">Applied</span>
+      <h4 class="concept-title">Parity-check codes: the valid messages are a null space</h4>
+      <p class="concept-desc">Error-correcting codes such as the Hamming code use a
+      <strong>parity-check matrix</strong> <code>H</code>, with arithmetic done mod 2 (1 + 1 = 0). A
+      received word <code>r</code> is a valid codeword exactly when <code>Hr = 0</code> — the codewords
+      <em>are</em> the null space of <code>H</code>. When a bit flips, <code>Hr</code> (the
+      <em>syndrome</em>) is no longer zero, and in the Hamming code it equals the column of
+      <code>H</code> at the flipped position, so it names the bit to fix.</p>
+      <pre class="code-block">Hamming (7,4): column j of H is j written in binary (1 … 7)
+Send 0000000, bit 5 flips  ->  r = 0000100
+Hr = column 5 = (1, 0, 1)  ->  binary 101 = 5  ->  flip bit 5 back</pre>
+      <div class="concept-desc verdict">
+        <strong>This is coding theory, not cryptography.</strong> Course notes often file it as
+        "linked to cryptography", but a code adds redundancy so anyone can recover the message; a
+        cipher removes readability so only a key holder can. They meet only in code-based
+        cryptosystems such as McEliece, which hide a code's structure on purpose.
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -787,6 +808,428 @@ A = | 4 1 |    det | 4−λ   1  | = (4 − λ)(3 − λ) − 2 = λ² − 7λ +
         the other half, and it is the half that is examined.</strong> One caution: this table is for
         <code>x′ = Ax</code>. For a step-by-step system <code>xₖ₊₁ = Axₖ</code>, the test is the size
         <code>|λ|</code> instead — below 1 spirals in, above 1 spirals out, exactly 1 circles.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: LEAST SQUARES ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">📉</span>
+    <span class="topic-name">Least Squares — Normal Equations, Projection &amp; the Regression Line</span>
+    <span class="topic-badge">LINALG • Applications</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">When there is no solution, solve for the closest thing to one</h4>
+      <p class="concept-desc">Data gives more equations than unknowns — twenty measurements, a line
+      with two parameters — and the system <code>Ax = b</code> is inconsistent: <code>b</code> is not
+      in the column space of <code>A</code>. Least squares finds the <code>x̂</code> that makes
+      <code>Ax̂</code> as close to <code>b</code> as possible, minimizing the sum of squared errors
+      <code>‖b − Ax̂‖²</code>.</p>
+      <p class="concept-desc">The closest point in the column space is the <strong>orthogonal
+      projection</strong> of <code>b</code> onto it — the foot of the perpendicular. So the error
+      <code>b − Ax̂</code> is perpendicular to every column of <code>A</code>, which says
+      <code>Aᵀ(b − Ax̂) = 0</code>, which rearranges to the <strong>normal equations</strong>:</p>
+      <pre class="code-block">AᵀA x̂ = Aᵀb</pre>
+      <div class="concept-desc verdict">
+        <strong>When <code>b</code> is outside the column space, solve for its shadow on that space
+        instead.</strong> That one picture is the derivation: the normal equations are nothing but
+        "the leftover error is perpendicular to everything <code>A</code> can make".
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The regression line, by the normal equations</h4>
+      <pre class="code-block">Fit y = β₀ + β₁x to (0, 1), (1, 3), (2, 4), (3, 4)
+
+A = | 1 0 |    b = | 1 |     <span class="com"># column of 1s for β₀, column of x for β₁</span>
+    | 1 1 |        | 3 |
+    | 1 2 |        | 4 |
+    | 1 3 |        | 4 |
+
+AᵀA = |  4  6 |     Aᵀb = | 12 |
+      |  6 14 |           | 23 |
+
+det = 56 − 36 = 20
+x̂ = (1/20) | 14 −6 | | 12 |  =  (1/20) | 30 |  =  | 1.5 |
+           | −6  4 | | 23 |            | 20 |     | 1.0 |
+
+Line:  y = 1.5 + x
+Residuals: −0.5, 0.5, 0.5, −0.5    <span class="com"># sum to 0, and are perpendicular to the x column</span></pre>
+      <p class="concept-desc">The residual check at the bottom is the projection made visible: the
+      errors are orthogonal to both columns of <code>A</code>, so they sum to zero (the column of 1s)
+      and their dot product with the x-values is zero (the second column).</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">When it goes wrong</span>
+      <h4 class="concept-title">Multicollinearity, and the three ways to compute a fit</h4>
+      <p class="concept-desc"><strong>Multicollinearity</strong> means two predictor columns are
+      nearly dependent — height in inches and height in centimeters, or two sensors that move
+      together. <code>AᵀA</code> is then nearly singular, and the coefficients swing wildly with tiny
+      changes to the data even though the fitted line barely moves. Exactly dependent columns give
+      infinitely many least-squares solutions.</p>
+      <table class="ref-table">
+        <tr><th>Method</th><th>Use it when</th><th>Its limit</th></tr>
+        <tr><td>Normal equations <code>AᵀAx̂ = Aᵀb</code></td><td>By hand, and on tests</td><td>Forming <code>AᵀA</code> squares the condition number, so numerically it is the least accurate</td></tr>
+        <tr><td><code>QR</code> factorization (<code>A = QR</code>) or the SVD (NumPy's <code>np.linalg.lstsq</code> uses the SVD)</td><td>In software, for any ordinary data set</td><td>Needs the whole matrix in memory</td></tr>
+        <tr><td>Gradient descent on the squared error</td><td>Millions of rows or parameters</td><td>Iterative and approximate; needs a learning rate and a stopping rule</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The first row is what a course examines and the second is what a careful program
+        does.</strong> The third is the same minimization done step by step, and it is how a model
+        learns when the matrix is too large to solve directly — see <span class="xref">Derivatives &amp; Gradient Descent — How a Model Actually Learns</span>.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Connections</span>
+      <h4 class="concept-title">Squared error, and the price of squaring</h4>
+      <p class="concept-desc">Least squares is the oldest example of a loss function: the fit is
+      defined as whatever minimizes the total squared error. Squaring makes the math clean and makes
+      big errors count far more than small ones, so <strong>one outlier can drag the whole
+      line</strong> toward itself. When that matters, a different loss is the fix rather than a
+      better solver — see <span class="xref">Loss Functions — What the Model Is Being Told to Minimize</span>,
+      which also covers regularization: adding a penalty that pays the model to keep its
+      coefficients small, and the standard cure for multicollinearity.</p>
+      <p class="concept-desc">"Regression" here is the statistics word: fitting a line or curve to
+      data. Elsewhere on this site, regression testing is something else entirely.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: MARKOV CHAINS ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🎲</span>
+    <span class="topic-name">Markov Chains — Transition Matrices &amp; the Steady State</span>
+    <span class="topic-badge">LINALG • Applications</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">One matrix of probabilities, multiplied again and again</h4>
+      <p class="concept-desc">A <strong>Markov chain</strong> moves between states (sunny, rainy;
+      brand A, brand B) with fixed probabilities that depend only on the current state. Those
+      probabilities fill a <strong>transition matrix</strong> <code>P</code>, the current distribution
+      is a <strong>probability vector</strong> (non-negative entries summing to 1), and each step is
+      one matrix multiplication. But textbooks disagree on which way round, and the two conventions
+      produce transposed matrices:</p>
+      <table class="ref-table">
+        <tr><th></th><th>Column convention</th><th>Row convention</th></tr>
+        <tr><td>Which sum to 1</td><td>Each <strong>column</strong></td><td>Each <strong>row</strong></td></tr>
+        <tr><td>Entry <code>pᵢⱼ</code> means</td><td>Probability of going <em>to</em> i <em>from</em> j</td><td>Probability of going <em>from</em> i <em>to</em> j</td></tr>
+        <tr><td>One step</td><td><code>x₁ = P x₀</code> (x is a column)</td><td><code>x₁ = x₀ P</code> (x is a row)</td></tr>
+        <tr><td>Common in</td><td>Many linear algebra textbooks</td><td>Probability and statistics books</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The steady state is the eigenvector for eigenvalue 1, but check whether the book
+        multiplies rows or columns first.</strong> Add up a row and a column of the matrix you are
+        given: whichever sums to 1 tells you the convention. Using the wrong one gives a transposed
+        answer that looks completely reasonable and is marked wrong.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Markov chain steady state, worked both ways</h4>
+      <pre class="code-block">Sunny tomorrow after sunny: 0.9     after rainy: 0.5
+Column convention (columns = today, rows = tomorrow):
+
+P = | 0.9  0.5 |      x₀ = | 1 |   <span class="com"># sunny today</span>
+    | 0.1  0.5 |           | 0 |
+
+x₁ = P x₀ = (0.90, 0.10)
+x₂ = P x₁ = (0.86, 0.14)          <span class="com"># drifting toward the steady state</span>
+
+Steady state: P q = q  ->  (P − I) q = 0
+| −0.1   0.5 |  ->  q₁ = 5 q₂,  and q₁ + q₂ = 1
+|  0.1  −0.5 |
+q = (5/6, 1/6) ≈ (0.833, 0.167)
+CHECK: 0.9(5/6) + 0.5(1/6) = 5/6 ✓
+
+Row convention: the same chain is Pᵀ = | 0.9 0.1 |  and the steady state solves q Pᵀ = q.
+                                      | 0.5 0.5 |  Same q — written as a row.</pre>
+      <p class="concept-desc">The last step that is easy to forget: an eigenvector can be scaled by
+      anything, so <strong>scale it to sum to 1</strong>. <code>(5, 1)</code> is an eigenvector; only
+      <code>(5/6, 1/6)</code> is a steady state.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">The caveat</span>
+      <h4 class="concept-title">Eigenvalue 1 is guaranteed; reaching a steady state is not</h4>
+      <p class="concept-desc">Every transition matrix has 1 as an eigenvalue, so "it has an
+      eigenvalue of 1" proves nothing about where the chain ends up. The chain settles to one steady
+      state from every start only if it is <strong>regular</strong>: some power <code>Pᵏ</code> has
+      every entry strictly positive.</p>
+      <table class="ref-table">
+        <tr><th>Chain</th><th>What happens</th></tr>
+        <tr><td>Regular — the weather chain above</td><td>Every start converges to the same <code>q</code>. The other eigenvalue, 0.4, shrinks as 0.4ᵏ, which is the convergence speed</td></tr>
+        <tr><td><code>P = [0 1; 1 0]</code> — always switch</td><td>A steady state <code>(½, ½)</code> exists, but from <code>(1, 0)</code> the chain flips forever and never reaches it</td></tr>
+        <tr><td><code>P = I</code> — never move</td><td>Every distribution is a steady state; there is no single answer</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Check regularity before claiming a long-run answer.</strong> For the weather chain,
+        <code>P</code> itself is all positive, so it is regular and done. The middle row is the
+        counterexample to keep ready: eigenvalue −1 alongside 1 is the fingerprint of a chain that
+        oscillates instead of settling.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Connections</span>
+      <h4 class="concept-title">Where the same chain turns up</h4>
+      <p class="concept-desc">The long run is <code>Pᵏx₀</code> for large k, which is the
+      diagonalization payoff from <span class="xref">Eigenvalues &amp; Eigenvectors — The Characteristic Equation &amp; Diagonalization</span>:
+      every eigenvalue except 1 dies away. The probability rules underneath are in <span class="xref">Probability Fundamentals — Independence, Conditional Probability &amp; Expectation</span>.
+      Add actions and rewards to a chain's states and transition odds and you have a <strong>Markov
+      decision process</strong>, the formal setting of reinforcement learning, described in <span class="xref">ML Foundations</span>.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: LINEAR PROGRAMMING ─────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">📏</span>
+    <span class="topic-name">Linear Programming — The Feasible Region &amp; Why the Answer Is a Corner</span>
+    <span class="topic-badge">LINALG • Applications</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">Optimize a straight-line goal inside straight-line limits</h4>
+      <p class="concept-desc">Linear programming maximizes or minimizes a linear
+      <strong>objective</strong> (profit <code>2x + 5y</code>) subject to linear
+      <strong>constraints</strong> (inequalities like <code>x + y ≤ 4</code>). The points that satisfy
+      every constraint form the <strong>feasible region</strong>, a polygon with straight edges.
+      "Programming" is the 1940s word for planning; no code is involved.</p>
+      <div class="concept-desc verdict">
+        <strong>The optimum sits on a vertex, so you test the corners and never the inside.</strong>
+        The objective's level lines are parallel; sliding them in the improving direction, the last
+        point of the region they touch is a corner (or, in a tie, a whole edge). An interior point
+        can always be improved by moving.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">The corner method, start to finish</h4>
+      <pre class="code-block">Maximize  P = 2x + 5y
+subject to   x +  y ≤ 4
+             x + 3y ≤ 6
+             x ≥ 0,  y ≥ 0
+
+1. Graph each boundary line; shade the side that satisfies it.
+2. Find every corner — each is where two boundaries cross:
+     y = 0  and  x + y = 4      ->  (4, 0)
+     x = 0  and  x + 3y = 6     ->  (0, 2)
+     x + y = 4  and  x + 3y = 6 ->  subtract: 2y = 2, y = 1, x = 3  ->  (3, 1)
+     x = 0  and  y = 0          ->  (0, 0)
+3. Evaluate P at each corner:
+     (0, 0) -> 0     (4, 0) -> 8     (0, 2) -> 10     (3, 1) -> 11   <span class="com"># max</span>
+
+Maximum P = 11 at x = 3, y = 1</pre>
+      <p class="concept-desc">Step 2 is solving 2×2 systems, which is why this sits in a linear
+      algebra course. Check every corner is actually feasible — a crossing point of two boundary
+      lines that breaks a third constraint is not a corner of the region.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Special cases</span>
+      <h4 class="concept-title">When there is no single answer</h4>
+      <table class="ref-table">
+        <tr><th>Situation</th><th>Result</th><th>How it shows up</th></tr>
+        <tr><td>The constraints contradict each other</td><td><strong>Infeasible</strong> — no answer</td><td>No region to shade</td></tr>
+        <tr><td>The region is open in the improving direction</td><td><strong>Unbounded</strong> — no maximum</td><td>The objective keeps growing along an open edge</td></tr>
+        <tr><td>The objective is parallel to an optimal edge</td><td>Infinitely many optimal points</td><td>Two adjacent corners tie for best</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>A tie between two adjacent corners is not an arithmetic error.</strong> It means the
+        whole edge between them is optimal, and the answer is that segment. The first two rows are
+        the ones to state in words when a question has no numeric answer.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">At scale</span>
+      <h4 class="concept-title">Simplex, and why whole numbers make it hard</h4>
+      <p class="concept-desc">Real problems have thousands of variables and no graph. The
+      <strong>simplex method</strong> walks from corner to neighboring corner, always uphill, and
+      stops when no neighbor is better. It can be slow on contrived inputs but is fast in practice,
+      and interior-point methods solve linear programs in polynomial time.</p>
+      <p class="concept-desc">Require the variables to be <strong>whole numbers</strong> — trucks,
+      not 3.4 trucks — and the problem becomes integer programming, which is NP-hard. Rounding the
+      linear answer is not guaranteed to be feasible or optimal. <span class="xref">P, NP &amp; Knowing When to Stop Looking for an Exact Answer</span>
+      covers what that classification means in practice.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: NETWORKS AS SYSTEMS ────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🚰</span>
+    <span class="topic-name">Networks as Systems — Flow Conservation &amp; the Bottleneck</span>
+    <span class="topic-badge">LINALG • Applications</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">Flow in equals flow out, at every node</h4>
+      <p class="concept-desc">Network flow problems — traffic through intersections, water through
+      pipes, current through a circuit — rest on one rule, <strong>flow conservation</strong>: at
+      every junction, what flows in equals what flows out. Nothing is stored or lost. Each junction
+      therefore gives one linear equation in the unknown flows along the edges.</p>
+      <div class="concept-desc verdict">
+        <strong>Each node's flow in = flow out is one linear equation, so a network is a system you
+        row-reduce.</strong> Free variables in the answer are real choices: routes the flow could
+        take, where the network does not force a single plan. In electronics the same rule is
+        Kirchhoff's current law.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">Four junctions, five pipes</h4>
+      <pre class="code-block">30 units enter at A and leave at D.
+Pipes: A→B (x₁)  A→C (x₂)  B→D (x₃)  B→C (x₄)  C→D (x₅)
+
+Node A:  x₁ + x₂           = 30
+Node B:  x₁ − x₃ − x₄      =  0
+Node C:  x₂ + x₄ − x₅      =  0
+Node D:  x₃ + x₅           = 30
+
+Row-reduce: one row becomes 0 = 0 (total in = total out makes one node redundant)
+Rank 3, 5 unknowns  ->  2 free variables. Let x₃ = t, x₄ = s:
+
+x₁ = t + s     x₂ = 30 − t − s     x₃ = t     x₄ = s     x₅ = 30 − t
+
+CHECK node D: t + (30 − t) = 30 ✓</pre>
+      <p class="concept-desc">The <code>0 = 0</code> row is expected, not a mistake: in any closed
+      network the last node's equation follows from the others. Physical limits then narrow the free
+      variables — flows cannot be negative, and pipes have capacities — which turns the system into
+      inequalities on <code>t</code> and <code>s</code>.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">The bottleneck</span>
+      <h4 class="concept-title">The narrowest cut decides the maximum flow</h4>
+      <p class="concept-desc">A <strong>cut</strong> is a set of pipes whose removal separates the
+      source from the destination. Every unit of flow must cross every cut, so no flow can exceed the
+      total capacity of the narrowest one. The <strong>max-flow min-cut theorem</strong> says the
+      maximum flow equals that minimum cut capacity exactly.</p>
+      <table class="ref-table">
+        <tr><th>In the example, cap…</th><th>Cut {B→D, C→D}</th><th>Can 30 get through?</th></tr>
+        <tr><td>Every pipe at 20</td><td>20 + 20 = 40</td><td>Yes — e.g. <code>t = 15, s = 0</code></td></tr>
+        <tr><td><code>x₃</code> at 15 and <code>x₅</code> at 10</td><td>15 + 10 = 25</td><td><strong>No</strong> — at most 25, however the rest is routed</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Find the bottleneck by looking for the cheapest cut, not by solving.</strong> The
+        second row fails before any row reduction: two pipes into D carry 25 at most, so 30 cannot
+        arrive. Widening any pipe that is not in the minimum cut changes nothing.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Connections</span>
+      <h4 class="concept-title">Graphs, and a word that means something else here</h4>
+      <p class="concept-desc">The network is a directed graph with capacities on its edges; storing
+      and searching graphs is <span class="xref">Graphs — Representation, Traversal &amp; the Four Algorithms Worth Knowing</span>.
+      Algorithms such as Ford–Fulkerson find maximum flows by repeatedly pushing more flow along a
+      path with spare capacity. On the rest of this site, NetFlow is a network-telemetry protocol;
+      network flow in this card is the optimization problem.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: SVD ────────────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🖼️</span>
+    <span class="topic-name">SVD — Singular Values &amp; the Rank-1 Approximation</span>
+    <span class="topic-badge">LINALG • Applications</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">Singular value decomposition: every matrix is rotate, stretch, rotate</h4>
+      <p class="concept-desc">The <strong>singular value decomposition</strong> writes
+      <em>any</em> matrix — any shape, invertible or not — as <code>A = UΣVᵀ</code>. <code>V</code>
+      and <code>U</code> are orthogonal (pure rotations or reflections), and <code>Σ</code> is diagonal
+      with the <strong>singular values</strong> <code>σ₁ ≥ σ₂ ≥ … ≥ 0</code>. So every matrix does
+      three simple things in order: turn, stretch along the axes, turn again.</p>
+      <table class="ref-table">
+        <tr><th>Fact</th><th>Consequence</th></tr>
+        <tr><td>Singular values are the square roots of the eigenvalues of <code>AᵀA</code></td><td>The hand method: eigenvalues of <code>AᵀA</code> (or <code>AAᵀ</code>, whichever is smaller), then square roots</td></tr>
+        <tr><td>Rank = number of non-zero singular values</td><td>The most reliable way software measures rank</td></tr>
+        <tr><td>Condition number = <code>σ₁ / σₙ</code></td><td>The sensitivity from the row reduction card, read straight off <code>Σ</code></td></tr>
+        <tr><td>Unlike eigenvalues, it always exists and is always real</td><td>Works for rectangular and non-diagonalizable matrices</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The last row is why the SVD is the decomposition software reaches for.</strong>
+        Eigenvalues need a square matrix and may need complex numbers or fail to diagonalize; the
+        SVD has no exceptions at all.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Rank-1 approximation</span>
+      <h4 class="concept-title">Keep the biggest piece, drop the rest</h4>
+      <p class="concept-desc">The SVD is a sum of rank-1 pieces,
+      <code>A = σ₁u₁v₁ᵀ + σ₂u₂v₂ᵀ + …</code>, largest first. Keeping the first k pieces gives the
+      <strong>best possible rank-k approximation</strong> of <code>A</code> (the Eckart–Young
+      theorem).</p>
+      <pre class="code-block">A = | 3 2  2 |       AAᵀ = | 17  8 |   eigenvalues 25 and 9
+    | 2 3 −2 |             |  8 17 |   ->  σ₁ = 5,  σ₂ = 3
+
+u₁ = (1, 1)/√2      v₁ = Aᵀu₁ / σ₁ = (1, 1, 0)/√2
+
+Rank-1 approximation:  σ₁ u₁ v₁ᵀ = | 2.5 2.5 0 |
+                                   | 2.5 2.5 0 |
+
+Share kept: σ₁² / (σ₁² + σ₂²) = 25 / 34 ≈ 74%</pre>
+      <div class="concept-desc verdict">
+        <strong>Keeping the top singular value keeps the most a rank-1 picture can hold.</strong>
+        The share line is the useful habit: the squared singular values say how much of the matrix
+        each piece carries, so you can decide how many to keep before computing any of them.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Applied</span>
+      <h4 class="concept-title">Where truncated SVD earns its keep</h4>
+      <table class="ref-table">
+        <tr><th>Use</th><th>What the SVD does</th></tr>
+        <tr><td>Principal component analysis (PCA)</td><td>The SVD of centered data; the top singular vectors are the directions of most variation — the standard dimensionality reduction</td></tr>
+        <tr><td>Image compression</td><td>A 1,000 × 1,000 image kept at rank 50 stores 50 × (1,000 + 1,000 + 1) = 100,050 numbers instead of 1,000,000</td></tr>
+        <tr><td>Least squares when columns are dependent</td><td>The pseudo-inverse built from the SVD gives the smallest of the infinitely many solutions</td></tr>
+        <tr><td>Recommendations and noise removal</td><td>Low rank keeps the pattern, discards the noise in the small singular values</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The first row is the one other fields ask about.</strong> PCA is the SVD with
+        statistical names; see <span class="xref">Dimensionality &amp; the Curse — Why High-Dimensional Intuition Fails</span>
+        and <span class="xref">ML Foundations</span>. Low-rank fine-tuning of language models is the
+        same idea applied to a weight update, in <span class="xref">LoRA, Quantization &amp; Tokenization Internals</span>.
       </div>
     </div>
 
