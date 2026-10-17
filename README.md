@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **475 elements at rest instead of 146,826** — measured at 1,563 topics,
+  costs **487 elements at rest instead of 147,258** — measured at 1,567 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -73,6 +73,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | ⏱️ Productivity & Learning Systems | Study | Learning how to learn, spaced repetition, the memory palace, sleep, attention & task-switching, note-taking, habits, the Japanese mastery loop, ASL fingerspelling with a picture of every handshape |
 | 🧠 Mind & Wellbeing | Inner Game | Imposter syndrome, burnout, resilience, dealing with failure, surviving on-call, communication |
 | 📐 Mathematics — Calculus | Calculus | Limits, derivatives, integrals, series, differential equations, the unit circle, and a one-page cheat sheet |
+| 🧊 Mathematics — Linear Algebra | Linear Algebra | Systems, row reduction, determinants, inverses, vector spaces, eigenvalues, least squares, and the applications a course examines |
 | ❝ Quotes — Sourced & Corrected | Sourced | Stoic, Eastern and existentialist quotes with the work cited — plus the famous lines nobody can source |
 | 🔤 Acronym Dictionary | REF | 1,104 IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
 

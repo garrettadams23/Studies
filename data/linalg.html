@@ -1,0 +1,409 @@
+<!-- ── TOPIC: SYSTEMS OF EQUATIONS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🧮</span>
+    <span class="topic-name">Systems of Equations — One Solution, None, or Infinitely Many</span>
+    <span class="topic-badge">LINALG • Systems</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">The picture gives the count before any algebra</h4>
+      <p class="concept-desc">A system of linear equations is a set of equations in the same
+      unknowns, each one a line (two unknowns), a plane (three) or a hyperplane (more). A solution
+      is a point on <em>all</em> of them at once, so the number of solutions is a question about how
+      the shapes meet, and there are only three possible answers. There is never exactly two.</p>
+      <table class="ref-table">
+        <tr><th>Two lines…</th><th>Solutions</th><th>What the algebra shows</th></tr>
+        <tr><td>Cross at one point</td><td>Exactly one</td><td>Different slopes. Row reduction gives a pivot for every unknown</td></tr>
+        <tr><td>Run parallel</td><td>None (<em>inconsistent</em>)</td><td>Same slope, different intercept. A row reduces to <code>0 = 5</code></td></tr>
+        <tr><td>Coincide — the same line twice</td><td>Infinitely many</td><td>One equation is a multiple of the other. A row reduces to <code>0 = 0</code> and an unknown is left free</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Sketch or compare slopes first, because the last two rows look identical until
+        the right-hand side is checked.</strong> <code>2x + 4y = 6</code> and
+        <code>x + 2y = 3</code> are one line; change the 3 to a 4 and they never meet. The left
+        sides are the same either way — only the constants decide which of the bottom two rows you
+        are in.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Counting</span>
+      <h4 class="concept-title">What the shape of the system tells you before you solve it</h4>
+      <table class="ref-table">
+        <tr><th>System shape</th><th>Possible answers</th><th>Why</th></tr>
+        <tr><td>Homogeneous (every constant is 0): <code>Ax = 0</code></td><td>One or infinitely many — <strong>never none</strong></td><td><code>x = 0</code> always works. The only question is whether anything else does</td></tr>
+        <tr><td>More unknowns than equations</td><td>None or infinitely many — <strong>never exactly one</strong></td><td>There are more columns than there can be pivots, so at least one unknown is free</td></tr>
+        <tr><td>Square (n equations, n unknowns)</td><td>Exactly one if and only if <code>det A ≠ 0</code></td><td>A non-zero determinant means a pivot in every column; see <span class="xref">Determinants — Cofactor Expansion &amp; What Row Operations Do to Them</span></td></tr>
+        <tr><td>More equations than unknowns</td><td>Any of the three; usually none</td><td>Extra equations are extra constraints. When data gives too many, the answer is least squares</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The second row is the one tests use to save you work.</strong> Two equations in
+        three unknowns cannot have a unique solution, so an answer option that gives a single point
+        is wrong before any arithmetic. The first row is its mirror: a homogeneous system that
+        "has no solution" means an arithmetic slip, because zero is always one.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Vocabulary</span>
+      <h4 class="concept-title">The words, and one convention that is not a definition</h4>
+      <table class="ref-table">
+        <tr><th>Word</th><th>Meaning</th></tr>
+        <tr><td>Consistent</td><td>Has at least one solution</td></tr>
+        <tr><td>Inconsistent</td><td>Has none</td></tr>
+        <tr><td>Solution set</td><td>Every solution, written as a point, a parametric form (<code>x = 3 − 2t, y = t</code>) or the empty set</td></tr>
+        <tr><td>Equivalent systems</td><td>Two systems with the same solution set — what every row operation preserves</td></tr>
+        <tr><td>Linear</td><td>Each unknown appears to the first power, multiplied only by a constant. <code>xy</code>, <code>x²</code>, <code>sin x</code> or <code>1/x</code> make it non-linear</td></tr>
+      </table>
+      <p class="concept-desc">Some courses say a system "needs at least two equations." That is a
+      convention for what the course will call a system, not part of the definition. One linear
+      equation is a perfectly good (trivial) system, and its solution set is a line or a plane. If
+      a quiz asks, answer the way your course defines it; on any other test, one equation counts.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Applied</span>
+      <h4 class="concept-title">The input–output model: an economy as one system</h4>
+      <p class="concept-desc">Course notes that start talking about inputs and outputs — what a
+      factory consumes, what it ships — are usually leading up to the <strong>Leontief
+      input–output model</strong>. Each industry uses some of every other industry's output to
+      make its own. With <code>C</code> the consumption matrix (column j is what industry j uses per
+      unit it produces) and <code>d</code> the outside demand, the production <code>x</code> that
+      exactly meets demand solves:</p>
+      <pre class="code-block">x = Cx + d          <span class="com"># production = internal use + outside demand</span>
+(I − C)x = d        <span class="com"># one linear system</span>
+
+C = | 0.2  0.3 |    d = | 100 |
+    | 0.4  0.1 |        |  50 |
+
+I − C = |  0.8  −0.3 |      det = 0.72 − 0.12 = 0.60
+        | −0.4   0.9 |
+
+x = (I − C)⁻¹ d = (1/0.6) | 0.9  0.3 | | 100 |  =  | 175.0 |
+                          | 0.4  0.8 | |  50 |     | 133.3 |
+
+CHECK: 0.8(175) − 0.3(133.3) = 100 ✓     −0.4(175) + 0.9(133.3) = 50 ✓</pre>
+      <div class="concept-desc verdict">
+        <strong>Check the syllabus for this model by name before the test.</strong> If the notes
+        have an inputs-and-outputs vocabulary list and no matrix, the matrix is what the next
+        lecture adds, and it is the part that is examined.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: ROW REDUCTION ──────────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🪜</span>
+    <span class="topic-name">Row Reduction — Gaussian Elimination, RREF &amp; Reading the Answer</span>
+    <span class="topic-badge">LINALG • Method</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">The augmented matrix and the three moves</h4>
+      <p class="concept-desc">Write the system as an <strong>augmented matrix</strong>
+      <code>[A | b]</code>: the coefficient matrix <code>A</code> with the constants <code>b</code>
+      as an extra column. Gaussian elimination then uses only three row operations, and none of
+      them changes the solution set — which is the entire reason the method is allowed.</p>
+      <table class="ref-table">
+        <tr><th>Row operation</th><th>Notation</th><th>Effect on a determinant</th></tr>
+        <tr><td>Replace a row with itself plus a multiple of another</td><td><code>R₂ → R₂ − 2R₁</code></td><td>None</td></tr>
+        <tr><td>Swap two rows</td><td><code>R₁ ↔ R₂</code></td><td>Flips the sign</td></tr>
+        <tr><td>Multiply a row by a non-zero constant</td><td><code>R₃ → ½R₃</code></td><td>Multiplies it by that constant</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The first row does almost all the work, and "non-zero" in the last row is the
+        rule people break.</strong> Multiplying a row by 0 deletes an equation and changes the
+        answer. The third column matters later, in the determinants card, where these same moves
+        are the fast way to a determinant.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Definitions</span>
+      <h4 class="concept-title">Row echelon form vs reduced row echelon form (REF vs RREF)</h4>
+      <table class="ref-table">
+        <tr><th></th><th>Row echelon form (REF)</th><th>Reduced row echelon form (RREF)</th></tr>
+        <tr><td>Zero rows</td><td>At the bottom</td><td>At the bottom</td></tr>
+        <tr><td>Each <strong>pivot</strong> (leading entry)</td><td>Is to the right of the pivot above it</td><td>Is to the right of the pivot above it, <strong>and is 1</strong></td></tr>
+        <tr><td>Column of each pivot</td><td>Zeros below it</td><td>Zeros above <strong>and</strong> below it</td></tr>
+        <tr><td>Unique?</td><td>No — many REFs per matrix</td><td><strong>Yes</strong> — exactly one</td></tr>
+        <tr><td>Reading the answer</td><td>Needs back-substitution</td><td>Read it straight off</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The uniqueness row is why answer keys use RREF.</strong> Two correct people can
+        reach different echelon forms, but never different reduced ones, so a marker can only check
+        RREF at a glance. Here <em>pivot</em> is the leading entry of a row — nothing to do with
+        pivoting through a network, which is the sense the rest of this site uses.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Reading the answer</span>
+      <h4 class="concept-title">The bottom row decides everything</h4>
+      <table class="ref-table">
+        <tr><th>What RREF shows</th><th>Meaning</th></tr>
+        <tr><td>A row <code>[0 0 0 | 5]</code> — zeros, then a non-zero constant</td><td><strong>No solution.</strong> That row says <code>0 = 5</code>. Stop; nothing else matters</td></tr>
+        <tr><td>A pivot in every variable column</td><td><strong>Exactly one solution</strong>, read off the last column</td></tr>
+        <tr><td>A variable column with no pivot, and no <code>0 = 5</code> row</td><td><strong>Infinitely many solutions.</strong> That variable is <em>free</em>; write the others in terms of it</td></tr>
+        <tr><td>A row <code>[0 0 0 | 0]</code></td><td>Says <code>0 = 0</code>: one equation was redundant. On its own it proves nothing about the count</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Check for the first row before anything else.</strong> A <code>0 = 0</code> row is
+        the classic misreading: it does not mean infinitely many solutions by itself — that comes
+        from a column without a pivot. Count pivots against variables, not zero rows.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">One system, both endings</h4>
+      <pre class="code-block"><span class="com">#  x + 2y +  z = 4        augmented matrix</span>
+<span class="com"># 2x + 4y + 3z = 9</span>
+<span class="com">#  x + 2y + 2z = 5</span>
+
+| 1 2 1 | 4 |
+| 2 4 3 | 9 |   R₂ → R₂ − 2R₁   ->  | 0 0 1 | 1 |
+| 1 2 2 | 5 |   R₃ → R₃ − R₁    ->  | 0 0 1 | 1 |
+                R₃ → R₃ − R₂    ->  | 0 0 0 | 0 |
+                R₁ → R₁ − R₂    ->  | 1 2 0 | 3 |
+
+RREF:  | 1 2 0 | 3 |     pivots in x and z; y has none, so y is FREE
+       | 0 0 1 | 1 |
+       | 0 0 0 | 0 |
+
+Solution:  x = 3 − 2t,  y = t,  z = 1      <span class="com"># infinitely many</span>
+"Set the free variable to 0":  (3, 0, 1)
+CHECK in row 2 of the original: 2(3) + 4(0) + 3(1) = 9 ✓
+
+<span class="com"># Now change the last constant from 5 to 6:</span>
+R₃ − R₁ gives | 0 0 1 | 2 |,  then R₃ − R₂ gives | 0 0 0 | 1 |
+That row says 0 = 1.  No solution.</pre>
+      <p class="concept-desc">The coefficients never changed between the two endings — only one
+      constant did. That is the systems card's point made in a matrix: the left-hand side decides
+      whether an unknown is free, and the right-hand side decides whether there is anything to be
+      free about.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">On a computer</span>
+      <h4 class="concept-title">Why software swaps rows you would not, and what the condition number bounds</h4>
+      <p class="concept-desc">By hand you pick the friendliest pivot. Software uses <strong>partial
+      pivoting</strong>: in each column it swaps up the row with the largest absolute value. The
+      reason is floating point — in binary <code>0.1 + 0.2</code> is not exactly 0.3 (see
+      <span class="xref">Number Representation — Two's Complement, IEEE-754 &amp; the Bugs Each Causes</span>),
+      and dividing by a tiny pivot multiplies that rounding error into the whole answer.</p>
+      <p class="concept-desc">The <strong>condition number</strong> <code>κ(A)</code> measures how
+      sensitive a system is. The rule usually quoted as "output error ≈ condition number × input
+      error" is an <strong>upper bound</strong>, not an estimate: the relative error in
+      <code>x</code> is <em>at most</em> <code>κ(A)</code> times the relative error in
+      <code>b</code>. The matrix <code>[1 1; 1 1.0001]</code> has <code>κ ≈ 40,000</code> — two
+      nearly parallel lines, where a nudge to either moves the crossing point a long way.</p>
+      <p class="concept-desc">Gaussian elimination is also why one family of post-quantum
+      cryptography works. A system with small random errors added to every equation cannot be
+      row-reduced back to its secret; remove the errors and elimination recovers it at once. <span class="xref">Lattices, Gently — The Hard Problem Post-Quantum Cryptography Moved To</span>
+      tells that story from the security side.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: DETERMINANTS ───────────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🔲</span>
+    <span class="topic-name">Determinants — Cofactor Expansion &amp; What Row Operations Do to Them</span>
+    <span class="topic-badge">LINALG • Method</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">One number: how much the matrix scales area, and whether it flattens</h4>
+      <p class="concept-desc">For a 2×2 (2x2) matrix the determinant is
+      <code>det [a b; c d] = ad − bc</code>. Geometrically it is the factor by which the matrix
+      scales area (volume, in 3D); a negative sign means it also flips orientation, like a mirror.
+      A determinant of <strong>zero</strong> means the matrix squashes space into a lower
+      dimension — a plane onto a line — and nothing can un-squash it, which is why
+      <code>det A = 0</code> is exactly the test for "no inverse".</p>
+      <p class="concept-desc">The matrix sense of the word is the only one meant here. Elsewhere on
+      this site a <em>determinant</em> is a database term, in normalization, and the two have
+      nothing to do with each other.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Method</span>
+      <h4 class="concept-title">Cofactor expansion — a determinant of a 3x3 by hand</h4>
+      <p class="concept-desc">Pick any row or column. For each entry <code>aᵢⱼ</code>, delete its
+      row and column to get a smaller <strong>submatrix</strong>; its determinant is the
+      <strong>minor</strong> <code>Mᵢⱼ</code>, and the <strong>cofactor</strong> is
+      <code>Cᵢⱼ = (−1)<sup>i+j</sup> Mᵢⱼ</code>. The determinant is the sum of each entry times
+      its cofactor along that one row or column. The signs follow a checkerboard that always starts
+      with + in the top-left:</p>
+      <pre class="code-block">| + − + |        A = | 2 0 1 |
+| − + − |            | 3 1 0 |
+| + − + |            | 1 4 5 |
+
+Along row 1:
+det A = +2·det| 1 0 |  − 0·(anything)  + 1·det| 3 1 |
+              | 4 5 |                         | 1 4 |
+      = 2(5 − 0)   −   0   +   1(12 − 1)
+      = 10 + 11 = 21</pre>
+      <div class="concept-desc verdict">
+        <strong>Expand along the row or column with the most zeros.</strong> The 0 in row 1 above
+        removed a whole 2×2 calculation. The sign of a cofactor comes from its position, never from
+        the entry — a negative entry in a + position is still added.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">The fast way</span>
+      <h4 class="concept-title">Row-reduce to triangular, then multiply the diagonal</h4>
+      <table class="ref-table">
+        <tr><th>Do this to the matrix</th><th>The determinant</th></tr>
+        <tr><td>Add a multiple of one row to another</td><td><strong>Does not change</strong></td></tr>
+        <tr><td>Swap two rows</td><td>Changes sign</td></tr>
+        <tr><td>Multiply one row by <code>k</code></td><td>Is multiplied by <code>k</code></td></tr>
+        <tr><td>Reach a triangular matrix</td><td>Is the product of the diagonal</td></tr>
+        <tr><td>Find a row of zeros, or two equal rows</td><td>Is 0 — stop</td></tr>
+      </table>
+      <pre class="code-block">| 0 2 4 |   R₁ ↔ R₂ (sign flips)   | 1 1 1 |   R₃ − 2R₁   | 1 1 1 |   R₃ − R₂   | 1 1 1 |
+| 1 1 1 |  ----------------------> | 0 2 4 |  ---------> | 0 2 4 |  --------> | 0 2 4 |
+| 2 4 8 |                          | 2 4 8 |             | 0 2 6 |            | 0 0 2 |
+
+diagonal: 1 · 2 · 2 = 4,  one swap  ->  det = −4</pre>
+      <div class="concept-desc verdict">
+        <strong>A swap flips the sign and a row replacement changes nothing, so reduce to
+        triangular and multiply the diagonal.</strong> For anything bigger than 3×3 this is the
+        only sane method — cofactor expansion of a 5×5 is 120 products. Keep a tally of swaps and
+        scalings as you go; that tally is the only thing that can go wrong.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">The trap</span>
+      <h4 class="concept-title">The properties that are true, and the two that are not</h4>
+      <table class="ref-table">
+        <tr><th>True</th><th>Not true</th></tr>
+        <tr><td><code>det(AB) = det A · det B</code></td><td><code>det(A + B) = det A + det B</code> — no such rule</td></tr>
+        <tr><td><code>det(Aᵀ) = det A</code>, so column operations behave like row operations</td><td><code>det(kA) = k · det A</code> — it is <code>kⁿ · det A</code> for an n×n matrix, because every row is scaled</td></tr>
+        <tr><td><code>det(A⁻¹) = 1 / det A</code></td><td></td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The <code>kⁿ</code> row is the one that costs marks.</strong> Doubling a 3×3
+        matrix multiplies its determinant by 8, not 2. And the diagonal shortcut called Sarrus's
+        rule works for 3×3 only — applied to a 4×4 it gives a confident wrong number.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: INVERSE MATRICES ───────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">↩️</span>
+    <span class="topic-name">Inverse Matrices — The 2-by-2 Formula, Solving Ax = b &amp; When There Is None</span>
+    <span class="topic-badge">LINALG • Method</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">The inverse of a 2x2 matrix: swap, negate, divide</h4>
+      <p class="concept-desc">The inverse <code>A⁻¹</code> undoes <code>A</code>:
+      <code>A⁻¹A = AA⁻¹ = I</code>. Only square matrices can have one, and only when
+      <code>det A ≠ 0</code>. For a 2×2 there is a formula worth knowing cold — swap the diagonal,
+      negate the off-diagonal, divide by the determinant:</p>
+      <pre class="code-block">A = | a b |        A⁻¹ = 1/(ad − bc) · |  d  −b |
+    | c d |                            | −c   a |
+
+A = | 4 7 |        det = 24 − 14 = 10
+    | 2 6 |
+                   A⁻¹ = 1/10 · |  6 −7 |  =  |  0.6 −0.7 |
+                                | −2  4 |     | −0.2  0.4 |
+
+CHECK (multiply back):  row 1 of A · column 1 of A⁻¹ = 4(0.6) + 7(−0.2) = 1 ✓
+                        row 1 of A · column 2 of A⁻¹ = 4(−0.7) + 7(0.4) = 0 ✓</pre>
+      <div class="concept-desc verdict">
+        <strong>Check the determinant before inverting and multiply back after.</strong> The first
+        catches the matrices with no inverse before you divide by zero; the second catches the sign
+        slip in the formula, which is the commonest error on this card.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Method</span>
+      <h4 class="concept-title">Bigger than 2×2: row-reduce <code>[A | I]</code></h4>
+      <p class="concept-desc">Put the identity beside <code>A</code> and row-reduce the whole thing.
+      If the left half becomes <code>I</code>, the right half is <code>A⁻¹</code>. If the left half
+      produces a row of zeros, <code>A</code> has no inverse and you can stop there — that row is
+      the same finding as a zero determinant.</p>
+      <pre class="code-block">[ A | I ]   --row operations-->   [ I | A⁻¹ ]
+                                  or a zero row on the left: not invertible</pre>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Equivalences</span>
+      <h4 class="concept-title">Seven ways of saying "invertible", cheapest test first</h4>
+      <table class="ref-table">
+        <tr><th>For an n×n matrix A, each of these is the same fact</th><th>When to use it</th></tr>
+        <tr><td><code>det A ≠ 0</code></td><td>2×2 and 3×3 — seconds by hand</td></tr>
+        <tr><td>A has n pivots (its RREF is <code>I</code>)</td><td>When you are row-reducing anyway</td></tr>
+        <tr><td>The columns are linearly independent</td><td>When a question is about vectors, not equations</td></tr>
+        <tr><td><code>Ax = 0</code> has only the solution <code>x = 0</code></td><td>Proofs, and null space questions</td></tr>
+        <tr><td><code>Ax = b</code> has exactly one solution for every <code>b</code></td><td>Systems questions</td></tr>
+        <tr><td>Rank is n; the null space is just <code>{0}</code></td><td>Rank questions</td></tr>
+        <tr><td>0 is not an eigenvalue</td><td>Eigenvalue questions</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Prove one row and you have proved all seven.</strong> This is the invertible matrix
+        theorem, and its use on a test is translation: a question phrased about columns can be
+        answered with a determinant, and a question about eigenvalues with a row reduction.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Solving Ax = b</span>
+      <h4 class="concept-title">Nothing divides a matrix — order is everything</h4>
+      <p class="concept-desc">There is no matrix division. To solve <code>Ax = b</code> you multiply
+      both sides by <code>A⁻¹</code> <em>on the left</em>, giving <code>x = A⁻¹b</code>. Because
+      <code>AB ≠ BA</code> (see <span class="xref">Matrices &amp; Linear Transformations — The Operation a GPU Spends Its Life Doing</span>),
+      the side matters every time:</p>
+      <table class="ref-table">
+        <tr><th>Equation</th><th>Solution</th></tr>
+        <tr><td><code>AX = B</code></td><td><code>X = A⁻¹B</code></td></tr>
+        <tr><td><code>XA = B</code></td><td><code>X = BA⁻¹</code></td></tr>
+        <tr><td><code>(AB)⁻¹</code></td><td><code>B⁻¹A⁻¹</code> — reversed, like taking off socks and shoes</td></tr>
+      </table>
+      <p class="concept-desc">In code, NumPy (installed with pip; see <span class="xref">Modules, Packages &amp; pip — Using Other People's Code</span>)
+      gives both routes, and the professional habit is to solve rather than invert — it is faster
+      and loses less precision:</p>
+      <pre class="code-block">import numpy as np
+A = np.array([[4, 7], [2, 6]])
+b = np.array([1, 2])
+
+np.linalg.solve(A, b)     <span class="com"># array([-0.8,  0.6])   preferred</span>
+np.linalg.inv(A) @ b      <span class="com"># array([-0.8,  0.6])   same answer, more work</span>
+np.linalg.det(A)          <span class="com"># 10.000000000000002    floating point, not 10</span></pre>
+      <div class="concept-desc verdict">
+        <strong>On paper, use the inverse when the question asks for it; in code, use
+        <code>solve</code>.</strong> The determinant printing as 10.000000000000002 is the floating
+        point story from the row reduction card, and it is why <code>det(A) == 0</code> is never
+        the right test in code — compare against a small tolerance instead.
+      </div>
+    </div>
+
+  </div>
+</div>

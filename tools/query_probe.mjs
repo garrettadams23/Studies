@@ -572,6 +572,31 @@ const READERS = [
     ["asl numbers", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
     ["manual alphabet", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
   ]],
+  // plan.md, *Study site integration — linear algebra*: a course's own words,
+  // put here before the linalg domain existed, as the readers above were. Each
+  // `want` names the topic it is being written into. Most of the words already
+  // return cards, in the wrong sense: `kernel` reaches the Linux kernel, `pivot`
+  // lateral movement, `augmented` retrieval-augmented generation, `regression`
+  // regression testing. A count would score them answered.
+  ["a student on a linear algebra course", [
+    ["row echelon form", "", "linalg/row-reduction-gaussian-elimination-rref-reading-the-answer"],
+    ["rref", "", "linalg/row-reduction-gaussian-elimination-rref-reading-the-answer"],
+    ["augmented matrix", "", "linalg/row-reduction-gaussian-elimination-rref-reading-the-answer"],
+    ["infinitely many solutions", "", "linalg/systems-of-equations-one-solution-none-or-infinitely-many"],
+    ["determinant of a 3x3", "", "linalg/determinants-cofactor-expansion-what-row-operations-do-to-th"],
+    ["cofactor expansion", "", "linalg/determinants-cofactor-expansion-what-row-operations-do-to-th"],
+    ["inverse of a 2x2 matrix", "", "linalg/inverse-matrices-the-2-by-2-formula-solving-ax-b-when-there-"],
+    ["linearly independent", "", "linalg/span-independence-basis-when-a-set-of-vectors-is-enough"],
+    ["kernel of a matrix", "", "linalg/subspaces-null-space-column-space-rank-nullity-in-one-line"],
+    ["rank nullity theorem", "", "linalg/subspaces-null-space-column-space-rank-nullity-in-one-line"],
+    ["is this transformation linear", "", "linalg/linear-transformations-two-properties-one-matrix-one-to-one-"],
+    ["eigenvalues", "", "linalg/eigenvalues-eigenvectors-the-characteristic-equation-diagona"],
+    ["least squares", "", "linalg/least-squares-normal-equations-projection-the-regression-lin"],
+    ["markov chain steady state", "", "linalg/markov-chains-transition-matrices-the-steady-state"],
+    ["linear programming", "", "linalg/linear-programming-the-feasible-region-why-the-answer-is-a-c"],
+    ["singular value decomposition", "", "linalg/svd-singular-values-the-rank-1-approximation"],
+    ["ti-84 rref", "", "linalg/ti-84-plus-ce-the-matrix-menu-rref-det-inverse"],
+  ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],
