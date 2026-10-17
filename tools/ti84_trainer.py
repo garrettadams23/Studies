@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-ti84_trainer.py — Drills the TI-84 Plus CE key sequences the Math domain documents.
+ti84_trainer.py — Drills the TI-84 Plus CE key sequences the Math and
+Linear Algebra domains document.
 
 This is not an emulator. Emulating the calculator would be a large project with
 no learning payoff, and the real device is already a poor practice environment
@@ -24,6 +25,7 @@ Drill bank: data/ti84_drills.json. Spec: plan-archive.md, CALCULUS TRACK section
 """
 
 import argparse
+import fractions
 import json
 import math
 import pathlib
@@ -39,6 +41,7 @@ AREAS = {
     "numeric": "Numeric functions (nDeriv, fnInt, Σ, logBASE)",
     "calc": "The CALC menu and graphing",
     "errors": "Errors, traps, and where the calculator lies",
+    "matrix": "The matrix menu (rref, det, inverse, transpose)",
 }
 
 
@@ -62,8 +65,58 @@ def fnint(f, a, b, n=2000):
     return total * h / 3
 
 
+# ── the matrix routines ────────────────────────────────────────────────────
+# Exact rational arithmetic rather than floats, so an rref or an inverse comes
+# back as the fractions a student writes, not as 0.6000000000000001.
+
+def _exact(m):
+    return [[fractions.Fraction(x) for x in row] for row in m]
+
+
+def rref(m):
+    """Reduced row echelon form, exactly. Pivots on the first non-zero entry."""
+    a = _exact(m)
+    rows, cols, r = len(a), len(a[0]), 0
+    for c in range(cols):
+        pivot = next((i for i in range(r, rows) if a[i][c] != 0), None)
+        if pivot is None:
+            continue
+        a[r], a[pivot] = a[pivot], a[r]
+        a[r] = [x / a[r][c] for x in a[r]]
+        for i in range(rows):
+            if i != r and a[i][c] != 0:
+                a[i] = [x - a[i][c] * y for x, y in zip(a[i], a[r])]
+        r += 1
+        if r == rows:
+            break
+    return a
+
+
+def det(m):
+    """Determinant by cofactor expansion along the first row, exactly."""
+    a = _exact(m)
+    if len(a) == 1:
+        return a[0][0]
+    return sum((-1) ** j * a[0][j] * det([row[:j] + row[j + 1:] for row in a[1:]])
+               for j in range(len(a)))
+
+
+def inv(m):
+    """Inverse by row-reducing [A | I]. Raises on a singular matrix, as the TI-84 does."""
+    n = len(m)
+    if det(m) == 0:
+        raise ValueError("singular matrix")
+    aug = [list(row) + [int(i == j) for j in range(n)] for i, row in enumerate(_exact(m))]
+    return [row[n:] for row in rref(aug)]
+
+
+def transpose(m):
+    return [list(col) for col in zip(*m)]
+
+
 SAFE = {"math": math, "nderiv": nderiv, "fnint": fnint, "abs": abs,
-        "sum": sum, "range": range, "float": float, "int": int}
+        "sum": sum, "range": range, "float": float, "int": int,
+        "rref": rref, "det": det, "inv": inv, "transpose": transpose}
 
 
 def evaluate(expr):
@@ -72,6 +125,11 @@ def evaluate(expr):
 
 
 def fmt(value):
+    if isinstance(value, fractions.Fraction):
+        return str(value)
+    if isinstance(value, list) and value and isinstance(value[0], list):
+        return "  ".join("[" + " ".join(str(fractions.Fraction(x)) for x in row) + "]"
+                         for row in value)
     if isinstance(value, float):
         if abs(value) < 1e-10:
             return f"0 (computed as {value:.3g} — floating point, read it as zero)"
@@ -154,18 +212,21 @@ def verify():
 # Prose cannot be checked, so it drifted the moment an area was added. The block
 # between these markers is generated from the bank instead, and --check-card is
 # wired into CI so the two cannot disagree again.
-CARD = ROOT / "data" / "math.html"
+CARDS = {
+    ROOT / "data" / "math.html": ["mode", "numeric", "calc", "errors"],
+    ROOT / "data" / "linalg.html": ["matrix"],
+}
 BEGIN = "<!-- BEGIN GENERATED: ti84-drill-index -->"
 END = "<!-- END GENERATED: ti84-drill-index -->"
 
 
-def card_block(indent="      "):
-    """The drill index, as it should appear inside the TI-84 card."""
+def card_block(areas, indent="      "):
+    """The drill index, as it should appear inside a TI-84 card."""
     drills = load()
     rows = [
-        f"{indent}  <tr><td><code>--area {area}</code></td><td>{label}</td>"
+        f"{indent}  <tr><td><code>--area {area}</code></td><td>{AREAS[area]}</td>"
         f"<td>{sum(1 for d in drills if d['area'] == area)}</td></tr>"
-        for area, label in AREAS.items()
+        for area in areas
     ]
     return "\n".join([
         f"{indent}{BEGIN}",
@@ -179,31 +240,38 @@ def card_block(indent="      "):
 
 
 def sync_card(check=False):
-    text = CARD.read_text(encoding="utf-8")
-    if BEGIN not in text or END not in text:
-        print(f"error: {CARD.name} has no ti84-drill-index markers", file=sys.stderr)
+    covered = {a for areas in CARDS.values() for a in areas}
+    if covered != set(AREAS):
+        print(f"error: areas on no card: {sorted(set(AREAS) - covered)}", file=sys.stderr)
         return 1
+    status = 0
+    for card, areas in CARDS.items():
+        text = card.read_text(encoding="utf-8")
+        if BEGIN not in text or END not in text:
+            print(f"error: {card.name} has no ti84-drill-index markers", file=sys.stderr)
+            status = 1
+            continue
 
-    start = text.index(BEGIN)
-    indent = text[: start].rsplit("\n", 1)[-1]
-    end = text.index(END) + len(END)
-    updated = text[: start - len(indent)] + card_block(indent) + text[end:]
+        start = text.index(BEGIN)
+        indent = text[: start].rsplit("\n", 1)[-1]
+        end = text.index(END) + len(END)
+        updated = text[: start - len(indent)] + card_block(areas, indent) + text[end:]
 
-    if check:
-        if updated != text:
-            print(
-                "::error::the TI-84 drill index in data/math.html is out of step "
-                "with data/ti84_drills.json. Run "
-                "'python tools/ti84_trainer.py --sync-card' and commit the result.",
-                file=sys.stderr,
-            )
-            return 1
-        print("TI-84 drill index is in step with the bank.")
-        return 0
-
-    CARD.write_text(updated, encoding="utf-8")
-    print(f"Synced the drill index into {CARD.name}.")
-    return 0
+        if check:
+            if updated != text:
+                print(
+                    f"::error::the TI-84 drill index in data/{card.name} is out of step "
+                    "with data/ti84_drills.json. Run "
+                    "'python tools/ti84_trainer.py --sync-card' and commit the result.",
+                    file=sys.stderr,
+                )
+                status = 1
+            continue
+        card.write_text(updated, encoding="utf-8")
+        print(f"Synced the drill index into {card.name}.")
+    if check and status == 0:
+        print("TI-84 drill indexes are in step with the bank.")
+    return status
 
 
 def show_list():

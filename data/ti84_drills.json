@@ -210,6 +210,89 @@
       "answer": "No — it does not exist. There is a corner at 0; nDeriv uses a symmetric difference and cannot tell.",
       "compute": "nderiv(abs, 0)",
       "note": "The calculator answers confidently when it should not. Know where it lies."
+    },
+    {
+      "id": "matrix-menu",
+      "area": "matrix",
+      "prompt": "Open the matrix menu. Which keys?",
+      "accept": ["2nd x-1", "2nd x^-1", "2nd x⁻¹", "2nd matrix", "2nd matrx"],
+      "answer": "2nd then x⁻¹ (MATRIX). Three tabs: NAMES, MATH, EDIT.",
+      "note": "x⁻¹ alone, without 2nd, is the inverse key — the same key does both jobs."
+    },
+    {
+      "id": "matrix-edit",
+      "area": "matrix",
+      "prompt": "Enter the augmented matrix of 3 equations in 3 unknowns as [A]. Where do you go, and what size is it?",
+      "accept": ["edit 3 4", "edit 3x4", "3x4", "3 by 4", "edit"],
+      "answer": "2nd x⁻¹, right to EDIT, ENTER on [A], type 3 ENTER 4 ENTER — 3 rows, 4 columns (3 coefficients plus the constants) — then the entries row by row.",
+      "note": "A 3×3 here silently drops the constants column, and rref then answers a different question."
+    },
+    {
+      "id": "matrix-rref",
+      "area": "matrix",
+      "prompt": "[A] = [1 2 1 4; 2 4 3 9; 1 2 2 5]. Which function, from which tab, and what does it return?",
+      "accept": ["rref", "math rref", "rref(a)", "rref([a])"],
+      "answer": "MATH tab of the matrix menu, rref(, then [A] from NAMES, close the parenthesis, ENTER.",
+      "compute": "rref([[1,2,1,4],[2,4,3,9],[1,2,2,5]])",
+      "note": "The calculator does the arithmetic, not the reading — see the next drill."
+    },
+    {
+      "id": "matrix-free",
+      "area": "matrix",
+      "prompt": "rref returned [1 2 0 3; 0 0 1 1; 0 0 0 0] for unknowns x, y, z. Which variable is free, and what does the answer key usually want?",
+      "accept": ["y", "y is free", "y free"],
+      "answer": "y — its column has no pivot. Solution x = 3 − 2t, y = t, z = 1; \"set the free variable to 0\" gives (3,0,1).",
+      "compute": "rref([[1,2,1,4],[2,4,3,9],[1,2,2,5]])",
+      "note": "rref( cannot tell you which variable is free. Count pivots against columns yourself."
+    },
+    {
+      "id": "matrix-det",
+      "area": "matrix",
+      "prompt": "Find det [2 0 1; 3 1 0; 1 4 5] on the calculator.",
+      "accept": ["det", "math det", "det(a)", "det([a])"],
+      "answer": "MATH tab, det( (item 1), then [A], close, ENTER.",
+      "compute": "det([[2,0,1],[3,1,0],[1,4,5]])"
+    },
+    {
+      "id": "matrix-inverse",
+      "area": "matrix",
+      "prompt": "Find the inverse of [A] = [4 7; 2 6].",
+      "accept": ["a x-1", "[a] x-1", "a inverse", "x-1", "x^-1"],
+      "answer": "[A] from NAMES, then the x⁻¹ key, ENTER. There is no inv( function — the key is the function.",
+      "compute": "inv([[4,7],[2,6]])"
+    },
+    {
+      "id": "matrix-frac",
+      "area": "matrix",
+      "prompt": "The inverse shows 0.6, -0.7, -0.2, 0.4. How do you get exact fractions?",
+      "accept": ["frac", "math frac", "math 1", "▶frac"],
+      "answer": "Before ENTER, press MATH then 1: ▶Frac — [A]⁻¹▶Frac.",
+      "compute": "inv([[4,7],[2,6]])"
+    },
+    {
+      "id": "matrix-singular",
+      "area": "matrix",
+      "prompt": "You invert [1 2; 2 4] and get an error. Which error, and what does it mean?",
+      "accept": ["singular", "singular mat", "err singular mat", "err: singular mat"],
+      "answer": "ERR: SINGULAR MAT — the determinant is 0, so there is no inverse.",
+      "compute": "det([[1,2],[2,4]])",
+      "note": "This is an answer, not a malfunction: the matrix has no inverse."
+    },
+    {
+      "id": "matrix-dim",
+      "area": "matrix",
+      "prompt": "[A] is 2×3 and [B] is 2×3. [A]*[B] gives an error. Which one, and why?",
+      "accept": ["dim mismatch", "err dim mismatch", "dimension mismatch"],
+      "answer": "ERR: DIM MISMATCH — the inner sizes must agree (2×3 times 3×something). [A]*[B]ᵀ would work.",
+      "compute": "transpose([[1,2,3],[4,5,6]])"
+    },
+    {
+      "id": "matrix-transpose",
+      "area": "matrix",
+      "prompt": "Where is the transpose?",
+      "accept": ["math t", "t", "transpose", "math 2"],
+      "answer": "MATH tab of the matrix menu, ᵀ (item 2), typed after the matrix: [A]ᵀ.",
+      "compute": "transpose([[1,2,3],[4,5,6]])"
     }
   ]
 }

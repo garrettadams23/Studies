@@ -1235,3 +1235,278 @@ Share kept: σ₁² / (σ₁² + σ₂²) = 25 / 34 ≈ 74%</pre>
 
   </div>
 </div>
+
+<!-- ── TOPIC: TI-84 PLUS CE MATRIX MENU ──────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🖩</span>
+    <span class="topic-name">TI-84 Plus CE — The Matrix Menu: rref, det &amp; Inverse</span>
+    <span class="topic-badge">LINALG • Calculator</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Do this first</span>
+      <h4 class="concept-title">Entering a matrix — and why an augmented one is 3×4</h4>
+      <!-- fact: TI-84 Plus CE matrix menu: 2nd x⁻¹ opens it; EDIT tab to enter; rref( on the MATH tab | source: TI-84 Plus family knowledge base (education.ti.com, product usage 34713), seen through a search summary — the guidebook itself could not be fetched from this container, so det( item 1, ᵀ item 2, ▶Frac and the error names are from the TI-84 Plus family menu layout and have not been checked on a device | checked: 2026-10 -->
+      <pre class="code-block"><span class="com"># 2nd then x⁻¹ opens MATRIX. Three tabs: NAMES · MATH · EDIT</span>
+   2nd  x⁻¹  ->  ▶ ▶ to EDIT  ->  ENTER on [A]
+   type rows ENTER, columns ENTER     <span class="com"># 3 ENTER 4 ENTER</span>
+   type each entry, ENTER after each, row by row
+   2nd  MODE  (QUIT) back to the home screen
+
+<span class="com"># A system of 3 equations in 3 unknowns is a 3 × 4 matrix:</span>
+<span class="com"># three coefficient columns PLUS the constants column.</span>
+<span class="com"># Entering it as 3 × 3 silently drops the constants.</span></pre>
+      <p class="concept-desc">The same key does two jobs: <code>x⁻¹</code> alone is the inverse key,
+      and <code>2nd</code> <code>x⁻¹</code> is the matrix menu. Matrix names like <code>[A]</code> must
+      come from the NAMES tab — typing a bracket and the letter A does not make a matrix.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Reference</span>
+      <h4 class="concept-title">The functions a linear algebra course uses</h4>
+      <table class="ref-table">
+        <tr><th>Want</th><th>Press (home screen)</th></tr>
+        <tr><td>Reduced row echelon form</td><td>MATRIX → MATH → <code>rref(</code>, then <code>[A]</code> from NAMES, <code>)</code>, ENTER</td></tr>
+        <tr><td>Row echelon form</td><td>MATRIX → MATH → <code>ref(</code> — not unique, so rarely what a key wants</td></tr>
+        <tr><td>Determinant</td><td>MATRIX → MATH → <code>det(</code> (item 1), <code>[A]</code>, <code>)</code></td></tr>
+        <tr><td>Inverse</td><td><code>[A]</code> then the <code>x⁻¹</code> key. There is no <code>inv(</code></td></tr>
+        <tr><td>Transpose</td><td><code>[A]</code> then MATRIX → MATH → <code>ᵀ</code> (item 2)</td></tr>
+        <tr><td>Exact fractions</td><td>Add MATH → <code>1: ▶Frac</code> before ENTER: <code>[A]⁻¹▶Frac</code></td></tr>
+        <tr><td>Multiply</td><td><code>[A]*[B]</code> — order matters, as on paper</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Learn the fractions row with the first one.</strong> Inverses and reduced matrices
+        come back as decimals like 0.6 and −0.7, and an answer key written in fractions will not
+        accept them. <code>▶Frac</code> turns <code>0.6</code> back into <code>3/5</code>.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Hands-on</span>
+      <h4 class="concept-title">TI-84 rref on a real system — and the part it cannot do</h4>
+      <pre class="code-block">[A] = | 1 2 1 4 |       rref([A])  ->  | 1 2 0 3 |
+      | 2 4 3 9 |                      | 0 0 1 1 |
+      | 1 2 2 5 |                      | 0 0 0 0 |
+
+Now YOU read it:
+  pivot columns: 1 (x) and 3 (z)   ->  y is FREE
+  x = 3 − 2t,  y = t,  z = 1
+  "set the free variable to 0"     ->  (3, 0, 1)</pre>
+      <div class="concept-desc verdict">
+        <strong><code>rref(</code> does the arithmetic, not the reading: it cannot tell you which
+        variable is free.</strong> The screen above is complete and correct, and a student who
+        copies the last column as "x = 3, y = 1, z = 0" has misread it. Count pivots against
+        columns every time; <span class="xref">Row Reduction — Gaussian Elimination, RREF &amp; Reading the Answer</span>
+        has the reading rules.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">The trap</span>
+      <h4 class="concept-title">Errors and confident wrong answers</h4>
+      <table class="ref-table">
+        <tr><th>Screen</th><th>What it means</th></tr>
+        <tr><td><code>ERR: SINGULAR MAT</code> on <code>[A]⁻¹</code></td><td>The determinant is 0 — there is no inverse. This is an answer, not a malfunction</td></tr>
+        <tr><td><code>ERR: DIM MISMATCH</code></td><td>The sizes do not fit: <code>[A]*[B]</code> needs A's columns to equal B's rows</td></tr>
+        <tr><td>An entry like <code>−1E−13</code></td><td>Floating-point dust; read it as 0. It can hide a pivot that should not exist, so check suspicious tiny entries by hand</td></tr>
+        <tr><td>A clean rref of a 3×3</td><td>If you meant to solve a system, you left out the constants column</td></tr>
+      </table>
+      <p class="concept-desc">There is a drill for this card in the repo:
+      <code>python tools/ti84_trainer.py</code> asks for the key sequences and checks your
+      answers, and every matrix it quotes back is computed by Python at run time, in exact fractions,
+      so the drill cannot be wrong about the arithmetic. Pass a flag to drill this area:</p>
+      <!-- BEGIN GENERATED: ti84-drill-index -->
+      <!-- Generated by tools/ti84_trainer.py --sync-card. Do not edit by hand. -->
+      <table class="ref-table">
+        <tr><th>Flag</th><th>Covers</th><th>Drills</th></tr>
+        <tr><td><code>--area matrix</code></td><td>The matrix menu (rref, det, inverse, transpose)</td><td>10</td></tr>
+      </table>
+      <!-- END GENERATED: ti84-drill-index -->
+      <p class="concept-desc">The calculus keys — mode, <code>nDeriv</code>, the CALC menu — are
+      in <span class="xref">TI-84 Plus CE — The Keys That Matter for Calculus</span>.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: LINEAR ALGEBRA TESTS ───────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">📝</span>
+    <span class="topic-name">Linear Algebra Tests — The Format, the Conventions &amp; a Broken Question</span>
+    <span class="topic-badge">LINALG • Exam Strategy</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">The trap</span>
+      <h4 class="concept-title">Many lost marks are format, not math</h4>
+      <table class="ref-table">
+        <tr><th>What the question wants</th><th>The guard</th></tr>
+        <tr><td>A point typed in an exact format, such as <code>(x,y,z)</code> with no spaces</td><td>Read the format line before typing. An online system marks <code>(3, 0, 1)</code> wrong if it asked for <code>(3,0,1)</code></td></tr>
+        <tr><td>"Set the free variable to 0"</td><td>The key wants one particular solution, not the parametric family. Give the one it asks for</td></tr>
+        <tr><td>Fractions, not decimals</td><td><code>▶Frac</code> on the calculator; never round <code>1/3</code> to 0.33</td></tr>
+        <tr><td>The book's Markov convention</td><td>Check whether rows or columns sum to 1 before setting up <code>P</code></td></tr>
+        <tr><td>"No solution" vs "infinitely many"</td><td>Look for a <code>0 = c</code> row first, then count pivots</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Many lost marks are format: <code>(x,y,z)</code> with no spaces, "set the free
+        variable to 0", and options missing the right matrix.</strong> The first two rows lose marks
+        on work that was right. Spend ten seconds on the format line of every question before
+        spending any on the math.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Trick questions</span>
+      <h4 class="concept-title">The six this course is built to ask</h4>
+      <table class="ref-table">
+        <tr><th>The question</th><th>The right answer</th></tr>
+        <tr><td>Is <code>[4 1; 0 4]</code> diagonalizable?</td><td><strong>No.</strong> λ = 4 twice, but only one independent eigenvector</td></tr>
+        <tr><td>RREF has a <code>0 = 0</code> row — infinitely many solutions?</td><td>Not by itself. Infinitely many needs a column without a pivot</td></tr>
+        <tr><td>A basis for the column space</td><td>The pivot columns of the <strong>original</strong> matrix, not of the RREF</td></tr>
+        <tr><td><code>det(2A)</code> for a 3×3 with <code>det A = 5</code></td><td><code>2³ · 5 = 40</code>, not 10</td></tr>
+        <tr><td>"Reflect, then rotate" as one matrix</td><td>Rotation × reflection — the first step goes on the right</td></tr>
+        <tr><td>Eigenvalue 1, so the chain settles?</td><td>Only if the chain is regular; every transition matrix has eigenvalue 1</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The first row is the classic, and it is on your own quiz.</strong> Every row here
+        is the same shape: the tempting answer is true of a nearby case. When a question feels like
+        it can be answered in one line, check which of these it is.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">When no option is right</span>
+      <h4 class="concept-title">A broken question, and how to be sure it is the question</h4>
+      <p class="concept-desc">A multiple-choice question about reflecting across the x-axis and then
+      rotating 90° offered no correct matrix. The right answer is <code>[0 1; 1 0]</code>; the options
+      were built from multiplying in the wrong order. Before deciding a question is broken, prove
+      your answer two ways:</p>
+      <pre class="code-block">1. Compute it:            R · F = | 0 1 |
+                                  | 1 0 |
+2. Test it on a vector:   e₁ = (1, 0)  ->  reflect (1, 0)  ->  rotate (0, 1)
+                          your matrix sends (1, 0) to (0, 1) ✓
+Both agree and no option matches  ->  the question is broken. Say so.</pre>
+      <div class="concept-desc verdict">
+        <strong>Two independent checks turn "I think the key is wrong" into a case you can
+        make.</strong> Pick the closest option if you must, write your matrix beside it, and raise
+        it with the instructor afterwards with the vector check — that is the argument that gets
+        marks returned.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Check your own work</span>
+      <h4 class="concept-title">Every answer type has a ten-second check</h4>
+      <table class="ref-table">
+        <tr><th>Answer</th><th>Check</th></tr>
+        <tr><td>A solution to <code>Ax = b</code></td><td>Substitute into one original equation</td></tr>
+        <tr><td>An inverse</td><td>One row of <code>A</code> times one column of <code>A⁻¹</code> gives 1 or 0</td></tr>
+        <tr><td>Eigenvalues</td><td>Sum = trace, product = determinant</td></tr>
+        <tr><td>An eigenvector</td><td><code>Av</code> is a multiple of <code>v</code></td></tr>
+        <tr><td>Rank and nullity</td><td>They add to the number of columns</td></tr>
+        <tr><td>A steady state</td><td>Entries sum to 1, and <code>Pq = q</code></td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The eigenvalue row is the best return on ten seconds in the course.</strong> It
+        catches a factoring slip before you spend five minutes finding eigenvectors for a wrong
+        λ. The same habit for calculus is in <span class="xref">Chapter Tests &amp; the Final — Where the Marks Actually Go</span>.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: CHEAT SHEET ────────────────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🧊</span>
+    <span class="topic-name">Linear Algebra Cheat Sheet — Everything on One Page</span>
+    <span class="topic-badge">LINALG • Cheat Sheet</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Systems</span>
+      <h4 class="concept-title">Reading a reduced matrix</h4>
+      <table class="ref-table">
+        <tr><th>RREF shows</th><th>Solutions</th></tr>
+        <tr><td>A row <code>[0 … 0 | c]</code>, c ≠ 0</td><td>None</td></tr>
+        <tr><td>A pivot in every variable column</td><td>Exactly one</td></tr>
+        <tr><td>A variable column with no pivot</td><td>Infinitely many — that variable is free</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Check the first row before the others.</strong> Row operations: replacing a row with
+        itself plus a multiple of another changes nothing; a swap flips a determinant's sign;
+        scaling a row by k scales it by k.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Determinants &amp; inverses</span>
+      <h4 class="concept-title">The formulas</h4>
+      <table class="ref-table">
+        <tr><th>Item</th><th>Formula</th></tr>
+        <tr><td>2×2 determinant</td><td><code>ad − bc</code></td></tr>
+        <tr><td>Cofactor</td><td><code>Cᵢⱼ = (−1)<sup>i+j</sup>Mᵢⱼ</code>; signs <code>+ − +</code> from the top-left</td></tr>
+        <tr><td>Triangular determinant</td><td>Product of the diagonal</td></tr>
+        <tr><td>Products</td><td><code>det(AB) = det A · det B</code>; <code>det(kA) = kⁿ det A</code>; <code>det Aᵀ = det A</code></td></tr>
+        <tr><td>2×2 inverse</td><td><code>1/(ad − bc) · [d −b; −c a]</code></td></tr>
+        <tr><td>Larger inverse</td><td>Row-reduce <code>[A | I]</code> to <code>[I | A⁻¹]</code></td></tr>
+        <tr><td>Order</td><td><code>(AB)⁻¹ = B⁻¹A⁻¹</code>; <code>AX = B</code> gives <code>X = A⁻¹B</code></td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Invertible, <code>det ≠ 0</code>, n pivots, independent columns, <code>Nul A = {0}</code>,
+        rank n, and 0 not an eigenvalue are one fact.</strong> Use whichever is cheapest for the
+        question in front of you.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Vector spaces</span>
+      <h4 class="concept-title">Span, independence, null space, rank</h4>
+      <table class="ref-table">
+        <tr><th>Item</th><th>Rule</th></tr>
+        <tr><td>Independent</td><td>Pivot in every column; <code>p &gt; n</code> vectors in ℝⁿ are always dependent</td></tr>
+        <tr><td>Subspace</td><td>Contains 0, closed under + and scalar ×</td></tr>
+        <tr><td><code>Nul A</code> (the kernel)</td><td>Solutions of <code>Ax = 0</code>; one basis vector per free variable</td></tr>
+        <tr><td><code>Col A</code></td><td>Pivot columns of the <strong>original</strong> A</td></tr>
+        <tr><td>Rank–nullity</td><td><code>rank + nullity = number of columns</code></td></tr>
+        <tr><td>One-to-one / onto</td><td>Pivot in every column / pivot in every row</td></tr>
+        <tr><td>Linear map test</td><td><code>T(0) = 0</code> first; an <code>xy</code> or constant term means not linear</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The <code>Col A</code> row is the one most often lost.</strong> RREF tells you which
+        columns; the vectors come from the matrix you started with.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Eigenvalues &amp; applications</span>
+      <h4 class="concept-title">The equations to know cold</h4>
+      <table class="ref-table">
+        <tr><th>Item</th><th>Equation</th></tr>
+        <tr><td>Characteristic equation</td><td><code>det(A − λI) = 0</code>; eigenvectors from <code>Nul(A − λI)</code></td></tr>
+        <tr><td>Checks</td><td>Σλ = trace, Πλ = det</td></tr>
+        <tr><td>Diagonalizable</td><td>n independent eigenvectors; then <code>Aᵏ = PDᵏP⁻¹</code></td></tr>
+        <tr><td>Least squares</td><td><code>AᵀA x̂ = Aᵀb</code></td></tr>
+        <tr><td>Markov steady state</td><td><code>Pq = q</code> (column convention), entries sum to 1; regular chain to be unique</td></tr>
+        <tr><td>Linear programming</td><td>Evaluate the objective at every corner</td></tr>
+        <tr><td>Network</td><td>Flow in = flow out at each node</td></tr>
+        <tr><td>SVD</td><td><code>A = UΣVᵀ</code>; <code>σᵢ = √λᵢ(AᵀA)</code>; keep the top k for the best rank-k approximation</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The diagonalizable row is the one the tests are built around.</strong> A factored
+        characteristic polynomial is not enough; count the eigenvectors, and remember
+        <code>[4 1; 0 4]</code>.
+      </div>
+    </div>
+
+  </div>
+</div>
