@@ -67,7 +67,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **55** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **56** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -6351,4 +6351,76 @@ reader still 12 of 12, its five ASL queries retargeted · census 373 of 398, 0 u
 related links 4,902 -> 4,904 · path steps 1,600 -> 1,601 · smoke 163 -> 164: the hands follow the theme
 1 latent test fault fixed (a palette left open) · 1 contrast failure found by hand, fixed
 45 gates green · smoke 164 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — conducting *Study site integration — linear algebra*: a course whose words the site already used for something else
+
+The integration plan (filed in the DevOps hub as `docs/plans/study-site-integration.md`, written
+against this repository at `2cb40e9`) proposed a sibling course domain rather than more topics in
+`math`, because `plan-archive.md` records `math` as *a specific calculus course, not a mathematics
+library*. That decision was kept: **`linalg`, Mathematics — Linear Algebra**, sixteen topics in four
+waves, beside MATH in the Reference chip row. HEAD was still `2cb40e9` when the session started, so
+every claim in the plan's repository table was checked against the tree it described.
+
+### The reader went in first, and opened at zero
+
+*A student on a linear algebra course* was added to `query_probe.mjs` before any card existed, with
+the plan's seventeen `want`s. It opened at **0 of 17**: twelve zeros and five wrong-sense hits — the
+plan's own design point, that `kernel` reaches the Linux kernel and `augmented` retrieval-augmented
+generation. It closed at 17 of 17, wave by wave: 7, 12, 16, 17. Every `want` slug in the plan's draft
+was right first time; the plan had computed them with the site's slug rule rather than guessing.
+
+### Eleven claims from the notes, corrected at the card
+
+The plan listed eleven lines that were right for a quiz and wrong for a card. Each was written in
+its corrected form and none was left as the notes had it: the Markov row/column conventions shown
+side by side with how to tell them apart; eigenvalue 1 as guaranteed and convergence as needing a
+regular chain, with `[0 1; 1 0]` as the chain that never settles; complex eigenvalues decided by the
+real part for `x′ = Ax` — and, which the plan did not say, by `|λ|` for `xₖ₊₁ = Axₖ`; the condition
+number as an upper bound; orthogonal eigenvectors only across different eigenvalues; diagonalizable
+as *n independent eigenvectors*, with the quiz's own `[4 1; 0 4]` failing it; "at least two
+equations" as a convention; the inputs-and-outputs vocabulary resolved to the Leontief model; the
+broken reflect-then-rotate question worked to `[0 1; 1 0]`, **with the wrong-order product
+`[0 −1; −1 0]` beside it**, which is almost certainly how the key was built; and parity checks as
+coding theory, filed in the Subspaces topic because Hamming codewords *are* a null space.
+**Every worked number in the sixteen topics was computed with NumPy before it was written.**
+
+### What the gates found, which the plan could not have
+
+| Found | By | Done |
+|---|---|---|
+| The Calculus island merged into the mainland the moment `linalg` linked to both `math` and `cs` | `orphan_report.py --islands`: one component, 100% | The related-links row now says the `math` decision was reversed on purpose, as the plan asked |
+| `counterclockwise` failed the spelling gate as a British `-ise` | `check_spelling.py` | Not British: added to `ISE_KEEP` beside `clockwise`, with a fixture, as its own commit |
+| "QR factorization" would have been annotated *Quick Response* | Reading the annotator's dry run | Q and R name two matrices, so it is written `<code>QR</code>`, which the annotator skips — no new `byDomain` entry for a word that is not an acronym |
+| `infinitely many solutions` regressed in wave 3 | The reader | The SVD card said the phrase verbatim and the systems card only in pieces. Kind 1, fixed in prose |
+| The two cheat sheets paired by title | `near_duplicates.py` | Read both; kept, with the sentence in `duplicate-verdicts.json` |
+| The landing card's "start here" named the cheat sheet three waves before it existed | `smoke_test.mjs` | Pointed at existing cards until wave 4 wrote it |
+| Seven new topics off any path after wave 1 | `check_paths.py` | The learning path was started in wave 1 and extended each wave, rather than written at the end as the plan ordered |
+
+### The calculator claims, and what could be checked
+
+The plan said to check every TI-84 key sequence against the guidebook. The container's network policy
+refused `education.ti.com` and every mirror tried. One TI knowledge-base result, seen through a search
+summary, confirmed `2nd x⁻¹`, the EDIT tab and `rref(` on the MATH tab. The card's fact anchor says
+exactly that, and says the rest — `det(` as item 1, `ᵀ` as item 2, `▶Frac`, the two error names — is
+from the TI-84 Plus family menu layout and **has not been checked on a device**. That is the ASCII
+card's precedent: an anchor that records a failed check is worth more than one that implies a
+successful one. **Named and not done:** press each sequence on a real calculator and update the anchor.
+
+`ti84_trainer.py` gained a `matrix` area with exact `rref`, `det`, `inv` and `transpose` helpers in
+`fractions.Fraction`, so the drill quotes `3/5` where the calculator shows 0.6, and its generated drill
+index now syncs per card; the calculus card's block came out byte-identical.
+
+### Not done
+
+`gen_cheatsheet.py` still reads only `data/math.html`, so there is no `LINEAR-ALGEBRA-CHEAT-SHEET.md`.
+The plan marked it optional, and a second generated file is a second `--check` gate to keep green; it
+is one argument away when it is wanted.
+
+```
+7 commits · 16 new topics (linalg, new domain) · 1 card added to Subspaces · 1 checker fix · 1 annotation commit
+reader 0 of 17 -> 17 of 17 · census 373 of 398 -> 390 of 415, 0 unexplained
+topics 1,563 -> 1,579 · domains 30 -> 31 · related links 4,904 -> 5,004, one component · path steps 1,601 -> 1,617
+ti84 drills 27 -> 37 (18 computed) · fact anchors 31 -> 32 · near-duplicate verdicts 17 -> 18
+45 gates green · smoke 164 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 (chip row rebaselined) · backup 3
 ```
