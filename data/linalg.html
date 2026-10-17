@@ -407,3 +407,388 @@ np.linalg.det(A)          <span class="com"># 10.000000000000002    floating poi
 
   </div>
 </div>
+
+<!-- ── TOPIC: SPAN, INDEPENDENCE & BASIS ─────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🧭</span>
+    <span class="topic-name">Span, Independence &amp; Basis — When a Set of Vectors Is Enough</span>
+    <span class="topic-badge">LINALG • Vector Spaces</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">Span: everywhere a set of vectors can reach</h4>
+      <p class="concept-desc">A <strong>linear combination</strong> of vectors
+      <code>v₁ … vₚ</code> is <code>c₁v₁ + … + cₚvₚ</code> for any numbers <code>cᵢ</code>. Their
+      <strong>span</strong> is every linear combination at once — every point the vectors can reach
+      by stretching and adding. One non-zero vector spans a line through the origin; two that do not
+      point along the same line span a plane; three that do not lie in one plane span all of
+      3D space.</p>
+      <p class="concept-desc">"Is <code>b</code> in the span of these vectors?" is the systems
+      question in disguise: put the vectors in as columns, augment with <code>b</code>, and
+      row-reduce. Consistent means yes. The working is in <span class="xref">Row Reduction — Gaussian Elimination, RREF &amp; Reading the Answer</span>.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Independence</span>
+      <h4 class="concept-title">Linearly independent: no vector is wasted</h4>
+      <p class="concept-desc">A set is <strong>linearly independent</strong> when the only
+      combination that gives the zero vector is the one with every <code>cᵢ = 0</code>. Otherwise it
+      is <strong>dependent</strong>: at least one vector is a combination of the others and adds
+      nothing to the span. To test, put the vectors in as columns and row-reduce — a pivot in every
+      column means independent. Before reducing anything, check these, cheapest first:</p>
+      <table class="ref-table">
+        <tr><th>If the set…</th><th>Then it is</th></tr>
+        <tr><td>Contains the zero vector</td><td>Dependent — <code>1 · 0 = 0</code> is a non-trivial combination</td></tr>
+        <tr><td>Has more vectors than entries per vector (p &gt; n)</td><td><strong>Dependent</strong>, always. Four vectors in 3D cannot all be independent</td></tr>
+        <tr><td>Is two vectors</td><td>Dependent exactly when one is a multiple of the other</td></tr>
+        <tr><td>Is n vectors in n dimensions (a square matrix)</td><td>Independent exactly when <code>det ≠ 0</code></td></tr>
+        <tr><td>Is non-zero vectors that are pairwise perpendicular</td><td>Independent, always</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>More vectors than dimensions are always dependent; for a square set, the
+        determinant decides.</strong> Those two rows answer most test questions in one line. Only
+        a set with fewer vectors than dimensions actually needs row reduction.
+      </div>
+      <pre class="code-block">v₁ = (1, 2, 3)   v₂ = (4, 5, 6)   v₃ = (7, 8, 9)
+
+det | 1 4 7 |
+    | 2 5 8 |  = 0     ->  dependent
+    | 3 6 9 |
+
+The combination that proves it:  v₁ − 2v₂ + v₃ = (0, 0, 0)</pre>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Basis</span>
+      <h4 class="concept-title">A basis is a set that is exactly enough</h4>
+      <table class="ref-table">
+        <tr><th>Term</th><th>Meaning</th><th>Why it matters</th></tr>
+        <tr><td><strong>Basis</strong></td><td>Independent <em>and</em> spans the space</td><td>Every vector in the space is a combination of the basis in exactly one way</td></tr>
+        <tr><td>Dimension</td><td>The number of vectors in any basis</td><td>Every basis of a space has the same count; ℝ³ always takes three</td></tr>
+        <tr><td>Coordinates</td><td>The unique weights <code>c₁ … cₙ</code> for a vector in a given basis</td><td>Change the basis and the same arrow gets different coordinates</td></tr>
+        <tr><td>Standard basis</td><td><code>e₁ = (1,0,0)</code>, <code>e₂ = (0,1,0)</code>, <code>e₃ = (0,0,1)</code></td><td>The basis the usual coordinates are written in, without anyone saying so</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The first row is the definition to quote, and both of its halves are tested.</strong>
+        Add a vector to a basis and it stops being independent; remove one and it stops spanning.
+        A basis is the point where the two failures meet, which is why its size is a property of
+        the space and not of the set.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Connections</span>
+      <h4 class="concept-title">The dot product, and where these words turn up elsewhere</h4>
+      <p class="concept-desc">The <strong>dot product</strong> <code>a · b = a₁b₁ + a₂b₂ + a₃b₃
+      = ‖a‖‖b‖ cos θ</code> is the tool the rest of the course leans on. A dot product of zero means
+      perpendicular (<em>orthogonal</em>); length is <code>‖v‖ = √(v · v)</code>, and a unit vector is
+      <code>v / ‖v‖</code>. The calculus side is <span class="xref">Unit 1 — Foundations: Functions, Continuity, Vectors &amp; Trig</span>.</p>
+      <p class="concept-desc">Machine learning uses the same pieces under other names. An
+      embedding is a vector, and <em>cosine similarity</em> is the dot product divided by both
+      lengths — see <span class="xref">Vectors &amp; Embeddings — Similarity, Cosine Distance &amp; What a Dimension Means</span>.
+      Restrict the weights in a combination to whole numbers and the span becomes a
+      <strong>lattice</strong>, a grid of points, which is where post-quantum cryptography lives —
+      see <span class="xref">Lattices, Gently — The Hard Problem Post-Quantum Cryptography Moved To</span>.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: SUBSPACES, NULL SPACE & RANK ───────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🗂️</span>
+    <span class="topic-name">Subspaces, Null Space &amp; Column Space — Rank-Nullity in One Line</span>
+    <span class="topic-badge">LINALG • Vector Spaces</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">A subspace passes three checks, and the first one fails most</h4>
+      <p class="concept-desc">A <strong>subspace</strong> is a set of vectors that is a vector space
+      in its own right. It must (1) contain the zero vector, (2) be closed under addition — the sum
+      of two members stays inside — and (3) be closed under scalar multiplication.</p>
+      <table class="ref-table">
+        <tr><th>Set in ℝ³</th><th>Subspace?</th><th>The check it fails</th></tr>
+        <tr><td>A plane through the origin, <code>x + y − z = 0</code></td><td>Yes</td><td>—</td></tr>
+        <tr><td>A plane <em>not</em> through the origin, <code>x + y − z = 4</code></td><td>No</td><td>(1): <code>(0,0,0)</code> gives 0, not 4</td></tr>
+        <tr><td>The curve <code>y = x²</code> in ℝ²</td><td>No</td><td>(2): <code>(1,1)</code> and <code>(2,4)</code> are on it; their sum <code>(3,5)</code> is not</td></tr>
+        <tr><td>Only the zero vector, <code>{0}</code></td><td>Yes</td><td>— (the smallest subspace there is)</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Test the zero vector first; it disqualifies most non-examples in one line.</strong>
+        Anything defined by an equation with a non-zero constant fails there. Only when zero is in
+        the set do the two closure checks need doing.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">The two that matter</span>
+      <h4 class="concept-title">Null space (the kernel of a matrix) and column space</h4>
+      <table class="ref-table">
+        <tr><th></th><th>Null space, <code>Nul A</code></th><th>Column space, <code>Col A</code></th></tr>
+        <tr><td>Definition</td><td>Every <code>x</code> with <code>Ax = 0</code></td><td>The span of the columns of <code>A</code></td></tr>
+        <tr><td>Question it answers</td><td>Which inputs does <code>A</code> send to zero?</td><td>Which <code>b</code> make <code>Ax = b</code> consistent?</td></tr>
+        <tr><td>Lives in</td><td>ℝⁿ (n = number of columns)</td><td>ℝᵐ (m = number of rows)</td></tr>
+        <tr><td>Basis from RREF</td><td>One vector per free variable, from the parametric solution</td><td>The pivot columns <strong>of the original A</strong></td></tr>
+        <tr><td>Dimension</td><td><strong>Nullity</strong> = number of free variables</td><td><strong>Rank</strong> = number of pivots</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The bold cell in the fourth row is the commonest lost mark.</strong> Row reduction
+        changes the column space, so the columns of the RREF are the wrong vectors — RREF only tells
+        you <em>which</em> columns to take from the original. Here the <em>kernel</em> is the null
+        space; the operating-system kernel elsewhere on this site is a different word. The
+        <strong>row space</strong> is the column space of the transpose <code>Aᵀ</code> (rows swapped
+        for columns), and it has the same dimension as the column space.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">The theorem</span>
+      <h4 class="concept-title">Rank-Nullity: rank A + nullity A = n</h4>
+      <p class="concept-desc">The rank–nullity theorem says the rank plus the nullity equals the
+      number of columns. <strong>Every column is a pivot or a free variable, and that is all
+      Rank-Nullity says.</strong> Pivots count the rank; free variables count the nullity; together
+      they are every column.</p>
+      <pre class="code-block">A = | 1 2 1 |    RREF = | 1 2 0 |     pivots in columns 1 and 3   ->  rank 2
+    | 2 4 3 |           | 0 0 1 |     column 2 is free              ->  nullity 1
+    | 1 2 2 |           | 0 0 0 |     2 + 1 = 3 columns ✓
+
+Col A basis (pivot columns of the ORIGINAL):  (1, 2, 1), (1, 3, 2)
+Nul A: solve Ax = 0  ->  x = −2t, y = t, z = 0   ->  basis (−2, 1, 0)
+CHECK: A(−2, 1, 0) = (−2 + 2 + 0, −4 + 4 + 0, −2 + 2 + 0) = (0, 0, 0) ✓</pre>
+      <p class="concept-desc">Its use on a test: given any two of rank, nullity and column count,
+      the third is subtraction. A 5×7 matrix of rank 5 has nullity 2, so <code>Ax = 0</code> has a
+      plane of solutions without anybody reducing anything.</p>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Applied</span>
+      <h4 class="concept-title">Rank as a memory budget</h4>
+      <p class="concept-desc">A matrix of rank <code>r</code> can be written as a tall
+      <code>d × r</code> matrix times a wide <code>r × d</code> one. When <code>r</code> is small that
+      product is far cheaper to store than the full matrix, and that is the whole trick behind LoRA
+      fine-tuning of large language models: instead of changing a 4,096 × 4,096 weight matrix
+      (16,777,216 numbers), it learns a rank-8 update stored as two thin matrices — 65,536 numbers,
+      256 times fewer. See <span class="xref">LoRA, Quantization &amp; Tokenization Internals</span>.</p>
+      <div class="concept-desc verdict">
+        <strong>Low rank means the matrix holds less information than its size suggests.</strong>
+        That sentence is also the idea under the singular value decomposition, later in this
+        domain, where it becomes a way to throw away exactly the least important part.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: LINEAR TRANSFORMATIONS ─────────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🔀</span>
+    <span class="topic-name">Linear Transformations — Two Properties, One Matrix, One-to-One vs Onto</span>
+    <span class="topic-badge">LINALG • Transformations</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">Is this transformation linear? Two properties, and one quick fail</h4>
+      <p class="concept-desc">A transformation <code>T</code> is <strong>linear</strong> when, for
+      all vectors <code>u</code>, <code>v</code> and every scalar <code>c</code>:
+      <code>T(u + v) = T(u) + T(v)</code> and <code>T(cu) = cT(u)</code>. Both together force
+      <code>T(0) = 0</code>, which is the fastest test there is.</p>
+      <table class="ref-table">
+        <tr><th>Fingerprint in the formula</th><th>Example</th><th>Fails</th></tr>
+        <tr><td>A product of variables</td><td><code>T(x, y) = (x + y, xy)</code></td><td>Scaling: <code>T(2,2) = (4,4)</code> but <code>2T(1,1) = (4,2)</code></td></tr>
+        <tr><td>A constant term</td><td><code>T(x, y) = (x + 1, y)</code></td><td><code>T(0,0) = (1,0) ≠ (0,0)</code></td></tr>
+        <tr><td>A power, root, absolute value or trig function</td><td><code>T(x) = x²</code>, <code>|x|</code>, <code>sin x</code></td><td>Scaling or addition, with almost any numbers</td></tr>
+        <tr><td>Only sums of constant multiples of variables</td><td><code>T(x, y) = (3x − y, 2y)</code></td><td>Nothing — it is linear</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>One counterexample proves a map is not linear, and an <code>xy</code> term is the
+        usual fingerprint.</strong> Proving it <em>is</em> linear needs the two properties for all
+        inputs; disproving needs one pair of numbers. Try <code>T(0)</code> first, then double an
+        input.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">One matrix</span>
+      <h4 class="concept-title">Every linear map is a matrix — its columns are where the basis lands</h4>
+      <p class="concept-desc">Every linear <code>T: ℝⁿ → ℝᵐ</code> equals multiplication by one
+      <code>m × n</code> <strong>standard matrix</strong>, whose columns are <code>T(e₁) … T(eₙ)</code>.
+      Find where each standard basis vector goes, write those as columns, and the matrix is done.
+      <span class="xref">Matrices &amp; Linear Transformations — The Operation a GPU Spends Its Life Doing</span>
+      treats the same idea from the computing side.</p>
+      <table class="ref-table">
+        <tr><th>Map in ℝ²</th><th>Matrix</th></tr>
+        <tr><td>Reflect across the x-axis</td><td><code>[1 0; 0 −1]</code></td></tr>
+        <tr><td>Reflect across the y-axis</td><td><code>[−1 0; 0 1]</code></td></tr>
+        <tr><td>Reflect across the line y = x</td><td><code>[0 1; 1 0]</code></td></tr>
+        <tr><td>Rotate counterclockwise by θ</td><td><code>[cos θ −sin θ; sin θ cos θ]</code>; 90° is <code>[0 −1; 1 0]</code></td></tr>
+        <tr><td>Scale by k</td><td><code>[k 0; 0 k]</code></td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Rebuild any row of this table from the method rather than memorizing it.</strong>
+        Ask where <code>(1, 0)</code> and <code>(0, 1)</code> go and write them down as columns. The
+        rotation row is the only one worth knowing cold, and the minus sign belongs on the
+        top-right <code>sin θ</code> for counterclockwise.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Composition</span>
+      <h4 class="concept-title">"First this, then that" multiplies right to left</h4>
+      <p class="concept-desc">Applying <code>T₁</code> and then <code>T₂</code> is the matrix
+      <code>A₂A₁</code> — the first map sits on the right, next to the vector it acts on first.
+      Worked out for a quiz question that offered no correct answer:</p>
+      <pre class="code-block">Reflect across the x-axis, THEN rotate 90° counterclockwise:
+
+  R · F = | 0 −1 | | 1  0 |  =  | 0 1 |      <span class="com"># = reflection across y = x</span>
+          | 1  0 | | 0 −1 |     | 1 0 |
+
+CHECK with e₁ = (1, 0):  reflect -> (1, 0),  rotate -> (0, 1)
+                         | 0 1 | (1, 0) = (0, 1) ✓
+                         | 1 0 |
+
+Multiplied in the wrong order:  F · R = |  0 −1 |   <span class="com"># reflection across y = −x</span>
+                                        | −1  0 |</pre>
+      <div class="concept-desc verdict">
+        <strong>When no option matches, compute the composition and check it on one basis vector
+        before doubting yourself.</strong> A key that lists only <code>F · R</code> was built in
+        the wrong order. Push <code>e₁</code> through the two steps by hand; if your matrix sends it
+        to the same place, your answer is right and the question is broken.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">One-to-one vs onto</span>
+      <h4 class="concept-title">Pivots in every column, or pivots in every row</h4>
+      <table class="ref-table">
+        <tr><th></th><th>One-to-one (injective)</th><th>Onto (surjective)</th></tr>
+        <tr><td>Means</td><td>No two inputs land on the same output</td><td>Every output in ℝᵐ is reached</td></tr>
+        <tr><td>Matrix test</td><td>A pivot in <strong>every column</strong></td><td>A pivot in <strong>every row</strong></td></tr>
+        <tr><td>Same as</td><td><code>Nul A = {0}</code>; columns independent</td><td>Columns span ℝᵐ; <code>Col A = ℝᵐ</code></td></tr>
+        <tr><td>Impossible when</td><td>More columns than rows (n &gt; m)</td><td>More rows than columns (m &gt; n)</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Read the last row before reducing anything.</strong> A 3×5 matrix cannot be
+        one-to-one, and a 5×3 cannot be onto, by counting alone. For a square matrix the two are the
+        same condition: both or neither. The words come from functions in general, which <span class="xref">Sets &amp; Relations — The Formal Spine of SQL Joins and Access Control</span> covers.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOPIC: EIGENVALUES & EIGENVECTORS ─────────────────── -->
+<div class="topic" data-reviewed="2026-10">
+  <div class="topic-header">
+    <span class="topic-icon">🎯</span>
+    <span class="topic-name">Eigenvalues &amp; Eigenvectors — The Characteristic Equation &amp; Diagonalization</span>
+    <span class="topic-badge">LINALG • Eigenvalues</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+
+    <div class="concept-card">
+      <span class="concept-label">Core Concept</span>
+      <h4 class="concept-title">The direction the matrix does not turn</h4>
+      <p class="concept-desc">An <strong>eigenvector</strong> of a square matrix <code>A</code> is a
+      non-zero vector <code>v</code> with <code>Av = λv</code>: the matrix only stretches it, by the
+      <strong>eigenvalue</strong> <code>λ</code>, without changing its direction (a negative
+      <code>λ</code> flips it back along the same line). Most vectors get turned; eigenvectors are the
+      exceptions, and they describe what the matrix really does.</p>
+      <div class="concept-desc verdict">
+        <strong>An eigenvector is the direction the matrix does not turn, which is why a rotation's
+        eigenvalues are complex.</strong> A 90° rotation turns every real direction, so it has no
+        real eigenvector; its characteristic equation is <code>λ² + 1 = 0</code> and its eigenvalues
+        are <code>±i</code>.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Method</span>
+      <h4 class="concept-title">Characteristic equation, then a null space for each eigenvalue</h4>
+      <pre class="code-block">1. Solve det(A − λI) = 0 for λ          <span class="com"># the characteristic equation</span>
+2. For each λ, find Nul(A − λI)         <span class="com"># its eigenvectors (plus 0)</span>
+
+A = | 4 1 |    det | 4−λ   1  | = (4 − λ)(3 − λ) − 2 = λ² − 7λ + 10 = (λ − 5)(λ − 2)
+    | 2 3 |        |  2   3−λ |
+
+λ = 5:  A − 5I = | −1  1 |  ->  x = y   ->  v = (1, 1)     CHECK: A(1, 1) = (5, 5) ✓
+                 |  2 −2 |
+λ = 2:  A − 2I = | 2 1 |    ->  y = −2x ->  v = (1, −2)    CHECK: A(1, −2) = (2, −4) ✓
+                 | 2 1 |</pre>
+      <table class="ref-table">
+        <tr><th>Shortcut</th><th>Check on the example</th></tr>
+        <tr><td>Sum of eigenvalues = trace (sum of the diagonal)</td><td>5 + 2 = 7 = 4 + 3 ✓</td></tr>
+        <tr><td>Product of eigenvalues = determinant</td><td>5 · 2 = 10 = 12 − 2 ✓</td></tr>
+        <tr><td>Triangular matrix: eigenvalues are the diagonal</td><td>No working needed at all</td></tr>
+        <tr><td>0 is an eigenvalue exactly when <code>A</code> is not invertible</td><td>det = 10, so 0 is not one</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>Use the first two rows to check your eigenvalues before finding any
+        eigenvectors.</strong> They take seconds and catch a factoring slip that would otherwise
+        produce a null space of only the zero vector — which is itself the sign that a
+        <code>λ</code> was wrong, because a real eigenvalue always has an eigenvector.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Diagonalization</span>
+      <h4 class="concept-title">A = PDP⁻¹ needs n independent eigenvectors — not just a factored polynomial</h4>
+      <p class="concept-desc">An n×n matrix is <strong>diagonalizable</strong>,
+      <code>A = PDP⁻¹</code> with the eigenvectors as the columns of <code>P</code> and the eigenvalues
+      down the diagonal of <code>D</code>, exactly when it has <strong>n linearly independent
+      eigenvectors</strong>. Being able to factor the characteristic polynomial is not the test. Your
+      own quiz has the counterexample:</p>
+      <pre class="code-block">A = | 4 1 |    det(A − λI) = (4 − λ)²   ->  λ = 4, twice
+    | 0 4 |
+               A − 4I = | 0 1 |   ->  one free variable  ->  ONE eigenvector, (1, 0)
+                        | 0 0 |
+2 × 2 matrix, 1 independent eigenvector  ->  NOT diagonalizable</pre>
+      <table class="ref-table">
+        <tr><th>Situation</th><th>Diagonalizable?</th></tr>
+        <tr><td>n distinct eigenvalues</td><td><strong>Always</strong> — distinct eigenvalues give independent eigenvectors</td></tr>
+        <tr><td>A repeated eigenvalue</td><td>Only if its eigenspace has as many dimensions as the repeat count. Check it</td></tr>
+        <tr><td>Symmetric (<code>A = Aᵀ</code>)</td><td><strong>Always</strong>, with real eigenvalues. Eigenvectors for <em>different</em> eigenvalues are orthogonal; for a repeated eigenvalue you can <em>choose</em> an orthogonal set</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>The middle row is the trick question.</strong> A repeated eigenvalue is where a test
+        checks whether you know the real condition, and <code>[4 1; 0 4]</code> is the standard
+        example. The payoff of diagonalizing is <code>Aᵏ = PDᵏP⁻¹</code>, where <code>Dᵏ</code> is
+        just each diagonal entry to the power k — which is how the Markov chains card computes a
+        long-run state.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <span class="concept-label">Complex eigenvalues</span>
+      <h4 class="concept-title">Spiral in, spiral out, or circle — decided by the real part</h4>
+      <p class="concept-desc">Complex eigenvalues <code>a ± bi</code> come in pairs and mean rotation.
+      Whether the motion spirals is not decided by the complex part at all; it is decided by the real
+      part. For a system of differential equations <code>x′ = Ax</code> (see <span class="xref">Unit 3 — Integrals: Series, Area, Techniques &amp; Differential Equations</span>):</p>
+      <table class="ref-table">
+        <tr><th>Real part <code>a</code></th><th>Behavior</th></tr>
+        <tr><td>Negative</td><td>Spirals <strong>in</strong> to the origin — stable</td></tr>
+        <tr><td>Positive</td><td>Spirals <strong>out</strong> — unstable</td></tr>
+        <tr><td>Zero</td><td>Circles (or ellipses) forever — neither</td></tr>
+      </table>
+      <div class="concept-desc verdict">
+        <strong>"Complex eigenvalues oscillate" is half a sentence; the sign of the real part is
+        the other half, and it is the half that is examined.</strong> One caution: this table is for
+        <code>x′ = Ax</code>. For a step-by-step system <code>xₖ₊₁ = Axₖ</code>, the test is the size
+        <code>|λ|</code> instead — below 1 spirals in, above 1 spirals out, exactly 1 circles.
+      </div>
+    </div>
+
+  </div>
+</div>
