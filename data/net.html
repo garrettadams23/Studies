@@ -3090,7 +3090,7 @@ nslookup -type=MX google.com</pre>
 </div>
 
 <!-- ── TOPIC: ROUTING PROTOCOLS 101 ──────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🗺️</span>
     <span class="topic-name">Routing Protocols — How Routers Find the Best Path</span>
@@ -3130,6 +3130,35 @@ nslookup -type=MX google.com</pre>
       <div class="concept-label">DEFAULT ROUTE</div>
       <div class="concept-title">The Fallback Route (0.0.0.0/0)</div>
       <div class="concept-desc">The default route (<code>0.0.0.0/0</code> or <code>::/0</code>) matches ANY destination. It's the "if nothing else matches, send it here" rule — usually pointing to the upstream router or internet gateway. Every end device has a default gateway for this reason.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">Which Route Wins: Longest Prefix First, Then Trust, Then Cost</div>
+      <div class="concept-desc">
+        A router holding several routes toward one address applies three tests, always in this order.
+        Most routing surprises are the tests applied in the wrong one: an engineer adds a static route,
+        trusts that static beats dynamic, and watches the traffic go somewhere else.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Test</th><th>Decides between</th><th>How</th><th>The trap</th></tr></thead>
+          <tbody>
+            <tr><td>1. Longest prefix match</td><td>Routes of different lengths</td><td>The most specific route that contains the address wins, whatever learned it: a /24 beats a /16, and everything beats the /0 default</td><td>A static /16 loses to a learned /24 inside it. It is also why VLSM <span class="acro-exp">(Variable Length Subnet Mask)</span> and summarization coexist: a small subnet inside a summarized block stays reachable, because its route is longer</td></tr>
+            <tr><td>2. Administrative distance</td><td>Routes to the same prefix from different sources</td><td>The source the router trusts more wins, and lower is more trusted. Cisco's defaults: connected 0, static 1, eBGP 20, EIGRP 90, OSPF 110, IS-IS <span class="acro-exp">(Intermediate System to Intermediate System)</span> 115, RIP 120, iBGP 200</td><td>The numbers are one vendor's defaults. Juniper calls the same idea route preference and uses different values</td></tr>
+            <tr><td>3. Metric</td><td>Routes to the same prefix from the same protocol</td><td>The protocol's own cost: hop count for RIP, a cost from bandwidth for OSPF</td><td>Metrics are only compared inside one protocol. An OSPF cost and a RIP hop count are different units, which is the reason test 2 exists</td></tr>
+          </tbody>
+        </table>
+        <!-- fact: Cisco default administrative distances: connected 0, static 1, eBGP 20, EIGRP 90, OSPF 110, IS-IS 115, RIP 120, iBGP 200 | source: Cisco document 15986 and the IOS `distance bgp 20 200 200` defaults, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The second row is the one to use on purpose.</strong> A floating
+          static route is a static route given a distance higher than the dynamic protocol's, 250 rather
+          than 1, so it stays out of the table while OSPF has a route and installs itself the moment that
+          route disappears: a backup path with no protocol to run. And when a route you configured is being
+          ignored, check the first row before the second, because something more specific is almost always
+          winning. The default route above is the same rule from the other end: a /0 is the shortest prefix
+          there is, so it wins only when nothing else matches.
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -3298,7 +3327,7 @@ sudo ufw status verbose</pre>
 
 <!-- BEGINNER11-NET v1 -->
 <!-- ── TOPIC: NETWORK TROUBLESHOOTING ───────────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔍</span>
     <span class="topic-name">Network Troubleshooting — A Systematic Approach</span>
@@ -3382,6 +3411,41 @@ tcpdump -r capture.pcap</pre>
         afternoons is the intermittent one: a duplex mismatch produces exactly the
         pattern of small, unexplained loss that gets blamed on the application for
         weeks.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Fingerprint</div>
+      <div class="concept-title">The Counters Name the Fault Before Anyone Has a Theory</div>
+      <div class="concept-desc">
+        Every switch and router port counts the frames it could not use, by reason:
+        <code>show interfaces</code> on Cisco, <code>ip -s link</code> or <code>ethtool -S</code> on
+        Linux. The counters run from the last reboot or the last clear, so a large number proves only
+        that something went wrong once. <strong>Clear them, wait through the symptom, and read which
+        one moved.</strong> That turns "the network is flaky" into a named fault in the time it takes the
+        symptom to recur.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Counter</th><th>What increments it</th><th>What it usually means</th><th>First move</th></tr></thead>
+          <tbody>
+            <tr><td>CRC <span class="acro-exp">(Cyclic Redundancy Check)</span> errors</td><td>A frame arrived whose checksum does not match its contents: it was damaged on the way</td><td>Layer 1: a cable, connector or optic, or interference. Also the full-duplex end of a duplex mismatch</td><td>Swap the patch lead and the optic. If the errors stay with the port, the port is the fault</td></tr>
+            <tr><td>Runts</td><td>Frames shorter than Ethernet's 64-byte minimum</td><td>Collisions, which on a switched link means one end thinks it is half duplex</td><td>Compare speed and duplex on both ends</td></tr>
+            <tr><td>Giants</td><td>Frames longer than the port's maximum: 1,518 bytes by default, 1,522 with a VLAN <span class="acro-exp">(Virtual Local Area Network)</span> tag</td><td>An MTU <span class="acro-exp">(Maximum Transmission Unit)</span> mismatch: one side sends jumbo frames the other was never configured for</td><td>Make the MTU agree along the whole path</td></tr>
+            <tr><td>Late collisions</td><td>A collision after the first 64 bytes of a frame had already gone out</td><td>The half-duplex end of a duplex mismatch, or a copper run longer than the standard allows</td><td>Fix the end that reports them: that is the end set wrong</td></tr>
+            <tr><td>Output drops</td><td>Frames the port threw away because its transmit queue was full</td><td>Congestion, not damage: a fast link feeding a slow one, or a burst</td><td>Capacity or QoS <span class="acro-exp">(Quality of Service)</span>. No cable will fix it</td></tr>
+            <tr><td>Input errors</td><td>The sum of the receive-side errors, CRC errors included</td><td>A headline, not a diagnosis</td><td>Read the counters inside it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Learn the duplex mismatch as a pair of rows</strong>, because it is the
+          intermittent loss the symptom table above says costs afternoons: CRC errors and runts on one end,
+          late collisions on the other. The end with late collisions is running half duplex, and the usual
+          cause is the other end hard-coded to full duplex. A port that is set by hand stops negotiating,
+          and a port that negotiates with a silent partner can sense its speed but not its duplex, so it
+          falls back to half. Set both ends the same way, which almost always means both on auto. Giants
+          are the same reading for MTU, and <span class="xref">MTU, Fragmentation &amp; the Half-Loading Website</span>
+          is where the rest of that fault lives. Output drops are the one row no cable can explain.
+        </div>
       </div>
     </div>
   </div>
