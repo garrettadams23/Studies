@@ -4065,26 +4065,26 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
         <code>%s</code> does below.
       </div>
       <pre class="code-block"><span class="com"># Safe — the value is bound</span>
-cur.execute(<span class="m">"SELECT * FROM users WHERE email = %s"</span>, (email,))
+cur.execute(<span class="str">"SELECT * FROM users WHERE email = %s"</span>, (email,))
 
 <span class="com"># Injectable — the identifier cannot be bound, so it was formatted</span>
-cur.execute(<span class="m">f"SELECT * FROM users ORDER BY {sort_col} {direction}"</span>)
+cur.execute(<span class="str">f"SELECT * FROM users ORDER BY {sort_col} {direction}"</span>)
 
 <span class="com"># The only safe pattern for identifiers: an allow-list you control</span>
-COLS = {<span class="m">"name"</span>, <span class="m">"created_at"</span>, <span class="m">"email"</span>}
+COLS = {<span class="str">"name"</span>, <span class="str">"created_at"</span>, <span class="str">"email"</span>}
 <span class="kw">if</span> sort_col <span class="kw">not in</span> COLS: <span class="kw">raise</span> ValueError(sort_col)
-direction = <span class="m">"DESC"</span> <span class="kw">if</span> direction.upper() == <span class="m">"DESC"</span> <span class="kw">else</span> <span class="m">"ASC"</span></pre>
+direction = <span class="str">"DESC"</span> <span class="kw">if</span> direction.upper() == <span class="str">"DESC"</span> <span class="kw">else</span> <span class="str">"ASC"</span></pre>
       <pre class="code-block"><span class="com">-- The same three cases in T-SQL, inside a stored procedure</span>
 <span class="com">-- Injectable: the value is pasted into the string that EXEC runs</span>
-<span class="kw">EXEC</span>(<span class="m">'SELECT * FROM users WHERE email = '''</span> + @email + <span class="m">''''</span>);
+<span class="kw">EXEC</span>(<span class="str">'SELECT * FROM users WHERE email = '''</span> + @email + <span class="str">''''</span>);
 
 <span class="com">-- Safe: sp_executesql binds @e as a parameter</span>
-<span class="kw">EXEC</span> sp_executesql <span class="m">N'SELECT * FROM users WHERE email = @e'</span>,
-     <span class="m">N'@e nvarchar(320)'</span>, @e = @email;
+<span class="kw">EXEC</span> sp_executesql <span class="str">N'SELECT * FROM users WHERE email = @e'</span>,
+     <span class="str">N'@e nvarchar(320)'</span>, @e = @email;
 
 <span class="com">-- An identifier still cannot be bound. QUOTENAME makes it a name and never code;</span>
 <span class="com">-- the allow-list above still decides which names are allowed</span>
-<span class="kw">SET</span> @sql = <span class="m">N'SELECT * FROM users ORDER BY '</span> + QUOTENAME(@sort_col);</pre>
+<span class="kw">SET</span> @sql = <span class="str">N'SELECT * FROM users ORDER BY '</span> + QUOTENAME(@sort_col);</pre>
       <div class="concept-desc verdict">
         Same rule for shell commands: arguments can be passed as a list, but the
         <em>program name</em> and any flags cannot come from user input. If the shape of the
@@ -4167,7 +4167,7 @@ inv = Invoice.get(id)
 
 <span class="com"># Durable: ownership is part of the lookup. Forgetting it is a 404.</span>
 inv = Invoice.filter(id=id, owner_id=user.id).one_or_none()
-<span class="kw">if</span> inv <span class="kw">is</span> <span class="m">None</span>: <span class="kw">raise</span> NotFound</pre>
+<span class="kw">if</span> inv <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">raise</span> NotFound</pre>
       <div class="concept-desc verdict">
         Returning <strong>404 rather than 403</strong> for an object the caller may not see is
         deliberate: 403 confirms the record exists, which is itself a disclosure when the
@@ -4250,7 +4250,7 @@ inv = Invoice.filter(id=id, owner_id=user.id).one_or_none()
 <span class="kw">from</span> defusedxml.ElementTree <span class="kw">import</span> parse   <span class="com"># drop-in, safe defaults</span>
 
 <span class="com"># Java: the two features that matter</span>
-factory.setFeature(<span class="m">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <span class="kw">true</span>);
+factory.setFeature(<span class="str">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <span class="kw">true</span>);
 factory.setXIncludeAware(<span class="kw">false</span>);</pre>
       <div class="concept-desc verdict">
         Modern parsers mostly default to safe now, which makes this a legacy-and-dependency

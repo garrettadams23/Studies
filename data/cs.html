@@ -156,8 +156,8 @@
         analysis only speaks to the second.
       </div>
       <pre class="code-block"><span class="com"># Pre-sizing removes the resizes entirely when the size is known</span>
-buf = [<span class="m">None</span>] * n_expected          <span class="com"># Python</span>
-buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected)     <span class="com"># Go: length 0, capacity reserved</span></pre>
+buf = [<span class="kw">None</span>] * n_expected          <span class="com"># Python</span>
+buf := make([]<span class="kw">int</span>, <span class="num">0</span>, nExpected)     <span class="com"># Go: length 0, capacity reserved</span></pre>
     </div>
 
   </div>
@@ -272,7 +272,7 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
     <span class="kw">if</span> lo &gt;= hi: <span class="kw">return</span>              <span class="com"># base case</span>
     p = partition(a, lo, hi)
     quicksort(a, lo, p)              <span class="com"># BUG: should be p - 1</span>
-    quicksort(a, p + <span class="m">1</span>, hi)</pre>
+    quicksort(a, p + <span class="num">1</span>, hi)</pre>
       <div class="concept-desc verdict">
         Python defaults to a recursion limit near 1000 frames, which turns unbounded recursion
         into a clean exception. C and C++ have no such courtesy: the stack simply runs out, and
@@ -461,12 +461,12 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
         and behind why a scan over a column store outruns a row store on analytics by so much.
       </div>
       <pre class="code-block"><span class="com"># Array of structs: summing one field drags every other field into cache</span>
-<span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="m">64</span>]; };
+<span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="num">64</span>]; };
 P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes per line</span>
 
 <span class="com"># Struct of arrays: the summed field is contiguous</span>
 <span class="kw">float</span> xs[N], ys[N], zs[N];
-<span class="kw">char</span> names[N][<span class="m">64</span>];        <span class="com"># every fetched line is all x values</span></pre>
+<span class="kw">char</span> names[N][<span class="num">64</span>];        <span class="com"># every fetched line is all x values</span></pre>
       <div class="concept-desc verdict">
         Do not reach for this by default — it makes code harder to read and only pays where a
         hot loop touches a subset of fields over many records. It is a profiling result, not a
@@ -542,8 +542,8 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
       </div>
       <pre class="code-block"><span class="com"># Python randomises string hashing per process by default since 3.3.</span>
 <span class="com"># Same string, two processes, two hashes — that is the mitigation working.</span>
-$ python3 -c <span class="m">"print(hash('collide'))"</span>
-$ python3 -c <span class="m">"print(hash('collide'))"</span>
+$ python3 -c <span class="str">"print(hash('collide'))"</span>
+$ python3 -c <span class="str">"print(hash('collide'))"</span>
 
 <span class="com"># PYTHONHASHSEED=0 disables it. Only ever for reproducing a bug.</span></pre>
       <div class="concept-desc verdict">
@@ -1052,8 +1052,8 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         so call your standard library's version.
       </div>
       <pre class="code-block"><span class="com"># The classic bug: lo + hi overflows on large arrays in fixed-width ints.</span>
-mid = (lo + hi) // <span class="m">2</span>          <span class="com"># overflows in C/Java</span>
-mid = lo + (hi - lo) // <span class="m">2</span>     <span class="com"># does not</span>
+mid = (lo + hi) // <span class="num">2</span>          <span class="com"># overflows in C/Java</span>
+mid = lo + (hi - lo) // <span class="num">2</span>     <span class="com"># does not</span>
 
 <span class="com"># Python: use the library. bisect returns an insertion point,</span>
 <span class="com"># which is more useful than a found/not-found boolean.</span>
@@ -1122,11 +1122,11 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
 
 <span class="com"># Naive recursion: correct, exponential, obviously right.</span>
 <span class="com"># One decorator makes it linear. That is the whole technique.</span>
-<span class="nd">@lru_cache</span>(maxsize=<span class="m">None</span>)
+<span class="fn">@lru_cache</span>(maxsize=<span class="kw">None</span>)
 <span class="kw">def</span> <span class="fn">ways</span>(n):
-    <span class="kw">if</span> n &lt; <span class="m">0</span>: <span class="kw">return</span> <span class="m">0</span>
-    <span class="kw">if</span> n == <span class="m">0</span>: <span class="kw">return</span> <span class="m">1</span>
-    <span class="kw">return</span> ways(n - <span class="m">1</span>) + ways(n - <span class="m">2</span>)</pre>
+    <span class="kw">if</span> n &lt; <span class="num">0</span>: <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">if</span> n == <span class="num">0</span>: <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">return</span> ways(n - <span class="num">1</span>) + ways(n - <span class="num">2</span>)</pre>
       <div class="concept-desc verdict">
         Convert to a bottom-up table only when you need it — to avoid recursion depth, or to
         drop memory from O(n) to O(1) by keeping just the rows still in use. Both are
@@ -1189,8 +1189,8 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
       </div>
       <pre class="code-block"><span class="com"># Nested quantifier over overlapping alternatives. Add one character</span>
 <span class="com"># to the input and the match time roughly doubles.</span>
-pattern = <span class="m">r"^(a+)+$"</span>
-subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="m">"!"</span>        <span class="com"># no match, and it will take a while</span>
+pattern = <span class="str">r"^(a+)+$"</span>
+subject = <span class="str">"a"</span> * <span class="num">30</span> + <span class="str">"!"</span>        <span class="com"># no match, and it will take a while</span>
 
 <span class="com"># Mitigations, in order of preference:</span>
 <span class="com">#  1. Avoid nested quantifiers and overlapping alternations</span>
@@ -1273,7 +1273,7 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
         <span class="kw">if</span> i &lt; k:
             keep.append(item)
         <span class="kw">else</span>:
-            j = random.randint(<span class="m">0</span>, i)     <span class="com"># inclusive</span>
+            j = random.randint(<span class="num">0</span>, i)     <span class="com"># inclusive</span>
             <span class="kw">if</span> j &lt; k:
                 keep[j] = item
     <span class="kw">return</span> keep</pre>
@@ -1935,10 +1935,10 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
         the nearest representable one and the error compounds across operations.
       </div>
       <pre class="code-block"><span class="com"># Not a language quirk — the hardware representation, everywhere</span>
-&gt;&gt;&gt; <span class="m">0.1</span> + <span class="m">0.2</span> == <span class="m">0.3</span>
+&gt;&gt;&gt; <span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>
 <span class="kw">False</span>
 &gt;&gt;&gt; <span class="kw">from</span> decimal <span class="kw">import</span> Decimal
-&gt;&gt;&gt; Decimal(<span class="m">"0.1"</span>) + Decimal(<span class="m">"0.2"</span>) == Decimal(<span class="m">"0.3"</span>)
+&gt;&gt;&gt; Decimal(<span class="str">"0.1"</span>) + Decimal(<span class="str">"0.2"</span>) == Decimal(<span class="str">"0.3"</span>)
 <span class="kw">True</span></pre>
       <div class="concept-desc verdict">
         <strong>Store money as integer minor units, or as a decimal type.</strong> Never as a

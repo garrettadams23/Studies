@@ -11840,26 +11840,26 @@ parameterized form is <code>sp_executesql</code>, which binds values exactly the
 <code>%s</code> does below.
 </div>
 <pre class="code-block"><span class="com"># Safe — the value is bound</span>
-cur.execute(<span class="m">"SELECT * FROM users WHERE email = %s"</span>, (email,))
+cur.execute(<span class="str">"SELECT * FROM users WHERE email = %s"</span>, (email,))
 
 <span class="com"># Injectable — the identifier cannot be bound, so it was formatted</span>
-cur.execute(<span class="m">f"SELECT * FROM users ORDER BY {sort_col} {direction}"</span>)
+cur.execute(<span class="str">f"SELECT * FROM users ORDER BY {sort_col} {direction}"</span>)
 
 <span class="com"># The only safe pattern for identifiers: an allow-list you control</span>
-COLS = {<span class="m">"name"</span>, <span class="m">"created_at"</span>, <span class="m">"email"</span>}
+COLS = {<span class="str">"name"</span>, <span class="str">"created_at"</span>, <span class="str">"email"</span>}
 <span class="kw">if</span> sort_col <span class="kw">not in</span> COLS: <span class="kw">raise</span> ValueError(sort_col)
-direction = <span class="m">"DESC"</span> <span class="kw">if</span> direction.upper() == <span class="m">"DESC"</span> <span class="kw">else</span> <span class="m">"ASC"</span></pre>
+direction = <span class="str">"DESC"</span> <span class="kw">if</span> direction.upper() == <span class="str">"DESC"</span> <span class="kw">else</span> <span class="str">"ASC"</span></pre>
 <pre class="code-block"><span class="com">-- The same three cases in T-SQL, inside a stored procedure</span>
 <span class="com">-- Injectable: the value is pasted into the string that EXEC runs</span>
-<span class="kw">EXEC</span>(<span class="m">'SELECT * FROM users WHERE email = '''</span> + @email + <span class="m">''''</span>);
+<span class="kw">EXEC</span>(<span class="str">'SELECT * FROM users WHERE email = '''</span> + @email + <span class="str">''''</span>);
 
 <span class="com">-- Safe: sp_executesql binds @e as a parameter</span>
-<span class="kw">EXEC</span> sp_executesql <span class="m">N'SELECT * FROM users WHERE email = @e'</span>,
-     <span class="m">N'@e nvarchar(320)'</span>, @e = @email;
+<span class="kw">EXEC</span> sp_executesql <span class="str">N'SELECT * FROM users WHERE email = @e'</span>,
+     <span class="str">N'@e nvarchar(320)'</span>, @e = @email;
 
 <span class="com">-- An identifier still cannot be bound. QUOTENAME makes it a name and never code;</span>
 <span class="com">-- the allow-list above still decides which names are allowed</span>
-<span class="kw">SET</span> @sql = <span class="m">N'SELECT * FROM users ORDER BY '</span> + QUOTENAME(@sort_col);</pre>
+<span class="kw">SET</span> @sql = <span class="str">N'SELECT * FROM users ORDER BY '</span> + QUOTENAME(@sort_col);</pre>
 <div class="concept-desc verdict">
 Same rule for shell commands: arguments can be passed as a list, but the
 <em>program name</em> and any flags cannot come from user input. If the shape of the
@@ -11938,7 +11938,7 @@ inv = Invoice.get(id)
 
 <span class="com"># Durable: ownership is part of the lookup. Forgetting it is a 404.</span>
 inv = Invoice.filter(id=id, owner_id=user.id).one_or_none()
-<span class="kw">if</span> inv <span class="kw">is</span> <span class="m">None</span>: <span class="kw">raise</span> NotFound</pre>
+<span class="kw">if</span> inv <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">raise</span> NotFound</pre>
 <div class="concept-desc verdict">
 Returning <strong>404 rather than 403</strong> for an object the caller may not see is
 deliberate: 403 confirms the record exists, which is itself a disclosure when the
@@ -12017,7 +12017,7 @@ requests on request.
 <span class="kw">from</span> defusedxml.ElementTree <span class="kw">import</span> parse   <span class="com"># drop-in, safe defaults</span>
 
 <span class="com"># Java: the two features that matter</span>
-factory.setFeature(<span class="m">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <span class="kw">true</span>);
+factory.setFeature(<span class="str">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <span class="kw">true</span>);
 factory.setXIncludeAware(<span class="kw">false</span>);</pre>
 <div class="concept-desc verdict">
 Modern parsers mostly default to safe now, which makes this a legacy-and-dependency
@@ -58969,7 +58969,7 @@ application can run in a Linux container at all.
 <tr><th>Property</th><th>.NET Framework (4.8)</th><th>Modern .NET</th></tr>
 <tr><td>Platform</td><td>Windows only</td><td class="c-green">Windows, Linux, macOS; containers</td></tr>
 <tr><td>Versioning</td><td>Machine-wide, one at a time</td><td>Side-by-side, or self-contained with the app</td></tr>
-<tr><td>Support</td><td class="c-yellow">Serviced with Windows, not evolving</td><td>Annual releases; LTS <span class="acro-exp">(Long Term Support)</span> every other one</td></tr>
+<tr><td>Support</td><td class="c-amber">Serviced with Windows, not evolving</td><td>Annual releases; LTS <span class="acro-exp">(Long Term Support)</span> every other one</td></tr>
 <tr><td>Migration blockers</td><td>—</td><td>WCF hosting, Web Forms, Windows-only APIs, some third-party libraries</td></tr>
 <tr><td>Startup</td><td>Slow, and the runtime is already resident</td><td>Fast; ReadyToRun and AOT <span class="acro-exp">(Ahead-of-Time Compilation)</span> compilation for serverless</td></tr>
 </table>
@@ -59909,7 +59909,7 @@ Get-Process |
 <table class="ref-table">
 <tr><th>Cmdlet</th><th>What it does</th><th>What comes out</th></tr>
 <tr><td><code>Where-Object</code></td><td>Keeps objects matching a condition</td><td>The same type, fewer of them</td></tr>
-<tr><td><code>Select-Object</code></td><td>Picks or computes properties; <code>-First</code>/<code>-Last</code>/<code>-Unique</code></td><td class="c-yellow">A new <code>PSCustomObject</code> — the original type is gone</td></tr>
+<tr><td><code>Select-Object</code></td><td>Picks or computes properties; <code>-First</code>/<code>-Last</code>/<code>-Unique</code></td><td class="c-amber">A new <code>PSCustomObject</code> — the original type is gone</td></tr>
 <tr><td><code>Select-Object -ExpandProperty</code></td><td>Unwraps one property to its bare value</td><td>Whatever that property's type is — often what you actually wanted</td></tr>
 <tr><td><code>Sort-Object</code></td><td>Orders by property</td><td>Same objects — but it must buffer them all first</td></tr>
 <tr><td><code>Group-Object</code></td><td>Buckets by a property value</td><td><code>GroupInfo</code> objects with <code>Name</code>, <code>Count</code>, <code>Group</code></td></tr>
@@ -76973,7 +76973,7 @@ succeed.
 <tr><th>Gap</th><th>Effect on the report</th><th>What to supply</th></tr>
 <tr><td>No authentication context</td><td>Everything behind the login is untested and unlisted</td><td>An authentication script or a replayable session, plus a logged-out detection rule</td></tr>
 <tr><td>Client-side routing</td><td>The spider finds one page</td><td>The AJAX <span class="acro-exp">(Asynchronous JavaScript and XML)</span> spider, or an OpenAPI spec, or a recorded HAR of a real session</td></tr>
-<tr><td>Baseline vs full scan</td><td class="c-yellow">Baseline is passive — it reports headers and obvious issues and attacks nothing</td><td>Know which one you ran; a green baseline is not a tested application</td></tr>
+<tr><td>Baseline vs full scan</td><td class="c-amber">Baseline is passive — it reports headers and obvious issues and attacks nothing</td><td>Know which one you ran; a green baseline is not a tested application</td></tr>
 <tr><td>Active scan in CI</td><td class="c-red">It submits forms and mutates data — against a shared staging database</td><td>An environment you can reset, and never production</td></tr>
 </table>
 <div class="concept-desc verdict">
@@ -82538,7 +82538,7 @@ authentication is structurally blind to it.
 <tr><td>The SPF ten-lookup limit</td><td class="c-red">Chained <code>include:</code> statements exceed it and the record fails <em>permerror</em> — which many receivers treat as no SPF at all. Flatten it, and re-check after adding any SaaS <span class="acro-exp">(Software as a Service)</span> sender</td></tr>
 <tr><td>Alignment, not just a pass</td><td>DMARC cares that the passing domain matches the visible From. Relaxed alignment lets a subdomain pass for the parent; <code>adkim=s; aspf=s</code> is stricter and breaks more forwarders</td></tr>
 <tr><td>Forwarding and mailing lists</td><td>Break SPF by changing the sending IP <span class="acro-exp">(Internet Protocol)</span>, and break DKIM if the list edits the body — which is what ARC exists to repair</td></tr>
-<tr><td>Stuck at <code>p=none</code></td><td class="c-yellow">Monitoring forever is the commonest outcome; the reports exist to find your senders, not to be admired</td></tr>
+<tr><td>Stuck at <code>p=none</code></td><td class="c-amber">Monitoring forever is the commonest outcome; the reports exist to find your senders, not to be admired</td></tr>
 <tr><td>Lookalike domains</td><td>Not addressed by any of the three — this is registrar monitoring plus an external-sender banner</td></tr>
 </table>
 <div class="concept-desc verdict">
@@ -86416,7 +86416,7 @@ changed the bucket's permissions and not who read what was in it.
 <table class="ref-table">
 <tr><th>Log type</th><th>State by default</th><th>Answers</th></tr>
 <tr><td>Admin Activity</td><td>Always on, free, cannot be disabled</td><td>Who changed the configuration</td></tr>
-<tr><td>Data Access — <code>ADMIN_READ</code></td><td class="c-yellow">Off</td><td>Who listed or read metadata</td></tr>
+<tr><td>Data Access — <code>ADMIN_READ</code></td><td class="c-amber">Off</td><td>Who listed or read metadata</td></tr>
 <tr><td>Data Access — <code>DATA_READ</code> / <code>DATA_WRITE</code></td><td class="c-red">Off (except BigQuery)</td><td>Who read or wrote the contents</td></tr>
 <tr><td>System Event</td><td>Always on, free</td><td>What Google itself did to your resources</td></tr>
 </table>
@@ -87371,7 +87371,7 @@ which is the enumeration step of most identity attacks, done with a normal login
 <tr><td>Users can register applications</td><td>Shadow app registrations, and consent phishing that succeeds quietly</td><td>Entra → User settings; plus an admin-consent workflow</td></tr>
 <tr><td>Anyone can invite guests</td><td>External accounts in the directory with no owner and no review</td><td>External collaboration settings → restrict to admins or a named role</td></tr>
 <tr><td>Full directory read for all members</td><td>Org-chart-quality reconnaissance from any compromised account</td><td>Restrict access to the <span class="volatile" data-checked="2026-09">Entra admin center</span>; accept that Graph still reads</td></tr>
-<tr><td>Security defaults on, Conditional Access unused</td><td class="c-yellow">Good baseline MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, but all-or-nothing — no break-glass exclusion, no risk conditions</td><td>Turn security defaults off <em>only</em> when CA policies are ready to replace them</td></tr>
+<tr><td>Security defaults on, Conditional Access unused</td><td class="c-amber">Good baseline MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, but all-or-nothing — no break-glass exclusion, no risk conditions</td><td>Turn security defaults off <em>only</em> when CA policies are ready to replace them</td></tr>
 </table>
 <div class="concept-desc verdict">
 <strong class="c-red">The last row is where tenants actually get hurt.</strong>
@@ -87440,7 +87440,7 @@ features below exist.
 <tr><th>Assumption</th><th>Reality</th><th>What actually does the job</th></tr>
 <tr><td>"It isolates access"</td><td>Inherited role assignments still apply</td><td>Scope assignments deliberately; PIM <span class="acro-exp">(Privileged Identity Management)</span> for standing access</td></tr>
 <tr><td>"It isolates the network"</td><td>The VNet is the boundary, and it is a separate object</td><td>NSGs, subnets, and separate VNets where isolation is real</td></tr>
-<tr><td>"We can move things later"</td><td class="c-yellow">Many resource types cannot be moved between groups or subscriptions at all</td><td>Decide the grouping at creation; check the move-support list first</td></tr>
+<tr><td>"We can move things later"</td><td class="c-amber">Many resource types cannot be moved between groups or subscriptions at all</td><td>Decide the grouping at creation; check the move-support list first</td></tr>
 <tr><td>"The group is in a region, so its resources are"</td><td>The group's region only stores its metadata — resources choose their own</td><td>Read each resource's location; a group in West Europe can hold East US machines</td></tr>
 <tr><td>"Deleting is reversible"</td><td class="c-red">Deleting the group deletes its contents, and most of it does not come back</td><td>Delete locks (<code>CanNotDelete</code>) on anything holding data</td></tr>
 </table>
@@ -90701,8 +90701,8 @@ better worst-case bounds. Latency and throughput are different goals, and amorti
 analysis only speaks to the second.
 </div>
 <pre class="code-block"><span class="com"># Pre-sizing removes the resizes entirely when the size is known</span>
-buf = [<span class="m">None</span>] * n_expected          <span class="com"># Python</span>
-buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected)     <span class="com"># Go: length 0, capacity reserved</span></pre>
+buf = [<span class="kw">None</span>] * n_expected          <span class="com"># Python</span>
+buf := make([]<span class="kw">int</span>, <span class="num">0</span>, nExpected)     <span class="com"># Go: length 0, capacity reserved</span></pre>
 </div>
 </div>
 </div>
@@ -90811,7 +90811,7 @@ than a test failure.
     <span class="kw">if</span> lo &gt;= hi: <span class="kw">return</span>              <span class="com"># base case</span>
     p = partition(a, lo, hi)
     quicksort(a, lo, p)              <span class="com"># BUG: should be p - 1</span>
-    quicksort(a, p + <span class="m">1</span>, hi)</pre>
+    quicksort(a, p + <span class="num">1</span>, hi)</pre>
 <div class="concept-desc verdict">
 Python defaults to a recursion limit near 1000 frames, which turns unbounded recursion
 into a clean exception. C and C++ have no such courtesy: the stack simply runs out, and
@@ -90989,12 +90989,12 @@ insight behind columnar storage — see <span class="xref" data-xref="columnar-e
 and behind why a scan over a column store outruns a row store on analytics by so much.
 </div>
 <pre class="code-block"><span class="com"># Array of structs: summing one field drags every other field into cache</span>
-<span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="m">64</span>]; };
+<span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="num">64</span>]; };
 P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes per line</span>
 
 <span class="com"># Struct of arrays: the summed field is contiguous</span>
 <span class="kw">float</span> xs[N], ys[N], zs[N];
-<span class="kw">char</span> names[N][<span class="m">64</span>];        <span class="com"># every fetched line is all x values</span></pre>
+<span class="kw">char</span> names[N][<span class="num">64</span>];        <span class="com"># every fetched line is all x values</span></pre>
 <div class="concept-desc verdict">
 Do not reach for this by default — it makes code harder to read and only pays where a
 hot loop touches a subset of fields over many records. It is a profiling result, not a
@@ -91067,8 +91067,8 @@ cannot precompute colliding keys.
 </div>
 <pre class="code-block"><span class="com"># Python randomises string hashing per process by default since 3.3.</span>
 <span class="com"># Same string, two processes, two hashes — that is the mitigation working.</span>
-$ python3 -c <span class="m">"print(hash('collide'))"</span>
-$ python3 -c <span class="m">"print(hash('collide'))"</span>
+$ python3 -c <span class="str">"print(hash('collide'))"</span>
+$ python3 -c <span class="str">"print(hash('collide'))"</span>
 
 <span class="com"># PYTHONHASHSEED=0 disables it. Only ever for reproducing a bug.</span></pre>
 <div class="concept-desc verdict">
@@ -91555,8 +91555,8 @@ lesson is not that it is hard, but that off-by-one boundaries deserve real care 
 so call your standard library's version.
 </div>
 <pre class="code-block"><span class="com"># The classic bug: lo + hi overflows on large arrays in fixed-width ints.</span>
-mid = (lo + hi) // <span class="m">2</span>          <span class="com"># overflows in C/Java</span>
-mid = lo + (hi - lo) // <span class="m">2</span>     <span class="com"># does not</span>
+mid = (lo + hi) // <span class="num">2</span>          <span class="com"># overflows in C/Java</span>
+mid = lo + (hi - lo) // <span class="num">2</span>     <span class="com"># does not</span>
 
 <span class="com"># Python: use the library. bisect returns an insertion point,</span>
 <span class="com"># which is more useful than a found/not-found boolean.</span>
@@ -91622,11 +91622,11 @@ with none of the index arithmetic.
 
 <span class="com"># Naive recursion: correct, exponential, obviously right.</span>
 <span class="com"># One decorator makes it linear. That is the whole technique.</span>
-<span class="nd">@lru_cache</span>(maxsize=<span class="m">None</span>)
+<span class="fn">@lru_cache</span>(maxsize=<span class="kw">None</span>)
 <span class="kw">def</span> <span class="fn">ways</span>(n):
-    <span class="kw">if</span> n &lt; <span class="m">0</span>: <span class="kw">return</span> <span class="m">0</span>
-    <span class="kw">if</span> n == <span class="m">0</span>: <span class="kw">return</span> <span class="m">1</span>
-    <span class="kw">return</span> ways(n - <span class="m">1</span>) + ways(n - <span class="m">2</span>)</pre>
+    <span class="kw">if</span> n &lt; <span class="num">0</span>: <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">if</span> n == <span class="num">0</span>: <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">return</span> ways(n - <span class="num">1</span>) + ways(n - <span class="num">2</span>)</pre>
 <div class="concept-desc verdict">
 Convert to a bottom-up table only when you need it — to avoid recursion depth, or to
 drop memory from O(n) to O(1) by keeping just the rows still in use. Both are
@@ -91686,8 +91686,8 @@ backtracking can be exponential.
 </div>
 <pre class="code-block"><span class="com"># Nested quantifier over overlapping alternatives. Add one character</span>
 <span class="com"># to the input and the match time roughly doubles.</span>
-pattern = <span class="m">r"^(a+)+$"</span>
-subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="m">"!"</span>        <span class="com"># no match, and it will take a while</span>
+pattern = <span class="str">r"^(a+)+$"</span>
+subject = <span class="str">"a"</span> * <span class="num">30</span> + <span class="str">"!"</span>        <span class="com"># no match, and it will take a while</span>
 
 <span class="com"># Mitigations, in order of preference:</span>
 <span class="com">#  1. Avoid nested quantifiers and overlapping alternations</span>
@@ -91766,7 +91766,7 @@ O(k) memory and one pass.
         <span class="kw">if</span> i &lt; k:
             keep.append(item)
         <span class="kw">else</span>:
-            j = random.randint(<span class="m">0</span>, i)     <span class="com"># inclusive</span>
+            j = random.randint(<span class="num">0</span>, i)     <span class="com"># inclusive</span>
             <span class="kw">if</span> j &lt; k:
                 keep[j] = item
     <span class="kw">return</span> keep</pre>
@@ -92417,10 +92417,10 @@ representable in base two any more than a third is in base ten, so the stored va
 the nearest representable one and the error compounds across operations.
 </div>
 <pre class="code-block"><span class="com"># Not a language quirk — the hardware representation, everywhere</span>
-&gt;&gt;&gt; <span class="m">0.1</span> + <span class="m">0.2</span> == <span class="m">0.3</span>
+&gt;&gt;&gt; <span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>
 <span class="kw">False</span>
 &gt;&gt;&gt; <span class="kw">from</span> decimal <span class="kw">import</span> Decimal
-&gt;&gt;&gt; Decimal(<span class="m">"0.1"</span>) + Decimal(<span class="m">"0.2"</span>) == Decimal(<span class="m">"0.3"</span>)
+&gt;&gt;&gt; Decimal(<span class="str">"0.1"</span>) + Decimal(<span class="str">"0.2"</span>) == Decimal(<span class="str">"0.3"</span>)
 <span class="kw">True</span></pre>
 <div class="concept-desc verdict">
 <strong>Store money as integer minor units, or as a decimal type.</strong> Never as a
@@ -106955,7 +106955,7 @@ part of it makes your build look better than it is.
 <tr><td>A warm cache</td><td>Your second visit skips everything the first one paid for</td><td>Tick "Disable cache", and test in a fresh profile or private window</td></tr>
 <tr><td>The dev build</td><td>Unminified, unbundled, with the framework's dev-mode checks in the flame chart</td><td>Profile the production build; React's profiling build if you need names</td></tr>
 <tr><td>Your machine</td><td>A developer laptop is several times faster than the median phone</td><td>4–6× CPU throttle plus Slow 4G, together — either alone is optimistic</td></tr>
-<tr><td>Lighthouse's number</td><td class="c-yellow">A single lab run with simulated throttling — it varies by ten points between runs on the same page</td><td>Treat lab scores as a diff between two builds, never as your users' experience</td></tr>
+<tr><td>Lighthouse's number</td><td class="c-amber">A single lab run with simulated throttling — it varies by ten points between runs on the same page</td><td>Treat lab scores as a diff between two builds, never as your users' experience</td></tr>
 <tr><td>Extensions</td><td>They inject scripts and inflate long tasks that are not yours</td><td>Profile in a clean profile, or incognito with extensions off</td></tr>
 </table>
 <div class="concept-desc verdict">
@@ -107762,7 +107762,7 @@ the component rarely re-renders enough for the divergence to show.
 <tr><th>Symptom</th><th>What is actually happening</th><th>The move</th></tr>
 <tr><td>Value stuck at its initial state inside a timer or subscription</td><td>The closure captured render 0 and the deps array said that was fine</td><td>Functional updates — <code>setN(n =&gt; n + 1)</code> — or a ref for the mutable handle</td></tr>
 <tr><td>Effect runs on every render</td><td>An object, array or inline function in the deps is a new identity each time</td><td>Move it inside the effect, or memoize the value, not the effect</td></tr>
-<tr><td>Two requests, or a doubled subscription, in dev only</td><td class="c-yellow">StrictMode mounts, unmounts and remounts on purpose to find missing cleanup</td><td>Write the cleanup function — this is the bug being surfaced, not a bug in React</td></tr>
+<tr><td>Two requests, or a doubled subscription, in dev only</td><td class="c-amber">StrictMode mounts, unmounts and remounts on purpose to find missing cleanup</td><td>Write the cleanup function — this is the bug being surfaced, not a bug in React</td></tr>
 <tr><td>Response from an old request overwrites a newer one</td><td>Two in-flight fetches resolving out of order</td><td><code>AbortController</code>, or an ignore flag set in the cleanup</td></tr>
 </table>
 <div class="concept-desc verdict">
@@ -115903,7 +115903,7 @@ indirect ones. Check the effective total, not the direct list:
 <span class="com"># Users closest to the limit, worst first</span>
 Get-ADUser <span class="kw">-Filter</span> * <span class="kw">-Properties</span> TokenGroups |
     Select-Object Name, @{n='Groups';e={$_.TokenGroups.Count}} |
-    Sort-Object Groups <span class="kw">-Descending</span> | Select-Object <span class="kw">-First</span> <span class="m">20</span></pre>
+    Sort-Object Groups <span class="kw">-Descending</span> | Select-Object <span class="kw">-First</span> <span class="num">20</span></pre>
 <div class="concept-desc verdict">
 Keep nesting to two levels — the depth AGDLP implies and no more. Every extra level
 makes membership harder to audit and pushes users toward a limit whose symptom does not
@@ -116122,11 +116122,11 @@ anything quarterly has had its chance to fail loudly. Then delete. The disable i
 instantly reversible; the delete is not.
 </div>
 <pre class="code-block"><span class="com"># Accounts unused for 90 days, still enabled</span>
-Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="m">90</span>.00:00:00 <span class="kw">-UsersOnly</span> |
+Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="num">90</span>.00:00:00 <span class="kw">-UsersOnly</span> |
     Where-Object Enabled | Select-Object Name, LastLogonDate
 
 <span class="com"># Computers the same, then disable and park them</span>
-Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="m">90</span>.00:00:00 <span class="kw">-ComputersOnly</span> |
+Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="num">90</span>.00:00:00 <span class="kw">-ComputersOnly</span> |
     Disable-ADAccount <span class="kw">-PassThru</span> |
     Move-ADObject <span class="kw">-TargetPath</span> "OU=Quarantine,DC=corp,DC=example,DC=com"</pre>
 <div class="concept-desc verdict">
@@ -116234,7 +116234,7 @@ Get-DnsServerScavenging <span class="kw">-ComputerName</span> dc01
 
 <span class="com"># Static records must have NO timestamp, or scavenging eats them</span>
 Get-DnsServerResourceRecord <span class="kw">-ZoneName</span> corp.example.com <span class="kw">-RRType</span> A |
-    Where-Object { $_.Timestamp -ne $<span class="m">null</span> -and $_.HostName -match <span class="m">'^(vpn|printer|nas)'</span> }</pre>
+    Where-Object { $_.Timestamp -ne <span class="var">$null</span> -and $_.HostName -match <span class="str">'^(vpn|printer|nas)'</span> }</pre>
 <div class="concept-desc verdict">
 Enable it on one zone, leave it a month, and read what it removed before enabling it
 everywhere. An aggressive interval on a site whose laptops are away for three weeks is
@@ -116310,7 +116310,7 @@ this is the thing forgotten when a new VLAN <span class="acro-exp">(Virtual Loca
 not work" with everything on the Windows side configured correctly.
 </div>
 <pre class="code-block">Add-DhcpServerv4Failover <span class="kw">-ComputerName</span> dhcp01 <span class="kw">-PartnerServer</span> dhcp02 `
-    <span class="kw">-Name</span> "Site-A" <span class="kw">-ScopeId</span> <span class="m">10.10.0.0</span> <span class="kw">-LoadBalancePercent</span> <span class="m">50</span>
+    <span class="kw">-Name</span> "Site-A" <span class="kw">-ScopeId</span> <span class="num">10.10.0.0</span> <span class="kw">-LoadBalancePercent</span> <span class="num">50</span>
 
 Get-DhcpServerv4ScopeStatistics <span class="kw">-ComputerName</span> dhcp01   <span class="com"># pool exhaustion</span>
 Get-DhcpServerInDC                                       <span class="com"># authorised servers</span></pre>
@@ -116380,8 +116380,8 @@ are per user per volume; File Server Resource Manager quotas are per folder and 
 useful ones.
 </div>
 <pre class="code-block"><span class="com"># Soft quota — warn at 80%, do not block. Start here.</span>
-New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw">-Size</span> <span class="m">100</span>GB <span class="kw">-SoftLimit</span> `
-    <span class="kw">-Threshold</span> (New-FsrmQuotaThreshold <span class="kw">-Percentage</span> <span class="m">80</span>)
+New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw">-Size</span> <span class="num">100</span>GB <span class="kw">-SoftLimit</span> `
+    <span class="kw">-Threshold</span> (New-FsrmQuotaThreshold <span class="kw">-Percentage</span> <span class="num">80</span>)
 
 <span class="com"># And keep shares off the system volume in the first place</span></pre>
 <div class="concept-desc verdict">
@@ -116551,7 +116551,7 @@ you, faster than reading template properties by hand.
 </div>
 <pre class="code-block"><span class="com"># Enumerate templates and CA settings, flagging the known ESC patterns.</span>
 <span class="com"># Run this against your own PKI as routine defensive work.</span>
-certipy find -u user@corp.example.com -p <span class="m">'...'</span> -dc-ip <span class="m">10.0.0.10</span> -vulnerable
+certipy find -u user@corp.example.com -p <span class="str">'...'</span> -dc-ip <span class="num">10.0.0.10</span> -vulnerable
 
 <span class="com"># Native equivalents for spot checks</span>
 certutil -TCAInfo
@@ -116601,12 +116601,12 @@ self-inflicted downtime. They happen because nobody owns the inventory — the
 certificate was installed during a project, by someone who has moved on.
 </div>
 <pre class="code-block"><span class="com"># Everything the CA issued that expires in the next 60 days</span>
-certutil -view -restrict <span class="m">"NotAfter&lt;=now+60:00:00,Disposition=20"</span> `
-    -out <span class="m">"CommonName,NotAfter,RequesterName"</span>
+certutil -view -restrict <span class="str">"NotAfter&lt;=now+60:00:00,Disposition=20"</span> `
+    -out <span class="str">"CommonName,NotAfter,RequesterName"</span>
 
 <span class="com"># Local store on a server</span>
 Get-ChildItem Cert:\LocalMachine\My |
-    Where-Object NotAfter -lt (Get-Date).AddDays(<span class="m">60</span>) |
+    Where-Object NotAfter -lt (Get-Date).AddDays(<span class="num">60</span>) |
     Select-Object Subject, NotAfter, Thumbprint</pre>
 <div class="concept-desc verdict">
 <strong>Monitor expiry from outside, on the live endpoint.</strong> A CA report misses
@@ -116655,10 +116655,10 @@ no backup, no downtime, no restore. Enable it now if it is not on; it is a one-w
 and costs nothing.
 </div>
 <pre class="code-block"><span class="com"># Is it on? If not, turn it on — irreversible, and you want it</span>
-Get-ADOptionalFeature <span class="kw">-Filter</span> <span class="m">'name -like "Recycle Bin*"'</span>
+Get-ADOptionalFeature <span class="kw">-Filter</span> <span class="str">'name -like "Recycle Bin*"'</span>
 
 <span class="com"># Restore a deleted user, memberships intact</span>
-Get-ADObject <span class="kw">-Filter</span> <span class="m">'Name -like "*jdoe*"'</span> <span class="kw">-IncludeDeletedObjects</span> |
+Get-ADObject <span class="kw">-Filter</span> <span class="str">'Name -like "*jdoe*"'</span> <span class="kw">-IncludeDeletedObjects</span> |
     Restore-ADObject</pre>
 </div>
 <div class="concept-card">
@@ -116738,12 +116738,12 @@ If the DC is already gone and cannot be demoted, clean the metadata explicitly. 
 leave it: replication partners keep attempting it, and the errors mask real faults.
 </div>
 <pre class="code-block"><span class="com"># Graceful, on the DC itself</span>
-Uninstall-ADDSDomainController <span class="kw">-DemoteOperationMasterRole</span> <span class="kw">-ForceRemoval</span>:$<span class="m">false</span>
+Uninstall-ADDSDomainController <span class="kw">-DemoteOperationMasterRole</span> <span class="kw">-ForceRemoval</span>:<span class="var">$false</span>
 
 <span class="com"># The DC is gone for good — remove it from the directory</span>
 ntdsutil "metadata cleanup" "remove selected server DC03" quit quit
-Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "computer"'</span> <span class="kw">-SearchBase</span> `
-    <span class="m">"OU=Domain Controllers,DC=corp,DC=example,DC=com"</span></pre>
+Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq "computer"'</span> <span class="kw">-SearchBase</span> `
+    <span class="str">"OU=Domain Controllers,DC=corp,DC=example,DC=com"</span></pre>
 <div class="concept-desc verdict">
 The same applies to a file server behind a DFS <span class="acro-exp">(Distributed File System)</span> namespace: remove the folder target
 first and let clients move, then decommission. Reversing those two steps is a
