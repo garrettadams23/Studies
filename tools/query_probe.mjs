@@ -572,6 +572,33 @@ const READERS = [
     ["asl numbers", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
     ["manual alphabet", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
   ]],
+  // plan.md's *Content ideas* checked 398 exam phrases against the site and
+  // found it a mention deep on most of them: every domain header carries a
+  // certification tag, and no reader here was revising for one. Put here before
+  // the first card of that queue, as the four readers above were, and scoped to
+  // the five rows that wave writes rather than to all 398: a reader whose
+  // queries nothing is about to answer records a backlog, not a census. Each
+  // `want` names the topic being written into, including one that does not
+  // exist yet, because §3 of that section found a quarter of the titles that
+  // seemed to own a phrase owned it in another sense.
+  ["somebody revising for a CompTIA exam", [
+    ["ecb mode", "", "sec/cryptography-algorithm-reference"],
+    ["block cipher modes", "", "sec/cryptography-algorithm-reference"],
+    ["gcm nonce reuse", "", "sec/cryptography-algorithm-reference"],
+    ["crc errors", "", "net/network-troubleshooting-a-systematic-approach"],
+    ["runts and giants", "", "net/network-troubleshooting-a-systematic-approach"],
+    ["late collisions", "", "net/network-troubleshooting-a-systematic-approach"],
+    ["administrative distance", "", "net/routing-protocols-how-routers-find-the-best-path"],
+    ["longest prefix match", "", "net/routing-protocols-how-routers-find-the-best-path"],
+    ["floating static route", "", "net/routing-protocols-how-routers-find-the-best-path"],
+    ["safe mode", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["sfc scannow", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["dism restorehealth", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["inaccessible boot device", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["windows won't boot", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["performance-based questions", "", "productivity/exam-technique-the-marks-you-lose-without-knowing-less"],
+    ["pbq", "", "productivity/exam-technique-the-marks-you-lose-without-knowing-less"],
+  ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
     ["what is a symlink"],
