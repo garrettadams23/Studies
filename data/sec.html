@@ -387,7 +387,7 @@
           </div>
 
           <!-- ── TOPIC: CRYPTOGRAPHY ─────────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🔑</span>
               <span class="topic-name">Cryptography Algorithm Reference</span>
@@ -483,6 +483,40 @@
                     encryption</em>, because nothing reverses it and nothing is meant to, and asymmetric
                     cryptography is not "stronger" than symmetric, it is slower and solves a different problem —
                     which is precisely why every protocol here uses it only to agree the symmetric key.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">AES Is Half a Cipher, and the Mode Decides What Leaks</div>
+                <div class="concept-desc">
+                  AES encrypts exactly sixteen bytes. Anything longer, from a TLS record to a whole disk, is
+                  encrypted by a <strong>mode of operation</strong> that decides how those sixteen-byte blocks are
+                  chained, and the mode answers the two questions the name <code>AES-256</code> leaves open: does
+                  equal plaintext produce equal ciphertext, and can anyone change the ciphertext without the
+                  receiver noticing? Those are the questions the first row of
+                  <span class="xref">Reading a Cryptographic Claim Critically — Vendor Slides &amp; "Military-Grade"</span>
+                  asks of every vendor, and the rows below are the answers.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Mode</th><th>How it works</th><th>What goes wrong</th><th>Where you meet it</th></tr></thead>
+                    <tbody>
+                      <tr><td>ECB <span class="acro-exp">(Electronic Codebook)</span></td><td>Each block is encrypted on its own, under the same key</td><td class="c-red">Equal plaintext blocks give equal ciphertext blocks, so the structure shows through: an image encrypted this way is still recognizably the image. No integrity</td><td>Nowhere, by choice. It survives as a library default and in homemade schemes</td></tr>
+                      <tr><td>CBC <span class="acro-exp">(Cipher Block Chaining)</span></td><td>Each block is XORed with the previous ciphertext block before it is encrypted, starting from an IV that must be unpredictable</td><td class="c-amber">No integrity of its own. A server that reports bad padding differently from a bad tag leaks the plaintext a byte at a time, the padding oracle, and a predictable IV is what BEAST used</td><td>TLS 1.0 to 1.2 suites, all removed from TLS 1.3; older file and archive formats</td></tr>
+                      <tr><td>CTR <span class="acro-exp">(Counter Mode)</span></td><td>Encrypts a counter and XORs <span class="acro-exp">(Exclusive OR)</span> the output with the data, which turns the block cipher into a stream cipher</td><td class="c-amber">Reuse a nonce under the same key and the XOR of the two ciphertexts is the XOR of the two plaintexts. No integrity: flip a bit of ciphertext and the same bit of plaintext flips</td><td>Inside GCM <span class="acro-exp">(Galois/Counter Mode)</span>. On its own, only with a separate authentication tag</td></tr>
+                      <tr><td>GCM</td><td>CTR for secrecy, plus an authentication tag over the ciphertext and any unencrypted header: authenticated encryption, or AEAD</td><td class="c-amber">Nonce reuse breaks both halves at once: the CTR leak above, and enough to recover the authentication key and forge messages</td><td class="c-green">TLS 1.2 and 1.3, IPsec <span class="acro-exp">(Internet Protocol Security)</span>, SSH <span class="acro-exp">(Secure Shell)</span>. The default</td></tr>
+                      <tr><td>XTS <span class="acro-exp">(XEX-based Tweaked-codebook mode with ciphertext Stealing)</span></td><td>Encrypts each disk sector with a tweak derived from its position, so the output is exactly the size of the input</td><td class="c-amber">No integrity, by design. Someone with the disk can put back an older copy of a sector and nothing detects it</td><td>Disk encryption only: BitLocker's XTS-AES, FileVault, LUKS <span class="acro-exp">(Linux Unified Key Setup)</span></td></tr>
+                    </tbody>
+                  </table>
+                  <!-- fact: random-nonce GCM capped at 2^32 messages per key | source: NIST SP 800-38D §8.3, as quoted in search results alongside its Rev. 1 draft; the PDF itself was not fetched | checked: 2026-11 -->
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The fourth row is the one to design around.</strong> Choose an
+                    authenticated mode, which means GCM, or ChaCha20-Poly1305 where there is no AES hardware, and
+                    treat the nonce as the one value that must never repeat under a key. A counter that only goes
+                    up is safer than a random nonce for a key that encrypts a lot: NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> caps random 96-bit nonces at
+                    2³² messages per key, because past that a collision stops being negligible. Every other row is
+                    a mistake, a legacy, a component or a disk.
                   </div>
                 </div>
               </div>
