@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it | ⬜ **queued** — nothing written, see its §7 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic | ◐ **started** — see its §9 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -66,9 +66,9 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Depth tail | **10th percentile 2,154 chars**, median 3,766 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 36 fact anchors: 83 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently. It rose by one with the ASCII chart's source link, and that anchor records that this container could not fetch the page rather than claiming a check. It rose by one more with GCM's random-nonce limit in the cipher-modes card, and that anchor says the NIST figure was confirmed in search results and the PDF was not fetched. One more for Cisco's default administrative distances, said the same way, and two for the Windows repair ladder: Microsoft's DISM-before-SFC order and the two failed starts that open WinRE. And one for CompTIA's rule that a virtual PBQ cannot be skipped and returned to, which this container could not fetch from comptia.org and says so | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **56** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **57** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -143,7 +143,7 @@ before lint before the expensive determinism and budget checks.
 | 3 | Wrote **"whitelist"** where house style is "allowlist" | `check_renames.py`, already in `make check`. First time it caught same-session writing |
 | 4 | A stray `<div class="topic-icon-none">` typed into a header | **Nothing catches this.** Re-read the first ten lines of each new card before splicing |
 | 5 | A regex audit found `DP` inside `UDP`, `RA` inside `YARA`, `SCP` inside `OSCP` — half a 77-row finding was the regex looking at itself | `(?<![A-Za-z0-9])`. A token boundary is not a word boundary when the tokens are acronyms |
-| 6 | Used `class="c-yellow"`, which does not exist | Grep `style.css` for the utility class before using one. Six exist; the rest are `style="color: var(--…)"` |
+| 6 | Used `class="c-yellow"`, which does not exist | Grep `style.css` for the utility class before using one. Six exist; the rest are `style="color: var(--…)"`. **Now a gate:** the habit was got past nine times, and `check_css_vars.py` fails on a class no rule defines |
 | 7 | Wrote a related-map target from memory; **slugs truncate at 60 characters** and the real id ended `…funds-i` | `suggest_related.py --check` names the missing target and the resulting one-way edge in the same run |
 | 8 | Filed a new acronym under `"c": "Military"` — the acronym domain is generated **by category**, so one entry created a whole `By Area — Military` topic and moved the site count | Check the neighbours before inventing a category. A category field in a generated taxonomy is a structural decision |
 | 9 | Probe zeros were **~60% phrasing misses**, including two cards written an hour earlier | Step 1 of the loop. Verify every zero against the real title list |
@@ -1425,7 +1425,7 @@ under the names they have. Renaming is a redesign, and it moves nothing for the 
 
 | Class | Where | What it was meant to be |
 |---|---|---|
-| `c-yellow` | 9 table cells in 6 files: `cloud` 3, `web` 2, `blueteam` 1, `redteam` 1, `script.05-platform` 1, `script.06-admin-automation` 1 | The caution tone between green and red. The house class is `c-amber`, and the cells beside these nine use it |
+| `c-yellow` | 9 table cells in 6 files: `cloud` 3, `web` 2, `blueteam` 1, `redteam` 1, `script.05-platform` 1, `script.06-admin-automation` 1 | The caution tone between green and red. The house class is `c-amber`. The cells beside them use `c-red` and `c-green`, not `c-amber` as this cell first said. Fixed, see §9 |
 | `m` | 61 spans in code blocks: `cs` 27, `infra` 19, `sec` 15 | A number literal. This is a Pygments token name; the house token is `num` |
 | `nd` | 1 span in `cs` | A decorator, also a Pygments name |
 
@@ -1884,6 +1884,39 @@ wrong-sense correction in §3.
 * **Owned by a title (1):** `conway's law`
 
 </details>
+
+## 9. What shipped — the first wave
+
+Conducted in one session, in §7's order, and recorded below as *Session — starting the
+content-ideas queue*. §7's steps 1, 2, 3 and 5, then §4's first five rows, one commit per
+domain. The exam reader opened at **0 of 16** and closed at **16 of 16**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 7.1 | The classes that color nothing | 71 elements. `c-yellow` to `c-amber` (9). `m` to the house literal tokens (61): it was a catch-all for numbers, strings and constants, not a number class. `nd` to `fn` (1). Then `style-orange` removed, because an inline `var(--orange)` was doing its work. Both mechanical commits are in `.git-blame-ignore-revs`, and stamping the four touched domains moves nothing into this month |
+| 7.2 | The gate | `check_css_vars.py` fails on a class on a real element that no selector defines, with ten allowed names that each carry a reason. A parser, because the regex census counted `link`, which was text in a code sample. Run on the tree before 7.1 it reports exactly 72. `style_equiv.mjs` counted differences only up to the five it printed; it counts all of them now |
+| 7.3 | The readers | *Somebody revising for a CompTIA exam*, 16 queries over this wave's five rows. **The theory reader is not added yet**: a reader whose queries nothing is about to answer records a backlog, not a census. It goes in with the first theory card |
+| 7.5 | One picture first | §2 row 1, the six UML lines. **No new CSS**, and the first attempt showed why the question was worth asking: `math-svg` is a fluid full-width frame, and in a table cell it drew the lines 51×9 px on a phone. A picture inside a cell takes its size from its own `width` and `height` attributes. Full-width figures use the frame |
+| 4.1 | Block-cipher modes | A card in *Cryptography Algorithm Reference*. It answers the "Which mode? Is it authenticated?" row of *Reading a Cryptographic Claim Critically*, and the two now link both ways |
+| 4.9, 4.10 | Interface counters; which route wins | A card each in `net`. The counters card gives the duplex-mismatch fingerprint the troubleshooting table had only named. The routes card gives the three tests in order and the floating static route |
+| 4.14 | The Windows repair ladder | A new topic in `endpoint`, on the service-desk path after the slow-laptop topic: the ladder, the fingerprint and the Safe Mode trap |
+| 4.19 | Performance-based questions | A card in *Exam Technique*. **The draft sentence in §4 was wrong**: CompTIA's current pages do not say PBQs come first. What they do say is better: a simulation can be marked and revisited, and a virtual item cannot |
+
+**Two claims in this section were wrong, and stay visible rather than silently fixed.** §1
+said the cells beside the nine `c-yellow` cells use `c-amber`. Read, they use `c-red` in
+seven tables and `c-green` in one; the fix stands on the house tone instead. And §4 row
+19's draft said PBQs come first, which is what the older sources say.
+
+**One gap found underneath an old query.** `the user has two accounts` had passed the census
+at exactly 60 results, which is the wide threshold, and the repair ladder made it 61. Nothing
+in that set is about one person with two identities. `soft-match` and `hard-match` appear
+nowhere on the site, so the question is kind 2, and its natural home is `infra`'s *Entra
+Connect & Hybrid Identity* or `m365`'s joiner-mover-leaver topic. Queued here; the query
+carries the verdict.
+
+**Not done, and why.** The other 15 rows of §4, the other 19 pictures and the exam paths
+are the queue. `make visual` fails in this container on the commit before this session as
+well, at the same 10.3% and 10.1%. Its fonts render wider, so the baseline was left alone.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -6980,4 +7013,71 @@ shapes: 58 of 1,503 topics · 9 with an SVG · 15 of 29 domains with none · 75 
 look: 15 classes with no rule · c-yellow 9 cells in 6 files · m 61 spans · nd 1
 paths: 102, 0 named for an exam · census unchanged at 373 of 398
 make check green, 45 gates · probe-check green · browser suites not re-run, the built page is unchanged
+```
+
+## Session — starting the content-ideas queue, and the three things the plan had wrong
+
+The request was **start the plan**. The queue was *Content ideas*, and §7 set the order: fix
+the look's hole, gate it, add the reader, draw one picture, then write. All of it shipped,
+with one commit per step and per domain. Its §9 is the table. This is what doing it found.
+
+### The proof tool was undercounting its own proof
+
+The recolor changed 71 elements, and `style_equiv.mjs` reported **25 differences**. It
+printed five per domain, and it also stopped counting at five, so the summary was the
+number it had printed. That is an undercount presented as a total, in the tool whose only
+job is to say what a change moved. It counts everything now, and tallies which properties
+moved: 72 elements, the 71 plus one `<code>` inheriting from a recolored cell, and only
+`color` and the border colors that follow it. **The shape is the oldest one in this file:
+a check that stops looking reports the same thing as one that found nothing.**
+
+### The stamper's two traps, both met on the way
+
+- **An annotator span in an uncommitted change reads as a review.** Adding `AEAD` to the
+  dictionary expanded it in the TLS card, and stamping with the new card in the same change
+  moved the TLS topic to 2026-11 for one span. `CONTRIBUTING.md` already asks for annotator
+  passes as their own commit; this session followed that only after the stamper showed why.
+- **A comment above a new topic belongs to the topic before it.** The stamper gives every
+  line between two topic openings to the earlier topic, so the marker comment over the new
+  repair-ladder topic re-dated *Lost, Stolen & Returning Devices*. With the marker inside
+  the new topic, only the new topic moves. Earlier topic additions may have done this to
+  their neighbors. `CONTRIBUTING.md` says it now.
+
+### The census caught a query that had never been answered
+
+`the user has two accounts` had been scored answered with **60** results in 17 domains,
+because 60 is the threshold. The new topic's "a second account" made it 61, and it became
+the one unexplained result that was not the new reader. The tempting fix was to reword the
+new card, and the census forbids it. Read, the set holds no card about one person with two
+identities, and `soft-match` appears nowhere on the site. So the query carries a verdict that
+names the gap, and *Content ideas* §9 queues it. **A number that sits exactly on a threshold is
+a measurement of the threshold.**
+
+### What the plan itself had wrong
+
+| The plan said | Read, it was | Where it is corrected |
+|---|---|---|
+| The cells beside `c-yellow` use `c-amber` | `c-red` in seven tables, `c-green` in one | §1's table, and §9 |
+| PBQs "usually come first" (§4 row 19's draft) | Older sources say so; CompTIA's current pages do not. They say a simulation can be revisited and a virtual item cannot | The card, and §9 |
+| A diagram is "inline SVG" with the existing rules | True, but `math-svg` is a full-width frame: in a table cell it drew 51×9 px on a phone. A cell picture takes its size from its own attributes | §9 |
+
+The draft sentences in §4 carried a warning that they were written from memory. One of the
+five shipped was wrong, and the warning is why it was checked before it was copied.
+
+### What was verified, and how far
+
+Every volatile number in the five cards was checked by search, and none of the pages behind
+them could be fetched. `comptia.org` does not resolve from this container. So each fact
+anchor names its source and says it was confirmed in search results and not fetched:
+GCM's 2³² random-nonce cap, Cisco's eight default distances, Microsoft's DISM-before-SFC
+order, the two failed starts that open WinRE, and CompTIA's PBQ rule. Five anchors, and the
+*Dated claims* row rose from 78 to 83 for those reasons.
+
+```
+12 commits · 1 new topic (endpoint) · 6 cards (sec 1, net 2, endpoint 3) + 1 (productivity) · 6 pictures (eng)
+classes: 71 recolored + 1 removed, then gated · check_css_vars fixtures 13 -> 26 · style_equiv counts all differences
+reader: somebody revising for a CompTIA exam, 0 of 16 -> 16 of 16 · census 373 of 398 -> 389 of 414, 0 unexplained
+acronyms 1,104 -> 1,110 · related links 4,904 -> 4,918 · path steps 1,601 -> 1,602 · dated claims 78 -> 83
+45 gates green · smoke 164 · search 58 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, and 0/2 on the commit before this session: font rendering, baseline left alone
 ```
