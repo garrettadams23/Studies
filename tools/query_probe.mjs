@@ -311,7 +311,8 @@ const READERS = [
     // ── batch seventeen ──
     ["how do i prove it is not the network",
      "wide and inherent, and the widest noun this site has: `network` is the only word left after the stop list drops `how do i prove it is not the`, and it is in a fifth of the corpus. The answer is inside the set — `ops` *Troubleshooting Like a Pro* and `net`'s own troubleshooting cards are all in the 83. Ranking would pick between them; this matcher is a filter"],
-    ["the user has two accounts"],
+    ["the user has two accounts",
+     "wide by one, and never answered by count alone: 60 cards in 17 domains passed only because 60 is the threshold, and the Windows repair ladder's `a second account` made it 61. Three common words and no exact phrase. Kind 2 underneath: one person with two identities, after a rehire or an Entra Connect match that failed, is written nowhere — `soft-match` and `hard-match` appear 0 times. Queued in plan.md's *Content ideas*"],
     ["the software installed but does not appear"],
     // ── batch eighteen ──
     ["the user changed their name"],
