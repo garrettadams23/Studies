@@ -599,6 +599,33 @@ const READERS = [
     ["windows won't boot", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
     ["performance-based questions", "", "productivity/exam-technique-the-marks-you-lose-without-knowing-less"],
     ["pbq", "", "productivity/exam-technique-the-marks-you-lose-without-knowing-less"],
+    // ── second wave: §4 rows 2–8 and 11–13, added before their cards ──
+    // Left out on purpose: `separation of duties` already reaches the insider
+    // topic, and `policy decision point` reaches zero trust at 59 results, one
+    // short of wide, so neither measures anything this wave will change.
+    ["bell-lapadula", "", "sec/access-control-models"],
+    ["biba integrity model", "", "sec/access-control-models"],
+    ["clark-wilson", "", "sec/access-control-models"],
+    ["chinese wall", "", "sec/access-control-models"],
+    ["policy enforcement point", "", "sec/zero-trust-never-trust-always-verify"],
+    ["false acceptance rate", "", "sec/multi-factor-authentication-layers-of-proof"],
+    ["crossover error rate", "", "sec/multi-factor-authentication-layers-of-proof"],
+    ["mandatory vacation", "", "sec/the-insider-threat-program-malicious-negligent-compromised"],
+    ["job rotation", "", "sec/the-insider-threat-program-malicious-negligent-compromised"],
+    ["dual control", "", "sec/the-insider-threat-program-malicious-negligent-compromised"],
+    ["toctou", "", "sec/broken-access-control-idor-traversal-the-checks-nobody-ran"],
+    ["maximum tolerable downtime", "", "ops/bcp-dr-key-metrics-recovery-strategies"],
+    ["mtd vs rto", "", "ops/bcp-dr-key-metrics-recovery-strategies"],
+    ["memorandum of understanding", "", "grc/third-party-risk-your-security-is-only-as-strong-as-your-ven"],
+    ["mou vs moa", "", "grc/third-party-risk-your-security-is-only-as-strong-as-your-ven"],
+    ["business partners agreement", "", "grc/third-party-risk-your-security-is-only-as-strong-as-your-ven"],
+    ["t568a vs t568b", "", "net/structured-cabling-racks-fiber-in-practice"],
+    ["attenuation", "", "net/structured-cabling-racks-fiber-in-practice"],
+    ["demarcation point", "", "net/structured-cabling-racks-fiber-in-practice"],
+    ["tone and probe", "", "net/the-field-toolkit-what-to-carry-and-the-test-each-tool-answe"],
+    ["tdr", "", "net/the-field-toolkit-what-to-carry-and-the-test-each-tool-answe"],
+    ["lldp", "", "net/network-documentation-that-stays-current"],
+    ["syslog severity levels", "", "ops/structured-logging-log-pipelines"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
