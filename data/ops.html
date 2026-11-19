@@ -385,7 +385,7 @@
                NEW TOPIC: BCP / DR Key Metrics
                Source: CISSP + Net+ Cheat Sheet PDFs
           ═══════════════════════════════════════════════════════════════ -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🏢</span>
               <span class="topic-name">BCP <span class="acro-exp">(Business Continuity Plan)</span> / DR — Key Metrics &amp; Recovery Strategies</span>
@@ -603,6 +603,39 @@
                     independent, which is the assumption real outages break, and
                     <span class="xref">Probability Fundamentals — Independence, Conditional Probability &amp; Expectation</span>
                     works through what that does to redundancy.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">RTO Is Not the Deadline: Maximum Tolerable Downtime Is, and the Business Sets It</div>
+                <div class="concept-desc">
+                  The core metrics above begin at RTO and leave out the number it answers to. Maximum tolerable
+                  downtime (MTD) is how long a business process can be disrupted before the harm to the organization
+                  is significant, which is how NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> SP 800-34 defines it. It belongs to a process rather than a
+                  system, and the business sets it in the business impact analysis. The people who restore systems
+                  inherit it. Downtime then has two parts: the RTO, which brings the systems back, and the work
+                  recovery time (WRT) that follows, while the data is checked, the work lost since the recovery point
+                  is entered again and the backlog is cleared. Both have to fit inside the limit, so RTO + WRT ≤ MTD. Take
+                  an order desk that can be down for 48 hours.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Plan</th><th>RTO</th><th>Orders lost (RPO)</th><th>WRT</th><th>RTO + WRT</th></tr></thead>
+                    <tbody>
+                      <tr><td>Warm site, a backup every four hours</td><td>30 hours</td><td>Up to 4 hours</td><td>12 hours</td><td class="c-green">42 hours, inside</td></tr>
+                      <tr><td>The same site, a nightly backup</td><td>30 hours</td><td>Up to 24 hours</td><td>24 hours</td><td class="c-red">54 hours, over</td></tr>
+                      <tr><td>A hot site, still a nightly backup</td><td>4 hours</td><td>Up to 24 hours</td><td>24 hours</td><td class="c-green">28 hours, inside</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The second row is the trap.</strong> The restore is exactly as fast as in the
+                    first row and the plan still fails, because a later recovery point leaves more work to do after the
+                    systems are back. RTO and RPO are usually set and tested separately, and the limit they share is set
+                    somewhere else and often never written down, so nothing adds them up. The third row repairs the plan
+                    by spending on the wrong half: the site table's most expensive row buys back 26 hours of restore,
+                    where the first row's four-hourly backup fixed it by shortening the other half. An RTO with no MTD
+                    above it is a number IT chose, and nothing checks that it is short enough.
                   </div>
                 </div>
               </div>
@@ -2741,7 +2774,7 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🪵</span>
               <span class="topic-name">Structured Logging &amp; Log Pipelines</span>
@@ -2810,6 +2843,44 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
                     "which endpoint returned 500 for tenant X in the last hour" — and log exactly the
                     fields that answer it; anything else belongs in a metric, which is orders of
                     magnitude cheaper per event.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Syslog Severity Counts Down, and the Number Is the Writer's Opinion</div>
+                <div class="concept-desc">
+                  The <code>level</code> field in the first card is a modern form of an old idea, and syslog fixes it at
+                  eight values, defined in RFC <span class="acro-exp">(Request for Comments)</span> 5424. Two things about the scale catch people. It runs backwards, so
+                  zero is the worst. And a threshold means that number and everything more severe: on a Cisco device,
+                  <code>logging trap warnings</code> sends levels 0 to 4 to the syslog server and drops the rest. Each
+                  message also names a facility, the part of the system that wrote it, and the number in angle brackets
+                  at the start of a raw message is the two combined, facility × 8 + severity.
+                </div>
+                <div class="dw">
+                  <!-- fact: Cisco IOS keyword per level, and the default `logging trap` level, informational (6) | source: Cisco Community answers and the O'Reilly Cisco IOS Cookbook, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+                  <!-- fact: an interface going down is logged as %LINK-3-UPDOWN and %LINEPROTO-5-UPDOWN on IOS | source: Cisco Community threads and the Catalyst 3750 system message guide's severity table, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+                  <table class="ref-table">
+                    <thead><tr><th>Level</th><th>Name</th><th>What RFC 5424 says it means</th><th>Cisco keyword</th><th>At <code>logging trap warnings</code></th></tr></thead>
+                    <tbody>
+                      <tr><td>0</td><td>Emergency</td><td>System is unusable</td><td>emergencies</td><td class="c-green">Sent</td></tr>
+                      <tr><td>1</td><td>Alert</td><td>Action must be taken immediately</td><td>alerts</td><td class="c-green">Sent</td></tr>
+                      <tr><td>2</td><td>Critical</td><td>Critical conditions</td><td>critical</td><td class="c-green">Sent</td></tr>
+                      <tr><td>3</td><td>Error</td><td>Error conditions</td><td>errors</td><td class="c-green">Sent</td></tr>
+                      <tr><td>4</td><td>Warning</td><td>Warning conditions</td><td>warnings</td><td class="c-green">Sent</td></tr>
+                      <tr><td>5</td><td>Notice</td><td>Normal but significant condition</td><td>notifications</td><td class="c-muted">Dropped</td></tr>
+                      <tr><td>6</td><td>Informational</td><td>Informational messages</td><td>informational</td><td class="c-muted">Dropped</td></tr>
+                      <tr><td>7</td><td>Debug</td><td>Debug-level messages</td><td>debugging</td><td class="c-muted">Dropped</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The fifth row is where thresholds are usually set, and the table cannot tell
+                    you what lands on either side of it.</strong> The severity was chosen by whoever wrote the line of
+                    code, long before your incident existed. When an interface goes down, a Cisco router typically logs
+                    it twice: <code>%LINK-3-UPDOWN</code> at error and <code>%LINEPROTO-5-UPDOWN</code> at notice, one
+                    event at two severities chosen by two pieces of code. Use the threshold to control volume, and alert
+                    on the specific messages that matter by name, whatever level they arrive at. Cisco's default trap
+                    level is informational, which keeps everything but debug.
                   </div>
                 </div>
               </div>
