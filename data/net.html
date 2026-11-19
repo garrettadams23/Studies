@@ -7272,7 +7272,7 @@ Nobody hears anything, so media did not.</pre>
 </div>
 
 <!-- ── TOPIC: STRUCTURED CABLING ─────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧵</span>
     <span class="topic-name">Structured Cabling, Racks &amp; Fiber in Practice</span>
@@ -7356,6 +7356,107 @@ Nobody hears anything, so media did not.</pre>
         <div class="concept-desc verdict">
           Never look into a fiber end face or an active port. The light is invisible and focused, and
           eye damage is permanent — inspect with a scope, and treat every port as live.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Concept</div>
+      <div class="concept-title">From the Street to the Desk: the Demarc, the Distribution Frames and the 90-Meter Run</div>
+      <div class="concept-desc">
+        The cards above keep a rack in order. This is the map the racks sit on, in the words the exams use. A
+        provider's circuit enters the building at the demarcation point. The main distribution frame (MDF)
+        takes it from there, with the core switching and a backbone to an intermediate distribution frame
+        (IDF) on each floor or zone, and from each IDF one horizontal run per outlet goes through the walls to
+        a desk. The lengths are a budget rather than a superstition. Attenuation is the loss of signal
+        strength along a cable, measured in decibels, and it grows with length, so the standard gives the
+        permanent run in the wall 90 meters and the patch cords at its two ends the last 10, keeping the whole
+        channel inside 100.
+      </div>
+      <div class="dw">
+        <div class="dora-seq">
+          <div class="dora-item">
+            <div class="dora-letter">D</div>
+            <div class="dora-word">Demarc</div>
+            <div class="dora-desc">The provider hands its circuit over, often at a smartjack</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">M</div>
+            <div class="dora-word">MDF</div>
+            <div class="dora-desc">The main telecom room: core switching and the backbone</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">I</div>
+            <div class="dora-word">IDF</div>
+            <div class="dora-desc">A telecom room per floor, where the runs land on patch panels</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">H</div>
+            <div class="dora-word">Horizontal run</div>
+            <div class="dora-desc">Up to 90 m in the walls, from the panel to the wall outlet</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">C</div>
+            <div class="dora-word">Cords</div>
+            <div class="dora-desc">Up to 10 m at the two ends together: a 100 m channel</div>
+          </div>
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Place</th><th>Whose it is</th><th>The question it answers in a fault</th></tr></thead>
+          <tbody>
+            <tr><td>Demarcation point</td><td>The provider's, up to and including it</td><td>Does the circuit test clean to here? If it does, the fault is on your side</td></tr>
+            <tr><td>Main distribution frame</td><td>Yours</td><td>Is it everyone in the building? Then here, or past the demarc</td></tr>
+            <tr><td>Intermediate distribution frame</td><td>Yours</td><td>Is it everyone on one floor? Then that IDF's switch, or its backbone link</td></tr>
+            <tr><td>Horizontal run</td><td>Yours, and the hardest part to replace</td><td>Does it pass certification end to end? Testers report its attenuation as insertion loss</td></tr>
+            <tr><td>Patch cords</td><td>Yours, and the cheapest part</td><td>Does a known-good cord fix it? Substitution answers that in seconds</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The first row is the one to find first, because it splits every fault into
+          the provider's and yours.</strong> A carrier can test its circuit to the smartjack and prove it clean
+          while the outage sits in the cable from the demarc to your router, which is yours unless the contract
+          moved the demarc. Knowing where it is, and having it labeled, turns an argument with the carrier into
+          a test. The rows after it narrow a fault the same way, by asking how many people it reaches.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">T568A and T568B Carry Traffic Identically, and a Run With One at Each End Is a Crossover</div>
+      <div class="concept-desc">
+        The two ways to wire an RJ45 <span class="acro-exp">(Registered Jack 45)</span> jack differ only in where the orange and green pairs go, and the cabling
+        table in <span class="xref">Cabling, Connectors &amp; Ethernet Standards</span> lists both color
+        orders. Drawn pin by pin, the difference is four pins, and they are exactly the four that 10 and 100
+        Mb/s Ethernet sends and receives on.
+      </div>
+      <div class="dw">
+        <!-- fact: ANSI/TIA-568 prefers T568A for horizontal cabling, and the two pinouts differ only at pins 1, 2, 3 and 6 | source: Wikipedia's ANSI/TIA-568 article and cable vendors' pinout guides, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <!-- fact: fixing both speed and duplex on a Cisco port turns off auto-negotiation and Auto-MDI/MDIX with it, except at 1000/full | source: Cisco Secure Firewall device documentation and Cisco Community threads, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <table class="ref-table">
+          <thead><tr><th>Pin</th><th>T568A</th><th>T568B</th><th>At 10 or 100 Mb/s, a computer's port uses it to</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td class="c-amber">White/green</td><td class="c-amber">White/orange</td><td>Transmit</td></tr>
+            <tr><td>2</td><td class="c-amber">Green</td><td class="c-amber">Orange</td><td>Transmit</td></tr>
+            <tr><td>3</td><td class="c-amber">White/orange</td><td class="c-amber">White/green</td><td>Receive</td></tr>
+            <tr><td>4</td><td>Blue</td><td>Blue</td><td class="c-muted">Nothing</td></tr>
+            <tr><td>5</td><td>White/blue</td><td>White/blue</td><td class="c-muted">Nothing</td></tr>
+            <tr><td>6</td><td class="c-amber">Orange</td><td class="c-amber">Green</td><td>Receive</td></tr>
+            <tr><td>7</td><td>White/brown</td><td>White/brown</td><td class="c-muted">Nothing</td></tr>
+            <tr><td>8</td><td>Brown</td><td>Brown</td><td class="c-muted">Nothing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The four amber rows are the whole difference, and they are the transmit and
+          receive pins.</strong> That is why a cable wired A at one end and B at the other is a crossover, and
+          why the two perform identically when one is used at both ends. Gigabit uses all eight pins, and the
+          automatic crossover in modern ports, Auto-MDI-X, makes a mixed run work anyway. So the mistake stays
+          silent until somebody fixes a Cisco port's speed and duplex at 10 or 100 Mb/s, which turns
+          auto-negotiation off and Auto-MDI-X with it, and a link that worked for years goes down. The standard
+          prefers T568A for horizontal cabling and many installers use T568B. Either is right: pick one for the
+          site, and write it on the patch panel.
         </div>
       </div>
     </div>
@@ -7445,7 +7546,7 @@ Nobody hears anything, so media did not.</pre>
 </div>
 
 <!-- ── TOPIC: NETWORK DOCUMENTATION ──────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🗺️</span>
     <span class="topic-name">Network Documentation That Stays Current</span>
@@ -7504,6 +7605,41 @@ Nobody hears anything, so media did not.</pre>
           references and provider escalation numbers are exactly what nobody can find at 2 a.m., and
           they belong somewhere reachable when the network is down — which means not only on the
           network.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">The Switch Already Knows What Is Plugged In, and Tells Anyone Who Asks</div>
+      <div class="concept-desc">
+        The first table says a port map should be generated from the devices and never kept by hand, and this
+        is the protocol that makes that possible. Each switch, router, access point and phone tells its
+        directly connected neighbor who it is: its name, the port it is sending from, its model and software,
+        its management address and its VLAN. The Link Layer Discovery Protocol (LLDP) is the vendor-neutral
+        standard, IEEE <span class="acro-exp">(Institute of Electrical and Electronics Engineers)</span> 802.1AB, and the Cisco Discovery Protocol (CDP) is Cisco's own. On Cisco devices CDP is
+        on by default and LLDP has to be turned on with <code>lldp run</code>. CDP announces every 60 seconds
+        and LLDP every 30, and a neighbor that falls silent is forgotten after 180 and 120. Then
+        <code>show cdp neighbors detail</code> or <code>show lldp neighbors detail</code> lists what is on the
+        far end of every port, as it is now.
+      </div>
+      <div class="dw">
+        <!-- fact: CDP is on by default on Cisco IOS and LLDP is off until `lldp run`; CDP sends every 60 s with a 180 s holdtime, LLDP every 30 s with 120 s | source: CCNA study guides and Cisco Community posts, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <table class="ref-table">
+          <thead><tr><th>The port faces</th><th>Discovery</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>A switch, router or access point you manage</td><td class="c-green">On</td><td>It is the port map, the cabling check and the answer to what is on the far end of a port, at no cost</td></tr>
+            <tr><td>An IP phone</td><td class="c-green">On: LLDP-MED, or CDP for Cisco's phones</td><td>LLDP-MED is LLDP's extension for media endpoints. The phone learns its voice VLAN and negotiates its power from it, and turning it off breaks voice</td></tr>
+            <tr><td>A desk, a meeting room or a public area</td><td class="c-amber">Off, unless a phone needs it</td><td>Anyone with a laptop there can read the switch's model, software version and management address</td></tr>
+            <tr><td>The internet, or a provider's network</td><td class="c-red">Off</td><td>It tells a network you do not control what your edge device is and what it runs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The second and third rows are often the same port, which makes this a decision
+          per port rather than a setting per switch.</strong> Turning discovery off everywhere breaks the
+          phones, and leaving it on everywhere tells anyone at a wall port the switch's model and software
+          version, which is where a search for its known vulnerabilities starts, and the address to try them
+          against. And a map built from the neighbors does not go stale the way a drawing does, because the
+          network is asked again each time somebody reads it.
         </div>
       </div>
     </div>
@@ -7665,7 +7801,7 @@ Nobody hears anything, so media did not.</pre>
 </div>
 
 <!-- ── TOPIC: FIELD TOOLKIT ──────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧰</span>
     <span class="topic-name">The Field Toolkit — What to Carry, and the Test Each Tool Answers</span>
@@ -7686,7 +7822,8 @@ Nobody hears anything, so media did not.</pre>
           <tbody>
             <tr><td>Console cable and USB <span class="acro-exp">(Universal Serial Bus)</span> adapter</td><td>"Can I get in when the network is down?" — the single most important item</td></tr>
             <tr><td>Cable tester</td><td>"Is this cable wired correctly end to end?"</td></tr>
-            <tr><td>Toner and probe</td><td>"Which of these 300 unlabelled cables is it?"</td></tr>
+            <tr><td>Tone generator and probe</td><td>"Which of these 300 unlabeled cables is it?" — a tone on the pair at one end, heard through the insulation at the other</td></tr>
+            <tr><td>Time-domain reflectometer (TDR), or the optical version (OTDR) for fiber</td><td>"Where along this cable is the break?" — the next card is about trusting its answer</td></tr>
             <tr><td>Known-good patch leads, several lengths</td><td>"Is the cable the problem?" — answered by substitution in seconds</td></tr>
             <tr><td>Laptop with a real Ethernet port or a trusted adapter</td><td>"What does a client on this port actually see?"</td></tr>
             <tr><td>Fiber inspection scope and cleaner</td><td>"Is the connector dirty?" — usually yes</td></tr>
@@ -7698,6 +7835,38 @@ Nobody hears anything, so media did not.</pre>
           A cable tester proves continuity and pinout; it does not prove the cable will carry
           multi-gigabit traffic over its full length. For that a qualification tester is needed, and
           the difference matters when the fault is intermittent and only under load.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">A TDR Measures Time, and a Number in Its Settings Turns That Into Meters</div>
+      <div class="concept-desc">
+        The cable tester in the table says whether a cable is broken. A time-domain reflectometer (TDR) says
+        where. It sends a pulse down a copper pair and times the echo: a break, a short, a crushed section or
+        a bad termination changes the cable's impedance, and the change reflects part of the pulse back. The
+        optical version, the OTDR, does the same with light down a fiber and draws the run as a trace, with
+        each connector, splice, bend and break as an event at a distance, with its loss. Both measure a time.
+        The distance on the screen is that time converted with how fast the signal travels in that cable, its
+        nominal velocity of propagation (NVP) for copper or its index of refraction for glass, and the
+        instrument takes the number from its settings.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Set or assumed wrongly</th><th>What the screen then says</th><th>The check</th></tr></thead>
+          <tbody>
+            <tr><td>The NVP, set for a different cable</td><td>A real fault, at the wrong distance, to the meter</td><td>Measure a known length of the same cable, and adjust until the tester agrees</td></tr>
+            <tr><td>Fiber distance, read as distance along the route</td><td>A break you walk past: the fiber is longer than its cable, and the cable is longer than the route, with its slack loops</td><td>Locate from the nearest splice or landmark on the trace, not from the end</td></tr>
+            <tr><td>No launch cable on the OTDR</td><td>The first connector, lost in the dead zone at the start of the trace and never measured</td><td>Put a launch cable between the OTDR and the link</td></tr>
+            <tr><td>A tight bend</td><td>An event that can look like a break</td><td>Confirm with a visual fault locator before anything is cut</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The first row fails without a warning.</strong> The tester reports a distance
+          to the meter, and nothing on the screen says the velocity setting belonged to another cable. The check
+          takes a minute against a measured length, and it is the difference between lifting one ceiling tile
+          and lifting several. The other three rows are the same lesson in glass: the trace is precise about
+          what it measured, and each row is a way to have measured something other than the fault.
         </div>
       </div>
     </div>
