@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic | ◐ **started** — see its §9 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges | ◐ **started** — see its §9 and §10 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -68,7 +68,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **57** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **58** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -1917,6 +1917,44 @@ carries the verdict.
 **Not done, and why.** The other 15 rows of §4, the other 19 pictures and the exam paths
 are the queue. `make visual` fails in this container on the commit before this session as
 well, at the same 10.3% and 10.1%. Its fonts render wider, so the baseline was left alone.
+
+## 10. What shipped — the second wave
+
+Conducted in one session, recorded below as *Session — the second wave, and three tools
+that were wrong at their own edges*. §4 rows 2 to 8 and 11 to 13, with the reader extended
+first and one commit per domain. The exam reader's second batch opened at **0 of 23** and
+closed at **23 of 23**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.2 | The formal models | A card in *Access Control Models*. Bell-LaPadula and Biba are one ladder with opposite rules, then Clark-Wilson and Brewer-Nash |
+| 4.3 | Zero trust's two boxes | A card in *Zero Trust*, as step tiles and a table. **It corrected a row already there**: "Policy engine (PEP/PDP) — decides allow/deny" made the enforcement point a decision-maker, and in NIST's model it decides nothing |
+| 4.4 | Biometric error rates | A card in *Multi-Factor Authentication*. The rates are spelled out and not added to the dictionary, because `CER` is also the `.cer` extension |
+| 4.5 | The fraud controls | A card in *The Insider Threat Program*: separation of duties and four siblings, split into the three that prevent and the two that only detect |
+| 4.8 | Race conditions and TOCTOU | A card in *Broken Access Control*, not beside *The Injection Family* as the row said: a check that ran at the wrong moment is an access-control failure |
+| 4.6 | Maximum tolerable downtime | **A card, not a row.** The metrics in *BCP / DR* are tiles, each with an inline border color, and the inline-style ceiling has no slack. Work recovery time came with it, and the worked example is the argument: one restore passes with a four-hourly backup and fails with a nightly one |
+| 4.7 | Agreement types | A card in *Third-Party Risk*, seven documents with the SLA and the work order added. Sources disagree on whether an MOA binds, so the card says force comes from wording, and the verdict names the MOU and the NDA as the two traps |
+| 4.11 | The physical layer | Two cards in *Structured Cabling*: the path from demarc to desk, with attenuation as the budget behind its lengths, and the pinout drawn pin by pin. In *The Field Toolkit* the toner row names the tool and says what it does, a TDR row joins it, and a card covers TDR and OTDR |
+| 4.12 | LLDP and CDP | A card in *Network Documentation*, as a decision per port |
+| 4.13 | Syslog severity | A card in *Structured Logging*, with Cisco's keywords and what a threshold sends |
+
+**Three tools were wrong at their own edges, and the new cards found all three.** The search mapped
+every dictionary entry both ways, including the ones marked as ordinary words, so
+`information technology` returned 1,452 of 1,564 topics through *it*, and adding FAR sent
+`false acceptance rate` to 219 through *far*. The annotator's window read across a topic's
+edge, and SSRF lost its expansion in the title of the topic about SSRF. And `.dora-word`
+was `#fff`, so the step names vanished on the light theme's tiles. Each fix is its own
+commit, with fixtures or a measured before and after. The search fix has a recorded cost:
+`metropolitan area network` now reaches the dictionary entry and not the cards that write
+only MAN, because a lowercased index cannot tell MAN from *man*.
+
+**The palette has no brown.** The pinout marks the four pins that differ, in amber, and
+does not paint the wires. Where a picture needs a color the palette lacks, it marks the
+difference instead.
+
+**Not done.** §4 rows 15 to 18 and 20 to 35, the other pictures and the exam paths are the
+queue, and so is the gap §9 found under `the user has two accounts`. `make visual` fails
+here as it did in the first wave, for the same font reason.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7080,4 +7118,84 @@ reader: somebody revising for a CompTIA exam, 0 of 16 -> 16 of 16 · census 373 
 acronyms 1,104 -> 1,110 · related links 4,904 -> 4,918 · path steps 1,601 -> 1,602 · dated claims 78 -> 83
 45 gates green · smoke 164 · search 58 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, and 0/2 on the commit before this session: font rendering, baseline left alone
+```
+
+## Session — the second wave, and three tools that were wrong at their own edges
+
+The request was **keep going with the next wave**. The wave was *Content ideas* §4 rows 2
+to 8 and 11 to 13, the rest of the security and networking words the exams use. The reader
+went in first, then one commit per domain, and *Content ideas* §10 is the table. This is
+what doing it found.
+
+### Each tool was right inside its edge and wrong at it
+
+Three fixes, and one shape. The search's acronym map was right for every acronym and wrong
+for the ones that are also words, which the dictionary had already marked `noAnnotate`.
+The annotator's window was right inside a topic and read across the edge into one the
+reader has not opened. `.dora-word` was right on the theme it was written for. **Each was
+found by the first new user of the thing, not by its own tests.** FAR was the first
+word-shaped acronym added since the map was written, the TOCTOU card ended beside a topic
+about servers, and the zero-trust card was the tiles' second user, looked at on a phone in
+light mode. The search gained a ceiling and the annotator three fixtures, and axe counted
+four contrast failures on each tile card before the color fix and none after.
+
+### A query that closes is not a query answered correctly
+
+`policy enforcement point` found only the acronym dictionary, and it closed the moment PEP
+went into the dictionary, through an existing row: *Policy engine (PEP/PDP) — decides
+allow/deny*. That row was wrong. In NIST's model the enforcement point decides nothing,
+and the zero-trust card corrected it two commits later. Until then the census counted the
+question answered by a sentence that answered it wrongly. **The census measures whether a
+reader lands on the right card. Whether the card is right is still a reading job.**
+
+### The ceiling decided a card's shape
+
+§4 row 6 said *a row in BCP / DR — Key Metrics*. The metrics there are five tiles, each
+with an inline border color, and the inline-style ceiling sits at exactly 401 with no slack.
+A sixth tile to match its neighbors needed a sixth inline style. It became a card instead,
+and the card was the better shape: maximum tolerable downtime is not a sixth metric beside
+the five but the limit two of them answer to, and showing that took a worked example. **A
+ratchet with no slack is working when it changes the shape of the next thing rather than
+being raised to fit it.**
+
+### A word the matcher reads whole
+
+`tone and probe` found an AI card about bias, while the toolkit had a row called *Toner and
+probe*. Words of four letters or fewer match whole, so *tone* never matched *toner*. The
+census forbids tuning prose to the matcher, so the test was whether the row is better with
+the new words if no query existed. *Tone generator and probe* is the tool's name, and the
+row now also says what the generator does, which the old one did not. Two titles went the
+other way: the cabling and discovery cards' titles named MDF, IDF, LLDP and CDP, a title is
+an acronym's first use in its topic, and each would have carried an expansion that the
+prose under it spells out again. They were reworded.
+
+### What the plan had wrong
+
+| The plan said | Read, it was | Where it is corrected |
+|---|---|---|
+| Row 6 is *a row* in the metrics | A card: the metrics are tiles with inline styles, and the ceiling has no slack | §10 |
+| Row 8 lands *beside The Injection Family* | *Broken Access Control*: a check run at the wrong moment is an access-control failure | §10 |
+| Row 3: *policy enforcement point* 0 | Absent as a phrase, but closed through a wrong row once PEP was in the dictionary | §10, and the card |
+| Row 7 asks which documents are enforceable | Sources disagree on the MOA; force comes from wording, and an MOU is *usually* not binding | The card |
+| Row 11: the demarc is where the fault stops being yours | Unless the contract moved it | The card's verdict |
+
+### What was verified, and how far
+
+Rows 6, 7 and 11 to 13 were checked by search before they were written: the syslog levels,
+the pinouts and the standard's preference, CDP and LLDP and their timers, MTD and work
+recovery time, the agreement types, the 90 and 10 meter budget, the demarc, and how TDR and
+OTDR measure. No page was fetched. One draft synonym, *maximum tolerable period of
+disruption*, was not confirmed, so the card does not use it. Five fact anchors record vendor
+defaults as confirmed in search results and not fetched: Cisco's syslog keywords and default
+trap level, the two messages one interface going down produces, the preference for T568A,
+the rule that fixing speed and duplex turns Auto-MDI-X off, and the CDP and LLDP timers. The
+*Dated claims* row rose from 83 to 88 for those reasons.
+
+```
+10 commits · 12 cards (sec 5, grc 1, ops 2, net 4) · 2 table rows corrected, 1 added · 0 new topics
+tools: search maps word-shaped acronyms one way · annotator window clipped to its topic · .dora-word follows the theme
+reader: CompTIA exam batch two, 0 of 23 -> 23 of 23 · census 389 of 414 -> 412 of 437, 0 unexplained
+acronyms 1,110 -> 1,121 · dated claims 83 -> 88 · mean card 1,408 -> 1,412 · depth median 3,766 -> 3,780
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in the first wave: font rendering, baseline left alone
 ```
