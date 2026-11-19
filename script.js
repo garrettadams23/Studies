@@ -1876,8 +1876,15 @@ function acroSearchMap() {
     if (!m.has(k)) m.set(k, new Set());
     m.get(k).add(val);
   };
-  (typeof acroData === "function" ? acroData() : []).forEach(([a, exps]) => {
-    exps.forEach(e => { add(a, e); add(e, a); });
+  // An acronym that is also an ordinary word (`noAnnotate` in the dictionary,
+  // the 1 in the fourth field) maps one way only. "IT" still finds the cards
+  // that say information technology, but "information technology" must not
+  // add "it" as an alternate: a short term matches on word boundaries, and the
+  // word "it" is in almost every card. That query returned 1,452 of 1,564
+  // topics, which is not a search result, it is the site. The annotator has
+  // honored the flag since it existed; the search had not.
+  (typeof acroData === "function" ? acroData() : []).forEach(([a, exps, , word]) => {
+    exps.forEach(e => { add(a, e); if (!word) add(e, a); });
   });
   _acroSearchMap = m;
   return m;
