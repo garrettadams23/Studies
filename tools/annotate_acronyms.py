@@ -26,6 +26,7 @@ Usage:
              without writing files.
 """
 
+import bisect
 import html
 import json
 import re
@@ -151,11 +152,32 @@ WINDOW = 180
 # cheaper than walking the document, and cannot under-read.
 RAW_WINDOW = 4000
 
+# The window also stops at the edges of the topic the acronym sits in. A reader
+# opens one topic at a time, so text in the topic above is text they have not
+# seen. Without the edge, a card about race conditions ending "...one request
+# never races itself" supplied the word "request", the next topic's own title
+# supplied "Server-Side", and SSRF lost its expansion in the title of the topic
+# about SSRF: two of three words from the title, the third from a neighbor.
+TOPIC_START_RE = re.compile(r'<div class="topic"[\s>]')
 
-def already_expanded(source, start, end, expansion):
-    """True when the expansion is already spelled out right next to the match."""
-    before = strip_tags(source[max(0, start - RAW_WINDOW):start])[-WINDOW:]
-    after = strip_tags(source[end:end + RAW_WINDOW])[:WINDOW]
+
+def topic_starts(source):
+    """Offsets where each topic opens, for clipping a window to its own topic."""
+    return [m.start() for m in TOPIC_START_RE.finditer(source)]
+
+
+def topic_edges(starts, index):
+    """(floor, ceiling) of the topic containing `index`; text outside it is unseen."""
+    k = bisect.bisect_right(starts, index)
+    return (starts[k - 1] if k else 0), (starts[k] if k < len(starts) else None)
+
+
+def already_expanded(source, start, end, expansion, floor=0, ceiling=None):
+    """True when the expansion is already spelled out right next to the match,
+    inside the same topic: `floor` and `ceiling` are its edges."""
+    hi = end + RAW_WINDOW if ceiling is None else min(ceiling, end + RAW_WINDOW)
+    before = strip_tags(source[max(floor, start - RAW_WINDOW):start])[-WINDOW:]
+    after = strip_tags(source[end:hi])[:WINDOW]
     window = (before + strip_tags(source[start:end]) + after).lower()
     words = [w for w in re.findall(r"[a-z0-9]+", expansion.lower()) if len(w) > 3]
     if not words:
@@ -189,12 +211,13 @@ def annotate(source, terms, pattern, alternates=None):
     seen = set()
     seen_stack = []
     added = 0
+    starts = topic_starts(source)
 
     for tag_match in TOKEN_RE.finditer(source):
         text = source[pos:tag_match.start()]
         if text:
             if skip_depth == 0:
-                new_text, n = annotate_text(text, terms, pattern, seen, source, pos, alternates)
+                new_text, n = annotate_text(text, terms, pattern, seen, source, pos, alternates, starts)
                 out.append(new_text)
                 added += n
             else:
@@ -239,7 +262,7 @@ def annotate(source, terms, pattern, alternates=None):
     tail = source[pos:]
     if tail:
         if skip_depth == 0:
-            new_text, n = annotate_text(tail, terms, pattern, seen, source, pos, alternates)
+            new_text, n = annotate_text(tail, terms, pattern, seen, source, pos, alternates, starts)
             out.append(new_text)
             added += n
         else:
@@ -248,7 +271,7 @@ def annotate(source, terms, pattern, alternates=None):
     return "".join(out), added
 
 
-def annotate_text(text, terms, pattern, seen, source, offset, alternates=None):
+def annotate_text(text, terms, pattern, seen, source, offset, alternates=None, starts=()):
     """Annotate one run of plain text (already known to be outside any tag)."""
     added = 0
     pieces = []
@@ -260,7 +283,8 @@ def annotate_text(text, terms, pattern, seen, source, offset, alternates=None):
         expansion = terms[term]
         abs_start = offset + m.start()
         abs_end = offset + m.end()
-        if already_expanded(source, abs_start, abs_end, expansion):
+        floor, ceiling = topic_edges(starts, abs_start)
+        if already_expanded(source, abs_start, abs_end, expansion, floor, ceiling):
             seen.add(term)
             continue
         # The text has already disambiguated itself, the other way. When a
@@ -271,7 +295,7 @@ def annotate_text(text, terms, pattern, seen, source, offset, alternates=None):
         # cell reads "Artificial Neural Network". Not added to `seen`: a later
         # use in the same topic may well be this domain's sense.
         if alternates and any(
-            already_expanded(source, abs_start, abs_end, other)
+            already_expanded(source, abs_start, abs_end, other, floor, ceiling)
             for other in alternates.get(term, ())
         ):
             continue
@@ -324,6 +348,21 @@ ALTERNATE_FIXTURES = [
 ]
 
 
+# The topic edge, reduced. The expansion's words sit at the end of the topic
+# above; the acronym opens the next. Each case is (name, html, expected).
+EDGE_FIXTURES = [
+    ("the topic above cannot suppress an expansion in this one",
+     '<div class="topic"><p>A Ticket Granting Ticket is issued.</p></div>'
+     '<div class="topic"><p>The TGT lives ten hours.</p></div>', 1),
+    ("inside one topic, the spelled-out expansion still suppresses it",
+     '<div class="topic"><p>A Ticket Granting Ticket is issued.</p>'
+     '<p>The TGT lives ten hours.</p></div>', 0),
+    ("nor can the topic below",
+     '<div class="topic"><p>The TGT lives ten hours.</p></div>'
+     '<div class="topic"><p>A Ticket Granting Ticket is issued.</p></div>', 1),
+]
+
+
 def self_test():
     """The window must not move when only the markup around it does."""
     failures = 0
@@ -331,6 +370,11 @@ def self_test():
     alternates = {"ANN": ["Artificial Neural Network"]}
     pattern = build_pattern(terms)
     for name, html_in, want in ALTERNATE_FIXTURES:
+        _, got = annotate(html_in, terms, pattern, alternates)
+        ok = got == want
+        failures += not ok
+        print(f"  {'ok  ' if ok else 'FAIL'} {name}  (added={got}, expected={want})")
+    for name, html_in, want in EDGE_FIXTURES:
         _, got = annotate(html_in, terms, pattern, alternates)
         ok = got == want
         failures += not ok
@@ -343,7 +387,8 @@ def self_test():
         ok = got[0] == got[1]
         failures += not ok
         print(f"  {'ok  ' if ok else 'FAIL'} {name}  (plain={got[0]}, dense={got[1]})")
-    print(f"\nself-test: {len(DENSITY_FIXTURES) + len(ALTERNATE_FIXTURES)} fixtures, {failures} failure(s).")
+    total = len(DENSITY_FIXTURES) + len(ALTERNATE_FIXTURES) + len(EDGE_FIXTURES)
+    print(f"\nself-test: {total} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 
 
