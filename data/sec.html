@@ -156,7 +156,7 @@
           </div>
 
           <!-- ── TOPIC: ACCESS CONTROL MODELS ───────────────────────── -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🗂️</span>
               <span class="topic-name">Access Control Models</span>
@@ -230,6 +230,34 @@
                     The failure mode to watch for is <strong class="c-red">role explosion</strong>:
                     when exceptions are met by creating one more role, a directory ends up with
                     roughly one role per person, which is DAC with extra administration.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Formal Models: Two Forbid Opposite Directions on One Ladder</div>
+                <div class="concept-desc">
+                  The MAC row above is the working end of a set of formal models, written to prove that a system
+                  could not leak or corrupt data. Exams ask for them by name. What is worth keeping is what each one
+                  protects, because the two best known draw the same ladder of levels and forbid opposite
+                  directions on it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Model</th><th>Protects</th><th>The rules</th><th>Where the idea lives now</th></tr></thead>
+                    <tbody>
+                      <tr><td>Bell-LaPadula</td><td>Confidentiality</td><td>No read up: a subject cannot read above its clearance. No write down: it cannot write below it, so a secret cannot be copied into an unclassified file</td><td>Military classification, and the MAC row above</td></tr>
+                      <tr><td>Biba</td><td>Integrity</td><td>No read down: a trusted process does not take in less trustworthy data. No write up: a less trusted subject cannot change more trusted data</td><td>Windows integrity levels, where a low-integrity process cannot write to medium-integrity files</td></tr>
+                      <tr><td>Clark-Wilson</td><td>Integrity, the commercial way</td><td>Users never touch the data directly. They run well-formed transactions against constrained data, and the person who runs a transaction is not the person who certifies it</td><td>Every accounting system where a clerk can post an invoice and cannot edit the ledger</td></tr>
+                      <tr><td>Brewer-Nash, the Chinese Wall</td><td>Conflicts of interest</td><td>Access depends on history: once you have read one client's data, you lose access to that client's competitors</td><td>Consultancies, banks and law firms with competing clients</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Remember the first two rows as one picture.</strong> Draw the levels as
+                    a ladder: Bell-LaPadula stops secrets flowing down it and Biba stops bad data flowing up it.
+                    Enforced together on the same labels, they leave a subject able to talk only to its own level,
+                    which is why real systems apply them to different things. The last row is the odd one, because its
+                    rule depends on what you did yesterday, and no static permission can express that.
                   </div>
                 </div>
               </div>
@@ -1380,7 +1408,7 @@ entered = <span class="str">"my_secure_pass"</span>
 </div>
 
 <!-- ── TOPIC: MFA & AUTHENTICATION METHODS ──────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📲</span>
     <span class="topic-name">Multi-Factor Authentication — Layers of Proof</span>
@@ -1423,6 +1451,34 @@ entered = <span class="str">"my_secure_pass"</span>
       <div class="concept-label">HOW TOTP WORKS</div>
       <div class="concept-title">Time-Based One-Time Passwords</div>
       <div class="concept-desc">During setup, the server shares a secret key with your phone (usually via QR code). Every 30 seconds, both your phone AND the server compute HMAC-SHA1(secret + current_time_window). They should match. An attacker needs the secret AND the current window — that's why TOTP codes expire so fast.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Biometric Accuracy Is Two Error Rates, and the Threshold Trades One for the Other</div>
+      <div class="concept-desc">
+        A biometric reader never answers yes or no. It scores how closely a sample matches the enrolled
+        template, and a threshold turns the score into a decision. Move the threshold and two error rates
+        move in opposite directions, so a single accuracy figure on a datasheet is either the crossover point
+        or a number chosen to look good.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Measure</th><th>What it counts</th><th>Also called</th><th>Minimize it when</th></tr></thead>
+          <tbody>
+            <tr><td>False acceptance rate (FAR)</td><td>Impostors accepted</td><td>Type II error</td><td>One wrong person inside is the failure: a data center door</td></tr>
+            <tr><td>False rejection rate (FRR)</td><td>Genuine users rejected</td><td>Type I error</td><td>Rejection costs time and drives people to workarounds: a busy entrance, a phone unlock</td></tr>
+            <tr><td>Crossover error rate (CER)</td><td>The threshold at which the two rates are equal</td><td>Equal error rate (EER)</td><td>Never; it is not a setting. It compares sensors, and the lower one is the more accurate device</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row is for buying, and the first two are for configuring.</strong>
+          Compare devices by their crossover rate, then set the threshold away from it on purpose: toward
+          fewer false acceptances where a wrong person costs more than a slow queue, and toward fewer
+          rejections where the opposite holds. A biometric is also an identifier, not a secret, and it cannot
+          be changed after a breach. That is why the strong designs, passkeys among them, match it on the
+          device and send only a cryptographic proof.
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2219,7 +2275,7 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 
 <!-- BEGINNER27-SEC v1 -->
 <!-- ── TOPIC: ZERO TRUST ARCHITECTURE ────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🚫</span>
     <span class="topic-name">Zero Trust — Never Trust, Always Verify</span>
@@ -2278,7 +2334,7 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
           <tr><td>Strong identity (IAM + MFA)</td><td>The new perimeter is identity — verify who</td></tr>
           <tr><td>Device posture</td><td>Is the device managed, patched, healthy?</td></tr>
           <tr><td>Microsegmentation</td><td>Divide the network into tiny zones — contain lateral movement</td></tr>
-          <tr><td>Policy engine (PEP/PDP)</td><td>Decides allow/deny per request based on context</td></tr>
+          <tr><td>Decision and enforcement points (PDP, PEP)</td><td>One decides allow or deny per request from context, and the other carries the decision out at the resource. The last card separates them</td></tr>
           <tr><td>Continuous monitoring</td><td>Re-evaluate trust constantly, not just at login</td></tr>
           <tr><td>Encryption everywhere</td><td>Protect data in transit even "inside"</td></tr>
         </tbody>
@@ -2359,6 +2415,58 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
                 </div>
               </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">Zero Trust Is Two Boxes: One That Decides, One That Enforces</div>
+      <div class="concept-desc">
+        NIST <span class="acro-exp">(National Institute of Standards and Technology)</span>'s zero trust architecture, SP 800-207, splits every access into a control plane that decides
+        and a data plane that carries the traffic, and the exam vocabulary comes straight from it. The split
+        is the useful part. Most products sold as zero trust are the enforcement half, and buying one does not
+        buy the decision.
+      </div>
+      <div class="dw">
+        <div class="dora-seq">
+          <div class="dora-item">
+            <div class="dora-letter">R</div>
+            <div class="dora-word">Request</div>
+            <div class="dora-desc">A subject asks for a resource, and the enforcement point holds it</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">D</div>
+            <div class="dora-word">Decide</div>
+            <div class="dora-desc">The policy engine weighs identity, device and signals against policy</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">A</div>
+            <div class="dora-word">Administer</div>
+            <div class="dora-desc">The policy administrator tells the enforcement point to open a session, or not</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">E</div>
+            <div class="dora-word">Enforce</div>
+            <div class="dora-desc">A path to that one resource opens, and is watched until it closes</div>
+          </div>
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Component</th><th>Plane</th><th>What it does</th><th>What it is in practice</th></tr></thead>
+          <tbody>
+            <tr><td>Policy engine</td><td>Control</td><td>Makes the allow-or-deny decision from policy and signals: identity, device posture, threat intelligence, behavior</td><td>The conditional-access engine of an identity provider</td></tr>
+            <tr><td>Policy administrator</td><td>Control</td><td>Turns the decision into action: issues the session credential, and tells the enforcement point to open or close the path</td><td>The part of the same product that mints tokens and pushes session changes</td></tr>
+            <tr><td>Policy enforcement point</td><td>Data</td><td>Stands in front of the resource; opens, watches and ends the connection. It decides nothing</td><td>A ZTNA gateway, an identity-aware proxy, an agent, a microsegmentation firewall</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row is the one vendors sell, and the first is the one that makes
+          it zero trust.</strong> The first two together are what the standard calls the PDP <span class="acro-exp">(Policy Decision Point)</span>. An
+          enforcement point with no decision behind it is a gateway with a new name, and a decision made once
+          at login and never revisited is a VPN with better branding. Ask any product which of the three boxes
+          it is, and where the other two come from.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -4147,7 +4255,7 @@ direction = <span class="str">"DESC"</span> <span class="kw">if</span> direction
 </div>
 
 <!-- ── TOPIC: BROKEN ACCESS CONTROL ───────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🚪</span>
     <span class="topic-name">Broken Access Control — IDOR <span class="acro-exp">(Insecure Direct Object Reference)</span>, Traversal &amp; the Checks Nobody Ran</span>
@@ -4224,6 +4332,32 @@ inv = Invoice.filter(id=id, owner_id=user.id).one_or_none()
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">The Check Ran, at the Wrong Moment: Race Conditions</div>
+      <div class="concept-desc">
+        Everything above is a check that is missing. A race condition is a check that is present and still
+        fails, because the check and the action it protects are two separate moments, and something changes
+        in between. The gap has a name, TOCTOU <span class="acro-exp">(Time-of-Check to Time-of-Use)</span>, and it is the commonest race in security code.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Where</th><th>The race</th><th>The fix</th></tr></thead>
+          <tbody>
+            <tr><td>Files</td><td>A privileged program checks a path with <code>access()</code>, then opens it, and between the two calls an attacker swaps the file for a link to <code>/etc/shadow</code></td><td>Check the handle, not the name: open first, inspect what was opened with <code>fstat()</code>, and open with flags that refuse links</td></tr>
+            <tr><td>Money and limits</td><td>Two requests read the same balance, both pass the "enough funds" check, and both withdraw: a coupon redeemed twice, a gift card spent twice</td><td>Make the check and the change one operation: an <code>UPDATE</code> that succeeds only while the balance is still sufficient, or a row lock</td></tr>
+            <tr><td>Uniqueness</td><td>Two sign-ups check that a username is free, both see it free, and both insert</td><td>A unique constraint, so the database turns the second insert into an error</td></tr>
+            <tr><td>Kernels</td><td>A copy-on-write race let an ordinary user write to read-only memory: Dirty COW, in 2016</td><td>Not yours to fix in code. It is the reason kernel patching is not optional</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The first three rows have one fix:</strong> make the check and the use a
+          single step that cannot be interleaved, so the database or the kernel checks atomically instead of
+          your code checking twice. A normal test will not find these, because one request never races
+          itself. Send the same request twenty times at once, which is what an attacker does.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -4916,7 +5050,7 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
 </div>
 
 <!-- ── TOPIC: INSIDER THREAT ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🎭</span>
     <span class="topic-name">The Insider Threat Program — Malicious, Negligent &amp; Compromised</span>
@@ -4970,6 +5104,34 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
           transparent about what is monitored, and keep HR in the room. The cleared-environment
           version of this discipline is in
           <span class="xref">Clearance Paperwork — SF 86, SF 312 &amp; SF 714</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Five Controls Against One Person Acting Alone, and the Two That Only Detect</div>
+      <div class="concept-desc">
+        The table above names separation of duties. It has four siblings, and exams ask for all five. They
+        share one assumption, that the fraud needs a single person acting alone, and they divide into
+        controls that prevent it and controls that only find it later.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>What it requires</th><th>Prevents or detects</th><th>Where it shows up in IT</th></tr></thead>
+          <tbody>
+            <tr><td>Separation of duties</td><td>No one person completes a sensitive process alone: request and approve, write and deploy, raise and pay</td><td class="c-green">Prevents</td><td>Change approval, and a developer who cannot deploy their own code to production</td></tr>
+            <tr><td>Dual control</td><td>Two people act together, at the same moment</td><td class="c-green">Prevents</td><td>Break-glass credentials, a key ceremony, a vault with two keys</td></tr>
+            <tr><td>Split knowledge</td><td>No one person knows the whole secret: each holds a part</td><td class="c-green">Prevents</td><td>Master key components held by separate custodians</td></tr>
+            <tr><td>Job rotation</td><td>People move between duties on a schedule</td><td class="c-amber">Detects, and builds cover</td><td>A successor finds what the last person was hiding, and the team survives a departure</td></tr>
+            <tr><td>Mandatory vacation</td><td>A block of consecutive days away, with the work done by someone else</td><td class="c-amber">Detects</td><td>A fraud that needs daily upkeep, such as a suppressed alert or money moved to cover an earlier theft, surfaces while its author is away</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row is the cheapest detective control there is, and the one most
+          often waived for the person who most needs it.</strong> The indispensable administrator who never
+          takes leave is either a single point of failure or a fraud in progress, and the control cannot tell
+          which until they are away. All five fail the same way, to two people agreeing, which is why they are
+          paired with monitoring rather than trusted alone.
         </div>
       </div>
     </div>
