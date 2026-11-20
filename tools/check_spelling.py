@@ -181,9 +181,16 @@ def match_case(src, dst):
     return dst
 
 
+# `-wise` is a suffix of its own, "in the manner of", and English makes new ones
+# freely: *bitwise*, *piecewise*, *elementwise*. None of them is an `-ise` word,
+# so no American spelling replaces it. The list above named five of them one at
+# a time; the sixth, *bitwise*, failed the build on a card about bitwise
+# operations, and the rule is what the list was approximating.
 def _ise(m):
     word = m.group(0)
     if word.lower() in ISE_KEEP or (m.group(1) + "ise").lower() in ISE_KEEP:
+        return None
+    if (m.group(1) + "ise").lower().endswith("wise"):
         return None
     return match_case(word, m.group(1).lower() + "iz" + m.group(2).lower())
 
@@ -234,7 +241,7 @@ RULES = [("irregular", IRREGULAR_RE, _irregular),
 # tells the reader why an American site spells it that way.
 ALLOW = ["Fibre Channel", "Enquiry, as the standard spells it"]
 ALLOW_RE = re.compile("|".join(re.escape(a) for a in ALLOW), re.I)
-HOLD_RE = re.compile("\x00(\d+)\x00")
+HOLD_RE = re.compile(r"\x00(\d+)\x00")
 
 # A British spelling with its own American form a few words away is not a
 # spelling mistake. It is a sentence *about* the two spellings, and rewriting it
@@ -430,6 +437,7 @@ def self_test():
         ("surprised", None), ("exercises", None), ("advertising", None),
         ("malvertising", None), ("denoise", None), ("expertise", None),
         ("unsupervised", None), ("wise", None), ("raise", None), ("noise", None),
+        ("bitwise", None), ("Piecewise", None), ("elementwise", None),
         # -yse, and the plural that is not a verb
         ("analyse", "analyze"), ("analyser", "analyzer"), ("analyses", None),
         ("analysis", None), ("analyst", None),
