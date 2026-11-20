@@ -626,6 +626,28 @@ const READERS = [
     ["tdr", "", "net/the-field-toolkit-what-to-carry-and-the-test-each-tool-answe"],
     ["lldp", "", "net/network-documentation-that-stays-current"],
     ["syslog severity levels", "", "ops/structured-logging-log-pipelines"],
+    // ── third wave: §4 rows 15–18 and 20, added before their cards ──
+    // The first `want` names a topic that does not exist yet; it is the slug of
+    // the title it will be written under. Left out on purpose: `msconfig` and
+    // `sfc scannow` already reach the Windows repair ladder, which uses both;
+    // `lc vs sc` and `st connector` already reach the cabling topic's table; and
+    // `displayport vs hdmi` reaches the displays topic, which compares the two.
+    ["chkdsk", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["robocopy mir", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["diskpart", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["devmgmt.msc", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["pathping", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["vlookup", "", "shortcut/microsoft-office-excelword"],
+    ["xlookup", "", "shortcut/microsoft-office-excelword"],
+    ["pivot table", "", "shortcut/microsoft-office-excelword"],
+    ["malware removal steps", "", "ops/incident-response-lifecycle-picerl"],
+    ["disable system restore", "", "ops/incident-response-lifecycle-picerl"],
+    ["rj11", "", "net/cabling-connectors-ethernet-standards"],
+    ["f-type connector", "", "net/cabling-connectors-ethernet-standards"],
+    ["lightning connector", "", "hw/docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati"],
+    ["micro usb", "", "hw/docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati"],
+    ["exercise before studying", "", "productivity/sleep-where-the-studying-actually-sticks"],
+    ["does exercise help memory", "", "productivity/sleep-where-the-studying-actually-sticks"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
