@@ -416,6 +416,17 @@ const READERS = [
     ["what does opsec actually mean", "",
      "military/opsec-operational-security-in-cyber-real-life"],
     ["how do i use vim", "", "shortcut/vim"],
+    // ── fifth wave: Content ideas §4 rows 31 and 35, added before their cards.
+    // Two wants name topics that do not exist yet, by the slugs of their titles.
+    ["epicureanism", "", "philosophy/epicureanism-pleasure-meant-the-absence-of-pain"],
+    ["epicurus", "", "philosophy/epicureanism-pleasure-meant-the-absence-of-pain"],
+    ["confucianism", "", "philosophy/confucianism-roles-ritual-and-the-exemplary-person-and-where"],
+    ["taoism vs confucianism", "", "philosophy/confucianism-roles-ritual-and-the-exemplary-person-and-where"],
+    ["9 line medevac", "", "military/military-communication-standards-clear-concise-correct"],
+    ["date time group", "", "military/military-communication-standards-clear-concise-correct"],
+    ["frago", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
+    ["mett-tc", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
+    ["ccir", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
     ["what is big o for",
      "wide, and the one of the three with a cause rather than a corpus: `o` is one character, dropped as a free-floating requirement because a one-character word narrows nothing, so the query collapses to `big` — 114 cards. `big o` returns 10 and `big o notation` returns 2, because a short query is answered by the phrase stage and never reaches this one. The join-instead-of-drop fix was built and reverted: it broke `the 5 whys`, a gated fixture, and narrowing it to letters fails on `what is a c pointer`, which needs `pointer` and not `cpointer`. A corpus-aware version — join only where the joined form exists in the folded text — is decidable and not attempted, because it costs a sweep on every query",
      "cs/big-o-in-practice-what-the-notation-hides"],
@@ -994,6 +1005,17 @@ const READERS = [
     ["impostor syndrome", "", "mind/imposter-syndrome-you-belong-here"],
     ["first week as a manager", "",
      "eng/the-first-90-days-leading-a-team-listen-map-stabilize-then-c"],
+    // ── fifth wave: Content ideas §4 rows 28 to 30, added before their cards.
+    // `low mood` is left out: it already reaches Getting Professional Help and
+    // the CBT topic, both defensible. The low-mood want names a topic to come.
+    ["skillbridge", "", "military/transitioning-out-the-timeline-and-what-to-start-when"],
+    ["clep", "", "military/transitioning-out-the-timeline-and-what-to-start-when"],
+    ["federal resume", "", "military/transitioning-out-the-timeline-and-what-to-start-when"],
+    ["va home loan", "", "military/transitioning-out-the-timeline-and-what-to-start-when"],
+    ["feeling low", "", "mind/low-mood-a-bad-patch-or-something-to-take-to-a-doctor"],
+    ["depressed for weeks", "", "mind/low-mood-a-bad-patch-or-something-to-take-to-a-doctor"],
+    ["active listening", "", "mind/communication-relationships"],
+    ["how to be assertive", "", "mind/communication-relationships"],
     ["i keep procrastinating", "",
      "productivity/procrastination-what-it-actually-is-and-the-moves-that-work"],
     ["which cert should i do first", "",
