@@ -25414,8 +25414,8 @@ and the design-side principle is
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Service Desk · SOC · Incident Response · Vulnerability Mgmt · BCP/DR · Forensics · ITIL · SRE · Observability</span>
-<span class="domain-meta" aria-label="78 topics, about 4h 05m to read"
->78 topics · ~4h 05m</span>
+<span class="domain-meta" aria-label="78 topics, about 4h 10m to read"
+>78 topics · ~4h 10m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -25535,12 +25535,12 @@ ticket · Update runbook/playbook
 </div>
 </div>
 <!-- ── TOPIC: INCIDENT RESPONSE (PICERL) ────────────────── -->
-<div class="topic" id="incident-response-lifecycle-picerl" data-reviewed="2026-07" data-read="3" data-level="core">
+<div class="topic" id="incident-response-lifecycle-picerl" data-reviewed="2026-11" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🚨</span>
 <span class="topic-name">Incident Response Lifecycle — PICERL <span class="acro-exp">(Preparation, Identification, Containment, Eradication, Recovery, Lessons learned)</span></span>
 <span class="topic-badge">6-PHASE CYCLE</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -25691,6 +25691,82 @@ L<br />Learn
 Lessons Learned<br />Post-incident review
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Inversion</div>
+<div class="concept-title">Malware Removal Is This Lifecycle for One Machine, and the Order Is the Content</div>
+<div class="concept-desc">
+CompTIA A+ teaches malware removal as seven steps for one infected PC, and they are the phases above
+at the scale of a single machine. The exam asks for them in order, and the order is not arbitrary:
+each step protects the one after it, so a step done early or late undoes work instead of adding it.
+</div>
+<div class="dw">
+<!-- fact: the seven steps and their order are A+ 220-1102 objective 3.3 and 220-1202 objective 2.6, and Professor Messer's course calls wiping and reinstalling the real best practice | source: Professor Messer's 220-1102 and 220-1202 video pages and study sites, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+<div class="dora-seq">
+<div class="dora-item">
+<div class="dora-letter">1</div>
+<div class="dora-word">Investigate</div>
+<div class="dora-desc">Verify the symptoms are malware</div>
+</div>
+<div class="c-muted">→</div>
+<div class="dora-item">
+<div class="dora-letter">2</div>
+<div class="dora-word">Quarantine</div>
+<div class="dora-desc">Off the network, no drives in or out</div>
+</div>
+<div class="c-muted">→</div>
+<div class="dora-item">
+<div class="dora-letter">3</div>
+<div class="dora-word">Restore off</div>
+<div class="dora-desc">Disable System Restore</div>
+</div>
+<div class="c-muted">→</div>
+<div class="dora-item">
+<div class="dora-letter">4</div>
+<div class="dora-word">Remediate</div>
+<div class="dora-desc">Update, then scan from Safe Mode or a boot environment</div>
+</div>
+<div class="c-muted">→</div>
+<div class="dora-item">
+<div class="dora-letter">5</div>
+<div class="dora-word">Schedule</div>
+<div class="dora-desc">Scans and updates that run on their own</div>
+</div>
+<div class="c-muted">→</div>
+<div class="dora-item">
+<div class="dora-letter">6</div>
+<div class="dora-word">Restore on</div>
+<div class="dora-desc">Enable it, and make a clean restore point</div>
+</div>
+<div class="c-muted">→</div>
+<div class="dora-item">
+<div class="dora-letter">7</div>
+<div class="dora-word">Educate</div>
+<div class="dora-desc">The user, last</div>
+</div>
+</div>
+<table class="ref-table">
+<thead><tr><th>Step</th><th>Phase above</th><th>Why it sits where it does</th></tr></thead>
+<tbody>
+<tr><td>1. Investigate</td><td>Identification</td><td>Verify the symptoms first: slowness and pop-ups are also a failing drive or a bad update, and cleaning a machine that is not infected hides the real fault</td></tr>
+<tr><td>2. Quarantine</td><td>Containment</td><td>Quarantine the infected system before anything is cleaned: an infection that spreads over a share or a USB <span class="acro-exp">(Universal Serial Bus)</span> stick while you work is a second incident</td></tr>
+<tr><td>3. Restore off</td><td>Containment</td><td>Disable System Restore. Restore points made while the machine was infected can hold the malware, and restoring one after the cleaning puts it back</td></tr>
+<tr><td>4. Remediate</td><td>Eradication</td><td>Update the scanner first, then scan where the malware is not running: Safe Mode, or a preinstallation environment started from other media</td></tr>
+<tr><td>5. Schedule</td><td>Recovery</td><td>Schedule scans and run updates: the way in was usually a missing update or a scanner that had been turned off</td></tr>
+<tr><td>6. Restore on</td><td>Recovery</td><td>Enable System Restore and create a restore point: the first one after the cleaning is the first one worth having</td></tr>
+<tr><td>7. Educate</td><td>Lessons learned</td><td>Educate the end user, last, because it is the one step that changes the odds of the next infection, and the conversation needs to know how this one happened</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">The third row is the one the order exists for.</strong> Disable restore before
+the cleaning and enable it after, and every restore point left is a clean one. In the other order an
+infected restore point survives the cleaning and is one click from coming back. The list also has an
+honest limit, and Professor Messer's A+ course states it outright: removal leaves you hoping the
+machine is clean, because nothing proves every piece is gone, and the real best practice is to wipe
+it and reinstall from known-good media or a backup made before the infection. The seven steps are for
+the machine that cannot be rebuilt today.
 </div>
 </div>
 </div>
@@ -132306,6 +132382,6 @@ progress in localStorage — no content of its own, just an order. -->
 taken from the data-reviewed stamps at build time. Shown on the domain's
 landing card, because "is anyone still maintaining this?" is a question a
 reference site should answer without being asked. -->
-<script type="application/json" id="changelog">{"net":{"month":"2026-11","topics":["routing-protocols-how-routers-find-the-best-path","network-troubleshooting-a-systematic-approach","structured-cabling-racks-fiber-in-practice"]},"sec":{"month":"2026-11","topics":["access-control-models","cryptography-algorithm-reference","multi-factor-authentication-layers-of-proof"]},"threat":{"month":"2026-09","topics":["diamond-model-of-intrusion-analysis","malware-types-reference","dos-ddos-network-attack-types"]},"grc":{"month":"2026-11","topics":["third-party-risk-your-security-is-only-as-strong-as-your-ven","defense-in-depth-layered-security","risk-management-lifecycle"]},"ops":{"month":"2026-11","topics":["bcp-dr-key-metrics-recovery-strategies","structured-logging-log-pipelines","vulnerability-management-lifecycle"]},"devops":{"month":"2026-09","topics":["terraform-infrastructure-as-code-in-practice","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning"]},"pentest":{"month":"2026-09","topics":["owasp-top-10-2021","recon-methodology-intelligence-before-attack","penetration-testing-phases"]},"linux":{"month":"2026-09","topics":["linux-file-permissions-model","linux-boot-process-biosuefi-systemd","podman-rootless-containers"]},"ai":{"month":"2026-09","topics":["machine-learning-pipeline","ml-learning-paradigms","ai-ethics-responsible-ai-nist-ai-rmf"]},"script":{"month":"2026-09","topics":["choosing-the-right-data-structure","regular-expressions-pattern-matching-that-pays-off-forever","rust-safe-systems-programming"]},"shortcut":{"month":"2026-11","topics":["windows-built-in-tools-the-run-box-names-and-the-commands-wo","microsoft-office-excelword","vs-code-editing-superpowers"]},"philosophy":{"month":"2026-09","topics":["philosophy-schools-of-thought","qigong-the-three-regulations-what-it-is-good-for","stoicism-the-art-of-rational-endurance"]},"productivity":{"month":"2026-11","topics":["exam-technique-the-marks-you-lose-without-knowing-less","asl-fingerspelling-the-alphabet-numbers-how-to-learn-them","habits-time"]},"mind":{"month":"2026-09","topics":["imposter-syndrome-you-belong-here","cbt-and-dbt-what-each-one-trains-and-which-problem-each-is-f","survival-mindsets-hard-won-wisdom-for-a-long-it-career"]},"career":{"month":"2026-09","topics":["mentorship-the-fastest-way-to-grow","your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r","certification-roadmap-charting-a-path-through-the-alphabet-s"]},"military":{"month":"2026-08","topics":["prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","quick-reference-full-cross-matrix"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-09","topics":["tcpdump-capture-from-the-command-line","arkime-ntopng-full-capture-traffic-analytics","wazuh-open-source-xdrsiem"]},"cloud":{"month":"2026-09","topics":["aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started"]},"cs":{"month":"2026-10","topics":["ascii-character-set-all-128-codes-and-the-bits-behind-them","amortized-analysis-why-a-dynamic-array-is-o1-on-average","memory-layout-cache-locality-why-arrays-beat-linked-lists"]},"eng":{"month":"2026-11","topics":["uml-class-object-sequence-diagrams-and-the-diamond-everybody","scalability-101-vertical-vs-horizontal","load-balancing-sharding"]},"data":{"month":"2026-09","topics":["how-a-database-actually-works","the-relational-model-keys-integrity","er-modeling-entities-relationships-cardinality"]},"web":{"month":"2026-09","topics":["devtools-mastery","the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi","design-systems-tokens-tailwind"]},"endpoint":{"month":"2026-11","topics":["windows-will-not-start-the-repair-ladder-safe-mode-to-reset","autopilot-device-preparation-the-newer-flow-that-deletes-the","glossary-acronyms-logs-task-sequence-variables"]},"infra":{"month":"2026-09","topics":["restore-testing-dr-design-turning-backups-into-a-recovery-ca","windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-"]},"hw":{"month":"2026-08","topics":["voltage-current-resistance-ohms-law-with-worked-it-examples","power-thermals-watts-heat-and-why-the-psu-calculation-matter","components-schematics-resistors-capacitors-diodes-transistor"]},"m365":{"month":"2026-09","topics":["joiner-mover-leaver-in-m365-terms-the-process-that-prevents-","exchange-hybrid-the-coexistence-nobody-meant-to-keep","exchange-server-on-prem-dag-transport-the-server-you-cant-qu"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-08","topics":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon"]}}</script>
+<script type="application/json" id="changelog">{"net":{"month":"2026-11","topics":["routing-protocols-how-routers-find-the-best-path","network-troubleshooting-a-systematic-approach","structured-cabling-racks-fiber-in-practice"]},"sec":{"month":"2026-11","topics":["access-control-models","cryptography-algorithm-reference","multi-factor-authentication-layers-of-proof"]},"threat":{"month":"2026-09","topics":["diamond-model-of-intrusion-analysis","malware-types-reference","dos-ddos-network-attack-types"]},"grc":{"month":"2026-11","topics":["third-party-risk-your-security-is-only-as-strong-as-your-ven","defense-in-depth-layered-security","risk-management-lifecycle"]},"ops":{"month":"2026-11","topics":["incident-response-lifecycle-picerl","bcp-dr-key-metrics-recovery-strategies","structured-logging-log-pipelines"]},"devops":{"month":"2026-09","topics":["terraform-infrastructure-as-code-in-practice","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning"]},"pentest":{"month":"2026-09","topics":["owasp-top-10-2021","recon-methodology-intelligence-before-attack","penetration-testing-phases"]},"linux":{"month":"2026-09","topics":["linux-file-permissions-model","linux-boot-process-biosuefi-systemd","podman-rootless-containers"]},"ai":{"month":"2026-09","topics":["machine-learning-pipeline","ml-learning-paradigms","ai-ethics-responsible-ai-nist-ai-rmf"]},"script":{"month":"2026-09","topics":["choosing-the-right-data-structure","regular-expressions-pattern-matching-that-pays-off-forever","rust-safe-systems-programming"]},"shortcut":{"month":"2026-11","topics":["windows-built-in-tools-the-run-box-names-and-the-commands-wo","microsoft-office-excelword","vs-code-editing-superpowers"]},"philosophy":{"month":"2026-09","topics":["philosophy-schools-of-thought","qigong-the-three-regulations-what-it-is-good-for","stoicism-the-art-of-rational-endurance"]},"productivity":{"month":"2026-11","topics":["exam-technique-the-marks-you-lose-without-knowing-less","asl-fingerspelling-the-alphabet-numbers-how-to-learn-them","habits-time"]},"mind":{"month":"2026-09","topics":["imposter-syndrome-you-belong-here","cbt-and-dbt-what-each-one-trains-and-which-problem-each-is-f","survival-mindsets-hard-won-wisdom-for-a-long-it-career"]},"career":{"month":"2026-09","topics":["mentorship-the-fastest-way-to-grow","your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r","certification-roadmap-charting-a-path-through-the-alphabet-s"]},"military":{"month":"2026-08","topics":["prefix-letters-j-g-s-n-a-c-m-f","functional-numbers-1-through-9-what-each-number-means","quick-reference-full-cross-matrix"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-09","topics":["tcpdump-capture-from-the-command-line","arkime-ntopng-full-capture-traffic-analytics","wazuh-open-source-xdrsiem"]},"cloud":{"month":"2026-09","topics":["aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started"]},"cs":{"month":"2026-10","topics":["ascii-character-set-all-128-codes-and-the-bits-behind-them","amortized-analysis-why-a-dynamic-array-is-o1-on-average","memory-layout-cache-locality-why-arrays-beat-linked-lists"]},"eng":{"month":"2026-11","topics":["uml-class-object-sequence-diagrams-and-the-diamond-everybody","scalability-101-vertical-vs-horizontal","load-balancing-sharding"]},"data":{"month":"2026-09","topics":["how-a-database-actually-works","the-relational-model-keys-integrity","er-modeling-entities-relationships-cardinality"]},"web":{"month":"2026-09","topics":["devtools-mastery","the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi","design-systems-tokens-tailwind"]},"endpoint":{"month":"2026-11","topics":["windows-will-not-start-the-repair-ladder-safe-mode-to-reset","autopilot-device-preparation-the-newer-flow-that-deletes-the","glossary-acronyms-logs-task-sequence-variables"]},"infra":{"month":"2026-09","topics":["restore-testing-dr-design-turning-backups-into-a-recovery-ca","windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-"]},"hw":{"month":"2026-08","topics":["voltage-current-resistance-ohms-law-with-worked-it-examples","power-thermals-watts-heat-and-why-the-psu-calculation-matter","components-schematics-resistors-capacitors-diodes-transistor"]},"m365":{"month":"2026-09","topics":["joiner-mover-leaver-in-m365-terms-the-process-that-prevents-","exchange-hybrid-the-coexistence-nobody-meant-to-keep","exchange-server-on-prem-dag-transport-the-server-you-cant-qu"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-08","topics":["sourced-quotes-why-this-collection-has-citations","stoic-quotes-marcus-aurelius-epictetus-seneca","eastern-quotes-tao-te-ching-zen-the-buddhist-canon"]}}</script>
 </body>
 </html>

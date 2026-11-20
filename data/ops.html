@@ -113,7 +113,7 @@
           </div>
 
           <!-- ── TOPIC: INCIDENT RESPONSE (PICERL) ────────────────── -->
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🚨</span>
               <span class="topic-name">Incident Response Lifecycle — PICERL <span class="acro-exp">(Preparation, Identification, Containment, Eradication, Recovery, Lessons learned)</span></span>
@@ -268,6 +268,82 @@
                         Lessons Learned<br />Post-incident review
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">Malware Removal Is This Lifecycle for One Machine, and the Order Is the Content</div>
+                <div class="concept-desc">
+                  CompTIA A+ teaches malware removal as seven steps for one infected PC, and they are the phases above
+                  at the scale of a single machine. The exam asks for them in order, and the order is not arbitrary:
+                  each step protects the one after it, so a step done early or late undoes work instead of adding it.
+                </div>
+                <div class="dw">
+                  <!-- fact: the seven steps and their order are A+ 220-1102 objective 3.3 and 220-1202 objective 2.6, and Professor Messer's course calls wiping and reinstalling the real best practice | source: Professor Messer's 220-1102 and 220-1202 video pages and study sites, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+                  <div class="dora-seq">
+                    <div class="dora-item">
+                      <div class="dora-letter">1</div>
+                      <div class="dora-word">Investigate</div>
+                      <div class="dora-desc">Verify the symptoms are malware</div>
+                    </div>
+                    <div class="c-muted">→</div>
+                    <div class="dora-item">
+                      <div class="dora-letter">2</div>
+                      <div class="dora-word">Quarantine</div>
+                      <div class="dora-desc">Off the network, no drives in or out</div>
+                    </div>
+                    <div class="c-muted">→</div>
+                    <div class="dora-item">
+                      <div class="dora-letter">3</div>
+                      <div class="dora-word">Restore off</div>
+                      <div class="dora-desc">Disable System Restore</div>
+                    </div>
+                    <div class="c-muted">→</div>
+                    <div class="dora-item">
+                      <div class="dora-letter">4</div>
+                      <div class="dora-word">Remediate</div>
+                      <div class="dora-desc">Update, then scan from Safe Mode or a boot environment</div>
+                    </div>
+                    <div class="c-muted">→</div>
+                    <div class="dora-item">
+                      <div class="dora-letter">5</div>
+                      <div class="dora-word">Schedule</div>
+                      <div class="dora-desc">Scans and updates that run on their own</div>
+                    </div>
+                    <div class="c-muted">→</div>
+                    <div class="dora-item">
+                      <div class="dora-letter">6</div>
+                      <div class="dora-word">Restore on</div>
+                      <div class="dora-desc">Enable it, and make a clean restore point</div>
+                    </div>
+                    <div class="c-muted">→</div>
+                    <div class="dora-item">
+                      <div class="dora-letter">7</div>
+                      <div class="dora-word">Educate</div>
+                      <div class="dora-desc">The user, last</div>
+                    </div>
+                  </div>
+                  <table class="ref-table">
+                    <thead><tr><th>Step</th><th>Phase above</th><th>Why it sits where it does</th></tr></thead>
+                    <tbody>
+                      <tr><td>1. Investigate</td><td>Identification</td><td>Verify the symptoms first: slowness and pop-ups are also a failing drive or a bad update, and cleaning a machine that is not infected hides the real fault</td></tr>
+                      <tr><td>2. Quarantine</td><td>Containment</td><td>Quarantine the infected system before anything is cleaned: an infection that spreads over a share or a USB <span class="acro-exp">(Universal Serial Bus)</span> stick while you work is a second incident</td></tr>
+                      <tr><td>3. Restore off</td><td>Containment</td><td>Disable System Restore. Restore points made while the machine was infected can hold the malware, and restoring one after the cleaning puts it back</td></tr>
+                      <tr><td>4. Remediate</td><td>Eradication</td><td>Update the scanner first, then scan where the malware is not running: Safe Mode, or a preinstallation environment started from other media</td></tr>
+                      <tr><td>5. Schedule</td><td>Recovery</td><td>Schedule scans and run updates: the way in was usually a missing update or a scanner that had been turned off</td></tr>
+                      <tr><td>6. Restore on</td><td>Recovery</td><td>Enable System Restore and create a restore point: the first one after the cleaning is the first one worth having</td></tr>
+                      <tr><td>7. Educate</td><td>Lessons learned</td><td>Educate the end user, last, because it is the one step that changes the odds of the next infection, and the conversation needs to know how this one happened</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The third row is the one the order exists for.</strong> Disable restore before
+                    the cleaning and enable it after, and every restore point left is a clean one. In the other order an
+                    infected restore point survives the cleaning and is one click from coming back. The list also has an
+                    honest limit, and Professor Messer's A+ course states it outright: removal leaves you hoping the
+                    machine is clean, because nothing proves every piece is gone, and the real best practice is to wipe
+                    it and reinstall from known-good media or a backup made before the infection. The seven steps are for
+                    the machine that cannot be rebuilt today.
                   </div>
                 </div>
               </div>
