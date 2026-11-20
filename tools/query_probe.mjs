@@ -559,6 +559,31 @@ const READERS = [
   // word: asleep, ASLR, Maslow, SASL. `carriage return` and `extended ascii`
   // found cards, just not the chart. The ASL half then moved to its own topic in
   // productivity, with a picture of each handshape, and its five queries with it.
+  // The second reader *Content ideas* §7.3 named, added with the first theory
+  // card as it said: a reader whose queries nothing is about to answer records a
+  // backlog, not a census. Fifteen queries for §4 rows 21 to 27, before their
+  // cards. Left out on purpose, because each already reaches a defensible card:
+  // `crc` the modular-arithmetic topic, `bit mask` the subnetting topics, `error
+  // correcting code` the memory topic's ECC, `regex html` the regex topic, and
+  // `producer consumer` the message-queue topics, which are the same pattern at
+  // the scale of services.
+  ["a student on a theory course", [
+    ["halting problem", "", "cs/p-np-knowing-when-to-stop-looking-for-an-exact-answer"],
+    ["turing machine", "", "cs/p-np-knowing-when-to-stop-looking-for-an-exact-answer"],
+    ["undecidable", "", "cs/p-np-knowing-when-to-stop-looking-for-an-exact-answer"],
+    ["context-free grammar", "", "cs/string-algorithms-matching-edit-distance-where-regex-fits"],
+    ["pumping lemma", "", "cs/string-algorithms-matching-edit-distance-where-regex-fits"],
+    ["hamming code", "", "cs/modular-arithmetic-the-clock-maths-behind-hashing-checksums-"],
+    ["parity bit", "", "cs/modular-arithmetic-the-clock-maths-behind-hashing-checksums-"],
+    ["bitwise and", "", "cs/boolean-algebra-truth-tables-de-morgan-firewall-logic"],
+    ["priority inversion", "", "cs/deadlock-livelock-the-four-conditions-and-which-one-to-break"],
+    ["dining philosophers", "", "cs/deadlock-livelock-the-four-conditions-and-which-one-to-break"],
+    ["boundary value analysis", "", "script/testing-strategy-why-and-how-to-test"],
+    ["equivalence partitioning", "", "script/testing-strategy-why-and-how-to-test"],
+    ["mutation testing", "", "script/testing-strategy-why-and-how-to-test"],
+    ["segmentation fault", "", "cs/memory-layout-cache-locality-why-arrays-beat-linked-lists"],
+    ["stack vs heap", "", "cs/memory-layout-cache-locality-why-arrays-beat-linked-lists"],
+  ]],
   ["somebody looking up a character code or a handshape", [
     ["ascii table", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
     ["ascii code", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
