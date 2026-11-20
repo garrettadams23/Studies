@@ -903,7 +903,7 @@ const READERS = [
     // ── batch eighteen ──
     ["it posts but windows will not start"],
     ["the usb ports on one side stopped working",
-     "kind 3 — the reader's fault is *a whole controller or front-panel header, not a port*, which is the right diagnosis and is the shape `hw` teaches throughout: isolate, swap, halve. `usb` at 31 and `header` at 33 are both in the corpus; no card carries them with `side`, which is the reader's word for a physical grouping the site describes electrically"],
+     "kind 3 — the reader's fault is *a whole controller or front-panel header, not a port*, which is the right diagnosis and is the shape `hw` teaches throughout: isolate, swap, halve. `usb` at 31 and `header` at 33 are both in the corpus; no card carries them with `side`, which is the reader's word for a physical grouping the site describes electrically. Since the third wave it scores answered, half by accident: the connector card in Docks says a plug is *wider on one side*, which satisfies the conjunction, and relaxation then adds Motherboard Anatomy, whose chipset row is the nearest the site comes to ports that fail together sharing a controller. The diagnosis the reader needs is still not written as a card"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
