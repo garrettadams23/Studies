@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges | ◐ **started** — see its §9 and §10 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences | ◐ **started** — see its §9, §10 and §11 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -68,7 +68,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **58** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **59** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -1955,6 +1955,43 @@ difference instead.
 **Not done.** §4 rows 15 to 18 and 20 to 35, the other pictures and the exam paths are the
 queue, and so is the gap §9 found under `the user has two accounts`. `make visual` fails
 here as it did in the first wave, for the same font reason.
+
+## 11. What shipped — the third wave
+
+Conducted in one session, recorded below as *Session — the third wave, and two answers the
+census counted that nobody gave*. §4 rows 15 to 18 and 20, *the desk and the exam*, with
+the reader extended first and one commit per domain. The exam reader's third batch opened at
+**0 of 16** and closed at **16 of 16**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.15 | The built-in tools and the Run box | **A new topic, and longer than *short by design*.** `shortcut` *Windows Built-in Tools*, beside *System &amp; General*: the Run box names, the disk, system-file and policy commands with the switch that matters on each, and the Windows network commands, which the site barely had: `ipconfig` twice, `tracert` once, `netstat` never on Windows. The last card is robocopy `/MIR`, linked to the rsync card. On *Running a Service Desk* after the troubleshooting methodology |
+| 4.16 | Malware removal as a sequence | A card in `ops` *Incident Response Lifecycle — PICERL*, not `threat`: the seven A+ steps are its phases at the scale of one machine, and the table says which phase each step is. Step tiles, as the row asked. The verdict carries the limit Professor Messer's A+ course states, that rebuilding is the real best practice |
+| 4.17 | Connectors, to recognize by sight | **Two cards, in `net` and in `hw`, and not a grid.** Six network connectors in the cabling topic and six desk plugs in *Docks, USB-C &amp; Thunderbolt*, each drawn face-on in its table's first column, the way wave one drew the UML lines, so each shape sits beside its tell. One scale per table, existing roles only, no new CSS |
+| 4.18 | Excel an administrator uses | Two cards in *Microsoft Office*. VLOOKUP's default is approximate, and MATCH has the same default, which the row did not say. A pivot table is a `GROUP BY` you drag, linked to `data`'s aggregation topic |
+| 4.20 | Exercise and learning | A card in *Sleep*, under the condition the row set. One number has a study behind it, van Dongen and colleagues in 2016, and the card gives its limits. The other, twenty minutes before study, has none that a search found, and the card says so instead of repeating it as advice |
+
+**Two old zeros now score answered, and neither was answered.** Search reads the
+annotator's expansions as text. `the user says the file is gone` matched the new tools topic
+through *User* in the expansion of UDP, and `the usb ports on one side stopped working`
+matched a connector card's *wider on one side*. In both, relaxation then widened one
+accidental match into a result list, so the census counts two answers a reader does not get.
+The staleness check cannot see either, because neither note claims a zero in words. Both
+notes now say what happened. **For the first, a fix is queued and not made:** search that
+skips text inside `.acro-exp`, measured by the census before and after, because an expansion
+is a reading aid and not something a card says. The second is the ordinary cost of a matcher
+that reads words, and its repair is the card the note says is still unwritten.
+
+**A new topic has three costs the plan did not list.** `check_paths.py` fails until it is on
+a path, the orphan row drifts until it has related links in both directions, and
+`gen_og_image --check` fails because the preview image prints the topic count. All three
+were met here and are in the commit.
+
+**Not done.** §4 rows 21 to 27, the theory under the tools, wait for the second reader, *a
+student on a theory course*. Rows 28 to 35 are the human domains, each with a condition of
+its own, and rows 32 to 34 need the source-reading gate. The pictures
+of §2 and the exam paths of §5 are still the queue, and so is the gap §9 found under `the
+user has two accounts`.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7198,4 +7235,85 @@ reader: CompTIA exam batch two, 0 of 23 -> 23 of 23 · census 389 of 414 -> 412 
 acronyms 1,110 -> 1,121 · dated claims 83 -> 88 · mean card 1,408 -> 1,412 · depth median 3,766 -> 3,780
 45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in the first wave: font rendering, baseline left alone
+```
+
+## Session — the third wave, and two answers the census counted that nobody gave
+
+The request was **keep going with the next wave**, and then **stay going until it is
+completed**. The wave was *Content ideas* §4 rows 15 to 18 and 20, *the desk and the
+exam*. The reader went in first, then one commit per domain, and *Content ideas* §11 is the
+table. This is what doing it found.
+
+### A match is not an answer, and the census only sees matches
+
+The last wave fixed three tools at their edges. This one found the census's edge. Two queries
+with recorded zeros, both kept on purpose with notes explaining why no card answers them,
+began scoring as answered without anyone answering them. One matched the new Windows tools
+topic through *User* inside the expansion of UDP. The other matched a connector card's
+*wider on one side*. Each time the search's relaxation stage then did what it was built to
+do and widened one match into a list, 31 cards in the first case. **The census counts a
+query answered when the result is non-empty and not wide, and a coincidence passes that
+test.** The staleness check reads a note for the claim it can evaluate, a zero, and neither
+note made that claim in words, so neither was flagged. They were found by diffing the census
+before and after each commit, which is now the habit: a count that moves by one more than
+the batch explains has moved for a reason.
+
+### The plan's short lookup was short because it was missing things
+
+Row 15 said *a lookup, short by design*, and listed the commands it had counted as absent.
+Writing it found the Windows network commands absent too: `ipconfig` twice on the whole site,
+`tracert` once and `netstat` never on Windows. The grep behind §4 had looked for the commands
+it already thought of. The same thing happened to row 18, whose draft named VLOOKUP's
+approximate default and not MATCH's, which is the same trap inside INDEX and MATCH.
+**A list of what is absent is bounded by the words its author thought to look for.**
+
+### The picture grid became pictures in a table
+
+Row 17 said *the site's second picture grid*. The first grid's rules are named for the ASL
+hands, and a grid separates a shape from the words that make it recognizable, which for a
+connector is the whole card: *two cut corners* or *one*, *hollow* or *solid*. Wave one had
+already drawn the UML lines in a table's first column with existing roles and no new CSS, so
+the connectors went the same way, twelve of them from one script, at one scale per table.
+Each was rendered at size in both themes and read against its own row before its commit, the
+check the ASL records established.
+
+### A new topic costs three things the plan never listed
+
+A path, because `check_paths.py` fails a hand-written topic that is on none. Related links in
+both directions, because the orphan row drifts without them. And a new preview image, because
+`gen_og_image --check` compares the topic count printed on the image. While adding the links,
+the related-links row turned out to carry a mainland of 1,487 that had been 1,488 since the
+first wave's topic. Nothing checks that figure, so nothing noticed. It reads 1,489 now.
+
+### What the plan had wrong
+
+| The plan said | Read, it was | Where it is corrected |
+|---|---|---|
+| Row 15 is a short lookup | Four cards: the Windows network commands were nearly absent too | §11 |
+| Row 16 lands in `ops` or `threat` | `ops`, inside PICERL: the seven steps are its phases for one machine | §11 |
+| Row 17 is a picture grid in `net` | Two cards, `net` and `hw`, with each picture in its table's first column | §11 |
+| Row 18's trap is VLOOKUP's | MATCH has the same default | The card |
+| Related links: a mainland of 1,487 | 1,488 since the first wave, and nothing checked it | The row |
+
+### What was verified, and how far
+
+Every outside fact was checked by search before it was written, and no page was fetched. The
+malware removal order and Professor Messer's caveat about rebuilding. The A+ command list,
+where only `pathping`, `chkdsk`, `diskpart`, `robocopy` and `winver` were confirmed for
+220-1202, so the topic claims no objective numbers for its tables. VLOOKUP's and MATCH's
+defaults, XLOOKUP's versions and the pivot refresh keys. The connector faces: the published
+widths, RJ11's fit in an RJ45 jack, the fiber ferrules, and DisplayPort's single cut corner,
+which took a second search. And the two exercise studies, where the meta-analysis was found
+and the twenty-minute protocol was not. Three fact anchors record what is dated or
+version-specific: XLOOKUP's Excel versions, the A+ objective numbers, and the two studies.
+The *Dated claims* row rose from 88 to 91 for those reasons.
+
+```
+7 commits · 1 new topic (shortcut) · 10 cards (shortcut 6, ops 1, net 1, hw 1, productivity 1) · 12 connector drawings
+reader: CompTIA exam batch three, 0 of 16 -> 16 of 16 · census 412 of 453 -> 430 of 453, 0 unexplained
+2 kept zeros now answered by coincidence, both notes say so · search inside expansions queued, not changed
+topics 1,564 -> 1,565 · path steps 1,602 -> 1,603 · related links 4,918 -> 4,928 · mainland 1,488 -> 1,489
+dated claims 88 -> 91 · mean card 1,412 -> 1,414 · page budget 32% (~727) -> 31% (~717) · acronyms unchanged at 1,121
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in the first two waves: font rendering, baseline left alone
 ```
