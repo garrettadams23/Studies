@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences | ◐ **started** — see its §9, §10 and §11 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix | ◐ **started** — see its §9 to §12 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -68,7 +68,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **59** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **60** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -1992,6 +1992,28 @@ student on a theory course*. Rows 28 to 35 are the human domains, each with a co
 its own, and rows 32 to 34 need the source-reading gate. The pictures
 of §2 and the exam paths of §5 are still the queue, and so is the gap §9 found under `the
 user has two accounts`.
+
+## 12. What shipped — the fourth wave
+
+Conducted in the same session as the third, recorded below as *Session — the fourth wave,
+and a spelling gate that knew five words and not the rule*. §4 rows 21 to 27, the theory
+under the tools, with the second reader §7.3 named, *a student on a theory course*, added
+first. It opened at **0 of 15** and closed at **15 of 15**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.21 | Computability | A card in *P, NP*: the halting problem and Rice's theorem, and why every scanner is sound and noisy or quiet and incomplete |
+| 4.22 | Regular and context-free | A card in *String Algorithms*: the machines, the pumping lemma, and the HTML theorem with its two qualifications |
+| 4.23 | Detecting and correcting errors | A card in *Modular Arithmetic*, not a new home: a CRC is modular arithmetic on bits. Parity, CRC, Hamming and SECDED, linked to the memory topic |
+| 4.24 | Bitwise operations | A card in *Boolean Algebra*, linked to subnetting and Linux permissions. **The draft missed the better half:** umask is not subtraction, and 033 is where the shortcut breaks |
+| 4.25 | The synchronization problems | A card in *Deadlock*: four shapes and their fixes, and the Mars Pathfinder mutex |
+| 4.26 | Test design | A card in `script` *Testing Strategy*, on one example where a mutant survives every partition test |
+| 4.27 | The stack, the heap and the segmentation fault | A card in *Memory Layout*, with what finds each cause before the crash |
+
+**Two gates caught the content, and one of them was wrong.** The linter caught `ECC`
+rendering as *Elliptic Curve Cryptography* in a card about error-correcting codes, which was
+right, and `cs` now decides the meaning. The spelling gate failed *bitwise*, which was not:
+its exception list named five *-wise* words, and the suffix is now a rule.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7316,4 +7338,51 @@ topics 1,564 -> 1,565 · path steps 1,602 -> 1,603 · related links 4,918 -> 4,9
 dated claims 88 -> 91 · mean card 1,412 -> 1,414 · page budget 32% (~727) -> 31% (~717) · acronyms unchanged at 1,121
 45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in the first two waves: font rendering, baseline left alone
+```
+
+## Session — the fourth wave, and a spelling gate that knew five words and not the rule
+
+The request was **keep going until you finish all waves**. The fourth was *Content ideas* §4
+rows 21 to 27, the theory under the tools, and §7.3 had said when its reader goes in: with the
+first theory card. So *a student on a theory course* went in first, 15 queries, and opened at
+0 of 15. *Content ideas* §12 is the table. This is what doing it found.
+
+### An exception list is a rule somebody has not written yet
+
+The spelling gate flagged *bitwise* and offered *bitwize*. Its `-ise` rule keeps a list of
+words where `ise` is not the suffix, and the list named *clockwise*, *likewise*, *otherwise*,
+*pairwise* and *stepwise*, one at a time. Five names were approximating one fact: *-wise* is
+a suffix of its own, English coins new ones freely, and none has an American spelling that
+differs. It is a rule now, with three fixtures, and the commit that taught it came before the
+card that needed it, so every commit on the branch passes. **When a list of exceptions grows
+by one each time content meets it, the list is a rule in disguise.**
+
+### The other gate was right, and the mechanism it guards worked
+
+The linter refused `ECC` rendering as *Elliptic Curve Cryptography* in the card about
+error-correcting codes. `acronyms.json` already carried both meanings and decisions for `hw`,
+`linux` and `sec`, and `cs` had never needed one. One line decides it now. That is the design
+working: an acronym with two meanings is decided per domain at the moment a domain first uses
+it, by the person who knows which one it meant.
+
+### A commit made before its gate finished
+
+One command in this wave chained `make check` to the commit without testing its exit status,
+and the commit landed while the spelling gate was failing. It was caught by reading the
+output, reset before anything was pushed, and redone after the gate was fixed. **The order is
+the gate's exit status first, then the commit,** and a command that runs both has to say so.
+
+### What the plan had right, and the half it missed
+
+Six of the seven draft sentences held. Row 24's said a subnet mask and a permission mask are
+the same move, *AND against a mask*. Half right: a subnet is AND, and umask is AND NOT, which
+is why the common shortcut of subtracting works for 022 and fails for 033. The card is built on
+the half the draft missed.
+
+```
+5 commits · 7 cards (cs 6, script 1) · 1 gate taught a rule · 1 acronym decided for a domain
+reader: a student on a theory course, 0 of 15 -> 15 of 15 · census 430 of 468 -> 445 of 468, 0 unexplained
+dated claims 91 -> 93 · mean card 1,414 -> 1,415 · depth 10th 2,155 -> 2,162, median 3,780 -> 3,791 · page budget ~717 -> ~713
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
 ```
