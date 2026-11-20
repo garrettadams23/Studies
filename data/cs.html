@@ -301,7 +301,7 @@ buf := make([]<span class="kw">int</span>, <span class="num">0</span>, nExpected
 </div>
 
 <!-- ── TOPIC: P VS NP ─────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧩</span>
     <span class="topic-name">P, NP &amp; Knowing When to Stop Looking for an Exact Answer</span>
@@ -382,6 +382,37 @@ buf := make([]<span class="kw">int</span>, <span class="num">0</span>, nExpected
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Some Questions About Programs Have No Algorithm at All: the Halting Problem and Rice's Theorem</div>
+      <div class="concept-desc">
+        P versus NP is about problems that are slow to solve. The halting problem is about a question that
+        cannot be solved at all: given any program and its input, will it finish? Alan Turing proved in 1936
+        that no program can answer that for every program, by handing any claimed answerer a program built to
+        do the opposite of whatever it predicts, so the problem is undecidable. Henry Rice extended that in 1951
+        to every non-trivial question about what a program does, as opposed to what its text looks like. A Turing machine is the model the
+        proof is about: a tape, a head and a table of rules, enough to compute anything a computer can.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question about a program</th><th>Decidable?</th><th>So every tool that answers it</th></tr></thead>
+          <tbody>
+            <tr><td>Does its text contain <code>eval(</code>?</td><td class="c-green">Yes: it is about the text</td><td>Can answer exactly</td></tr>
+            <tr><td>Will it halt on this input?</td><td class="c-red">No: Turing</td><td>Times out, guesses, or declines</td></tr>
+            <tr><td>Can user input ever reach this SQL <span class="acro-exp">(Structured Query Language)</span> query?</td><td class="c-red">No, in general: Rice</td><td>Reports some flows that cannot happen, misses some that can, or gives up on some programs</td></tr>
+            <tr><td>Does it do the same thing as this other program?</td><td class="c-red">No, in general</td><td>Proves only the equivalences it was built to recognize</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The third row is why every security scanner either cries wolf or misses
+          things, and why choosing one is choosing which.</strong> A scanner that reports every flow that might
+          be dangerous is sound and noisy, and one tuned to report only flows it is sure of is quiet and
+          incomplete. No third kind is waiting to be built. The exits are the ones the card above lists for
+          NP-hard problems, approximate or heuristic or a constrained input, such as a framework where the
+          question becomes decidable, with one difference: there is no solver to buy.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -391,7 +422,7 @@ buf := make([]<span class="kw">int</span>, <span class="num">0</span>, nExpected
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: MEMORY LAYOUT ───────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧱</span>
     <span class="topic-name">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>
@@ -474,6 +505,37 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">The Stack, the Heap, and Why a Segmentation Fault Is the Operating System Doing Its Job</div>
+      <div class="concept-desc">
+        Each thread has a stack: a fixed-size region where each function call gets a frame for its local
+        variables, released when the call returns. The heap is everything allocated with <code>malloc</code>
+        or <code>new</code>, which lives until something frees it. A segmentation fault is the processor and
+        the kernel stopping a process that touched memory it has no right to, an unmapped page or a
+        protected one, with the signal <code>SIGSEGV</code>. The crash is where the mistake was caught, which
+        is rarely where it was made.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause</th><th>Where the mistake was</th><th>What finds it before the crash</th></tr></thead>
+          <tbody>
+            <tr><td>A null pointer read or written</td><td>Wherever the pointer was left null and not checked</td><td>Compiler warnings and static analysis</td></tr>
+            <tr><td>Use after free</td><td>The code that freed the memory, and the code that kept a pointer to it</td><td>AddressSanitizer, or Valgrind</td></tr>
+            <tr><td>A buffer overflow</td><td>A write past the end of an array, possibly far from where it crashes</td><td>AddressSanitizer</td></tr>
+            <tr><td>Recursion with no working base case</td><td>The base case</td><td>The stack's guard page is what turns it into a crash at all</td></tr>
+            <tr><td>A write to a string literal</td><td>Code that treated read-only data as writable</td><td><code>const</code>, and the warnings that enforce it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The second and third rows are why the crash is the good outcome.</strong> A use
+          after free or an overflow that does not crash corrupts data quietly instead, and some of those are how
+          an attacker takes over a process. Building tests with <code>-fsanitize=address</code> turns those
+          silent corruptions into a crash at the first bad access, with the line that made it, which is the
+          mistake and not its consequence.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1138,7 +1200,7 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
 </div>
 
 <!-- ── TOPIC: STRING ALGORITHMS ───────────────────────────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔡</span>
     <span class="topic-name">String Algorithms — Matching, Edit Distance &amp; Where Regex Fits</span>
@@ -1226,6 +1288,36 @@ subject = <span class="str">"a"</span> * <span class="num">30</span> + <span cla
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Regular and Context-Free: Why Matching Nested Brackets Needs a Stack</div>
+      <div class="concept-desc">
+        A regular expression, in the theory's sense, describes a regular language, and every regular language
+        is recognized by a machine with a fixed number of states and no memory beyond them. A machine like
+        that cannot count how many brackets are still open, so it cannot match nesting to any depth. A
+        context-free grammar adds a stack, which is exactly that count. The pumping lemma is the proof tool:
+        any long enough string in a regular language has a part that can be repeated without leaving the
+        language, and balanced brackets do not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Language class</th><th>Machine</th><th>Describes</th><th>Where you meet it</th></tr></thead>
+          <tbody>
+            <tr><td>Regular</td><td>Finite automaton: fixed states and no other memory</td><td>Fixed patterns: a date, an IP <span class="acro-exp">(Internet Protocol)</span> address's shape, a token</td><td>grep, input validation, the first pass of every parser</td></tr>
+            <tr><td>Context-free</td><td>Pushdown automaton: the same, plus a stack</td><td>Nesting: brackets, HTML <span class="acro-exp">(HyperText Markup Language)</span> elements, JSON <span class="acro-exp">(JavaScript Object Notation)</span>, arithmetic expressions</td><td>Every parser for a programming or data language</td></tr>
+            <tr><td>Context-sensitive and beyond</td><td>Linear-bounded automaton, then a Turing machine</td><td>Rules that depend on what came before, such as a variable declared before it is used</td><td>Compilers, which check these after parsing, in code rather than in the grammar</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">"You cannot parse HTML with a regular expression" is a theorem about the first
+          two rows,</strong> not an opinion about style: a finite set of states cannot count open tags. Two
+          qualifications keep it honest. A regex is fine for one tag in a flat string, because the theorem is
+          about structures of any depth. And the engines in Perl, PCRE and .NET add recursion and balancing
+          groups, so they match things no regular expression can, which makes them more than regular
+          expressions, and the parser is still the tool that says what went wrong and where.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1550,7 +1642,7 @@ value = transform(row)
 </div>
 
 <!-- ── TOPIC: DEADLOCK ────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔒</span>
     <span class="topic-name">Deadlock &amp; Livelock — The Four Conditions, and Which One to Break</span>
@@ -1599,6 +1691,36 @@ value = transform(row)
         transaction with a retryable error — so application code that talks to a database
         <em>must</em> handle deadlock as a retry case, not as a fatal exception. Code that does
         not is the source of the intermittent failures nobody can reproduce.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Fingerprint</div>
+      <div class="concept-title">The Classic Synchronization Problems, and the One That Kept Resetting a Spacecraft</div>
+      <div class="concept-desc">
+        Four problems recur in every operating systems course because each is a shape that real systems keep
+        reproducing. Dijkstra set the dining philosophers as an exam question in 1965, about computers
+        competing for tape drives, and Tony Hoare later gave it the philosophers and the forks. Each row names
+        the shape, so that the next time a system hangs or stalls it has a name and a known fix.
+      </div>
+      <div class="dw">
+        <!-- fact: Mars Pathfinder, 1997: priority inversion between a high-priority bus task, a low-priority meteorological task and a medium-priority communications task; the watchdog reset; fixed by turning on priority inheritance in the VxWorks mutex from the ground | source: Mike Jones's account of David Wilner's 1997 keynote and Glenn Reeves's reply, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <table class="ref-table">
+          <thead><tr><th>Problem</th><th>What goes wrong</th><th>The fix</th></tr></thead>
+          <tbody>
+            <tr><td>Producer-consumer, the bounded buffer</td><td>A producer adds to a full buffer, or a consumer takes from an empty one</td><td>Two counting semaphores, one for empty slots and one for full ones, and a lock on the buffer itself</td></tr>
+            <tr><td>Readers-writers</td><td>Writers wait forever while readers keep arriving, or the reverse</td><td>A written policy on who goes first, because either choice starves somebody</td></tr>
+            <tr><td>Dining philosophers</td><td>Each philosopher holds one fork and waits for the next: a circular wait</td><td>Number the forks and always take the lower one first, which breaks circular wait, one of the four conditions in the first card</td></tr>
+            <tr><td>Priority inversion</td><td>A high-priority task waits on a lock held by a low-priority one, while a medium-priority task keeps the low one from running</td><td>Priority inheritance: the task holding the lock borrows the waiter's priority until it lets go</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row happened on Mars.</strong> In 1997 Mars Pathfinder kept resetting
+          itself: a high-priority bus task waited on a mutex held by a low-priority weather task, a
+          medium-priority communications task ran in between, and a watchdog saw the bus task late and restarted
+          the computer. The mutex had been created with priority inheritance off. Engineers on the ground
+          uploaded a short program that turned it on, and the resets stopped. The lesson is the third column:
+          each fix is one switch, and knowing the shape's name is how you find the switch.
+        </div>
       </div>
     </div>
   </div>
@@ -3078,7 +3200,7 @@ valgrind --leak-check=full ./prog</pre>
 <!-- /domain-body cs -->
 
 <!-- ── TOPIC: MODULAR ARITHMETIC ─────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🕐</span>
     <span class="topic-name">Modular Arithmetic — The Clock Maths Behind Hashing, Checksums &amp; Crypto</span>
@@ -3152,11 +3274,41 @@ valgrind --leak-check=full ./prog</pre>
    index = ((h % n) + n) % n</pre>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">Detecting and Correcting Errors Are Different Purchases: Parity, CRC and Hamming</div>
+      <div class="concept-desc">
+        Every scheme here adds redundant bits, and what the extra bits buy differs. A CRC is modular arithmetic
+        on bits: the message, read as a polynomial, is divided by a fixed one, and the remainder travels with
+        it. A Hamming code places parity bits so that the pattern of failed checks names the position of a
+        flipped bit, which is what lets it repair the bit instead of only reporting it.
+      </div>
+      <div class="dw">
+        <!-- fact: ECC memory uses a (72,64) SECDED code: 64 data bits and 8 check bits, the eighth an overall parity bit that adds double-error detection | source: an AMD (Xilinx) application note, University of Wisconsin course notes and memory-controller patents, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <table class="ref-table">
+          <thead><tr><th>Scheme</th><th>Extra bits</th><th>Detects</th><th>Corrects</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>Parity</td><td>1 per unit</td><td>Any odd number of flipped bits, and no even number</td><td class="c-muted">Nothing</td><td>Serial links, older memory</td></tr>
+            <tr><td>CRC-32</td><td>32 per frame</td><td>Every burst of errors up to 32 bits long, and most longer ones</td><td class="c-muted">Nothing: the data is sent again</td><td>Ethernet frames, ZIP, PNG <span class="acro-exp">(Portable Network Graphics)</span></td></tr>
+            <tr><td>Hamming (7,4)</td><td>3 per 4 data bits</td><td>Two flips, if it is not also correcting</td><td>One flipped bit</td><td>The idea behind ECC <span class="acro-exp">(Error-Correcting Code)</span></td></tr>
+            <tr><td>SECDED (72,64): single-error correcting, double-error detecting</td><td>8 per 64 data bits</td><td>Two flips</td><td class="c-green">One flipped bit</td><td>ECC memory</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The third row has the trap the fourth exists to close.</strong> A Hamming code
+          used to correct cannot tell two flipped bits from one, so it repairs the wrong bit and reports success.
+          ECC memory adds an eighth check bit to each 64 for exactly that: one flip is fixed without asking, and
+          two are reported instead of miscorrected. A CRC can only tell you to ask again, which is fine on a
+          network that can resend and useless in memory that cannot. The memory half is
+          <span class="xref">Memory Deep — Channels, Ranks, Timings, ECC &amp; Diagnosing Bad RAM</span>.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- ── TOPIC: BOOLEAN ALGEBRA ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔲</span>
     <span class="topic-name">Boolean Algebra — Truth Tables, De Morgan &amp; Firewall Logic</span>
@@ -3305,6 +3457,34 @@ valgrind --leak-check=full ./prog</pre>
           four or five variables the maps stop being usable and tools take over: Quine–McCluskey does the same
           minimization exactly, and heuristics such as Espresso do it at scale. The map is where you learn what
           the tool is doing.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Bitwise Operations: a Subnet Mask and a Permission Mask Are the Same Move, and umask Is Not Subtraction</div>
+      <div class="concept-desc">
+        The laws above, applied to every bit of a number at once, are the bitwise operations, and an
+        administrator uses them daily under other names. A mask is a number whose 1 bits say where to act.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Operation</th><th>Does</th><th>Where you already use it</th></tr></thead>
+          <tbody>
+            <tr><td>AND with a mask</td><td>Keeps the bits the mask has set and clears the rest</td><td>An address AND its subnet mask is the network address: 192.168.10.77 AND 255.255.255.0 is 192.168.10.0</td></tr>
+            <tr><td>AND with NOT a mask</td><td>Clears the bits the mask has set</td><td>umask: a new file asks for mode 666, and the system gives 666 AND NOT 022, which is 644</td></tr>
+            <tr><td>OR</td><td>Sets the bits the mask has set</td><td><code>chmod a+x</code> is the mode OR 111, and API <span class="acro-exp">(Application Programming Interface)</span> flags are combined with OR</td></tr>
+            <tr><td>XOR</td><td>Flips the bits the mask has set, and doing it twice restores them</td><td>RAID 5 parity, and why a lost disk can be rebuilt from the others</td></tr>
+            <tr><td>Shift left by n</td><td>Multiplies by 2 to the n</td><td>A /24 is 24 one bits, and <code>1 &lt;&lt; 8</code> is 256</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The second row is where people subtract instead, and get a plausible wrong
+          answer.</strong> For umask 022, 666 minus 022 and 666 AND NOT 022 both give 644, so the shortcut seems
+          to work. For umask 033 subtraction gives 633 and the system gives 644, because a bit the request never
+          asked for cannot be taken away. The subnet and permission halves are
+          <span class="xref">Subnetting &amp; CIDR</span> and
+          <span class="xref">Linux File Permissions Model</span>.
         </div>
       </div>
     </div>
