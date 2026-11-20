@@ -75,7 +75,148 @@
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-11">
+            <!-- ── TOPIC: WINDOWS BUILT-IN TOOLS ──────────────────────────────── -->
+            <div class="topic-header">
+              <span class="topic-icon">🛠️</span>
+              <span class="topic-name">Windows Built-in Tools — the Run Box Names and the Commands Worth Knowing</span>
+              <span class="topic-badge">OS CORE</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Type the Name and Skip the Menus</div>
+                <div class="concept-desc">
+                  Win + R opens the Run box, and every console below opens from it by name, faster than any path
+                  through Settings. The extension says what kind of window comes back: <code>.msc</code> is a
+                  management console, <code>.cpl</code> is a Control Panel applet, and a bare name is a program.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Type</th><th>Opens</th><th>Reach for it when</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>compmgmt.msc</code></td><td>Computer Management</td><td>You want Device Manager, Disk Management, Event Viewer, Services and Task Scheduler in one window</td></tr>
+                      <tr><td><code>devmgmt.msc</code></td><td>Device Manager</td><td>A driver needs rolling back, updating or disabling</td></tr>
+                      <tr><td><code>diskmgmt.msc</code></td><td>Disk Management</td><td>A new disk needs initializing, or a partition needs a letter</td></tr>
+                      <tr><td><code>eventvwr.msc</code></td><td>Event Viewer</td><td>You need what Windows logged before the crash</td></tr>
+                      <tr><td><code>services.msc</code></td><td>Services</td><td>A service needs starting, stopping, or a different startup type</td></tr>
+                      <tr><td><code>taskschd.msc</code></td><td>Task Scheduler</td><td>Something runs at sign-in or on a timer, and nobody knows why</td></tr>
+                      <tr><td><code>ncpa.cpl</code></td><td>Network Connections</td><td>An adapter needs disabling, or a static address</td></tr>
+                      <tr><td><code>appwiz.cpl</code></td><td>Programs and Features</td><td>Uninstalling, or turning a Windows feature on or off</td></tr>
+                      <tr><td><code>msinfo32</code></td><td>System Information</td><td>You need the model, BIOS <span class="acro-exp">(Basic Input/Output System)</span> version, memory and build on one page</td></tr>
+                      <tr><td><code>dxdiag</code></td><td>DirectX Diagnostic Tool</td><td>A display or sound fault, and the driver versions behind it</td></tr>
+                      <tr><td><code>msconfig</code></td><td>System Configuration</td><td>A clean boot, or Safe Mode on the next restart</td></tr>
+                      <tr><td><code>resmon</code></td><td>Resource Monitor</td><td>You need to know which process is holding the disk or the network</td></tr>
+                      <tr><td><code>regedit</code></td><td>Registry Editor</td><td>Nothing else will do, and you have exported the key first</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The last row is the one with no undo.</strong> Registry Editor writes each
+                    change the moment it is made, with no save step and no confirmation, so the export comes first:
+                    right-click the key, choose Export, and the file it writes puts the key back when it is opened.
+                    The first row is the one to learn if you learn only one, because Computer Management holds five of
+                    the others.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Disks, System Files and Policy: the Commands, and the Switch That Matters</div>
+                <div class="concept-desc">
+                  These run in a terminal, and the ones that repair or partition need it opened as administrator.
+                  Any of them followed by <code>/?</code> prints its switches.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Command</th><th>What it does</th><th>The switch that matters</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>chkdsk</code></td><td>Checks a volume's file system</td><td><code>/f</code> fixes errors. <code>/r</code> also finds bad sectors and includes <code>/f</code>. On the drive Windows is running from, it waits for the next restart</td></tr>
+                      <tr><td><code>sfc</code></td><td>Checks protected system files against known-good copies</td><td><code>/scannow</code>. When it cannot repair, DISM <span class="acro-exp">(Deployment Image Servicing and Management)</span> runs first, because sfc copies from the store DISM repairs</td></tr>
+                      <tr><td><code>DISM</code></td><td>Repairs the component store that sfc copies from</td><td><code>/Online /Cleanup-Image /RestoreHealth</code></td></tr>
+                      <tr><td><code>diskpart</code></td><td>Partitions and formats disks from the command line</td><td><code>list disk</code>, then <code>select disk</code>. Every later command acts on the selected disk, <code>clean</code> included</td></tr>
+                      <tr><td><code>format</code></td><td>Formats a volume</td><td><code>/fs:ntfs</code> picks the file system, and <code>/q</code> skips the scan for bad sectors</td></tr>
+                      <tr><td><code>robocopy</code></td><td>Copies folder trees, and survives interruption</td><td><code>/E</code> copies. <code>/MIR</code> also deletes, which is the last card</td></tr>
+                      <tr><td><code>gpupdate</code></td><td>Applies Group Policy now, not at the next refresh</td><td><code>/force</code> reapplies every setting, not only the changed ones</td></tr>
+                      <tr><td><code>gpresult</code></td><td>Shows which policies applied, and which did not</td><td><code>/r</code> for a summary, <code>/h report.html</code> for all of it</td></tr>
+                      <tr><td><code>shutdown</code></td><td>Restarts or shuts down</td><td><code>/r /t 0</code> restarts now</td></tr>
+                      <tr><td><code>winver</code></td><td>Shows the Windows version and build</td><td>None, and it is the one to run first</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The fourth row is how the wrong disk gets wiped.</strong> diskpart acts on
+                    whichever disk was selected last, and <code>clean</code> removes its partition table, so read the
+                    size beside each number in <code>list disk</code> before selecting one. The first row has a quieter
+                    trap: on a drive that is failing, copy the data off before <code>chkdsk /r</code>. It reads every
+                    sector, for hours on a large drive, and what it cannot read from a bad sector is lost when the
+                    sector is marked bad.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">The Network, From the Windows Side</div>
+                <div class="concept-desc">
+                  The same commands, for the question every desk ticket starts with: is it this machine, or
+                  everything past it?
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Command</th><th>Answers</th><th>The form worth knowing</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>ipconfig</code></td><td>What address, gateway and DNS <span class="acro-exp">(Domain Name System)</span> servers does this machine have?</td><td><code>/all</code> adds the DNS servers and the DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> lease. <code>/release</code> then <code>/renew</code> asks for a new lease, and <code>/flushdns</code> empties the resolver cache</td></tr>
+                      <tr><td><code>ping</code></td><td>Does that address answer at all?</td><td><code>-t</code> keeps going until Ctrl + C, and <code>-n 20</code> sends twenty</td></tr>
+                      <tr><td><code>tracert</code></td><td>Which routers does the path go through?</td><td>Windows sends ICMP <span class="acro-exp">(Internet Control Message Protocol)</span> echo requests, where Linux <code>traceroute</code> sends UDP <span class="acro-exp">(User Datagram Protocol)</span> by default, so one can pass a firewall the other cannot</td></tr>
+                      <tr><td><code>pathping</code></td><td>Where along that path are packets lost?</td><td>It traces the path, then measures every hop for a while before it reports, so it takes minutes</td></tr>
+                      <tr><td><code>nslookup</code></td><td>What does a DNS server say this name is?</td><td>It asks the server directly and ignores the hosts file and the cache, so it can disagree with what the browser gets</td></tr>
+                      <tr><td><code>netstat</code></td><td>What is connected, and what is listening?</td><td><code>-ano</code> shows every connection with numeric addresses and the process ID that owns it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Loss at one hop in the middle of a pathping, and none after it, is usually
+                    not loss.</strong> Routers answer packets addressed to themselves at low priority and drop many of
+                    them while forwarding traffic at full speed, so a hop can report heavy loss while every hop after it
+                    reports none. The loss that matters starts at one hop and carries on to the destination.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">robocopy /MIR Makes the Destination Match the Source, and Matching Means Deleting</div>
+                <div class="concept-desc">
+                  <code>/MIR</code> mirrors a folder tree. It is <code>/E</code>, which copies subfolders including
+                  empty ones, plus <code>/PURGE</code>, which deletes anything in the destination that the source does
+                  not have. That is the switch's whole meaning, and its commonest accident, because the deleting is
+                  aimed at whichever path comes second.
+                </div>
+                <div class="dw">
+                  <div class="code-label">THE DRY RUN, THEN THE MIRROR</div>
+                  <pre class="code-block"><span class="com">:: Source first, destination second. /L lists what would happen and changes nothing.</span>
+robocopy D:\Projects E:\Backup\Projects /MIR /L
+
+<span class="com">:: Only after the list looked right.</span>
+robocopy D:\Projects E:\Backup\Projects /MIR</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>What went wrong</th><th>What /MIR does about it</th></tr></thead>
+                    <tbody>
+                      <tr><td>The two paths are swapped</td><td>The newer copy is now the destination, and its new files are deleted to match the old one</td></tr>
+                      <tr><td>The source exists but is empty: a folder whose drive did not mount, or simply the wrong folder</td><td>Everything in the destination is deleted, to match nothing</td></tr>
+                      <tr><td>A copy was wanted, not a mirror</td><td>Files that were only in the destination are gone. <code>/E</code> adds and never deletes</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The second row is the one that empties a backup.</strong> A scheduled mirror
+                    whose source has gone empty mirrors the emptiness, faithfully, every night it runs. This is rsync <span class="acro-exp">(Remote Sync)</span>'s
+                    <code>--delete</code> with a different spelling, and
+                    <span class="xref">Moving Data Safely — rsync, Its Flags, and the Trailing Slash</span> is the same
+                    card for Linux, with the same rule: the dry run first, every time.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">📊</span>
               <span class="topic-name">Microsoft Office (Excel/Word)</span>
@@ -113,6 +254,67 @@
                       <td>AutoSum Selected Range</td>
                     </tr>
                   </table>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">VLOOKUP Without Its Fourth Argument Guesses, and the Guess Looks Like an Answer</div>
+                <div class="concept-desc">
+                  A lookup is how a spreadsheet joins two exports, and the oldest lookup has the worst default.
+                  VLOOKUP's fourth argument, <code>range_lookup</code>, chooses between an exact and an approximate
+                  match, and leaving it out asks for approximate. Approximate matching assumes the first column is
+                  sorted. On data that is not, it returns a row from near where the value would have been, with no
+                  error, and the number it returns looks like every other number in the column.
+                </div>
+                <div class="dw">
+                  <!-- fact: XLOOKUP exists in Microsoft 365 and Excel 2021 onward, and Excel 2019 or older shows #NAME? | source: Microsoft Tech Community answers and a vendor troubleshooting page, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+                  <table class="ref-table">
+                    <thead><tr><th>Formula</th><th>The match it makes</th><th>Needs sorted data</th><th>When the value is not there</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>=VLOOKUP(A2, Prices, 3)</code></td><td class="c-red">Approximate, because the fourth argument was left out</td><td>Yes</td><td class="c-red">A plausible wrong row</td></tr>
+                      <tr><td><code>=VLOOKUP(A2, Prices, 3, FALSE)</code></td><td>Exact, because FALSE asked for it</td><td>No</td><td><code>#N/A</code></td></tr>
+                      <tr><td><code>=MATCH(A2, Codes)</code></td><td class="c-red">Approximate: MATCH has the same default</td><td>Yes, ascending</td><td class="c-red">A plausible wrong position</td></tr>
+                      <tr><td><code>=XLOOKUP(A2, Codes, Prices)</code></td><td class="c-green">Exact, by default</td><td>No</td><td><code>#N/A</code>, or the text given as its fourth argument</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The first row is the trap, and the third is the same trap inside INDEX and
+                    MATCH.</strong> Write <code>FALSE</code>, or <code>0</code> for MATCH, every time, or use XLOOKUP,
+                    whose default is the one you wanted. XLOOKUP exists in Microsoft 365 and in Excel 2021 onward, and a
+                    workbook that uses it shows <code>#NAME?</code> in every lookup cell when it is opened in Excel 2019
+                    or older. An <code>#N/A</code> is the good outcome here: it says the value was missing, which a
+                    wrong row never does.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Concept</div>
+                <div class="concept-title">A Pivot Table Is a GROUP BY You Drag, and It Answers From a Snapshot</div>
+                <div class="concept-desc">
+                  A pivot table summarizes rows without a formula, and every box in its field list is a clause of the
+                  SQL <span class="acro-exp">(Structured Query Language)</span> query that would do the same thing, which makes it readable to anyone who knows one of the two.
+                  The SQL half is <span class="xref">Aggregation — GROUP BY, HAVING &amp; ROLLUP</span>. The tool that
+                  earns its place beside it is conditional formatting, which colors cells by rule so that the outliers
+                  stand out before anybody goes looking for them.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Pivot table box</th><th>The SQL it is</th><th>What it does</th></tr></thead>
+                    <tbody>
+                      <tr><td>Rows</td><td><code>GROUP BY</code></td><td>One line for each distinct value</td></tr>
+                      <tr><td>Values, as Sum of or Count of</td><td><code>SUM()</code>, <code>COUNT()</code></td><td>The number on each line</td></tr>
+                      <tr><td>Columns</td><td>A second <code>GROUP BY</code>, spread across</td><td>A cross-tab: one column for each distinct value</td></tr>
+                      <tr><td>Filters and slicers</td><td><code>WHERE</code></td><td>Rows left out before anything is summed</td></tr>
+                      <tr><td>A value filter, such as Top 10</td><td><code>HAVING</code></td><td>Lines left out after they are summed</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">It answers from a snapshot.</strong> Change the source and the pivot table
+                    does not change until it is refreshed: Alt + F5 refreshes the one you are in, and Ctrl + Alt + F5
+                    refreshes everything in the workbook. Rows added below a plain range are outside it even after a
+                    refresh, which is why the source should be made a table first, with Ctrl + T. A table grows with
+                    its rows, and the next refresh includes them.
+                  </div>
                 </div>
               </div>
               <div class="concept-card">

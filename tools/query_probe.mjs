@@ -298,7 +298,7 @@ const READERS = [
     ["onedrive is not syncing"],
     ["teams keeps signing me out"],
     ["the user says the file is gone",
-     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want"],
+     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want. Since the third wave it scores answered, by coincidence: the Windows built-in tools topic holds all four words, `user` only inside the expansion of UDP, and relaxation widens that one match to 31 cards. One is the retention card; the rest are not about a lost file. The census counts one answer more than a reader gets, until search stops matching inside acronym expansions or this query is given a want"],
     // ── batch fourteen ──
     ["the printer is printing garbage", "",
      "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
