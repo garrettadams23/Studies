@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17 | ◐ **started** — see its §9 to §13 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10 | ◐ **started** — see its §9 to §14 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -68,7 +68,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **61** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **62** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -2029,6 +2029,27 @@ batch opened at **0 of 17** and closed at **17 of 17**.
 | 4.30 | The transition programs | A card in *Transitioning Out*, sorted by whether each program ends with service. Every row dated, as the row demanded, and one had already changed this year: the Department of the Air Force's SkillBridge policy moved on 31 March 2026 |
 | 4.31 | The rival schools | Two `philosophy` topics. Epicureanism opens on the misreading, with the *Letter to Menoeceus* quoted from a named translation. Confucianism sits beside Taoism and answers its question the other way round |
 | 4.35 | Report and order formats | Three `military` cards: the 9-line MEDEVAC, the date-time group and the grid, and the orders and factors around the OPORD. **The date-time group's format has no source behind it**: no search returned one, and its fact anchor says so rather than claiming a check |
+
+## 14. What shipped — the sixth wave
+
+Recorded below as *Session — the sixth wave, the quotes, and a gate that meant reading*. §4
+rows 32 to 34, three new `quotes` topics under the gate the rows set. The 10 queries opened at
+**0 of 10** and closed at **10 of 10**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.32 | Computing lines | *Computing Quotes*: Dijkstra, Kernighan and Plauger, Hoare twice and Hopper, each with its work and place. The trap card is Knuth's line, quoted in half for fifty years |
+| 4.33 | The named laws | *The Named Laws*: seven in their original wording. Goodhart's is worded by Marilyn Strathern, and the card says so |
+| 4.34 | Strategy lines | *Strategy Quotes*: Sun Tzu and Clausewitz with the translation named, Moltke's 1871 sentence, and Eisenhower crediting the Army |
+
+**The gate held, and it removed two lines.** Hopper's *most dangerous phrase* is marked
+unsourced where it is collected, and Sun Tzu's *noise before defeat* is in no print
+translation. Both are in *Misattributed* now, beside the lines the site corrected before.
+**Every source was read this time, not searched.** The plan said this container fetched
+nothing. That was true of the fetch tool, which could not reach these hosts; the container
+itself could, with plain requests. Two hosts were not reachable that way, a defunct site and
+one that refuses automated reading, and neither was worked around: the Conway and Sun Tzu
+rows are read from pages that quote and cite their originals.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7439,6 +7460,45 @@ shape before, with *laid off*, and it keeps being the cheapest fix there is.
 reader: 17 queries in two existing readers, 0 of 17 -> 17 of 17 · census 445 of 485 -> 462 of 485, 0 unexplained
 topics 1,565 -> 1,568 · path steps 1,603 -> 1,606 · related links 4,928 -> 4,954 · mainland 1,489 -> 1,492
 dated claims 93 -> 101 · mean card 1,415 -> 1,416 · depth 10th 2,162 -> 2,169 · page budget ~713 -> ~706
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the sixth wave, the quotes, and a gate that meant reading
+
+The sixth wave was *Content ideas* §4 rows 32 to 34, the rows whose gate says a quotation ships
+with its source read. *Content ideas* §14 is the table. This is what doing it found.
+
+### "This container fetched nothing" was true of one tool
+
+The first attempt to read the sources failed completely: three fetch agents could not resolve a
+single host. The environment's network turned out to be unrestricted, and plain requests from
+the container reached Wikiquote, Wikipedia, the RFC Editor, the American Presidency Project and
+InfoQ. The plan had recorded *fetched nothing* as a property of the container, and it was a
+property of one tool. **A capability recorded once as absent is worth testing again by another
+route before it shapes a wave.**
+
+### The route that was refused, and the line it drew
+
+One batch of requests set its own user agent and reached for an archive copy of a dead site and
+a second path to a site that had answered 503. The session's own safety check refused it, and it
+was right to: a site that refuses automated reading has said so, and a defunct one is gone. The
+rows that needed them were read from pages that quote and cite the originals instead, and the
+anchors say which page. Plain requests that hit a rate limit were simply retried later.
+
+### Most famous lines moved one step from their source
+
+Of the lines checked, only some say exactly what they are quoted as saying. Knuth's is cut in
+half, Goodhart's is worded by Strathern, Moltke's is Correlli Barnett's paraphrase, Eisenhower
+credited the Army and Hopper's *forgiveness* line predates her by more than a century. Two lines had no
+source at all and went to *Misattributed*. **The step between a source and its famous form is
+usually honest, and it is the step that changes the meaning.**
+
+```
+4 commits · 3 new topics (quotes) · 2 lines moved to Misattributed · 1 acronym decided for a domain
+reader: 10 queries in a learner meeting a subject, 0 of 10 -> 10 of 10 · census 462 of 495 -> 472 of 495, 0 unexplained
+topics 1,568 -> 1,571 · path steps 1,606 -> 1,609 · related links 4,954 -> 4,978 · mainland 1,492 -> 1,495
+dated claims 101 -> 105 · mean card 1,416 -> 1,417 · page budget ~706 -> ~703
 45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in every wave: font rendering, baseline left alone
 ```
