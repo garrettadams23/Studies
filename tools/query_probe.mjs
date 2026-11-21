@@ -427,6 +427,21 @@ const READERS = [
     ["frago", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
     ["mett-tc", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
     ["ccir", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
+    // ── sixth wave: Content ideas §4 rows 32 to 34, the quotes, before their topics.
+    // Each want names a topic that does not exist yet. Left out: `conway's law`
+    // and `goodhart's law` already reach the eng cards that use them, and `no
+    // plan survives contact with the enemy` and `plans are worthless` reach
+    // military and mind cards that quote them.
+    ["premature optimization", "", "quotes/computing-quotes-the-lines-engineers-repeat-and-where-each-w"],
+    ["billion dollar mistake", "", "quotes/computing-quotes-the-lines-engineers-repeat-and-where-each-w"],
+    ["grace hopper", "", "quotes/computing-quotes-the-lines-engineers-repeat-and-where-each-w"],
+    ["hyrum's law", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["postel's law", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["brooks's law", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["hofstadter's law", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["chesterton's fence", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["sun tzu", "", "quotes/strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"],
+    ["clausewitz", "", "quotes/strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"],
     ["what is big o for",
      "wide, and the one of the three with a cause rather than a corpus: `o` is one character, dropped as a free-floating requirement because a one-character word narrows nothing, so the query collapses to `big` — 114 cards. `big o` returns 10 and `big o notation` returns 2, because a short query is answered by the phrase stage and never reaches this one. The join-instead-of-drop fix was built and reverted: it broke `the 5 whys`, a gated fixture, and narrowing it to letters fails on `what is a c pointer`, which needs `pointer` and not `cpointer`. A corpus-aware version — join only where the joined form exists in the folded text — is decidable and not attempted, because it costs a sweep on every query",
      "cs/big-o-in-practice-what-the-notation-hides"],
