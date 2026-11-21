@@ -92616,12 +92616,12 @@ from the same fields, and make those fields immutable.
 </div>
 </div>
 <!-- ── TOPIC: TREES ───────────────────────────────────────────── -->
-<div class="topic" id="trees-bst-balanced-heap-trie-and-what-each-is-actually-for" data-reviewed="2026-09" data-read="5" data-level="core">
+<div class="topic" id="trees-bst-balanced-heap-trie-and-what-each-is-actually-for" data-reviewed="2026-11" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌳</span>
 <span class="topic-name">Trees — BST <span class="acro-exp">(Binary Search Tree)</span>, Balanced, Heap &amp; Trie, and What Each Is Actually For</span>
 <span class="topic-badge">CS • Data Structures</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -92663,6 +92663,20 @@ A plain BST built from already-sorted input degenerates completely: every insert
 right, and lookup becomes O(n). Since sorted input is extremely common — importing
 records by ID, replaying a log — this is the normal case rather than the pathological
 one.
+</div>
+<div class="dw">
+<div class="topo-grid">
+<div class="topo-card">
+<svg class="math-svg" viewBox="0 0 320 190" role="img" aria-label="A balanced binary search tree of the keys 1 to 7: 4 at the root, 2 and 6 below it, and 1, 3, 5 and 7 as leaves. The search for 7 visits 4, 6 and 7, marked."><line class="msv-axis" x1="150.5" y1="32.9" x2="99.5" y2="81.1"/><line class="msv-secant" x1="169.5" y1="32.9" x2="220.5" y2="81.1"/><line class="msv-axis" x1="83.9" y1="101.5" x2="61.1" y2="144.5"/><line class="msv-axis" x1="96.1" y1="101.5" x2="118.9" y2="144.5"/><line class="msv-axis" x1="223.9" y1="101.5" x2="201.1" y2="144.5"/><line class="msv-secant" x1="236.1" y1="101.5" x2="258.9" y2="144.5"/><circle class="msv-circle msv-secant" cx="160" cy="24" r="13"/><text class="msv-lbl" x="160" y="28.5">4</text><circle class="msv-circle" cx="90" cy="90" r="13"/><text class="msv-rad" x="90" y="94.5">2</text><circle class="msv-circle msv-secant" cx="230" cy="90" r="13"/><text class="msv-lbl" x="230" y="94.5">6</text><circle class="msv-circle" cx="55" cy="156" r="13"/><text class="msv-rad" x="55" y="160.5">1</text><circle class="msv-circle" cx="125" cy="156" r="13"/><text class="msv-rad" x="125" y="160.5">3</text><circle class="msv-circle" cx="195" cy="156" r="13"/><text class="msv-rad" x="195" y="160.5">5</text><circle class="msv-circle msv-secant" cx="265" cy="156" r="13"/><text class="msv-lbl" x="265" y="160.5">7</text></svg>
+<div class="topo-name">Inserted 4, 2, 6, 1, 3, 5, 7</div>
+<div class="topo-desc">Three levels. Finding 7 takes three comparisons, and a million keys would take about twenty</div>
+</div>
+<div class="topo-card">
+<svg class="math-svg" viewBox="0 0 320 190" role="img" aria-label="The same seven keys inserted in sorted order: each is the right child of the one before, a diagonal chain from 1 to 7. The search for 7 visits all seven, marked."><line class="msv-secant" x1="41.3" y1="26.5" x2="62" y2="38.5"/><line class="msv-secant" x1="84.6" y1="51.5" x2="105.3" y2="63.5"/><line class="msv-secant" x1="127.9" y1="76.5" x2="148.6" y2="88.5"/><line class="msv-secant" x1="171.2" y1="101.5" x2="191.9" y2="113.5"/><line class="msv-secant" x1="214.5" y1="126.5" x2="235.2" y2="138.5"/><line class="msv-secant" x1="257.8" y1="151.5" x2="278.5" y2="163.5"/><circle class="msv-circle msv-secant" cx="30" cy="20" r="13"/><text class="msv-lbl" x="30" y="24.5">1</text><circle class="msv-circle msv-secant" cx="73.3" cy="45" r="13"/><text class="msv-lbl" x="73.3" y="49.5">2</text><circle class="msv-circle msv-secant" cx="116.6" cy="70" r="13"/><text class="msv-lbl" x="116.6" y="74.5">3</text><circle class="msv-circle msv-secant" cx="159.9" cy="95" r="13"/><text class="msv-lbl" x="159.9" y="99.5">4</text><circle class="msv-circle msv-secant" cx="203.2" cy="120" r="13"/><text class="msv-lbl" x="203.2" y="124.5">5</text><circle class="msv-circle msv-secant" cx="246.5" cy="145" r="13"/><text class="msv-lbl" x="246.5" y="149.5">6</text><circle class="msv-circle msv-secant" cx="289.8" cy="170" r="13"/><text class="msv-lbl" x="289.8" y="174.5">7</text></svg>
+<div class="topo-name">Inserted 1 to 7, in order</div>
+<div class="topo-desc">Seven levels. Finding 7 takes seven comparisons, and a million keys would take a million: a linked list</div>
+</div>
+</div>
 </div>
 <div class="concept-desc">
 Self-balancing variants (red-black, AVL) rotate on insert to keep depth logarithmic. You
@@ -93907,21 +93921,21 @@ optional.
 WAVE AL5 (PARTIAL) — COMPUTER ARCHITECTURE
 ══════════════════════════════════════════════════════════════ -->
 <!-- ── TOPIC: MEMORY HIERARCHY ────────────────────────────────── -->
-<div class="topic" id="caches-the-memory-hierarchy-the-numbers-every-engineer-shoul" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="caches-the-memory-hierarchy-the-numbers-every-engineer-shoul" data-reviewed="2026-11" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏔️</span>
 <span class="topic-name">Caches &amp; the Memory Hierarchy — The Numbers Every Engineer Should Know</span>
 <span class="topic-badge">CS • Architecture</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
 <div class="concept-card">
 <div class="concept-label">The numbers</div>
-<div class="concept-title">Six Orders of Magnitude, and Where Your Latency Actually Went</div>
+<div class="concept-title">Eight Orders of Magnitude, and Where Your Latency Actually Went</div>
 <div class="concept-desc">
 Storage is a hierarchy: small and fast at the top, enormous and slow at the bottom.
-The gaps are not incremental — they span six orders of magnitude, and knowing roughly
+The gaps are not incremental — they span eight orders of magnitude, and knowing roughly
 where each level sits explains more production latency than any profiler.
 </div>
 <div class="dw">
@@ -93942,6 +93956,28 @@ where each level sits explains more production latency than any profiler.
 hardware, and the ratios matter far more than the values. The practical conclusion is
 blunt: no amount of algorithmic cleverness recovers a network round trip you did not
 need. Remove the trip before optimizing the loop.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Picture</div>
+<div class="concept-title">The Ladder Drawn to Scale, Where Two Gaps Take Most of the Height</div>
+<div class="concept-desc">
+The table gives every level a row of the same height, and that is the flattening. Drawn so that each
+step down is ten times slower than the one above, the top three levels bunch together, and two gaps
+take up most of the ladder: from memory to storage, and from a server in the same building to one on
+another continent.
+</div>
+<div class="dw">
+<svg class="math-svg" viewBox="0 0 345 500" role="img" aria-label="The six levels on a vertical scale where each step down is ten times slower, from 1 nanosecond at the top to 1 second at the bottom. L1 and L2 sit almost together at the top and main memory just below. Then a gap a thousand times long to an NVMe read, the same-datacenter round trip just below it, and a gap three hundred times long to the cross-continent round trip near the bottom."><line class="msv-axis" x1="60" y1="34" x2="60" y2="484"/><line class="msv-axis" x1="54" y1="34" x2="60" y2="34"/><line class="msv-axis" x1="54" y1="84" x2="60" y2="84"/><line class="msv-axis" x1="54" y1="134" x2="60" y2="134"/><line class="msv-axis" x1="54" y1="184" x2="60" y2="184"/><line class="msv-axis" x1="54" y1="234" x2="60" y2="234"/><line class="msv-axis" x1="54" y1="284" x2="60" y2="284"/><line class="msv-axis" x1="54" y1="334" x2="60" y2="334"/><line class="msv-axis" x1="54" y1="384" x2="60" y2="384"/><line class="msv-axis" x1="54" y1="434" x2="60" y2="434"/><line class="msv-axis" x1="54" y1="484" x2="60" y2="484"/><text class="msv-lbl2" x="27" y="38.5">1 ns</text><text class="msv-lbl2" x="27" y="188.5">1 µs</text><text class="msv-lbl2" x="27" y="338.5">1 ms</text><text class="msv-lbl2" x="27" y="488.5">1 s</text><line class="msv-secant" x1="60" y1="34" x2="88" y2="34"/><circle class="msv-dot2" cx="60" cy="34" r="4"/><text class="msv-rad" x="160" y="38.5">L1 cache</text><text class="msv-lbl" x="264" y="38.5">~1 ns</text><line class="msv-secant" x1="60" y1="64.1" x2="88" y2="64.1"/><circle class="msv-dot2" cx="60" cy="64.1" r="4"/><text class="msv-rad" x="160" y="68.6">L2 cache</text><text class="msv-lbl" x="264" y="68.6">~4 ns</text><line class="msv-secant" x1="60" y1="134" x2="88" y2="134"/><circle class="msv-dot2" cx="60" cy="134" r="4"/><text class="msv-rad" x="160" y="138.5">Main memory</text><text class="msv-lbl" x="264" y="138.5">~100 ns</text><line class="msv-secant" x1="60" y1="284" x2="88" y2="284"/><circle class="msv-dot2" cx="60" cy="284" r="4"/><text class="msv-rad" x="160" y="288.5">NVMe read</text><text class="msv-lbl" x="264" y="288.5">~100 µs</text><line class="msv-secant" x1="60" y1="318.9" x2="88" y2="318.9"/><circle class="msv-dot2" cx="60" cy="318.9" r="4"/><text class="msv-rad" x="160" y="323.4">Same datacenter</text><text class="msv-lbl" x="264" y="323.4">~0.5 ms</text><line class="msv-secant" x1="60" y1="442.8" x2="88" y2="442.8"/><circle class="msv-dot2" cx="60" cy="442.8" r="4"/><text class="msv-rad" x="160" y="447.3">Cross-continent</text><text class="msv-lbl" x="264" y="447.3">~150 ms</text><text class="msv-lbl2" x="320" y="53.6">×4</text><line class="msv-dash" x1="320" y1="72.1" x2="320" y2="87.1"/><line class="msv-dash" x1="320" y1="109.1" x2="320" y2="126"/><text class="msv-lbl2" x="320" y="103.6">×25</text><line class="msv-dash" x1="320" y1="142" x2="320" y2="197"/><line class="msv-dash" x1="320" y1="219" x2="320" y2="276"/><text class="msv-lbl" x="320" y="213.5">×1,000</text><text class="msv-lbl2" x="320" y="306">×5</text><line class="msv-dash" x1="320" y1="326.9" x2="320" y2="368.9"/><line class="msv-dash" x1="320" y1="390.9" x2="320" y2="434.8"/><text class="msv-lbl" x="320" y="385.4">×300</text></svg>
+<div class="concept-desc verdict">
+<strong class="c-amber">The thousand-fold gap between main memory and an NVMe read is the cliff,</strong>
+and on a spinning disk it is a hundred times longer again. B-trees are shaped around it, and
+<span class="xref" data-xref="trees-bst-balanced-heap-trie-and-what-each-is-actually-for" role="link" tabindex="0">Trees — BST, Balanced, Heap &amp; Trie, and What Each Is Actually For</span> says how.
+The second long gap is the network leaving the region, three hundred times a round trip inside the
+datacenter, which is why a protocol that is chatty but fine on a local network is unusable across an
+ocean. The gaps at the top, four and twenty-five, are the ones caches exist to hide, and drawn to
+scale they are barely there.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -94789,12 +94825,12 @@ of the type system rather than of the tests.
 </div>
 </div>
 <!-- ── TOPIC: MERKLE TREES ──────────────────────────────── -->
-<div class="topic" id="merkle-trees-verifying-and-diffing-huge-data-by-comparing-ha" data-reviewed="2026-08" data-read="5" data-level="core">
+<div class="topic" id="merkle-trees-verifying-and-diffing-huge-data-by-comparing-ha" data-reviewed="2026-11" data-read="7" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🌳</span>
 <span class="topic-name">Merkle Trees — Verifying and Diffing Huge Data by Comparing Hashes</span>
 <span class="topic-badge">CS • Data Structures</span>
-<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -94822,6 +94858,35 @@ The recursive rule is the whole idea: <strong>if two subtree hashes are equal, e
 them is equal — skip it entirely.</strong> You only descend into the parts that changed, which
 is why a Merkle tree makes synchronizing two nearly-identical copies cost a function of the
 <em>difference</em>, not of the total size.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Picture</div>
+<div class="concept-title">One Changed Block, Drawn: the Hashes That Change Are the Proof</div>
+<div class="concept-desc">
+Four blocks are enough to see it. Change one, and only the hashes on its way up change, one per
+level, while everything off that path keeps its hash and can be skipped. Read the same path the
+other way and it is a proof: to show that a block belongs under a root, send the hash beside each
+step of the path, and nothing else.
+</div>
+<div class="dw">
+<div class="topo-grid">
+<div class="topo-card">
+<svg class="math-svg" viewBox="0 0 340 204" role="img" aria-label="A Merkle tree over four blocks, B0 to B3. Each block has a leaf hash, H0 to H3; H01 and H23 hash the pairs, and the root hashes those two. B2 has changed, and the marked path B2, H2, H23 and Root is every hash that changes with it."><line class="msv-axis" x1="170" y1="37" x2="90" y2="63"/><line class="msv-secant" x1="170" y1="37" x2="250" y2="63"/><line class="msv-axis" x1="90" y1="89" x2="50" y2="115"/><line class="msv-axis" x1="90" y1="89" x2="130" y2="115"/><line class="msv-secant" x1="250" y1="89" x2="210" y2="115"/><line class="msv-axis" x1="250" y1="89" x2="290" y2="115"/><line class="msv-axis" x1="50" y1="141" x2="50" y2="169"/><line class="msv-axis" x1="130" y1="141" x2="130" y2="169"/><line class="msv-secant" x1="210" y1="141" x2="210" y2="169"/><line class="msv-axis" x1="290" y1="141" x2="290" y2="169"/><rect class="msv-circle msv-secant" x="135" y="11" width="70" height="26" rx="4"/><text class="msv-lbl" x="170" y="28.5">Root</text><rect class="msh-right" x="62" y="63" width="56" height="26" rx="4"/><text class="msv-lbl2" x="90" y="80.5">H01</text><rect class="msv-circle msv-secant" x="222" y="63" width="56" height="26" rx="4"/><text class="msv-lbl" x="250" y="80.5">H23</text><rect class="msh-right" x="26" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="50" y="132.5">H0</text><rect class="msh-right" x="106" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="130" y="132.5">H1</text><rect class="msv-circle msv-secant" x="186" y="115" width="48" height="26" rx="4"/><text class="msv-lbl" x="210" y="132.5">H2</text><rect class="msh-right" x="266" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="290" y="132.5">H3</text><rect class="msh-right" x="26" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="50" y="186.5">B0</text><rect class="msh-right" x="106" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="130" y="186.5">B1</text><rect class="msv-circle msv-secant" x="186" y="169" width="48" height="26" rx="4"/><text class="msv-lbl" x="210" y="186.5">B2</text><rect class="msh-right" x="266" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="290" y="186.5">B3</text></svg>
+<div class="topo-name">Block B2 changes</div>
+<div class="topo-desc">H2, H23 and the root change with it. Every other box keeps its hash, so a comparison can skip it</div>
+</div>
+<div class="topo-card">
+<svg class="math-svg" viewBox="0 0 340 204" role="img" aria-label="The same tree. To prove B2 is in the set, the proof carries only H3 and H01, highlighted. The verifier hashes B2 into H2, combines it with H3 into H23, combines that with H01, and compares the result with the root it already trusts."><line class="msv-axis" x1="170" y1="37" x2="90" y2="63"/><line class="msv-secant" x1="170" y1="37" x2="250" y2="63"/><line class="msv-axis" x1="90" y1="89" x2="50" y2="115"/><line class="msv-axis" x1="90" y1="89" x2="130" y2="115"/><line class="msv-secant" x1="250" y1="89" x2="210" y2="115"/><line class="msv-axis" x1="250" y1="89" x2="290" y2="115"/><line class="msv-axis" x1="50" y1="141" x2="50" y2="169"/><line class="msv-axis" x1="130" y1="141" x2="130" y2="169"/><line class="msv-secant" x1="210" y1="141" x2="210" y2="169"/><line class="msv-axis" x1="290" y1="141" x2="290" y2="169"/><rect class="msv-circle msv-secant" x="135" y="11" width="70" height="26" rx="4"/><text class="msv-lbl" x="170" y="28.5">Root</text><rect class="msv-bar" x="62" y="63" width="56" height="26" rx="4"/><text class="msh-name" x="90" y="80.5">H01</text><rect class="msv-circle msv-secant" x="222" y="63" width="56" height="26" rx="4"/><text class="msv-lbl" x="250" y="80.5">H23</text><rect class="msh-right" x="26" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="50" y="132.5">H0</text><rect class="msh-right" x="106" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="130" y="132.5">H1</text><rect class="msv-circle msv-secant" x="186" y="115" width="48" height="26" rx="4"/><text class="msv-lbl" x="210" y="132.5">H2</text><rect class="msv-bar" x="266" y="115" width="48" height="26" rx="4"/><text class="msh-name" x="290" y="132.5">H3</text><rect class="msh-right" x="26" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="50" y="186.5">B0</text><rect class="msh-right" x="106" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="130" y="186.5">B1</text><rect class="msv-circle msv-secant" x="186" y="169" width="48" height="26" rx="4"/><text class="msv-lbl" x="210" y="186.5">B2</text><rect class="msh-right" x="266" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="290" y="186.5">B3</text></svg>
+<div class="topo-name">Proving B2 is in the set</div>
+<div class="topo-desc">The proof is H3 and H01. The verifier hashes B2, combines up the path, and compares the result with the root it already trusts</div>
+</div>
+</div>
+<div class="concept-desc verdict">
+<strong class="c-amber">Both panels are the same path, and its length is the number of levels, not
+the number of blocks.</strong> Four blocks need two sibling hashes and a million need twenty, which
+is why a light client can check one payment without downloading the chain.
 </div>
 </div>
 </div>
@@ -133411,6 +133476,6 @@ progress in localStorage — no content of its own, just an order. -->
 taken from the data-reviewed stamps at build time. Shown on the domain's
 landing card, because "is anyone still maintaining this?" is a question a
 reference site should answer without being asked. -->
-<script type="application/json" id="changelog">{"net":{"month":"2026-11","topics":["tcp-vs-udp-transport-layer","cabling-connectors-ethernet-standards","routing-protocols-how-routers-find-the-best-path"]},"sec":{"month":"2026-11","topics":["access-control-models","cryptography-algorithm-reference","multi-factor-authentication-layers-of-proof"]},"threat":{"month":"2026-09","topics":["diamond-model-of-intrusion-analysis","malware-types-reference","dos-ddos-network-attack-types"]},"grc":{"month":"2026-11","topics":["third-party-risk-your-security-is-only-as-strong-as-your-ven","defense-in-depth-layered-security","risk-management-lifecycle"]},"ops":{"month":"2026-11","topics":["incident-response-lifecycle-picerl","bcp-dr-key-metrics-recovery-strategies","structured-logging-log-pipelines"]},"devops":{"month":"2026-09","topics":["terraform-infrastructure-as-code-in-practice","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning"]},"pentest":{"month":"2026-09","topics":["owasp-top-10-2021","recon-methodology-intelligence-before-attack","penetration-testing-phases"]},"linux":{"month":"2026-09","topics":["linux-file-permissions-model","linux-boot-process-biosuefi-systemd","podman-rootless-containers"]},"ai":{"month":"2026-09","topics":["machine-learning-pipeline","ml-learning-paradigms","ai-ethics-responsible-ai-nist-ai-rmf"]},"script":{"month":"2026-11","topics":["testing-strategy-why-and-how-to-test","choosing-the-right-data-structure","regular-expressions-pattern-matching-that-pays-off-forever"]},"shortcut":{"month":"2026-11","topics":["windows-built-in-tools-the-run-box-names-and-the-commands-wo","microsoft-office-excelword","vs-code-editing-superpowers"]},"philosophy":{"month":"2026-11","topics":["epicureanism-pleasure-meant-the-absence-of-pain","confucianism-roles-ritual-and-the-exemplary-person-and-where","philosophy-schools-of-thought"]},"productivity":{"month":"2026-11","topics":["sleep-where-the-studying-actually-sticks","exam-technique-the-marks-you-lose-without-knowing-less","asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"]},"mind":{"month":"2026-11","topics":["communication-relationships","low-mood-a-bad-patch-or-something-to-take-to-a-doctor","imposter-syndrome-you-belong-here"]},"career":{"month":"2026-09","topics":["mentorship-the-fastest-way-to-grow","your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r","certification-roadmap-charting-a-path-through-the-alphabet-s"]},"military":{"month":"2026-11","topics":["military-communication-standards-clear-concise-correct","mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord","transitioning-out-the-timeline-and-what-to-start-when"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-09","topics":["tcpdump-capture-from-the-command-line","arkime-ntopng-full-capture-traffic-analytics","wazuh-open-source-xdrsiem"]},"cloud":{"month":"2026-09","topics":["aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started"]},"cs":{"month":"2026-11","topics":["p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists","string-algorithms-matching-edit-distance-where-regex-fits"]},"eng":{"month":"2026-11","topics":["uml-class-object-sequence-diagrams-and-the-diamond-everybody","scalability-101-vertical-vs-horizontal","load-balancing-sharding"]},"data":{"month":"2026-09","topics":["how-a-database-actually-works","the-relational-model-keys-integrity","er-modeling-entities-relationships-cardinality"]},"web":{"month":"2026-09","topics":["devtools-mastery","the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi","design-systems-tokens-tailwind"]},"endpoint":{"month":"2026-11","topics":["windows-will-not-start-the-repair-ladder-safe-mode-to-reset","autopilot-device-preparation-the-newer-flow-that-deletes-the","glossary-acronyms-logs-task-sequence-variables"]},"infra":{"month":"2026-09","topics":["restore-testing-dr-design-turning-backups-into-a-recovery-ca","windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-"]},"hw":{"month":"2026-11","topics":["docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati","voltage-current-resistance-ohms-law-with-worked-it-examples","power-thermals-watts-heat-and-why-the-psu-calculation-matter"]},"m365":{"month":"2026-09","topics":["joiner-mover-leaver-in-m365-terms-the-process-that-prevents-","exchange-hybrid-the-coexistence-nobody-meant-to-keep","exchange-server-on-prem-dag-transport-the-server-you-cant-qu"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-11","topics":["computing-quotes-the-lines-engineers-repeat-and-where-each-w","the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte","strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"]}}</script>
+<script type="application/json" id="changelog">{"net":{"month":"2026-11","topics":["tcp-vs-udp-transport-layer","cabling-connectors-ethernet-standards","routing-protocols-how-routers-find-the-best-path"]},"sec":{"month":"2026-11","topics":["access-control-models","cryptography-algorithm-reference","multi-factor-authentication-layers-of-proof"]},"threat":{"month":"2026-09","topics":["diamond-model-of-intrusion-analysis","malware-types-reference","dos-ddos-network-attack-types"]},"grc":{"month":"2026-11","topics":["third-party-risk-your-security-is-only-as-strong-as-your-ven","defense-in-depth-layered-security","risk-management-lifecycle"]},"ops":{"month":"2026-11","topics":["incident-response-lifecycle-picerl","bcp-dr-key-metrics-recovery-strategies","structured-logging-log-pipelines"]},"devops":{"month":"2026-09","topics":["terraform-infrastructure-as-code-in-practice","what-devops-actually-is-culture-over-tools","the-three-ways-flow-feedback-learning"]},"pentest":{"month":"2026-09","topics":["owasp-top-10-2021","recon-methodology-intelligence-before-attack","penetration-testing-phases"]},"linux":{"month":"2026-09","topics":["linux-file-permissions-model","linux-boot-process-biosuefi-systemd","podman-rootless-containers"]},"ai":{"month":"2026-09","topics":["machine-learning-pipeline","ml-learning-paradigms","ai-ethics-responsible-ai-nist-ai-rmf"]},"script":{"month":"2026-11","topics":["testing-strategy-why-and-how-to-test","choosing-the-right-data-structure","regular-expressions-pattern-matching-that-pays-off-forever"]},"shortcut":{"month":"2026-11","topics":["windows-built-in-tools-the-run-box-names-and-the-commands-wo","microsoft-office-excelword","vs-code-editing-superpowers"]},"philosophy":{"month":"2026-11","topics":["epicureanism-pleasure-meant-the-absence-of-pain","confucianism-roles-ritual-and-the-exemplary-person-and-where","philosophy-schools-of-thought"]},"productivity":{"month":"2026-11","topics":["sleep-where-the-studying-actually-sticks","exam-technique-the-marks-you-lose-without-knowing-less","asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"]},"mind":{"month":"2026-11","topics":["communication-relationships","low-mood-a-bad-patch-or-something-to-take-to-a-doctor","imposter-syndrome-you-belong-here"]},"career":{"month":"2026-09","topics":["mentorship-the-fastest-way-to-grow","your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r","certification-roadmap-charting-a-path-through-the-alphabet-s"]},"military":{"month":"2026-11","topics":["military-communication-standards-clear-concise-correct","mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord","transitioning-out-the-timeline-and-what-to-start-when"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-09","topics":["tcpdump-capture-from-the-command-line","arkime-ntopng-full-capture-traffic-analytics","wazuh-open-source-xdrsiem"]},"cloud":{"month":"2026-09","topics":["aws-getting-started","aws-cli-cloudshell","google-cloud-getting-started"]},"cs":{"month":"2026-11","topics":["p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists","trees-bst-balanced-heap-trie-and-what-each-is-actually-for"]},"eng":{"month":"2026-11","topics":["uml-class-object-sequence-diagrams-and-the-diamond-everybody","scalability-101-vertical-vs-horizontal","load-balancing-sharding"]},"data":{"month":"2026-09","topics":["how-a-database-actually-works","the-relational-model-keys-integrity","er-modeling-entities-relationships-cardinality"]},"web":{"month":"2026-09","topics":["devtools-mastery","the-cascade-specificity-why-the-rule-you-wrote-is-not-applyi","design-systems-tokens-tailwind"]},"endpoint":{"month":"2026-11","topics":["windows-will-not-start-the-repair-ladder-safe-mode-to-reset","autopilot-device-preparation-the-newer-flow-that-deletes-the","glossary-acronyms-logs-task-sequence-variables"]},"infra":{"month":"2026-09","topics":["restore-testing-dr-design-turning-backups-into-a-recovery-ca","windows-server-editions-licensing-what-you-are-actually-buyi","server-core-why-you-would-remove-the-gui-and-how-you-manage-"]},"hw":{"month":"2026-11","topics":["docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati","voltage-current-resistance-ohms-law-with-worked-it-examples","power-thermals-watts-heat-and-why-the-psu-calculation-matter"]},"m365":{"month":"2026-09","topics":["joiner-mover-leaver-in-m365-terms-the-process-that-prevents-","exchange-hybrid-the-coexistence-nobody-meant-to-keep","exchange-server-on-prem-dag-transport-the-server-you-cant-qu"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-11","topics":["computing-quotes-the-lines-engineers-repeat-and-where-each-w","the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte","strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"]}}</script>
 </body>
 </html>
