@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix | ◐ **started** — see its §9 to §12 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17 | ◐ **started** — see its §9 to §13 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -68,7 +68,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **60** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **61** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -2014,6 +2014,21 @@ first. It opened at **0 of 15** and closed at **15 of 15**.
 rendering as *Elliptic Curve Cryptography* in a card about error-correcting codes, which was
 right, and `cs` now decides the meaning. The spelling gate failed *bitwise*, which was not:
 its exception list named five *-wise* words, and the suffix is now a rule.
+
+## 13. What shipped — the fifth wave
+
+Recorded below as *Session — the fifth wave, the human domains, and a neighbor the stamper
+re-dated*. §4 rows 28 to 31 and 35, each under the condition its row set. The 17 queries
+went to two readers that already ask about these subjects rather than a new one, and the
+batch opened at **0 of 17** and closed at **17 of 17**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.28 | Low mood | A new `mind` topic after *Anxiety*, on its precedent: the same scope sentence, thoughts of self-harm sent to *Getting Professional Help* today, the NHS's and NIMH's two-week line cited, and behavioral activation with the COBRA trial behind it. Not written from memory: two fact anchors date the guidance and the trial |
+| 4.29 | Listening and the uncomfortable thing | Two cards in *Communication &amp; Relationships*, which was four one-line cards: active listening from Rogers and Farson, and the DESC script on a colleague who merges without review |
+| 4.30 | The transition programs | A card in *Transitioning Out*, sorted by whether each program ends with service. Every row dated, as the row demanded, and one had already changed this year: the Department of the Air Force's SkillBridge policy moved on 31 March 2026 |
+| 4.31 | The rival schools | Two `philosophy` topics. Epicureanism opens on the misreading, with the *Letter to Menoeceus* quoted from a named translation. Confucianism sits beside Taoism and answers its question the other way round |
+| 4.35 | Report and order formats | Three `military` cards: the 9-line MEDEVAC, the date-time group and the grid, and the orders and factors around the OPORD. **The date-time group's format has no source behind it**: no search returned one, and its fact anchor says so rather than claiming a check |
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7383,6 +7398,47 @@ the half the draft missed.
 5 commits · 7 cards (cs 6, script 1) · 1 gate taught a rule · 1 acronym decided for a domain
 reader: a student on a theory course, 0 of 15 -> 15 of 15 · census 430 of 468 -> 445 of 468, 0 unexplained
 dated claims 91 -> 93 · mean card 1,414 -> 1,415 · depth 10th 2,155 -> 2,162, median 3,780 -> 3,791 · page budget ~717 -> ~713
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the fifth wave, the human domains, and a neighbor the stamper re-dated
+
+The fifth wave was *Content ideas* §4 rows 28 to 31 and 35, the rows with conditions in place
+of draft sentences. *Content ideas* §13 is the table. This is what doing it found.
+
+### Where a topic is inserted can re-date the one before it
+
+The Confucianism topic first went in front of Taoism, and the stamper moved Buddhism, the
+topic above, to this month. Nothing in Buddhism had changed. The stamper blames the working
+tree, and the new topic ends with exactly the same closing lines as Buddhism does, so blame
+was free to align the insertion inside Buddhism's span. Moved to after Taoism, which is still
+beside it, the same block re-dated nothing. The check that caught it is the one every wave
+here has run, reading which topics moved rather than how many, and it is the reason that
+check exists. **A stamp is derived from a diff, and a diff of repeated closing tags has more
+than one honest reading.**
+
+### Conditions, not drafts, and each one held
+
+Row 28 said not to write from memory, so every claim in the low-mood topic is cited and dated,
+and it ends where the row said, at *Getting Professional Help*. Row 30 said every row is a
+dated claim, and the search proved it: one program's policy had changed in March. Row 35's
+date-time group could not be sourced at all, so its anchor says that instead of borrowing a
+check. **An anchor that records an absent source is more useful than one that implies a
+present one.**
+
+### The reader's word, once more
+
+`depressed for weeks` stayed at zero after the low-mood topic shipped, because the topic said
+*depression* and never *depressed*. The fix was the census's kind 1: the opening sentence
+now uses the reader's word, which is also the plainer sentence. The census has recorded this
+shape before, with *laid off*, and it keeps being the cheapest fix there is.
+
+```
+5 commits · 3 new topics (mind 1, philosophy 2) · 8 cards (mind 2, military 4, plus the topics' own)
+reader: 17 queries in two existing readers, 0 of 17 -> 17 of 17 · census 445 of 485 -> 462 of 485, 0 unexplained
+topics 1,565 -> 1,568 · path steps 1,603 -> 1,606 · related links 4,928 -> 4,954 · mainland 1,489 -> 1,492
+dated claims 93 -> 101 · mean card 1,415 -> 1,416 · depth 10th 2,162 -> 2,169 · page budget ~713 -> ~706
 45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in every wave: font rendering, baseline left alone
 ```
