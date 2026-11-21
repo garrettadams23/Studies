@@ -8259,8 +8259,8 @@ visit in the trade, and it is entirely preventable by one phone call.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">CIA Triad · AAA · Access Control · PKI · Crypto · Cloud · Zero Trust · Kerberos</span>
-<span class="domain-meta" aria-label="92 topics, about 4h 50m to read"
->92 topics · ~4h 50m</span>
+<span class="domain-meta" aria-label="92 topics, about 4h 55m to read"
+>92 topics · ~4h 55m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -12787,12 +12787,12 @@ earns its cost.
 </div>
 </div>
 <!-- ── TOPIC: NETWORK SECURITY ARCHITECTURE ───────────────────── -->
-<div class="topic" id="network-security-architecture-segmentation-dmz-egress-filter" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="network-security-architecture-segmentation-dmz-egress-filter" data-reviewed="2026-11" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧱</span>
 <span class="topic-name">Network Security Architecture — Segmentation, DMZ <span class="acro-exp">(Demilitarized Zone)</span> &amp; Egress Filtering</span>
 <span class="topic-badge">SEC • Architecture</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -12821,6 +12821,37 @@ touch.
 inbound carefully and let anything leave. Command-and-control, data theft and tool
 download are all outbound — restricting a server segment to the handful of destinations
 it genuinely needs breaks a large share of intrusion tooling for very little work.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Picture</div>
+<div class="concept-title">The Zones and the Arrows Between Them, and the One Arrow to Take Away</div>
+<div class="concept-desc">
+Each arrow is a direction a connection may start in, and the replies come back along it. The two
+pictures differ by one arrow, from the servers to the internet, and that arrow is the row the table
+above calls underrated: egress filtering is an absence, and an absence does not show up in a list of
+what is allowed.
+</div>
+<div class="dw">
+<div class="topo-grid">
+<div class="topo-card">
+<svg class="math-svg" viewBox="0 0 360 254" role="img" aria-label="Four zones drawn as a diamond: the internet at the top, the DMZ on the left, users on the right and servers at the bottom. Green arrows show the directions a connection may start in: internet to DMZ for inbound web, DMZ to servers on one application port, users to servers for named services, and users to the internet through the proxy. An amber arrow labelled anything out runs from servers straight up to the internet."><line class="msv-tangent" x1="150" y1="40" x2="92.6" y2="106.7"/><polygon class="msv-r1" points="88,112 90.5,102.2 97.3,108.1"/><text class="msh-form" x="62" y="72">inbound web</text><line class="msv-tangent" x1="272" y1="112" x2="214.6" y2="45.3"/><polygon class="msv-r1" points="210,40 219.3,43.9 212.5,49.8"/><text class="msh-form" x="300" y="72">via the proxy</text><line class="msv-tangent" x1="88" y1="142" x2="145.4" y2="208.7"/><polygon class="msv-r1" points="150,214 140.7,210.1 147.5,204.2"/><text class="msh-form" x="60" y="188">one app port</text><line class="msv-tangent" x1="272" y1="142" x2="214.6" y2="208.7"/><polygon class="msv-r1" points="210,214 212.5,204.2 219.3,210.1"/><text class="msh-form" x="302" y="188">named services</text><line class="msv-secant" x1="180" y1="214" x2="180" y2="48"/><polygon class="msv-dot2" points="180,41 184.5,50 175.5,50"/><rect class="rsv-chip" x="122" y="114" width="116" height="26" rx="4"/><text class="msv-lbl" x="180" y="131.5">anything out</text><rect class="msh-right" x="125" y="10" width="110" height="30" rx="4"/><text class="msh-name" x="180" y="29.5">Internet</text><rect class="msh-right" x="20" y="112" width="100" height="30" rx="4"/><text class="msh-name" x="70" y="131.5">DMZ</text><rect class="msh-right" x="240" y="112" width="100" height="30" rx="4"/><text class="msh-name" x="290" y="131.5">Users</text><rect class="msh-right" x="125" y="214" width="110" height="30" rx="4"/><text class="msh-name" x="180" y="233.5">Servers</text></svg>
+<div class="topo-name">As usually built</div>
+<div class="topo-desc">Inbound is controlled zone by zone, and anything on a server may connect out to anywhere</div>
+</div>
+<div class="topo-card">
+<svg class="math-svg" viewBox="0 0 360 254" role="img" aria-label="Four zones drawn as a diamond: the internet at the top, the DMZ on the left, users on the right and servers at the bottom. Green arrows show the directions a connection may start in: internet to DMZ for inbound web, DMZ to servers on one application port, users to servers for named services, and users to the internet through the proxy. The line from servers up to the internet is dashed and crossed out: the arrow egress filtering removes."><line class="msv-tangent" x1="150" y1="40" x2="92.6" y2="106.7"/><polygon class="msv-r1" points="88,112 90.5,102.2 97.3,108.1"/><text class="msh-form" x="62" y="72">inbound web</text><line class="msv-tangent" x1="272" y1="112" x2="214.6" y2="45.3"/><polygon class="msv-r1" points="210,40 219.3,43.9 212.5,49.8"/><text class="msh-form" x="300" y="72">via the proxy</text><line class="msv-tangent" x1="88" y1="142" x2="145.4" y2="208.7"/><polygon class="msv-r1" points="150,214 140.7,210.1 147.5,204.2"/><text class="msh-form" x="60" y="188">one app port</text><line class="msv-tangent" x1="272" y1="142" x2="214.6" y2="208.7"/><polygon class="msv-r1" points="210,214 212.5,204.2 219.3,210.1"/><text class="msh-form" x="302" y="188">named services</text><line class="msv-secant" x1="180" y1="214" x2="180" y2="40" stroke-dasharray="5 4"/><rect class="rsv-chip" x="122" y="114" width="116" height="26" rx="4"/><text class="msv-lbl" x="180" y="131.5">✕ to internet</text><rect class="msh-right" x="125" y="10" width="110" height="30" rx="4"/><text class="msh-name" x="180" y="29.5">Internet</text><rect class="msh-right" x="20" y="112" width="100" height="30" rx="4"/><text class="msh-name" x="70" y="131.5">DMZ</text><rect class="msh-right" x="240" y="112" width="100" height="30" rx="4"/><text class="msh-name" x="290" y="131.5">Users</text><rect class="msh-right" x="125" y="214" width="110" height="30" rx="4"/><text class="msh-name" x="180" y="233.5">Servers</text></svg>
+<div class="topo-name">Egress filtered</div>
+<div class="topo-desc">The servers reach only the few named destinations they need, such as update mirrors, and nothing else outside</div>
+</div>
+</div>
+<div class="concept-desc verdict">
+<strong class="c-amber">The arrow in the middle is the one an intruder on a server needs,</strong> for
+command-and-control, for downloading tools and for sending data out. With it in place, the rest of the
+picture can be drawn perfectly and an intruder on a server can still call home. Removing it costs a
+list of the few destinations each server really talks to, which is the first piece of the service map
+the micro-segmentation row needs.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -12928,12 +12959,12 @@ for the endpoint half of the same argument.
 </div>
 </div>
 <!-- ── TOPIC: OT VS IT & THE PURDUE MODEL ───────────────────────── -->
-<div class="topic" id="ot-vs-it-the-purdue-model-when-the-generic-answer-is-the-wro" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="ot-vs-it-the-purdue-model-when-the-generic-answer-is-the-wro" data-reviewed="2026-11" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🏭</span>
 <span class="topic-name">OT vs IT &amp; the Purdue Model — When the Generic Answer Is the Wrong Answer</span>
 <span class="topic-badge">SecurityX • OT</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -12999,6 +13030,38 @@ Convergence, remote access and cloud historians have punched holes through the l
 everywhere. The value of the map is spotting which holes exist in <em>your</em> plant —
 the vendor laptop that dials straight into Level 1 is the finding, and the model is what
 lets you see it.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The Picture</div>
+<div class="concept-title">The Map and the Plant: the Path the Model Draws, and the Link It Does Not</div>
+<div class="concept-desc">
+Drawn as a stack, the boundary is a line between two layers: everything above level 3.5 is IT and
+everything below it is OT. The model intends every path into the plant to cross that line. The verdict
+above names what real plants have instead, and drawn beside the intent it has a position: outside the
+stack, from the enterprise network straight to the controllers.
+</div>
+<div class="dw">
+<div class="topo-grid">
+<div class="topo-card">
+<svg class="math-svg" viewBox="0 0 360 240" role="img" aria-label="The Purdue levels as a stack: enterprise and internet at the top, the IT/OT DMZ at level 3.5 below it, then operations, supervisory, control and the physical process at level 0. Everything above the DMZ is IT and everything below it is OT. A green path runs down through the stack from the enterprise level to control, crossing the DMZ on the way."><rect class="msh-right" x="66" y="10" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="29.5">4–5</text><text class="msv-rad" x="192" y="29.5">Enterprise, internet</text><rect class="msv-bar" x="66" y="48" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="67.5">3.5</text><text class="msh-name" x="192" y="67.5">IT/OT DMZ</text><rect class="msh-right" x="66" y="86" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="105.5">3</text><text class="msv-rad" x="192" y="105.5">Operations</text><rect class="msh-right" x="66" y="124" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="143.5">2</text><text class="msv-rad" x="192" y="143.5">Supervisory</text><rect class="msh-right" x="66" y="162" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="181.5">1</text><text class="msv-rad" x="192" y="181.5">Control</text><rect class="msh-right" x="66" y="200" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="219.5">0</text><text class="msv-rad" x="192" y="219.5">Process</text><line class="msv-axis" x1="52" y1="12" x2="52" y2="38"/><line class="msv-axis" x1="52" y1="12" x2="58" y2="12"/><line class="msv-axis" x1="52" y1="38" x2="58" y2="38"/><text class="msv-lbl2" x="32" y="29.5">IT</text><line class="msv-axis" x1="52" y1="88" x2="52" y2="228"/><line class="msv-axis" x1="52" y1="88" x2="58" y2="88"/><line class="msv-axis" x1="52" y1="228" x2="58" y2="228"/><text class="msv-lbl2" x="32" y="162.5">OT</text><line class="msv-tangent" x1="277" y1="40" x2="277" y2="169"/><polygon class="msv-r1" points="277,176 272.5,167 281.5,167"/></svg>
+<div class="topo-name">As the model intends</div>
+<div class="topo-desc">A path from the enterprise network reaches the controllers only by crossing the DMZ at 3.5</div>
+</div>
+<div class="topo-card">
+<svg class="math-svg" viewBox="0 0 360 240" role="img" aria-label="The same stack. A dashed line labelled vendor link leaves the enterprise level, runs down the outside of the stack and arrives at level 1, control, without crossing the DMZ."><rect class="msh-right" x="66" y="10" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="29.5">4–5</text><text class="msv-rad" x="192" y="29.5">Enterprise, internet</text><rect class="msv-bar" x="66" y="48" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="67.5">3.5</text><text class="msh-name" x="192" y="67.5">IT/OT DMZ</text><rect class="msh-right" x="66" y="86" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="105.5">3</text><text class="msv-rad" x="192" y="105.5">Operations</text><rect class="msh-right" x="66" y="124" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="143.5">2</text><text class="msv-rad" x="192" y="143.5">Supervisory</text><rect class="msh-right" x="66" y="162" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="181.5">1</text><text class="msv-rad" x="192" y="181.5">Control</text><rect class="msh-right" x="66" y="200" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="219.5">0</text><text class="msv-rad" x="192" y="219.5">Process</text><line class="msv-axis" x1="52" y1="12" x2="52" y2="38"/><line class="msv-axis" x1="52" y1="12" x2="58" y2="12"/><line class="msv-axis" x1="52" y1="38" x2="58" y2="38"/><text class="msv-lbl2" x="32" y="29.5">IT</text><line class="msv-axis" x1="52" y1="88" x2="52" y2="228"/><line class="msv-axis" x1="52" y1="88" x2="58" y2="88"/><line class="msv-axis" x1="52" y1="228" x2="58" y2="228"/><text class="msv-lbl2" x="32" y="162.5">OT</text><line class="msv-secant" x1="286" y1="25" x2="318" y2="25" stroke-dasharray="5 4"/><line class="msv-secant" x1="318" y1="25" x2="318" y2="177" stroke-dasharray="5 4"/><line class="msv-secant" x1="318" y1="177" x2="295" y2="177" stroke-dasharray="5 4"/><polygon class="msv-dot2" points="287,177 296,172.5 296,181.5"/><text class="msv-lbl" x="332" y="101" transform="rotate(90 332 101)">vendor link</text></svg>
+<div class="topo-name">As the plant is wired</div>
+<div class="topo-desc">A vendor’s remote-support link arrives at level 1 and never crosses the DMZ</div>
+</div>
+</div>
+<div class="concept-desc verdict">
+<strong class="c-amber">Any line that reaches a lower level without crossing 3.5 is a finding,</strong>
+whatever it is for. A vendor's remote-support link is the usual one: installed so a machine can be
+fixed quickly, connected straight to the controllers, and missing from the network diagram. Look for
+these in the traffic, which the passive monitoring in
+<span class="xref" data-xref="ics-protocols-modbus-dnp3-opc-ua-and-their-security-assumpti" role="link" tabindex="0">ICS Protocols — Modbus, DNP3, OPC UA and Their Security Assumptions</span> already
+collects, and not in the diagram.
 </div>
 </div>
 </div>
