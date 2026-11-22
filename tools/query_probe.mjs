@@ -699,6 +699,26 @@ const READERS = [
     ["micro usb", "", "hw/docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati"],
     ["exercise before studying", "", "productivity/sleep-where-the-studying-actually-sticks"],
     ["does exercise help memory", "", "productivity/sleep-where-the-studying-actually-sticks"],
+    // ── ninth wave: the five A+ objectives the exam paths skipped, added before their topics ──
+    // Every want names a topic that does not exist yet, by the slug of the title it will be
+    // written under. Opened at 0 of 16: ten zeros, and six that found the wrong card, among
+    // them `mbr vs gpt` reaching only the Linux boot topic and the acronym pages.
+    ["windows home vs pro", "", "endpoint/windows-editions-home-pro-enterprise-education-and-the-featu"],
+    ["can windows home join a domain", "", "endpoint/windows-editions-home-pro-enterprise-education-and-the-featu"],
+    ["windows enterprise vs pro", "", "endpoint/windows-editions-home-pro-enterprise-education-and-the-featu"],
+    ["ntfs vs exfat", "", "hw/file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c"],
+    ["fat32 file size limit", "", "hw/file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c"],
+    ["what file system for a usb drive", "", "hw/file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c"],
+    ["mbr vs gpt", "", "endpoint/installing-windows-boot-media-gpt-vs-mbr-and-clean-install-v"],
+    ["clean install vs upgrade", "", "endpoint/installing-windows-boot-media-gpt-vs-mbr-and-clean-install-v"],
+    ["pxe boot", "", "endpoint/installing-windows-boot-media-gpt-vs-mbr-and-clean-install-v"],
+    ["windows 11 tpm requirement", "", "endpoint/installing-windows-boot-media-gpt-vs-mbr-and-clean-install-v"],
+    ["phone battery draining fast", "", "endpoint/troubleshooting-phones-tablets-apps-battery-connectivity-and"],
+    ["app keeps crashing on phone", "", "endpoint/troubleshooting-phones-tablets-apps-battery-connectivity-and"],
+    ["signs a phone is compromised", "", "endpoint/troubleshooting-phones-tablets-apps-battery-connectivity-and"],
+    ["hard drive clicking", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
+    ["smart drive failure", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
+    ["drive not showing in bios", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
