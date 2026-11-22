@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10 | ◐ **started** — see its §9 to §14 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them | ◐ **started** — see its §9 to §15 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -68,7 +68,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **62** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **63** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -2050,6 +2050,48 @@ nothing. That was true of the fetch tool, which could not reach these hosts; the
 itself could, with plain requests. Two hosts were not reachable that way, a defunct site and
 one that refuses automated reading, and neither was worked around: the Conway and Sun Tzu
 rows are read from pages that quote and cite their originals.
+
+## 15. What shipped — the seventh wave
+
+Recorded below as *Session — the seventh wave, the pictures, and the components the rows
+named*. §2 rows 2 to 20, every picture left after the first wave drew row 1, one commit per
+domain. No reader queries were added, because a picture adds no question a reader types. The census was **472 of 495**
+before and after.
+
+| § | Topic | Where it went |
+|---|---|---|
+| 2.2 | `career` *Diagrams That Explain* | Six shapes, each drawn in the table's diagram column beside its question, not as a separate grid |
+| 2.3 | `hw` *Motherboard Anatomy* | The block diagram, drawn tall: the CPU's own lanes in green, one amber uplink, everything else under the chipset, and the shared M.2 and SATA lanes bracketed |
+| 2.4 | `ops` *Priority, Impact &amp; Urgency* | **The row said the topic had no matrix, and it had one, as a table.** The picture is the risk matrix with one senior manager's ticket followed across it: along the urgency axis to P3, never up the impact axis to P1 |
+| 2.5 | `eng` *SDLC Models* | Replaces the box-drawing V: the pairs, and the longest way round, from requirements down and back up to acceptance |
+| 2.6–2.8 | `net` *Spanning Tree*, *TCP vs UDP*, *NAT in Practice* | With the components named. The switches are A, B and C, because the annotator read *S3* as Amazon's storage service |
+| 2.9 | `sec` *OT vs IT &amp; the Purdue Model* | Two stacks drawn in SVG, the intended path and the vendor link. A layer-stack cannot draw a line that goes round it |
+| 2.10 | `sec` *Network Security Architecture* | The zones as a diamond, twice, differing by the one arrow egress filtering removes. Not `topo-svg`, which is 80 pixels tall |
+| 2.11–2.13 | `cs` *Trees*, *Caches*, *Merkle Trees* | Seven keys balanced and in order; the memory ladder on a log scale, not a layer-stack, whose even rows are the flattening the row named; the changed path and the proof. **The ladder showed the title wrong: 1 ns to 150 ms is eight orders of magnitude, not six** |
+| 2.14 | `military` *OODA Loop*, *The Intelligence Cycle* | Rings, each beside what it is not: Boyd's line from Orient to Act beside the intruder's reset, and the open belt beside the closed cycle. Not `lifecycle`, a row that cannot draw the arc back and needs inline styles for its arrows |
+| 2.15 | `blueteam` *Pyramid of Pain* | A pyramid, because a stack's rows are one width and the width is half the picture. The card says the height is Bianco's model and the width is a reading of it |
+| 2.16 | `devops` *CI/CD Pipeline Design* | Step tiles with a gate diamond at each of the four positions between them |
+| 2.17 | `cloud` *Azure Hierarchy* | Nested boxes, a role at a subscription and a policy at the management group: inheritance is containment, which a stack cannot hold |
+| 2.18 | `infra` *Processing Order &amp; Precedence* | Two stacks drawn in SVG: by default the Kiosks OU writes last, and with Enforced the domain's pass moves to the bottom |
+| 2.19 | `m365` *Mail Flow* | Step tiles twice, the path and the same path under an allow rule. **The hole is narrower than the topic's verdict says**: malware and high-confidence phishing are quarantined whatever a rule says |
+| 2.20 | `web` *Flexbox* | The same items in a row and a column, with both axes turning |
+
+**Eight of the nineteen rows named a component that could not draw their claim.** Five
+named `layer-stack`. Its rows are all one width, sit side by side and hold nothing, and the
+pyramid's width, Azure's containment, the line round the Purdue model and the ladder's uneven
+gaps are each exactly one of those. The others named a `lifecycle` row for a cycle, a
+separate grid for shapes that belonged beside their questions, and an 80-pixel `topo-svg` for
+four labeled zones. **§2's claim that none of the twenty needs a line of new CSS held.**
+Every picture uses roles already in `style.css`, and the class gate passed each commit.
+
+**A picture drawn alone is the wrong size at both ends.** The math SVGs scale with the card,
+so one picture alone renders at twice its size on a desktop and a third of it on a phone. Every
+picture that compares two things went into two panels of the topology grid, which stack on a
+phone, and the three drawn alone were drawn tall, which the height cap holds to size.
+
+**Not done.** The spelling gate misses prefixed forms: it rejects *labelled* and has never
+seen *unlabelled*, which the site has fifteen times, or *relabelled*, which it has once. It
+is queued for the eighth wave with §5's exam paths and the gaps §9 and §11 left.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7499,6 +7541,73 @@ usually honest, and it is the step that changes the meaning.**
 reader: 10 queries in a learner meeting a subject, 0 of 10 -> 10 of 10 · census 462 of 495 -> 472 of 495, 0 unexplained
 topics 1,568 -> 1,571 · path steps 1,606 -> 1,609 · related links 4,954 -> 4,978 · mainland 1,492 -> 1,495
 dated claims 101 -> 105 · mean card 1,416 -> 1,417 · page budget ~706 -> ~703
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the seventh wave, the pictures, and the components the rows named
+
+The request was **keep going until you finish all waves**, and the seventh was *Content ideas*
+§2 rows 2 to 20, the pictures. *Content ideas* §15 is the table. This is what doing it found.
+
+### A component is a claim about what it can draw
+
+§2 chose a component for every row before any row was drawn, and eight of the nineteen could
+not draw their own row's sentence. The five that named `layer-stack` are the clearest case. A
+stack's rows are one width, sit one above another and contain nothing. The pictures needed a
+width (the pyramid), containment (Azure), a line that goes round the stack (Purdue) or uneven
+gaps (the memory ladder). Each was drawn as an inline SVG with roles already in the stylesheet.
+**The component column was a guess about the picture, and the sentence beside it was the
+spec.**
+
+### A number has to hold still to be drawn
+
+Two claims changed the moment they were drawn to scale. The memory hierarchy's title said six
+orders of magnitude, and a log axis from 1 ns to 150 ms needs eight. The plan said the priority
+topic had no matrix, and it had one as a table, so the picture became what the topic's third
+card does on it. A third claim narrowed rather than broke: the mail flow verdict's allow-rule
+hole, which Microsoft now closes for malware and high-confidence phishing whatever a rule says.
+**Prose can carry a rough number for years, and a scale cannot.**
+
+### A picture drawn alone is the wrong size at both ends
+
+The math SVG role scales with the card. A picture alone renders at twice its size on a desktop
+and a third of it on a phone, and the first drafts of four pictures did exactly that. Two
+panels of the topology grid fixed both ends, because the panels stack on a phone. That suited the
+rows too, because most of these pictures are comparisons, and the second panel shows what
+the first is not. The three left single were drawn tall, which the height cap holds to size.
+
+### What the pictures cost
+
+The page budget fell from room for ~703 more topics to ~682. Twenty pictures cost about what
+twenty topics would, because an SVG's coordinates are characters and the budget counts
+characters. That is a fair price for twenty pictures that each show a position, an order or a
+containment. It is also the reason a picture added later has to make its row's claim, and
+cannot be decoration.
+
+### What was verified, and how far
+
+Four outside facts, each by search and each with an anchor that says so. Boyd's line from
+Orient to Act, in his 1995 briefing: both primary PDFs refused automated fetching, and neither
+was worked around. Bianco's 2013 authorship of the Pyramid of Pain, from a secondary overview.
+Microsoft's description of Enforced as moving a GPO to the end of the processing order. And the
+limit on a mail flow rule that sets the spam level to −1. Every picture was rendered at size in
+both themes, at desktop and phone width, and read against its card before its commit, the
+check the ASL records established. That reading sent several back: a label over a switch, a
+path over a word, wires showing through hollow boxes, and the sizes above.
+
+### The gate that knew a word and not its prefixes
+
+A new card said *labelled*, and the spelling gate caught it. The fix showed what the gate does
+not catch. Its word boundary rejects a letter before *labelled*, so *unlabelled*, which the site
+has fifteen times, has never been checked. It is queued for the eighth wave as a gate change
+and one mechanical commit, not folded into a picture's.
+
+```
+14 commits · 0 new topics · 17 picture cards and 3 pictures in existing cards · §2 finished, 20 of 20 rows drawn
+reader: no new queries · census 472 of 495 before and after, 0 unexplained
+dated claims 105 -> 109 · mean card 1,417 unchanged · depth median 3,795 -> 3,810 · page budget ~703 -> ~682
+0 lines of new CSS · inline styles 401 -> 401 · README elements 149,612 -> 150,665
 45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in every wave: font rendering, baseline left alone
 ```
