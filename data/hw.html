@@ -398,7 +398,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
 </div>
 
 <!-- ── TOPIC: MOTHERBOARD ANATOMY ────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧩</span>
     <span class="topic-name">Motherboard Anatomy — Chipsets, PCIe <span class="acro-exp">(Peripheral Component Interconnect Express)</span> Lanes &amp; the Block Diagram</span>
@@ -431,6 +431,26 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           installs an NVMe drive and two SATA drives disappear. Nothing is broken — the lanes are
           shared, the board reallocated them, and the manual's block diagram said so. Reading that
           diagram before building is a five-minute step that prevents an afternoon of confusion.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Picture</div>
+      <div class="concept-title">The Block Diagram, Drawn: Everything Under the Chipset Shares One Link</div>
+      <div class="concept-desc">
+        The manual's block diagram is the picture the card above says to read before building, and this is its
+        usual shape. The CPU feeds the memory, the main slot and a fast storage slot or two directly. The
+        chipset feeds everything else, and reaches the CPU over a single link. Lane counts, and which slots and
+        ports share, differ from board to board, and the manual has them. The shape does not differ.
+      </div>
+      <div class="dw">
+        <svg class="math-svg" viewBox="0 0 360 470" role="img" aria-label="A motherboard block diagram. The CPU at the top connects directly to the memory, to the main x16 slot and to one M.2 NVMe slot, drawn in green. A single amber link labeled one shared uplink runs down from the CPU to the chipset. Below the chipset a bus feeds the x4 slots, USB, the network and audio, a second M.2 slot and the SATA ports. A dashed amber bracket under the second M.2 slot and the SATA ports is labeled same lanes."><line class="msv-tangent" x1="100" y1="40" x2="130" y2="40"/><line class="msv-tangent" x1="230" y1="40" x2="250" y2="40"/><polyline class="msv-curve msv-tangent" points="230,52 240,52 240,107 250,107"/><line class="msv-secant" x1="180" y1="60" x2="180" y2="250"/><rect class="msv-bar" x="130" y="20" width="100" height="40" rx="4"/><text class="msh-name" x="180" y="44.5">CPU</text><rect class="msh-right" x="10" y="20" width="90" height="40" rx="4"/><text class="msh-name" x="55" y="44.5">Memory</text><rect class="msh-right" x="250" y="20" width="100" height="40" rx="4"/><text class="msh-name" x="300" y="44.5">x16 slot</text><rect class="msh-right" x="250" y="90" width="100" height="34" rx="4"/><text class="msh-name" x="300" y="111.5">M.2 NVMe</text><rect class="rsv-chip" x="104" y="140" width="152" height="26" rx="4"/><text class="msv-lbl" x="180" y="157.5">one shared uplink</text><rect class="msv-bar" x="130" y="250" width="100" height="40" rx="4"/><text class="msh-name" x="180" y="274.5">Chipset</text><line class="msv-axis" x1="180" y1="290" x2="180" y2="314"/><line class="msv-axis" x1="60" y1="314" x2="300" y2="314"/><line class="msv-axis" x1="60" y1="314" x2="60" y2="340"/><line class="msv-axis" x1="180" y1="314" x2="180" y2="340"/><line class="msv-axis" x1="300" y1="314" x2="300" y2="340"/><line class="msv-axis" x1="120" y1="314" x2="120" y2="400"/><line class="msv-axis" x1="240" y1="314" x2="240" y2="400"/><rect class="msh-right" x="10" y="340" width="100" height="32" rx="4"/><text class="msv-rad" x="60" y="360.5">x4 slots</text><rect class="msh-right" x="130" y="340" width="100" height="32" rx="4"/><text class="msv-rad" x="180" y="360.5">USB</text><rect class="msh-right" x="250" y="340" width="100" height="32" rx="4"/><text class="msv-rad" x="300" y="360.5">LAN, audio</text><rect class="msh-right" x="70" y="400" width="100" height="32" rx="4"/><text class="msv-rad" x="120" y="420.5">M.2 #2</text><rect class="msh-right" x="190" y="400" width="100" height="32" rx="4"/><text class="msv-rad" x="240" y="420.5">SATA</text><line class="msv-secant" x1="120" y1="446" x2="240" y2="446" stroke-dasharray="5 4"/><line class="msv-secant" x1="120" y1="440" x2="120" y2="452"/><line class="msv-secant" x1="240" y1="440" x2="240" y2="452"/><text class="msh-form" x="180" y="464">same lanes</text></svg>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The amber link is the budget, and everything drawn under it shares it.</strong>
+          A second NVMe drive, a network card in an x4 slot and a busy USB device each look independent, and at
+          full load they all queue behind the same link. The dashed bracket is the third row of the card above:
+          on many boards the second M.2 slot and some SATA ports are the same lanes, and fitting the drive turns
+          the ports off.
         </div>
       </div>
     </div>
