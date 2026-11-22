@@ -1656,6 +1656,79 @@ Start-ADSyncSyncCycle <span class="kw">-PolicyType</span> Delta</pre>
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: ONE USER, TWO ACCOUNTS ────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">One User, Two Accounts — How Sync Matches People, and Fixing the Duplicate</span>
+    <span class="topic-badge">Identity • Hybrid</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The mechanism</div>
+      <div class="concept-title">How Sync Decides Two Accounts Are One Person, and What It Does When It Cannot</div>
+      <div class="concept-desc">
+        The ticket says the user has two accounts, with two mailboxes and one person between them. It starts
+        when the on-premises directory syncs a user into a tenant that may already hold them. Sync has to
+        decide whether a cloud user it finds is the same person, and it tries two matches in order. When
+        neither succeeds it does the only other thing it can, and creates a second cloud user. A rehire does
+        this, and so does a cloud-only account made before sync was switched on.
+        <!-- fact: Entra Connect tries a hard match of the on-premises sourceAnchor against the cloud ImmutableId first, then a soft match on userPrincipalName or the primary SMTP proxyAddress, only where the cloud user has no ImmutableId; the documented repair sets mS-DS-ConsistencyGuid to the cloud user's ImmutableId; from 1 July 2026 a hard match is blocked onto an account with onPremisesObjectIdentifier already set or a privileged role assigned or eligible | source: Microsoft Learn's pages on installing Connect against an existing tenant and on sync errors, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Compares</th><th>Succeeds when</th></tr></thead>
+          <tbody>
+            <tr><td>Hard match, first</td><td>The on-premises source anchor with the cloud user's ImmutableId</td><td>The two values are the same</td></tr>
+            <tr><td>Soft match, second</td><td>The user principal name, or the primary SMTP <span class="acro-exp">(Simple Mail Transfer Protocol)</span> address</td><td>The cloud user has no ImmutableId yet, and soft matching has not been turned off</td></tr>
+            <tr><td>Neither</td><td>Nothing left to compare</td><td class="c-amber">A second cloud user is created, or a sync error if an address is already taken</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># A new account's anchor: its object GUID as base64, which sync writes to mS-DS-ConsistencyGuid</span>
+[Convert]::ToBase64String((Get-ADUser jsmith).ObjectGUID.ToByteArray())
+<span class="com"># The anchor the cloud account already carries, if any</span>
+(Get-MgUser <span class="kw">-UserId</span> jsmith@contoso.com <span class="kw">-Property</span> OnPremisesImmutableId).OnPremisesImmutableId</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The third row is the ticket, and the fix is to make the anchors agree, not to
+          merge the accounts.</strong> Decide which account keeps the mailbox and OneDrive, write that cloud
+          user's ImmutableId into the on-premises account's <code>mS-DS-ConsistencyGuid</code>, which is the
+          repair Microsoft documents, and let the next sync hard-match. Since July 2026 a hard match onto an
+          account that holds or is eligible for a privileged role is refused, so an administrator's duplicate
+          means removing the role first and assigning it again afterwards.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Prevention</div>
+      <div class="concept-title">Most Duplicates Are Made Before Sync Runs: Rehires and Accounts Made Early</div>
+      <div class="concept-desc">
+        Sync does what the two match rules say. The duplicates come from the process around it, and three
+        habits make most of them.
+        <!-- fact: restoring a deleted user from the AD Recycle Bin keeps its source anchor, and a recreated user gets a new one; Entra keeps a deleted user soft-deleted for 30 days, after which it cannot be restored | source: Microsoft Learn's pages on enabling the AD recycle bin for Connect Sync and on restoring deleted users, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>Why it makes two accounts</th><th>Instead</th></tr></thead>
+          <tbody>
+            <tr><td>A rehire gets a new directory account</td><td>A new account has a new object GUID <span class="acro-exp">(Globally Unique Identifier)</span>, so its source anchor matches nothing the tenant holds</td><td>Re-enable the original account. If it was deleted, restore it from the AD <span class="acro-exp">(Active Directory)</span> Recycle Bin, which keeps the anchor</td></tr>
+            <tr><td>A cloud account is made before sync is switched on</td><td>Nothing links it to the directory account except its addresses</td><td>Make the user principal name and primary SMTP address match before the first sync so soft match pairs them, then turn soft matching off, as Microsoft advises</td></tr>
+            <tr><td>The leaver's cloud account was deleted long ago</td><td>Entra keeps a deleted user for 30 days, and after that it cannot be restored</td><td>Treat the rehire as a new account. What survives of the old mailbox is whatever a retention policy kept</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The first row is the one to change, because a rehire is a known event with a
+          date.</strong> A joiner process that searches for a returning person before creating anyone turns most
+          duplicates into a re-enable. The AD Recycle Bin is its precondition: without it a deleted account comes
+          back only as a new object with a new anchor, which is the duplicate again. The sync settings around all
+          of this are in
+          <span class="xref">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: LEGACY CLEANUP ──────────────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">

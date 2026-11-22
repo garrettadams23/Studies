@@ -311,8 +311,8 @@ const READERS = [
     // ── batch seventeen ──
     ["how do i prove it is not the network",
      "wide and inherent, and the widest noun this site has: `network` is the only word left after the stop list drops `how do i prove it is not the`, and it is in a fifth of the corpus. The answer is inside the set — `ops` *Troubleshooting Like a Pro* and `net`'s own troubleshooting cards are all in the 83. Ranking would pick between them; this matcher is a filter"],
-    ["the user has two accounts",
-     "wide by one, and never answered by count alone: 60 cards in 17 domains passed only because 60 is the threshold, and the Windows repair ladder's `a second account` made it 61. Three common words and no exact phrase. Kind 2 underneath: one person with two identities, after a rehire or an Entra Connect match that failed, is written nowhere — `soft-match` and `hard-match` appear 0 times. Queued in plan.md's *Content ideas*"],
+    ["the user has two accounts", "",
+     "infra/one-user-two-accounts-how-sync-matches-people-and-fixing-the"],
     ["the software installed but does not appear"],
     // ── batch eighteen ──
     ["the user changed their name"],
@@ -953,8 +953,8 @@ const READERS = [
     ["the drive is clicking"],
     // ── batch eighteen ──
     ["it posts but windows will not start"],
-    ["the usb ports on one side stopped working",
-     "kind 3 — the reader's fault is *a whole controller or front-panel header, not a port*, which is the right diagnosis and is the shape `hw` teaches throughout: isolate, swap, halve. `usb` at 31 and `header` at 33 are both in the corpus; no card carries them with `side`, which is the reader's word for a physical grouping the site describes electrically. Since the third wave it scores answered, half by accident: the connector card in Docks says a plug is *wider on one side*, which satisfies the conjunction, and relaxation then adds Motherboard Anatomy, whose chipset row is the nearest the site comes to ports that fail together sharing a controller. The diagnosis the reader needs is still not written as a card"],
+    ["the usb ports on one side stopped working", "",
+     "hw/motherboard-anatomy-chipsets-pcie-lanes-the-block-diagram"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
