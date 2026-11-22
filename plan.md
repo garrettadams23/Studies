@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes | ✅ **shipped** — see its §9 to §16; what it left is §16's list |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives | ✅ **shipped** — see its §9 to §17 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -68,7 +68,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **165** · search **59** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **64** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **65** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -2124,6 +2124,35 @@ A path for it waits for its outline.
 the visual baseline, which fails in this container on font rendering and was left alone.
 Otherwise the queue *Content ideas* opened with is empty: §4's thirty-five rows, §2's twenty
 pictures, §5's paths and every gap a wave set aside.
+
+## 17. What shipped — the ninth wave
+
+Recorded below as *Session — the ninth wave, the five gaps and the exam that launched*. All of
+§16's list of what was left. The reader went in first: 16 queries opened at **0 of 16** and
+closed at **16 of 16**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 16 | Windows editions | `endpoint` *Windows Editions*: what Home leaves out, from the domain join to the Remote Desktop host, and Enterprise as a license that steps Pro up. A+ Core 2, 1.3 |
+| 16 | Installing an operating system | `endpoint` *Installing Windows*: the kinds of install by what survives, GPT with UEFI and MBR with legacy BIOS, and boot media. Core 2, 1.2 |
+| 16 | Troubleshooting mobile devices | `endpoint` *Troubleshooting Phones &amp; Tablets*: the common faults and their first checks, then the signs of compromise. Core 2, 3.2 and 3.3 |
+| 16 | File systems | `hw` *File Systems*: six by what reads them and how large a file can be, then NTFS permissions through a copy and a move. Core 2, 1.1 |
+| 16 | A failing drive | `hw` *A Failing Drive*: copy the data first, seven symptoms, and the five SMART attributes and why a clean report proves nothing. Core 1, 5.2 |
+| 16 | A path for SY0-801 | Read from CompTIA's own objectives document, version 2.0, fetched. 49 steps, every objective with a topic, including V8's new 2.6 on the threats that come with using AI |
+
+**Both A+ paths now cover every objective, and their blurbs name no gaps.** The five were
+written as topics and not cards, because the eighth wave found that search widens a lone
+exact hit unless the topic's own name carries the question. Eleven of the sixteen queries
+find their topic as the only result, and the other five find it among two to fifteen.
+
+**The outline the eighth wave could not find was one search away.** The eighth wave looked for
+SY0-801 at the address its predecessor's course used, and stopped there. This wave searched
+for the outline itself, and found CompTIA's objectives document on the file host its pages
+link to: the official document, not a course index that mirrors it.
+
+**What is left.** The visual baseline, which still fails in this container on font rendering
+and is left alone. *Content ideas* has nothing else queued. New content would start from a new
+list, with its readers in the census first.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7701,6 +7730,60 @@ both themes and read before its commit, and so was the paths panel.
 reader: no new queries · census 472 of 495 -> 471 of 495, 0 unexplained · wide 9 -> 8
 topics 1,571 -> 1,572 · paths 102 -> 106 · path steps 1,609 -> 1,751 · related links 4,978 -> 4,984 · mainland 1,495 -> 1,496
 dated claims 109 -> 111 · 18 prefixed spellings swept, the gate taught four prefixes
+45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the ninth wave, the five gaps and the exam that launched
+
+The request was **keep going with the next wave**. *Content ideas* had shipped, so the next
+wave was the list §16 left: five A+ objectives the exam paths skipped, and a path for
+SY0-801. *Content ideas* §17 is the table. This is what doing it found.
+
+### Two queries closed in prose, the way they usually do
+
+The 16 queries went into the census before any topic, at 0 of 16. With the topics written,
+fourteen found them, and two did not. `windows 11 tpm requirement` missed because the card
+said Windows 11 *requires* them. `fat32 file size limit` missed because the card said *how
+large one file can be*. Each closed when the card used the reader's noun, and in both the
+reader's noun was also the plainer sentence. That is the same fix as *depressed for weeks*
+in the fifth wave. **A reader's question is usually written in nouns, and a card that
+answers it in verbs reads well and goes unfound.**
+
+### The missing outline was one search away
+
+The eighth wave looked for SY0-801's outline at the address its predecessor's course used,
+found nothing there, and stopped. This wave searched for the outline itself. It found
+CompTIA's objectives document, version 2.0, on the file host CompTIA's own pages link to,
+fetched it with a plain request and read it: the official document, not a course index that
+mirrors one. V8 keeps the five domains, reweights them and adds an objective on the threats
+of using AI, which topics already on the site answer. **When a source is missing, search for
+the source, not for another copy of the place the last one was found.**
+
+### Writing a topic found a near-duplicate, and reading it took a sentence
+
+The near-duplicate census flagged one new pair: *Windows Editions* beside *Windows Server
+Editions & Licensing*. Phase 9's test is to open both and say in one sentence who each is
+for. Here that was easy: one is for the laptop a technician meets, one for the server an
+administrator buys, and each links to the other. The sentence is in the verdicts file now,
+and the census reads 0 unread.
+
+### What was verified, and how far
+
+These Microsoft pages were fetched and read: the Device Encryption page, the Entra join page,
+the GPT FAQ, MBR2GPT and the Home and Pro comparison. Search covered Windows 11's
+requirements, the 2 TB MBR limit, subscription activation, Dev Drive, the Home to Pro upgrade,
+NTFS permissions on copy and move, and the file systems' support on macOS and Linux. Backblaze's
+SMART figures came from search too, and their anchor says they are from 2016 data. CompTIA's
+SY0-801 objectives were fetched and read. Six fact anchors record all of it, and the claim the
+sources would not support, that a Home to Pro upgrade keeps every app, was left out. Every new
+card was rendered at size in both themes and read before its commit.
+
+```
+5 commits · 5 new topics (endpoint 3, hw 2) · 1 exam path · 1 acronym decided for a domain · 1 near-duplicate pair read
+reader: 16 queries in somebody revising for a CompTIA exam, 0 of 16 -> 16 of 16 · census 471 of 495 -> 487 of 511, 0 unexplained
+topics 1,572 -> 1,577 · paths 106 -> 107 · path steps 1,751 -> 1,805 · related links 4,984 -> 5,016 · mainland 1,496 -> 1,501
+dated claims 111 -> 117 · near-duplicate pairs 95 -> 96, 0 unread
 45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in every wave: font rendering, baseline left alone
 ```
