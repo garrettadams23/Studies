@@ -904,7 +904,14 @@ function domainTopics(domainId) {
       // It is chrome, not content: leaving it in made "min" match 1,337 of
       // 1,367 topics, which is the same failure the acronym-alternate bug
       // produced and would have been just as invisible.
-      text: indexText(chunk.replace(RE_TOPIC_READ, "")),
+      //
+      // The annotator's expansions are a reading aid too, not something the card
+      // says. Indexed, they answered queries no card answers: "the user says the
+      // file is gone" matched a Windows tools topic through *User* in UDP's
+      // expansion, and the relaxation stage widened that into 31 cards. A reader
+      // who types an expansion still finds the acronym, because searchTerms()
+      // maps one to the other before matching.
+      text: indexText(chunk.replace(RE_TOPIC_READ, "").replace(RE_ACRO_SPAN, "")),
     });
     start = next;
   }
