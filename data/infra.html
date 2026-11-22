@@ -1051,7 +1051,7 @@ New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class
 </div>
 
 <!-- ── TOPIC: PROCESSING ORDER ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔢</span>
     <span class="topic-name">Processing Order &amp; Precedence — LSDOU <span class="acro-exp">(Local, Site, Domain, Organizational Unit)</span>, Enforcement &amp; Loopback</span>
@@ -1088,6 +1088,40 @@ New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class
         that make precedence hard to reason about, and they interact — Enforced wins over a
         block. Use them sparingly and document each one, because the person debugging the
         resulting behavior in two years will not guess why they are there.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The Picture</div>
+      <div class="concept-title">The Stack Drawn Twice: the Last Writer Wins, and Enforced Changes Who Writes Last</div>
+      <div class="concept-desc">
+        One setting, the screen lock on a kiosk, followed through every pass. The scopes are applied from the top
+        of the stack to the bottom, and each one that sets a value overwrites the one before, so the value that
+        stays is the lowest one written. Enforced does not break that rule. Microsoft's older documentation
+        describes it as moving the enforced GPO to the end of the processing order, which is the bottom of the
+        stack.
+        <!-- fact: an Enforced link moves its GPO to the end of the processing order, so it is applied last; enforced links take precedence over child containers and over Block Inheritance | source: Microsoft's TechNet page Group Policy Inheritance and the Learn module on GPO scope and inheritance, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="topo-grid">
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 340 252" role="img" aria-label="The processing order as a stack, applied from the top: local sets a screen lock of 30 minutes, site sets nothing, domain sets 15 minutes, the Workstations OU sets nothing, and the Kiosks OU sets 5 minutes. The Kiosks row, the last writer, is marked, and the result is 5 minutes."><rect class="msh-right" x="50" y="10" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="31.5">1</text><text class="msv-rad" x="152" y="31.5">Local</text><text class="msv-rad" x="286" y="31.5">30 min</text><rect class="msh-right" x="50" y="52" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="73.5">2</text><text class="msv-rad" x="152" y="73.5">Site</text><text class="msv-lbl2" x="286" y="73.5">not set</text><rect class="msh-right" x="50" y="94" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="115.5">3</text><text class="msv-rad" x="152" y="115.5">Domain</text><text class="msv-rad" x="286" y="115.5">15 min</text><rect class="msh-right" x="50" y="136" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="157.5">4</text><text class="msv-rad" x="152" y="157.5">OU: Workstations</text><text class="msv-lbl2" x="286" y="157.5">not set</text><rect class="msv-circle msv-secant" x="50" y="178" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="199.5">5</text><text class="msv-lbl" x="152" y="199.5">OU: Kiosks</text><text class="msv-lbl" x="286" y="199.5">5 min</text><line class="msv-axis" x1="18" y1="14" x2="18" y2="202"/><polygon class="msv-lbl2" points="18,210 13.5,201 22.5,201"/><text class="msv-lbl2" x="34" y="111" transform="rotate(90 34 111)">applied in order</text><text class="msv-lbl" x="192" y="242">Result: 5 min</text></svg>
+            <div class="topo-name">By default</div>
+            <div class="topo-desc">The Kiosks OU is applied last, so its 5 minutes overwrite the domain's 15</div>
+          </div>
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 340 252" role="img" aria-label="The same settings with the domain link Enforced. The domain row has moved to the bottom of the stack, after both OUs, so it is the last writer; it is marked, and the result is 15 minutes."><rect class="msh-right" x="50" y="10" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="31.5">1</text><text class="msv-rad" x="152" y="31.5">Local</text><text class="msv-rad" x="286" y="31.5">30 min</text><rect class="msh-right" x="50" y="52" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="73.5">2</text><text class="msv-rad" x="152" y="73.5">Site</text><text class="msv-lbl2" x="286" y="73.5">not set</text><rect class="msh-right" x="50" y="94" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="115.5">3</text><text class="msv-rad" x="152" y="115.5">OU: Workstations</text><text class="msv-lbl2" x="286" y="115.5">not set</text><rect class="msh-right" x="50" y="136" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="157.5">4</text><text class="msv-rad" x="152" y="157.5">OU: Kiosks</text><text class="msv-rad" x="286" y="157.5">5 min</text><rect class="msv-circle msv-secant" x="50" y="178" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="199.5">5</text><text class="msv-lbl" x="152" y="199.5">Domain, Enforced</text><text class="msv-lbl" x="286" y="199.5">15 min</text><line class="msv-axis" x1="18" y1="14" x2="18" y2="202"/><polygon class="msv-lbl2" points="18,210 13.5,201 22.5,201"/><text class="msv-lbl2" x="34" y="111" transform="rotate(90 34 111)">applied in order</text><text class="msv-lbl" x="192" y="242">Result: 15 min</text></svg>
+            <div class="topo-name">With the domain link Enforced</div>
+            <div class="topo-desc">The domain's pass moves after both OUs, so its 15 minutes are written last and stay</div>
+          </div>
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read a precedence problem from the bottom of the stack up: the first value you
+          meet is the one that won.</strong> Then look for an Enforced link higher in the hierarchy, because that
+          link is not where its container sits in this order. It was applied last. The Group Policy Inheritance
+          tab in the management console lists the same order the other way up, with precedence 1, the last
+          writer, at the top.
+        </div>
       </div>
     </div>
 
