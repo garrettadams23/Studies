@@ -334,7 +334,7 @@
 </div>
 
 <!-- ── TOPIC: MAIL FLOW ──────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">✉️</span>
     <span class="topic-name">Mail Flow — Connectors, Transport Rules &amp; the Path a Message Takes</span>
@@ -365,6 +365,49 @@
           The practical consequence: a transport rule that allows a sender runs <em>before</em> the
           spam verdict, which is exactly why a well-meant "allow our partner" rule is the most
           common way a tenant lets phishing straight through.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Picture</div>
+      <div class="concept-title">The Path Drawn: Where a Message Can Die, and the Step an Allow Rule Skips</div>
+      <div class="concept-desc">
+        The table gives the order. Drawn as a path, each stage is a place a message can stop, and a message in
+        the inbox has survived every one of them in turn. The second row is the same path for a sender that a
+        mail flow rule has been told to trust.
+        <!-- fact: a mail flow rule that sets SCL -1 overrides spam filtering only; it cannot bypass malware or high confidence phishing, which are always quarantined, unless the MX record points to another service in front of Microsoft 365 | source: Microsoft Learn's anti-spam troubleshooting and secure-by-default pages, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="dt">▸ THE PATH, AND HOW A MESSAGE DIES AT EACH STEP</div>
+        <div class="dora-seq">
+          <div class="dora-item"><div class="dora-letter">1</div><div class="dora-word">Connection</div><div class="dora-desc">Blocked by the sending server's address, before anything else is read</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">2</div><div class="dora-word">Malware</div><div class="dora-desc">Quarantined as malware</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">3</div><div class="dora-word">Your rules</div><div class="dora-desc">Rejected, redirected or quarantined by the organization's own rule</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">4</div><div class="dora-word">Spam and phish</div><div class="dora-desc">Sent to junk or quarantine by the filter's verdict</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">5</div><div class="dora-word">Inbox rules</div><div class="dora-desc">Moved or deleted by the user's own rule</div></div>
+        </div>
+        <div class="dt">▸ THE SAME PATH, WITH A RULE THAT TRUSTS THE SENDER</div>
+        <div class="dora-seq">
+          <div class="dora-item"><div class="dora-letter">1</div><div class="dora-word">Connection</div><div class="dora-desc">Checked as usual</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">2</div><div class="dora-word">Malware</div><div class="dora-desc">Checked, so malware still stops here</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">3</div><div class="dora-word">Your rules</div><div class="dora-desc">The allow rule matches the sender and sets the spam level to −1</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">4</div><div class="dora-word">Skipped</div><div class="dora-desc">No spam or phish verdict, except high-confidence phishing, quarantined anyway</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">5</div><div class="dora-word">Inbox rules</div><div class="dora-desc">The message arrives, looking trusted</div></div>
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The fourth tile of the second row is the hole the card above describes, and it
+          is narrower than it was.</strong> Microsoft quarantines malware and high-confidence phishing whatever a
+          rule says, unless the mail reaches Microsoft 365 through another filtering service first. What an allow
+          rule still waves through is everything the filter was less sure of: ordinary phishing, and spam. Scope
+          the rule to something an attacker cannot set, as the transport-rules card says.
         </div>
       </div>
     </div>
