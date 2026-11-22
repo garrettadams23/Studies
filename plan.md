@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them | ◐ **started** — see its §9 to §15 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes | ✅ **shipped** — see its §9 to §16; what it left is §16's list |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -66,9 +66,9 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Depth tail | **10th percentile 2,169 chars**, median 3,813 — the number a deepening wave has to move | `depth_report.py` |
 | Dated claims | **47 volatile spans and 64 fact anchors: 111 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently. It rose by one with the ASCII chart's source link, and that anchor records that this container could not fetch the page rather than claiming a check. It rose by one more with GCM's random-nonce limit in the cipher-modes card, and that anchor says the NIST figure was confirmed in search results and the PDF was not fetched. One more for Cisco's default administrative distances, said the same way, and two for the Windows repair ladder: Microsoft's DISM-before-SFC order and the two failed starts that open WinRE. And one for CompTIA's rule that a virtual PBQ cannot be skipped and returned to, which this container could not fetch from comptia.org and says so. Two more for Cisco's syslog defaults in the severity card: the trap level that ships as informational, and the two messages one interface going down produces, both confirmed in search results with the pages not fetched. Three more in the cabling and discovery cards, said the same way: the standard's preference for T568A, Cisco's rule that fixing speed and duplex turns Auto-MDI-X off, and the CDP and LLDP timers. One more for the Excel versions that have XLOOKUP, one for the A+ objective numbers behind the malware removal steps, one for the two exercise studies the header image's numbers were checked against, two in `cs` for ECC memory's code and the Mars Pathfinder mutex, and five in `military` for the transition programs, the 9-line, the date-time group and METT-TC, said the same way. The date-time group's anchor says that no source was found for it, which is what an anchor is for. Two in `mind` date the health services' two-week line and the COBRA trial, and one in `philosophy` records which translation the Epicurus quotation is from. Four in `quotes` record the pages each line was read on, fetched this time and not only searched. One more in `military` records where Boyd's line from Orient to Act was read about, and that both primary PDFs refused the fetch, and one in `blueteam` dates the Pyramid of Pain to Bianco in 2013 from a secondary overview, his post unread. One in `infra` records that an Enforced link moves to the end of processing, from Microsoft's pages as quoted in search, and one in `m365` that a rule setting the spam level to −1 cannot pass malware or high-confidence phishing, said the same way. Two in `infra`'s two-accounts topic date how sync matches a user and how long a deleted one can be restored | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
+| Gate results | check · smoke **165** · search **59** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **63** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **64** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -2090,8 +2090,40 @@ picture that compares two things went into two panels of the topology grid, whic
 phone, and the three drawn alone were drawn tall, which the height cap holds to size.
 
 **Not done.** The spelling gate misses prefixed forms: it rejects *labelled* and has never
-seen *unlabelled*, which the site has fifteen times, or *relabelled*, which it has once. It
+seen *unlabelled*, which the site has seventeen times, or *relabelled*, which it has once. It
 is queued for the eighth wave with §5's exam paths and the gaps §9 and §11 left.
+
+## 16. What shipped — the eighth wave
+
+Recorded below as *Session — the eighth wave, the exam paths, and the queue emptied*. §5's
+exam paths, the feature §5 held for them, and every gap an earlier wave queued. No reader
+queries were added. Two that already carried verdicts found their cards, and one went back
+to the zero its note always said was true.
+
+| § | Item | Where it went |
+|---|---|---|
+| 5 | Exam paths | Four, over topics that exist: *CompTIA Network+ (N10-009)*, 36 steps; *Security+ (SY0-701)*, 45; *A+ Core 1 (220-1201)*, 28; *A+ Core 2 (220-1202)*, 32. Each outline was read first, from a course index that mirrors CompTIA's numbering, fetched with plain requests. comptia.org refuses automated reading. Each blurb names the domains and the month the outline was read |
+| 5 | A path as a deck | **Built.** Exam mode, flashcards, the quiz and the Markdown export take a learning path, through the same `pathSteps()` the print pack uses. The smoke test covers it, 164 to 165 |
+| 9 | `the user has two accounts` | A new `infra` topic, *One User, Two Accounts*, with the matching rules and the habits that make duplicates. A topic and not a card, because search widens a lone exact hit unless the topic's own name carries the question. The query now finds it alone |
+| 11 | `the usb ports on one side stopped working` | A troubleshooting card in *Motherboard Anatomy*, under the block diagram. The query finds it first |
+| 11 | Search inside expansions | Search no longer reads the annotator's expansions as card text. The census moved by one, 472 to 471, and the one was the coincidence |
+| 15 | The spelling gate's prefixes | The gate takes un-, re-, mis- and pre-. Eighteen words were swept in a mechanical commit that `.git-blame-ignore-revs` lists, so no topic was re-dated by it |
+
+**Writing a path was the audit §5 said it would be.** Five objectives have nothing to point
+at. In Core 2 they are Windows editions, file systems, installing an operating system and
+troubleshooting mobile devices, and in Core 1 a failing drive. The paths skip them rather
+than point somewhere close, and each is now a candidate with a named asker.
+
+**An exam launched five days before its path was written.** CompTIA lists SY0-801's launch
+as 17 November 2026 and SY0-701's retirement as 11 June 2027. The Security+ path follows
+SY0-701, which is still being taken and whose outline was read. The SY0-801 course index was
+not at the address its predecessor's pattern predicts, and guessing further was not reading.
+A path for it waits for its outline.
+
+**What is left.** The five candidates above, a SY0-801 path once its outline can be read, and
+the visual baseline, which fails in this container on font rendering and was left alone.
+Otherwise the queue *Content ideas* opened with is empty: §4's thirty-five rows, §2's twenty
+pictures, §5's paths and every gap a wave set aside.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7600,7 +7632,7 @@ path over a word, wires showing through hollow boxes, and the sizes above.
 
 A new card said *labelled*, and the spelling gate caught it. The fix showed what the gate does
 not catch. Its word boundary rejects a letter before *labelled*, so *unlabelled*, which the site
-has fifteen times, has never been checked. It is queued for the eighth wave as a gate change
+has seventeen times, has never been checked. It is queued for the eighth wave as a gate change
 and one mechanical commit, not folded into a picture's.
 
 ```
@@ -7609,5 +7641,66 @@ reader: no new queries · census 472 of 495 before and after, 0 unexplained
 dated claims 105 -> 109 · mean card 1,417 unchanged · depth median 3,795 -> 3,810 · page budget ~703 -> ~682
 0 lines of new CSS · inline styles 401 -> 401 · README elements 149,612 -> 150,665
 45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the eighth wave, the exam paths, and the queue emptied
+
+The request was **keep going until you finish all waves**, and the eighth was *Content ideas*
+§5's exam paths and every gap an earlier wave had set aside. *Content ideas* §16 is the
+table. This is what doing it found.
+
+### A search with no ranking finds a card by its title
+
+`the user has two accounts` needed a card, and a card alone did not answer it. The new card
+held the reader's exact words, and search widens a lone exact hit unless the topic's own name
+carries a word of the question. That rule exists because four lone hits had been
+coincidences, and it is right. The reader got 63 cards with the answer somewhere among them.
+The fix was the shape the rule asks for, a topic named for the question, and the query now
+finds it alone. **Where nothing is ranked, a title is how a card gets found.**
+
+### Taking a reading aid out of the index cost one answer, and it was the false one
+
+Search read the annotator's acronym expansions as if a card had said them, so *User* in
+UDP's expansion answered a query about a lost file. The fix drops the expansions from the
+index, the way the reading-time chrome was already dropped. A reader who types an expansion
+still finds the acronym, because the query is mapped before matching. The census moved by
+exactly one, 472 to 471, and the query that moved was the coincidence, back at the zero its
+note had always said was true. **A measurement that drops by the number you predicted is
+the measurement working.**
+
+### The gate knew a word and not its prefixes
+
+The spelling gate's dictionary rejected any letter in front of a word, so it caught
+*labelled* and had never seen *unlabelled*, which the site used seventeen times. The
+seventh wave's record said fifteen, counted by hand before the gate could count, and says
+seventeen now. Taught four prefixes, the gate found eighteen. The sweep went in as its own mechanical commit, and that commit
+is listed in `.git-blame-ignore-revs`. A spelling fix is not a review, and no topic's date
+moved for one. That was checked by stamping two of the swept domains and seeing nothing move.
+
+### The outline was read the week its successor launched
+
+CompTIA lists SY0-801's launch as 17 November 2026, five days before the Security+ path was
+written, and SY0-701 retires in June 2027. The path follows SY0-701, the exam whose outline
+was read and which people are still taking. SY0-801's course index was not at the address the
+pattern predicted, and guessing further addresses would have been a search for a page, not a
+reading of one. **A dated claim can go stale between the search and the commit, and the date
+in the blurb is how a reader can tell.**
+
+### What was verified, and how far
+
+How sync matches a user, and the hard-match protections that apply from July 2026, came from
+Microsoft's pages as quoted in search results. So did the AD Recycle Bin keeping a user's
+anchor and Entra's thirty days. Two anchors record both. The four exam outlines were fetched
+and read from a course index that mirrors CompTIA's numbering, and the SY0-801 and SY0-701
+dates came from CompTIA's pages as quoted in search. Every new card was rendered at size in
+both themes and read before its commit, and so was the paths panel.
+
+```
+7 commits · 1 new topic (infra) · 3 cards (infra 2, hw 1) · 4 exam paths · 1 feature, a path as a deck
+reader: no new queries · census 472 of 495 -> 471 of 495, 0 unexplained · wide 9 -> 8
+topics 1,571 -> 1,572 · paths 102 -> 106 · path steps 1,609 -> 1,751 · related links 4,978 -> 4,984 · mainland 1,495 -> 1,496
+dated claims 109 -> 111 · 18 prefixed spellings swept, the gate taught four prefixes
+45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in every wave: font rendering, baseline left alone
 ```
