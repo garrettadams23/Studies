@@ -3498,9 +3498,18 @@ function stScopeOptions() {
   });
   return doms;
 }
+// A learning path as a deck. plan.md's *Content ideas* §5 named this and held it
+// until a path named for an exam existed; the four CompTIA paths are that. The
+// print pack already took a path as its scope; the decks take the same steps, in
+// the same order, through the same pathSteps().
+const ST_PATH_SCOPE = "__path:";
 function stTopicsForScope(scope) {
   const all = stIndex();
   if (scope === "__all") return all.filter(stIsStudyable);
+  if (scope.startsWith(ST_PATH_SCOPE)) {
+    const path = learningPaths().find(p => p.id === scope.slice(ST_PATH_SCOPE.length));
+    return path ? pathSteps(path).filter(stIsStudyable) : [];
+  }
   // Starring and grading are deliberate acts, so those two decks honour the
   // user's choice even for a section the domain list would not offer.
   if (scope === "__bookmarks") return all.filter(t => stIsBookmarked(t.id));
@@ -3520,6 +3529,14 @@ function stScopeSelectHTML(id) {
       // Parentheses, not a dash: some domain titles already contain an em dash
       // ("Endpoint Management — Intune · MECM") and a second one read as a typo.
       `<option value="${esc(d.id)}">${esc(d.icon)} ${esc(d.title)} (${d.n})</option>`));
+  const paths = learningPaths()
+    .map(p => ({ p, n: pathSteps(p).filter(stIsStudyable).length }))
+    .filter(x => x.n);
+  if (paths.length) {
+    opts.push('<optgroup label="Learning paths">' + paths.map(({ p, n }) =>
+      `<option value="${ST_PATH_SCOPE}${esc(p.id)}">${esc(p.icon || "🧭")} ${esc(p.name)} (${n})</option>`).join("") +
+      "</optgroup>");
+  }
   return `<select id="${id}" class="st-select">${opts.join("")}</select>`;
 }
 
