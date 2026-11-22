@@ -719,6 +719,29 @@ const READERS = [
     ["hard drive clicking", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
     ["smart drive failure", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
     ["drive not showing in bios", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
+    // ── tenth wave: six objectives from four exam outlines with no topic, added before their topics ──
+    // Linux+ 1.2 and 1.7, PenTest+ 4.4 and 5.4, CISSP 3.7, and CySA+ 3.3 with 4.2. Every want
+    // names a topic that does not exist yet, by the slug of the title it will be written under.
+    // Opened at 0 of 18: eleven zeros, and seven that found the wrong card, among them
+    // `incident communication plan` reaching 23 topics and none of them a plan.
+    ["modprobe", "", "linux/linux-device-management-kernel-modules-udev-the-hardware-the"],
+    ["udev rule", "", "linux/linux-device-management-kernel-modules-udev-the-hardware-the"],
+    ["load a kernel module", "", "linux/linux-device-management-kernel-modules-udev-the-hardware-the"],
+    ["virsh", "", "linux/virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"],
+    ["kvm vs qemu", "", "linux/virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"],
+    ["libvirt", "", "linux/virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"],
+    ["pentest cleanup", "", "pentest/cleanup-restoration-leaving-a-clients-network-as-you-found-i"],
+    ["post-engagement cleanup", "", "pentest/cleanup-restoration-leaving-a-clients-network-as-you-found-i"],
+    ["remove persistence after a test", "", "pentest/cleanup-restoration-leaving-a-clients-network-as-you-found-i"],
+    ["process hollowing", "", "threat/process-injection-hollowing-dll-side-loading-hiding-inside-a"],
+    ["process injection", "", "threat/process-injection-hollowing-dll-side-loading-hiding-inside-a"],
+    ["dll sideloading", "", "threat/process-injection-hollowing-dll-side-loading-hiding-inside-a"],
+    ["known plaintext attack", "", "sec/cryptanalytic-attacks-known-plaintext-side-channels-why-imple"],
+    ["side-channel attack", "", "sec/cryptanalytic-attacks-known-plaintext-side-channels-why-imple"],
+    ["frequency analysis", "", "sec/cryptanalytic-attacks-known-plaintext-side-channels-why-imple"],
+    ["incident communication plan", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
+    ["who to notify during an incident", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
+    ["when to involve law enforcement", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
