@@ -159,7 +159,14 @@ IRREGULAR = {
     "instalment": "installment", "instalments": "installments",
     "distil": "distill", "instil": "instill", "appal": "appall",
 }
-IRREGULAR_RE = re.compile(r"(?<![A-Za-z])(" + "|".join(sorted(IRREGULAR, key=len, reverse=True))
+# A prefix is part of the word it is on. The boundary below used to reject any
+# letter before the dictionary word, so `labelled` was caught and `unlabelled`,
+# which the site had fifteen times, never was: the list was checked only where
+# its words stood alone. Four prefixes make the same word, and none of them
+# turns an American form into a British one.
+IRREGULAR_PREFIXES = ("un", "re", "mis", "pre")
+IRREGULAR_RE = re.compile(r"(?<![A-Za-z])(" + "|".join(IRREGULAR_PREFIXES) + r")?("
+                          + "|".join(sorted(IRREGULAR, key=len, reverse=True))
                           + r")(?![A-Za-z])", re.I)
 
 # JSON files whose string values render as prose, and the keys to read in each.
@@ -210,7 +217,7 @@ def _our(m):
 
 
 def _irregular(m):
-    return match_case(m.group(0), IRREGULAR[m.group(0).lower()])
+    return match_case(m.group(0), (m.group(1) or "").lower() + IRREGULAR[m.group(2).lower()])
 
 
 # The dictionary runs **first**, because it is the exception to the rules and
@@ -453,6 +460,10 @@ def self_test():
         ("licensed", None), ("license", None), ("program", None), ("practice", None),
         ("installed", None), ("controlled", None), ("enrolled", None),
         ("greyhound", None), ("ThinkCentre", None), ("center", None), ("analyze", None),
+        # a prefix is part of the word, and the American prefixed forms survive
+        ("unlabelled", "unlabeled"), ("Relabelled", "Relabeled"), ("mislabelled", "mislabeled"),
+        ("misjudgement", "misjudgment"), ("UNLABELLED", "UNLABELED"),
+        ("unlabeled", None), ("relabeled", None), ("prefix", None), ("reinstall", None),
         # the allow phrase, and the same word without it
         ("Fibre Channel", None), ("fibre channel zoning", None),
         ("fibre", "fiber"), ("Wi-Fi and Fibre Are", "Wi-Fi and Fiber Are"),
