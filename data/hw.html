@@ -847,6 +847,158 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: FILE SYSTEMS ──────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🗂️</span>
+    <span class="topic-name">File Systems — NTFS <span class="acro-exp">(New Technology File System)</span>, exFAT, FAT32 <span class="acro-exp">(File Allocation Table 32)</span>, ReFS, APFS &amp; ext4, and What Each Cannot Do</span>
+    <span class="topic-badge">PC Hardware • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Six File Systems, and the Question Each One Answers Badly</div>
+      <div class="concept-desc">
+        NTFS vs exFAT is the question a USB <span class="acro-exp">(Universal Serial Bus)</span> drive raises, and behind it is a rule worth knowing once: a file
+        system decides which operating systems can read the disk, how large one file can be, and whether the
+        disk can hold permissions at all. Formatting is the moment that decision is made, and it is usually
+        made by accepting a default.
+        <!-- fact: FAT32's largest file is 4 GB minus one byte; macOS reads NTFS but does not write it, and reads and writes exFAT; Linux's ntfs3 driver reads and writes NTFS; APFS is macOS's since High Sierra; Dev Drive is built on ReFS; the EFI system partition is FAT | source: Microsoft Learn's Windows and GPT FAQ, fetched; macOS support from Eclectic Light and Setapp, ntfs3 from kernel.org and Dev Drive from Microsoft Learn, as quoted in search results | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>File system</th><th>Native to</th><th>Others</th><th>Largest file</th><th>Use it for</th></tr></thead>
+          <tbody>
+            <tr><td>NTFS</td><td>Windows</td><td>macOS reads it and cannot write it natively. Linux reads and writes it</td><td>Far beyond any drive</td><td>Windows system and data drives: permissions, encryption, journaling</td></tr>
+            <tr><td>FAT32</td><td>Everything</td><td>Everything reads and writes it</td><td class="c-red">4 GB, less one byte</td><td>Small removable media, firmware updates, and the EFI <span class="acro-exp">(Extensible Firmware Interface)</span> system partition every UEFI <span class="acro-exp">(Unified Extensible Firmware Interface)</span> machine boots from</td></tr>
+            <tr><td>exFAT</td><td>Windows and macOS</td><td>Current Linux reads and writes it</td><td>Far beyond any drive</td><td>Flash drives and memory cards that move between Windows and a Mac</td></tr>
+            <tr><td>ReFS</td><td>Windows Server, and Windows 11's Dev Drive</td><td>Nothing else</td><td>Far beyond any drive</td><td>Server storage pools and developer volumes, not the system drive</td></tr>
+            <tr><td>APFS</td><td>macOS since High Sierra, and iOS</td><td>Windows and Linux need third-party drivers</td><td>Far beyond any drive</td><td>Mac internal drives and Mac backup disks</td></tr>
+            <tr><td>ext4</td><td>Most Linux distributions</td><td>Windows cannot read it natively</td><td>16 TB with the usual block size</td><td>Linux system and data volumes</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The FAT32 row is the one that produces a ticket.</strong> Its file size limit
+          is 4 GB less one byte, so a larger file will not copy to a stick formatted FAT32, and Windows says the
+          file is too large for the destination file system, which names the problem without naming the fix. Reformat the stick as exFAT if it moves
+          between Windows and a Mac, or NTFS if it stays on Windows. Keep FAT32 for the jobs that demand it:
+          firmware and BIOS <span class="acro-exp">(Basic Input/Output System)</span> update sticks, older cameras and cars, and the EFI system partition, which is FAT by
+          specification and stays that way on every machine.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Permissions Live in the File System, So Copying and Moving Treat Them Differently</div>
+      <div class="concept-desc">
+        NTFS stores who may open a file with the file itself. That makes the difference between copying and
+        moving visible in a way users never expect, and it makes FAT32 and exFAT drives quietly strip
+        permissions from anything put on them, because neither can store any.
+        <!-- fact: a copy inherits the destination folder's permissions; a move within one NTFS volume keeps the object's own; a move to another volume inherits the destination's; a move to a volume without permissions loses them | source: Microsoft Support KB 310316 and the Microsoft Learn file-access module, as quoted in search results; not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Action</th><th>Permissions afterwards</th></tr></thead>
+          <tbody>
+            <tr><td>Copy, to any NTFS folder</td><td>The copy is a new file, and it inherits the destination folder's permissions</td></tr>
+            <tr><td>Move within the same NTFS volume</td><td class="c-amber">It keeps its own permissions, because only the pointer to it changes</td></tr>
+            <tr><td>Move to a different NTFS volume</td><td>It inherits the destination's, as a copy would</td></tr>
+            <tr><td>Copy or move to FAT32 or exFAT</td><td class="c-red">It loses them, because neither file system stores any</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The second row is the surprise.</strong> A file moved out of a shared folder
+          into a private one on the same drive keeps the shared folder's permissions, which is how a private
+          folder ends up holding files the whole department can open. Copying, or moving across drives, picks
+          up the destination's permissions instead. On a file server the same rules meet share permissions,
+          which <span class="xref">File Services — Share vs NTFS Permissions, DFS &amp; Quotas</span> covers.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: A FAILING DRIVE ───────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">💽</span>
+    <span class="topic-name">A Failing Drive — Clicking, SMART Warnings, Missing Disks and What to Do First</span>
+    <span class="topic-badge">PC Hardware • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">Copy the Data Off Before You Diagnose, Because Diagnosis Wears the Drive</div>
+      <div class="concept-desc">
+        A hard drive clicking, a SMART drive failure warning, a drive not showing in the BIOS <span class="acro-exp">(Basic Input/Output System)</span>: each sounds like
+        a question about the drive, and the first answer is about the data. Every test reads the whole surface,
+        and a drive that is failing mechanically may have only hours of reading left. Spend them on a copy.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Usually means</th><th>First</th></tr></thead>
+          <tbody>
+            <tr><td>Clicking, grinding, or spinning up again and again</td><td>The heads or the motor of a hard drive are failing</td><td class="c-red">Stop. Image what can be read, once. Every power cycle risks the rest, and data worth paying for goes to a recovery service</td></tr>
+            <tr><td>A SMART warning at startup or in a tool</td><td>The drive's own counters have crossed a threshold</td><td class="c-amber">Back up now, then replace it</td></tr>
+            <tr><td>Slow reads, long freezes, files that will not open</td><td>Sectors failing to read, and the drive retrying them</td><td>Back up the most important files first, then image the rest</td></tr>
+            <tr><td>Missing from the firmware's list of drives</td><td>Power, cable or port, or a dead drive</td><td>Swap the cable and the port, then try another machine. An M.2 drive may sit in a slot whose lanes the board has given to SATA <span class="acro-exp">(Serial Advanced Technology Attachment)</span> ports</td></tr>
+            <tr><td>In the firmware, missing in Windows</td><td>Never initialized, no volume or drive letter, or no storage controller driver</td><td>Disk Management first. During setup, load the controller's driver</td></tr>
+            <tr><td>No bootable device</td><td>The boot order, a firmware mode that does not match the disk's partition style, or a failed drive</td><td>Check the firmware's boot settings before blaming the drive</td></tr>
+            <tr><td>An array reports degraded</td><td>One member has failed, and the array is running without redundancy</td><td>Replace it and rebuild now. The rebuild is the riskiest hour the array has</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The first row is the one where helping makes it worse.</strong> Repeated
+          restarts, disk checks and recovery tools run against a drive that is failing mechanically all read the
+          surface, and each pass can take what is left. The other rows are mostly cables, settings and
+          configuration, and for those the block diagram in
+          <span class="xref">Motherboard Anatomy — Chipsets, PCIe Lanes &amp; the Block Diagram</span>, the
+          partition styles in
+          <span class="xref">Installing Windows — Boot Media, GPT vs MBR, and Clean Install vs Upgrade</span> and
+          the rebuild window in
+          <span class="xref">RAID &amp; Erasure Coding — What Redundancy Buys, and the Rebuild Window</span> are
+          where to go next.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Honest limits</div>
+      <div class="concept-title">Reading SMART: Five Numbers That Matter, and Why Silence Proves Nothing</div>
+      <div class="concept-desc">
+        SMART is the drive's own record of its health, kept as a list of counters. Most of them vary by maker
+        and mean little on their own. Backblaze, a cloud backup company that publishes the failure statistics
+        of its drives, found five that rise before failure more than the rest.
+        <!-- fact: Backblaze watches SMART 5, 187, 188, 197 and 198; in its published analysis 76.7% of failed drives had at least one above zero and 23.3% had none, against 4.2% of operational drives | source: Backblaze's SMART stats posts and Gleb Budman's SNIA 2016 presentation, as quoted in search results; the figures date from 2016 data | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Attribute</th><th>Counts</th><th>Above zero means</th></tr></thead>
+          <tbody>
+            <tr><td>5, Reallocated Sectors Count</td><td>Sectors the drive retired and replaced from its spares</td><td>The surface is failing. Watch whether it grows</td></tr>
+            <tr><td>187, Reported Uncorrectable Errors</td><td>Reads the drive could not correct</td><td class="c-red">Data has already been lost somewhere</td></tr>
+            <tr><td>188, Command Timeout</td><td>Operations that took too long</td><td>The drive, or its cable and power</td></tr>
+            <tr><td>197, Current Pending Sector Count</td><td>Sectors waiting to be remapped</td><td>Unreadable now. The next write to each decides whether it recovers</td></tr>
+            <tr><td>198, Offline Uncorrectable</td><td>Sectors the drive's own scan could not read</td><td>As 197, found by the drive itself</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># Linux and macOS: every attribute, and the drive's own verdict</span>
+smartctl -a /dev/sda
+<span class="com"># Windows: the counters the storage stack exposes</span>
+Get-PhysicalDisk | Get-StorageReliabilityCounter</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A clean report is not a clean drive.</strong> In Backblaze's analysis, 76.7%
+          of the drives that failed had at least one of these five above zero, and 23.3% failed with all five at
+          zero. A warning means act now. Silence means only that the backups had better be running. NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span> drives
+          report differently, through their own health log, and the lines to read there are percentage used,
+          available spare and media errors.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: SYSTEMATIC HARDWARE TROUBLESHOOTING ────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
