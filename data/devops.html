@@ -2068,7 +2068,7 @@ jobs:
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🏭</span>
               <span class="topic-name">CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> Pipeline Design — Stages, Gates &amp; Artifacts</span>
@@ -2100,6 +2100,36 @@ jobs:
                     <strong class="c-green">CD</strong> = that artifact is always deployable
                     (Continuous Delivery) or actually auto-deployed (Continuous Deployment). Keep
                     pipelines fast — a 40-minute pipeline kills the feedback loop.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Picture</div>
+                <div class="concept-title">Five Stages and the Four Places Between Them Where the Artifact Stops</div>
+                <div class="concept-desc">
+                  The table pairs each stage with its gate. Drawn in order, a gate is not a stage of its own but a
+                  position: the diamond between two tiles, where the artifact stops if the stage to its left failed.
+                  Nothing to the right of that diamond runs, and the artifact that crosses it is the one built in the
+                  first tile, unchanged.
+                </div>
+                <div class="dw">
+                  <div class="dt">▸ FIVE STAGES, FOUR GATES, ONE ARTIFACT</div>
+                  <div class="dora-seq">
+                    <div class="dora-item"><div class="dora-letter">1</div><div class="dora-word">Build</div><div class="dora-desc">Compiles once and produces the artifact</div></div>
+                    <div class="c-amber">◆</div>
+                    <div class="dora-item"><div class="dora-letter">2</div><div class="dora-word">Test</div><div class="dora-desc">Unit and integration tests, on that artifact</div></div>
+                    <div class="c-amber">◆</div>
+                    <div class="dora-item"><div class="dora-letter">3</div><div class="dora-word">Scan</div><div class="dora-desc">SAST <span class="acro-exp">(Static Application Security Testing)</span>, SCA <span class="acro-exp">(Software Composition Analysis)</span> and secrets; a high finding fails it</div></div>
+                    <div class="c-amber">◆</div>
+                    <div class="dora-item"><div class="dora-letter">4</div><div class="dora-word">Staging</div><div class="dora-desc">The same artifact deployed, and smoke tests run</div></div>
+                    <div class="c-amber">◆</div>
+                    <div class="dora-item"><div class="dora-letter">5</div><div class="dora-word">Production</div><div class="dora-desc">Approved, or released to a canary first</div></div>
+                  </div>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Where a diamond sits decides what a failure costs.</strong> Put the cheap,
+                    fast checks to the left of the slow ones and most failures stop at the first diamond, in minutes,
+                    so the long suites only ever run on changes that passed everything cheaper. That ordering is most
+                    of what the next card's ten-minute target needs, and it deletes no tests.
                   </div>
                 </div>
               </div>
