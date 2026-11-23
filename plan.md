@@ -29,7 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives | ✅ **shipped** — see its §9 to §17 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at | ✅ **shipped** — see its §9 to §18 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -57,7 +57,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Mean chars per concept card | **1,423**, or **1,146 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
 | Near-duplicate pairs | **96** (41 by overlap, 55 by containment) — 78 explained by §3, 18 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **487 of 511**, **0 unexplained** — thirty batches. The newest is the ninth wave's, 16 queries for the five A+ objectives the exam paths skipped, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 16**, ten zeros and six that found the wrong card, and closed at 16 of 16 with three `endpoint` topics and two in `hw`. Two closed in prose, each by the card saying what the reader asked in the reader's words: `windows 11 tpm requirement` once the card called them Windows 11's requirements, and `fat32 file size limit` once it named FAT32's file size limit. Before it came the sixth wave's, 10 queries for §4 rows 32 to 34, the quotes, added to *a learner meeting a subject* before their topics. It opened at **0 of 10**, all ten zeros, and closed at 10 of 10, with every line in the three topics read at its source first. Before it came the fifth wave's, 17 queries for *Content ideas* §4 rows 28 to 31 and 35, added before their cards to two readers that already ask about those subjects, *a learner meeting a subject* and *somebody looking for a job*. It opened at **0 of 17** and closed at 17 of 17: 14 zeros and 3 that found the wrong card, `active listening` among them through load balancers and nmap. One closed in prose, not a card: `depressed for weeks` needed the low-mood topic to use the reader's word. Before it came *a student on a theory course*, the second reader *Content ideas* §7.3 named: 15 queries for its fourth wave, seven rows, added before their cards. It opened at **0 of 15** and closed at 15 of 15: 8 zeros and 7 that found the wrong card, `segmentation fault` among them through network segmentation. Before it, the exam reader's third batch, 16 queries for the third wave, opened at **0 of 16** and closed at 16 of 16: 12 zeros and 4 that found the wrong card, `pivot table` among them through *pivot* and *table* in threat and grc cards. Its second, 23 queries for the second wave, opened at **0 of 23** and closed at 23 of 23: 16 zeros and 7 that found the wrong card, among them three that reached only the acronym dictionary and one an AI card that happens to contain *tone* and *probe*. Its first batch, *somebody revising for a CompTIA exam*, was added the same way for the first wave's five rows. It opened at **0 of 16** and closed at 16 of 16: 8 zeros and 8 that found the wrong card. Four of the zeros were words the site had never written, among them `scannow` and `pbq`, and `crc errors` reached a modular-arithmetic card. The wave also disturbed one old query: `the user has two accounts` sat on the wide threshold at 60 and went to 61, and it carried a verdict naming the gap underneath it until the eighth wave wrote that gap as its own topic, which the query now finds alone. The reader before it, *somebody looking up a character code or a handshape*, was added from a request for the ASCII character set with ASL added to it, before the card was written. It opened at **0 of 12** and closed at 12 of 12: five zeros, and seven that found cards but never the chart. `asl` was a zero the corpus counted fifteen times, every one inside another word: *asleep*, ASLR, Maslow, SASL. The reader before it, *a student with a data structures course*, was added from *csvistool* the same way. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The one before that, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. Before that, *a student on a SQL Server and Java course* opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. Of the **23** zeros and **1** wrong-card, all are recorded verdicts. Two recorded zeros left that list by coincidence in the third wave, and their notes say so. `the user says the file is gone` matched the Windows tools topic with `user` found only inside the expansion of UDP, until the eighth wave stopped search matching inside expansions and it went back to zero, which is what a reader gets. `the usb ports on one side stopped working` matched a connector card's *wider on one side*, and relaxation added Motherboard Anatomy, which was half an answer until the eighth wave wrote the card it needed there. The 8 wide results are verdicts too, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Reader questions answered | **505 of 529**, **0 unexplained** — thirty-one batches. The newest is the tenth wave's, 18 queries for six objectives four exam outlines had no topic for, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 18**, eleven zeros and seven that found the wrong card, `incident communication plan` among them reaching 23 topics and none of them a plan, and closed at 18 of 18: fourteen find their topic alone, and four find it among two to eight. Before it came the ninth wave's, 16 queries for the five A+ objectives the exam paths skipped, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 16**, ten zeros and six that found the wrong card, and closed at 16 of 16 with three `endpoint` topics and two in `hw`. Two closed in prose, each by the card saying what the reader asked in the reader's words: `windows 11 tpm requirement` once the card called them Windows 11's requirements, and `fat32 file size limit` once it named FAT32's file size limit. Before it came the sixth wave's, 10 queries for §4 rows 32 to 34, the quotes, added to *a learner meeting a subject* before their topics. It opened at **0 of 10**, all ten zeros, and closed at 10 of 10, with every line in the three topics read at its source first. Before it came the fifth wave's, 17 queries for *Content ideas* §4 rows 28 to 31 and 35, added before their cards to two readers that already ask about those subjects, *a learner meeting a subject* and *somebody looking for a job*. It opened at **0 of 17** and closed at 17 of 17: 14 zeros and 3 that found the wrong card, `active listening` among them through load balancers and nmap. One closed in prose, not a card: `depressed for weeks` needed the low-mood topic to use the reader's word. Before it came *a student on a theory course*, the second reader *Content ideas* §7.3 named: 15 queries for its fourth wave, seven rows, added before their cards. It opened at **0 of 15** and closed at 15 of 15: 8 zeros and 7 that found the wrong card, `segmentation fault` among them through network segmentation. Before it, the exam reader's third batch, 16 queries for the third wave, opened at **0 of 16** and closed at 16 of 16: 12 zeros and 4 that found the wrong card, `pivot table` among them through *pivot* and *table* in threat and grc cards. Its second, 23 queries for the second wave, opened at **0 of 23** and closed at 23 of 23: 16 zeros and 7 that found the wrong card, among them three that reached only the acronym dictionary and one an AI card that happens to contain *tone* and *probe*. Its first batch, *somebody revising for a CompTIA exam*, was added the same way for the first wave's five rows. It opened at **0 of 16** and closed at 16 of 16: 8 zeros and 8 that found the wrong card. Four of the zeros were words the site had never written, among them `scannow` and `pbq`, and `crc errors` reached a modular-arithmetic card. The wave also disturbed one old query: `the user has two accounts` sat on the wide threshold at 60 and went to 61, and it carried a verdict naming the gap underneath it until the eighth wave wrote that gap as its own topic, which the query now finds alone. The reader before it, *somebody looking up a character code or a handshape*, was added from a request for the ASCII character set with ASL added to it, before the card was written. It opened at **0 of 12** and closed at 12 of 12: five zeros, and seven that found cards but never the chart. `asl` was a zero the corpus counted fifteen times, every one inside another word: *asleep*, ASLR, Maslow, SASL. The reader before it, *a student with a data structures course*, was added from *csvistool* the same way. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The one before that, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. Before that, *a student on a SQL Server and Java course* opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. Of the **23** zeros and **1** wrong-card, all are recorded verdicts. Two recorded zeros left that list by coincidence in the third wave, and their notes say so. `the user says the file is gone` matched the Windows tools topic with `user` found only inside the expansion of UDP, until the eighth wave stopped search matching inside expansions and it went back to zero, which is what a reader gets. `the usb ports on one side stopped working` matched a connector card's *wider on one side*, and relaxation added Motherboard Anatomy, which was half an answer until the eighth wave wrote the card it needed there. The 8 wide results are verdicts too, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
 | Learning paths | **111 paths, 2,014 steps, 1,523 of 1,583 topics, 0 hand-written topics off a path** | `check_paths.py` |
 | Related links | **1,523 topics, 5,064 links, 0 one-way** — one mainland of **1,507 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
 | Page budget | **29% raw** headroom — room for ~654 more topics | `page_budget.py` |
@@ -68,7 +68,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **165** · search **59** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **65** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **66** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -2153,6 +2153,38 @@ link to: the official document, not a course index that mirrors it.
 **What is left.** The visual baseline, which still fails in this container on font rendering
 and is left alone. *Content ideas* has nothing else queued. New content would start from a new
 list, with its readers in the census first.
+
+## 18. What shipped — the tenth wave
+
+Recorded below as *Session — the tenth wave, four exam paths and the six gaps they found*.
+§17 left nothing queued, so the wave went back to §5's own count: four exams it found at zero
+in `paths.json`, CySA+, PenTest+, Linux+ and CISSP, that no wave had written a path for. The
+paths went first, the reader's queries second and the topics last. The 18 queries opened at
+**0 of 18** and closed at **18 of 18**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 5 | Exam paths | Four more, each read from the exam body's own document, fetched with plain requests from the file hosts their pages link to: *CompTIA PenTest+ (PT0-003)*, 53 steps; *CySA+ (CS0-004)*, 54; *Linux+ (XK0-006)*, 45; *ISC2 CISSP (2024 outline)*, 57. The CySA+ path follows CS0-004, launched on 23 June 2026, and names CS0-003's English retirement, 22 December 2026. The CISSP path follows the outline in force and names 15 April 2027, when ISC2's next one takes effect |
+| 5 | Linux device management | `linux` *Linux Device Management*: the three stages a device passes through, the inventory commands, modprobe against insmod, and udev rules. Linux+ 1.2 |
+| 5 | Virtualization on Linux | `linux` *Virtualization on Linux*: KVM, QEMU, libvirt and virsh as layers of one stack, qcow2 and VirtIO, and the five network modes. Linux+ 1.7 |
+| 5 | Cleanup after a test | `pentest` *Cleanup &amp; Restoration*: the outline's seven activities, what only the client can fix, and the order they run in. PenTest+ 5.4 |
+| 5 | Process injection | `threat` *Process Injection, Hollowing &amp; DLL Side-Loading*: the four calls, the variants, side-loading, and the Sysmon events that record them. PenTest+ 4.4, and CySA+ 1.2 |
+| 5 | Cryptanalytic attacks | `sec` *Cryptanalytic Attacks*: the five attack models, side channels and faults, and the attacks that never touch the math. CISSP 3.7 |
+| 5 | Incident communications | `ops` *Incident Communications*: who hears what and who owns telling them, three regulators' clocks, and the order people hear it in. CySA+ 3.3 and 4.2, and CISSP 7.6 |
+
+**132 objectives, and most already had a topic.** PenTest+ has 26, CySA+ 15, Linux+ 29 and
+the CISSP outline 62. Six had nothing to point at, and they are the six topics. Everywhere else
+a step is a topic that already existed, and a topic that answers two objectives sits at the
+first. Linux+ 3.4, account hardening, is answered by the PAM and account steps already on the
+path rather than by a step of its own.
+
+**Two more turned up on a second reading, and are left for the next wave.** CISSP 1.6, the
+hierarchy of policies, standards, procedures and guidelines, and 7.15, personnel safety (travel,
+duress and emergency management), have no topic either. The path skips them rather than point
+somewhere close, as the A+ paths did with their five, and the CISSP path is their asker.
+
+**What is left.** Those two, and the visual baseline, which still fails in this container on
+font rendering and is left alone.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -7784,6 +7816,79 @@ card was rendered at size in both themes and read before its commit.
 reader: 16 queries in somebody revising for a CompTIA exam, 0 of 16 -> 16 of 16 · census 471 of 495 -> 487 of 511, 0 unexplained
 topics 1,572 -> 1,577 · paths 106 -> 107 · path steps 1,751 -> 1,805 · related links 4,984 -> 5,016 · mainland 1,496 -> 1,501
 dated claims 111 -> 117 · near-duplicate pairs 95 -> 96, 0 unread
+45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the tenth wave, four exam paths and the six gaps they found
+
+The request was **keep going with the next wave**. §17 had left nothing queued, so the wave
+went back to §5's own count, the exams it found at zero in `paths.json` that no wave had
+written a path for: CySA+, PenTest+, Linux+ and CISSP. *Content ideas* §18 is the table. This
+is what doing it found.
+
+### Four outlines, read where the exam bodies keep them
+
+CompTIA's objectives documents for PT0-003, CS0-004 and XK0-006 came from the file host that
+served SY0-801's, and ISC2's CISSP outlines from the media host its own site links to, all with
+plain requests, and each was read in full before its path was written. The launch and
+retirement dates came from CompTIA's exam pages as search quoted them, since comptia.org
+refuses automated reading. One third-party post put CS0-003's retirement on CS0-004's launch
+day. CompTIA's own pages say 22 December 2026, and the path uses that. ISC2 has already
+published the outline that replaces the current one on 15 April 2027, so the CISSP path names
+the date.
+
+### A slug typed by hand was one character wrong
+
+The 18 queries went into the census before any topic, each want naming the slug its topic's
+title would produce. Five were computed with the site's own `slugify`. The sixth had been
+computed for a longer draft title, and when the title was shortened the slug was guessed
+rather than computed again. `check_paths.py` caught it the moment the topic joined the CISSP
+path: one step that resolved to nothing, and one topic on no path. **A slug is computed, never
+typed. The function that makes it is one import away.**
+
+### Checking a fact found that it had moved
+
+Every dated claim was searched before it was written. Nine came back as expected, and one
+changed the card: ATT&CK's April 2025 release folded DLL Side-Loading, T1574.002, into
+T1574.001, now named simply DLL. The card cites the current number, and its anchor records the
+change. **A technique ID is a dated claim, like a price, because the framework that issues it
+renumbers.**
+
+### A gate that skips code already had the exception a keyword needed
+
+`check_renames.py` lists *blacklist* as renamed to *blocklist* since 2020, and the device topic
+used the word four times in prose, because `modprobe.d` still spells its keyword that way. The
+gate reads prose only, so the fix needed no allow entry: the prose says blocking, and the
+keyword appears only as code, where it is literally the right word.
+
+### Rendering at size found what every gate passed
+
+Every gate and every suite was green before a single card was rendered. Rendering each card at
+1280 and 375 pixels then found three things none of them measures. A 33-character badge
+widened the whole `ops` page by 5 pixels on a phone, because the topic header does not wrap
+and the title shrinks to its longest word, here *Communications*. Another badge ran under the
+chevron. And a table column headed *Covered in* sat over two rows that gave a defense instead.
+The mobile suite checks fifteen views chosen in advance, and a new topic's header is not one of
+them. **For a new topic, the render is the gate. The suites guard what they were written
+for.**
+
+### What was verified, and how far
+
+The four outlines were fetched and read. Search covered ATT&CK's process injection and
+hollowing pages and its April 2025 release notes, Sysmon's events and MITRE's detection
+strategy for hollowing, the EFF's DES search, Kocher's timing and power papers, the Bellcore
+fault attack, Bleichenbacher and ROBOT, libvirt's open network mode, dracut's `mkinitrd`
+wrapper, and the NIS2 and Form 8-K clocks. Ten fact anchors record it, each saying the pages
+were seen in search results and not fetched. What search did not confirm was left out:
+Vaudenay's padding oracle is not named. Every new card was rendered at size in both themes and
+read, and the fixes it found are their own commit.
+
+```
+5 commits · 4 exam paths · 6 new topics (linux 2, pentest 1, threat 1, sec 1, ops 1) · 1 acronym decided for a domain
+reader: 18 queries in somebody revising for a CompTIA exam, 0 of 18 -> 18 of 18 · census 487 of 511 -> 505 of 529, 0 unexplained
+topics 1,577 -> 1,583 · paths 107 -> 111 · path steps 1,805 -> 2,014 · related links 5,016 -> 5,064 · mainland 1,501 -> 1,507
+dated claims 117 -> 127 · near-duplicate pairs 96, 0 unread · plan.md under the 8,000 lines that reopen the fifth risk
 45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in every wave: font rendering, baseline left alone
 ```
