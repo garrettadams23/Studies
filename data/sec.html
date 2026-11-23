@@ -5501,21 +5501,21 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
       </div>
       <div class="dw">
         <table class="ref-table">
-          <thead><tr><th>Attack</th><th>What it does instead</th><th>Covered in</th></tr></thead>
+          <thead><tr><th>Attack</th><th>What it does instead</th><th>Defense</th></tr></thead>
           <tbody>
-            <tr><td>Man-in-the-middle</td><td>Sits between two parties before they have authenticated each other's keys, and agrees a key with each of them</td><td><span class="xref">TLS — Handshake, Cipher Suites &amp; Certificate Chain</span></td></tr>
+            <tr><td>Man-in-the-middle</td><td>Sits between two parties before they have authenticated each other's keys, and agrees a key with each of them</td><td>Authenticated key exchange: the certificate checks in <span class="xref">TLS — Handshake, Cipher Suites &amp; Certificate Chain</span></td></tr>
             <tr><td>Downgrade</td><td>Pushes both sides to an older protocol version or a weaker cipher they still allow</td><td>Turning old versions off, and protocols that detect the push</td></tr>
-            <tr><td>Pass the hash</td><td>Presents the stored NTLM <span class="acro-exp">(NT LAN Manager)</span> hash itself, which the protocol accepts in place of the password</td><td><span class="xref">Mimikatz — Credential Extraction</span></td></tr>
-            <tr><td>Kerberos exploitation</td><td>Cracks service tickets offline, since each is encrypted with a key derived from the service account's password, or forges tickets with a stolen key</td><td><span class="xref">Kerberos Attacks — Rubeus &amp; Kerbrute</span></td></tr>
-            <tr><td>Birthday attack</td><td>Finds two inputs with the same hash after about 2<sup>n/2</sup> tries for an n-bit hash, not 2<sup>n</sup></td><td><span class="xref">The Birthday Paradox &amp; Collisions — Hash Collisions, ID Reuse &amp; Key Spaces</span></td></tr>
-            <tr><td>Ransomware</td><td>Uses cryptography correctly, against its victim</td><td>Backups. Free decryptors exist mainly where a family's implementation was flawed or its keys were seized</td></tr>
+            <tr><td>Pass the hash</td><td>Presents the stored NTLM <span class="acro-exp">(NT LAN Manager)</span> hash itself, which the protocol accepts in place of the password</td><td>Keeping stored hashes out of reach, as <span class="xref">Mimikatz — Credential Extraction</span> explains</td></tr>
+            <tr><td>Kerberos exploitation</td><td>Cracks service tickets offline, since each is encrypted with a key derived from the service account's password, or forges tickets with a stolen key</td><td>Long or managed service-account passwords, and a protected krbtgt key, as in <span class="xref">Kerberos Attacks — Rubeus &amp; Kerbrute</span></td></tr>
+            <tr><td>Birthday attack</td><td>Finds two inputs with the same hash after about 2<sup>n/2</sup> tries for an n-bit hash, not 2<sup>n</sup></td><td>A hash long enough that 2<sup>n/2</sup> is out of reach. The arithmetic is in <span class="xref">The Birthday Paradox &amp; Collisions — Hash Collisions, ID Reuse &amp; Key Spaces</span></td></tr>
+            <tr><td>Ransomware</td><td>Uses cryptography correctly, against its victim</td><td>Backups the attacker cannot reach. Free decryptors exist mainly where a family's implementation was flawed or its keys were seized</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          <strong class="c-amber">The defense for this whole table is key management.</strong> Authenticate every
-          key exchange, retire old protocol versions, protect stored hashes and keys as if they were the
-          passwords they stand for, and keep backups the attacker cannot reach. Each row is a way around strong
-          cryptography, and none of them is fixed by choosing a stronger cipher.
+          <strong class="c-amber">None of these is fixed by choosing a stronger cipher.</strong> Each row
+          goes around strong cryptography rather than through it, so the defenses are about keys and
+          protocols: authenticate every key exchange, retire old protocol versions, protect stored hashes and
+          keys as if they were the passwords they stand for, and keep backups the attacker cannot reach.
         </div>
       </div>
     </div>
