@@ -3177,6 +3177,110 @@ sum by (service) (rate(http_requests_total{status=~<span class="str">"5.."</span
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: INCIDENT COMMUNICATIONS ───────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📣</span>
+    <span class="topic-name">Incident Communications — Who Hears What, When, and From Whom</span>
+    <span class="topic-badge">Incident Response • Communication</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The plan</div>
+      <div class="concept-title">The Incident Communication Plan Is Written Before the Incident, Because During One Nobody Agrees</div>
+      <div class="concept-desc">
+        An incident communication plan settles in advance who to notify during an incident, who approves what is
+        said, and through which channel. The middle of an incident is the wrong time to discover that the only
+        list of executives' phone numbers was in the mailbox that is now encrypted. The plan names one person who
+        declares an incident and one voice for the outside, keeps contact lists printed and offline, and has
+        holding statements ready that legal counsel has already read.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Audience</th><th>Usually owned by</th><th>Needs</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Responders</td><td>The incident lead</td><td>Facts, tasks and the next checkpoint, on a channel the attacker cannot read</td><td>Continuously</td></tr>
+            <tr><td>Executives</td><td>The incident lead or the head of security</td><td>The impact, the decisions needed from them, and the time of the next update</td><td>At declaration, then on a fixed cadence</td></tr>
+            <tr><td>Legal counsel</td><td>Security leadership</td><td>Early notice, so that privilege, holds on evidence and duties to notify are decided in time</td><td>Within the first hours, and before anything is said outside</td></tr>
+            <tr><td>Regulators</td><td>Legal and compliance</td><td>What the law in each jurisdiction requires, in its form and on its clock</td><td>By the deadline the rule sets, which can fall before the facts are known</td></tr>
+            <tr><td>The insurer</td><td>Legal or finance</td><td>Notice under the policy, which often also names the firms the insurer will pay for</td><td>Early, because late notice can cost the cover</td></tr>
+            <tr><td>Law enforcement</td><td>Legal, with executive approval</td><td>The facts of a crime, and evidence handled so that it can be used</td><td>Once that decision is made, most often for extortion, fraud or theft</td></tr>
+            <tr><td>Customers and affected people</td><td>Communications, with legal</td><td>What happened, which data, what is being done, and what they should do now</td><td>Once the facts are verified, or sooner where the law requires it</td></tr>
+            <tr><td>The public and the press</td><td>Communications</td><td>A holding statement, then facts, from one spokesperson</td><td>When it becomes public, or before, on your own terms</td></tr>
+            <tr><td>Employees</td><td>Communications and HR</td><td>Where to send questions from outside, and which scams to expect in the incident's name</td><td>Early, because they hear the rumors first</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Legal decides the words.</strong> <em>Incident</em> and <em>breach</em> are not
+          synonyms in law: a breach can start a notification clock, so the plan says who may use the word. Until
+          then, statements say what is known, and "we have found no evidence that data was taken" is a different
+          sentence from "no data was taken". The second one is the sentence that gets quoted back.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The clocks</div>
+      <div class="concept-title">When to Notify a Regulator Is Set by Law, and Some Clocks Start Before You Know Much</div>
+      <div class="concept-desc">
+        Duties to notify depend on the jurisdiction, the sector and what was affected, so the plan lists the
+        ones that apply to the organization and names who tracks each. Three widely cited rules show how far
+        apart the clocks are.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Rule</th><th>Applies to</th><th>Clock</th></tr></thead>
+          <tbody>
+            <tr><td>GDPR <span class="acro-exp">(General Data Protection Regulation)</span>, Article 33</td><td>Controllers of personal data of people in the EU</td><td>Notify the supervisory authority within 72 hours of becoming aware of a personal data breach, where that is feasible</td></tr>
+            <tr><td>NIS2, Article 23</td><td>Essential and important entities in the EU</td><td>An early warning within 24 hours of becoming aware of a significant incident, a fuller notification within 72 hours, and a final report within a month of that notification</td></tr>
+            <tr><td>Form 8-K, Item 1.05</td><td>Companies that report to the US Securities and Exchange Commission</td><td>Disclose within four business days of determining that an incident is material</td></tr>
+          </tbody>
+        </table>
+        <!-- fact: NIS2 Article 23 sets an early warning within 24 hours of becoming aware of a significant incident, an incident notification within 72 hours, and a final report no later than one month after that notification | source: ENISA's NIS2 incident reporting infographic and the Directive's Article 23 text as reproduced by springlex.eu and others, as quoted in search results | checked: 2026-11 -->
+        <!-- fact: Form 8-K Item 1.05 is due within four business days after a registrant determines a cybersecurity incident is material | source: PwC Viewpoint, EY and Deloitte summaries of the SEC rule and the SEC staff statement of 21 May 2024, as quoted in search results | checked: 2026-11 -->
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The plan assigns the clocks; nobody should be reciting them from memory.</strong>
+          Each rule has its own start, its own recipient and its own idea of what counts, and an organization in
+          several jurisdictions can owe several at once for one incident. The European rules are set out in
+          <span class="xref">The Regulatory Landscape — DORA, NIS2 &amp; Cyber Disclosure Rules</span>, and the
+          plan's job is to say who watches each one.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">During the incident</div>
+      <div class="concept-title">Every Update Says What We Know, What We Are Doing, and When You Will Hear Next</div>
+      <div class="concept-desc">
+        An update on a fixed cadence, even one that says nothing has changed, stops executives from asking the
+        responders directly, which is where the responders' time goes otherwise. Each update separates what is
+        confirmed from what is suspected, and ends with the time of the next one.
+      </div>
+      <div class="dw">
+        <div class="dt">▸ THE ORDER PEOPLE HEAR IT IN</div>
+        <div class="dora-seq">
+          <div class="dora-item"><div class="dora-letter">1</div><div class="dora-word">Declare</div><div class="dora-desc">Severity set, an incident lead named, and a channel opened outside the normal systems</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">2</div><div class="dora-word">Inside</div><div class="dora-desc">Responders, executives and legal counsel</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">3</div><div class="dora-word">Obligations</div><div class="dora-desc">Regulators, the insurer, and whether to involve law enforcement</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">4</div><div class="dora-word">Outside</div><div class="dora-desc">Affected people, customers and the public, in one voice</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">5</div><div class="dora-word">After</div><div class="dora-desc">The after-action report and the lessons learned</div></div>
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-red">Assume the attacker can read your email.</strong> An intruder with administrative
+          rights in the directory may be in the mail system and the chat, reading the response as it is planned.
+          Move the incident's conversation out of band, to phones or a separate system set up in advance, until
+          the scope is known. The response itself is in
+          <span class="xref">Incident Response — What to Do When It Goes Wrong</span>, and the after-action report
+          in <span class="xref">Writing a Postmortem People Actually Learn From</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body ops -->
 <!-- ── TOPIC: INCIDENT VS PROBLEM VS CHANGE VS REQUEST ───────── -->
 <div class="topic" data-reviewed="2026-08">

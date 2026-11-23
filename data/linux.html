@@ -6207,4 +6207,309 @@ cat /proc/self/status | grep CapEff</pre>
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: LINUX DEVICE MANAGEMENT ───────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔌</span>
+    <span class="topic-name">Linux Device Management — Kernel Modules, udev &amp; the Hardware the Kernel Sees</span>
+    <span class="topic-badge">Kernel • Hardware</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The model</div>
+      <div class="concept-title">The Kernel Finds a Device, a Module Drives It, and udev Names It</div>
+      <div class="concept-desc">
+        A device that "does not work" on Linux has failed at one of three stages, and each stage has its own
+        command. The kernel enumerates what is on its buses and reads each device's vendor and product IDs. A
+        driver claims the device, either one built into the kernel or one loaded as a module. Then udev, the
+        device manager that runs as systemd-udevd, creates the node under <code>/dev</code>, names it, and
+        sets its owner and permissions.
+      </div>
+      <div class="dw">
+        <div class="dt">▸ FROM A DEVICE ON THE BUS TO A FILE IN /DEV</div>
+        <div class="dora-seq">
+          <div class="dora-item"><div class="dora-letter">1</div><div class="dora-word">Enumerate</div><div class="dora-desc">The kernel finds the device on the PCI or USB <span class="acro-exp">(Universal Serial Bus)</span> bus and reads its vendor and product IDs</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">2</div><div class="dora-word">Bind</div><div class="dora-desc">A driver claims it. When the driver is a module, the kernel's event carries the device's alias and udev loads the module that matches</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">3</div><div class="dora-word">Name</div><div class="dora-desc">udev creates the node in /dev, applies its rules, and adds stable links such as /dev/disk/by-uuid</div></div>
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Stage that failed</th><th>What you see</th><th>Where to look</th></tr></thead>
+          <tbody>
+            <tr><td>Enumerate</td><td>The device is missing from <code>lspci</code> or <code>lsusb</code></td><td>Power, cabling, the firmware's settings, or the hardware itself. No driver can fix a device the bus never reported</td></tr>
+            <tr><td>Bind</td><td>Listed, but <code>lspci -k</code> shows no <em>Kernel driver in use</em></td><td>A module that is not installed, is kept out by a <code>blacklist</code> line, or was built for another kernel. <code>dmesg</code> usually says which</td></tr>
+            <tr><td>Name</td><td>The driver is bound, but the node is missing, named differently, or unreadable by the service that needs it</td><td>udev rules, and the groups the service runs as</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read the kernel's log before changing anything.</strong> <code>dmesg</code>, or
+          <code>journalctl -k</code> on a systemd machine, records what the kernel did when the device appeared,
+          including a driver that refused it and the reason. Most threads titled "card not detected" are answered
+          by its last twenty lines.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The inventory</div>
+      <div class="concept-title">Asking What the Kernel Found — the ls Tools, dmidecode and the Sensors</div>
+      <div class="concept-desc">
+        Each of these reads what the kernel or the firmware already knows, so none of them changes anything.
+        Several need root to show everything, because serial numbers and firmware tables are not readable by
+        ordinary users.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Command</th><th>Shows</th><th>Reach for it when</th></tr></thead>
+          <tbody>
+            <tr><td><code>lspci -nnk</code></td><td>PCI devices with their vendor and device IDs, and the driver bound to each</td><td>A network card, storage controller or GPU <span class="acro-exp">(Graphics Processing Unit)</span> is missing or using the wrong driver</td></tr>
+            <tr><td><code>lsusb</code>, <code>lsusb -t</code></td><td>USB devices, and with <code>-t</code> the tree of hubs and the speed each port negotiated</td><td>A USB device is slow, or not seen at all</td></tr>
+            <tr><td><code>lscpu</code>, <code>lsmem</code></td><td>The CPU <span class="acro-exp">(Central Processing Unit)</span>'s model, cores, threads and virtualization support, and which blocks of memory are online</td><td>Sizing, licensing, and checking that a virtual machine got what it was promised</td></tr>
+            <tr><td><code>lshw -short</code></td><td>One inventory of everything, as a short list or a full tree</td><td>Documenting a machine you have just inherited</td></tr>
+            <tr><td><code>dmidecode -t system</code>, <code>-t memory</code></td><td>The firmware's own tables: maker, model, serial number, BIOS <span class="acro-exp">(Basic Input/Output System)</span> version, and which memory slots are filled</td><td>Ordering a part or making a warranty claim without opening the case</td></tr>
+            <tr><td><code>sensors</code></td><td>Temperatures, fan speeds and voltages, from lm_sensors once <code>sensors-detect</code> has run</td><td>A machine that slows down or switches off under load</td></tr>
+            <tr><td><code>ipmitool sdr</code>, <code>ipmitool sel list</code></td><td>The server's baseboard management controller: its sensors, and its log of hardware events</td><td>A server reports a failed fan, power supply or memory module. With <code>-I lanplus -H</code> it reaches the controller over the network while the operating system is down</td></tr>
+            <tr><td><code>nvtop</code></td><td>GPU load, GPU memory and the processes using them, refreshed like <code>top</code></td><td>A training or rendering job is slow, and the question is whether the GPU is the busy part</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">dmidecode reports what the firmware was told, not what is installed.</strong>
+          On a virtual machine it describes the virtual hardware, and on a cheap motherboard the maker's fields
+          can read "To Be Filled By O.E.M.". Trust <code>lspci</code> and <code>dmesg</code> for what is present,
+          and dmidecode for what the label says.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Kernel modules</div>
+      <div class="concept-title">modprobe, Not insmod — Loading, Removing and Blocking a Driver</div>
+      <div class="concept-desc">
+        A kernel module is a driver or feature built to load into a running kernel: a <code>.ko</code> file under
+        <code>/lib/modules/$(uname -r)</code>. Modules depend on one another, and only one of the commands that
+        load a kernel module knows that.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Command</th><th>Does</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>lsmod</code></td><td>Lists loaded modules, their size, and what is using each one</td><td>The same data as <code>/proc/modules</code>, formatted</td></tr>
+            <tr><td><code>modinfo e1000e</code></td><td>Shows a module's file, version, parameters and the device IDs it claims</td><td>Read it before setting an option, because parameter names differ between drivers</td></tr>
+            <tr><td><code>modprobe e1000e</code></td><td>Loads a module and everything it depends on</td><td>The command to use. <code>modprobe -r</code> removes it, with any dependencies nothing else needs</td></tr>
+            <tr><td><code>insmod ./driver.ko</code></td><td>Loads one file, with no dependency resolution</td><td class="c-amber">Fails if a dependency is not already loaded. For testing a module you have just built</td></tr>
+            <tr><td><code>rmmod e1000e</code></td><td>Removes one module</td><td>Refuses while the module is in use, which is the point</td></tr>
+            <tr><td><code>depmod -a</code></td><td>Rebuilds the dependency and alias maps that modprobe reads</td><td>After installing a module by hand. Packages run it for you</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># Which driver is the network card using?</span>
+lspci -nnk | grep -A3 -i ethernet
+<span class="com"># Reload a driver after changing one of its options</span>
+sudo modprobe -r e1000e &amp;&amp; sudo modprobe e1000e
+<span class="com"># Make it permanent: load at boot, set an option, or keep one out</span>
+echo "vfio-pci" | sudo tee /etc/modules-load.d/vfio.conf
+echo "options e1000e InterruptThrottleRate=3000" | sudo tee /etc/modprobe.d/e1000e.conf
+echo "blacklist nouveau" | sudo tee /etc/modprobe.d/blacklist-nouveau.conf
+<span class="com"># A module the initramfs loads only sees the change once the image is rebuilt</span>
+sudo dracut -f              <span class="com"># Red Hat family; mkinitrd survives as a wrapper that calls dracut</span>
+sudo update-initramfs -u    <span class="com"># Debian family</span></pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A <code>blacklist</code> line stops automatic loading, not loading.</strong> It keeps udev from
+          loading a module because a device's alias matched it, but an explicit <code>modprobe</code>, or another
+          module that depends on it, still loads it. To keep a module out entirely, add
+          <code>install nouveau /bin/false</code> to the same file. And a module loaded from the initramfs <span class="acro-exp">(Initial RAM Filesystem)</span> ignores
+          a change on disk until the image is rebuilt, which is why a <code>blacklist</code> line can seem to do nothing until
+          <code>dracut</code> runs. The boot side of that is in
+          <span class="xref">Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot</span>.
+          <!-- fact: dracut's man pages describe mkinitrd as a compatibility wrapper that calls dracut to build the initramfs | source: mkinitrd(8) on man7.org and manpages.debian.org (dracut-core), as quoted in search results | checked: 2026-11 -->
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">udev rules</div>
+      <div class="concept-title">Stable Names and Permissions, Matched on What the Device Says About Itself</div>
+      <div class="concept-desc">
+        Kernel names are handed out in the order devices are found, so <code>/dev/sdb</code> or
+        <code>/dev/ttyUSB0</code> can belong to a different device after the next boot. A udev rule attaches a
+        name, a link or a permission to the device's own attributes instead: its vendor and product IDs, its
+        serial number, the port it is plugged into. Packaged rules live in <code>/usr/lib/udev/rules.d</code>.
+        Local ones go in <code>/etc/udev/rules.d</code>, where a file with the same name overrides the packaged
+        one.
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Watch the events as you plug the device in</span>
+udevadm monitor --udev
+<span class="com"># Every attribute a rule can match, for the device and for each parent above it</span>
+udevadm info -a -n /dev/ttyUSB0
+<span class="com"># /etc/udev/rules.d/70-console-cable.rules: a stable link, and a group that may use it</span>
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", SYMLINK+="console-cable", GROUP="dialout", MODE="0660"
+<span class="com"># Load the new rules, and replay the events for devices already present</span>
+sudo udevadm control --reload
+sudo udevadm trigger</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A rule may match the device and one parent, never two.</strong>
+          <code>udevadm info -a</code> walks up from the device through each parent, and one rule can combine
+          the device's attributes with those of a single parent, not attributes from two different parents. A
+          udev rule that never fires is usually that. Disks rarely need a rule at all: mount them by
+          <code>/dev/disk/by-uuid</code> or by label in <code>/etc/fstab</code>, as
+          <span class="xref">Storage Management — Disks, Partitions, LVM &amp; RAID</span> does.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: VIRTUALIZATION ON LINUX ───────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🖥️</span>
+    <span class="topic-name">Virtualization on Linux — KVM <span class="acro-exp">(Kernel-based Virtual Machine)</span>, QEMU, libvirt &amp; virsh, and What Each Layer Does</span>
+    <span class="topic-badge">Hypervisor • Virtual Machines</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The layers</div>
+      <div class="concept-title">KVM vs QEMU Is Not a Choice — a Linux VM Runs on Both, and libvirt Manages Them</div>
+      <div class="concept-desc">
+        Four names come up whenever Linux runs virtual machines, and they are layers of one stack rather than
+        alternatives. KVM is the part in the kernel. QEMU, the Quick Emulator, is the program each virtual
+        machine runs as. libvirt keeps the definitions and manages the networks and storage. virsh and
+        virt-manager are how people talk to libvirt.
+      </div>
+      <div class="dw">
+        <div class="dt">▸ ONE VIRTUAL MACHINE, FOUR LAYERS AND THE CPU <span class="acro-exp">(Central Processing Unit)</span></div>
+        <div class="layer-stack">
+          <div class="layer"><div class="layer-num">4</div><div class="layer-name">virsh, virt-manager</div><div class="layer-proto">The command line and the desktop tool. Both are clients of libvirt</div></div>
+          <div class="layer"><div class="layer-num">3</div><div class="layer-name">libvirt</div><div class="layer-proto">Definitions kept as XML <span class="acro-exp">(eXtensible Markup Language)</span>, networks, storage pools, start and stop, migration</div></div>
+          <div class="layer"><div class="layer-num">2</div><div class="layer-name">QEMU</div><div class="layer-proto">One process per machine. Emulates its disks, network cards and firmware</div></div>
+          <div class="layer"><div class="layer-num">1</div><div class="layer-name">KVM</div><div class="layer-proto">Kernel modules that run the guest's code directly on the CPU, through /dev/kvm</div></div>
+          <div class="layer"><div class="layer-num">0</div><div class="layer-name">The CPU</div><div class="layer-proto">Intel VT-x or AMD-V, switched on in the firmware</div></div>
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Take away</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>KVM</td><td>QEMU still runs, translating every guest instruction in software. That is many times slower, and it is also how QEMU runs a guest built for another architecture, such as an AArch64 image on an x86_64 host</td></tr>
+            <tr><td>QEMU</td><td>Nothing runs. KVM is an interface in the kernel, not a program that starts machines</td></tr>
+            <tr><td>libvirt</td><td>You type QEMU command lines by hand, and nothing about a machine survives a reboot unless you script it</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># Can this host run KVM at all?</span>
+grep -cE 'vmx|svm' /proc/cpuinfo     <span class="com"># 0 means no VT-x or AMD-V, or it is switched off in the firmware</span>
+lsmod | grep kvm                     <span class="com"># kvm, plus kvm_intel or kvm_amd</span>
+ls -l /dev/kvm</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Bare metal or a virtual machine is decided by what the workload needs from the
+          hardware.</strong> A virtual machine adds isolation, snapshots and moving between hosts, for a small
+          cost in CPU and a larger one in disk and network I/O <span class="acro-exp">(Input/Output)</span> unless the guest uses the paravirtualized drivers
+          below. Databases with heavy I/O, and workloads that need a GPU <span class="acro-exp">(Graphics Processing Unit)</span> or another device to themselves, are
+          where bare metal still wins the argument. The vocabulary that carries across hypervisors is in
+          <span class="xref">Hyper-V, vSphere &amp; the Open-Source Stack — The Vocabulary That Transfers</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Day to day</div>
+      <div class="concept-title">virsh — the Commands, and the One Whose Name Sounds Worse Than It Is</div>
+      <div class="concept-desc">
+        virsh speaks to libvirt, on this host or on another one over SSH <span class="acro-exp">(Secure Shell)</span>. A virtual machine is a
+        <em>domain</em> in libvirt's vocabulary, which is why the commands are named the way they are. Its
+        states are running, paused, shut off, crashed, and suspended to disk.
+      </div>
+      <div class="dw">
+        <pre class="code-block">virsh list --all                     <span class="com"># every defined machine, running or not</span>
+virsh start web01
+virsh shutdown web01                 <span class="com"># asks the guest to shut down, as a power button does</span>
+virsh destroy web01                  <span class="com"># pulls the plug: an immediate stop, and nothing is deleted</span>
+virsh suspend web01; virsh resume web01      <span class="com"># pause and continue, with memory kept in RAM</span>
+virsh autostart web01                <span class="com"># start it with the host</span>
+virsh dominfo web01; virsh dumpxml web01 &gt; web01.xml
+virsh edit web01                     <span class="com"># vCPUs, memory and devices, in the XML</span>
+virsh snapshot-create-as web01 before-patch
+virsh snapshot-revert web01 before-patch
+virsh migrate --live web01 qemu+ssh://host2/system
+virsh undefine web01                 <span class="com"># forgets the definition; the disk stays unless you ask</span></pre>
+        <table class="ref-table">
+          <thead><tr><th>Operation</th><th>What to know</th></tr></thead>
+          <tbody>
+            <tr><td>Snapshots</td><td>Quick to take and to roll back to. A snapshot lives on the same disk as the machine, so it is a rollback point and not a backup</td></tr>
+            <tr><td>Cloning</td><td><code>virt-clone --original web01 --name web02 --auto-clone</code> copies the disk and gives the clone a new UUID <span class="acro-exp">(Universally Unique Identifier)</span> and network card address. The system inside keeps the old machine ID and SSH host keys until <code>virt-sysprep</code> resets them</td></tr>
+            <tr><td>Templates</td><td>A base image kept read-only, with each machine an overlay on top of it, so twenty machines share one copy of what they have in common</td></tr>
+            <tr><td>Live migration</td><td>Moves a running machine between hosts. It needs storage both hosts can reach, or <code>--copy-storage-all</code> to copy the disk as it goes</td></tr>
+            <tr><td>Nested virtualization</td><td>A hypervisor running inside a guest. Fine for labs and test pipelines, and slower and less proven than anything production should run on</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red"><code>virsh destroy</code> destroys nothing on disk.</strong> It is holding the
+          power button down, and it is the right command for a guest that ignores <code>shutdown</code>. The
+          command that loses work is <code>undefine --remove-all-storage</code>, which deletes the disks. What
+          cloning does to a fleet over time is the subject of
+          <span class="xref">VM Lifecycle — Templates, Cloning, Sysprep &amp; the Snowflake Problem</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Disks and drivers</div>
+      <div class="concept-title">qcow2, qemu-img and VirtIO — Where a Virtual Machine's Speed Is Won or Lost</div>
+      <div class="concept-desc">
+        A virtual machine's disk is a file, usually in qcow2, QEMU's own format, which grows as it fills and
+        supports snapshots and backing files. Raw images are simpler and a little faster, and do neither.
+        <code>qemu-img</code> is the tool for both formats, and it works on an image while the machine is shut
+        off.
+      </div>
+      <div class="dw">
+        <pre class="code-block">qemu-img info web01.qcow2            <span class="com"># format, virtual size, space used, backing file, snapshots</span>
+qemu-img convert -f vmdk -O qcow2 old.vmdk web01.qcow2      <span class="com"># bring a VMware disk across</span>
+qemu-img resize web01.qcow2 +20G     <span class="com"># then grow the partition and the file system inside the guest</span>
+qemu-img create -f qcow2 -b base.qcow2 -F qcow2 web02.qcow2  <span class="com"># an overlay on a template</span></pre>
+        <table class="ref-table">
+          <thead><tr><th>Device type</th><th>How it works</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Emulated: an e1000 network card, an IDE <span class="acro-exp">(Integrated Drive Electronics)</span> or SATA <span class="acro-exp">(Serial Advanced Technology Attachment)</span> disk</td><td>QEMU imitates real hardware, so every guest already has a driver for it</td><td>Slow, because each access is imitated in software</td></tr>
+            <tr><td>Paravirtualized: VirtIO network, block and SCSI <span class="acro-exp">(Small Computer System Interface)</span> devices</td><td>The guest knows it is virtual and passes work to QEMU through shared queues</td><td>Fast. Linux guests have the drivers built in, and Windows guests need the virtio-win drivers</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A Windows installer that finds no disk is missing a driver, not a disk.</strong>
+          A Windows guest given a VirtIO disk sees nothing at the step that asks where to install until the
+          VirtIO storage driver is loaded from the virtio-win media, the same fix as for any storage controller
+          Windows does not know. And never shrink an image without shrinking the file system inside it first,
+          because <code>qemu-img</code> cuts the end off whatever is stored there.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Networking</div>
+      <div class="concept-title">NAT <span class="acro-exp">(Network Address Translation)</span>, Bridged, Routed, Isolated and Open — Who Can Reach the Guest</div>
+      <div class="concept-desc">
+        libvirt's network modes answer one question: who outside the host can start a connection to the
+        guest? A fresh install creates one network, <code>default</code>, which is NAT behind a bridge called
+        <code>virbr0</code>, with addresses in 192.168.122.0/24 handed out by libvirt's own copy of dnsmasq.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mode</th><th>The guest can reach</th><th>Who can reach the guest</th><th>Use it for</th></tr></thead>
+          <tbody>
+            <tr><td>NAT</td><td>Anything the host can, behind the host's address</td><td>The host, and others only through ports you forward</td><td>A laptop lab, and guests that only connect outward</td></tr>
+            <tr><td>Bridged</td><td>The physical network directly, with an address of its own</td><td>Anyone on that network, as with any other machine</td><td>Servers other machines must reach</td></tr>
+            <tr><td>Routed</td><td>The network, through the host acting as a router, with no NAT</td><td>Anyone, once the network has a route to the guests' subnet through the host</td><td>A subnet of guests that the rest of the network routes to</td></tr>
+            <tr><td>Isolated</td><td>Other guests on the same network, and the host</td><td>The same, and nothing else</td><td>Malware labs, and anything that must not get out</td></tr>
+            <tr><td>Open</td><td>Whatever your own firewall rules allow</td><td>The same</td><td>Hosts where something else manages the firewall, because libvirt adds no rules of its own</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block">virsh net-list --all
+virsh net-dumpxml default
+virsh domiflist web01                <span class="com"># the network or bridge each of the machine's interfaces uses</span></pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A bridge needs a wired interface.</strong> Bridging puts the guest's own
+          hardware address on the physical network, and most Wi-Fi adapters in client mode will not carry frames
+          from any address but their own, so a guest bridged to a laptop's Wi-Fi gets nothing. Use NAT or routed
+          mode there. On a server the bridge is built in NetworkManager or netplan, and the guest is attached
+          to it, with the addressing covered in
+          <span class="xref">The ip Command — Modern Linux Networking</span>.
+          <!-- fact: libvirt's forward mode 'open', added in 2016, makes libvirt generate no firewall rules for the network; later libvirt stopped enabling IP forwarding for it | source: libvirt's network XML documentation and the libvir-list patch of August 2016, as quoted in search results | checked: 2026-11 -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body linux -->

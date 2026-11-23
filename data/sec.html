@@ -5419,6 +5419,109 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: CRYPTANALYTIC ATTACKS ─────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔓</span>
+    <span class="topic-name">Cryptanalytic Attacks — Known Plaintext, Side Channels &amp; Why Implementations Break First</span>
+    <span class="topic-badge">Cryptography • Attacks</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The attack models</div>
+      <div class="concept-title">What the Attacker Holds Decides Which Attack Is Possible</div>
+      <div class="concept-desc">
+        Cryptanalysis sorts attacks by what the attacker has to work with, from intercepted ciphertext alone up
+        to a system that will try to decrypt whatever they send it. Modern ciphers such as AES <span class="acro-exp">(Advanced Encryption Standard)</span> are designed to
+        resist every one of these models. The models still matter, because of the systems that use those ciphers
+        badly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Model</th><th>The attacker has</th><th>Where it still works</th></tr></thead>
+          <tbody>
+            <tr><td>Ciphertext only</td><td>Intercepted ciphertext, and nothing else</td><td>Classical ciphers, through frequency analysis, and any scheme that encrypts the same input to the same output</td></tr>
+            <tr><td>Known plaintext</td><td>Some plaintext and the ciphertext it became, such as a file header or a fixed protocol field</td><td>A stream cipher or counter mode with a key and nonce used twice. A known plaintext attack on one message recovers the keystream, and that keystream decrypts every other message made with it</td></tr>
+            <tr><td>Chosen plaintext</td><td>A way to have plaintext of their choosing encrypted</td><td>Encryption with no randomness in it, such as ECB <span class="acro-exp">(Electronic Codebook)</span> mode, which shows when two messages are the same</td></tr>
+            <tr><td>Chosen ciphertext</td><td>A system that tries to decrypt what they send, and answers that differ by outcome</td><td>Padding oracles. Bleichenbacher broke the PKCS <span class="acro-exp">(Public Key Cryptography Standards)</span>#1 v1.5 padding of RSA <span class="acro-exp">(Rivest-Shamir-Adleman)</span> in SSL <span class="acro-exp">(Secure Sockets Layer)</span> this way in 1998, and the ROBOT research found the same flaw in TLS <span class="acro-exp">(Transport Layer Security)</span> servers in 2017</td></tr>
+            <tr><td>Brute force</td><td>Time, and a way to test a key</td><td>Short keys and human passwords. The Electronic Frontier Foundation's machine found a DES <span class="acro-exp">(Data Encryption Standard)</span> key in 56 hours in 1998. A 128-bit key is beyond any such search</td></tr>
+          </tbody>
+        </table>
+        <!-- fact: EFF's DES Cracker found the key for RSA's DES Challenge II-2 in July 1998 after about 56 hours; with distributed.net in January 1999 it took 22 hours 15 minutes | source: EFF's DES Cracker pages and Wikipedia's EFF DES cracker article, as quoted in search results | checked: 2026-11 -->
+        <!-- fact: Bleichenbacher's adaptive chosen-ciphertext attack on PKCS#1 v1.5 was published in 1998; ROBOT (Böck, Somorovsky and Young) was announced in December 2017 and presented at USENIX Security 2018 | source: the USENIX Security 2018 ROBOT paper page, CERT/CC VU#144389 and Rapid7's December 2017 post, as quoted in search results | checked: 2026-11 -->
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Frequency analysis is the oldest lesson, and it is still the live one.</strong>
+          It breaks a substitution cipher by counting symbols: <em>e</em> is the most common letter in English,
+          so the most common symbol in the ciphertext probably stands for it. Any modern scheme that turns equal
+          inputs into equal outputs leaks in the same way, which is why ECB mode shows the outline of an image it
+          encrypts, and why authenticated modes with a fresh nonce, such as AES-GCM, replaced it. The modes are
+          compared in <span class="xref">Cryptography Algorithm Reference</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Implementation attacks</div>
+      <div class="concept-title">Side Channels and Faults — Reading the Key From the Device, Not the Math</div>
+      <div class="concept-desc">
+        A side-channel attack leaves the algorithm alone and measures the device running it, and a fault attack
+        disturbs that device. Paul Kocher showed in 1996 that the time private-key operations take can reveal
+        RSA and Diffie-Hellman keys, and in 1999, with Joshua Jaffe and Benjamin Jun, that a chip's power
+        consumption can reveal its DES key. In 1997 Boneh, DeMillo and Lipton showed that a single faulty RSA
+        signature, computed with the Chinese remainder theorem shortcut most implementations use, can expose the
+        private key.
+        <!-- fact: Kocher, Timing Attacks on Implementations of Diffie-Hellman, RSA, DSS, and Other Systems, CRYPTO '96; Kocher, Jaffe and Jun, Differential Power Analysis, CRYPTO '99 (applied to DES); Boneh, DeMillo and Lipton, Eurocrypt '97, journal version in the Journal of Cryptology 2001, where the key of a CRT implementation is exposed from a single erroneous signature | source: Springer and DOI records and Stanford's abstract page, as quoted in search results | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Attack</th><th>Measures or causes</th><th>Defense</th></tr></thead>
+          <tbody>
+            <tr><td>Timing</td><td>How long an operation takes, when that depends on the secret. A comparison that stops at the first wrong byte tells the attacker how many bytes were right</td><td>Constant-time code, and constant-time comparison such as <code>hmac.compare_digest</code> in Python</td></tr>
+            <tr><td>Power and electromagnetic analysis</td><td>The current a chip draws, or what it radiates, while it computes with the key</td><td>Masking, and hardware built and tested against it: smart cards, HSMs <span class="acro-exp">(Hardware Security Module)</span> and secure elements</td></tr>
+            <tr><td>Cache and microarchitectural</td><td>What another process can infer from shared CPU <span class="acro-exp">(Central Processing Unit)</span> caches and speculative execution</td><td>Patches, isolation, and not sharing a core with untrusted code</td></tr>
+            <tr><td>Fault injection</td><td>A glitch in voltage or clock, or a laser pulse, that makes one computation come out wrong</td><td>Checking a result before releasing it, and sensors that detect the glitch</td></tr>
+            <tr><td>Acoustic and other emanations</td><td>Sound, light or radio that varies with what the device is doing</td><td>Shielding, and control of who can get near the device</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">AES has not been broken; implementations of it have.</strong> No attack on the
+          full cipher comes anywhere near practical, and the breaks that make the news are side channels, reused
+          nonces, careless padding checks and stolen keys. When a question asks what fails first, the answer is
+          almost never the algorithm. The microarchitectural row has a topic of its own,
+          <span class="xref">Speculative Execution &amp; Its Security Cost — Spectre and Meltdown</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Around the cipher</div>
+      <div class="concept-title">Man-in-the-Middle, Pass the Hash, Kerberos and Ransomware — Attacks That Never Touch the Math</div>
+      <div class="concept-desc">
+        The rest of what the CISSP <span class="acro-exp">(Certified Information Systems Security Professional)</span> outline lists under cryptanalytic attacks breaks nothing mathematical. These
+        attacks take a key, reuse something that works as one, or sit where keys are agreed.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Attack</th><th>What it does instead</th><th>Covered in</th></tr></thead>
+          <tbody>
+            <tr><td>Man-in-the-middle</td><td>Sits between two parties before they have authenticated each other's keys, and agrees a key with each of them</td><td><span class="xref">TLS — Handshake, Cipher Suites &amp; Certificate Chain</span></td></tr>
+            <tr><td>Downgrade</td><td>Pushes both sides to an older protocol version or a weaker cipher they still allow</td><td>Turning old versions off, and protocols that detect the push</td></tr>
+            <tr><td>Pass the hash</td><td>Presents the stored NTLM <span class="acro-exp">(NT LAN Manager)</span> hash itself, which the protocol accepts in place of the password</td><td><span class="xref">Mimikatz — Credential Extraction</span></td></tr>
+            <tr><td>Kerberos exploitation</td><td>Cracks service tickets offline, since each is encrypted with a key derived from the service account's password, or forges tickets with a stolen key</td><td><span class="xref">Kerberos Attacks — Rubeus &amp; Kerbrute</span></td></tr>
+            <tr><td>Birthday attack</td><td>Finds two inputs with the same hash after about 2<sup>n/2</sup> tries for an n-bit hash, not 2<sup>n</sup></td><td><span class="xref">The Birthday Paradox &amp; Collisions — Hash Collisions, ID Reuse &amp; Key Spaces</span></td></tr>
+            <tr><td>Ransomware</td><td>Uses cryptography correctly, against its victim</td><td>Backups. Free decryptors exist mainly where a family's implementation was flawed or its keys were seized</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The defense for this whole table is key management.</strong> Authenticate every
+          key exchange, retire old protocol versions, protect stored hashes and keys as if they were the
+          passwords they stand for, and keep backups the attacker cannot reach. Each row is a way around strong
+          cryptography, and none of them is fixed by choosing a stronger cipher.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body sec -->
 <!-- ── TOPIC: MAPPING YOUR OWN ATTACK SURFACE ────────────────── -->
 <div class="topic" data-reviewed="2026-08">

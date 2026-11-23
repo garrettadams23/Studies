@@ -4260,4 +4260,118 @@ so nothing was exploited, and every step was a legitimate user action.</pre>
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: PROCESS INJECTION ─────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">💉</span>
+    <span class="topic-name">Process Injection, Hollowing &amp; DLL <span class="acro-exp">(Dynamic Link Library)</span> Side-Loading — Hiding Inside a Trusted Process</span>
+    <span class="topic-badge">Techniques • Detection</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Why attackers do it</div>
+      <div class="concept-title">Code Running Inside Another Process Borrows Its Name, Its Rights and Its Trust</div>
+      <div class="concept-desc">
+        Process injection runs an attacker's code inside a process that is already running. The code then
+        appears under that process's name and path, acts with its access token, and makes its network
+        connections. A firewall rule that lets a browser out lets the injected code out, and a scan of files on
+        disk finds nothing, because the code may never have been written to one. MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span> files the
+        family as T1055, Process Injection, with process hollowing as T1055.012.
+        <!-- fact: ATT&CK lists Process Injection as T1055 and Process Hollowing as its sub-technique T1055.012 (version 2.0, Windows) | source: attack.mitre.org technique pages, as quoted in search results | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="dt">▸ THE CLASSIC WINDOWS SEQUENCE, IN FOUR CALLS</div>
+        <div class="dora-seq">
+          <div class="dora-item"><div class="dora-letter">1</div><div class="dora-word">Open</div><div class="dora-desc">OpenProcess, asking for the right to write to the target's memory</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">2</div><div class="dora-word">Allocate</div><div class="dora-desc">VirtualAllocEx reserves memory inside the target</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">3</div><div class="dora-word">Write</div><div class="dora-desc">WriteProcessMemory copies in the code, or the path of a DLL</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">4</div><div class="dora-word">Run</div><div class="dora-desc">CreateRemoteThread starts it, or a call queued to one of the target's own threads does</div></div>
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Variant</th><th>How it works</th><th>What it leaves</th></tr></thead>
+          <tbody>
+            <tr><td>DLL injection</td><td>The data written is the path of a DLL, and the new thread loads it with LoadLibrary</td><td>A DLL loaded from an odd path, visible in the process's list of modules</td></tr>
+            <tr><td>Shellcode injection</td><td>Raw code is written and run, with no file at all</td><td>Executable memory that no file on disk backs</td></tr>
+            <tr><td>Process hollowing</td><td>Start a legitimate program suspended, unmap its code, write the payload in its place, point the thread at it, and resume</td><td>A process whose memory no longer matches its file on disk</td></tr>
+            <tr><td>Thread hijacking</td><td>Suspend a thread that already exists, change where it will continue, and resume it</td><td>No new thread, which is the point of it</td></tr>
+            <tr><td>Library injection on Linux</td><td><code>LD_PRELOAD</code>, or a line in <code>/etc/ld.so.preload</code>, loads a shared library into programs as they start</td><td>A changed environment, or a file that should almost never exist</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Every variant ends with code running from memory that the file on disk does
+          not explain.</strong> That is the detection to build: not a list of function names, which change, but
+          executable memory that is either backed by no file or differs from the file that backs it. Memory
+          forensics finds it afterward, as in <span class="xref">Volatility — Memory Forensics</span>, and
+          endpoint telemetry finds it as it happens.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Side-loading</div>
+      <div class="concept-title">DLL Side-Loading — a Signed Program Loads the Attacker's Library for Them</div>
+      <div class="concept-desc">
+        Windows looks for a DLL a program asks for in the program's own folder before most other places. DLL
+        side-loading, also written DLL sideloading, uses that. The attacker copies a legitimate, often signed,
+        program into a folder they control and puts a malicious DLL beside it under the name the program
+        expects. The signed program starts, loads the planted library, and the attacker's code runs inside a
+        process whose signature checks out. Search-order hijacking is the same trick played on a program that is
+        already installed, with the DLL planted in a folder searched earlier. Since April 2025, ATT&amp;CK files
+        both under Hijack Execution Flow: DLL, T1574.001.
+        <!-- fact: ATT&CK v17 (April 2025) revoked DLL Side-Loading (T1574.002) and merged it into T1574.001, renamed from DLL Search Order Hijacking to DLL | source: MITRE ATT&CK's April 2025 release notes and the T1574.001 page, as quoted in search results | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Sign</th><th>Why it stands out</th></tr></thead>
+          <tbody>
+            <tr><td>A signed vendor program running from a folder users can write to, such as AppData, ProgramData or a temporary folder</td><td>Installed software lives under Program Files. A copy anywhere else was brought there</td></tr>
+            <tr><td>That program loading an unsigned DLL from its own folder</td><td>A vendor that signs its program usually signs its libraries too</td></tr>
+            <tr><td>A program and a DLL written to the same new folder within seconds of each other</td><td>That is how the pair is delivered</td></tr>
+            <tr><td>A program started by a parent it never has, such as a script host</td><td>The chain that launched it was not the vendor's</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A valid signature says who wrote the program, not what it loaded.</strong> An
+          allow list that trusts a signed program trusts everything that program loads unless it checks the
+          libraries as well, which is why application control should cover DLLs as well as executables. The
+          programs already on every machine that attackers abuse in the same spirit are listed in
+          <span class="xref">Living off the Land — LOLBAS &amp; GTFOBins</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Detection and testing</div>
+      <div class="concept-title">What Sysmon Records, and Why a Tester Never Injects Into LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span> Casually</div>
+      <div class="concept-desc">
+        Sysmon, Microsoft's free system monitor for Windows, has an event for most stages of this, though not
+        all of them are logged by a default configuration. MITRE's own detection strategy for process hollowing
+        is built on events 8 and 10.
+        <!-- fact: Sysmon event 8 is CreateRemoteThread and event 25 ProcessTampering, which Sysmon 13 added in January 2021 and which is logged only when the configuration has a rule for it; ATT&CK's detection strategy DET0382 for process hollowing uses Sysmon events 8 and 10 | source: Microsoft's Sysmon events page, the SANS ISC diary of 17 January 2021, Netwrix and FalconForce write-ups, and attack.mitre.org DET0382, as quoted in search results | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Sysmon event</th><th>Records</th><th>Catches</th></tr></thead>
+          <tbody>
+            <tr><td>7, image loaded</td><td>Every DLL a process loads, with its signature status</td><td>Side-loading and DLL injection, at high volume, so it needs filtering</td></tr>
+            <tr><td>8, CreateRemoteThread</td><td>One process starting a thread inside another</td><td>The classic sequence's last step. Rare in normal use, so worth an alert</td></tr>
+            <tr><td>10, process access</td><td>One process opening another, with the rights it asked for</td><td>The first step, and any tool opening LSASS to read credentials</td></tr>
+            <tr><td>25, process tampering</td><td>A process image changed after the process started</td><td>Hollowing and similar tricks, once the configuration includes it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-red">On a test, injecting into a critical process can take the system down.</strong>
+          LSASS is a critical process: when it dies, Windows restarts. A failed injection into it on a domain
+          controller is an outage the client never agreed to. Testers use the techniques the rules of engagement
+          allow, against processes chosen for it, and report which of them the client's tools caught, which is
+          often the most useful line in the finding. The telemetry side is in
+          <span class="xref">Sysmon — The Windows Telemetry Powerhouse</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body threat -->
