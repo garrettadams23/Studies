@@ -742,6 +742,17 @@ const READERS = [
     ["incident communication plan", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
     ["who to notify during an incident", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
     ["when to involve law enforcement", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
+    // ── eleventh wave: CISSP 1.6 and 7.15, which the tenth wave's path skipped, added before their topics ──
+    // SecurityX 1.1 names the same document hierarchy as CISSP 1.6. Opened at 0 of 8: four zeros,
+    // and four that found the wrong card, `cobit` among them reaching only the acronym dictionary.
+    ["policy vs standard vs procedure", "", "grc/policies-standards-procedures-guidelines-the-security-docume"],
+    ["difference between a guideline and a standard", "", "grc/policies-standards-procedures-guidelines-the-security-docume"],
+    ["raci matrix", "", "grc/policies-standards-procedures-guidelines-the-security-docume"],
+    ["cobit", "", "grc/policies-standards-procedures-guidelines-the-security-docume"],
+    ["duress code", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
+    ["business travel security", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
+    ["emergency evacuation plan", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
+    ["fail-safe vs fail-secure", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
