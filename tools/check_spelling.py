@@ -159,7 +159,14 @@ IRREGULAR = {
     "instalment": "installment", "instalments": "installments",
     "distil": "distill", "instil": "instill", "appal": "appall",
 }
-IRREGULAR_RE = re.compile(r"(?<![A-Za-z])(" + "|".join(sorted(IRREGULAR, key=len, reverse=True))
+# A prefix is part of the word it is on. The boundary below used to reject any
+# letter before the dictionary word, so `labelled` was caught and `unlabelled`,
+# which the site had fifteen times, never was: the list was checked only where
+# its words stood alone. Four prefixes make the same word, and none of them
+# turns an American form into a British one.
+IRREGULAR_PREFIXES = ("un", "re", "mis", "pre")
+IRREGULAR_RE = re.compile(r"(?<![A-Za-z])(" + "|".join(IRREGULAR_PREFIXES) + r")?("
+                          + "|".join(sorted(IRREGULAR, key=len, reverse=True))
                           + r")(?![A-Za-z])", re.I)
 
 # JSON files whose string values render as prose, and the keys to read in each.
@@ -181,9 +188,16 @@ def match_case(src, dst):
     return dst
 
 
+# `-wise` is a suffix of its own, "in the manner of", and English makes new ones
+# freely: *bitwise*, *piecewise*, *elementwise*. None of them is an `-ise` word,
+# so no American spelling replaces it. The list above named five of them one at
+# a time; the sixth, *bitwise*, failed the build on a card about bitwise
+# operations, and the rule is what the list was approximating.
 def _ise(m):
     word = m.group(0)
     if word.lower() in ISE_KEEP or (m.group(1) + "ise").lower() in ISE_KEEP:
+        return None
+    if (m.group(1) + "ise").lower().endswith("wise"):
         return None
     return match_case(word, m.group(1).lower() + "iz" + m.group(2).lower())
 
@@ -203,7 +217,7 @@ def _our(m):
 
 
 def _irregular(m):
-    return match_case(m.group(0), IRREGULAR[m.group(0).lower()])
+    return match_case(m.group(0), (m.group(1) or "").lower() + IRREGULAR[m.group(2).lower()])
 
 
 # The dictionary runs **first**, because it is the exception to the rules and
@@ -234,7 +248,7 @@ RULES = [("irregular", IRREGULAR_RE, _irregular),
 # tells the reader why an American site spells it that way.
 ALLOW = ["Fibre Channel", "Enquiry, as the standard spells it"]
 ALLOW_RE = re.compile("|".join(re.escape(a) for a in ALLOW), re.I)
-HOLD_RE = re.compile("\x00(\d+)\x00")
+HOLD_RE = re.compile(r"\x00(\d+)\x00")
 
 # A British spelling with its own American form a few words away is not a
 # spelling mistake. It is a sentence *about* the two spellings, and rewriting it
@@ -430,6 +444,7 @@ def self_test():
         ("surprised", None), ("exercises", None), ("advertising", None),
         ("malvertising", None), ("denoise", None), ("expertise", None),
         ("unsupervised", None), ("wise", None), ("raise", None), ("noise", None),
+        ("bitwise", None), ("Piecewise", None), ("elementwise", None),
         # -yse, and the plural that is not a verb
         ("analyse", "analyze"), ("analyser", "analyzer"), ("analyses", None),
         ("analysis", None), ("analyst", None),
@@ -445,6 +460,10 @@ def self_test():
         ("licensed", None), ("license", None), ("program", None), ("practice", None),
         ("installed", None), ("controlled", None), ("enrolled", None),
         ("greyhound", None), ("ThinkCentre", None), ("center", None), ("analyze", None),
+        # a prefix is part of the word, and the American prefixed forms survive
+        ("unlabelled", "unlabeled"), ("Relabelled", "Relabeled"), ("mislabelled", "mislabeled"),
+        ("misjudgement", "misjudgment"), ("UNLABELLED", "UNLABELED"),
+        ("unlabeled", None), ("relabeled", None), ("prefix", None), ("reinstall", None),
         # the allow phrase, and the same word without it
         ("Fibre Channel", None), ("fibre channel zoning", None),
         ("fibre", "fiber"), ("Wi-Fi and Fibre Are", "Wi-Fi and Fiber Are"),

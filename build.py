@@ -383,7 +383,12 @@ def build_acronym_payload():
     if not path.exists():
         return "[]"
     entries = json.loads(path.read_text(encoding="utf-8"))["entries"]
-    compact = [[e["a"], [m["e"] for m in e["m"]], e["m"][0]["c"]] for e in entries]
+    # A fourth field, 1, marks an acronym that is also an ordinary word, which is
+    # what `noAnnotate` means in the dictionary. The search uses it to stop the
+    # expansion mapping back to the word: with IT in the map, "information
+    # technology" matched the word "it" and returned 1,452 of 1,564 topics.
+    compact = [[e["a"], [m["e"] for m in e["m"]], e["m"][0]["c"]]
+               + ([1] if e.get("noAnnotate") else []) for e in entries]
     payload = json.dumps(compact, separators=(",", ":"), ensure_ascii=False)
     # A JSON block ends at the first "</script>" the parser sees, wherever it is.
     print(f"  + acronym payload ({len(payload):,} chars, {len(entries)} entries)")

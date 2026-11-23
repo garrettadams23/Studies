@@ -1177,7 +1177,7 @@ index=auth <span class="str">"Failed password"</span>
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🎚️</span>
               <span class="topic-name">Detection Tuning &amp; the Pyramid of Pain</span>
@@ -1210,6 +1210,28 @@ index=auth <span class="str">"Failed password"</span>
                     detection's true/false-positive rate, add context/allowlists, and require
                     every alert to be <em>actionable</em>. Detection-as-code (Sigma in Git, tested
                     with Atomic) keeps quality high.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Picture</div>
+                <div class="concept-title">The Pyramid, Drawn: Height Is the Attacker's Cost, and Width Is How Many There Are</div>
+                <div class="concept-desc">
+                  The table ranks six kinds of indicator by what it costs an attacker to change one, which is David
+                  Bianco's 2013 model and the pyramid's height. The width is a reading the shape invites rather than
+                  part of the model: the wide layers are the indicators there are most of, and the cheapest to
+                  collect. A feed can hold millions of hashes and addresses, and nobody can sell you a list of an
+                  adversary's habits.
+                  <!-- fact: the Pyramid of Pain is David J. Bianco's model, from 2013 | source: a secondary overview found in search results; Bianco's original post was not read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <svg class="math-svg" viewBox="0 0 380 390" role="img" aria-label="The Pyramid of Pain, six layers from the wide base to the narrow top: hash values, trivial to change; IP addresses, easy; domain names, simple; network and host artifacts, annoying; tools, challenging; and at the top, tactics, techniques and procedures, tough. An arrow up the left side reads cost to the attacker."><polygon class="rsv-coder" points="185,14 207.5,74 162.5,74"/><text class="msh-name" x="185" y="66">TTPs</text><text class="msv-rad rsv-t-coder" x="236" y="66">Tough</text><polygon class="rsv-coder" points="162.5,74 207.5,74 230,134 140,134"/><text class="msh-name" x="185" y="126">Tools</text><text class="msv-rad rsv-t-coder" x="281.9" y="126">Challenging</text><polygon class="rsv-prog" points="140,134 230,134 252.5,194 117.5,194"/><text class="msh-name" x="185" y="172">Network/host</text><text class="msh-name" x="185" y="188">artifacts</text><text class="msv-lbl" x="290.4" y="180">Annoying</text><polygon class="rsv-prog" points="117.5,194 252.5,194 275,254 95,254"/><text class="msh-name" x="185" y="246">Domain names</text><text class="msv-lbl" x="307.4" y="246">Simple</text><polygon class="msh-right" points="95,254 275,254 297.5,314 72.5,314"/><text class="msh-name" x="185" y="306">IP addresses</text><text class="msv-lbl2" x="322.1" y="306">Easy</text><polygon class="msh-right" points="72.5,314 297.5,314 320,374 50,374"/><text class="msh-name" x="185" y="366">Hash values</text><text class="msv-lbl2" x="356.3" y="366">Trivial</text><line class="msv-axis" x1="16" y1="374" x2="16" y2="36"/><polygon class="msv-lbl2" points="16,28 20.5,37 11.5,37"/><text class="msv-lbl2" x="34" y="194" transform="rotate(-90 34 194)">cost to the attacker</text></svg>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The wide layers are where detection is easiest to build and easiest to step
+                    around.</strong> A hash rule catches the file already seen, and a recompile defeats it. A rule
+                    written against a behavior, such as credentials being read out of LSASS <span class="acro-exp">(Local Security Authority Subsystem Service)</span> memory, holds across tools
+                    and builds, because getting past it means changing how the attacker works. Let the feeds fill the
+                    wide layers, and spend the analysts' time on the narrow ones.
                   </div>
                 </div>
               </div>
@@ -1555,7 +1577,7 @@ index=auth <span class="str">"Failed password"</span>
                   <table class="ref-table">
                     <tr><th>What needs a person</th><th>How often</th><th>What it becomes without them</th></tr>
                     <tr><td>A dry run with real forms and hardware</td><td>Annually, at minimum</td><td>A procedure that has never been tested when it is first needed</td></tr>
-                    <tr><td>Checking the kit</td><td>Quarterly</td><td>A flat write blocker, an unlabelled drive, expired media</td></tr>
+                    <tr><td>Checking the kit</td><td>Quarterly</td><td>A flat write blocker, an unlabeled drive, expired media</td></tr>
                     <tr><td>Naming who is authorized to seize</td><td>On any team change</td><td>Nobody sure they are allowed to act, so nobody acts</td></tr>
                     <tr><td>Reviewing with legal or counsel</td><td>Annually</td><td>A form that does not meet the standard it would be judged against</td></tr>
                     <tr><td>Storing completed records</td><td>Per incident</td><td>Custody documented in a chat thread, which is not documentation</td></tr>
@@ -2251,7 +2273,7 @@ _dmarc.example.com  TXT  <span class="str">"v=DMARC1; p=quarantine; rua=mailto:d
                     <tr><td>The SPF ten-lookup limit</td><td class="c-red">Chained <code>include:</code> statements exceed it and the record fails <em>permerror</em> — which many receivers treat as no SPF at all. Flatten it, and re-check after adding any SaaS <span class="acro-exp">(Software as a Service)</span> sender</td></tr>
                     <tr><td>Alignment, not just a pass</td><td>DMARC cares that the passing domain matches the visible From. Relaxed alignment lets a subdomain pass for the parent; <code>adkim=s; aspf=s</code> is stricter and breaks more forwarders</td></tr>
                     <tr><td>Forwarding and mailing lists</td><td>Break SPF by changing the sending IP <span class="acro-exp">(Internet Protocol)</span>, and break DKIM if the list edits the body — which is what ARC exists to repair</td></tr>
-                    <tr><td>Stuck at <code>p=none</code></td><td class="c-yellow">Monitoring forever is the commonest outcome; the reports exist to find your senders, not to be admired</td></tr>
+                    <tr><td>Stuck at <code>p=none</code></td><td class="c-amber">Monitoring forever is the commonest outcome; the reports exist to find your senders, not to be admired</td></tr>
                     <tr><td>Lookalike domains</td><td>Not addressed by any of the three — this is registrar monitoring plus an external-sender banner</td></tr>
                   </table>
                   <div class="concept-desc verdict">

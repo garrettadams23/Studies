@@ -156,7 +156,7 @@
           </div>
 
           <!-- ── TOPIC: ACCESS CONTROL MODELS ───────────────────────── -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🗂️</span>
               <span class="topic-name">Access Control Models</span>
@@ -230,6 +230,34 @@
                     The failure mode to watch for is <strong class="c-red">role explosion</strong>:
                     when exceptions are met by creating one more role, a directory ends up with
                     roughly one role per person, which is DAC with extra administration.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Inversion</div>
+                <div class="concept-title">The Formal Models: Two Forbid Opposite Directions on One Ladder</div>
+                <div class="concept-desc">
+                  The MAC row above is the working end of a set of formal models, written to prove that a system
+                  could not leak or corrupt data. Exams ask for them by name. What is worth keeping is what each one
+                  protects, because the two best known draw the same ladder of levels and forbid opposite
+                  directions on it.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Model</th><th>Protects</th><th>The rules</th><th>Where the idea lives now</th></tr></thead>
+                    <tbody>
+                      <tr><td>Bell-LaPadula</td><td>Confidentiality</td><td>No read up: a subject cannot read above its clearance. No write down: it cannot write below it, so a secret cannot be copied into an unclassified file</td><td>Military classification, and the MAC row above</td></tr>
+                      <tr><td>Biba</td><td>Integrity</td><td>No read down: a trusted process does not take in less trustworthy data. No write up: a less trusted subject cannot change more trusted data</td><td>Windows integrity levels, where a low-integrity process cannot write to medium-integrity files</td></tr>
+                      <tr><td>Clark-Wilson</td><td>Integrity, the commercial way</td><td>Users never touch the data directly. They run well-formed transactions against constrained data, and the person who runs a transaction is not the person who certifies it</td><td>Every accounting system where a clerk can post an invoice and cannot edit the ledger</td></tr>
+                      <tr><td>Brewer-Nash, the Chinese Wall</td><td>Conflicts of interest</td><td>Access depends on history: once you have read one client's data, you lose access to that client's competitors</td><td>Consultancies, banks and law firms with competing clients</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Remember the first two rows as one picture.</strong> Draw the levels as
+                    a ladder: Bell-LaPadula stops secrets flowing down it and Biba stops bad data flowing up it.
+                    Enforced together on the same labels, they leave a subject able to talk only to its own level,
+                    which is why real systems apply them to different things. The last row is the odd one, because its
+                    rule depends on what you did yesterday, and no static permission can express that.
                   </div>
                 </div>
               </div>
@@ -387,7 +415,7 @@
           </div>
 
           <!-- ── TOPIC: CRYPTOGRAPHY ─────────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🔑</span>
               <span class="topic-name">Cryptography Algorithm Reference</span>
@@ -469,7 +497,7 @@
                     </tr>
                     <tr>
                       <td>ChaCha20-Poly1305</td>
-                      <td>Stream + AEAD</td>
+                      <td>Stream + AEAD <span class="acro-exp">(Authenticated Encryption with Associated Data)</span></td>
                       <td>256-bit</td>
                       <td>TLS 1.3, mobile (no hardware AES)</td>
                       <td class="c-green">✔ Modern</td>
@@ -483,6 +511,40 @@
                     encryption</em>, because nothing reverses it and nothing is meant to, and asymmetric
                     cryptography is not "stronger" than symmetric, it is slower and solves a different problem —
                     which is precisely why every protocol here uses it only to agree the symmetric key.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">AES Is Half a Cipher, and the Mode Decides What Leaks</div>
+                <div class="concept-desc">
+                  AES encrypts exactly sixteen bytes. Anything longer, from a TLS record to a whole disk, is
+                  encrypted by a <strong>mode of operation</strong> that decides how those sixteen-byte blocks are
+                  chained, and the mode answers the two questions the name <code>AES-256</code> leaves open: does
+                  equal plaintext produce equal ciphertext, and can anyone change the ciphertext without the
+                  receiver noticing? Those are the questions the first row of
+                  <span class="xref">Reading a Cryptographic Claim Critically — Vendor Slides &amp; "Military-Grade"</span>
+                  asks of every vendor, and the rows below are the answers.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Mode</th><th>How it works</th><th>What goes wrong</th><th>Where you meet it</th></tr></thead>
+                    <tbody>
+                      <tr><td>ECB <span class="acro-exp">(Electronic Codebook)</span></td><td>Each block is encrypted on its own, under the same key</td><td class="c-red">Equal plaintext blocks give equal ciphertext blocks, so the structure shows through: an image encrypted this way is still recognizably the image. No integrity</td><td>Nowhere, by choice. It survives as a library default and in homemade schemes</td></tr>
+                      <tr><td>CBC <span class="acro-exp">(Cipher Block Chaining)</span></td><td>Each block is XORed with the previous ciphertext block before it is encrypted, starting from an IV that must be unpredictable</td><td class="c-amber">No integrity of its own. A server that reports bad padding differently from a bad tag leaks the plaintext a byte at a time, the padding oracle, and a predictable IV is what BEAST used</td><td>TLS 1.0 to 1.2 suites, all removed from TLS 1.3; older file and archive formats</td></tr>
+                      <tr><td>CTR <span class="acro-exp">(Counter Mode)</span></td><td>Encrypts a counter and XORs <span class="acro-exp">(Exclusive OR)</span> the output with the data, which turns the block cipher into a stream cipher</td><td class="c-amber">Reuse a nonce under the same key and the XOR of the two ciphertexts is the XOR of the two plaintexts. No integrity: flip a bit of ciphertext and the same bit of plaintext flips</td><td>Inside GCM <span class="acro-exp">(Galois/Counter Mode)</span>. On its own, only with a separate authentication tag</td></tr>
+                      <tr><td>GCM</td><td>CTR for secrecy, plus an authentication tag over the ciphertext and any unencrypted header: authenticated encryption, or AEAD</td><td class="c-amber">Nonce reuse breaks both halves at once: the CTR leak above, and enough to recover the authentication key and forge messages</td><td class="c-green">TLS 1.2 and 1.3, IPsec <span class="acro-exp">(Internet Protocol Security)</span>, SSH <span class="acro-exp">(Secure Shell)</span>. The default</td></tr>
+                      <tr><td>XTS <span class="acro-exp">(XEX-based Tweaked-codebook mode with ciphertext Stealing)</span></td><td>Encrypts each disk sector with a tweak derived from its position, so the output is exactly the size of the input</td><td class="c-amber">No integrity, by design. Someone with the disk can put back an older copy of a sector and nothing detects it</td><td>Disk encryption only: BitLocker's XTS-AES, FileVault, LUKS <span class="acro-exp">(Linux Unified Key Setup)</span></td></tr>
+                    </tbody>
+                  </table>
+                  <!-- fact: random-nonce GCM capped at 2^32 messages per key | source: NIST SP 800-38D §8.3, as quoted in search results alongside its Rev. 1 draft; the PDF itself was not fetched | checked: 2026-11 -->
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The fourth row is the one to design around.</strong> Choose an
+                    authenticated mode, which means GCM, or ChaCha20-Poly1305 where there is no AES hardware, and
+                    treat the nonce as the one value that must never repeat under a key. A counter that only goes
+                    up is safer than a random nonce for a key that encrypts a lot: NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> caps random 96-bit nonces at
+                    2³² messages per key, because past that a collision stops being negligible. Every other row is
+                    a mistake, a legacy, a component or a disk.
                   </div>
                 </div>
               </div>
@@ -1179,7 +1241,7 @@
           <tr><td style="color:var(--cyan)">Handshake RTTs <span class="acro-exp">(Round Trip Time)</span></td><td>2 RTT (full) / 1 RTT (resumption)</td><td>1 RTT (full) / 0 RTT (resumption — risky)</td></tr>
           <tr><td style="color:var(--cyan)">Key Exchange</td><td>RSA or DHE/ECDHE</td><td>ECDHE <span class="acro-exp">(Elliptic Curve Diffie-Hellman Ephemeral)</span> only — RSA key exchange removed</td></tr>
           <tr><td style="color:var(--cyan)">Forward Secrecy</td><td>Optional (only with DHE/ECDHE)</td><td>Mandatory — every session gets unique keys</td></tr>
-          <tr><td style="color:var(--cyan)">Cipher Suites</td><td>Many including weak ones (RC4, 3DES)</td><td>5 strong AEAD suites only</td></tr>
+          <tr><td style="color:var(--cyan)">Cipher Suites</td><td>Many including weak ones (RC4, 3DES)</td><td>5 strong AEAD <span class="acro-exp">(Authenticated Encryption with Associated Data)</span> suites only</td></tr>
           <tr><td style="color:var(--cyan)">Encrypted</td><td>Only after Finished</td><td>Server certificate encrypted during handshake</td></tr>
           <tr><td style="color:var(--cyan)">Removed</td><td>—</td><td>RSA key exchange, static DH, CBC <span class="acro-exp">(Cipher Block Chaining)</span> mode ciphers, compression, renegotiation, SHA-1</td></tr>
         </table>
@@ -1340,13 +1402,13 @@ entered = <span class="str">"my_secure_pass"</span>
     <div class="concept-card">
       <div class="concept-label">STRONG PASSWORDS</div>
       <div class="concept-title">Length Beats Complexity</div>
-      <div class="concept-desc">A 20-character random passphrase is stronger than "P@$$w0rd!" — and much easier to remember. Use a <strong>password manager</strong> (Bitwarden, 1Password, KeePass). Generate unique passwords for every site. Enable MFA everywhere possible.</div>
+      <div class="concept-desc">A 20-character random passphrase is stronger than "P@$$w0rd!" — and much easier to remember. Use a <strong>password manager</strong> (Bitwarden, 1Password, KeePass). Generate unique passwords for every site. Enable MFA <span class="acro-exp">(Multi-Factor Authentication)</span> everywhere possible.</div>
     </div>
   </div>
 </div>
 
 <!-- ── TOPIC: MFA & AUTHENTICATION METHODS ──────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📲</span>
     <span class="topic-name">Multi-Factor Authentication — Layers of Proof</span>
@@ -1389,6 +1451,34 @@ entered = <span class="str">"my_secure_pass"</span>
       <div class="concept-label">HOW TOTP WORKS</div>
       <div class="concept-title">Time-Based One-Time Passwords</div>
       <div class="concept-desc">During setup, the server shares a secret key with your phone (usually via QR code). Every 30 seconds, both your phone AND the server compute HMAC-SHA1(secret + current_time_window). They should match. An attacker needs the secret AND the current window — that's why TOTP codes expire so fast.</div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Biometric Accuracy Is Two Error Rates, and the Threshold Trades One for the Other</div>
+      <div class="concept-desc">
+        A biometric reader never answers yes or no. It scores how closely a sample matches the enrolled
+        template, and a threshold turns the score into a decision. Move the threshold and two error rates
+        move in opposite directions, so a single accuracy figure on a datasheet is either the crossover point
+        or a number chosen to look good.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Measure</th><th>What it counts</th><th>Also called</th><th>Minimize it when</th></tr></thead>
+          <tbody>
+            <tr><td>False acceptance rate (FAR)</td><td>Impostors accepted</td><td>Type II error</td><td>One wrong person inside is the failure: a data center door</td></tr>
+            <tr><td>False rejection rate (FRR)</td><td>Genuine users rejected</td><td>Type I error</td><td>Rejection costs time and drives people to workarounds: a busy entrance, a phone unlock</td></tr>
+            <tr><td>Crossover error rate (CER)</td><td>The threshold at which the two rates are equal</td><td>Equal error rate (EER)</td><td>Never; it is not a setting. It compares sensors, and the lower one is the more accurate device</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row is for buying, and the first two are for configuring.</strong>
+          Compare devices by their crossover rate, then set the threshold away from it on purpose: toward
+          fewer false acceptances where a wrong person costs more than a slow queue, and toward fewer
+          rejections where the opposite holds. A biometric is also an identifier, not a secret, and it cannot
+          be changed after a breach. That is why the strong designs, passkeys among them, match it on the
+          device and send only a cryptographic proof.
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2185,7 +2275,7 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
 
 <!-- BEGINNER27-SEC v1 -->
 <!-- ── TOPIC: ZERO TRUST ARCHITECTURE ────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🚫</span>
     <span class="topic-name">Zero Trust — Never Trust, Always Verify</span>
@@ -2244,7 +2334,7 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
           <tr><td>Strong identity (IAM + MFA)</td><td>The new perimeter is identity — verify who</td></tr>
           <tr><td>Device posture</td><td>Is the device managed, patched, healthy?</td></tr>
           <tr><td>Microsegmentation</td><td>Divide the network into tiny zones — contain lateral movement</td></tr>
-          <tr><td>Policy engine (PEP/PDP)</td><td>Decides allow/deny per request based on context</td></tr>
+          <tr><td>Decision and enforcement points (PDP, PEP)</td><td>One decides allow or deny per request from context, and the other carries the decision out at the resource. The last card separates them</td></tr>
           <tr><td>Continuous monitoring</td><td>Re-evaluate trust constantly, not just at login</td></tr>
           <tr><td>Encryption everywhere</td><td>Protect data in transit even "inside"</td></tr>
         </tbody>
@@ -2325,6 +2415,58 @@ alert tcp any any -&gt; any 80 (msg:"Possible SQLi";
                 </div>
               </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">Zero Trust Is Two Boxes: One That Decides, One That Enforces</div>
+      <div class="concept-desc">
+        NIST <span class="acro-exp">(National Institute of Standards and Technology)</span>'s zero trust architecture, SP 800-207, splits every access into a control plane that decides
+        and a data plane that carries the traffic, and the exam vocabulary comes straight from it. The split
+        is the useful part. Most products sold as zero trust are the enforcement half, and buying one does not
+        buy the decision.
+      </div>
+      <div class="dw">
+        <div class="dora-seq">
+          <div class="dora-item">
+            <div class="dora-letter">R</div>
+            <div class="dora-word">Request</div>
+            <div class="dora-desc">A subject asks for a resource, and the enforcement point holds it</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">D</div>
+            <div class="dora-word">Decide</div>
+            <div class="dora-desc">The policy engine weighs identity, device and signals against policy</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">A</div>
+            <div class="dora-word">Administer</div>
+            <div class="dora-desc">The policy administrator tells the enforcement point to open a session, or not</div>
+          </div>
+          <div class="c-muted">→</div>
+          <div class="dora-item">
+            <div class="dora-letter">E</div>
+            <div class="dora-word">Enforce</div>
+            <div class="dora-desc">A path to that one resource opens, and is watched until it closes</div>
+          </div>
+        </div>
+        <table class="ref-table">
+          <thead><tr><th>Component</th><th>Plane</th><th>What it does</th><th>What it is in practice</th></tr></thead>
+          <tbody>
+            <tr><td>Policy engine</td><td>Control</td><td>Makes the allow-or-deny decision from policy and signals: identity, device posture, threat intelligence, behavior</td><td>The conditional-access engine of an identity provider</td></tr>
+            <tr><td>Policy administrator</td><td>Control</td><td>Turns the decision into action: issues the session credential, and tells the enforcement point to open or close the path</td><td>The part of the same product that mints tokens and pushes session changes</td></tr>
+            <tr><td>Policy enforcement point</td><td>Data</td><td>Stands in front of the resource; opens, watches and ends the connection. It decides nothing</td><td>A ZTNA gateway, an identity-aware proxy, an agent, a microsegmentation firewall</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row is the one vendors sell, and the first is the one that makes
+          it zero trust.</strong> The first two together are what the standard calls the PDP <span class="acro-exp">(Policy Decision Point)</span>. An
+          enforcement point with no decision behind it is a gateway with a new name, and a decision made once
+          at login and never revisited is a VPN with better branding. Ask any product which of the three boxes
+          it is, and where the other two come from.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -4065,26 +4207,26 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
         <code>%s</code> does below.
       </div>
       <pre class="code-block"><span class="com"># Safe — the value is bound</span>
-cur.execute(<span class="m">"SELECT * FROM users WHERE email = %s"</span>, (email,))
+cur.execute(<span class="str">"SELECT * FROM users WHERE email = %s"</span>, (email,))
 
 <span class="com"># Injectable — the identifier cannot be bound, so it was formatted</span>
-cur.execute(<span class="m">f"SELECT * FROM users ORDER BY {sort_col} {direction}"</span>)
+cur.execute(<span class="str">f"SELECT * FROM users ORDER BY {sort_col} {direction}"</span>)
 
 <span class="com"># The only safe pattern for identifiers: an allow-list you control</span>
-COLS = {<span class="m">"name"</span>, <span class="m">"created_at"</span>, <span class="m">"email"</span>}
+COLS = {<span class="str">"name"</span>, <span class="str">"created_at"</span>, <span class="str">"email"</span>}
 <span class="kw">if</span> sort_col <span class="kw">not in</span> COLS: <span class="kw">raise</span> ValueError(sort_col)
-direction = <span class="m">"DESC"</span> <span class="kw">if</span> direction.upper() == <span class="m">"DESC"</span> <span class="kw">else</span> <span class="m">"ASC"</span></pre>
+direction = <span class="str">"DESC"</span> <span class="kw">if</span> direction.upper() == <span class="str">"DESC"</span> <span class="kw">else</span> <span class="str">"ASC"</span></pre>
       <pre class="code-block"><span class="com">-- The same three cases in T-SQL, inside a stored procedure</span>
 <span class="com">-- Injectable: the value is pasted into the string that EXEC runs</span>
-<span class="kw">EXEC</span>(<span class="m">'SELECT * FROM users WHERE email = '''</span> + @email + <span class="m">''''</span>);
+<span class="kw">EXEC</span>(<span class="str">'SELECT * FROM users WHERE email = '''</span> + @email + <span class="str">''''</span>);
 
 <span class="com">-- Safe: sp_executesql binds @e as a parameter</span>
-<span class="kw">EXEC</span> sp_executesql <span class="m">N'SELECT * FROM users WHERE email = @e'</span>,
-     <span class="m">N'@e nvarchar(320)'</span>, @e = @email;
+<span class="kw">EXEC</span> sp_executesql <span class="str">N'SELECT * FROM users WHERE email = @e'</span>,
+     <span class="str">N'@e nvarchar(320)'</span>, @e = @email;
 
 <span class="com">-- An identifier still cannot be bound. QUOTENAME makes it a name and never code;</span>
 <span class="com">-- the allow-list above still decides which names are allowed</span>
-<span class="kw">SET</span> @sql = <span class="m">N'SELECT * FROM users ORDER BY '</span> + QUOTENAME(@sort_col);</pre>
+<span class="kw">SET</span> @sql = <span class="str">N'SELECT * FROM users ORDER BY '</span> + QUOTENAME(@sort_col);</pre>
       <div class="concept-desc verdict">
         Same rule for shell commands: arguments can be passed as a list, but the
         <em>program name</em> and any flags cannot come from user input. If the shape of the
@@ -4113,7 +4255,7 @@ direction = <span class="m">"DESC"</span> <span class="kw">if</span> direction.u
 </div>
 
 <!-- ── TOPIC: BROKEN ACCESS CONTROL ───────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🚪</span>
     <span class="topic-name">Broken Access Control — IDOR <span class="acro-exp">(Insecure Direct Object Reference)</span>, Traversal &amp; the Checks Nobody Ran</span>
@@ -4167,7 +4309,7 @@ inv = Invoice.get(id)
 
 <span class="com"># Durable: ownership is part of the lookup. Forgetting it is a 404.</span>
 inv = Invoice.filter(id=id, owner_id=user.id).one_or_none()
-<span class="kw">if</span> inv <span class="kw">is</span> <span class="m">None</span>: <span class="kw">raise</span> NotFound</pre>
+<span class="kw">if</span> inv <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">raise</span> NotFound</pre>
       <div class="concept-desc verdict">
         Returning <strong>404 rather than 403</strong> for an object the caller may not see is
         deliberate: 403 confirms the record exists, which is itself a disclosure when the
@@ -4190,6 +4332,32 @@ inv = Invoice.filter(id=id, owner_id=user.id).one_or_none()
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">The Check Ran, at the Wrong Moment: Race Conditions</div>
+      <div class="concept-desc">
+        Everything above is a check that is missing. A race condition is a check that is present and still
+        fails, because the check and the action it protects are two separate moments, and something changes
+        in between. The gap has a name, TOCTOU <span class="acro-exp">(Time-of-Check to Time-of-Use)</span>, and it is the commonest race in security code.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Where</th><th>The race</th><th>The fix</th></tr></thead>
+          <tbody>
+            <tr><td>Files</td><td>A privileged program checks a path with <code>access()</code>, then opens it, and between the two calls an attacker swaps the file for a link to <code>/etc/shadow</code></td><td>Check the handle, not the name: open first, inspect what was opened with <code>fstat()</code>, and open with flags that refuse links</td></tr>
+            <tr><td>Money and limits</td><td>Two requests read the same balance, both pass the "enough funds" check, and both withdraw: a coupon redeemed twice, a gift card spent twice</td><td>Make the check and the change one operation: an <code>UPDATE</code> that succeeds only while the balance is still sufficient, or a row lock</td></tr>
+            <tr><td>Uniqueness</td><td>Two sign-ups check that a username is free, both see it free, and both insert</td><td>A unique constraint, so the database turns the second insert into an error</td></tr>
+            <tr><td>Kernels</td><td>A copy-on-write race let an ordinary user write to read-only memory: Dirty COW, in 2016</td><td>Not yours to fix in code. It is the reason kernel patching is not optional</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The first three rows have one fix:</strong> make the check and the use a
+          single step that cannot be interleaved, so the database or the kernel checks atomically instead of
+          your code checking twice. A normal test will not find these, because one request never races
+          itself. Send the same request twenty times at once, which is what an attacker does.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -4250,7 +4418,7 @@ inv = Invoice.filter(id=id, owner_id=user.id).one_or_none()
 <span class="kw">from</span> defusedxml.ElementTree <span class="kw">import</span> parse   <span class="com"># drop-in, safe defaults</span>
 
 <span class="com"># Java: the two features that matter</span>
-factory.setFeature(<span class="m">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <span class="kw">true</span>);
+factory.setFeature(<span class="str">"http://apache.org/xml/features/disallow-doctype-decl"</span>, <span class="kw">true</span>);
 factory.setXIncludeAware(<span class="kw">false</span>);</pre>
       <div class="concept-desc verdict">
         Modern parsers mostly default to safe now, which makes this a legacy-and-dependency
@@ -4444,7 +4612,7 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
 </div>
 
 <!-- ── TOPIC: NETWORK SECURITY ARCHITECTURE ───────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧱</span>
     <span class="topic-name">Network Security Architecture — Segmentation, DMZ <span class="acro-exp">(Demilitarized Zone)</span> &amp; Egress Filtering</span>
@@ -4478,6 +4646,38 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
         inbound carefully and let anything leave. Command-and-control, data theft and tool
         download are all outbound — restricting a server segment to the handful of destinations
         it genuinely needs breaks a large share of intrusion tooling for very little work.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The Picture</div>
+      <div class="concept-title">The Zones and the Arrows Between Them, and the One Arrow to Take Away</div>
+      <div class="concept-desc">
+        Each arrow is a direction a connection may start in, and the replies come back along it. The two
+        pictures differ by one arrow, from the servers to the internet, and that arrow is the row the table
+        above calls underrated: egress filtering is an absence, and an absence does not show up in a list of
+        what is allowed.
+      </div>
+      <div class="dw">
+        <div class="topo-grid">
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 360 254" role="img" aria-label="Four zones drawn as a diamond: the internet at the top, the DMZ on the left, users on the right and servers at the bottom. Green arrows show the directions a connection may start in: internet to DMZ for inbound web, DMZ to servers on one application port, users to servers for named services, and users to the internet through the proxy. An amber arrow labeled anything out runs from servers straight up to the internet."><line class="msv-tangent" x1="150" y1="40" x2="92.6" y2="106.7"/><polygon class="msv-r1" points="88,112 90.5,102.2 97.3,108.1"/><text class="msh-form" x="62" y="72">inbound web</text><line class="msv-tangent" x1="272" y1="112" x2="214.6" y2="45.3"/><polygon class="msv-r1" points="210,40 219.3,43.9 212.5,49.8"/><text class="msh-form" x="300" y="72">via the proxy</text><line class="msv-tangent" x1="88" y1="142" x2="145.4" y2="208.7"/><polygon class="msv-r1" points="150,214 140.7,210.1 147.5,204.2"/><text class="msh-form" x="60" y="188">one app port</text><line class="msv-tangent" x1="272" y1="142" x2="214.6" y2="208.7"/><polygon class="msv-r1" points="210,214 212.5,204.2 219.3,210.1"/><text class="msh-form" x="302" y="188">named services</text><line class="msv-secant" x1="180" y1="214" x2="180" y2="48"/><polygon class="msv-dot2" points="180,41 184.5,50 175.5,50"/><rect class="rsv-chip" x="122" y="114" width="116" height="26" rx="4"/><text class="msv-lbl" x="180" y="131.5">anything out</text><rect class="msh-right" x="125" y="10" width="110" height="30" rx="4"/><text class="msh-name" x="180" y="29.5">Internet</text><rect class="msh-right" x="20" y="112" width="100" height="30" rx="4"/><text class="msh-name" x="70" y="131.5">DMZ</text><rect class="msh-right" x="240" y="112" width="100" height="30" rx="4"/><text class="msh-name" x="290" y="131.5">Users</text><rect class="msh-right" x="125" y="214" width="110" height="30" rx="4"/><text class="msh-name" x="180" y="233.5">Servers</text></svg>
+            <div class="topo-name">As usually built</div>
+            <div class="topo-desc">Inbound is controlled zone by zone, and anything on a server may connect out to anywhere</div>
+          </div>
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 360 254" role="img" aria-label="Four zones drawn as a diamond: the internet at the top, the DMZ on the left, users on the right and servers at the bottom. Green arrows show the directions a connection may start in: internet to DMZ for inbound web, DMZ to servers on one application port, users to servers for named services, and users to the internet through the proxy. The line from servers up to the internet is dashed and crossed out: the arrow egress filtering removes."><line class="msv-tangent" x1="150" y1="40" x2="92.6" y2="106.7"/><polygon class="msv-r1" points="88,112 90.5,102.2 97.3,108.1"/><text class="msh-form" x="62" y="72">inbound web</text><line class="msv-tangent" x1="272" y1="112" x2="214.6" y2="45.3"/><polygon class="msv-r1" points="210,40 219.3,43.9 212.5,49.8"/><text class="msh-form" x="300" y="72">via the proxy</text><line class="msv-tangent" x1="88" y1="142" x2="145.4" y2="208.7"/><polygon class="msv-r1" points="150,214 140.7,210.1 147.5,204.2"/><text class="msh-form" x="60" y="188">one app port</text><line class="msv-tangent" x1="272" y1="142" x2="214.6" y2="208.7"/><polygon class="msv-r1" points="210,214 212.5,204.2 219.3,210.1"/><text class="msh-form" x="302" y="188">named services</text><line class="msv-secant" x1="180" y1="214" x2="180" y2="40" stroke-dasharray="5 4"/><rect class="rsv-chip" x="122" y="114" width="116" height="26" rx="4"/><text class="msv-lbl" x="180" y="131.5">✕ to internet</text><rect class="msh-right" x="125" y="10" width="110" height="30" rx="4"/><text class="msh-name" x="180" y="29.5">Internet</text><rect class="msh-right" x="20" y="112" width="100" height="30" rx="4"/><text class="msh-name" x="70" y="131.5">DMZ</text><rect class="msh-right" x="240" y="112" width="100" height="30" rx="4"/><text class="msh-name" x="290" y="131.5">Users</text><rect class="msh-right" x="125" y="214" width="110" height="30" rx="4"/><text class="msh-name" x="180" y="233.5">Servers</text></svg>
+            <div class="topo-name">Egress filtered</div>
+            <div class="topo-desc">The servers reach only the few named destinations they need, such as update mirrors, and nothing else outside</div>
+          </div>
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The arrow in the middle is the one an intruder on a server needs,</strong> for
+          command-and-control, for downloading tools and for sending data out. With it in place, the rest of the
+          picture can be drawn perfectly and an intruder on a server can still call home. Removing it costs a
+          list of the few destinations each server really talks to, which is the first piece of the service map
+          the micro-segmentation row needs.
+        </div>
       </div>
     </div>
 
@@ -4594,7 +4794,7 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
 
 
 <!-- ── TOPIC: OT VS IT & THE PURDUE MODEL ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🏭</span>
     <span class="topic-name">OT vs IT &amp; the Purdue Model — When the Generic Answer Is the Wrong Answer</span>
@@ -4664,6 +4864,38 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
           everywhere. The value of the map is spotting which holes exist in <em>your</em> plant —
           the vendor laptop that dials straight into Level 1 is the finding, and the model is what
           lets you see it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Picture</div>
+      <div class="concept-title">The Map and the Plant: the Path the Model Draws, and the Link It Does Not</div>
+      <div class="concept-desc">
+        Drawn as a stack, the boundary is a line between two layers: everything above level 3.5 is IT and
+        everything below it is OT. The model intends every path into the plant to cross that line. The verdict
+        above names what real plants have instead, and drawn beside the intent it has a position: outside the
+        stack, from the enterprise network straight to the controllers.
+      </div>
+      <div class="dw">
+        <div class="topo-grid">
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 360 240" role="img" aria-label="The Purdue levels as a stack: enterprise and internet at the top, the IT/OT DMZ at level 3.5 below it, then operations, supervisory, control and the physical process at level 0. Everything above the DMZ is IT and everything below it is OT. A green path runs down through the stack from the enterprise level to control, crossing the DMZ on the way."><rect class="msh-right" x="66" y="10" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="29.5">4–5</text><text class="msv-rad" x="192" y="29.5">Enterprise, internet</text><rect class="msv-bar" x="66" y="48" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="67.5">3.5</text><text class="msh-name" x="192" y="67.5">IT/OT DMZ</text><rect class="msh-right" x="66" y="86" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="105.5">3</text><text class="msv-rad" x="192" y="105.5">Operations</text><rect class="msh-right" x="66" y="124" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="143.5">2</text><text class="msv-rad" x="192" y="143.5">Supervisory</text><rect class="msh-right" x="66" y="162" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="181.5">1</text><text class="msv-rad" x="192" y="181.5">Control</text><rect class="msh-right" x="66" y="200" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="219.5">0</text><text class="msv-rad" x="192" y="219.5">Process</text><line class="msv-axis" x1="52" y1="12" x2="52" y2="38"/><line class="msv-axis" x1="52" y1="12" x2="58" y2="12"/><line class="msv-axis" x1="52" y1="38" x2="58" y2="38"/><text class="msv-lbl2" x="32" y="29.5">IT</text><line class="msv-axis" x1="52" y1="88" x2="52" y2="228"/><line class="msv-axis" x1="52" y1="88" x2="58" y2="88"/><line class="msv-axis" x1="52" y1="228" x2="58" y2="228"/><text class="msv-lbl2" x="32" y="162.5">OT</text><line class="msv-tangent" x1="277" y1="40" x2="277" y2="169"/><polygon class="msv-r1" points="277,176 272.5,167 281.5,167"/></svg>
+            <div class="topo-name">As the model intends</div>
+            <div class="topo-desc">A path from the enterprise network reaches the controllers only by crossing the DMZ at 3.5</div>
+          </div>
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 360 240" role="img" aria-label="The same stack. A dashed line labeled vendor link leaves the enterprise level, runs down the outside of the stack and arrives at level 1, control, without crossing the DMZ."><rect class="msh-right" x="66" y="10" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="29.5">4–5</text><text class="msv-rad" x="192" y="29.5">Enterprise, internet</text><rect class="msv-bar" x="66" y="48" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="67.5">3.5</text><text class="msh-name" x="192" y="67.5">IT/OT DMZ</text><rect class="msh-right" x="66" y="86" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="105.5">3</text><text class="msv-rad" x="192" y="105.5">Operations</text><rect class="msh-right" x="66" y="124" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="143.5">2</text><text class="msv-rad" x="192" y="143.5">Supervisory</text><rect class="msh-right" x="66" y="162" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="181.5">1</text><text class="msv-rad" x="192" y="181.5">Control</text><rect class="msh-right" x="66" y="200" width="220" height="30" rx="3"/><text class="msv-lbl2" x="88" y="219.5">0</text><text class="msv-rad" x="192" y="219.5">Process</text><line class="msv-axis" x1="52" y1="12" x2="52" y2="38"/><line class="msv-axis" x1="52" y1="12" x2="58" y2="12"/><line class="msv-axis" x1="52" y1="38" x2="58" y2="38"/><text class="msv-lbl2" x="32" y="29.5">IT</text><line class="msv-axis" x1="52" y1="88" x2="52" y2="228"/><line class="msv-axis" x1="52" y1="88" x2="58" y2="88"/><line class="msv-axis" x1="52" y1="228" x2="58" y2="228"/><text class="msv-lbl2" x="32" y="162.5">OT</text><line class="msv-secant" x1="286" y1="25" x2="318" y2="25" stroke-dasharray="5 4"/><line class="msv-secant" x1="318" y1="25" x2="318" y2="177" stroke-dasharray="5 4"/><line class="msv-secant" x1="318" y1="177" x2="295" y2="177" stroke-dasharray="5 4"/><polygon class="msv-dot2" points="287,177 296,172.5 296,181.5"/><text class="msv-lbl" x="332" y="101" transform="rotate(90 332 101)">vendor link</text></svg>
+            <div class="topo-name">As the plant is wired</div>
+            <div class="topo-desc">A vendor’s remote-support link arrives at level 1 and never crosses the DMZ</div>
+          </div>
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Any line that reaches a lower level without crossing 3.5 is a finding,</strong>
+          whatever it is for. A vendor's remote-support link is the usual one: installed so a machine can be
+          fixed quickly, connected straight to the controllers, and missing from the network diagram. Look for
+          these in the traffic, which the passive monitoring in
+          <span class="xref">ICS Protocols — Modbus, DNP3, OPC UA and Their Security Assumptions</span> already
+          collects, and not in the diagram.
         </div>
       </div>
     </div>
@@ -4882,7 +5114,7 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
 </div>
 
 <!-- ── TOPIC: INSIDER THREAT ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🎭</span>
     <span class="topic-name">The Insider Threat Program — Malicious, Negligent &amp; Compromised</span>
@@ -4936,6 +5168,34 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
           transparent about what is monitored, and keep HR in the room. The cleared-environment
           version of this discipline is in
           <span class="xref">Clearance Paperwork — SF 86, SF 312 &amp; SF 714</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Five Controls Against One Person Acting Alone, and the Two That Only Detect</div>
+      <div class="concept-desc">
+        The table above names separation of duties. It has four siblings, and exams ask for all five. They
+        share one assumption, that the fraud needs a single person acting alone, and they divide into
+        controls that prevent it and controls that only find it later.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>What it requires</th><th>Prevents or detects</th><th>Where it shows up in IT</th></tr></thead>
+          <tbody>
+            <tr><td>Separation of duties</td><td>No one person completes a sensitive process alone: request and approve, write and deploy, raise and pay</td><td class="c-green">Prevents</td><td>Change approval, and a developer who cannot deploy their own code to production</td></tr>
+            <tr><td>Dual control</td><td>Two people act together, at the same moment</td><td class="c-green">Prevents</td><td>Break-glass credentials, a key ceremony, a vault with two keys</td></tr>
+            <tr><td>Split knowledge</td><td>No one person knows the whole secret: each holds a part</td><td class="c-green">Prevents</td><td>Master key components held by separate custodians</td></tr>
+            <tr><td>Job rotation</td><td>People move between duties on a schedule</td><td class="c-amber">Detects, and builds cover</td><td>A successor finds what the last person was hiding, and the team survives a departure</td></tr>
+            <tr><td>Mandatory vacation</td><td>A block of consecutive days away, with the work done by someone else</td><td class="c-amber">Detects</td><td>A fraud that needs daily upkeep, such as a suppressed alert or money moved to cover an earlier theft, surfaces while its author is away</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row is the cheapest detective control there is, and the one most
+          often waived for the person who most needs it.</strong> The indispensable administrator who never
+          takes leave is either a single point of failure or a fraud in progress, and the control cannot tell
+          which until they are away. All five fail the same way, to two people agreeing, which is why they are
+          paired with monitoring rather than trusted alone.
         </div>
       </div>
     </div>
@@ -5153,6 +5413,236 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
           running analytics for a partner without either side exposing raw records. That is the same
           goal the anonymization and differential-privacy techniques in `grc` pursue, reached by a
           different route: not de-identifying the data, but never decrypting it where it could leak.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: CRYPTANALYTIC ATTACKS ─────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔓</span>
+    <span class="topic-name">Cryptanalytic Attacks — Known Plaintext, Side Channels &amp; Why Implementations Break First</span>
+    <span class="topic-badge">Cryptography • Attacks</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The attack models</div>
+      <div class="concept-title">What the Attacker Holds Decides Which Attack Is Possible</div>
+      <div class="concept-desc">
+        Cryptanalysis sorts attacks by what the attacker has to work with, from intercepted ciphertext alone up
+        to a system that will try to decrypt whatever they send it. Modern ciphers such as AES <span class="acro-exp">(Advanced Encryption Standard)</span> are designed to
+        resist every one of these models. The models still matter, because of the systems that use those ciphers
+        badly.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Model</th><th>The attacker has</th><th>Where it still works</th></tr></thead>
+          <tbody>
+            <tr><td>Ciphertext only</td><td>Intercepted ciphertext, and nothing else</td><td>Classical ciphers, through frequency analysis, and any scheme that encrypts the same input to the same output</td></tr>
+            <tr><td>Known plaintext</td><td>Some plaintext and the ciphertext it became, such as a file header or a fixed protocol field</td><td>A stream cipher or counter mode with a key and nonce used twice. A known plaintext attack on one message recovers the keystream, and that keystream decrypts every other message made with it</td></tr>
+            <tr><td>Chosen plaintext</td><td>A way to have plaintext of their choosing encrypted</td><td>Encryption with no randomness in it, such as ECB <span class="acro-exp">(Electronic Codebook)</span> mode, which shows when two messages are the same</td></tr>
+            <tr><td>Chosen ciphertext</td><td>A system that tries to decrypt what they send, and answers that differ by outcome</td><td>Padding oracles. Bleichenbacher broke the PKCS <span class="acro-exp">(Public Key Cryptography Standards)</span>#1 v1.5 padding of RSA <span class="acro-exp">(Rivest-Shamir-Adleman)</span> in SSL <span class="acro-exp">(Secure Sockets Layer)</span> this way in 1998, and the ROBOT research found the same flaw in TLS <span class="acro-exp">(Transport Layer Security)</span> servers in 2017</td></tr>
+            <tr><td>Brute force</td><td>Time, and a way to test a key</td><td>Short keys and human passwords. The Electronic Frontier Foundation's machine found a DES <span class="acro-exp">(Data Encryption Standard)</span> key in 56 hours in 1998. A 128-bit key is beyond any such search</td></tr>
+          </tbody>
+        </table>
+        <!-- fact: EFF's DES Cracker found the key for RSA's DES Challenge II-2 in July 1998 after about 56 hours; with distributed.net in January 1999 it took 22 hours 15 minutes | source: EFF's DES Cracker pages and Wikipedia's EFF DES cracker article, as quoted in search results | checked: 2026-11 -->
+        <!-- fact: Bleichenbacher's adaptive chosen-ciphertext attack on PKCS#1 v1.5 was published in 1998; ROBOT (Böck, Somorovsky and Young) was announced in December 2017 and presented at USENIX Security 2018 | source: the USENIX Security 2018 ROBOT paper page, CERT/CC VU#144389 and Rapid7's December 2017 post, as quoted in search results | checked: 2026-11 -->
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Frequency analysis is the oldest lesson, and it is still the live one.</strong>
+          It breaks a substitution cipher by counting symbols: <em>e</em> is the most common letter in English,
+          so the most common symbol in the ciphertext probably stands for it. Any modern scheme that turns equal
+          inputs into equal outputs leaks in the same way, which is why ECB mode shows the outline of an image it
+          encrypts, and why authenticated modes with a fresh nonce, such as AES-GCM, replaced it. The modes are
+          compared in <span class="xref">Cryptography Algorithm Reference</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Implementation attacks</div>
+      <div class="concept-title">Side Channels and Faults — Reading the Key From the Device, Not the Math</div>
+      <div class="concept-desc">
+        A side-channel attack leaves the algorithm alone and measures the device running it, and a fault attack
+        disturbs that device. Paul Kocher showed in 1996 that the time private-key operations take can reveal
+        RSA and Diffie-Hellman keys, and in 1999, with Joshua Jaffe and Benjamin Jun, that a chip's power
+        consumption can reveal its DES key. In 1997 Boneh, DeMillo and Lipton showed that a single faulty RSA
+        signature, computed with the Chinese remainder theorem shortcut most implementations use, can expose the
+        private key.
+        <!-- fact: Kocher, Timing Attacks on Implementations of Diffie-Hellman, RSA, DSS, and Other Systems, CRYPTO '96; Kocher, Jaffe and Jun, Differential Power Analysis, CRYPTO '99 (applied to DES); Boneh, DeMillo and Lipton, Eurocrypt '97, journal version in the Journal of Cryptology 2001, where the key of a CRT implementation is exposed from a single erroneous signature | source: Springer and DOI records and Stanford's abstract page, as quoted in search results | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Attack</th><th>Measures or causes</th><th>Defense</th></tr></thead>
+          <tbody>
+            <tr><td>Timing</td><td>How long an operation takes, when that depends on the secret. A comparison that stops at the first wrong byte tells the attacker how many bytes were right</td><td>Constant-time code, and constant-time comparison such as <code>hmac.compare_digest</code> in Python</td></tr>
+            <tr><td>Power and electromagnetic analysis</td><td>The current a chip draws, or what it radiates, while it computes with the key</td><td>Masking, and hardware built and tested against it: smart cards, HSMs <span class="acro-exp">(Hardware Security Module)</span> and secure elements</td></tr>
+            <tr><td>Cache and microarchitectural</td><td>What another process can infer from shared CPU <span class="acro-exp">(Central Processing Unit)</span> caches and speculative execution</td><td>Patches, isolation, and not sharing a core with untrusted code</td></tr>
+            <tr><td>Fault injection</td><td>A glitch in voltage or clock, or a laser pulse, that makes one computation come out wrong</td><td>Checking a result before releasing it, and sensors that detect the glitch</td></tr>
+            <tr><td>Acoustic and other emanations</td><td>Sound, light or radio that varies with what the device is doing</td><td>Shielding, and control of who can get near the device</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">AES has not been broken; implementations of it have.</strong> No attack on the
+          full cipher comes anywhere near practical, and the breaks that make the news are side channels, reused
+          nonces, careless padding checks and stolen keys. When a question asks what fails first, the answer is
+          almost never the algorithm. The microarchitectural row has a topic of its own,
+          <span class="xref">Speculative Execution &amp; Its Security Cost — Spectre and Meltdown</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Around the cipher</div>
+      <div class="concept-title">Man-in-the-Middle, Pass the Hash, Kerberos and Ransomware — Attacks That Never Touch the Math</div>
+      <div class="concept-desc">
+        The rest of what the CISSP <span class="acro-exp">(Certified Information Systems Security Professional)</span> outline lists under cryptanalytic attacks breaks nothing mathematical. These
+        attacks take a key, reuse something that works as one, or sit where keys are agreed.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Attack</th><th>What it does instead</th><th>Defense</th></tr></thead>
+          <tbody>
+            <tr><td>Man-in-the-middle</td><td>Sits between two parties before they have authenticated each other's keys, and agrees a key with each of them</td><td>Authenticated key exchange: the certificate checks in <span class="xref">TLS — Handshake, Cipher Suites &amp; Certificate Chain</span></td></tr>
+            <tr><td>Downgrade</td><td>Pushes both sides to an older protocol version or a weaker cipher they still allow</td><td>Turning old versions off, and protocols that detect the push</td></tr>
+            <tr><td>Pass the hash</td><td>Presents the stored NTLM <span class="acro-exp">(NT LAN Manager)</span> hash itself, which the protocol accepts in place of the password</td><td>Keeping stored hashes out of reach, as <span class="xref">Mimikatz — Credential Extraction</span> explains</td></tr>
+            <tr><td>Kerberos exploitation</td><td>Cracks service tickets offline, since each is encrypted with a key derived from the service account's password, or forges tickets with a stolen key</td><td>Long or managed service-account passwords, and a protected krbtgt key, as in <span class="xref">Kerberos Attacks — Rubeus &amp; Kerbrute</span></td></tr>
+            <tr><td>Birthday attack</td><td>Finds two inputs with the same hash after about 2<sup>n/2</sup> tries for an n-bit hash, not 2<sup>n</sup></td><td>A hash long enough that 2<sup>n/2</sup> is out of reach. The arithmetic is in <span class="xref">The Birthday Paradox &amp; Collisions — Hash Collisions, ID Reuse &amp; Key Spaces</span></td></tr>
+            <tr><td>Ransomware</td><td>Uses cryptography correctly, against its victim</td><td>Backups the attacker cannot reach. Free decryptors exist mainly where a family's implementation was flawed or its keys were seized</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">None of these is fixed by choosing a stronger cipher.</strong> Each row
+          goes around strong cryptography rather than through it, so the defenses are about keys and
+          protocols: authenticate every key exchange, retire old protocol versions, protect stored hashes and
+          keys as if they were the passwords they stand for, and keep backups the attacker cannot reach.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: PERSONNEL SAFETY & SECURITY ────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧳</span>
+    <span class="topic-name">Personnel Safety &amp; Security — Travel, Duress, Emergency Management and Training</span>
+    <span class="topic-badge">People • Safety</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The first rule</div>
+      <div class="concept-title">People Come Before Assets, and Every Plan Here Is Written in That Order</div>
+      <div class="concept-desc">
+        Life safety outranks every other security objective: no data, system or building is worth a person
+        getting hurt. That one rule decides the answers in this topic. Staff under threat comply first and
+        signal second. Exits let people out even when that means a door is briefly unlocked. A traveler hands
+        over a device rather than argue with an armed official, which is why the device should carry nothing
+        worth arguing over.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Concern</th><th>What the program provides</th><th>What staff are told</th></tr></thead>
+          <tbody>
+            <tr><td>Travel</td><td>Briefings for the destination, loaner devices, a contact who answers at any hour</td><td>Carry the minimum, and report anything odd as soon as it is safe to</td></tr>
+            <tr><td>Duress</td><td>Duress codes and silent alarms, and a response that protects the person signaling</td><td>Comply, signal if it can be done unnoticed, and never resist to protect property</td></tr>
+            <tr><td>Emergencies</td><td>Evacuation and shelter-in-place plans, wardens, assembly points, drills and a way to account for everyone</td><td>Where to go, who to report to, and to leave belongings behind</td></tr>
+            <tr><td>Training and awareness</td><td>Recurring training on the threats aimed at people, from recruitment by outsiders to MFA <span class="acro-exp">(Multi-Factor Authentication)</span> fatigue</td><td>What to report, to whom, and that reporting a mistake is welcome</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">An exam answer that protects an asset at a person's expense is wrong.</strong>
+          The same rule settles fail-safe vs fail-secure on a door. A fail-safe lock opens when its power fails
+          and a fail-secure one stays locked, and on an exit even the fail-secure one must still let people out
+          from the inside. How each failure mode is chosen is in
+          <span class="xref">Failure Modes &amp; Effects Analysis for Systems — Thinking It Through Before It Happens</span>,
+          and the building's own layers in
+          <span class="xref">Physical Security Systems — Access Control, CCTV &amp; the Facility Layers</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Travel</div>
+      <div class="concept-title">Business Travel Security — Assume the Device Will Be Inspected, and Carry Accordingly</div>
+      <div class="concept-desc">
+        Business travel security starts from an awkward fact: at some borders, officials can examine a device,
+        and refusing can mean a refused entry or a device kept behind. Hotel rooms are not private, and public
+        Wi-Fi belongs to someone else. The answer is less to carry rather than more to defend.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>When</th><th>Do</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Before</td><td>Take a loaner laptop and phone for high-risk destinations, with only the data the trip needs. Check that the encryption on them may be taken into the country</td><td>A device with nothing on it cannot leak anything, and some countries restrict encryption</td></tr>
+            <tr><td>At the border</td><td>Have devices powered off rather than asleep</td><td>A powered-off encrypted disk needs its key, while a sleeping one may already have it in memory</td></tr>
+            <tr><td>During</td><td>Use the company VPN <span class="acro-exp">(Virtual Private Network)</span> on any network you do not control, and keep devices with you rather than in the room</td><td>Hotel and conference networks are shared, and an unattended device can be tampered with</td></tr>
+            <tr><td>If a device was taken out of sight</td><td>Report it, and treat it as compromised</td><td>Nobody can show that a device examined in private was not changed</td></tr>
+            <tr><td>After</td><td>Return loaners to be wiped and reimaged, and change any password used on the trip</td><td>Whatever happened to the device stays with it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Plan the trip in the posts as well as on the laptop.</strong> Travel dates,
+          hotel photos and conference badges posted publicly tell an attacker where someone will be and when the
+          house is empty. Senior people are the usual target, and
+          <span class="xref">Executive &amp; VIP Exposure — Data Brokers, Doxxing Risk &amp; Protective Steps</span>
+          covers what to do about how much of that is already public.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Duress and emergencies</div>
+      <div class="concept-title">A Duress Code Signals for Help Without Changing What the Attacker Sees</div>
+      <div class="concept-desc">
+        A duress code is a second code that appears to work normally while silently raising an alarm: an alarm
+        panel that disarms as asked and alerts the monitoring center, a phrase agreed for a phone call, a panic
+        button under a counter. It exists because the person being forced must not be seen asking for help. An
+        emergency evacuation plan does the same job for fire, flood and other hazards: it decides beforehand who
+        moves where, so nobody has to decide in the moment.
+      </div>
+      <div class="dw">
+        <div class="dt">▸ AN EVACUATION, IN ORDER</div>
+        <div class="dora-seq">
+          <div class="dora-item"><div class="dora-letter">1</div><div class="dora-word">Alert</div><div class="dora-desc">Alarm or mass notification, with the instruction: leave, or shelter in place</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">2</div><div class="dora-word">Move</div><div class="dora-desc">Wardens sweep their floor, and people leave by the nearest safe exit, belongings left</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">3</div><div class="dora-word">Assemble</div><div class="dora-desc">At the assigned assembly point, away from the building</div></div>
+          <div class="c-muted">→</div>
+          <div class="dora-item"><div class="dora-letter">4</div><div class="dora-word">Account</div><div class="dora-desc">A roll call against who was in, so responders know who is missing</div></div>
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Accounting for everyone is the step a drill most needs to test.</strong> A visitor log
+          and the badge system's record of who is inside are only useful if someone takes them out of the
+          building. Drill it, including the night shift. The same order is why a security team's own emergency
+          duties, such as protecting backup media or locking a server room, come after people are out and
+          counted.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Training</div>
+      <div class="concept-title">Awareness for the Threats Aimed at People — Recruitment, Oversharing and MFA Fatigue</div>
+      <div class="concept-desc">
+        The training CISSP <span class="acro-exp">(Certified Information Systems Security Professional)</span> names under personnel safety is about the attacks that go through people rather
+        than systems, and its measure is whether people report.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Threat</th><th>What it looks like</th><th>What staff should do</th></tr></thead>
+          <tbody>
+            <tr><td>Insider recruitment</td><td>An approach that flatters, offers money or a job, and asks for small favors that grow</td><td>Report it early. A report is not an accusation</td></tr>
+            <tr><td>Social media impacts</td><td>Org charts rebuilt from profiles, badge photos, out-of-office posts, travel plans</td><td>Post less about work, never a badge or a screen, and nothing about where you will be</td></tr>
+            <tr><td>MFA fatigue</td><td>Sign-in prompts arriving that you did not start, often late at night, sometimes with a call claiming to be IT</td><td>Deny them all and report it. A prompt you did not start means someone has your password</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Count reports, not completions.</strong> A course everyone finished proves
+          attendance. Rising reports of odd approaches and unexpected prompts prove the training worked. How
+          the push attacks work is in
+          <span class="xref">MFA Bypass in Practice — Adversary-in-the-Middle, Push Fatigue &amp; Stolen Sessions</span>,
+          and the program around the people who turn is in
+          <span class="xref">The Insider Threat Program — Malicious, Negligent &amp; Compromised</span>.
         </div>
       </div>
     </div>

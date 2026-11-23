@@ -298,7 +298,7 @@ const READERS = [
     ["onedrive is not syncing"],
     ["teams keeps signing me out"],
     ["the user says the file is gone",
-     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want"],
+     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want. Since the third wave it scores answered, by coincidence: the Windows built-in tools topic holds all four words, `user` only inside the expansion of UDP, and relaxation widens that one match to 31 cards. One is the retention card; the rest are not about a lost file. In the eighth wave search stopped matching inside acronym expansions, and this query went back to zero, which is what a reader gets"],
     // ── batch fourteen ──
     ["the printer is printing garbage", "",
      "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
@@ -311,7 +311,8 @@ const READERS = [
     // ── batch seventeen ──
     ["how do i prove it is not the network",
      "wide and inherent, and the widest noun this site has: `network` is the only word left after the stop list drops `how do i prove it is not the`, and it is in a fifth of the corpus. The answer is inside the set — `ops` *Troubleshooting Like a Pro* and `net`'s own troubleshooting cards are all in the 83. Ranking would pick between them; this matcher is a filter"],
-    ["the user has two accounts"],
+    ["the user has two accounts", "",
+     "infra/one-user-two-accounts-how-sync-matches-people-and-fixing-the"],
     ["the software installed but does not appear"],
     // ── batch eighteen ──
     ["the user changed their name"],
@@ -415,6 +416,32 @@ const READERS = [
     ["what does opsec actually mean", "",
      "military/opsec-operational-security-in-cyber-real-life"],
     ["how do i use vim", "", "shortcut/vim"],
+    // ── fifth wave: Content ideas §4 rows 31 and 35, added before their cards.
+    // Two wants name topics that do not exist yet, by the slugs of their titles.
+    ["epicureanism", "", "philosophy/epicureanism-pleasure-meant-the-absence-of-pain"],
+    ["epicurus", "", "philosophy/epicureanism-pleasure-meant-the-absence-of-pain"],
+    ["confucianism", "", "philosophy/confucianism-roles-ritual-and-the-exemplary-person-and-where"],
+    ["taoism vs confucianism", "", "philosophy/confucianism-roles-ritual-and-the-exemplary-person-and-where"],
+    ["9 line medevac", "", "military/military-communication-standards-clear-concise-correct"],
+    ["date time group", "", "military/military-communication-standards-clear-concise-correct"],
+    ["frago", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
+    ["mett-tc", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
+    ["ccir", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
+    // ── sixth wave: Content ideas §4 rows 32 to 34, the quotes, before their topics.
+    // Each want names a topic that does not exist yet. Left out: `conway's law`
+    // and `goodhart's law` already reach the eng cards that use them, and `no
+    // plan survives contact with the enemy` and `plans are worthless` reach
+    // military and mind cards that quote them.
+    ["premature optimization", "", "quotes/computing-quotes-the-lines-engineers-repeat-and-where-each-w"],
+    ["billion dollar mistake", "", "quotes/computing-quotes-the-lines-engineers-repeat-and-where-each-w"],
+    ["grace hopper", "", "quotes/computing-quotes-the-lines-engineers-repeat-and-where-each-w"],
+    ["hyrum's law", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["postel's law", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["brooks's law", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["hofstadter's law", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["chesterton's fence", "", "quotes/the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte"],
+    ["sun tzu", "", "quotes/strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"],
+    ["clausewitz", "", "quotes/strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"],
     ["what is big o for",
      "wide, and the one of the three with a cause rather than a corpus: `o` is one character, dropped as a free-floating requirement because a one-character word narrows nothing, so the query collapses to `big` — 114 cards. `big o` returns 10 and `big o notation` returns 2, because a short query is answered by the phrase stage and never reaches this one. The join-instead-of-drop fix was built and reverted: it broke `the 5 whys`, a gated fixture, and narrowing it to letters fails on `what is a c pointer`, which needs `pointer` and not `cpointer`. A corpus-aware version — join only where the joined form exists in the folded text — is decidable and not attempted, because it costs a sweep on every query",
      "cs/big-o-in-practice-what-the-notation-hides"],
@@ -558,6 +585,31 @@ const READERS = [
   // word: asleep, ASLR, Maslow, SASL. `carriage return` and `extended ascii`
   // found cards, just not the chart. The ASL half then moved to its own topic in
   // productivity, with a picture of each handshape, and its five queries with it.
+  // The second reader *Content ideas* §7.3 named, added with the first theory
+  // card as it said: a reader whose queries nothing is about to answer records a
+  // backlog, not a census. Fifteen queries for §4 rows 21 to 27, before their
+  // cards. Left out on purpose, because each already reaches a defensible card:
+  // `crc` the modular-arithmetic topic, `bit mask` the subnetting topics, `error
+  // correcting code` the memory topic's ECC, `regex html` the regex topic, and
+  // `producer consumer` the message-queue topics, which are the same pattern at
+  // the scale of services.
+  ["a student on a theory course", [
+    ["halting problem", "", "cs/p-np-knowing-when-to-stop-looking-for-an-exact-answer"],
+    ["turing machine", "", "cs/p-np-knowing-when-to-stop-looking-for-an-exact-answer"],
+    ["undecidable", "", "cs/p-np-knowing-when-to-stop-looking-for-an-exact-answer"],
+    ["context-free grammar", "", "cs/string-algorithms-matching-edit-distance-where-regex-fits"],
+    ["pumping lemma", "", "cs/string-algorithms-matching-edit-distance-where-regex-fits"],
+    ["hamming code", "", "cs/modular-arithmetic-the-clock-maths-behind-hashing-checksums-"],
+    ["parity bit", "", "cs/modular-arithmetic-the-clock-maths-behind-hashing-checksums-"],
+    ["bitwise and", "", "cs/boolean-algebra-truth-tables-de-morgan-firewall-logic"],
+    ["priority inversion", "", "cs/deadlock-livelock-the-four-conditions-and-which-one-to-break"],
+    ["dining philosophers", "", "cs/deadlock-livelock-the-four-conditions-and-which-one-to-break"],
+    ["boundary value analysis", "", "script/testing-strategy-why-and-how-to-test"],
+    ["equivalence partitioning", "", "script/testing-strategy-why-and-how-to-test"],
+    ["mutation testing", "", "script/testing-strategy-why-and-how-to-test"],
+    ["segmentation fault", "", "cs/memory-layout-cache-locality-why-arrays-beat-linked-lists"],
+    ["stack vs heap", "", "cs/memory-layout-cache-locality-why-arrays-beat-linked-lists"],
+  ]],
   ["somebody looking up a character code or a handshape", [
     ["ascii table", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
     ["ascii code", "", "cs/ascii-character-set-all-128-codes-and-the-bits-behind-them"],
@@ -571,6 +623,136 @@ const READERS = [
     ["fingerspelling", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
     ["asl numbers", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
     ["manual alphabet", "", "productivity/asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"],
+  ]],
+  // plan.md's *Content ideas* checked 398 exam phrases against the site and
+  // found it a mention deep on most of them: every domain header carries a
+  // certification tag, and no reader here was revising for one. Put here before
+  // the first card of that queue, as the four readers above were, and scoped to
+  // the five rows that wave writes rather than to all 398: a reader whose
+  // queries nothing is about to answer records a backlog, not a census. Each
+  // `want` names the topic being written into, including one that does not
+  // exist yet, because §3 of that section found a quarter of the titles that
+  // seemed to own a phrase owned it in another sense.
+  ["somebody revising for a CompTIA exam", [
+    ["ecb mode", "", "sec/cryptography-algorithm-reference"],
+    ["block cipher modes", "", "sec/cryptography-algorithm-reference"],
+    ["gcm nonce reuse", "", "sec/cryptography-algorithm-reference"],
+    ["crc errors", "", "net/network-troubleshooting-a-systematic-approach"],
+    ["runts and giants", "", "net/network-troubleshooting-a-systematic-approach"],
+    ["late collisions", "", "net/network-troubleshooting-a-systematic-approach"],
+    ["administrative distance", "", "net/routing-protocols-how-routers-find-the-best-path"],
+    ["longest prefix match", "", "net/routing-protocols-how-routers-find-the-best-path"],
+    ["floating static route", "", "net/routing-protocols-how-routers-find-the-best-path"],
+    ["safe mode", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["sfc scannow", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["dism restorehealth", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["inaccessible boot device", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["windows won't boot", "", "endpoint/windows-will-not-start-the-repair-ladder-safe-mode-to-reset"],
+    ["performance-based questions", "", "productivity/exam-technique-the-marks-you-lose-without-knowing-less"],
+    ["pbq", "", "productivity/exam-technique-the-marks-you-lose-without-knowing-less"],
+    // ── second wave: §4 rows 2–8 and 11–13, added before their cards ──
+    // Left out on purpose: `separation of duties` already reaches the insider
+    // topic, and `policy decision point` reaches zero trust at 59 results, one
+    // short of wide, so neither measures anything this wave will change.
+    ["bell-lapadula", "", "sec/access-control-models"],
+    ["biba integrity model", "", "sec/access-control-models"],
+    ["clark-wilson", "", "sec/access-control-models"],
+    ["chinese wall", "", "sec/access-control-models"],
+    ["policy enforcement point", "", "sec/zero-trust-never-trust-always-verify"],
+    ["false acceptance rate", "", "sec/multi-factor-authentication-layers-of-proof"],
+    ["crossover error rate", "", "sec/multi-factor-authentication-layers-of-proof"],
+    ["mandatory vacation", "", "sec/the-insider-threat-program-malicious-negligent-compromised"],
+    ["job rotation", "", "sec/the-insider-threat-program-malicious-negligent-compromised"],
+    ["dual control", "", "sec/the-insider-threat-program-malicious-negligent-compromised"],
+    ["toctou", "", "sec/broken-access-control-idor-traversal-the-checks-nobody-ran"],
+    ["maximum tolerable downtime", "", "ops/bcp-dr-key-metrics-recovery-strategies"],
+    ["mtd vs rto", "", "ops/bcp-dr-key-metrics-recovery-strategies"],
+    ["memorandum of understanding", "", "grc/third-party-risk-your-security-is-only-as-strong-as-your-ven"],
+    ["mou vs moa", "", "grc/third-party-risk-your-security-is-only-as-strong-as-your-ven"],
+    ["business partners agreement", "", "grc/third-party-risk-your-security-is-only-as-strong-as-your-ven"],
+    ["t568a vs t568b", "", "net/structured-cabling-racks-fiber-in-practice"],
+    ["attenuation", "", "net/structured-cabling-racks-fiber-in-practice"],
+    ["demarcation point", "", "net/structured-cabling-racks-fiber-in-practice"],
+    ["tone and probe", "", "net/the-field-toolkit-what-to-carry-and-the-test-each-tool-answe"],
+    ["tdr", "", "net/the-field-toolkit-what-to-carry-and-the-test-each-tool-answe"],
+    ["lldp", "", "net/network-documentation-that-stays-current"],
+    ["syslog severity levels", "", "ops/structured-logging-log-pipelines"],
+    // ── third wave: §4 rows 15–18 and 20, added before their cards ──
+    // The first `want` names a topic that does not exist yet; it is the slug of
+    // the title it will be written under. Left out on purpose: `msconfig` and
+    // `sfc scannow` already reach the Windows repair ladder, which uses both;
+    // `lc vs sc` and `st connector` already reach the cabling topic's table; and
+    // `displayport vs hdmi` reaches the displays topic, which compares the two.
+    ["chkdsk", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["robocopy mir", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["diskpart", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["devmgmt.msc", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["pathping", "", "shortcut/windows-built-in-tools-the-run-box-names-and-the-commands-wo"],
+    ["vlookup", "", "shortcut/microsoft-office-excelword"],
+    ["xlookup", "", "shortcut/microsoft-office-excelword"],
+    ["pivot table", "", "shortcut/microsoft-office-excelword"],
+    ["malware removal steps", "", "ops/incident-response-lifecycle-picerl"],
+    ["disable system restore", "", "ops/incident-response-lifecycle-picerl"],
+    ["rj11", "", "net/cabling-connectors-ethernet-standards"],
+    ["f-type connector", "", "net/cabling-connectors-ethernet-standards"],
+    ["lightning connector", "", "hw/docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati"],
+    ["micro usb", "", "hw/docks-usb-c-thunderbolt-power-delivery-alt-modes-the-compati"],
+    ["exercise before studying", "", "productivity/sleep-where-the-studying-actually-sticks"],
+    ["does exercise help memory", "", "productivity/sleep-where-the-studying-actually-sticks"],
+    // ── ninth wave: the five A+ objectives the exam paths skipped, added before their topics ──
+    // Every want names a topic that does not exist yet, by the slug of the title it will be
+    // written under. Opened at 0 of 16: ten zeros, and six that found the wrong card, among
+    // them `mbr vs gpt` reaching only the Linux boot topic and the acronym pages.
+    ["windows home vs pro", "", "endpoint/windows-editions-home-pro-enterprise-education-and-the-featu"],
+    ["can windows home join a domain", "", "endpoint/windows-editions-home-pro-enterprise-education-and-the-featu"],
+    ["windows enterprise vs pro", "", "endpoint/windows-editions-home-pro-enterprise-education-and-the-featu"],
+    ["ntfs vs exfat", "", "hw/file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c"],
+    ["fat32 file size limit", "", "hw/file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c"],
+    ["what file system for a usb drive", "", "hw/file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c"],
+    ["mbr vs gpt", "", "endpoint/installing-windows-boot-media-gpt-vs-mbr-and-clean-install-v"],
+    ["clean install vs upgrade", "", "endpoint/installing-windows-boot-media-gpt-vs-mbr-and-clean-install-v"],
+    ["pxe boot", "", "endpoint/installing-windows-boot-media-gpt-vs-mbr-and-clean-install-v"],
+    ["windows 11 tpm requirement", "", "endpoint/installing-windows-boot-media-gpt-vs-mbr-and-clean-install-v"],
+    ["phone battery draining fast", "", "endpoint/troubleshooting-phones-tablets-apps-battery-connectivity-and"],
+    ["app keeps crashing on phone", "", "endpoint/troubleshooting-phones-tablets-apps-battery-connectivity-and"],
+    ["signs a phone is compromised", "", "endpoint/troubleshooting-phones-tablets-apps-battery-connectivity-and"],
+    ["hard drive clicking", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
+    ["smart drive failure", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
+    ["drive not showing in bios", "", "hw/a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"],
+    // ── tenth wave: six objectives from four exam outlines with no topic, added before their topics ──
+    // Linux+ 1.2 and 1.7, PenTest+ 4.4 and 5.4, CISSP 3.7, and CySA+ 3.3 with 4.2. Every want
+    // names a topic that does not exist yet, by the slug of the title it will be written under.
+    // Opened at 0 of 18: eleven zeros, and seven that found the wrong card, among them
+    // `incident communication plan` reaching 23 topics and none of them a plan.
+    ["modprobe", "", "linux/linux-device-management-kernel-modules-udev-the-hardware-the"],
+    ["udev rule", "", "linux/linux-device-management-kernel-modules-udev-the-hardware-the"],
+    ["load a kernel module", "", "linux/linux-device-management-kernel-modules-udev-the-hardware-the"],
+    ["virsh", "", "linux/virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"],
+    ["kvm vs qemu", "", "linux/virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"],
+    ["libvirt", "", "linux/virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"],
+    ["pentest cleanup", "", "pentest/cleanup-restoration-leaving-a-clients-network-as-you-found-i"],
+    ["post-engagement cleanup", "", "pentest/cleanup-restoration-leaving-a-clients-network-as-you-found-i"],
+    ["remove persistence after a test", "", "pentest/cleanup-restoration-leaving-a-clients-network-as-you-found-i"],
+    ["process hollowing", "", "threat/process-injection-hollowing-dll-side-loading-hiding-inside-a"],
+    ["process injection", "", "threat/process-injection-hollowing-dll-side-loading-hiding-inside-a"],
+    ["dll sideloading", "", "threat/process-injection-hollowing-dll-side-loading-hiding-inside-a"],
+    ["known plaintext attack", "", "sec/cryptanalytic-attacks-known-plaintext-side-channels-why-impl"],
+    ["side-channel attack", "", "sec/cryptanalytic-attacks-known-plaintext-side-channels-why-impl"],
+    ["frequency analysis", "", "sec/cryptanalytic-attacks-known-plaintext-side-channels-why-impl"],
+    ["incident communication plan", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
+    ["who to notify during an incident", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
+    ["when to involve law enforcement", "", "ops/incident-communications-who-hears-what-when-and-from-whom"],
+    // ── eleventh wave: CISSP 1.6 and 7.15, which the tenth wave's path skipped, added before their topics ──
+    // SecurityX 1.1 names the same document hierarchy as CISSP 1.6. Opened at 0 of 8: four zeros,
+    // and four that found the wrong card, `cobit` among them reaching only the acronym dictionary.
+    ["policy vs standard vs procedure", "", "grc/policies-standards-procedures-guidelines-the-security-docume"],
+    ["difference between a guideline and a standard", "", "grc/policies-standards-procedures-guidelines-the-security-docume"],
+    ["raci matrix", "", "grc/policies-standards-procedures-guidelines-the-security-docume"],
+    ["cobit", "", "grc/policies-standards-procedures-guidelines-the-security-docume"],
+    ["duress code", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
+    ["business travel security", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
+    ["emergency evacuation plan", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
+    ["fail-safe vs fail-secure", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -825,8 +1007,8 @@ const READERS = [
     ["the drive is clicking"],
     // ── batch eighteen ──
     ["it posts but windows will not start"],
-    ["the usb ports on one side stopped working",
-     "kind 3 — the reader's fault is *a whole controller or front-panel header, not a port*, which is the right diagnosis and is the shape `hw` teaches throughout: isolate, swap, halve. `usb` at 31 and `header` at 33 are both in the corpus; no card carries them with `side`, which is the reader's word for a physical grouping the site describes electrically"],
+    ["the usb ports on one side stopped working", "",
+     "hw/motherboard-anatomy-chipsets-pcie-lanes-the-block-diagram"],
   ]],
   ["somebody with a cloud bill and a pager", [
     ["my lambda times out", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
@@ -892,6 +1074,17 @@ const READERS = [
     ["impostor syndrome", "", "mind/imposter-syndrome-you-belong-here"],
     ["first week as a manager", "",
      "eng/the-first-90-days-leading-a-team-listen-map-stabilize-then-c"],
+    // ── fifth wave: Content ideas §4 rows 28 to 30, added before their cards.
+    // `low mood` is left out: it already reaches Getting Professional Help and
+    // the CBT topic, both defensible. The low-mood want names a topic to come.
+    ["skillbridge", "", "military/transitioning-out-the-timeline-and-what-to-start-when"],
+    ["clep", "", "military/transitioning-out-the-timeline-and-what-to-start-when"],
+    ["federal resume", "", "military/transitioning-out-the-timeline-and-what-to-start-when"],
+    ["va home loan", "", "military/transitioning-out-the-timeline-and-what-to-start-when"],
+    ["feeling low", "", "mind/low-mood-a-bad-patch-or-something-to-take-to-a-doctor"],
+    ["depressed for weeks", "", "mind/low-mood-a-bad-patch-or-something-to-take-to-a-doctor"],
+    ["active listening", "", "mind/communication-relationships"],
+    ["how to be assertive", "", "mind/communication-relationships"],
     ["i keep procrastinating", "",
      "productivity/procrastination-what-it-actually-is-and-the-moves-that-work"],
     ["which cert should i do first", "",

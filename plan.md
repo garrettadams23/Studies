@@ -29,6 +29,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too | ✅ **shipped** — see its §9 to §19 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -51,23 +52,23 @@ the row needs was already running. Three are left, and all three want a stopwatc
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,563** across 30 domains | `depth_report.py` |
+| Topics | **1,585** across 30 domains | `depth_report.py` |
 | Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,406**, or **1,134 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Mean chars per concept card | **1,424**, or **1,146 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
-| Near-duplicate pairs | **95** (41 by overlap, 54 by containment) — 78 explained by §3, 17 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **373 of 398**, **0 unexplained** — twenty-two batches. The newest reader, *somebody looking up a character code or a handshape*, was added from a request for the ASCII character set with ASL added to it, before the card was written. It opened at **0 of 12** and closed at 12 of 12: five zeros, and seven that found cards but never the chart. `asl` was a zero the corpus counted fifteen times, every one inside another word: *asleep*, ASLR, Maslow, SASL. The reader before it, *a student with a data structures course*, was added from *csvistool* the same way. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The one before that, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. Before that, *a student on a SQL Server and Java course* opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. The 24 remaining zeros, the 1 wrong-card and the 8 wide results are recorded verdicts, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **102 paths, 1,601 steps, 1,503 of 1,563 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,503 topics, 4,904 links, 0 one-way** — one mainland of **1,487 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **32% raw** headroom — room for ~745 more topics | `page_budget.py` |
+| Near-duplicate pairs | **96** (41 by overlap, 55 by containment) — 78 explained by §3, 18 read and recorded, **0 unread** | `near_duplicates.py` |
+| Reader questions answered | **513 of 537**, **0 unexplained** — thirty-two batches. The newest is the eleventh wave's, 8 queries for CISSP 1.6 and 7.15, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 8**, four zeros and four that found the wrong card, `cobit` among them reaching only the acronym dictionary, and closed at 8 of 8: five find their topic alone and three find it among two or three. Before it came the tenth wave's, 18 queries for six objectives four exam outlines had no topic for, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 18**, eleven zeros and seven that found the wrong card, `incident communication plan` among them reaching 23 topics and none of them a plan, and closed at 18 of 18: fourteen find their topic alone, and four find it among two to eight. Before it came the ninth wave's, 16 queries for the five A+ objectives the exam paths skipped, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 16**, ten zeros and six that found the wrong card, and closed at 16 of 16 with three `endpoint` topics and two in `hw`. Two closed in prose, each by the card saying what the reader asked in the reader's words: `windows 11 tpm requirement` once the card called them Windows 11's requirements, and `fat32 file size limit` once it named FAT32's file size limit. Before it came the sixth wave's, 10 queries for §4 rows 32 to 34, the quotes, added to *a learner meeting a subject* before their topics. It opened at **0 of 10**, all ten zeros, and closed at 10 of 10, with every line in the three topics read at its source first. Before it came the fifth wave's, 17 queries for *Content ideas* §4 rows 28 to 31 and 35, added before their cards to two readers that already ask about those subjects, *a learner meeting a subject* and *somebody looking for a job*. It opened at **0 of 17** and closed at 17 of 17: 14 zeros and 3 that found the wrong card, `active listening` among them through load balancers and nmap. One closed in prose, not a card: `depressed for weeks` needed the low-mood topic to use the reader's word. Before it came *a student on a theory course*, the second reader *Content ideas* §7.3 named: 15 queries for its fourth wave, seven rows, added before their cards. It opened at **0 of 15** and closed at 15 of 15: 8 zeros and 7 that found the wrong card, `segmentation fault` among them through network segmentation. Before it, the exam reader's third batch, 16 queries for the third wave, opened at **0 of 16** and closed at 16 of 16: 12 zeros and 4 that found the wrong card, `pivot table` among them through *pivot* and *table* in threat and grc cards. Its second, 23 queries for the second wave, opened at **0 of 23** and closed at 23 of 23: 16 zeros and 7 that found the wrong card, among them three that reached only the acronym dictionary and one an AI card that happens to contain *tone* and *probe*. Its first batch, *somebody revising for a CompTIA exam*, was added the same way for the first wave's five rows. It opened at **0 of 16** and closed at 16 of 16: 8 zeros and 8 that found the wrong card. Four of the zeros were words the site had never written, among them `scannow` and `pbq`, and `crc errors` reached a modular-arithmetic card. The wave also disturbed one old query: `the user has two accounts` sat on the wide threshold at 60 and went to 61, and it carried a verdict naming the gap underneath it until the eighth wave wrote that gap as its own topic, which the query now finds alone. The reader before it, *somebody looking up a character code or a handshape*, was added from a request for the ASCII character set with ASL added to it, before the card was written. It opened at **0 of 12** and closed at 12 of 12: five zeros, and seven that found cards but never the chart. `asl` was a zero the corpus counted fifteen times, every one inside another word: *asleep*, ASLR, Maslow, SASL. The reader before it, *a student with a data structures course*, was added from *csvistool* the same way. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The one before that, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. Before that, *a student on a SQL Server and Java course* opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. Of the **23** zeros and **1** wrong-card, all are recorded verdicts. Two recorded zeros left that list by coincidence in the third wave, and their notes say so. `the user says the file is gone` matched the Windows tools topic with `user` found only inside the expansion of UDP, until the eighth wave stopped search matching inside expansions and it went back to zero, which is what a reader gets. `the usb ports on one side stopped working` matched a connector card's *wider on one side*, and relaxation added Motherboard Anatomy, which was half an answer until the eighth wave wrote the card it needed there. The 8 wide results are verdicts too, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **112 paths, 2,062 steps, 1,525 of 1,585 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,525 topics, 5,082 links, 0 one-way** — one mainland of **1,509 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **29% raw** headroom — room for ~650 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,154 chars**, median 3,761 — the number a deepening wave has to move | `depth_report.py` |
-| Dated claims | **47 volatile spans and 31 fact anchors: 78 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently. It rose by one with the ASCII chart's source link, and that anchor records that this container could not fetch the page rather than claiming a check | `check_volatility.py` |
+| Depth tail | **10th percentile 2,171 chars**, median 3,826 — the number a deepening wave has to move | `depth_report.py` |
+| Dated claims | **47 volatile spans and 80 fact anchors: 127 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently. It rose by one with the ASCII chart's source link, and that anchor records that this container could not fetch the page rather than claiming a check. It rose by one more with GCM's random-nonce limit in the cipher-modes card, and that anchor says the NIST figure was confirmed in search results and the PDF was not fetched. One more for Cisco's default administrative distances, said the same way, and two for the Windows repair ladder: Microsoft's DISM-before-SFC order and the two failed starts that open WinRE. And one for CompTIA's rule that a virtual PBQ cannot be skipped and returned to, which this container could not fetch from comptia.org and says so. Two more for Cisco's syslog defaults in the severity card: the trap level that ships as informational, and the two messages one interface going down produces, both confirmed in search results with the pages not fetched. Three more in the cabling and discovery cards, said the same way: the standard's preference for T568A, Cisco's rule that fixing speed and duplex turns Auto-MDI-X off, and the CDP and LLDP timers. One more for the Excel versions that have XLOOKUP, one for the A+ objective numbers behind the malware removal steps, one for the two exercise studies the header image's numbers were checked against, two in `cs` for ECC memory's code and the Mars Pathfinder mutex, and five in `military` for the transition programs, the 9-line, the date-time group and METT-TC, said the same way. The date-time group's anchor says that no source was found for it, which is what an anchor is for. Two in `mind` date the health services' two-week line and the COBRA trial, and one in `philosophy` records which translation the Epicurus quotation is from. Four in `quotes` record the pages each line was read on, fetched this time and not only searched. One more in `military` records where Boyd's line from Orient to Act was read about, and that both primary PDFs refused the fetch, and one in `blueteam` dates the Pyramid of Pain to Bianco in 2013 from a secondary overview, his post unread. One in `infra` records that an Enforced link moves to the end of processing, from Microsoft's pages as quoted in search, and one in `m365` that a rule setting the spam level to −1 cannot pass malware or high-confidence phishing, said the same way. Two in `infra`'s two-accounts topic date how sync matches a user and how long a deleted one can be restored, and three in `endpoint` date the edition differences, subscription activation, and the MBR, GPT and Windows 11 limits. Three in `hw` date the file systems' limits and support, NTFS permissions on copy and move, and Backblaze's SMART figures, which are from its 2016 data. Ten more in the tenth wave's six topics, all from search results with the pages not fetched: two in `linux` for dracut's `mkinitrd` wrapper and libvirt's open network mode, three in `threat` for ATT&CK's injection and side-loading numbers and Sysmon's events, three in `sec` for the DES search, the padding oracles and the side-channel papers, and two in `ops` for the NIS2 and Form 8-K clocks | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **164** · search **58** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3 | `make all` |
+| Gate results | check · smoke **165** · search **59** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **55** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **67** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -142,7 +143,7 @@ before lint before the expensive determinism and budget checks.
 | 3 | Wrote **"whitelist"** where house style is "allowlist" | `check_renames.py`, already in `make check`. First time it caught same-session writing |
 | 4 | A stray `<div class="topic-icon-none">` typed into a header | **Nothing catches this.** Re-read the first ten lines of each new card before splicing |
 | 5 | A regex audit found `DP` inside `UDP`, `RA` inside `YARA`, `SCP` inside `OSCP` — half a 77-row finding was the regex looking at itself | `(?<![A-Za-z0-9])`. A token boundary is not a word boundary when the tokens are acronyms |
-| 6 | Used `class="c-yellow"`, which does not exist | Grep `style.css` for the utility class before using one. Six exist; the rest are `style="color: var(--…)"` |
+| 6 | Used `class="c-yellow"`, which does not exist | Grep `style.css` for the utility class before using one. Six exist; the rest are `style="color: var(--…)"`. **Now a gate:** the habit was got past nine times, and `check_css_vars.py` fails on a class no rule defines |
 | 7 | Wrote a related-map target from memory; **slugs truncate at 60 characters** and the real id ended `…funds-i` | `suggest_related.py --check` names the missing target and the resulting one-way edge in the same run |
 | 8 | Filed a new acronym under `"c": "Military"` — the acronym domain is generated **by category**, so one entry created a whole `By Area — Military` topic and moved the site count | Check the neighbours before inventing a category. A category field in a generated taxonomy is a structural decision |
 | 9 | Probe zeros were **~60% phrasing misses**, including two cards written an hour earlier | Step 1 of the loop. Verify every zero against the real title list |
@@ -1329,6 +1330,884 @@ batch two*. The student reader opened at **1 of 15** and closed at **15 of 15**.
 | 4 | SQL Server | **Not a product card.** The §2 rows could each be written as a comparison, so the dialect was the topic: a new `data` topic, *SQL Dialects — The Differences That Run Without an Error* |
 | 4 | Java the language | One concept card on the existing Java topic, *The Rules a First Java Course States Too Strongly*, which is §5 turned into the question a student has |
 | 5 | Claims not to copy | Each went in as the caveat in its row, never as the note's sentence: `SET` and subqueries, `LIKE` brackets, `DATEDIFF`, the Java rows |
+
+
+# Content ideas — 839 candidates checked against the site, and the look they have to keep
+
+> Source: a request to *update the plan with more content ideas to add, with the same clean
+> look*. Filed as **a queue, not a record**: no card was written and nothing in `data/`
+> changed. It is the fourth piece of incoming work to arrive as a list, and the first where
+> this file wrote the list itself, so it got the treatment every list here gets, with less
+> excuse for skipping it. **839 candidate phrases in 17 reader groups**, each checked two
+> ways: a pattern over `data/*.html` with the generated acronym pages excluded, and
+> `runSearch()` driven in Chromium on the built page the way `query_probe.mjs` does it. The
+> whole list is kept in §8, because a scratch file is how queries evaporated before.
+
+**The largest finding was not on the list.** The page's own heading is *Cycles, Concepts
+&amp; Diagrams*, and **58 of 1,503 hand-written topics** carry anything beyond a concept
+card, a table and a code block. Nine contain an inline SVG, and six of those are in `math`.
+Fifteen of the twenty-nine hand-written domains have none at all. The components to draw
+with already exist, follow the theme, and most are used in exactly one place. §2.
+
+**The list came down the way lists here do.** Of 839 phrases, **81 are owned by a title**,
+452 are mentioned somewhere and no title owns them, and **306 are absent**. 238 return
+nothing from search outside the acronym dictionary. The count of owned phrases was 125 on
+the first pass and 107 on the second, and both were wrong: see §3. What is worth writing is
+about thirty-five cards, grouped in §4, and the answer is allowed to be fewer.
+
+**"The same clean look" is checkable, and it has one hole.** The look is seven everyday
+components, ten shapes and six color classes, counted in §1. Everything about it is gated except one thing: a
+class in the content that no rule in `style.css` defines. Nine table cells use one today.
+
+**And one kind of content needs no card at all.** There are 102 learning paths and none is
+named for an exam, on a site whose header reads *CompTIA, Tech &amp; Life Reference*. A path
+is an order over topics that exist, so it adds nothing to the page's look. §5.
+
+## 1. The look, measured — what "the same clean look" is made of
+
+A class census over the 35 files in `data/`: 294 distinct class names, and the look a
+reader sees is a short list of them. The first table is the part every topic uses.
+
+| What the reader sees | Class | Uses | Domains |
+|---|---|---|---|
+| A card: label, title, prose | `concept-card` | 4,357 | 30 |
+| A table | `ref-table` | 2,412 | 30 |
+| The sentence under a table | `concept-desc verdict` | 2,756 | 29 |
+| Code | `code-block` | 821 | 28 |
+| A pointer to another card | `xref` | 549 | 28 |
+| A claim with a date on it | `volatile` | 47 | 11 |
+| A link off the site | `extlink` | 42 | 4 |
+| Color | `c-cyan` 3,358 · `c-amber` 3,001 · `c-muted` 1,646 · `c-green` 446 · `c-red` 295 · `c-purple` 17 | | |
+
+`ai-table` is the older table design, 358 uses in 16 domains. `CONTRIBUTING.md` already
+says not to use it for new content and not to convert what exists.
+
+The second table is the part almost nothing uses. These are the shapes, counted by how
+many hand-written topics carry each. A topic can carry more than one.
+
+| Shape | Classes | Topics |
+|---|---|---|
+| Card grid | `card-grid` with `g-card`, and the one-off grids `zt-pillars`, `topo-grid`, `diamond-grid`, `pki-flow` | 24 |
+| Numbered rows, for a cycle or a ranked list | `kc-row`, `lifecycle` with `lc-step`, `nist-row`, `owasp-item` | 13 |
+| Callout bar | `info-bar` | 9 |
+| Inline SVG | `topo-svg`, `math-svg`, `asl-hand`, `role-svg` | 9 |
+| Step tiles, for a sequence | `dora-seq`, `flow-step`, `ml-flow`, `boot-seq`, `pt-phase` | 6 |
+| Layer stack | `layer-stack` | 2 |
+| Tree, and permission bits | `tree`, `perm-row` | 2 |
+| Matrix | `risk-matrix` | 1 |
+| Widget | `url-codec-wrap` | 1 |
+| Image file | `asl-chart` | 1 |
+
+**The names are historical and the components are not.** `dora-seq` is a flex row of
+tiles that wraps, and it was written for one DHCP sequence. `kc-row` was the kill chain.
+Every one of them has its rules in `style.css` and no fixed count of items. Reuse them
+under the names they have. Renaming is a redesign, and it moves nothing for the reader.
+
+**So the contract for new content is five rules, and four of them are already gated.**
+
+1. A topic is the canonical skeleton in `CONTRIBUTING.md` and a card is a `concept-card`.
+   `check_markup.py` proves it is well-formed and `lint_content.py` holds the conventions.
+2. A table is a `ref-table`, and it is followed by a `concept-desc verdict` that names a
+   row. `lint_content.py` counts the tables that end a card without one.
+3. A color is one of the six classes above or `style="color: var(--…)"`. A hex literal
+   fails the build, and so does a `var()` that is never declared.
+4. A picture is inline SVG colored by classes in `style.css`. No image host, no font from
+   elsewhere and no iframe: `netlify.toml` sets `default-src 'none'` and the smoke test
+   asserts zero off-site requests.
+5. A shape reuses a component from the second table before it adds one. A new component
+   is a design change. It owes the smoke test a theme check with presence asserted before
+   behavior, the mobile gate at 375 px, contrast in both themes, print, and
+   `page_budget.py`. The contrast half is by hand until the topic is in the set
+   `a11y_test.mjs` scans, which the last record named and did not build.
+
+**The hole is in rule 3.** Fifteen class names are used in content and have no rule in
+`style.css`. Three of them were meant to color something and color nothing:
+
+| Class | Where | What it was meant to be |
+|---|---|---|
+| `c-yellow` | 9 table cells in 6 files: `cloud` 3, `web` 2, `blueteam` 1, `redteam` 1, `script.05-platform` 1, `script.06-admin-automation` 1 | The caution tone between green and red. The house class is `c-amber`. The cells beside them use `c-red` and `c-green`, not `c-amber` as this cell first said. Fixed, see §9 |
+| `m` | 61 spans in code blocks: `cs` 27, `infra` 19, `sec` 15 | A number literal. This is a Pygments token name; the house token is `num` |
+| `nd` | 1 span in `cs` | A decorator, also a Pygments name |
+
+The other twelve are `layer-1` to `layer-7` on the OSI stack and five one-offs. They were
+counted and not read. **`c-yellow` is failure 6 in the operating manual, by name.** Its
+guard was *grep `style.css` for the utility class before using one*, which is a habit and
+not a gate, and nine cells have got past it since. It is the `var(--bg1)` bug that
+`check_css_vars.py` was written for, one layer over: a name that does not exist, failing
+silently, and producing a plausible wrong color in place of a missing one.
+
+## 2. The site is named for diagrams, and 58 topics draw anything
+
+| | Hand-written topics |
+|---|---|
+| All | 1,503 |
+| Carry any shape from §1's second table | **58**, 3.9% |
+| The same, not counting a callout bar as a shape | 52 |
+| Contain an inline SVG | **9**: `math` 6, `net` 1, `productivity` 1, `eng` 1 |
+| Domains with no shape at all | **15 of 29**: `blueteam`, `career`, `cloud`, `cs`, `data`, `devops`, `endpoint`, `hw`, `infra`, `m365`, `mind`, `quotes`, `redteam`, `shortcut`, `web` |
+
+**Fifty of the 58 carry an all-caps badge, which is mostly the mark of the first cards**:
+*REFERENCE MODEL*, *VISUAL MODELS*, *6-PHASE CYCLE*. They are the OSI stack, the
+topologies, DORA, the kill chain, the boot chain and the risk matrix. 194 topics have a
+badge like that, so a quarter of them have a shape. **Of the other 1,309 topics, eight
+do**: one zero-trust card, the ASL topic, and six in `math`, each
+drawn on purpose. The programmes that wrote everything else used the first table in §1 and
+nothing from the second. Phase 8 found this shape in depth, as the first accumulation risk:
+the house form improved and the earlier content was never revisited. This is that risk
+running the other way. The early form had pictures, and the later content never picked
+them up.
+
+**90 titles name a shape, and 75 of those draw none.** The words counted are *flow*,
+*lifecycle*, *handshake*, *cycle*, *pipeline*, *chain*, *hierarchy*, *topology*, *layer*,
+*tree*, *diagram*, *anatomy*, *loop*, *pyramid*, *matrix*, *ladder*, *graph*, *sequence*,
+*stage* and *phase*. The list is generous. *Supply chain* and *Microsoft Graph* are on it,
+and neither promises a picture. A looser list that adds *model*, *process*, *path* and
+*structure* gives 139 of 162, and that number should not be quoted.
+
+**Four of the 75 are about pictures and contain none.** `eng` *UML — Class, Object &amp;
+Sequence Diagrams, and the Diamond Everybody Draws Backwards* describes six line styles in
+words. Its table's first column reads *Hollow diamond, at the whole* and *Hollow triangle,
+dashed line, at the interface*. That column is a description of a drawing. `career` *Diagrams That Explain — The Small Number of Shapes
+Worth Using* does not show a shape. `hw` *Motherboard Anatomy — Chipsets, PCIe Lanes &amp;
+the Block Diagram* has no block diagram. `ops` *Priority, Impact &amp; Urgency — A Matrix
+People Actually Apply* has no matrix, and `grc` *Risk Management Lifecycle* already
+carries the component.
+
+### The rule for a picture, which is the rubric's one test turned sideways
+
+**A picture earns its place when it shows a location, an order or a containment that the
+prose can only assert.** `net` *Network Topologies* is the model. Its verdict says the five
+diagrams hide the difference between physical and logical, and that the only row that
+matters is where the single point of failure is. That is a judgement about the pictures.
+A diagram that restates its table is the picture version of a restated verdict, and the
+rubric's fix for that is to cut it.
+
+Twenty to draw, in the order the evidence ranks them. Every one uses a component that
+exists, and *inline SVG* below means drawn with the `topo-svg` or `msv-*` rules already in
+`style.css`. That none of the twenty needs a line of new CSS is a claim, and §7 says how to
+test it on one topic first.
+
+| # | Topic | What to draw | Component | What the picture says that the table cannot |
+|---|---|---|---|---|
+| 1 | `eng` *UML* | The six lines | Inline SVG in the table's first column | The card already says which mark is drawn the wrong way round. It should be visible |
+| 2 | `career` *Diagrams That Explain* | The shapes it recommends | `card-grid` of small SVGs | A card about choosing a shape, read without seeing one |
+| 3 | `hw` *Motherboard Anatomy* | The block diagram the title names | Inline SVG | Which lanes come from the CPU and which from the chipset, which is the card's whole argument about budget |
+| 4 | `ops` *Priority, Impact &amp; Urgency* | The matrix | `risk-matrix` | The cell where two teams disagree is a position, not a sentence |
+| 5 | `eng` *SDLC Models* | The V | Inline SVG | Each test level sits opposite the design level it checks. That pairing is the model |
+| 6 | `net` *Spanning Tree* | Three switches in a triangle, one port blocked | `topo-svg`, with `topo-hot` marking the port | Where the block is, and what loops when it is removed |
+| 7 | `net` *TCP vs UDP* | The handshake and the teardown | `dora-seq` | The half-open state has a position, and a SYN flood lives in it |
+| 8 | `net` *NAT in Practice* | One flow, with the address pair rewritten at each hop | `dora-seq` | Hairpinning is a path, and the failing one is the one that turns back |
+| 9 | `sec` *OT vs IT &amp; the Purdue Model* | The levels | `layer-stack` | The boundary between IT and OT is a line between two layers |
+| 10 | `sec` *Network Security Architecture* | Zones, and the directions allowed between them | `topo-svg` | The arrow that is missing. Egress filtering is an absence |
+| 11 | `cs` *Trees* | The same seven keys, balanced and degenerate | Inline SVG | The card is titled *An Unbalanced BST Is a Linked List With Extra Steps*. That is a picture |
+| 12 | `cs` *Caches &amp; the Memory Hierarchy* | The ladder, with the numbers on it | `layer-stack` | The gaps between rungs are orders of magnitude, and a table flattens them |
+| 13 | `cs` *Merkle Trees* | One changed leaf, and the hashes that change with it | Inline SVG | The path from leaf to root is the proof |
+| 14 | `military` *OODA Loop*, *The Intelligence Cycle* | The cycle | `lifecycle`, used in two topics today | The site's heading begins with *Cycles* |
+| 15 | `blueteam` *Detection Tuning &amp; the Pyramid of Pain* | The pyramid | `layer-stack` | Cost to the attacker rises with height, and the cheap indicators are the wide ones |
+| 16 | `devops` *CI/CD Pipeline Design* | Stages, with the gate between them | `dora-seq` | A gate is a position between two stages |
+| 17 | `cloud` *Azure Hierarchy, RBAC Scopes &amp; Policy* | Management group to resource | `layer-stack` | Inheritance runs one way, and the picture has a direction |
+| 18 | `infra` *Processing Order &amp; Precedence* | LSDOU as a stack | `layer-stack` | The last writer wins, and last is at the bottom |
+| 19 | `m365` *Mail Flow* | The path a message takes | `dora-seq` | Where a message can die, in order |
+| 20 | `web` *Flexbox*, *CSS Grid* | The axes | Inline SVG | Main axis and cross axis are directions |
+
+**What the ASL records already established, and it applies to every row above.** A
+drawing is a claim, and the check is weaker than a source: render it at size and read it
+against its own description. That caught four hands on the first pass. A caption needs
+`--cyan-2` and not `--cyan` to pass contrast in light mode. axe skips single-character
+text, so a clean scan is not evidence about one-letter labels. A grid fits three to a row
+under 640 px, and its media query goes below the base rule. And the theme check has to
+click, which is how the open palette was found. None of that needs rediscovering.
+
+## 3. 839 candidates, by who would ask
+
+The census groups its queries by reader because that is how the gaps cluster. This list
+did the same. Six groups are exam candidates, because 16 of the 30 domain headers carry a
+certification tag and no reader in `query_probe.mjs` is revising for one. Four are
+courses: the calculus that `math` follows, the software engineering and Java that the
+earlier batches named, and the two a computer science degree puts beside them. The rest
+are the Human, Growth and Reference chips.
+
+Each phrase was classified by the strongest place it appears. *Owned* means a topic title
+or a concept-card title contains it, in the sense that reader means. *Mentioned* means it
+is in the prose and no title carries it. *Absent* means it is nowhere in hand-written
+content in that sense. *Zero* is what search returns once the acronym dictionary is set
+aside.
+
+| Reader | Phrases | Owned | Mentioned | Absent | Zero |
+|---|---|---|---|---|---|
+| A Security+ candidate | 86 | 16 | 52 | 18 | 16 |
+| A Network+ candidate | 83 | 10 | 55 | 18 | 19 |
+| An A+ candidate | 66 | 6 | 32 | 28 | 14 |
+| A CISSP or SecurityX candidate | 54 | 3 | 19 | 32 | 23 |
+| A CySA+ candidate | 52 | 8 | 36 | 8 | 7 |
+| A Linux+ candidate | 57 | 9 | 36 | 12 | 10 |
+| A calculus student | 60 | 1 | 39 | 20 | 12 |
+| A student on a discrete maths or theory course | 41 | 2 | 16 | 23 | 19 |
+| A student on an operating systems or compilers course | 33 | 4 | 15 | 14 | 7 |
+| A student on a software engineering or Java course | 51 | 5 | 24 | 22 | 8 |
+| Somebody at a keyboard, looking something up | 40 | 3 | 15 | 22 | 16 |
+| A reader of the philosophy domain | 48 | 4 | 28 | 16 | 19 |
+| A reader of the mind domain | 27 | 0 | 20 | 7 | 5 |
+| A student building a study routine | 38 | 3 | 22 | 13 | 8 |
+| Somebody building a career, veterans included | 39 | 3 | 19 | 17 | 18 |
+| Somebody reading military structure | 32 | 3 | 17 | 12 | 9 |
+| Somebody looking for the source of a line | 32 | 1 | 7 | 24 | 28 |
+| **All** | **839** | **81** | **452** | **306** | **238** |
+
+**Three things the table says.**
+
+- **The site is a mention deep on the exams and a card deep on almost none of them.** Of
+  the 398 exam phrases, 52 are owned, 230 are mentioned and 116 are absent. By exam, the
+  share present in any form runs CySA+ 85%, Security+ 79%, Linux+ 79%, Network+ 78%, A+
+  58%, and CISSP or SecurityX 41%. The two lowest are the Windows desk and the theory,
+  which §4 comes back to.
+- **The mind domain owns none of its 27.** Twenty are mentioned, and the mentions are
+  mostly in other domains: `depress` appears once on the site, in `productivity`.
+- **The quotes domain is the least covered against its own premise.** 24 of 32 names are
+  absent from a domain whose subtitle is *with the work cited, and the misattributions
+  named*.
+
+**What these numbers are not.** The exam phrases were written from memory of the outlines.
+The outlines were not fetched, so this is a sample of objective vocabulary and not a
+coverage figure for any exam. *Mentioned* is an upper bound on coverage, because a mention
+can be the other sense of the word. And *absent* is a statement about a phrase. The
+calculus group is the proof: `integration by parts` is absent and the cheat sheet has a
+row named *By parts*.
+
+### The owned count was wrong twice, and the second error is the site's oldest finding
+
+The first pass said **125 owned**. The matcher put a trailing word boundary on every
+pattern and compiled any pattern containing a capital letter case-sensitively. So
+`Kerberoast` could not match inside *Kerberoasting*, and `NTFS permissions` missed a topic
+titled *Share vs NTFS Permissions*. Fixed, the count was **107**.
+
+Then the owner of each of the 107 was read, and **26 came off**. The title that owned
+the phrase was about something else: the other sense of the word, or a longer word that
+begins the same way.
+
+| Phrase | The title that owned it |
+|---|---|
+| `certificate signing request`, as `CSR` | *SSR, SSG, ISR &amp; CSR*, which is client-side rendering |
+| `loopback address` | *Processing Order &amp; Precedence — LSDOU, Enforcement &amp; Loopback* |
+| `amplification attack` | *You Pay for Cheap Writes in Read and Space Amplification*, in the LSM topic |
+| `out-of-band management` | *Out-of-Band Verification Is the Key*, in a social engineering card |
+| `common criteria` | *The CC (Common Criteria) Control Families*, which is SOC 2's |
+| `journaling` | *Filesystems From the Inside — Inodes, Journaling &amp; Crash Consistency* |
+| `second-order thinking` | *Second-Order Injection Passes Every Test* |
+| `cynicism` | *Exhaustion · Cynicism · Inefficacy*, in the burnout card |
+| `bit shift` | *Shift Left &amp; Wire Into CI* |
+| `glba`, as `Gramm` | *The sudoers Grammar, and the Commands That Are a Root Shell* |
+
+The other sixteen are the same shape: `lfi rfi` found *RFI, RFP, RFQ*, `efs` found AWS
+EFS, `java generics` found TypeScript's, `virtual desktops` found VDI. **A quarter of what
+a title appeared to own, it owned in another sense.** *Knowledge integration* counted this
+for the first time, nine of a reader's first sixteen misses. *csvistool* found it in
+*stack* and *queue*. It is the reason every `want` in the census names a topic and not a
+count. The final figure is **81**. The 452 mentioned phrases were not read one by one, so
+the same error is still in that number at some rate nobody measured.
+
+## 4. What is worth writing — clusters, not phrases
+
+A definition is not a card. The 306 absent phrases are mostly definitions, and the filter
+is the rubric's one test: a question somebody has, and a sentence the table could not have
+supplied. Where several absent phrases are one question, they are one row below. Every
+count is a grep over `data/*.html` with `acronym.html` excluded.
+
+**Every sentence in the fourth column is a draft, written from memory in a container that
+fetched nothing.** It is there to show the card has an argument, which is the rubric's
+test. It is not there to be copied. *Study notes, batch two* §5 found twelve confident
+claims that should not reach a card as written, and the same treatment applies to these
+before anything ships.
+
+### Security and networking — the words the exams use and the site does not
+
+| # | Cluster | On the site today | Lands in | The sentence, as a draft |
+|---|---|---|---|---|
+| 1 | **Block-cipher modes** | `ECB` 0, `CTR` 0, *mode of operation* 0. `CBC` 4 and `GCM` 1, all in `sec`, named and never explained | `sec`, a card in *Cryptography Algorithm Reference* | *AES-256* is half a sentence. The mode decides whether equal blocks of plaintext stay visible in the ciphertext, and ECB leaves them visible |
+| 2 | **The formal models**: Bell-LaPadula, Biba, Clark-Wilson, Brewer-Nash | 0 each. `grc` has *CISSP — 8 Domains Overview* and two domains carry the SecX tag | `sec`, in *Access Control Models*, one card and 2,742 characters today | Bell-LaPadula and Biba are one diagram read in opposite directions. The first stops secrets flowing down and the second stops bad data flowing up |
+| 3 | **Zero trust's two boxes**: the decision point and the enforcement point | *policy enforcement point* 0, *policy decision point* 0, `800-207` 0, against three zero-trust topics | `sec`, *Zero Trust — Never Trust, Always Verify*, with a diagram | Zero trust is something that decides and something that enforces, and most products sell the second |
+| 4 | **Biometric error rates**: false acceptance, false rejection, the crossover | *biometric* 9 mentions; the three rates 0 | `sec`, *Multi-Factor Authentication — Layers of Proof* | The crossover rate is for comparing sensors. Where the threshold is set is a separate decision about which error you can afford |
+| 5 | **The fraud controls**: separation of duties, dual control, job rotation, mandatory vacation | *separation of duties* 1; the other three at most 1 between them | `sec`, *The Insider Threat Program* | Mandatory vacation is a detective control. A fraud that needs its author present stops working when they are away |
+| 6 | **Maximum tolerable downtime** | 0, against `RTO` 28 | `ops`, a row in *BCP / DR — Key Metrics* | An RTO is a target. The maximum tolerable downtime is the limit it has to fit inside, and the business sets that one |
+| 7 | **Agreement types**: MOU, MOA, MSA, SOW, NDA, BPA | *memorandum of understanding* 0, *master service agreement* 0 | `grc`, *Third-Party Risk* | Which of these can be enforced, and which only records an intention |
+| 8 | **Race conditions and TOCTOU** | *race condition* 3, all in passing; `TOCTOU` 0 | `sec`, beside *The Injection Family* | The check and the use are two moments, and the attack lives between them |
+| 9 | **Reading interface counters** | *CRC error*, *input error*, *runt*, *late collision* 0 each; *duplex mismatch* 2 | `net`, *Network Troubleshooting — A Systematic Approach* | A duplex mismatch has a fingerprint: late collisions on the half-duplex end and CRC errors on the other |
+| 10 | **Which route wins** | *administrative distance* 0, `VLSM` 0; *longest prefix* 1, and that one is in `script` | `net`, *Routing Protocols — How Routers Find the Best Path* | The most specific route wins before trust is consulted. Administrative distance only decides between sources that offer the same prefix |
+| 11 | **The physical layer's vocabulary**: attenuation, T568A and B, MDF and IDF, the demarc, TDR and OTDR, the toner probe | 0 each | `net`, *Structured Cabling, Racks &amp; Fiber in Practice* and *The Field Toolkit*, with the pinout drawn | The demarc is where the fault stops being yours, which is why it is the first thing to find |
+| 12 | **LLDP and CDP** | 0 | `net`, *Network Documentation That Stays Current* | A switch already knows what is plugged into each port. Documentation that asks the neighbors does not go stale the same way |
+| 13 | **Syslog severity** | `syslog` 18 mentions; the eight levels as a table 0 | `ops`, *Structured Logging &amp; Log Pipelines* | Severity is chosen by whoever wrote the log line, so it records an opinion formed before your incident existed |
+
+### The desk and the exam
+
+| # | Cluster | On the site today | Lands in | The sentence, as a draft |
+|---|---|---|---|---|
+| 14 | **The Windows repair ladder**: Safe Mode, SFC and DISM, System Restore, the recovery environment, reset | *Safe Mode* 0, *System Restore* 0, `WinRE` 0; *blue screen* or *stop code* 2 | `endpoint`, a new topic. `ops` *"Why Is My Laptop Slow?"* is the model | Work down from the repair that keeps the most. Each rung gives up more of the machine's state for a better chance of booting |
+| 15 | **The built-in tools and the Run box** | `chkdsk`, `diskpart`, `robocopy`, `msconfig`, `regedit`, `pathping` 0 each. `ncpa.cpl`, `appwiz.cpl`, `devmgmt.msc`, `msinfo32`, `dxdiag` 0 each | `shortcut`, a lookup beside *System &amp; General*. Short by design | `robocopy /MIR` deletes at the destination. That is the flag's meaning and its commonest accident, and `linux` already has the same card about a trailing slash |
+| 16 | **Malware removal as a sequence** | *malware removal* 0 | `ops` or `threat`, as `dora-seq` | The order is the content: quarantine before anything is cleaned, restore points off before the scan and back on after it, and the user's education last |
+| 17 | **Connectors, to recognize by sight** | `RJ11` 0, *F-type* 1, *Lightning* 0, in a topic that is one card | `net`, *Cabling, Connectors &amp; Ethernet Standards*, as the site's second picture grid | A+ asks for a connector by its shape, and the card describes it by its name |
+| 18 | **Excel an administrator uses** | `XLOOKUP` 0, `VLOOKUP` 0, *pivot table* 0, *conditional formatting* 0. The domain's subtitle says *Excel* and the topic is 1,621 characters | `shortcut`, *Microsoft Office (Excel/Word)*, linked to `data` *Aggregation* | `VLOOKUP` defaults to an approximate match, so the common mistake returns a plausible wrong row and no error |
+| 19 | **Performance-based questions** | *performance-based* 0, `PBQ` 0, *test anxiety* 0 | `productivity`, a card in *Exam Technique* | The simulations usually come first and take the most minutes, so the order you answer in is a decision |
+| 20 | **Exercise and learning** | *workout* 0. Exercise is mentioned beside study in two topics, and no card is about it | `productivity`, beside *Sleep* | Condition, not a sentence: see below |
+
+**Row 20 is about the picture at the top of every page.** `Img/Studying-Tips.png` teaches
+four things: sleep patterns, the 25 and 5 Pomodoro, a workout timeframe, and naps. Sleep
+has a topic, and naps are in it. Pomodoro is a card in *Time Management*. The third pillar
+says *20 minutes of moderate exercise before study* and *exercise four hours after
+learning*, and those two numbers are in the image and nowhere in the text. They are the
+one part of the page's first screen that nothing on the site has checked. The card either
+cites the study behind each number or does not repeat the number.
+
+### The theory under the tools
+
+| # | Cluster | On the site today | Lands in | The sentence, as a draft |
+|---|---|---|---|---|
+| 21 | **Computability**: Turing machines, the halting problem | *Turing* 0, *halting* 0, *decidable* 0 | `cs`, a card in *P, NP &amp; Knowing When to Stop Looking for an Exact Answer* | No tool can decide what an arbitrary program will do, which is why every scanner settles for patterns and every scanner misses or over-reports |
+| 22 | **Regular and context-free** | *context-free* 0, *pumping* 0 | `cs`, *String Algorithms — Matching, Edit Distance &amp; Where Regex Fits* | *You cannot parse HTML with a regular expression* is a theorem about nesting, not an opinion about style |
+| 23 | **Detecting and correcting errors**: parity, CRC, Hamming | *Hamming* 0; `CRC` in one `cs` card | `cs`, linked to `hw` *Memory Deep* for ECC | Detection and correction are different purchases. A CRC can only tell you to ask again, and ECC memory fixes the bit without asking |
+| 24 | **Bitwise operations** | *bitwise* 0 | `cs`, linked to `net` subnetting and `linux` permissions | A subnet mask and a permission mask are the same move: AND against a mask |
+| 25 | **The classic synchronization problems** | *priority inversion*, *producer-consumer*, *dining philosophers* 0 each | `cs`, *Deadlock &amp; Livelock* | Priority inversion is the least important task holding up the most important one, and the fix is to lend it the priority |
+| 26 | **Test design**: equivalence classes, boundary values, mutation testing | 0 each | `script`, *Testing Strategy — Why and How to Test* | Coverage counts the lines the tests ran. Mutation testing counts the bugs they would have noticed |
+| 27 | **Stack, heap and the segmentation fault** | *segmentation fault* 0, *linker* 0, *the heap* 0 | `cs`, *Memory Layout &amp; Cache Locality* | A segmentation fault is the operating system doing its job. The mistake happened earlier, and somewhere else |
+
+### The human domains, and the quotes
+
+| # | Cluster | On the site today | Lands in | The sentence, as a draft |
+|---|---|---|---|---|
+| 28 | **Low mood** | `depress` once on the whole site, in `productivity` | `mind` | Condition, not a sentence: see below |
+| 29 | **Listening, and saying the uncomfortable thing** | *active listening* 0, *assertive* 0. *Communication &amp; Relationships* is four cards in 928 characters | `mind`, a deepening and not a new topic | The topic has four headings and no argument yet, which is Phase 8's thin shape in a topic that escaped the count by having four cards |
+| 30 | **The programs a separating service member can use** | `SkillBridge` 0, `CLEP` or `DSST` 0, *Joint Services Transcript* 0, `USAJOBS` or *federal resume* 0, `TSP` 0, *VA loan* 0 | `military`, *Transitioning Out*, whose two cards are already titled for it | Every row is a dated claim about somebody else's program. Fact anchors in the same commit, or it does not ship |
+| 31 | **The rival schools**: Epicureanism beside Stoicism, Confucianism beside Taoism | `Epicur` 0, `Confuci` 0 | `philosophy`, one topic each | Epicurus is remembered for indulgence and taught the opposite. Confucianism and Taoism answer one question in opposite directions |
+| 32 | **Computing lines, with the paper cited** | Kernighan, Brooks, Hoare, Hopper 0 each; Knuth 1, in `cs` | `quotes`, a new topic | See the gate below |
+| 33 | **The named laws**: Conway, Goodhart, Brooks, Hyrum, Postel, Chesterton's fence, Hofstadter | Conway 4 and Goodhart 1, both in `eng`; the rest 0 | `quotes`, linked from `eng` | Several of the wordings people quote belong to somebody other than the name on the law |
+| 34 | **Strategy lines** | *Sun Tzu* 0, *Clausewitz* 0; Moltke 1, Eisenhower 1 | `quotes`, linked from `military` | See the gate below |
+| 35 | **Report and order formats**: 9-line, METT-TC, date-time group, MGRS, WARNO and FRAGO, CCIR | 0 each; `SALUTE` and `SITREP` are present | `military`, as rows in *Military Communication Standards* and *MDMP &amp; the OPORD* | A lookup, short by design, like the ten the measured state already lists |
+
+**Row 28 has a condition in place of a sentence, and it is the row to be most careful
+with.** A domain with *Anxiety*, *Burnout*, *Motivation*, *CBT and DBT* and *Getting
+Professional Help* has no card for the commonest reason somebody opens it. *Anxiety* set
+the precedent: the scope sentence says it is not a diagnosis, and the DSM link was fixed to
+point at the source. A low-mood card follows that precedent, ends at *Getting Professional
+Help*, and is not written from memory.
+
+**Rows 32 to 34 have a gate the rest do not.** The domain's premise is the citation.
+*Sourcing a Quotation* is the method card, and it says a line is real when the work can be
+named. This container fetched nothing, so every attribution in those three rows is
+unchecked. A line ships with its source read, or it is listed under *Misattributed*, or it
+is left out.
+
+**The order to write in.** Rows 1, 9, 10, 14 and 19 first. Each has a fingerprint, a
+count of zero where the site already has the host topic, and a reader the header
+advertises to. One wave is one domain and one theme, so that is four commits and not one.
+
+## 5. Exam paths — order, with no new content
+
+| | |
+|---|---|
+| Learning paths | 102 |
+| Named for an exam | **0**. `paths.json` has *Security+* 0 times, *CySA* 0, *PenTest+* 0, *Linux+* 0, *CISSP* 0, and *Network+* and *A+* once each, in a blurb |
+| Domain headers carrying a certification tag | 16 of the 30 |
+| What exam mode can be scoped to | All domains, one domain, the study list, or what is due. Not a path |
+| What a print pack can be scoped to | A domain, **a path**, or the study list |
+| The topic about choosing a certification | `eng` *Cert Roadmaps — Choosing a Path*, one card, 1,590 characters, and one of the seven thin topics |
+
+**A path is an order over topics that exist.** It is rendered by the study tools as a
+checklist, so it adds no component, no color and no card. An exam path is a print pack the
+day it is written. `network-foundations` already says in its blurb that it is *the path a
+Network+ syllabus takes*, and it is named for the subject and not the exam, so a reader
+looking for the exam does not find it.
+
+**Writing one is also an audit.** A path ordered by an exam's objective domains needs a
+topic for every step. A step with nothing to point at is a candidate with a named asker,
+which is stronger evidence than a phrase from §3.
+
+Three things to settle before the first one:
+
+1. **The outline is somebody else's document and it changes.** An exam code is a dated
+   claim. It gets a fact anchor in `paths.json`'s commit, and the outline is fetched and
+   read first. This file's 398 phrases are not a substitute for it.
+2. **A path names the objective domains. It does not reproduce the outline.**
+3. **`check_paths.py` gates *0 hand-written topics off a path*, and an exam path does not
+   move that number.** It adds steps over topics that are on a path already, so the
+   *Learning paths* row changes in paths and steps only.
+
+**Named and not built: a path as a scope for exam mode.** `stScopeOptions()` offers
+domains. Adding paths is one option group in a select, it is the one feature named for
+exams, and it is code and not content. The smoke test would have to cover it. The
+condition is that an exam path exists first.
+
+## 6. Decided against, or not this file's call
+
+| Idea | Verdict | Why |
+|---|---|---|
+| A Java language track | **Stays decided.** 22 of the 51 phrases in that group are absent, and 12 of those are Java the language | *Study notes, batch two* §4 called it a second beginner track squeezed into one card and shipped one card. The evidence that would reopen it is the evidence UML had: a second batch of notes asking for the same thing |
+| Calculus beyond the course | **The owner's syllabus decides** | `math` follows one course, chapter by chapter. Newton's method, linear approximation, partial derivatives, Euler's method, integrating factors and hyperbolic functions are absent, and nothing here knows whether the course teaches them. What a revision domain usually wants next is worked examples, and that is a different request |
+| A theory-of-computation domain | **Cards in `cs`, not a domain** | Rows 21 and 22 are two cards. *Knowledge integration* §3 set the rule: a domain is what you build when the cards exist and cannot be filed |
+| A UX domain | **Still deferred** | The condition was six cards in `web`. There are four |
+| Symptom phrases in existing cards | **No** | `query_probe.mjs` calls this kind 3 and forbids it. Row 14 is a new topic because the causes are absent, which is the test for kind 2 |
+| Converting `ai-table` to `ref-table` | **No** | `CONTRIBUTING.md`: that is a redesign |
+| Anything fetched from another host | **No** | The CSP and the smoke test both refuse it, and that refusal is part of the look |
+
+## 7. Before any of this is written
+
+1. **Fix the hole in the look first, as its own commit.** Nine `c-yellow` cells become
+   `c-amber`, and `m` and `nd` become the house tokens. It is mechanical, so by
+   `CONTRIBUTING.md`'s own rule it does not share a commit with content. Prove it with
+   `make equiv`: the nine cells and 62 spans change computed color and nothing else does.
+2. **Then gate it.** A class in `data/*.html` with no rule in `style.css` should fail
+   `make check`, the way an undeclared `var()` does. `check_css_vars.py` is the place and
+   its docstring is already the argument. It needs an allow list for the twelve structural
+   names, read first, and a self-test.
+3. **Put the readers into `query_probe.mjs` before the first card.** Two are worth
+   tracking: *somebody revising for a CompTIA exam*, seeded from the daggered phrases in
+   the six exam groups of §8, and *a student on a theory course*. Each `want` names the
+   topic being written into, so a wrong-sense result scores as the miss it is. §3 is the
+   argument for that.
+4. **`near_duplicates.py --title` before rows 2, 3, 13 and 16.** Each lands beside content
+   that exists: access control models, three zero-trust topics, several logging topics,
+   two malware-analysis topics.
+5. **One picture first, measured, before twenty.** Row 1 of §2. If the UML lines cannot be
+   drawn in the table's first column without a new rule, §2's claim that the wave needs no
+   CSS is false, and that is worth finding out on one topic.
+6. **Budget.** `page_budget.py` has room for about 745 topics. Thirty-seven hands cost
+   about 30 KB, so twenty diagrams are a rounding error against the byte budget. Run it
+   anyway. A picture grid is where `content_elements` goes, and row 17 of §4 is one.
+
+## 8. The candidates, by reader
+
+All 839, so the next session starts from what this one measured. A dagger marks a phrase
+whose search returns nothing outside the acronym dictionary. *Owned* is after the
+wrong-sense correction in §3.
+
+<details>
+<summary>839 phrases in 17 groups</summary>
+
+#### A Security+ candidate — 86
+
+* **Absent (18):** `control categories` · `directive control` · `policy enforcement point`† · `honeyfile`† · `backout plan`† · `steganography`† · `data masking` · `key stretching`† · `vm escape` · `side loading` · `bloatware`† · `time of check`† · `snmp trap`† · `identity proofing`† · `ephemeral credentials` · `memorandum of understanding`† · `master service agreement`† · `due care`
+* **Mentioned, and no title owns it (52):** `gap analysis` · `non-repudiation` · `access control vestibule`† · `bollards` · `honeytoken` · `maintenance window` · `secure enclave` · `salting` · `blockchain` · `ocsp stapling` · `wildcard certificate` · `certificate signing request` · `self-signed certificate` · `jailbreaking` · `logic bomb` · `keylogger` · `amplification attack` · `on-path attack`† · `credential replay` · `downgrade attack` · `birthday attack` · `directory traversal` · `race condition` · `impossible travel` · `fail open` · `fail closed` · `jump server` · `data sovereignty` · `data in use` · `hot site` · `warm site` · `cold site` · `cope cyod`† · `secure cookies` · `exposure factor` · `scap` · `file integrity monitoring` · `dns filtering` · `time-of-day restrictions`† · `password manager` · `guard rails` · `legal hold` · `data controller` · `risk appetite` · `risk tolerance` · `key risk indicator` · `single loss expectancy` · `annualized loss expectancy` · `business impact analysis` · `right-to-audit clause` · `due diligence` · `passive reconnaissance`
+* **Owned by a title (16):** `compensating control` · `key escrow` · `certificate revocation list` · `typosquatting` · `pretexting` · `rootkit` · `screened subnet`† · `tabletop exercise` · `site survey` · `netflow` · `password vaulting` · `acceptable use policy` · `data custodian` · `data steward` · `right to be forgotten` · `known environment`
+
+#### A Network+ candidate — 83
+
+* **Absent (18):** `administrative distance`† · `vlsm`† · `lldp`† · `attenuation`† · `t568a t568b`† · `mdf idf`† · `demarcation point`† · `vxlan`† · `ipam`† · `iperf`† · `syslog severity`† · `nat64`† · `channel bonding`† · `mac flooding` · `time-domain reflectometer`† · `toner probe` · `crc errors` · `runts giants`†
+* **Mentioned, and no title owns it (55):** `ospf areas` · `eigrp` · `link aggregation` · `jumbo frames` · `port mirroring`† · `native vlan` · `voice vlan` · `dhcp snooping` · `dynamic arp inspection` · `arp` · `arp spoofing` · `collision domain` · `broadcast domain` · `csma/cd`† · `duplex mismatch` · `auto-mdix`† · `single-mode fiber` · `multimode fiber` · `sfp transceiver` · `crosstalk` · `plenum` · `rack unit` · `split horizon` · `traceroute` · `snmp` · `mib oid` · `dscp` · `multicast` · `igmp` · `slaac` · `dual stack` · `link-local address` · `loopback address` · `rfc 1918` · `router on a stick` · `band steering` · `captive portal` · `mesh wifi` · `antenna types` · `rssi` · `evil twin` · `rogue access point` · `deauthentication` · `vlan hopping` · `dns poisoning` · `out-of-band management` · `console port` · `tftp` · `ipsec` · `gre tunnel` · `spine leaf` · `three-tier network` · `north-south east-west`† · `storm control` · `tacacs+`
+* **Owned by a title (10):** `vrrp` · `mac address table` · `power over ethernet` · `mpls` · `ntp stratum` · `icmp` · `anycast` · `apipa` · `port address translation` · `bpdu guard`
+
+#### An A+ candidate — 66
+
+* **Absent (28):** `thermal printer` · `3d printer` · `sodimm` · `lightning cable`† · `rj11`† · `type 1 hypervisor` · `vdi`† · `chkdsk`† · `diskpart`† · `robocopy`† · `pathping`† · `disk management` · `msconfig`† · `regedit`† · `time machine` · `malware removal` · `safe mode` · `system restore` · `windows recovery environment` · `no boot device` · `incremental backup` · `safety data sheet` · `surge protector`† · `vnc`† · `efs` · `driver rollback` · `dead pixels` · `liquid damage`
+* **Mentioned, and no title owns it (32):** `laser printing process`† · `fuser` · `impact printer` · `ddr5` · `tpm` · `boot order` · `m.2` · `hdmi` · `displayport` · `f-type connector`† · `sfc scannow`† · `gpupdate` · `event viewer` · `device manager` · `task scheduler` · `exfat` · `keychain` · `gatekeeper` · `blue screen` · `upnp` · `wps` · `degaussing` · `grandfather father son` · `synthetic full backup` · `esd` · `eula` · `drm` · `batch file` · `uac` · `roaming profile` · `folder redirection` · `battery swelling`
+* **Owned by a title (6):** `motherboard form factor` · `secure boot` · `differential backup` · `windows hello` · `ntfs permissions` · `beep codes`
+
+#### A CISSP or SecurityX candidate — 54
+
+* **Absent (32):** `bell-lapadula`† · `biba`† · `clark-wilson`† · `brewer-nash`† · `reference monitor` · `trusted computing base` · `common criteria` · `kerckhoffs`† · `one-time pad`† · `ecb mode`† · `split knowledge` · `dual control` · `job rotation` · `mandatory vacation`† · `maximum tolerable downtime`† · `cpted`† · `polyinstantiation`† · `data remanence`† · `crossover error rate` · `false acceptance rate`† · `nist 800-63`† · `synthetic transactions`† · `cobit`† · `fair model` · `nist 800-30`† · `nist 800-207`† · `coppa`† · `itar`† · `iso 22301`† · `iso 31000`† · `soc 1` · `ssae 18`†
+* **Mentioned, and no title owns it (19):** `covert channel` · `gcm` · `hmac` · `forward secrecy` · `separation of duties` · `need to know` · `fire suppression` · `micro-segmentation` · `full interruption test` · `togaf` · `sabsa` · `cis controls` · `nist 800-37` · `nist 800-61` · `nist 800-171` · `sox` · `glba` · `ferpa` · `fisma`
+* **Owned by a title (3):** `diffie-hellman` · `nist 800-53` · `cmmc`
+
+#### A CySA+ candidate — 52
+
+* **Absent (8):** `stored xss` · `lfi rfi`† · `integer overflow` · `ssvc`† · `amsi`† · `dll sideloading`† · `process hollowing`† · `shadow copies`
+* **Mentioned, and no title owns it (36):** `cvss vector` · `credentialed scan` · `reflected xss`† · `dom xss` · `parameterized queries` · `write blocker` · `order of volatility` · `tlp traffic light protocol`† · `kev catalog` · `cwe` · `applocker` · `process injection` · `golden ticket` · `silver ticket` · `pass the hash` · `kerberoasting` · `as-rep roasting` · `dcsync` · `llmnr poisoning` · `smb signing` · `credential guard` · `event id 4624` · `event id 4688` · `event id 7045` · `dns tunneling` · `domain generation algorithm` · `fast flux` · `ja3` · `prefetch` · `shimcache` · `amcache` · `mft` · `usn journal` · `registry hives` · `srum` · `shellbags`
+* **Owned by a title (8):** `beaconing` · `email header analysis` · `fuzzing` · `csrf` · `output encoding` · `mean time to detect` · `epss` · `lsass`
+
+#### A Linux+ candidate — 57
+
+* **Absent (12):** `swap space` · `udev`† · `nice renice`† · `mdadm`† · `disk quota` · `selinux booleans`† · `cups`† · `pxe boot`† · `anacron`† · `dmidecode`† · `kickstart`† · `case statement`
+* **Mentioned, and no title owns it (36):** `hard link` · `symbolic link` · `umask` · `setfacl` · `chattr` · `fstab` · `runlevels` · `systemd targets` · `kernel modules` · `sysctl` · `ulimit` · `timedatectl` · `nmcli` · `firewalld` · `gpg` · `here document` · `kernel panic` · `oom killer` · `rsyslog` · `sssd` · `chrony` · `wayland`† · `flatpak` · `compile from source` · `shared libraries` · `zombie process` · `/proc filesystem` · `fsck` · `file descriptors` · `nohup` · `dmesg` · `vmstat` · `lsof` · `cloud-init` · `bash arrays` · `trap`
+* **Owned by a title (9):** `sticky bit` · `suid` · `environment variables` · `apparmor` · `initramfs` · `iscsi` · `inode` · `job control` · `exit codes`
+
+#### A calculus student — 60
+
+* **Absent (20):** `integration by parts` · `shell method` · `epsilon delta`† · `limits at infinity` · `newton's method`† · `linear approximation`† · `polar coordinates`† · `partial derivative` · `logarithmic differentiation` · `hyperbolic functions`† · `work integral` · `geometric series` · `integral test` · `euler's method`† · `logistic growth`† · `integrating factor`† · `completing the square`† · `complex numbers` · `binomial theorem`† · `sigma notation`
+* **Mentioned, and no title owns it (39):** `chain rule` · `product rule` · `quotient rule` · `l'hopital` · `related rates` · `optimization problems` · `u-substitution` · `partial fractions` · `trig substitution` · `improper integral` · `taylor series` · `maclaurin` · `ratio test` · `disk method` · `arc length` · `fundamental theorem of calculus` · `riemann sum` · `mean value theorem` · `separable differential equation` · `exponential growth` · `parametric equations`† · `dot product` · `cross product` · `inverse trig derivatives` · `concavity` · `inflection point` · `second derivative test` · `critical points` · `area between curves` · `power series` · `alternating series` · `slope field` · `quadratic formula` · `asymptotes` · `inverse functions` · `law of sines` · `law of cosines` · `double angle` · `conic sections`†
+* **Owned by a title (1):** `interval of convergence`
+
+#### A student on a discrete maths or theory course — 41
+
+* **Absent (23):** `logical equivalence`† · `predicate logic`† · `pigeonhole principle`† · `combinations` · `inclusion exclusion` · `recurrence relation`† · `master theorem`† · `power set` · `equivalence relation`† · `injective surjective`† · `euler path`† · `pumping lemma`† · `context-free grammar`† · `turing machine` · `halting problem`† · `decidability`† · `fermat's little theorem`† · `chinese remainder theorem`† · `hamming code`† · `huffman coding`† · `multiplexer` · `bitwise operators`† · `gray code`
+* **Mentioned, and no title owns it (16):** `permutations` · `partial order` · `graph coloring` · `finite automata`† · `regular language` · `np-complete` · `reduction` · `traveling salesman` · `knapsack` · `euclidean algorithm`† · `parity bit` · `cyclic redundancy check` · `flip-flop` · `finite state machine` · `floating point` · `bit shift`
+* **Owned by a title (2):** `truth table` · `proof by induction`
+
+#### A student on an operating systems or compilers course — 33
+
+* **Absent (14):** `priority inversion` · `producer consumer` · `dining philosophers`† · `banker's algorithm`† · `fragmentation` · `device driver` · `von neumann`† · `cache associativity`† · `linker` · `abstract syntax tree`† · `bnf grammar`† · `symbol table` · `stack vs heap` · `segmentation fault`
+* **Mentioned, and no title owns it (15):** `interrupt` · `kernel mode user mode` · `fork exec` · `round robin` · `page fault` · `page replacement` · `malloc` · `fetch decode execute` · `registers` · `branch prediction` · `static vs dynamic linking` · `pointers` · `memory leak` · `calling convention` · `stack frame`
+* **Owned by a title (4):** `system call` · `thrashing` · `risc cisc`† · `reference counting`
+
+#### A student on a software engineering or Java course — 51
+
+* **Absent (22):** `use case diagram` · `activity diagram` · `factory pattern` · `strategy pattern` · `decorator pattern` · `adapter pattern` · `equivalence partitioning`† · `boundary value analysis` · `mutation testing` · `cyclomatic complexity`† · `javadoc`† · `checked exceptions` · `java generics` · `java collections` · `interface vs abstract class` · `equals and hashcode`† · `stringbuilder`† · `autoboxing`† · `pass by value` · `jdk jre`† · `synchronized` · `java streams`
+* **Mentioned, and no title owns it (24):** `functional vs non-functional requirements` · `state diagram` · `singleton` · `observer pattern` · `mvc` · `dependency injection` · `unit test` · `integration test` · `acceptance test` · `regression test` · `smoke test` · `black box testing` · `code coverage` · `test pyramid` · `code smell` · `pair programming` · `overloading vs overriding`† · `maven gradle` · `junit` · `lambda` · `null pointer exception` · `array index out of bounds` · `access modifiers` · `constructors`
+* **Owned by a title (5):** `acceptance criteria` · `white box testing` · `test-driven development` · `polymorphism` · `encapsulation`
+
+#### Somebody at a keyboard, looking something up — 40
+
+* **Absent (22):** `ncpa.cpl`† · `appwiz.cpl`† · `devmgmt.msc`† · `msinfo32`† · `dxdiag`† · `clipboard history` · `xlookup`† · `vlookup`† · `pivot table` · `conditional formatting` · `outlook shortcuts`† · `teams shortcuts` · `powerpoint`† · `google docs` · `latex` · `html entities` · `alt codes` · `xpath`† · `winget`† · `chocolatey`† · `powertoys`† · `windows terminal`
+* **Mentioned, and no title owns it (15):** `services.msc` · `compmgmt.msc` · `mstsc` · `run commands` · `virtual desktops` · `markdown syntax`† · `mime types` · `strftime` · `printf format` · `homebrew`† · `finder shortcuts`† · `firefox shortcuts` · `nano` · `emacs` · `man pages`
+* **Owned by a title (3):** `http status codes` · `toml` · `csv pitfalls`
+
+#### A reader of the philosophy domain — 48
+
+* **Absent (16):** `epicureanism`† · `cynicism` · `confucianism`† · `hinduism`† · `shinto`† · `bushido`† · `free will`† · `karma`† · `yoga`† · `shamanism`† · `tarot`† · `runes` · `chakras`† · `game theory`† · `first principles` · `second-order thinking`†
+* **Mentioned, and no title owns it (28):** `skepticism` · `virtue ethics` · `plato` · `socratic method`† · `nietzsche` · `kant` · `utilitarianism` · `nihilism` · `logotherapy`† · `ikigai` · `wabi-sabi` · `memento mori` · `amor fati` · `tai chi` · `meditation` · `mindfulness` · `breathwork`† · `norse paganism` · `animism` · `ogham` · `wheel of the year` · `moon phases`† · `herbalism` · `hermeticism`† · `sunk cost` · `confirmation bias` · `dunning-kruger` · `survivorship bias`†
+* **Owned by a title (4):** `zen` · `dichotomy of control` · `occam's razor` · `hanlon's razor`
+
+#### A reader of the mind domain — 27
+
+* **Absent (7):** `anger` · `self-compassion`† · `assertiveness`† · `active listening` · `doomscrolling`† · `ptsd`† · `moral injury`†
+* **Mentioned, and no title owns it (20):** `depression` · `adhd` · `grief` · `panic attack` · `social anxiety` · `perfectionism` · `boundaries` · `loneliness` · `alcohol` · `caffeine` · `exercise` · `journaling` · `gratitude` · `insomnia` · `night shift` · `eye strain` · `carpal tunnel` · `standing desk` · `posture` · `hydration`
+* **Owned by a title (0):** none
+
+#### A student building a study routine — 38
+
+* **Absent (13):** `mind map` · `sq3r`† · `leitner`† · `reading a textbook` · `test anxiety` · `all-nighter`† · `second brain` · `bullet journal`† · `peg system`† · `chunking` · `dual coding`† · `elaboration`† · `performance-based questions`†
+* **Mentioned, and no title owns it (22):** `pomodoro` · `getting things done` · `eisenhower matrix` · `zettelkasten` · `cornell notes` · `feynman technique` · `active recall` · `anki` · `speed reading` · `reading a paper` · `cramming` · `flow state` · `naps` · `exercise before studying` · `parkinson's law` · `pareto principle` · `habit stacking` · `body doubling` · `mnemonics` · `practice tests` · `mistake journal` · `exam voucher`
+* **Owned by a title (3):** `deep work` · `two-minute rule` · `study schedule`
+
+#### Somebody building a career, veterans included — 39
+
+* **Absent (17):** `cover letter` · `portfolio` · `usajobs`† · `gs pay scale`† · `federal resume`† · `skillbridge`† · `clep`† · `joint services transcript`† · `vr&e` · `va loan`† · `thrift savings plan`† · `resignation letter`† · `job scam`† · `bootcamp`† · `open source contribution`† · `background check` · `w2 vs 1099`†
+* **Mentioned, and no title owns it (19):** `linkedin profile` · `star method` · `take-home assignment`† · `internship`† · `dod 8140`† · `two weeks notice` · `exit interview` · `performance review` · `performance improvement plan` · `first week at a new job` · `recruiter` · `apprenticeship` · `capture the flag` · `conference talk` · `rsu equity`† · `401k` · `roth ira` · `credit score` · `non-compete`
+* **Owned by a title (3):** `behavioral interview`† · `security clearance` · `emergency fund`
+
+#### Somebody reading military structure — 32
+
+* **Absent (12):** `space force` · `9-line medevac`† · `mett-tc`† · `date time group` · `mgrs` · `tempest`† · `dd-214`† · `va disability`† · `chain of command` · `warno frago`† · `ccir`† · `ipb`†
+* **Mentioned, and no title owns it (17):** `navy ranks`† · `air force ranks` · `marine ranks` · `coast guard` · `warrant officer` · `pay grades` · `salute report` · `sitrep` · `bluf` · `zulu time` · `radio prowords` · `common access card` · `siprnet` · `comsec` · `controlled unclassified information` · `emass` · `course of action`
+* **Owned by a title (3):** `nato phonetic alphabet` · `military time` · `authority to operate`
+
+#### Somebody looking for the source of a line — 32
+
+* **Absent (24):** `premature optimization`† · `kernighan debugging`† · `brooks's law`† · `hoare billion dollar`† · `postel's law`† · `hyrum's law`† · `chesterton's fence`† · `hofstadter's law`† · `gall's law`† · `murphy's law`† · `moore's law`† · `metcalfe's law`† · `wirth's law`† · `linus's law`† · `sturgeon's law`† · `peter principle`† · `grace hopper`† · `sun tzu`† · `clausewitz`† · `musashi`† · `bruce lee`† · `confucius`† · `rumi`† · `thoreau`†
+* **Mentioned, and no title owns it (7):** `goodhart's law` · `dijkstra quote`† · `moltke`† · `eisenhower plans`† · `einstein insanity`† · `feynman` · `frankl`
+* **Owned by a title (1):** `conway's law`
+
+</details>
+
+## 9. What shipped — the first wave
+
+Conducted in one session, in §7's order, and recorded below as *Session — starting the
+content-ideas queue*. §7's steps 1, 2, 3 and 5, then §4's first five rows, one commit per
+domain. The exam reader opened at **0 of 16** and closed at **16 of 16**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 7.1 | The classes that color nothing | 71 elements. `c-yellow` to `c-amber` (9). `m` to the house literal tokens (61): it was a catch-all for numbers, strings and constants, not a number class. `nd` to `fn` (1). Then `style-orange` removed, because an inline `var(--orange)` was doing its work. Both mechanical commits are in `.git-blame-ignore-revs`, and stamping the four touched domains moves nothing into this month |
+| 7.2 | The gate | `check_css_vars.py` fails on a class on a real element that no selector defines, with ten allowed names that each carry a reason. A parser, because the regex census counted `link`, which was text in a code sample. Run on the tree before 7.1 it reports exactly 72. `style_equiv.mjs` counted differences only up to the five it printed; it counts all of them now |
+| 7.3 | The readers | *Somebody revising for a CompTIA exam*, 16 queries over this wave's five rows. **The theory reader is not added yet**: a reader whose queries nothing is about to answer records a backlog, not a census. It goes in with the first theory card |
+| 7.5 | One picture first | §2 row 1, the six UML lines. **No new CSS**, and the first attempt showed why the question was worth asking: `math-svg` is a fluid full-width frame, and in a table cell it drew the lines 51×9 px on a phone. A picture inside a cell takes its size from its own `width` and `height` attributes. Full-width figures use the frame |
+| 4.1 | Block-cipher modes | A card in *Cryptography Algorithm Reference*. It answers the "Which mode? Is it authenticated?" row of *Reading a Cryptographic Claim Critically*, and the two now link both ways |
+| 4.9, 4.10 | Interface counters; which route wins | A card each in `net`. The counters card gives the duplex-mismatch fingerprint the troubleshooting table had only named. The routes card gives the three tests in order and the floating static route |
+| 4.14 | The Windows repair ladder | A new topic in `endpoint`, on the service-desk path after the slow-laptop topic: the ladder, the fingerprint and the Safe Mode trap |
+| 4.19 | Performance-based questions | A card in *Exam Technique*. **The draft sentence in §4 was wrong**: CompTIA's current pages do not say PBQs come first. What they do say is better: a simulation can be marked and revisited, and a virtual item cannot |
+
+**Two claims in this section were wrong, and stay visible rather than silently fixed.** §1
+said the cells beside the nine `c-yellow` cells use `c-amber`. Read, they use `c-red` in
+seven tables and `c-green` in one; the fix stands on the house tone instead. And §4 row
+19's draft said PBQs come first, which is what the older sources say.
+
+**One gap found underneath an old query.** `the user has two accounts` had passed the census
+at exactly 60 results, which is the wide threshold, and the repair ladder made it 61. Nothing
+in that set is about one person with two identities. `soft-match` and `hard-match` appear
+nowhere on the site, so the question is kind 2, and its natural home is `infra`'s *Entra
+Connect & Hybrid Identity* or `m365`'s joiner-mover-leaver topic. Queued here; the query
+carries the verdict.
+
+**Not done, and why.** The other 15 rows of §4, the other 19 pictures and the exam paths
+are the queue. `make visual` fails in this container on the commit before this session as
+well, at the same 10.3% and 10.1%. Its fonts render wider, so the baseline was left alone.
+
+## 10. What shipped — the second wave
+
+Conducted in one session, recorded below as *Session — the second wave, and three tools
+that were wrong at their own edges*. §4 rows 2 to 8 and 11 to 13, with the reader extended
+first and one commit per domain. The exam reader's second batch opened at **0 of 23** and
+closed at **23 of 23**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.2 | The formal models | A card in *Access Control Models*. Bell-LaPadula and Biba are one ladder with opposite rules, then Clark-Wilson and Brewer-Nash |
+| 4.3 | Zero trust's two boxes | A card in *Zero Trust*, as step tiles and a table. **It corrected a row already there**: "Policy engine (PEP/PDP) — decides allow/deny" made the enforcement point a decision-maker, and in NIST's model it decides nothing |
+| 4.4 | Biometric error rates | A card in *Multi-Factor Authentication*. The rates are spelled out and not added to the dictionary, because `CER` is also the `.cer` extension |
+| 4.5 | The fraud controls | A card in *The Insider Threat Program*: separation of duties and four siblings, split into the three that prevent and the two that only detect |
+| 4.8 | Race conditions and TOCTOU | A card in *Broken Access Control*, not beside *The Injection Family* as the row said: a check that ran at the wrong moment is an access-control failure |
+| 4.6 | Maximum tolerable downtime | **A card, not a row.** The metrics in *BCP / DR* are tiles, each with an inline border color, and the inline-style ceiling has no slack. Work recovery time came with it, and the worked example is the argument: one restore passes with a four-hourly backup and fails with a nightly one |
+| 4.7 | Agreement types | A card in *Third-Party Risk*, seven documents with the SLA and the work order added. Sources disagree on whether an MOA binds, so the card says force comes from wording, and the verdict names the MOU and the NDA as the two traps |
+| 4.11 | The physical layer | Two cards in *Structured Cabling*: the path from demarc to desk, with attenuation as the budget behind its lengths, and the pinout drawn pin by pin. In *The Field Toolkit* the toner row names the tool and says what it does, a TDR row joins it, and a card covers TDR and OTDR |
+| 4.12 | LLDP and CDP | A card in *Network Documentation*, as a decision per port |
+| 4.13 | Syslog severity | A card in *Structured Logging*, with Cisco's keywords and what a threshold sends |
+
+**Three tools were wrong at their own edges, and the new cards found all three.** The search mapped
+every dictionary entry both ways, including the ones marked as ordinary words, so
+`information technology` returned 1,452 of 1,564 topics through *it*, and adding FAR sent
+`false acceptance rate` to 219 through *far*. The annotator's window read across a topic's
+edge, and SSRF lost its expansion in the title of the topic about SSRF. And `.dora-word`
+was `#fff`, so the step names vanished on the light theme's tiles. Each fix is its own
+commit, with fixtures or a measured before and after. The search fix has a recorded cost:
+`metropolitan area network` now reaches the dictionary entry and not the cards that write
+only MAN, because a lowercased index cannot tell MAN from *man*.
+
+**The palette has no brown.** The pinout marks the four pins that differ, in amber, and
+does not paint the wires. Where a picture needs a color the palette lacks, it marks the
+difference instead.
+
+**Not done.** §4 rows 15 to 18 and 20 to 35, the other pictures and the exam paths are the
+queue, and so is the gap §9 found under `the user has two accounts`. `make visual` fails
+here as it did in the first wave, for the same font reason.
+
+## 11. What shipped — the third wave
+
+Conducted in one session, recorded below as *Session — the third wave, and two answers the
+census counted that nobody gave*. §4 rows 15 to 18 and 20, *the desk and the exam*, with
+the reader extended first and one commit per domain. The exam reader's third batch opened at
+**0 of 16** and closed at **16 of 16**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.15 | The built-in tools and the Run box | **A new topic, and longer than *short by design*.** `shortcut` *Windows Built-in Tools*, beside *System &amp; General*: the Run box names, the disk, system-file and policy commands with the switch that matters on each, and the Windows network commands, which the site barely had: `ipconfig` twice, `tracert` once, `netstat` never on Windows. The last card is robocopy `/MIR`, linked to the rsync card. On *Running a Service Desk* after the troubleshooting methodology |
+| 4.16 | Malware removal as a sequence | A card in `ops` *Incident Response Lifecycle — PICERL*, not `threat`: the seven A+ steps are its phases at the scale of one machine, and the table says which phase each step is. Step tiles, as the row asked. The verdict carries the limit Professor Messer's A+ course states, that rebuilding is the real best practice |
+| 4.17 | Connectors, to recognize by sight | **Two cards, in `net` and in `hw`, and not a grid.** Six network connectors in the cabling topic and six desk plugs in *Docks, USB-C &amp; Thunderbolt*, each drawn face-on in its table's first column, the way wave one drew the UML lines, so each shape sits beside its tell. One scale per table, existing roles only, no new CSS |
+| 4.18 | Excel an administrator uses | Two cards in *Microsoft Office*. VLOOKUP's default is approximate, and MATCH has the same default, which the row did not say. A pivot table is a `GROUP BY` you drag, linked to `data`'s aggregation topic |
+| 4.20 | Exercise and learning | A card in *Sleep*, under the condition the row set. One number has a study behind it, van Dongen and colleagues in 2016, and the card gives its limits. The other, twenty minutes before study, has none that a search found, and the card says so instead of repeating it as advice |
+
+**Two old zeros now score answered, and neither was answered.** Search reads the
+annotator's expansions as text. `the user says the file is gone` matched the new tools topic
+through *User* in the expansion of UDP, and `the usb ports on one side stopped working`
+matched a connector card's *wider on one side*. In both, relaxation then widened one
+accidental match into a result list, so the census counts two answers a reader does not get.
+The staleness check cannot see either, because neither note claims a zero in words. Both
+notes now say what happened. **For the first, a fix is queued and not made:** search that
+skips text inside `.acro-exp`, measured by the census before and after, because an expansion
+is a reading aid and not something a card says. The second is the ordinary cost of a matcher
+that reads words, and its repair is the card the note says is still unwritten.
+
+**A new topic has three costs the plan did not list.** `check_paths.py` fails until it is on
+a path, the orphan row drifts until it has related links in both directions, and
+`gen_og_image --check` fails because the preview image prints the topic count. All three
+were met here and are in the commit.
+
+**Not done.** §4 rows 21 to 27, the theory under the tools, wait for the second reader, *a
+student on a theory course*. Rows 28 to 35 are the human domains, each with a condition of
+its own, and rows 32 to 34 need the source-reading gate. The pictures
+of §2 and the exam paths of §5 are still the queue, and so is the gap §9 found under `the
+user has two accounts`.
+
+## 12. What shipped — the fourth wave
+
+Conducted in the same session as the third, recorded below as *Session — the fourth wave,
+and a spelling gate that knew five words and not the rule*. §4 rows 21 to 27, the theory
+under the tools, with the second reader §7.3 named, *a student on a theory course*, added
+first. It opened at **0 of 15** and closed at **15 of 15**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.21 | Computability | A card in *P, NP*: the halting problem and Rice's theorem, and why every scanner is sound and noisy or quiet and incomplete |
+| 4.22 | Regular and context-free | A card in *String Algorithms*: the machines, the pumping lemma, and the HTML theorem with its two qualifications |
+| 4.23 | Detecting and correcting errors | A card in *Modular Arithmetic*, not a new home: a CRC is modular arithmetic on bits. Parity, CRC, Hamming and SECDED, linked to the memory topic |
+| 4.24 | Bitwise operations | A card in *Boolean Algebra*, linked to subnetting and Linux permissions. **The draft missed the better half:** umask is not subtraction, and 033 is where the shortcut breaks |
+| 4.25 | The synchronization problems | A card in *Deadlock*: four shapes and their fixes, and the Mars Pathfinder mutex |
+| 4.26 | Test design | A card in `script` *Testing Strategy*, on one example where a mutant survives every partition test |
+| 4.27 | The stack, the heap and the segmentation fault | A card in *Memory Layout*, with what finds each cause before the crash |
+
+**Two gates caught the content, and one of them was wrong.** The linter caught `ECC`
+rendering as *Elliptic Curve Cryptography* in a card about error-correcting codes, which was
+right, and `cs` now decides the meaning. The spelling gate failed *bitwise*, which was not:
+its exception list named five *-wise* words, and the suffix is now a rule.
+
+## 13. What shipped — the fifth wave
+
+Recorded below as *Session — the fifth wave, the human domains, and a neighbor the stamper
+re-dated*. §4 rows 28 to 31 and 35, each under the condition its row set. The 17 queries
+went to two readers that already ask about these subjects rather than a new one, and the
+batch opened at **0 of 17** and closed at **17 of 17**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.28 | Low mood | A new `mind` topic after *Anxiety*, on its precedent: the same scope sentence, thoughts of self-harm sent to *Getting Professional Help* today, the NHS's and NIMH's two-week line cited, and behavioral activation with the COBRA trial behind it. Not written from memory: two fact anchors date the guidance and the trial |
+| 4.29 | Listening and the uncomfortable thing | Two cards in *Communication &amp; Relationships*, which was four one-line cards: active listening from Rogers and Farson, and the DESC script on a colleague who merges without review |
+| 4.30 | The transition programs | A card in *Transitioning Out*, sorted by whether each program ends with service. Every row dated, as the row demanded, and one had already changed this year: the Department of the Air Force's SkillBridge policy moved on 31 March 2026 |
+| 4.31 | The rival schools | Two `philosophy` topics. Epicureanism opens on the misreading, with the *Letter to Menoeceus* quoted from a named translation. Confucianism sits beside Taoism and answers its question the other way round |
+| 4.35 | Report and order formats | Three `military` cards: the 9-line MEDEVAC, the date-time group and the grid, and the orders and factors around the OPORD. **The date-time group's format has no source behind it**: no search returned one, and its fact anchor says so rather than claiming a check |
+
+## 14. What shipped — the sixth wave
+
+Recorded below as *Session — the sixth wave, the quotes, and a gate that meant reading*. §4
+rows 32 to 34, three new `quotes` topics under the gate the rows set. The 10 queries opened at
+**0 of 10** and closed at **10 of 10**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 4.32 | Computing lines | *Computing Quotes*: Dijkstra, Kernighan and Plauger, Hoare twice and Hopper, each with its work and place. The trap card is Knuth's line, quoted in half for fifty years |
+| 4.33 | The named laws | *The Named Laws*: seven in their original wording. Goodhart's is worded by Marilyn Strathern, and the card says so |
+| 4.34 | Strategy lines | *Strategy Quotes*: Sun Tzu and Clausewitz with the translation named, Moltke's 1871 sentence, and Eisenhower crediting the Army |
+
+**The gate held, and it removed two lines.** Hopper's *most dangerous phrase* is marked
+unsourced where it is collected, and Sun Tzu's *noise before defeat* is in no print
+translation. Both are in *Misattributed* now, beside the lines the site corrected before.
+**Every source was read this time, not searched.** The plan said this container fetched
+nothing. That was true of the fetch tool, which could not reach these hosts; the container
+itself could, with plain requests. Two hosts were not reachable that way, a defunct site and
+one that refuses automated reading, and neither was worked around: the Conway and Sun Tzu
+rows are read from pages that quote and cite their originals.
+
+## 15. What shipped — the seventh wave
+
+Recorded below as *Session — the seventh wave, the pictures, and the components the rows
+named*. §2 rows 2 to 20, every picture left after the first wave drew row 1, one commit per
+domain. No reader queries were added, because a picture adds no question a reader types. The census was **472 of 495**
+before and after.
+
+| § | Topic | Where it went |
+|---|---|---|
+| 2.2 | `career` *Diagrams That Explain* | Six shapes, each drawn in the table's diagram column beside its question, not as a separate grid |
+| 2.3 | `hw` *Motherboard Anatomy* | The block diagram, drawn tall: the CPU's own lanes in green, one amber uplink, everything else under the chipset, and the shared M.2 and SATA lanes bracketed |
+| 2.4 | `ops` *Priority, Impact &amp; Urgency* | **The row said the topic had no matrix, and it had one, as a table.** The picture is the risk matrix with one senior manager's ticket followed across it: along the urgency axis to P3, never up the impact axis to P1 |
+| 2.5 | `eng` *SDLC Models* | Replaces the box-drawing V: the pairs, and the longest way round, from requirements down and back up to acceptance |
+| 2.6–2.8 | `net` *Spanning Tree*, *TCP vs UDP*, *NAT in Practice* | With the components named. The switches are A, B and C, because the annotator read *S3* as Amazon's storage service |
+| 2.9 | `sec` *OT vs IT &amp; the Purdue Model* | Two stacks drawn in SVG, the intended path and the vendor link. A layer-stack cannot draw a line that goes round it |
+| 2.10 | `sec` *Network Security Architecture* | The zones as a diamond, twice, differing by the one arrow egress filtering removes. Not `topo-svg`, which is 80 pixels tall |
+| 2.11–2.13 | `cs` *Trees*, *Caches*, *Merkle Trees* | Seven keys balanced and in order; the memory ladder on a log scale, not a layer-stack, whose even rows are the flattening the row named; the changed path and the proof. **The ladder showed the title wrong: 1 ns to 150 ms is eight orders of magnitude, not six** |
+| 2.14 | `military` *OODA Loop*, *The Intelligence Cycle* | Rings, each beside what it is not: Boyd's line from Orient to Act beside the intruder's reset, and the open belt beside the closed cycle. Not `lifecycle`, a row that cannot draw the arc back and needs inline styles for its arrows |
+| 2.15 | `blueteam` *Pyramid of Pain* | A pyramid, because a stack's rows are one width and the width is half the picture. The card says the height is Bianco's model and the width is a reading of it |
+| 2.16 | `devops` *CI/CD Pipeline Design* | Step tiles with a gate diamond at each of the four positions between them |
+| 2.17 | `cloud` *Azure Hierarchy* | Nested boxes, a role at a subscription and a policy at the management group: inheritance is containment, which a stack cannot hold |
+| 2.18 | `infra` *Processing Order &amp; Precedence* | Two stacks drawn in SVG: by default the Kiosks OU writes last, and with Enforced the domain's pass moves to the bottom |
+| 2.19 | `m365` *Mail Flow* | Step tiles twice, the path and the same path under an allow rule. **The hole is narrower than the topic's verdict says**: malware and high-confidence phishing are quarantined whatever a rule says |
+| 2.20 | `web` *Flexbox* | The same items in a row and a column, with both axes turning |
+
+**Eight of the nineteen rows named a component that could not draw their claim.** Five
+named `layer-stack`. Its rows are all one width, sit side by side and hold nothing, and the
+pyramid's width, Azure's containment, the line round the Purdue model and the ladder's uneven
+gaps are each exactly one of those. The others named a `lifecycle` row for a cycle, a
+separate grid for shapes that belonged beside their questions, and an 80-pixel `topo-svg` for
+four labeled zones. **§2's claim that none of the twenty needs a line of new CSS held.**
+Every picture uses roles already in `style.css`, and the class gate passed each commit.
+
+**A picture drawn alone is the wrong size at both ends.** The math SVGs scale with the card,
+so one picture alone renders at twice its size on a desktop and a third of it on a phone. Every
+picture that compares two things went into two panels of the topology grid, which stack on a
+phone, and the three drawn alone were drawn tall, which the height cap holds to size.
+
+**Not done.** The spelling gate misses prefixed forms: it rejects *labelled* and has never
+seen *unlabelled*, which the site has seventeen times, or *relabelled*, which it has once. It
+is queued for the eighth wave with §5's exam paths and the gaps §9 and §11 left.
+
+## 16. What shipped — the eighth wave
+
+Recorded below as *Session — the eighth wave, the exam paths, and the queue emptied*. §5's
+exam paths, the feature §5 held for them, and every gap an earlier wave queued. No reader
+queries were added. Two that already carried verdicts found their cards, and one went back
+to the zero its note always said was true.
+
+| § | Item | Where it went |
+|---|---|---|
+| 5 | Exam paths | Four, over topics that exist: *CompTIA Network+ (N10-009)*, 36 steps; *Security+ (SY0-701)*, 45; *A+ Core 1 (220-1201)*, 28; *A+ Core 2 (220-1202)*, 32. Each outline was read first, from a course index that mirrors CompTIA's numbering, fetched with plain requests. comptia.org refuses automated reading. Each blurb names the domains and the month the outline was read |
+| 5 | A path as a deck | **Built.** Exam mode, flashcards, the quiz and the Markdown export take a learning path, through the same `pathSteps()` the print pack uses. The smoke test covers it, 164 to 165 |
+| 9 | `the user has two accounts` | A new `infra` topic, *One User, Two Accounts*, with the matching rules and the habits that make duplicates. A topic and not a card, because search widens a lone exact hit unless the topic's own name carries the question. The query now finds it alone |
+| 11 | `the usb ports on one side stopped working` | A troubleshooting card in *Motherboard Anatomy*, under the block diagram. The query finds it first |
+| 11 | Search inside expansions | Search no longer reads the annotator's expansions as card text. The census moved by one, 472 to 471, and the one was the coincidence |
+| 15 | The spelling gate's prefixes | The gate takes un-, re-, mis- and pre-. Eighteen words were swept in a mechanical commit that `.git-blame-ignore-revs` lists, so no topic was re-dated by it |
+
+**Writing a path was the audit §5 said it would be.** Five objectives have nothing to point
+at. In Core 2 they are Windows editions, file systems, installing an operating system and
+troubleshooting mobile devices, and in Core 1 a failing drive. The paths skip them rather
+than point somewhere close, and each is now a candidate with a named asker.
+
+**An exam launched five days before its path was written.** CompTIA lists SY0-801's launch
+as 17 November 2026 and SY0-701's retirement as 11 June 2027. The Security+ path follows
+SY0-701, which is still being taken and whose outline was read. The SY0-801 course index was
+not at the address its predecessor's pattern predicts, and guessing further was not reading.
+A path for it waits for its outline.
+
+**What is left.** The five candidates above, a SY0-801 path once its outline can be read, and
+the visual baseline, which fails in this container on font rendering and was left alone.
+Otherwise the queue *Content ideas* opened with is empty: §4's thirty-five rows, §2's twenty
+pictures, §5's paths and every gap a wave set aside.
+
+## 17. What shipped — the ninth wave
+
+Recorded below as *Session — the ninth wave, the five gaps and the exam that launched*. All of
+§16's list of what was left. The reader went in first: 16 queries opened at **0 of 16** and
+closed at **16 of 16**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 16 | Windows editions | `endpoint` *Windows Editions*: what Home leaves out, from the domain join to the Remote Desktop host, and Enterprise as a license that steps Pro up. A+ Core 2, 1.3 |
+| 16 | Installing an operating system | `endpoint` *Installing Windows*: the kinds of install by what survives, GPT with UEFI and MBR with legacy BIOS, and boot media. Core 2, 1.2 |
+| 16 | Troubleshooting mobile devices | `endpoint` *Troubleshooting Phones &amp; Tablets*: the common faults and their first checks, then the signs of compromise. Core 2, 3.2 and 3.3 |
+| 16 | File systems | `hw` *File Systems*: six by what reads them and how large a file can be, then NTFS permissions through a copy and a move. Core 2, 1.1 |
+| 16 | A failing drive | `hw` *A Failing Drive*: copy the data first, seven symptoms, and the five SMART attributes and why a clean report proves nothing. Core 1, 5.2 |
+| 16 | A path for SY0-801 | Read from CompTIA's own objectives document, version 2.0, fetched. 49 steps, every objective with a topic, including V8's new 2.6 on the threats that come with using AI |
+
+**Both A+ paths now cover every objective, and their blurbs name no gaps.** The five were
+written as topics and not cards, because the eighth wave found that search widens a lone
+exact hit unless the topic's own name carries the question. Eleven of the sixteen queries
+find their topic as the only result, and the other five find it among two to fifteen.
+
+**The outline the eighth wave could not find was one search away.** The eighth wave looked for
+SY0-801 at the address its predecessor's course used, and stopped there. This wave searched
+for the outline itself, and found CompTIA's objectives document on the file host its pages
+link to: the official document, not a course index that mirrors it.
+
+**What is left.** The visual baseline, which still fails in this container on font rendering
+and is left alone. *Content ideas* has nothing else queued. New content would start from a new
+list, with its readers in the census first.
+
+## 18. What shipped — the tenth wave
+
+Recorded below as *Session — the tenth wave, four exam paths and the six gaps they found*.
+§17 left nothing queued, so the wave went back to §5's own count: four exams it found at zero
+in `paths.json`, CySA+, PenTest+, Linux+ and CISSP, that no wave had written a path for. The
+paths went first, the reader's queries second and the topics last. The 18 queries opened at
+**0 of 18** and closed at **18 of 18**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 5 | Exam paths | Four more, each read from the exam body's own document, fetched with plain requests from the file hosts their pages link to: *CompTIA PenTest+ (PT0-003)*, 53 steps; *CySA+ (CS0-004)*, 54; *Linux+ (XK0-006)*, 45; *ISC2 CISSP (2024 outline)*, 57. The CySA+ path follows CS0-004, launched on 23 June 2026, and names CS0-003's English retirement, 22 December 2026. The CISSP path follows the outline in force and names 15 April 2027, when ISC2's next one takes effect |
+| 5 | Linux device management | `linux` *Linux Device Management*: the three stages a device passes through, the inventory commands, modprobe against insmod, and udev rules. Linux+ 1.2 |
+| 5 | Virtualization on Linux | `linux` *Virtualization on Linux*: KVM, QEMU, libvirt and virsh as layers of one stack, qcow2 and VirtIO, and the five network modes. Linux+ 1.7 |
+| 5 | Cleanup after a test | `pentest` *Cleanup &amp; Restoration*: the outline's seven activities, what only the client can fix, and the order they run in. PenTest+ 5.4 |
+| 5 | Process injection | `threat` *Process Injection, Hollowing &amp; DLL Side-Loading*: the four calls, the variants, side-loading, and the Sysmon events that record them. PenTest+ 4.4, and CySA+ 1.2 |
+| 5 | Cryptanalytic attacks | `sec` *Cryptanalytic Attacks*: the five attack models, side channels and faults, and the attacks that never touch the math. CISSP 3.7 |
+| 5 | Incident communications | `ops` *Incident Communications*: who hears what and who owns telling them, three regulators' clocks, and the order people hear it in. CySA+ 3.3 and 4.2, and CISSP 7.6 |
+
+**132 objectives, and most already had a topic.** PenTest+ has 26, CySA+ 15, Linux+ 29 and
+the CISSP outline 62. Six had nothing to point at, and they are the six topics. Everywhere else
+a step is a topic that already existed, and a topic that answers two objectives sits at the
+first. Linux+ 3.4, account hardening, is answered by the PAM and account steps already on the
+path rather than by a step of its own.
+
+**Two more turned up on a second reading, and are left for the next wave.** CISSP 1.6, the
+hierarchy of policies, standards, procedures and guidelines, and 7.15, personnel safety (travel,
+duress and emergency management), have no topic either. The path skips them rather than point
+somewhere close, as the A+ paths did with their five, and the CISSP path is their asker.
+
+**What is left.** Those two, and the visual baseline, which still fails in this container on
+font rendering and is left alone.
+
+## 19. What shipped — the eleventh wave
+
+Recorded below as *Session — the eleventh wave, SecurityX and the two CISSP gaps*. §18 left two
+candidates, and the domain headers named one more exam the site had no path for: SecurityX,
+tagged on four domains. The path went first, the reader's queries second and the topics last.
+The 8 queries opened at **0 of 8** and closed at **8 of 8**.
+
+| § | Item | Where it went |
+|---|---|---|
+| 18 | CISSP 1.6 | `grc` *Policies, Standards, Procedures &amp; Guidelines*: each level by what it answers and how often it changes, a RACI matrix for a policy's life, and four frameworks by what each asks of the documents. SecurityX 1.1 too |
+| 18 | CISSP 7.15 | `sec` *Personnel Safety &amp; Security*: life safety first, then travel, duress codes, evacuation, and the training aimed at people |
+| 5 | A path for SecurityX | *CompTIA SecurityX (CAS-005)*, 46 steps, read from CompTIA's objectives document, version 7.0, fetched from the file host CompTIA's pages link to. A third-party copy in search results was version 3.0 |
+
+**Every SecurityX objective already had a topic but one.** The 23 objectives map onto topics
+that exist, except 1.1's program documentation, which is the CISSP 1.6 gap, so one topic closes
+both. Four terms the outline names appeared nowhere in the site's prose: the RACI matrix and
+COBIT, which the policy topic now explains, and RASP and IAST, which nothing does yet.
+
+**What is left.** RASP and IAST, which SecurityX names and PenTest+ names in part, and which the
+site's SAST and DAST topic does not cover. The domain-header tags with no path, whose outlines
+nobody has read: CKA, OSCP, GCIH, AWS, GCP, MD-102, AZ-800, MS-102 and AI+. And the visual
+baseline, unchanged.
 
 
 # Domain shape — the connectivity measurement, and what it says
@@ -6351,4 +7230,739 @@ reader still 12 of 12, its five ASL queries retargeted · census 373 of 398, 0 u
 related links 4,902 -> 4,904 · path steps 1,600 -> 1,601 · smoke 163 -> 164: the hands follow the theme
 1 latent test fault fixed (a palette left open) · 1 contrast failure found by hand, fixed
 45 gates green · smoke 164 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
+```
+
+## Session — a list of ideas, checked before it was filed, and a heading that promises diagrams
+
+The request: **update the plan with more content ideas to add, in the same clean look.**
+Nothing in `data/` changed and `index.html` was not rebuilt. The queue is *Content ideas*,
+above. This record is what checking it found, and what the checking got wrong on the way.
+
+### The look had never been written down as a list
+
+*The same clean look* was the constraint, so it was counted before any idea was. A class
+census over `data/` gives 294 names, and the look a reader sees is seven everyday
+components, ten shapes and six color classes. **Counting them is what found the two things
+nobody asked about.** The shapes are on 58 of 1,503 hand-written topics, under a page
+heading that reads *Cycles, Concepts &amp; Diagrams*. And fifteen class names in the content
+have no rule in `style.css`.
+
+Neither was on the list of ideas, and the first is now the largest item in the queue. It
+is the risk register's own habit, *once a phase, measure something nobody has measured*,
+arriving by accident again: the count was taken to describe a constraint, and it described
+a gap.
+
+### The class that is failure 6, nine times
+
+`c-yellow` colors nothing, in nine table cells across six files. The operating manual
+lists it by name, as the sixth of ten failures, with the guard *grep `style.css` for the
+utility class before using one*. That guard is a habit and not a tool, and it has been
+got past nine times. `check_css_vars.py`
+exists because a name that is never declared fails silently and looks plausible. It checks
+variables. Nothing checks classes. It is recorded in *Content ideas* §7 as the first thing
+to do and the second thing to gate, and **it was not fixed here**: the change is
+mechanical, and `CONTRIBUTING.md` asks for mechanical passes to be their own commit so the
+freshness stamps stay honest.
+
+### Three counts that were wrong before they were right
+
+| Count | First | Final | What was wrong |
+|---|---|---|---|
+| Phrases owned by a title | 125, then 107 | **81** | A trailing boundary and a case rule in the matcher, then 26 owners that were the other sense of the word |
+| Calculus phrases absent | `by parts` among them | Present | A case-sensitive grep over a file whose cheat sheet has a row named *By parts* |
+| Titles that name a shape and draw none | 139 of 162 | **75 of 90** | The word list counted *model*, *process* and *path* as shapes |
+
+**All three were a pattern whose matches nobody had read.** The first was caught by reading
+the owner of each phrase, the second by reading the topic, and the third by reading the
+list. Failure 9 in the manual is *probe zeros were 60% phrasing misses*, and its guard is
+to verify every zero against the real title list. This is the same failure from the other
+side. **A hit needs reading as much as a zero does**, and 26 of 107 is the rate at which it
+was false here. The 452 phrases counted as mentioned were not read, so that number is an
+upper bound and the section says so.
+
+### What was not done, on purpose
+
+- **No card, no diagram and no path.** The request was for the plan.
+- **The two readers were not added to `query_probe.mjs`.** The census still reads 373 of
+  398. A reader goes in when its first `want` can name a topic, and none of these has one
+  yet.
+- **No outline was fetched and no source was read.** Every exam phrase is from memory, and
+  every sentence in the *as a draft* columns is unverified. The section says this where the
+  sentences are, not only here.
+
+### The file
+
+`plan.md` went from 6,354 lines to 6,983. The fifth risk reopens at 8,000. The section is
+554 of the new lines, and 106 of those are the candidate list in its §8, collapsed. That
+list is the part to move to the archive first, with this record, once the queue is
+conducted.
+
+```
+0 commits to data/ · 0 topics · 0 cards · 1 queue section in 8 parts
+839 phrases · 17 reader groups · owned 125 -> 107 -> 81 · mentioned 452 · absent 306 · search zero 238
+shapes: 58 of 1,503 topics · 9 with an SVG · 15 of 29 domains with none · 75 of 90 shape-named titles draw nothing
+look: 15 classes with no rule · c-yellow 9 cells in 6 files · m 61 spans · nd 1
+paths: 102, 0 named for an exam · census unchanged at 373 of 398
+make check green, 45 gates · probe-check green · browser suites not re-run, the built page is unchanged
+```
+
+## Session — starting the content-ideas queue, and the three things the plan had wrong
+
+The request was **start the plan**. The queue was *Content ideas*, and §7 set the order: fix
+the look's hole, gate it, add the reader, draw one picture, then write. All of it shipped,
+with one commit per step and per domain. Its §9 is the table. This is what doing it found.
+
+### The proof tool was undercounting its own proof
+
+The recolor changed 71 elements, and `style_equiv.mjs` reported **25 differences**. It
+printed five per domain, and it also stopped counting at five, so the summary was the
+number it had printed. That is an undercount presented as a total, in the tool whose only
+job is to say what a change moved. It counts everything now, and tallies which properties
+moved: 72 elements, the 71 plus one `<code>` inheriting from a recolored cell, and only
+`color` and the border colors that follow it. **The shape is the oldest one in this file:
+a check that stops looking reports the same thing as one that found nothing.**
+
+### The stamper's two traps, both met on the way
+
+- **An annotator span in an uncommitted change reads as a review.** Adding `AEAD` to the
+  dictionary expanded it in the TLS card, and stamping with the new card in the same change
+  moved the TLS topic to 2026-11 for one span. `CONTRIBUTING.md` already asks for annotator
+  passes as their own commit; this session followed that only after the stamper showed why.
+- **A comment above a new topic belongs to the topic before it.** The stamper gives every
+  line between two topic openings to the earlier topic, so the marker comment over the new
+  repair-ladder topic re-dated *Lost, Stolen & Returning Devices*. With the marker inside
+  the new topic, only the new topic moves. Earlier topic additions may have done this to
+  their neighbors. `CONTRIBUTING.md` says it now.
+
+### The census caught a query that had never been answered
+
+`the user has two accounts` had been scored answered with **60** results in 17 domains,
+because 60 is the threshold. The new topic's "a second account" made it 61, and it became
+the one unexplained result that was not the new reader. The tempting fix was to reword the
+new card, and the census forbids it. Read, the set holds no card about one person with two
+identities, and `soft-match` appears nowhere on the site. So the query carries a verdict that
+names the gap, and *Content ideas* §9 queues it. **A number that sits exactly on a threshold is
+a measurement of the threshold.**
+
+### What the plan itself had wrong
+
+| The plan said | Read, it was | Where it is corrected |
+|---|---|---|
+| The cells beside `c-yellow` use `c-amber` | `c-red` in seven tables, `c-green` in one | §1's table, and §9 |
+| PBQs "usually come first" (§4 row 19's draft) | Older sources say so; CompTIA's current pages do not. They say a simulation can be revisited and a virtual item cannot | The card, and §9 |
+| A diagram is "inline SVG" with the existing rules | True, but `math-svg` is a full-width frame: in a table cell it drew 51×9 px on a phone. A cell picture takes its size from its own attributes | §9 |
+
+The draft sentences in §4 carried a warning that they were written from memory. One of the
+five shipped was wrong, and the warning is why it was checked before it was copied.
+
+### What was verified, and how far
+
+Every volatile number in the five cards was checked by search, and none of the pages behind
+them could be fetched. `comptia.org` does not resolve from this container. So each fact
+anchor names its source and says it was confirmed in search results and not fetched:
+GCM's 2³² random-nonce cap, Cisco's eight default distances, Microsoft's DISM-before-SFC
+order, the two failed starts that open WinRE, and CompTIA's PBQ rule. Five anchors, and the
+*Dated claims* row rose from 78 to 83 for those reasons.
+
+```
+12 commits · 1 new topic (endpoint) · 6 cards (sec 1, net 2, endpoint 3) + 1 (productivity) · 6 pictures (eng)
+classes: 71 recolored + 1 removed, then gated · check_css_vars fixtures 13 -> 26 · style_equiv counts all differences
+reader: somebody revising for a CompTIA exam, 0 of 16 -> 16 of 16 · census 373 of 398 -> 389 of 414, 0 unexplained
+acronyms 1,104 -> 1,110 · related links 4,904 -> 4,918 · path steps 1,601 -> 1,602 · dated claims 78 -> 83
+45 gates green · smoke 164 · search 58 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, and 0/2 on the commit before this session: font rendering, baseline left alone
+```
+
+## Session — the second wave, and three tools that were wrong at their own edges
+
+The request was **keep going with the next wave**. The wave was *Content ideas* §4 rows 2
+to 8 and 11 to 13, the rest of the security and networking words the exams use. The reader
+went in first, then one commit per domain, and *Content ideas* §10 is the table. This is
+what doing it found.
+
+### Each tool was right inside its edge and wrong at it
+
+Three fixes, and one shape. The search's acronym map was right for every acronym and wrong
+for the ones that are also words, which the dictionary had already marked `noAnnotate`.
+The annotator's window was right inside a topic and read across the edge into one the
+reader has not opened. `.dora-word` was right on the theme it was written for. **Each was
+found by the first new user of the thing, not by its own tests.** FAR was the first
+word-shaped acronym added since the map was written, the TOCTOU card ended beside a topic
+about servers, and the zero-trust card was the tiles' second user, looked at on a phone in
+light mode. The search gained a ceiling and the annotator three fixtures, and axe counted
+four contrast failures on each tile card before the color fix and none after.
+
+### A query that closes is not a query answered correctly
+
+`policy enforcement point` found only the acronym dictionary, and it closed the moment PEP
+went into the dictionary, through an existing row: *Policy engine (PEP/PDP) — decides
+allow/deny*. That row was wrong. In NIST's model the enforcement point decides nothing,
+and the zero-trust card corrected it two commits later. Until then the census counted the
+question answered by a sentence that answered it wrongly. **The census measures whether a
+reader lands on the right card. Whether the card is right is still a reading job.**
+
+### The ceiling decided a card's shape
+
+§4 row 6 said *a row in BCP / DR — Key Metrics*. The metrics there are five tiles, each
+with an inline border color, and the inline-style ceiling sits at exactly 401 with no slack.
+A sixth tile to match its neighbors needed a sixth inline style. It became a card instead,
+and the card was the better shape: maximum tolerable downtime is not a sixth metric beside
+the five but the limit two of them answer to, and showing that took a worked example. **A
+ratchet with no slack is working when it changes the shape of the next thing rather than
+being raised to fit it.**
+
+### A word the matcher reads whole
+
+`tone and probe` found an AI card about bias, while the toolkit had a row called *Toner and
+probe*. Words of four letters or fewer match whole, so *tone* never matched *toner*. The
+census forbids tuning prose to the matcher, so the test was whether the row is better with
+the new words if no query existed. *Tone generator and probe* is the tool's name, and the
+row now also says what the generator does, which the old one did not. Two titles went the
+other way: the cabling and discovery cards' titles named MDF, IDF, LLDP and CDP, a title is
+an acronym's first use in its topic, and each would have carried an expansion that the
+prose under it spells out again. They were reworded.
+
+### What the plan had wrong
+
+| The plan said | Read, it was | Where it is corrected |
+|---|---|---|
+| Row 6 is *a row* in the metrics | A card: the metrics are tiles with inline styles, and the ceiling has no slack | §10 |
+| Row 8 lands *beside The Injection Family* | *Broken Access Control*: a check run at the wrong moment is an access-control failure | §10 |
+| Row 3: *policy enforcement point* 0 | Absent as a phrase, but closed through a wrong row once PEP was in the dictionary | §10, and the card |
+| Row 7 asks which documents are enforceable | Sources disagree on the MOA; force comes from wording, and an MOU is *usually* not binding | The card |
+| Row 11: the demarc is where the fault stops being yours | Unless the contract moved it | The card's verdict |
+
+### What was verified, and how far
+
+Rows 6, 7 and 11 to 13 were checked by search before they were written: the syslog levels,
+the pinouts and the standard's preference, CDP and LLDP and their timers, MTD and work
+recovery time, the agreement types, the 90 and 10 meter budget, the demarc, and how TDR and
+OTDR measure. No page was fetched. One draft synonym, *maximum tolerable period of
+disruption*, was not confirmed, so the card does not use it. Five fact anchors record vendor
+defaults as confirmed in search results and not fetched: Cisco's syslog keywords and default
+trap level, the two messages one interface going down produces, the preference for T568A,
+the rule that fixing speed and duplex turns Auto-MDI-X off, and the CDP and LLDP timers. The
+*Dated claims* row rose from 83 to 88 for those reasons.
+
+```
+10 commits · 12 cards (sec 5, grc 1, ops 2, net 4) · 2 table rows corrected, 1 added · 0 new topics
+tools: search maps word-shaped acronyms one way · annotator window clipped to its topic · .dora-word follows the theme
+reader: CompTIA exam batch two, 0 of 23 -> 23 of 23 · census 389 of 414 -> 412 of 437, 0 unexplained
+acronyms 1,110 -> 1,121 · dated claims 83 -> 88 · mean card 1,408 -> 1,412 · depth median 3,766 -> 3,780
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in the first wave: font rendering, baseline left alone
+```
+
+## Session — the third wave, and two answers the census counted that nobody gave
+
+The request was **keep going with the next wave**, and then **stay going until it is
+completed**. The wave was *Content ideas* §4 rows 15 to 18 and 20, *the desk and the
+exam*. The reader went in first, then one commit per domain, and *Content ideas* §11 is the
+table. This is what doing it found.
+
+### A match is not an answer, and the census only sees matches
+
+The last wave fixed three tools at their edges. This one found the census's edge. Two queries
+with recorded zeros, both kept on purpose with notes explaining why no card answers them,
+began scoring as answered without anyone answering them. One matched the new Windows tools
+topic through *User* inside the expansion of UDP. The other matched a connector card's
+*wider on one side*. Each time the search's relaxation stage then did what it was built to
+do and widened one match into a list, 31 cards in the first case. **The census counts a
+query answered when the result is non-empty and not wide, and a coincidence passes that
+test.** The staleness check reads a note for the claim it can evaluate, a zero, and neither
+note made that claim in words, so neither was flagged. They were found by diffing the census
+before and after each commit, which is now the habit: a count that moves by one more than
+the batch explains has moved for a reason.
+
+### The plan's short lookup was short because it was missing things
+
+Row 15 said *a lookup, short by design*, and listed the commands it had counted as absent.
+Writing it found the Windows network commands absent too: `ipconfig` twice on the whole site,
+`tracert` once and `netstat` never on Windows. The grep behind §4 had looked for the commands
+it already thought of. The same thing happened to row 18, whose draft named VLOOKUP's
+approximate default and not MATCH's, which is the same trap inside INDEX and MATCH.
+**A list of what is absent is bounded by the words its author thought to look for.**
+
+### The picture grid became pictures in a table
+
+Row 17 said *the site's second picture grid*. The first grid's rules are named for the ASL
+hands, and a grid separates a shape from the words that make it recognizable, which for a
+connector is the whole card: *two cut corners* or *one*, *hollow* or *solid*. Wave one had
+already drawn the UML lines in a table's first column with existing roles and no new CSS, so
+the connectors went the same way, twelve of them from one script, at one scale per table.
+Each was rendered at size in both themes and read against its own row before its commit, the
+check the ASL records established.
+
+### A new topic costs three things the plan never listed
+
+A path, because `check_paths.py` fails a hand-written topic that is on none. Related links in
+both directions, because the orphan row drifts without them. And a new preview image, because
+`gen_og_image --check` compares the topic count printed on the image. While adding the links,
+the related-links row turned out to carry a mainland of 1,487 that had been 1,488 since the
+first wave's topic. Nothing checks that figure, so nothing noticed. It reads 1,489 now.
+
+### What the plan had wrong
+
+| The plan said | Read, it was | Where it is corrected |
+|---|---|---|
+| Row 15 is a short lookup | Four cards: the Windows network commands were nearly absent too | §11 |
+| Row 16 lands in `ops` or `threat` | `ops`, inside PICERL: the seven steps are its phases for one machine | §11 |
+| Row 17 is a picture grid in `net` | Two cards, `net` and `hw`, with each picture in its table's first column | §11 |
+| Row 18's trap is VLOOKUP's | MATCH has the same default | The card |
+| Related links: a mainland of 1,487 | 1,488 since the first wave, and nothing checked it | The row |
+
+### What was verified, and how far
+
+Every outside fact was checked by search before it was written, and no page was fetched. The
+malware removal order and Professor Messer's caveat about rebuilding. The A+ command list,
+where only `pathping`, `chkdsk`, `diskpart`, `robocopy` and `winver` were confirmed for
+220-1202, so the topic claims no objective numbers for its tables. VLOOKUP's and MATCH's
+defaults, XLOOKUP's versions and the pivot refresh keys. The connector faces: the published
+widths, RJ11's fit in an RJ45 jack, the fiber ferrules, and DisplayPort's single cut corner,
+which took a second search. And the two exercise studies, where the meta-analysis was found
+and the twenty-minute protocol was not. Three fact anchors record what is dated or
+version-specific: XLOOKUP's Excel versions, the A+ objective numbers, and the two studies.
+The *Dated claims* row rose from 88 to 91 for those reasons.
+
+```
+7 commits · 1 new topic (shortcut) · 10 cards (shortcut 6, ops 1, net 1, hw 1, productivity 1) · 12 connector drawings
+reader: CompTIA exam batch three, 0 of 16 -> 16 of 16 · census 412 of 453 -> 430 of 453, 0 unexplained
+2 kept zeros now answered by coincidence, both notes say so · search inside expansions queued, not changed
+topics 1,564 -> 1,565 · path steps 1,602 -> 1,603 · related links 4,918 -> 4,928 · mainland 1,488 -> 1,489
+dated claims 88 -> 91 · mean card 1,412 -> 1,414 · page budget 32% (~727) -> 31% (~717) · acronyms unchanged at 1,121
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in the first two waves: font rendering, baseline left alone
+```
+
+## Session — the fourth wave, and a spelling gate that knew five words and not the rule
+
+The request was **keep going until you finish all waves**. The fourth was *Content ideas* §4
+rows 21 to 27, the theory under the tools, and §7.3 had said when its reader goes in: with the
+first theory card. So *a student on a theory course* went in first, 15 queries, and opened at
+0 of 15. *Content ideas* §12 is the table. This is what doing it found.
+
+### An exception list is a rule somebody has not written yet
+
+The spelling gate flagged *bitwise* and offered *bitwize*. Its `-ise` rule keeps a list of
+words where `ise` is not the suffix, and the list named *clockwise*, *likewise*, *otherwise*,
+*pairwise* and *stepwise*, one at a time. Five names were approximating one fact: *-wise* is
+a suffix of its own, English coins new ones freely, and none has an American spelling that
+differs. It is a rule now, with three fixtures, and the commit that taught it came before the
+card that needed it, so every commit on the branch passes. **When a list of exceptions grows
+by one each time content meets it, the list is a rule in disguise.**
+
+### The other gate was right, and the mechanism it guards worked
+
+The linter refused `ECC` rendering as *Elliptic Curve Cryptography* in the card about
+error-correcting codes. `acronyms.json` already carried both meanings and decisions for `hw`,
+`linux` and `sec`, and `cs` had never needed one. One line decides it now. That is the design
+working: an acronym with two meanings is decided per domain at the moment a domain first uses
+it, by the person who knows which one it meant.
+
+### A commit made before its gate finished
+
+One command in this wave chained `make check` to the commit without testing its exit status,
+and the commit landed while the spelling gate was failing. It was caught by reading the
+output, reset before anything was pushed, and redone after the gate was fixed. **The order is
+the gate's exit status first, then the commit,** and a command that runs both has to say so.
+
+### What the plan had right, and the half it missed
+
+Six of the seven draft sentences held. Row 24's said a subnet mask and a permission mask are
+the same move, *AND against a mask*. Half right: a subnet is AND, and umask is AND NOT, which
+is why the common shortcut of subtracting works for 022 and fails for 033. The card is built on
+the half the draft missed.
+
+```
+5 commits · 7 cards (cs 6, script 1) · 1 gate taught a rule · 1 acronym decided for a domain
+reader: a student on a theory course, 0 of 15 -> 15 of 15 · census 430 of 468 -> 445 of 468, 0 unexplained
+dated claims 91 -> 93 · mean card 1,414 -> 1,415 · depth 10th 2,155 -> 2,162, median 3,780 -> 3,791 · page budget ~717 -> ~713
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the fifth wave, the human domains, and a neighbor the stamper re-dated
+
+The fifth wave was *Content ideas* §4 rows 28 to 31 and 35, the rows with conditions in place
+of draft sentences. *Content ideas* §13 is the table. This is what doing it found.
+
+### Where a topic is inserted can re-date the one before it
+
+The Confucianism topic first went in front of Taoism, and the stamper moved Buddhism, the
+topic above, to this month. Nothing in Buddhism had changed. The stamper blames the working
+tree, and the new topic ends with exactly the same closing lines as Buddhism does, so blame
+was free to align the insertion inside Buddhism's span. Moved to after Taoism, which is still
+beside it, the same block re-dated nothing. The check that caught it is the one every wave
+here has run, reading which topics moved rather than how many, and it is the reason that
+check exists. **A stamp is derived from a diff, and a diff of repeated closing tags has more
+than one honest reading.**
+
+### Conditions, not drafts, and each one held
+
+Row 28 said not to write from memory, so every claim in the low-mood topic is cited and dated,
+and it ends where the row said, at *Getting Professional Help*. Row 30 said every row is a
+dated claim, and the search proved it: one program's policy had changed in March. Row 35's
+date-time group could not be sourced at all, so its anchor says that instead of borrowing a
+check. **An anchor that records an absent source is more useful than one that implies a
+present one.**
+
+### The reader's word, once more
+
+`depressed for weeks` stayed at zero after the low-mood topic shipped, because the topic said
+*depression* and never *depressed*. The fix was the census's kind 1: the opening sentence
+now uses the reader's word, which is also the plainer sentence. The census has recorded this
+shape before, with *laid off*, and it keeps being the cheapest fix there is.
+
+```
+5 commits · 3 new topics (mind 1, philosophy 2) · 8 cards (mind 2, military 4, plus the topics' own)
+reader: 17 queries in two existing readers, 0 of 17 -> 17 of 17 · census 445 of 485 -> 462 of 485, 0 unexplained
+topics 1,565 -> 1,568 · path steps 1,603 -> 1,606 · related links 4,928 -> 4,954 · mainland 1,489 -> 1,492
+dated claims 93 -> 101 · mean card 1,415 -> 1,416 · depth 10th 2,162 -> 2,169 · page budget ~713 -> ~706
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the sixth wave, the quotes, and a gate that meant reading
+
+The sixth wave was *Content ideas* §4 rows 32 to 34, the rows whose gate says a quotation ships
+with its source read. *Content ideas* §14 is the table. This is what doing it found.
+
+### "This container fetched nothing" was true of one tool
+
+The first attempt to read the sources failed completely: three fetch agents could not resolve a
+single host. The environment's network turned out to be unrestricted, and plain requests from
+the container reached Wikiquote, Wikipedia, the RFC Editor, the American Presidency Project and
+InfoQ. The plan had recorded *fetched nothing* as a property of the container, and it was a
+property of one tool. **A capability recorded once as absent is worth testing again by another
+route before it shapes a wave.**
+
+### The route that was refused, and the line it drew
+
+One batch of requests set its own user agent and reached for an archive copy of a dead site and
+a second path to a site that had answered 503. The session's own safety check refused it, and it
+was right to: a site that refuses automated reading has said so, and a defunct one is gone. The
+rows that needed them were read from pages that quote and cite the originals instead, and the
+anchors say which page. Plain requests that hit a rate limit were simply retried later.
+
+### Most famous lines moved one step from their source
+
+Of the lines checked, only some say exactly what they are quoted as saying. Knuth's is cut in
+half, Goodhart's is worded by Strathern, Moltke's is Correlli Barnett's paraphrase, Eisenhower
+credited the Army and Hopper's *forgiveness* line predates her by more than a century. Two lines had no
+source at all and went to *Misattributed*. **The step between a source and its famous form is
+usually honest, and it is the step that changes the meaning.**
+
+```
+4 commits · 3 new topics (quotes) · 2 lines moved to Misattributed · 1 acronym decided for a domain
+reader: 10 queries in a learner meeting a subject, 0 of 10 -> 10 of 10 · census 462 of 495 -> 472 of 495, 0 unexplained
+topics 1,568 -> 1,571 · path steps 1,606 -> 1,609 · related links 4,954 -> 4,978 · mainland 1,492 -> 1,495
+dated claims 101 -> 105 · mean card 1,416 -> 1,417 · page budget ~706 -> ~703
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the seventh wave, the pictures, and the components the rows named
+
+The request was **keep going until you finish all waves**, and the seventh was *Content ideas*
+§2 rows 2 to 20, the pictures. *Content ideas* §15 is the table. This is what doing it found.
+
+### A component is a claim about what it can draw
+
+§2 chose a component for every row before any row was drawn, and eight of the nineteen could
+not draw their own row's sentence. The five that named `layer-stack` are the clearest case. A
+stack's rows are one width, sit one above another and contain nothing. The pictures needed a
+width (the pyramid), containment (Azure), a line that goes round the stack (Purdue) or uneven
+gaps (the memory ladder). Each was drawn as an inline SVG with roles already in the stylesheet.
+**The component column was a guess about the picture, and the sentence beside it was the
+spec.**
+
+### A number has to hold still to be drawn
+
+Two claims changed the moment they were drawn to scale. The memory hierarchy's title said six
+orders of magnitude, and a log axis from 1 ns to 150 ms needs eight. The plan said the priority
+topic had no matrix, and it had one as a table, so the picture became what the topic's third
+card does on it. A third claim narrowed rather than broke: the mail flow verdict's allow-rule
+hole, which Microsoft now closes for malware and high-confidence phishing whatever a rule says.
+**Prose can carry a rough number for years, and a scale cannot.**
+
+### A picture drawn alone is the wrong size at both ends
+
+The math SVG role scales with the card. A picture alone renders at twice its size on a desktop
+and a third of it on a phone, and the first drafts of four pictures did exactly that. Two
+panels of the topology grid fixed both ends, because the panels stack on a phone. That suited the
+rows too, because most of these pictures are comparisons, and the second panel shows what
+the first is not. The three left single were drawn tall, which the height cap holds to size.
+
+### What the pictures cost
+
+The page budget fell from room for ~703 more topics to ~682. Twenty pictures cost about what
+twenty topics would, because an SVG's coordinates are characters and the budget counts
+characters. That is a fair price for twenty pictures that each show a position, an order or a
+containment. It is also the reason a picture added later has to make its row's claim, and
+cannot be decoration.
+
+### What was verified, and how far
+
+Four outside facts, each by search and each with an anchor that says so. Boyd's line from
+Orient to Act, in his 1995 briefing: both primary PDFs refused automated fetching, and neither
+was worked around. Bianco's 2013 authorship of the Pyramid of Pain, from a secondary overview.
+Microsoft's description of Enforced as moving a GPO to the end of the processing order. And the
+limit on a mail flow rule that sets the spam level to −1. Every picture was rendered at size in
+both themes, at desktop and phone width, and read against its card before its commit, the
+check the ASL records established. That reading sent several back: a label over a switch, a
+path over a word, wires showing through hollow boxes, and the sizes above.
+
+### The gate that knew a word and not its prefixes
+
+A new card said *labelled*, and the spelling gate caught it. The fix showed what the gate does
+not catch. Its word boundary rejects a letter before *labelled*, so *unlabelled*, which the site
+has seventeen times, has never been checked. It is queued for the eighth wave as a gate change
+and one mechanical commit, not folded into a picture's.
+
+```
+14 commits · 0 new topics · 17 picture cards and 3 pictures in existing cards · §2 finished, 20 of 20 rows drawn
+reader: no new queries · census 472 of 495 before and after, 0 unexplained
+dated claims 105 -> 109 · mean card 1,417 unchanged · depth median 3,795 -> 3,810 · page budget ~703 -> ~682
+0 lines of new CSS · inline styles 401 -> 401 · README elements 149,612 -> 150,665
+45 gates green · smoke 164 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the eighth wave, the exam paths, and the queue emptied
+
+The request was **keep going until you finish all waves**, and the eighth was *Content ideas*
+§5's exam paths and every gap an earlier wave had set aside. *Content ideas* §16 is the
+table. This is what doing it found.
+
+### A search with no ranking finds a card by its title
+
+`the user has two accounts` needed a card, and a card alone did not answer it. The new card
+held the reader's exact words, and search widens a lone exact hit unless the topic's own name
+carries a word of the question. That rule exists because four lone hits had been
+coincidences, and it is right. The reader got 63 cards with the answer somewhere among them.
+The fix was the shape the rule asks for, a topic named for the question, and the query now
+finds it alone. **Where nothing is ranked, a title is how a card gets found.**
+
+### Taking a reading aid out of the index cost one answer, and it was the false one
+
+Search read the annotator's acronym expansions as if a card had said them, so *User* in
+UDP's expansion answered a query about a lost file. The fix drops the expansions from the
+index, the way the reading-time chrome was already dropped. A reader who types an expansion
+still finds the acronym, because the query is mapped before matching. The census moved by
+exactly one, 472 to 471, and the query that moved was the coincidence, back at the zero its
+note had always said was true. **A measurement that drops by the number you predicted is
+the measurement working.**
+
+### The gate knew a word and not its prefixes
+
+The spelling gate's dictionary rejected any letter in front of a word, so it caught
+*labelled* and had never seen *unlabelled*, which the site used seventeen times. The
+seventh wave's record said fifteen, counted by hand before the gate could count, and says
+seventeen now. Taught four prefixes, the gate found eighteen. The sweep went in as its own mechanical commit, and that commit
+is listed in `.git-blame-ignore-revs`. A spelling fix is not a review, and no topic's date
+moved for one. That was checked by stamping two of the swept domains and seeing nothing move.
+
+### The outline was read the week its successor launched
+
+CompTIA lists SY0-801's launch as 17 November 2026, five days before the Security+ path was
+written, and SY0-701 retires in June 2027. The path follows SY0-701, the exam whose outline
+was read and which people are still taking. SY0-801's course index was not at the address the
+pattern predicted, and guessing further addresses would have been a search for a page, not a
+reading of one. **A dated claim can go stale between the search and the commit, and the date
+in the blurb is how a reader can tell.**
+
+### What was verified, and how far
+
+How sync matches a user, and the hard-match protections that apply from July 2026, came from
+Microsoft's pages as quoted in search results. So did the AD Recycle Bin keeping a user's
+anchor and Entra's thirty days. Two anchors record both. The four exam outlines were fetched
+and read from a course index that mirrors CompTIA's numbering, and the SY0-801 and SY0-701
+dates came from CompTIA's pages as quoted in search. Every new card was rendered at size in
+both themes and read before its commit, and so was the paths panel.
+
+```
+7 commits · 1 new topic (infra) · 3 cards (infra 2, hw 1) · 4 exam paths · 1 feature, a path as a deck
+reader: no new queries · census 472 of 495 -> 471 of 495, 0 unexplained · wide 9 -> 8
+topics 1,571 -> 1,572 · paths 102 -> 106 · path steps 1,609 -> 1,751 · related links 4,978 -> 4,984 · mainland 1,495 -> 1,496
+dated claims 109 -> 111 · 18 prefixed spellings swept, the gate taught four prefixes
+45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the ninth wave, the five gaps and the exam that launched
+
+The request was **keep going with the next wave**. *Content ideas* had shipped, so the next
+wave was the list §16 left: five A+ objectives the exam paths skipped, and a path for
+SY0-801. *Content ideas* §17 is the table. This is what doing it found.
+
+### Two queries closed in prose, the way they usually do
+
+The 16 queries went into the census before any topic, at 0 of 16. With the topics written,
+fourteen found them, and two did not. `windows 11 tpm requirement` missed because the card
+said Windows 11 *requires* them. `fat32 file size limit` missed because the card said *how
+large one file can be*. Each closed when the card used the reader's noun, and in both the
+reader's noun was also the plainer sentence. That is the same fix as *depressed for weeks*
+in the fifth wave. **A reader's question is usually written in nouns, and a card that
+answers it in verbs reads well and goes unfound.**
+
+### The missing outline was one search away
+
+The eighth wave looked for SY0-801's outline at the address its predecessor's course used,
+found nothing there, and stopped. This wave searched for the outline itself. It found
+CompTIA's objectives document, version 2.0, on the file host CompTIA's own pages link to,
+fetched it with a plain request and read it: the official document, not a course index that
+mirrors one. V8 keeps the five domains, reweights them and adds an objective on the threats
+of using AI, which topics already on the site answer. **When a source is missing, search for
+the source, not for another copy of the place the last one was found.**
+
+### Writing a topic found a near-duplicate, and reading it took a sentence
+
+The near-duplicate census flagged one new pair: *Windows Editions* beside *Windows Server
+Editions & Licensing*. Phase 9's test is to open both and say in one sentence who each is
+for. Here that was easy: one is for the laptop a technician meets, one for the server an
+administrator buys, and each links to the other. The sentence is in the verdicts file now,
+and the census reads 0 unread.
+
+### What was verified, and how far
+
+These Microsoft pages were fetched and read: the Device Encryption page, the Entra join page,
+the GPT FAQ, MBR2GPT and the Home and Pro comparison. Search covered Windows 11's
+requirements, the 2 TB MBR limit, subscription activation, Dev Drive, the Home to Pro upgrade,
+NTFS permissions on copy and move, and the file systems' support on macOS and Linux. Backblaze's
+SMART figures came from search too, and their anchor says they are from 2016 data. CompTIA's
+SY0-801 objectives were fetched and read. Six fact anchors record all of it, and the claim the
+sources would not support, that a Home to Pro upgrade keeps every app, was left out. Every new
+card was rendered at size in both themes and read before its commit.
+
+```
+5 commits · 5 new topics (endpoint 3, hw 2) · 1 exam path · 1 acronym decided for a domain · 1 near-duplicate pair read
+reader: 16 queries in somebody revising for a CompTIA exam, 0 of 16 -> 16 of 16 · census 471 of 495 -> 487 of 511, 0 unexplained
+topics 1,572 -> 1,577 · paths 106 -> 107 · path steps 1,751 -> 1,805 · related links 4,984 -> 5,016 · mainland 1,496 -> 1,501
+dated claims 111 -> 117 · near-duplicate pairs 95 -> 96, 0 unread
+45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the tenth wave, four exam paths and the six gaps they found
+
+The request was **keep going with the next wave**. §17 had left nothing queued, so the wave
+went back to §5's own count, the exams it found at zero in `paths.json` that no wave had
+written a path for: CySA+, PenTest+, Linux+ and CISSP. *Content ideas* §18 is the table. This
+is what doing it found.
+
+### Four outlines, read where the exam bodies keep them
+
+CompTIA's objectives documents for PT0-003, CS0-004 and XK0-006 came from the file host that
+served SY0-801's, and ISC2's CISSP outlines from the media host its own site links to, all with
+plain requests, and each was read in full before its path was written. The launch and
+retirement dates came from CompTIA's exam pages as search quoted them, since comptia.org
+refuses automated reading. One third-party post put CS0-003's retirement on CS0-004's launch
+day. CompTIA's own pages say 22 December 2026, and the path uses that. ISC2 has already
+published the outline that replaces the current one on 15 April 2027, so the CISSP path names
+the date.
+
+### A slug typed by hand was one character wrong
+
+The 18 queries went into the census before any topic, each want naming the slug its topic's
+title would produce. Five were computed with the site's own `slugify`. The sixth had been
+computed for a longer draft title, and when the title was shortened the slug was guessed
+rather than computed again. `check_paths.py` caught it the moment the topic joined the CISSP
+path: one step that resolved to nothing, and one topic on no path. **A slug is computed, never
+typed. The function that makes it is one import away.**
+
+### Checking a fact found that it had moved
+
+Every dated claim was searched before it was written. Nine came back as expected, and one
+changed the card: ATT&CK's April 2025 release folded DLL Side-Loading, T1574.002, into
+T1574.001, now named simply DLL. The card cites the current number, and its anchor records the
+change. **A technique ID is a dated claim, like a price, because the framework that issues it
+renumbers.**
+
+### A gate that skips code already had the exception a keyword needed
+
+`check_renames.py` lists *blacklist* as renamed to *blocklist* since 2020, and the device topic
+used the word four times in prose, because `modprobe.d` still spells its keyword that way. The
+gate reads prose only, so the fix needed no allow entry: the prose says blocking, and the
+keyword appears only as code, where it is literally the right word.
+
+### Rendering at size found what every gate passed
+
+Every gate and every suite was green before a single card was rendered. Rendering each card at
+1280 and 375 pixels then found three things none of them measures. A 33-character badge
+widened the whole `ops` page by 5 pixels on a phone, because the topic header does not wrap
+and the title shrinks to its longest word, here *Communications*. Another badge ran under the
+chevron. And a table column headed *Covered in* sat over two rows that gave a defense instead.
+The mobile suite checks fifteen views chosen in advance, and a new topic's header is not one of
+them. **For a new topic, the render is the gate. The suites guard what they were written
+for.**
+
+### What was verified, and how far
+
+The four outlines were fetched and read. Search covered ATT&CK's process injection and
+hollowing pages and its April 2025 release notes, Sysmon's events and MITRE's detection
+strategy for hollowing, the EFF's DES search, Kocher's timing and power papers, the Bellcore
+fault attack, Bleichenbacher and ROBOT, libvirt's open network mode, dracut's `mkinitrd`
+wrapper, and the NIS2 and Form 8-K clocks. Ten fact anchors record it, each saying the pages
+were seen in search results and not fetched. What search did not confirm was left out:
+Vaudenay's padding oracle is not named. Every new card was rendered at size in both themes and
+read, and the fixes it found are their own commit.
+
+```
+5 commits · 4 exam paths · 6 new topics (linux 2, pentest 1, threat 1, sec 1, ops 1) · 1 acronym decided for a domain
+reader: 18 queries in somebody revising for a CompTIA exam, 0 of 18 -> 18 of 18 · census 487 of 511 -> 505 of 529, 0 unexplained
+topics 1,577 -> 1,583 · paths 107 -> 111 · path steps 1,805 -> 2,014 · related links 5,016 -> 5,064 · mainland 1,501 -> 1,507
+dated claims 117 -> 127 · near-duplicate pairs 96, 0 unread · plan.md under the 8,000 lines that reopen the fifth risk
+45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the eleventh wave, SecurityX and the two CISSP gaps
+
+The request was **keep going**. §18 had left two CISSP objectives with no topic, and the domain
+headers advertise exams the paths do not cover. SecurityX is tagged on four of them and shares
+its governance objective with one of the two gaps, so its path went first. *Content ideas* §19
+is the table. This is what doing it found.
+
+### The official document was newer than the copy that ranked first
+
+Search offered a third-party copy of the CAS-005 objectives labeled version 3.0, and, further
+down, CompTIA's own file host. CompTIA's copy was version 7.0. Every CompTIA outline this session
+read came from that file host, and this is why: a mirror keeps whichever version it happened
+to fetch. **The exam body's own copy is the one to read, even when a mirror is easier to find.**
+
+### One topic closed a gap in two exams
+
+The policy hierarchy was a CISSP gap the tenth wave found, and SecurityX 1.1 asks for the same
+documents. Writing it once, for both, meant one census batch covered both exams, and the
+SecurityX path opens on a topic written for it. The RACI matrix and COBIT, which SecurityX
+names and the site had never explained, became its second and third cards.
+
+### The slugs were computed, and all eight resolved
+
+The tenth wave's record said a slug is computed, never typed. This wave's eight wants were
+computed with the site's own `slugify` before either topic existed, and every one resolved the
+first time the topics were built.
+
+### Two verdicts claimed a count nobody had taken
+
+Rendering the cards at size and reading them found two verdicts that said how often something
+is skipped, "the step most drills skip" among them, with nothing counted behind it. Both now
+say what the step is for. **A verdict that sounds like a statistic needs one, or needs to stop
+sounding like one.**
+
+### What was verified, and how far
+
+CompTIA's CAS-005 objectives, version 7.0, were fetched and read. The CISSP outlines the tenth
+wave fetched were read again for 1.6 and 7.15, in the 2024 and 2027 versions, which name the
+same items. The two topics make no dated claims, so no fact anchors were added: COBIT and ITIL
+are described by what they govern, without versions or owners that would date. Every new card
+was rendered at size in both themes and read before its commit.
+
+```
+4 commits · 1 exam path · 2 new topics (grc 1, sec 1)
+reader: 8 queries in somebody revising for a CompTIA exam, 0 of 8 -> 8 of 8 · census 505 of 529 -> 513 of 537, 0 unexplained
+topics 1,583 -> 1,585 · paths 111 -> 112 · path steps 2,014 -> 2,062 · related links 5,064 -> 5,082 · mainland 1,507 -> 1,509
+dated claims 127 · near-duplicate pairs 96, 0 unread · plan.md under the 8,000 lines that reopen the fifth risk
+45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
+visual 0/2 here, as in every wave: font rendering, baseline left alone
 ```

@@ -3244,7 +3244,7 @@ console.print(table)
 
 <!-- BEGINNER29-SCRIPT v1 -->
 <!-- ── TOPIC: TESTING STRATEGY ───────────────────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧪</span>
     <span class="topic-name">Testing Strategy — Why and How to Test</span>
@@ -3309,6 +3309,36 @@ console.print(table)
         takes ten seconds is run constantly, which is where the value actually is — and
         tests that depend on order fail mysteriously and get deleted. Clear failure is
         the third: a test that fails without saying what broke costs more than it saves.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Coverage Counts the Lines the Tests Ran; Mutation Testing Counts the Bugs They Would Notice</div>
+      <div class="concept-desc">
+        The pyramid says how many tests to write at each level. Three techniques say which inputs to test.
+        Equivalence partitioning divides the inputs into classes the code should treat alike and tests one from
+        each. Boundary value analysis tests each edge and one step either side, because that is where
+        off-by-one mistakes live. Mutation testing turns the question round: a tool changes the code on
+        purpose, flipping a <code>&lt;</code> to <code>&lt;=</code> or deleting a line, and reruns the suite.
+        A test that fails has caught the mutant; a mutant that survives is a bug the suite would not notice.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>An age field that accepts 18 to 65</th><th>The tests it gives</th></tr></thead>
+          <tbody>
+            <tr><td>Equivalence partitions</td><td>Below 18, 18 to 65, above 65: one value from each, such as 10, 40 and 70</td></tr>
+            <tr><td>Boundary values</td><td>17, 18, 65 and 66, the four values where the rule changes</td></tr>
+            <tr><td>A mutant: <code>age &gt;= 18</code> becomes <code>age &gt; 18</code></td><td>Survives every partition test above, and is killed only by the boundary test at 18</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row is why full line coverage can still miss the bug.</strong> The
+          partition tests run the comparison, so it counts as covered, and none of them checks the one value
+          where <code>&gt;=</code> and <code>&gt;</code> disagree. Coverage measures what ran, and a mutation
+          score measures what was checked. Tools exist for most languages, such as PIT for Java, Stryker for
+          JavaScript and C#, and mutmut for Python, and they are slow, so run them on the code that matters
+          rather than on everything.
+        </div>
       </div>
     </div>
   </div>

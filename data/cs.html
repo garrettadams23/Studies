@@ -156,8 +156,8 @@
         analysis only speaks to the second.
       </div>
       <pre class="code-block"><span class="com"># Pre-sizing removes the resizes entirely when the size is known</span>
-buf = [<span class="m">None</span>] * n_expected          <span class="com"># Python</span>
-buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected)     <span class="com"># Go: length 0, capacity reserved</span></pre>
+buf = [<span class="kw">None</span>] * n_expected          <span class="com"># Python</span>
+buf := make([]<span class="kw">int</span>, <span class="num">0</span>, nExpected)     <span class="com"># Go: length 0, capacity reserved</span></pre>
     </div>
 
   </div>
@@ -272,7 +272,7 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
     <span class="kw">if</span> lo &gt;= hi: <span class="kw">return</span>              <span class="com"># base case</span>
     p = partition(a, lo, hi)
     quicksort(a, lo, p)              <span class="com"># BUG: should be p - 1</span>
-    quicksort(a, p + <span class="m">1</span>, hi)</pre>
+    quicksort(a, p + <span class="num">1</span>, hi)</pre>
       <div class="concept-desc verdict">
         Python defaults to a recursion limit near 1000 frames, which turns unbounded recursion
         into a clean exception. C and C++ have no such courtesy: the stack simply runs out, and
@@ -301,7 +301,7 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
 </div>
 
 <!-- ── TOPIC: P VS NP ─────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧩</span>
     <span class="topic-name">P, NP &amp; Knowing When to Stop Looking for an Exact Answer</span>
@@ -382,6 +382,37 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Some Questions About Programs Have No Algorithm at All: the Halting Problem and Rice's Theorem</div>
+      <div class="concept-desc">
+        P versus NP is about problems that are slow to solve. The halting problem is about a question that
+        cannot be solved at all: given any program and its input, will it finish? Alan Turing proved in 1936
+        that no program can answer that for every program, by handing any claimed answerer a program built to
+        do the opposite of whatever it predicts, so the problem is undecidable. Henry Rice extended that in 1951
+        to every non-trivial question about what a program does, as opposed to what its text looks like. A Turing machine is the model the
+        proof is about: a tape, a head and a table of rules, enough to compute anything a computer can.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question about a program</th><th>Decidable?</th><th>So every tool that answers it</th></tr></thead>
+          <tbody>
+            <tr><td>Does its text contain <code>eval(</code>?</td><td class="c-green">Yes: it is about the text</td><td>Can answer exactly</td></tr>
+            <tr><td>Will it halt on this input?</td><td class="c-red">No: Turing</td><td>Times out, guesses, or declines</td></tr>
+            <tr><td>Can user input ever reach this SQL <span class="acro-exp">(Structured Query Language)</span> query?</td><td class="c-red">No, in general: Rice</td><td>Reports some flows that cannot happen, misses some that can, or gives up on some programs</td></tr>
+            <tr><td>Does it do the same thing as this other program?</td><td class="c-red">No, in general</td><td>Proves only the equivalences it was built to recognize</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The third row is why every security scanner either cries wolf or misses
+          things, and why choosing one is choosing which.</strong> A scanner that reports every flow that might
+          be dangerous is sound and noisy, and one tuned to report only flows it is sure of is quiet and
+          incomplete. No third kind is waiting to be built. The exits are the ones the card above lists for
+          NP-hard problems, approximate or heuristic or a constrained input, such as a framework where the
+          question becomes decidable, with one difference: there is no solver to buy.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -391,7 +422,7 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: MEMORY LAYOUT ───────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧱</span>
     <span class="topic-name">Memory Layout &amp; Cache Locality — Why Arrays Beat Linked Lists</span>
@@ -461,12 +492,12 @@ buf := make([]<span class="kw">int</span>, <span class="m">0</span>, nExpected) 
         and behind why a scan over a column store outruns a row store on analytics by so much.
       </div>
       <pre class="code-block"><span class="com"># Array of structs: summing one field drags every other field into cache</span>
-<span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="m">64</span>]; };
+<span class="kw">struct</span> P { <span class="kw">float</span> x, y, z; <span class="kw">char</span> name[<span class="num">64</span>]; };
 P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes per line</span>
 
 <span class="com"># Struct of arrays: the summed field is contiguous</span>
 <span class="kw">float</span> xs[N], ys[N], zs[N];
-<span class="kw">char</span> names[N][<span class="m">64</span>];        <span class="com"># every fetched line is all x values</span></pre>
+<span class="kw">char</span> names[N][<span class="num">64</span>];        <span class="com"># every fetched line is all x values</span></pre>
       <div class="concept-desc verdict">
         Do not reach for this by default — it makes code harder to read and only pays where a
         hot loop touches a subset of fields over many records. It is a profiling result, not a
@@ -474,6 +505,37 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">The Stack, the Heap, and Why a Segmentation Fault Is the Operating System Doing Its Job</div>
+      <div class="concept-desc">
+        Each thread has a stack: a fixed-size region where each function call gets a frame for its local
+        variables, released when the call returns. The heap is everything allocated with <code>malloc</code>
+        or <code>new</code>, which lives until something frees it. A segmentation fault is the processor and
+        the kernel stopping a process that touched memory it has no right to, an unmapped page or a
+        protected one, with the signal <code>SIGSEGV</code>. The crash is where the mistake was caught, which
+        is rarely where it was made.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Cause</th><th>Where the mistake was</th><th>What finds it before the crash</th></tr></thead>
+          <tbody>
+            <tr><td>A null pointer read or written</td><td>Wherever the pointer was left null and not checked</td><td>Compiler warnings and static analysis</td></tr>
+            <tr><td>Use after free</td><td>The code that freed the memory, and the code that kept a pointer to it</td><td>AddressSanitizer, or Valgrind</td></tr>
+            <tr><td>A buffer overflow</td><td>A write past the end of an array, possibly far from where it crashes</td><td>AddressSanitizer</td></tr>
+            <tr><td>Recursion with no working base case</td><td>The base case</td><td>The stack's guard page is what turns it into a crash at all</td></tr>
+            <tr><td>A write to a string literal</td><td>Code that treated read-only data as writable</td><td><code>const</code>, and the warnings that enforce it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The second and third rows are why the crash is the good outcome.</strong> A use
+          after free or an overflow that does not crash corrupts data quietly instead, and some of those are how
+          an attacker takes over a process. Building tests with <code>-fsanitize=address</code> turns those
+          silent corruptions into a crash at the first bad access, with the line that made it, which is the
+          mistake and not its consequence.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -542,8 +604,8 @@ P people[N];              <span class="com"># 76 bytes/record; ~0.8 useful bytes
       </div>
       <pre class="code-block"><span class="com"># Python randomises string hashing per process by default since 3.3.</span>
 <span class="com"># Same string, two processes, two hashes — that is the mitigation working.</span>
-$ python3 -c <span class="m">"print(hash('collide'))"</span>
-$ python3 -c <span class="m">"print(hash('collide'))"</span>
+$ python3 -c <span class="str">"print(hash('collide'))"</span>
+$ python3 -c <span class="str">"print(hash('collide'))"</span>
 
 <span class="com"># PYTHONHASHSEED=0 disables it. Only ever for reproducing a bug.</span></pre>
       <div class="concept-desc verdict">
@@ -572,7 +634,7 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
 </div>
 
 <!-- ── TOPIC: TREES ───────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🌳</span>
     <span class="topic-name">Trees — BST <span class="acro-exp">(Binary Search Tree)</span>, Balanced, Heap &amp; Trie, and What Each Is Actually For</span>
@@ -620,6 +682,20 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         right, and lookup becomes O(n). Since sorted input is extremely common — importing
         records by ID, replaying a log — this is the normal case rather than the pathological
         one.
+      </div>
+      <div class="dw">
+        <div class="topo-grid">
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 320 190" role="img" aria-label="A balanced binary search tree of the keys 1 to 7: 4 at the root, 2 and 6 below it, and 1, 3, 5 and 7 as leaves. The search for 7 visits 4, 6 and 7, marked."><line class="msv-axis" x1="150.5" y1="32.9" x2="99.5" y2="81.1"/><line class="msv-secant" x1="169.5" y1="32.9" x2="220.5" y2="81.1"/><line class="msv-axis" x1="83.9" y1="101.5" x2="61.1" y2="144.5"/><line class="msv-axis" x1="96.1" y1="101.5" x2="118.9" y2="144.5"/><line class="msv-axis" x1="223.9" y1="101.5" x2="201.1" y2="144.5"/><line class="msv-secant" x1="236.1" y1="101.5" x2="258.9" y2="144.5"/><circle class="msv-circle msv-secant" cx="160" cy="24" r="13"/><text class="msv-lbl" x="160" y="28.5">4</text><circle class="msv-circle" cx="90" cy="90" r="13"/><text class="msv-rad" x="90" y="94.5">2</text><circle class="msv-circle msv-secant" cx="230" cy="90" r="13"/><text class="msv-lbl" x="230" y="94.5">6</text><circle class="msv-circle" cx="55" cy="156" r="13"/><text class="msv-rad" x="55" y="160.5">1</text><circle class="msv-circle" cx="125" cy="156" r="13"/><text class="msv-rad" x="125" y="160.5">3</text><circle class="msv-circle" cx="195" cy="156" r="13"/><text class="msv-rad" x="195" y="160.5">5</text><circle class="msv-circle msv-secant" cx="265" cy="156" r="13"/><text class="msv-lbl" x="265" y="160.5">7</text></svg>
+            <div class="topo-name">Inserted 4, 2, 6, 1, 3, 5, 7</div>
+            <div class="topo-desc">Three levels. Finding 7 takes three comparisons, and a million keys would take about twenty</div>
+          </div>
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 320 190" role="img" aria-label="The same seven keys inserted in sorted order: each is the right child of the one before, a diagonal chain from 1 to 7. The search for 7 visits all seven, marked."><line class="msv-secant" x1="41.3" y1="26.5" x2="62" y2="38.5"/><line class="msv-secant" x1="84.6" y1="51.5" x2="105.3" y2="63.5"/><line class="msv-secant" x1="127.9" y1="76.5" x2="148.6" y2="88.5"/><line class="msv-secant" x1="171.2" y1="101.5" x2="191.9" y2="113.5"/><line class="msv-secant" x1="214.5" y1="126.5" x2="235.2" y2="138.5"/><line class="msv-secant" x1="257.8" y1="151.5" x2="278.5" y2="163.5"/><circle class="msv-circle msv-secant" cx="30" cy="20" r="13"/><text class="msv-lbl" x="30" y="24.5">1</text><circle class="msv-circle msv-secant" cx="73.3" cy="45" r="13"/><text class="msv-lbl" x="73.3" y="49.5">2</text><circle class="msv-circle msv-secant" cx="116.6" cy="70" r="13"/><text class="msv-lbl" x="116.6" y="74.5">3</text><circle class="msv-circle msv-secant" cx="159.9" cy="95" r="13"/><text class="msv-lbl" x="159.9" y="99.5">4</text><circle class="msv-circle msv-secant" cx="203.2" cy="120" r="13"/><text class="msv-lbl" x="203.2" y="124.5">5</text><circle class="msv-circle msv-secant" cx="246.5" cy="145" r="13"/><text class="msv-lbl" x="246.5" y="149.5">6</text><circle class="msv-circle msv-secant" cx="289.8" cy="170" r="13"/><text class="msv-lbl" x="289.8" y="174.5">7</text></svg>
+            <div class="topo-name">Inserted 1 to 7, in order</div>
+            <div class="topo-desc">Seven levels. Finding 7 takes seven comparisons, and a million keys would take a million: a linked list</div>
+          </div>
+        </div>
       </div>
       <div class="concept-desc">
         Self-balancing variants (red-black, AVL) rotate on insert to keep depth logarithmic. You
@@ -1052,8 +1128,8 @@ $ python3 -c <span class="m">"print(hash('collide'))"</span>
         so call your standard library's version.
       </div>
       <pre class="code-block"><span class="com"># The classic bug: lo + hi overflows on large arrays in fixed-width ints.</span>
-mid = (lo + hi) // <span class="m">2</span>          <span class="com"># overflows in C/Java</span>
-mid = lo + (hi - lo) // <span class="m">2</span>     <span class="com"># does not</span>
+mid = (lo + hi) // <span class="num">2</span>          <span class="com"># overflows in C/Java</span>
+mid = lo + (hi - lo) // <span class="num">2</span>     <span class="com"># does not</span>
 
 <span class="com"># Python: use the library. bisect returns an insertion point,</span>
 <span class="com"># which is more useful than a found/not-found boolean.</span>
@@ -1122,11 +1198,11 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
 
 <span class="com"># Naive recursion: correct, exponential, obviously right.</span>
 <span class="com"># One decorator makes it linear. That is the whole technique.</span>
-<span class="nd">@lru_cache</span>(maxsize=<span class="m">None</span>)
+<span class="fn">@lru_cache</span>(maxsize=<span class="kw">None</span>)
 <span class="kw">def</span> <span class="fn">ways</span>(n):
-    <span class="kw">if</span> n &lt; <span class="m">0</span>: <span class="kw">return</span> <span class="m">0</span>
-    <span class="kw">if</span> n == <span class="m">0</span>: <span class="kw">return</span> <span class="m">1</span>
-    <span class="kw">return</span> ways(n - <span class="m">1</span>) + ways(n - <span class="m">2</span>)</pre>
+    <span class="kw">if</span> n &lt; <span class="num">0</span>: <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">if</span> n == <span class="num">0</span>: <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">return</span> ways(n - <span class="num">1</span>) + ways(n - <span class="num">2</span>)</pre>
       <div class="concept-desc verdict">
         Convert to a bottom-up table only when you need it — to avoid recursion depth, or to
         drop memory from O(n) to O(1) by keeping just the rows still in use. Both are
@@ -1138,7 +1214,7 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
 </div>
 
 <!-- ── TOPIC: STRING ALGORITHMS ───────────────────────────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔡</span>
     <span class="topic-name">String Algorithms — Matching, Edit Distance &amp; Where Regex Fits</span>
@@ -1189,8 +1265,8 @@ found = i &lt; len(sorted_items) <span class="kw">and</span> sorted_items[i] == 
       </div>
       <pre class="code-block"><span class="com"># Nested quantifier over overlapping alternatives. Add one character</span>
 <span class="com"># to the input and the match time roughly doubles.</span>
-pattern = <span class="m">r"^(a+)+$"</span>
-subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="m">"!"</span>        <span class="com"># no match, and it will take a while</span>
+pattern = <span class="str">r"^(a+)+$"</span>
+subject = <span class="str">"a"</span> * <span class="num">30</span> + <span class="str">"!"</span>        <span class="com"># no match, and it will take a while</span>
 
 <span class="com"># Mitigations, in order of preference:</span>
 <span class="com">#  1. Avoid nested quantifiers and overlapping alternations</span>
@@ -1226,6 +1302,36 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
       </div>
     </div>
 
+    <div class="concept-card">
+      <div class="concept-label">The Inversion</div>
+      <div class="concept-title">Regular and Context-Free: Why Matching Nested Brackets Needs a Stack</div>
+      <div class="concept-desc">
+        A regular expression, in the theory's sense, describes a regular language, and every regular language
+        is recognized by a machine with a fixed number of states and no memory beyond them. A machine like
+        that cannot count how many brackets are still open, so it cannot match nesting to any depth. A
+        context-free grammar adds a stack, which is exactly that count. The pumping lemma is the proof tool:
+        any long enough string in a regular language has a part that can be repeated without leaving the
+        language, and balanced brackets do not.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Language class</th><th>Machine</th><th>Describes</th><th>Where you meet it</th></tr></thead>
+          <tbody>
+            <tr><td>Regular</td><td>Finite automaton: fixed states and no other memory</td><td>Fixed patterns: a date, an IP <span class="acro-exp">(Internet Protocol)</span> address's shape, a token</td><td>grep, input validation, the first pass of every parser</td></tr>
+            <tr><td>Context-free</td><td>Pushdown automaton: the same, plus a stack</td><td>Nesting: brackets, HTML <span class="acro-exp">(HyperText Markup Language)</span> elements, JSON <span class="acro-exp">(JavaScript Object Notation)</span>, arithmetic expressions</td><td>Every parser for a programming or data language</td></tr>
+            <tr><td>Context-sensitive and beyond</td><td>Linear-bounded automaton, then a Turing machine</td><td>Rules that depend on what came before, such as a variable declared before it is used</td><td>Compilers, which check these after parsing, in code rather than in the grammar</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">"You cannot parse HTML with a regular expression" is a theorem about the first
+          two rows,</strong> not an opinion about style: a finite set of states cannot count open tags. Two
+          qualifications keep it honest. A regex is fine for one tag in a flat string, because the theorem is
+          about structures of any depth. And the engines in Perl, PCRE and .NET add recursion and balancing
+          groups, so they match things no regular expression can, which makes them more than regular
+          expressions, and the parser is still the tool that says what went wrong and where.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1273,7 +1379,7 @@ subject = <span class="m">"a"</span> * <span class="m">30</span> + <span class="
         <span class="kw">if</span> i &lt; k:
             keep.append(item)
         <span class="kw">else</span>:
-            j = random.randint(<span class="m">0</span>, i)     <span class="com"># inclusive</span>
+            j = random.randint(<span class="num">0</span>, i)     <span class="com"># inclusive</span>
             <span class="kw">if</span> j &lt; k:
                 keep[j] = item
     <span class="kw">return</span> keep</pre>
@@ -1550,7 +1656,7 @@ value = transform(row)
 </div>
 
 <!-- ── TOPIC: DEADLOCK ────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔒</span>
     <span class="topic-name">Deadlock &amp; Livelock — The Four Conditions, and Which One to Break</span>
@@ -1599,6 +1705,36 @@ value = transform(row)
         transaction with a retryable error — so application code that talks to a database
         <em>must</em> handle deadlock as a retry case, not as a fatal exception. Code that does
         not is the source of the intermittent failures nobody can reproduce.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Fingerprint</div>
+      <div class="concept-title">The Classic Synchronization Problems, and the One That Kept Resetting a Spacecraft</div>
+      <div class="concept-desc">
+        Four problems recur in every operating systems course because each is a shape that real systems keep
+        reproducing. Dijkstra set the dining philosophers as an exam question in 1965, about computers
+        competing for tape drives, and Tony Hoare later gave it the philosophers and the forks. Each row names
+        the shape, so that the next time a system hangs or stalls it has a name and a known fix.
+      </div>
+      <div class="dw">
+        <!-- fact: Mars Pathfinder, 1997: priority inversion between a high-priority bus task, a low-priority meteorological task and a medium-priority communications task; the watchdog reset; fixed by turning on priority inheritance in the VxWorks mutex from the ground | source: Mike Jones's account of David Wilner's 1997 keynote and Glenn Reeves's reply, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <table class="ref-table">
+          <thead><tr><th>Problem</th><th>What goes wrong</th><th>The fix</th></tr></thead>
+          <tbody>
+            <tr><td>Producer-consumer, the bounded buffer</td><td>A producer adds to a full buffer, or a consumer takes from an empty one</td><td>Two counting semaphores, one for empty slots and one for full ones, and a lock on the buffer itself</td></tr>
+            <tr><td>Readers-writers</td><td>Writers wait forever while readers keep arriving, or the reverse</td><td>A written policy on who goes first, because either choice starves somebody</td></tr>
+            <tr><td>Dining philosophers</td><td>Each philosopher holds one fork and waits for the next: a circular wait</td><td>Number the forks and always take the lower one first, which breaks circular wait, one of the four conditions in the first card</td></tr>
+            <tr><td>Priority inversion</td><td>A high-priority task waits on a lock held by a low-priority one, while a medium-priority task keeps the low one from running</td><td>Priority inheritance: the task holding the lock borrows the waiter's priority until it lets go</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last row happened on Mars.</strong> In 1997 Mars Pathfinder kept resetting
+          itself: a high-priority bus task waited on a mutex held by a low-priority weather task, a
+          medium-priority communications task ran in between, and a watchdog saw the bus task late and restarted
+          the computer. The mutex had been created with priority inheritance off. Engineers on the ground
+          uploaded a short program that turned it on, and the resets stopped. The lesson is the third column:
+          each fix is one switch, and knowing the shape's name is how you find the switch.
+        </div>
       </div>
     </div>
   </div>
@@ -1844,7 +1980,7 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: MEMORY HIERARCHY ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🏔️</span>
     <span class="topic-name">Caches &amp; the Memory Hierarchy — The Numbers Every Engineer Should Know</span>
@@ -1854,10 +1990,10 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
   <div class="topic-body">
     <div class="concept-card">
       <div class="concept-label">The numbers</div>
-      <div class="concept-title">Six Orders of Magnitude, and Where Your Latency Actually Went</div>
+      <div class="concept-title">Eight Orders of Magnitude, and Where Your Latency Actually Went</div>
       <div class="concept-desc">
         Storage is a hierarchy: small and fast at the top, enormous and slow at the bottom.
-        The gaps are not incremental — they span six orders of magnitude, and knowing roughly
+        The gaps are not incremental — they span eight orders of magnitude, and knowing roughly
         where each level sits explains more production latency than any profiler.
       </div>
       <div class="dw">
@@ -1878,6 +2014,28 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
         hardware, and the ratios matter far more than the values. The practical conclusion is
         blunt: no amount of algorithmic cleverness recovers a network round trip you did not
         need. Remove the trip before optimizing the loop.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Picture</div>
+      <div class="concept-title">The Ladder Drawn to Scale, Where Two Gaps Take Most of the Height</div>
+      <div class="concept-desc">
+        The table gives every level a row of the same height, and that is the flattening. Drawn so that each
+        step down is ten times slower than the one above, the top three levels bunch together, and two gaps
+        take up most of the ladder: from memory to storage, and from a server in the same building to one on
+        another continent.
+      </div>
+      <div class="dw">
+        <svg class="math-svg" viewBox="0 0 345 500" role="img" aria-label="The six levels on a vertical scale where each step down is ten times slower, from 1 nanosecond at the top to 1 second at the bottom. L1 and L2 sit almost together at the top and main memory just below. Then a gap a thousand times long to an NVMe read, the same-datacenter round trip just below it, and a gap three hundred times long to the cross-continent round trip near the bottom."><line class="msv-axis" x1="60" y1="34" x2="60" y2="484"/><line class="msv-axis" x1="54" y1="34" x2="60" y2="34"/><line class="msv-axis" x1="54" y1="84" x2="60" y2="84"/><line class="msv-axis" x1="54" y1="134" x2="60" y2="134"/><line class="msv-axis" x1="54" y1="184" x2="60" y2="184"/><line class="msv-axis" x1="54" y1="234" x2="60" y2="234"/><line class="msv-axis" x1="54" y1="284" x2="60" y2="284"/><line class="msv-axis" x1="54" y1="334" x2="60" y2="334"/><line class="msv-axis" x1="54" y1="384" x2="60" y2="384"/><line class="msv-axis" x1="54" y1="434" x2="60" y2="434"/><line class="msv-axis" x1="54" y1="484" x2="60" y2="484"/><text class="msv-lbl2" x="27" y="38.5">1 ns</text><text class="msv-lbl2" x="27" y="188.5">1 µs</text><text class="msv-lbl2" x="27" y="338.5">1 ms</text><text class="msv-lbl2" x="27" y="488.5">1 s</text><line class="msv-secant" x1="60" y1="34" x2="88" y2="34"/><circle class="msv-dot2" cx="60" cy="34" r="4"/><text class="msv-rad" x="160" y="38.5">L1 cache</text><text class="msv-lbl" x="264" y="38.5">~1 ns</text><line class="msv-secant" x1="60" y1="64.1" x2="88" y2="64.1"/><circle class="msv-dot2" cx="60" cy="64.1" r="4"/><text class="msv-rad" x="160" y="68.6">L2 cache</text><text class="msv-lbl" x="264" y="68.6">~4 ns</text><line class="msv-secant" x1="60" y1="134" x2="88" y2="134"/><circle class="msv-dot2" cx="60" cy="134" r="4"/><text class="msv-rad" x="160" y="138.5">Main memory</text><text class="msv-lbl" x="264" y="138.5">~100 ns</text><line class="msv-secant" x1="60" y1="284" x2="88" y2="284"/><circle class="msv-dot2" cx="60" cy="284" r="4"/><text class="msv-rad" x="160" y="288.5">NVMe read</text><text class="msv-lbl" x="264" y="288.5">~100 µs</text><line class="msv-secant" x1="60" y1="318.9" x2="88" y2="318.9"/><circle class="msv-dot2" cx="60" cy="318.9" r="4"/><text class="msv-rad" x="160" y="323.4">Same datacenter</text><text class="msv-lbl" x="264" y="323.4">~0.5 ms</text><line class="msv-secant" x1="60" y1="442.8" x2="88" y2="442.8"/><circle class="msv-dot2" cx="60" cy="442.8" r="4"/><text class="msv-rad" x="160" y="447.3">Cross-continent</text><text class="msv-lbl" x="264" y="447.3">~150 ms</text><text class="msv-lbl2" x="320" y="53.6">×4</text><line class="msv-dash" x1="320" y1="72.1" x2="320" y2="87.1"/><line class="msv-dash" x1="320" y1="109.1" x2="320" y2="126"/><text class="msv-lbl2" x="320" y="103.6">×25</text><line class="msv-dash" x1="320" y1="142" x2="320" y2="197"/><line class="msv-dash" x1="320" y1="219" x2="320" y2="276"/><text class="msv-lbl" x="320" y="213.5">×1,000</text><text class="msv-lbl2" x="320" y="306">×5</text><line class="msv-dash" x1="320" y1="326.9" x2="320" y2="368.9"/><line class="msv-dash" x1="320" y1="390.9" x2="320" y2="434.8"/><text class="msv-lbl" x="320" y="385.4">×300</text></svg>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The thousand-fold gap between main memory and an NVMe read is the cliff,</strong>
+          and on a spinning disk it is a hundred times longer again. B-trees are shaped around it, and
+          <span class="xref">Trees — BST, Balanced, Heap &amp; Trie, and What Each Is Actually For</span> says how.
+          The second long gap is the network leaving the region, three hundred times a round trip inside the
+          datacenter, which is why a protocol that is chatty but fine on a local network is unusable across an
+          ocean. The gaps at the top, four and twenty-five, are the ones caches exist to hide, and drawn to
+          scale they are barely there.
+        </div>
       </div>
     </div>
     <div class="concept-card">
@@ -1935,10 +2093,10 @@ os.fsync(dir_fd)                 <span class="com"># and now its NAME is durable
         the nearest representable one and the error compounds across operations.
       </div>
       <pre class="code-block"><span class="com"># Not a language quirk — the hardware representation, everywhere</span>
-&gt;&gt;&gt; <span class="m">0.1</span> + <span class="m">0.2</span> == <span class="m">0.3</span>
+&gt;&gt;&gt; <span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>
 <span class="kw">False</span>
 &gt;&gt;&gt; <span class="kw">from</span> decimal <span class="kw">import</span> Decimal
-&gt;&gt;&gt; Decimal(<span class="m">"0.1"</span>) + Decimal(<span class="m">"0.2"</span>) == Decimal(<span class="m">"0.3"</span>)
+&gt;&gt;&gt; Decimal(<span class="str">"0.1"</span>) + Decimal(<span class="str">"0.2"</span>) == Decimal(<span class="str">"0.3"</span>)
 <span class="kw">True</span></pre>
       <div class="concept-desc verdict">
         <strong>Store money as integer minor units, or as a decimal type.</strong> Never as a
@@ -2730,7 +2888,7 @@ valgrind --leak-check=full ./prog</pre>
 
 
           <!-- ── TOPIC: MERKLE TREES ──────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🌳</span>
               <span class="topic-name">Merkle Trees — Verifying and Diffing Huge Data by Comparing Hashes</span>
@@ -2762,6 +2920,35 @@ valgrind --leak-check=full ./prog</pre>
                     them is equal — skip it entirely.</strong> You only descend into the parts that changed, which
                     is why a Merkle tree makes synchronizing two nearly-identical copies cost a function of the
                     <em>difference</em>, not of the total size.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Picture</div>
+                <div class="concept-title">One Changed Block, Drawn: the Hashes That Change Are the Proof</div>
+                <div class="concept-desc">
+                  Four blocks are enough to see it. Change one, and only the hashes on its way up change, one per
+                  level, while everything off that path keeps its hash and can be skipped. Read the same path the
+                  other way and it is a proof: to show that a block belongs under a root, send the hash beside each
+                  step of the path, and nothing else.
+                </div>
+                <div class="dw">
+                  <div class="topo-grid">
+                    <div class="topo-card">
+                      <svg class="math-svg" viewBox="0 0 340 204" role="img" aria-label="A Merkle tree over four blocks, B0 to B3. Each block has a leaf hash, H0 to H3; H01 and H23 hash the pairs, and the root hashes those two. B2 has changed, and the marked path B2, H2, H23 and Root is every hash that changes with it."><line class="msv-axis" x1="170" y1="37" x2="90" y2="63"/><line class="msv-secant" x1="170" y1="37" x2="250" y2="63"/><line class="msv-axis" x1="90" y1="89" x2="50" y2="115"/><line class="msv-axis" x1="90" y1="89" x2="130" y2="115"/><line class="msv-secant" x1="250" y1="89" x2="210" y2="115"/><line class="msv-axis" x1="250" y1="89" x2="290" y2="115"/><line class="msv-axis" x1="50" y1="141" x2="50" y2="169"/><line class="msv-axis" x1="130" y1="141" x2="130" y2="169"/><line class="msv-secant" x1="210" y1="141" x2="210" y2="169"/><line class="msv-axis" x1="290" y1="141" x2="290" y2="169"/><rect class="msv-circle msv-secant" x="135" y="11" width="70" height="26" rx="4"/><text class="msv-lbl" x="170" y="28.5">Root</text><rect class="msh-right" x="62" y="63" width="56" height="26" rx="4"/><text class="msv-lbl2" x="90" y="80.5">H01</text><rect class="msv-circle msv-secant" x="222" y="63" width="56" height="26" rx="4"/><text class="msv-lbl" x="250" y="80.5">H23</text><rect class="msh-right" x="26" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="50" y="132.5">H0</text><rect class="msh-right" x="106" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="130" y="132.5">H1</text><rect class="msv-circle msv-secant" x="186" y="115" width="48" height="26" rx="4"/><text class="msv-lbl" x="210" y="132.5">H2</text><rect class="msh-right" x="266" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="290" y="132.5">H3</text><rect class="msh-right" x="26" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="50" y="186.5">B0</text><rect class="msh-right" x="106" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="130" y="186.5">B1</text><rect class="msv-circle msv-secant" x="186" y="169" width="48" height="26" rx="4"/><text class="msv-lbl" x="210" y="186.5">B2</text><rect class="msh-right" x="266" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="290" y="186.5">B3</text></svg>
+                      <div class="topo-name">Block B2 changes</div>
+                      <div class="topo-desc">H2, H23 and the root change with it. Every other box keeps its hash, so a comparison can skip it</div>
+                    </div>
+                    <div class="topo-card">
+                      <svg class="math-svg" viewBox="0 0 340 204" role="img" aria-label="The same tree. To prove B2 is in the set, the proof carries only H3 and H01, highlighted. The verifier hashes B2 into H2, combines it with H3 into H23, combines that with H01, and compares the result with the root it already trusts."><line class="msv-axis" x1="170" y1="37" x2="90" y2="63"/><line class="msv-secant" x1="170" y1="37" x2="250" y2="63"/><line class="msv-axis" x1="90" y1="89" x2="50" y2="115"/><line class="msv-axis" x1="90" y1="89" x2="130" y2="115"/><line class="msv-secant" x1="250" y1="89" x2="210" y2="115"/><line class="msv-axis" x1="250" y1="89" x2="290" y2="115"/><line class="msv-axis" x1="50" y1="141" x2="50" y2="169"/><line class="msv-axis" x1="130" y1="141" x2="130" y2="169"/><line class="msv-secant" x1="210" y1="141" x2="210" y2="169"/><line class="msv-axis" x1="290" y1="141" x2="290" y2="169"/><rect class="msv-circle msv-secant" x="135" y="11" width="70" height="26" rx="4"/><text class="msv-lbl" x="170" y="28.5">Root</text><rect class="msv-bar" x="62" y="63" width="56" height="26" rx="4"/><text class="msh-name" x="90" y="80.5">H01</text><rect class="msv-circle msv-secant" x="222" y="63" width="56" height="26" rx="4"/><text class="msv-lbl" x="250" y="80.5">H23</text><rect class="msh-right" x="26" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="50" y="132.5">H0</text><rect class="msh-right" x="106" y="115" width="48" height="26" rx="4"/><text class="msv-lbl2" x="130" y="132.5">H1</text><rect class="msv-circle msv-secant" x="186" y="115" width="48" height="26" rx="4"/><text class="msv-lbl" x="210" y="132.5">H2</text><rect class="msv-bar" x="266" y="115" width="48" height="26" rx="4"/><text class="msh-name" x="290" y="132.5">H3</text><rect class="msh-right" x="26" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="50" y="186.5">B0</text><rect class="msh-right" x="106" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="130" y="186.5">B1</text><rect class="msv-circle msv-secant" x="186" y="169" width="48" height="26" rx="4"/><text class="msv-lbl" x="210" y="186.5">B2</text><rect class="msh-right" x="266" y="169" width="48" height="26" rx="4"/><text class="msv-lbl2" x="290" y="186.5">B3</text></svg>
+                      <div class="topo-name">Proving B2 is in the set</div>
+                      <div class="topo-desc">The proof is H3 and H01. The verifier hashes B2, combines up the path, and compares the result with the root it already trusts</div>
+                    </div>
+                  </div>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Both panels are the same path, and its length is the number of levels, not
+                    the number of blocks.</strong> Four blocks need two sibling hashes and a million need twenty, which
+                    is why a light client can check one payment without downloading the chain.
                   </div>
                 </div>
               </div>
@@ -3078,7 +3265,7 @@ valgrind --leak-check=full ./prog</pre>
 <!-- /domain-body cs -->
 
 <!-- ── TOPIC: MODULAR ARITHMETIC ─────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🕐</span>
     <span class="topic-name">Modular Arithmetic — The Clock Maths Behind Hashing, Checksums &amp; Crypto</span>
@@ -3152,11 +3339,41 @@ valgrind --leak-check=full ./prog</pre>
    index = ((h % n) + n) % n</pre>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">Detecting and Correcting Errors Are Different Purchases: Parity, CRC and Hamming</div>
+      <div class="concept-desc">
+        Every scheme here adds redundant bits, and what the extra bits buy differs. A CRC is modular arithmetic
+        on bits: the message, read as a polynomial, is divided by a fixed one, and the remainder travels with
+        it. A Hamming code places parity bits so that the pattern of failed checks names the position of a
+        flipped bit, which is what lets it repair the bit instead of only reporting it.
+      </div>
+      <div class="dw">
+        <!-- fact: ECC memory uses a (72,64) SECDED code: 64 data bits and 8 check bits, the eighth an overall parity bit that adds double-error detection | source: an AMD (Xilinx) application note, University of Wisconsin course notes and memory-controller patents, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <table class="ref-table">
+          <thead><tr><th>Scheme</th><th>Extra bits</th><th>Detects</th><th>Corrects</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>Parity</td><td>1 per unit</td><td>Any odd number of flipped bits, and no even number</td><td class="c-muted">Nothing</td><td>Serial links, older memory</td></tr>
+            <tr><td>CRC-32</td><td>32 per frame</td><td>Every burst of errors up to 32 bits long, and most longer ones</td><td class="c-muted">Nothing: the data is sent again</td><td>Ethernet frames, ZIP, PNG <span class="acro-exp">(Portable Network Graphics)</span></td></tr>
+            <tr><td>Hamming (7,4)</td><td>3 per 4 data bits</td><td>Two flips, if it is not also correcting</td><td>One flipped bit</td><td>The idea behind ECC <span class="acro-exp">(Error-Correcting Code)</span></td></tr>
+            <tr><td>SECDED (72,64): single-error correcting, double-error detecting</td><td>8 per 64 data bits</td><td>Two flips</td><td class="c-green">One flipped bit</td><td>ECC memory</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The third row has the trap the fourth exists to close.</strong> A Hamming code
+          used to correct cannot tell two flipped bits from one, so it repairs the wrong bit and reports success.
+          ECC memory adds an eighth check bit to each 64 for exactly that: one flip is fixed without asking, and
+          two are reported instead of miscorrected. A CRC can only tell you to ask again, which is fine on a
+          network that can resend and useless in memory that cannot. The memory half is
+          <span class="xref">Memory Deep — Channels, Ranks, Timings, ECC &amp; Diagnosing Bad RAM</span>.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- ── TOPIC: BOOLEAN ALGEBRA ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔲</span>
     <span class="topic-name">Boolean Algebra — Truth Tables, De Morgan &amp; Firewall Logic</span>
@@ -3305,6 +3522,34 @@ valgrind --leak-check=full ./prog</pre>
           four or five variables the maps stop being usable and tools take over: Quine–McCluskey does the same
           minimization exactly, and heuristics such as Espresso do it at scale. The map is where you learn what
           the tool is doing.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Bitwise Operations: a Subnet Mask and a Permission Mask Are the Same Move, and umask Is Not Subtraction</div>
+      <div class="concept-desc">
+        The laws above, applied to every bit of a number at once, are the bitwise operations, and an
+        administrator uses them daily under other names. A mask is a number whose 1 bits say where to act.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Operation</th><th>Does</th><th>Where you already use it</th></tr></thead>
+          <tbody>
+            <tr><td>AND with a mask</td><td>Keeps the bits the mask has set and clears the rest</td><td>An address AND its subnet mask is the network address: 192.168.10.77 AND 255.255.255.0 is 192.168.10.0</td></tr>
+            <tr><td>AND with NOT a mask</td><td>Clears the bits the mask has set</td><td>umask: a new file asks for mode 666, and the system gives 666 AND NOT 022, which is 644</td></tr>
+            <tr><td>OR</td><td>Sets the bits the mask has set</td><td><code>chmod a+x</code> is the mode OR 111, and API <span class="acro-exp">(Application Programming Interface)</span> flags are combined with OR</td></tr>
+            <tr><td>XOR</td><td>Flips the bits the mask has set, and doing it twice restores them</td><td>RAID 5 parity, and why a lost disk can be rebuilt from the others</td></tr>
+            <tr><td>Shift left by n</td><td>Multiplies by 2 to the n</td><td>A /24 is 24 one bits, and <code>1 &lt;&lt; 8</code> is 256</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The second row is where people subtract instead, and get a plausible wrong
+          answer.</strong> For umask 022, 666 minus 022 and 666 AND NOT 022 both give 644, so the shortcut seems
+          to work. For umask 033 subtraction gives 633 and the system gives 644, because a bit the request never
+          asked for cannot be taken away. The subnet and permission halves are
+          <span class="xref">Subnetting &amp; CIDR</span> and
+          <span class="xref">Linux File Permissions Model</span>.
         </div>
       </div>
     </div>

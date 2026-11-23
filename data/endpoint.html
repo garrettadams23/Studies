@@ -4100,6 +4100,356 @@ Remove-PSSession $s
           </div>
 
 
+          <div class="topic" data-reviewed="2026-11">
+            <!-- ── TOPIC: WINDOWS REPAIR LADDER ──────────────────────────────────── -->
+            <div class="topic-header">
+              <span class="topic-icon">🪜</span>
+              <span class="topic-name">Windows Will Not Start — The Repair Ladder, Safe Mode to Reset</span>
+              <span class="topic-badge">Endpoint • Recovery</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Each Rung Keeps Less of the Machine, So Climb Down in Order</div>
+                <div class="concept-desc">
+                  A Windows machine that will not start, or starts and then crashes, can be repaired at several
+                  depths, and each one gives up more of the machine's state than the one before it for a better
+                  chance of booting. The ladder is the order to try them in. Two things come before the first
+                  rung. <strong>The BitLocker recovery key</strong>, because the recovery environment asks for it
+                  and the user will not have it. And <strong>the last change</strong>, because yesterday's update,
+                  driver or firmware setting is usually the cause, and naming it lets you skip half the ladder.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Rung</th><th>What it does</th><th>What it keeps</th><th>The right rung when</th></tr></thead>
+                    <tbody>
+                      <tr><td>1. Undo the last change</td><td>Uninstall the update, or roll back the driver from Device Manager's Roll Back Driver. The recovery environment's Uninstall Updates does the same from outside Windows</td><td class="c-green">Everything</td><td>The fault began after an update, a driver or a firmware setting</td></tr>
+                      <tr><td>2. Safe Mode</td><td>Starts Windows with a minimal set of drivers and services</td><td class="c-green">Everything</td><td>Windows crashes during or after a normal start. If Safe Mode stays up, the cause is a driver, a service or a startup item, not Windows</td></tr>
+                      <tr><td>3. DISM <span class="acro-exp">(Deployment Image Servicing and Management)</span>, then the System File Checker</td><td><code>DISM /Online /Cleanup-Image /RestoreHealth</code> repairs the component store, then <code>sfc /scannow</code> repairs system files from it</td><td class="c-green">Everything</td><td>Windows starts but errors or crashes as if its own files are damaged</td></tr>
+                      <tr><td>4. System Restore</td><td>Rolls system files, the registry, drivers and installed programs back to a restore point. Personal files are not touched</td><td class="c-amber">Personal files. Not the apps or drivers installed since the point</td><td>A change broke it and nobody can say which. Only if System Protection was on and a point exists</td></tr>
+                      <tr><td>5. Startup Repair, then the command prompt</td><td>From the recovery environment: Startup Repair first, then <code>bootrec</code> and <code>bcdboot</code> to rebuild the boot configuration</td><td class="c-green">Everything, when it works</td><td>Windows never starts at all, because the boot loader or the BCD <span class="acro-exp">(Boot Configuration Data)</span> is damaged</td></tr>
+                      <tr><td>6. Reset this PC</td><td>Reinstalls Windows from a cloud download or the local image, keeping or removing personal files</td><td class="c-amber">Personal files, if you choose. Not apps or settings</td><td>Everything above has failed, or the installation is no longer worth trusting</td></tr>
+                      <tr><td>7. Reimage, wipe or Autopilot Reset</td><td>Puts a managed device back on the standard build</td><td class="c-red">Nothing local. The user's data is wherever it was synced</td><td>In a managed estate, as soon as it is cheaper than the rungs above it</td></tr>
+                    </tbody>
+                  </table>
+                  <!-- fact: run DISM RestoreHealth before SFC on Windows 8 and later | source: Microsoft KB 929833, "Use the System File Checker tool to repair missing or corrupted system files", as quoted in search results; not fetched | checked: 2026-11 -->
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The last row is where a managed estate should stop climbing early.</strong>
+                    Each rung above it spends an engineer's time on an outcome nobody can promise, and a reimage
+                    costs the same hour every time and ends on a known build. That holds only if the data never lived
+                    only on the laptop, which is what
+                    <span class="xref">OneDrive — Known Folder Move, Files On-Demand &amp; Sync Triage</span> and
+                    <span class="xref">Lost, Stolen &amp; Returning Devices</span> are for. On an unmanaged or personal
+                    machine, climb the whole ladder in order, because rungs 6 and 7 take the apps and settings with
+                    them. And run DISM before the System File Checker, as Microsoft's own order says: the checker
+                    repairs files from the component store, so a damaged store gives it nothing good to copy.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The Fingerprint</div>
+                <div class="concept-title">Read the Failure Before Choosing the Rung</div>
+                <div class="concept-desc">
+                  The ladder says what to try. What the screen shows says where to step onto it, and two of the
+                  commonest screens mean the problem is not in Windows at all.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>What the screen shows</th><th>What it points to</th><th>Start at</th></tr></thead>
+                    <tbody>
+                      <tr><td>A stop code soon after a driver or an update arrived</td><td>The new driver or update</td><td>Rung 1, from Safe Mode if Windows will not stay up long enough</td></tr>
+                      <tr><td><code>INACCESSIBLE_BOOT_DEVICE</code></td><td>Windows cannot reach its own boot device: a storage-controller mode changed in the firmware (AHCI against RAID), a storage driver, or the boot configuration</td><td>Put the firmware setting back first, then the recovery environment</td></tr>
+                      <tr><td>"Automatic Repair couldn't repair your PC", in a loop</td><td>The recovery environment ran its own repair and it failed</td><td>Its Advanced options: Uninstall Updates, then System Restore, then the command prompt</td></tr>
+                      <tr><td>A BitLocker recovery screen at startup</td><td>The TPM <span class="acro-exp">(Trusted Platform Module)</span> saw a change in the boot path and withheld the key. Not a fault</td><td>The recovery key, then the cause</td></tr>
+                      <tr><td>"No boot device", or nothing at all before the Windows logo</td><td>Below Windows: a disk the firmware does not detect, or the boot order</td><td>The firmware and the hardware</td></tr>
+                      <tr><td>A black screen with only a cursor after sign-in</td><td>The shell, the user's profile or the display driver, not the system</td><td>Safe Mode, then a second account to separate the profile from the machine</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The fourth and fifth rows leave this ladder before its first rung.</strong>
+                    A BitLocker screen is the security chip working correctly, and
+                    <span class="xref">BitLocker at Scale — Silent Enablement, Key Escrow &amp; Recovery</span> says
+                    why it fired. A missing boot device is a hardware or firmware question that no System File
+                    Checker will answer, and
+                    <span class="xref">POST, Beep Codes &amp; Diagnostic LEDs — Reading a Machine That Will Not Boot</span>
+                    is the ladder for it. The same climb on Linux is
+                    <span class="xref">Rescuing a System That Will Not Boot — GRUB, initramfs &amp; the Chroot</span>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Getting Into Safe Mode Takes a Detour, and Getting Out Can Take Another</div>
+                <div class="concept-desc">
+                  Pressing F8 at startup no longer works by default: Windows 8 and later start too quickly for the
+                  key to be read. Every working route goes through the Windows Recovery Environment, WinRE, whose
+                  menu is Troubleshoot → Advanced options → Startup Settings → Restart. Then <kbd>4</kbd> is Safe
+                  Mode, <kbd>5</kbd> adds networking and <kbd>6</kbd> gives a command prompt.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Route</th><th>Works when</th><th>The catch</th></tr></thead>
+                    <tbody>
+                      <tr><td>Hold <kbd>Shift</kbd> and choose Restart</td><td>Windows reaches the sign-in screen or the desktop</td><td>None. This is the route to use</td></tr>
+                      <tr><td>Two failed starts in a row</td><td>Windows never finishes starting: WinRE opens on its own</td><td>Interrupting a start that hangs means holding the power button, twice</td></tr>
+                      <tr><td><code>msconfig</code> → Boot → Safe boot</td><td>Windows starts normally</td><td class="c-red">It persists. The machine starts in Safe Mode every time until someone clears the box</td></tr>
+                      <tr><td><code>bcdedit /set {default} safeboot minimal</code></td><td>A command prompt, including the one in WinRE</td><td class="c-red">It persists the same way. Undo it with <code>bcdedit /deletevalue {default} safeboot</code></td></tr>
+                    </tbody>
+                  </table>
+                  <!-- fact: WinRE starts automatically after two consecutive failed attempts to start Windows | source: Microsoft Learn, Windows Recovery Environment (Windows RE) technical reference, as quoted in search results; Microsoft's consumer page describes the same thing as WinRE on the third start | checked: 2026-11 -->
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The last two rows are the same trap twice.</strong> Both write the
+                    choice into the boot configuration, so the machine keeps starting in Safe Mode after the fix,
+                    and the user reports that it is now worse. A machine stuck in Safe Mode after a repair has one
+                    of those two settings still set, so clear it before the next diagnosis.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="topic" data-reviewed="2026-11">
+            <!-- ── TOPIC: WINDOWS EDITIONS ──────────────────────────────────────── -->
+            <div class="topic-header">
+              <span class="topic-icon">🏷️</span>
+              <span class="topic-name">Windows Editions — Home, Pro, Enterprise &amp; Education, and the Features That Decide</span>
+              <span class="topic-badge">Endpoint • Editions</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">The Edition Decides What You Can Do to a Machine, and Home Is the One That Says No</div>
+                <div class="concept-desc">
+                  Windows Home vs Pro is the question behind a common ticket: a laptop bought retail will not join
+                  the domain, will not take BitLocker policy and cannot be reached by Remote Desktop. Nothing is
+                  broken. Home leaves out exactly the features an organization manages a machine with, and the
+                  first thing to check is the edition, in Settings, System, About, or with <code>winver</code>.
+                  <!-- fact: Home cannot join an AD domain or be Entra joined; BitLocker Drive Encryption is Pro, Enterprise and Education, while Device Encryption also reaches Home; Home lacks Hyper-V, Windows Sandbox and the Remote Desktop host | source: Microsoft Support's Device Encryption page and Microsoft Learn's Entra join page, both fetched; domain join from Microsoft Q&A and Sandbox, Hyper-V and the host from Windows Central, as quoted in search results | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Feature</th><th>Home</th><th>Pro</th><th>Enterprise and Education</th></tr></thead>
+                    <tbody>
+                      <tr><td>Join an Active Directory domain</td><td class="c-red">No</td><td class="c-green">Yes</td><td class="c-green">Yes</td></tr>
+                      <tr><td>Join Microsoft Entra ID</td><td class="c-red">No. A work account can be added, not joined</td><td class="c-green">Yes</td><td class="c-green">Yes</td></tr>
+                      <tr><td>Disk encryption</td><td class="c-amber">Device Encryption, which turns BitLocker on automatically on supported hardware, without its management</td><td class="c-green">BitLocker Drive Encryption, managed</td><td class="c-green">BitLocker Drive Encryption, managed</td></tr>
+                      <tr><td>Group Policy</td><td class="c-red">No Group Policy editor, and domain policy cannot reach it</td><td class="c-green">Yes</td><td class="c-green">Yes</td></tr>
+                      <tr><td>Remote Desktop</td><td class="c-amber">Client only: it can connect out, and nothing can connect in</td><td class="c-green">Client and host</td><td class="c-green">Client and host</td></tr>
+                      <tr><td>Hyper-V and Windows Sandbox</td><td class="c-red">No</td><td class="c-green">Yes</td><td class="c-green">Yes</td></tr>
+                      <tr><td>The Long-Term Servicing Channel</td><td class="c-red">No</td><td class="c-red">No</td><td class="c-green">Enterprise only</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The first two rows are the ticket.</strong> A device that has to join the
+                    organization's directory, on premises or in Entra, needs Pro or better, so check the edition before
+                    anyone promises the user a working laptop. Home becomes Pro with a Pro key entered under Settings,
+                    System, Activation, or through the Store, as an upgrade in place rather than a reinstall. The third
+                    row is the one people misread: Home's Device Encryption is real BitLocker underneath, but it turns on
+                    by itself when someone signs in with a Microsoft account and escrows the key to that account, which
+                    is the user's and not the organization's.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Silently wrong</div>
+                <div class="concept-title">Enterprise Is Usually a License on a Pro Machine, Not Something Installed</div>
+                <div class="concept-desc">
+                  Few laptops are installed from Enterprise media. With subscription activation, a Pro device steps up
+                  to Enterprise when a user with a Windows Enterprise E3 or E5 license signs in with their Entra
+                  account, with no reinstall and no restart. When the subscription ends or moves to someone else, the
+                  device steps back down to Pro after a grace period. Home is not a starting point for any of this.
+                  <!-- fact: subscription activation steps Pro up to Enterprise when a user with an E3 or E5 license signs in, and reverts to Pro when the subscription expires or moves, after a grace period of up to 90 days; Home is not a supported starting edition | source: Microsoft Learn's Windows subscription activation page, as quoted in search results; not fetched | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Edition</th><th>Usually arrives as</th><th>Where it belongs</th></tr></thead>
+                    <tbody>
+                      <tr><td>Home</td><td>Preinstalled on consumer and retail machines</td><td>Personal devices, and nowhere an organization has to manage</td></tr>
+                      <tr><td>Pro</td><td>Preinstalled on business models, or a key upgrade from Home</td><td>Small organizations, and the base Enterprise is activated on</td></tr>
+                      <tr><td>Enterprise</td><td>Subscription activation on top of Pro, or volume licensing</td><td>Managed fleets</td></tr>
+                      <tr><td>Education</td><td>Academic licensing</td><td>Schools, with Enterprise's feature set</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The Enterprise row explains a machine that says Enterprise on Monday and Pro
+                    on Friday:</strong> the license moved, not the installation. Check the user's assignment before
+                    reimaging anything. Device enrollment and the join that subscription activation depends on are in
+                    <span class="xref">Azure AD / Microsoft Entra ID — Endpoint Identity</span>, and the server-side
+                    equivalent of this whole question is
+                    <span class="xref">Windows Server Editions &amp; Licensing — What You Are Actually Buying</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="topic" data-reviewed="2026-11">
+            <!-- ── TOPIC: INSTALLING WINDOWS ─────────────────────────────────────── -->
+            <div class="topic-header">
+              <span class="topic-icon">💿</span>
+              <span class="topic-name">Installing Windows — Boot Media, GPT <span class="acro-exp">(GUID Partition Table)</span> vs MBR <span class="acro-exp">(Master Boot Record)</span>, and Clean Install vs Upgrade</span>
+              <span class="topic-badge">Endpoint • Deployment</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">What Has to Survive Decides the Kind of Install</div>
+                <div class="concept-desc">
+                  Clean install vs upgrade is the first choice, and it is a choice about what is kept. Every way of
+                  putting Windows on a machine sits somewhere between keeping everything and keeping nothing, and
+                  picking the one that keeps too much leaves the problem in place, while picking the one that keeps
+                  too little costs the user their afternoon.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Install</th><th>What it does</th><th>What survives</th><th>Right when</th></tr></thead>
+                    <tbody>
+                      <tr><td>In-place upgrade</td><td>Runs setup inside the working Windows to a newer version</td><td class="c-green">Apps, settings and files</td><td>Moving a healthy machine to a new version, such as Windows 10 to 11</td></tr>
+                      <tr><td>Repair install</td><td>The same in-place setup, onto the version already installed</td><td class="c-green">Apps, settings and files, with Windows' own files replaced</td><td>Windows starts but is damaged past what DISM <span class="acro-exp">(Deployment Image Servicing and Management)</span> and the System File Checker fix</td></tr>
+                      <tr><td>Reset this PC</td><td>Reinstalls from a cloud download or the local image</td><td class="c-amber">Personal files, if chosen. Not apps</td><td>Covered as a rung of the repair ladder</td></tr>
+                      <tr><td>Clean install</td><td>Boots from installation media and replaces the system drive's contents</td><td class="c-red">Nothing on the system drive</td><td>A new drive, a compromised machine, or a start that has to be known clean</td></tr>
+                      <tr><td>Image deployment</td><td>Applies a prepared, generalized image to many machines, or provisions the factory image instead</td><td class="c-red">Nothing local; the build is the image's</td><td>More machines than an engineer can install by hand</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The repair install is the row people forget.</strong> It keeps everything the
+                    user cares about and replaces everything Windows owns, so it sits between the last software repair and
+                    a reset, and it is often the rung that saves a reimage. The rest of that ladder is
+                    <span class="xref">Windows Will Not Start — The Repair Ladder, Safe Mode to Reset</span>, and provisioning
+                    the factory image without installing anything is
+                    <span class="xref">Windows Autopilot — Zero-Touch Provisioning</span>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">GPT With UEFI <span class="acro-exp">(Unified Extensible Firmware Interface)</span>, MBR With Legacy BIOS <span class="acro-exp">(Basic Input/Output System)</span>: the Disk and the Firmware Have to Match</div>
+                <div class="concept-desc">
+                  MBR vs GPT is the partition style, and it decides more than the number of partitions: Windows boots
+                  UEFI firmware only from a GPT disk, and legacy BIOS only from MBR. A mismatch between the disk and the
+                  firmware's boot mode is the commonest install failure that looks like a hardware fault. Setup says it
+                  cannot install to this disk, or the finished machine reports no bootable device.
+                  <!-- fact: MBR addresses disks up to 2 TB and holds four partition table entries; Windows allows 128 GPT partitions and boots UEFI only from GPT; MBR2GPT converts without deleting data; Windows 11 requires UEFI with Secure Boot capability and TPM 2.0 | source: Microsoft Learn's Windows and GPT FAQ and MBR2GPT pages, fetched; the 2 TB limit from Microsoft Learn's disk-management pages and Windows 11's requirements from Microsoft Support, as quoted in search results | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>MBR</th><th>GPT</th></tr></thead>
+                    <tbody>
+                      <tr><td>Largest disk Windows can use</td><td class="c-amber">2 TB. Anything beyond it cannot be addressed</td><td class="c-green">Far beyond any drive sold</td></tr>
+                      <tr><td>Partitions</td><td>Four primary, or three and an extended partition holding logical drives</td><td>Up to 128 in Windows</td></tr>
+                      <tr><td>Boots on</td><td>Legacy BIOS</td><td>UEFI, which Windows 11 requires, with Secure Boot capability and TPM <span class="acro-exp">(Trusted Platform Module)</span> 2.0</td></tr>
+                      <tr><td>Converting</td><td colspan="2"><code>mbr2gpt /validate</code>, then <code>mbr2gpt /convert</code>, converts the system disk without deleting data. Switch the firmware to UEFI afterwards, not before</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The boot row is the one to check first when an install fails.</strong> A
+                    machine set to legacy mode will not boot a GPT disk, and Windows 11 will not install on it at all,
+                    because UEFI, Secure Boot capability and a TPM 2.0 chip are among its requirements.
+                    Convert the disk with MBR2GPT, then change the firmware to UEFI and turn Secure Boot on, in that order,
+                    because the old MBR install cannot start under UEFI and the converted disk cannot start under legacy
+                    mode. On a machine with nothing to keep, a clean install onto a wiped disk creates GPT by itself.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Reference</div>
+                <div class="concept-title">Boot Media, and How a Machine Finds It</div>
+                <div class="concept-desc">
+                  An install starts with something the firmware can boot. Which one depends on how many machines there
+                  are and where they are, and each has its own way of failing before Windows setup ever appears.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Boot method</th><th>What it needs</th><th>When it fails</th></tr></thead>
+                    <tbody>
+                      <tr><td>USB <span class="acro-exp">(Universal Serial Bus)</span> installation media</td><td>Microsoft's Media Creation Tool, or a downloaded <code>.iso</code> image written to a stick</td><td>The firmware boot order, or a boot mode that does not match the stick</td></tr>
+                      <tr><td>Network boot, PXE <span class="acro-exp">(Preboot Execution Environment)</span></td><td>Network boot enabled in the firmware, and a deployment server answering, such as Windows Deployment Services or Configuration Manager</td><td>No answer: a DHCP <span class="acro-exp">(Dynamic Host Configuration Protocol)</span> or VLAN <span class="acro-exp">(Virtual Local Area Network)</span> boundary between the machine and the server</td></tr>
+                      <tr><td>The recovery environment and a cloud download</td><td>Nothing external; Reset this PC fetches or uses the local image</td><td>A damaged recovery partition, which the cloud download avoids</td></tr>
+                      <tr><td>No install at all</td><td>Autopilot provisions the image the machine shipped with</td><td>Covered in the Autopilot topic</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">PXE boot fails on the network more often than on the machine.</strong> The
+                    request is a broadcast, so a server on another subnet hears it only if the router relays it, which is
+                    the same relay DHCP needs. When one site boots from the network and another does not, compare the
+                    relay settings on the two sites' routers before touching either image.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="topic" data-reviewed="2026-11">
+            <!-- ── TOPIC: TROUBLESHOOTING PHONES & TABLETS ────────────────────────── -->
+            <div class="topic-header">
+              <span class="topic-icon">📱</span>
+              <span class="topic-name">Troubleshooting Phones &amp; Tablets — Apps, Battery, Connectivity and the Signs of Compromise</span>
+              <span class="topic-badge">Endpoint • Mobile</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The Decision</div>
+                <div class="concept-title">Most Phone Faults Are One App, Full Storage or a Tired Battery, and a Restart Comes First</div>
+                <div class="concept-desc">
+                  A phone battery draining fast, or an app that keeps crashing on the phone, sounds like a fault in the
+                  device, and it rarely is. Phones fail in a small number of ways, and the first check for each is in
+                  Settings, not in a repair shop. Restart before anything else, because it clears a stuck process and
+                  costs nothing.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Symptom</th><th>First check</th><th>Then</th></tr></thead>
+                    <tbody>
+                      <tr><td>Battery drains fast</td><td>Battery usage by app, in Settings. One app at the top is the cause more often than the battery</td><td>A battery past its rated life is a replacement. A swollen one is a safety problem: stop charging it</td></tr>
+                      <tr><td>An app crashes or will not open</td><td>Update the app and the operating system, then restart</td><td>Clear the app's cache on Android, or offload and reinstall it on iOS, and check free storage</td></tr>
+                      <tr><td>Slow, freezing</td><td>Free storage. A nearly full phone slows everything on it</td><td>Close what runs in the background and restart. A reset is last, after a backup</td></tr>
+                      <tr><td>Overheating</td><td>Take it out of the case, stop charging, check what is running</td><td>Heat while idle points at an app, or a failing battery</td></tr>
+                      <tr><td>Wi-Fi or Bluetooth will not connect</td><td>Toggle it, forget the network, or unpair and pair again</td><td>Reset network settings, which also forgets saved Wi-Fi networks, so have the passwords</td></tr>
+                      <tr><td>An update will not install</td><td>Free storage, charge above the update's threshold, a stable connection</td><td>Retry on Wi-Fi rather than cellular</td></tr>
+                      <tr><td>The screen will not rotate</td><td>Rotation lock</td><td>Nothing more, almost always</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The battery row is the one that can be a hardware fault, and the swollen
+                    battery is the one that is dangerous.</strong> A case that no longer closes, a screen lifting at an
+                    edge or a back that bulges means the cell is swelling, and the fix is a replacement, not a setting.
+                    Everything else on this table is software, and a restart and an update clear most of it.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Failure mode</div>
+                <div class="concept-title">When the Symptom Is Security: Data, Ads, and Apps or Profiles Nobody Installed</div>
+                <div class="concept-desc">
+                  Some of the same symptoms are the signs a phone is compromised, and the difference is in the details:
+                  data used with the screen off, ads appearing outside any app, something installed that nobody
+                  remembers installing. Treat these as an incident, not a fault, because the response starts somewhere
+                  other than the phone.
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Sign</th><th>What it can mean</th><th>Do</th></tr></thead>
+                    <tbody>
+                      <tr><td>Data use far above normal</td><td>An app sending data out, or syncing something large</td><td>Data usage by app in Settings. Remove what nobody recognizes</td></tr>
+                      <tr><td>Pop-ups, ads outside apps, fake security warnings</td><td>Adware, usually from a recently installed app</td><td>Remove recent installs. On Android, check which apps hold device administrator rights</td></tr>
+                      <tr><td>A configuration profile or administrator app nobody installed</td><td>On iOS a profile can install certificates and route traffic through a proxy or VPN <span class="acro-exp">(Virtual Private Network)</span>. On Android an administrator app resists removal</td><td>Remove the profile, or revoke the administrator right, then uninstall</td></tr>
+                      <tr><td>Sign-ins to the user's accounts that they did not make</td><td>Credentials taken, from the phone or somewhere else</td><td class="c-amber">Change the passwords from a different device first, then clean or reset the phone</td></tr>
+                      <tr><td>Jailbroken or rooted, or apps from outside the official store</td><td>The platform's own protections are switched off</td><td>Restore or reset. In a managed fleet, compliance policy should block the device</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The sign-in row sets the order of everything else: change the passwords from
+                    another device, because a compromised phone can watch them being typed.</strong> Then remove what is
+                    unknown, update the operating system, and if doubt remains, back up the data only, not the apps, and
+                    reset. A managed phone can be wiped or retired remotely, which is
+                    <span class="xref">Lost, Stolen &amp; Returning Devices</span>, and what a work profile protects is in
+                    <span class="xref">iOS &amp; Android Enterprise — Supervision, Work Profiles &amp; MAM</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- ── TOPIC: ENDPOINT ANALYTICS & REMEDIATIONS ──────────────────────────────── -->
           <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">

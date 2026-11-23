@@ -278,6 +278,12 @@ const CEILINGS = [
   // work, time, good — and widening them covers a third to a half of the site.
   // A widened answer that large carries no information, so the cap turns them
   // into "too broad to widen" and they must report nothing at all.
+  // An acronym that is also a word must not pull its word into the query. IT is
+  // in the dictionary, and "information technology" mapped back to the word
+  // "it": 1,452 of 1,564 topics. Fixed by honoring `noAnnotate` in the search's
+  // acronym map. The share is the widened stage's ceiling, which is generous for
+  // two specific words and nowhere near the whole site.
+  ["information technology", share(0.09), "an acronym that is also a word pulling the word into the query"],
   ["how does it work", 0, "the widened stage answering a question it cannot answer"],
   ["time time time",   0, "the widened stage answering a question it cannot answer"],
 ];

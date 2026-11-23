@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **475 elements at rest instead of 146,826** — measured at 1,563 topics,
+  costs **475 elements at rest instead of 152,474** — measured at 1,585 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -33,7 +33,7 @@ Open `index.html` in any modern web browser — no server or build step required
   across your open tabs. No dependencies.
 - **Acronym Expansions Everywhere** — The first use of an acronym in any topic
   carries what it stands for right beside it, e.g. `ACL (Access Control List)`.
-- **Acronym Dictionary** — A dedicated domain with 1,104 IT acronyms, browsable
+- **Acronym Dictionary** — A dedicated domain with 1,121 IT acronyms, browsable
   A–Z or by subject area, searchable by acronym *or* by what it expands to.
 - **Rotating Snap Quotes** — Philosophical quotes on a fade cycle.
 - **URL Encode / Decode Widget** — Interactive tool in the Scripting domain.
@@ -74,7 +74,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🧠 Mind & Wellbeing | Inner Game | Imposter syndrome, burnout, resilience, dealing with failure, surviving on-call, communication |
 | 📐 Mathematics — Calculus | Calculus | Limits, derivatives, integrals, series, differential equations, the unit circle, and a one-page cheat sheet |
 | ❝ Quotes — Sourced & Corrected | Sourced | Stoic, Eastern and existentialist quotes with the work cited — plus the famous lines nobody can source |
-| 🔤 Acronym Dictionary | REF | 1,104 IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
+| 🔤 Acronym Dictionary | REF | 1,121 IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
 
 ## Project Structure
 

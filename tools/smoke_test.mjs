@@ -1334,6 +1334,21 @@ check("each question offers four options", exam.optionCount === 4, `${exam.optio
 check("answering marks nothing and moves on",
   exam.marked === 0 && exam.movedOn, `${exam.marked} marks shown`);
 
+// A learning path is a deck too (plan.md Content ideas §5): the exam paths are
+// what it was held for. Every question has to come from the path's own steps.
+const examPath = await page.evaluate(() => {
+  const sel = document.getElementById("st-ex-scope");
+  const opt = sel ? [...sel.querySelectorAll('optgroup[label="Learning paths"] option')]
+    .find(o => o.value === "__path:comptia-network-plus-n10-009") : null;
+  const path = learningPaths().find(p => p.id === "comptia-network-plus-n10-009");
+  const steps = new Set(path ? path.steps : []);
+  const qs = examBuild("__path:comptia-network-plus-n10-009", 20) || [];
+  return { offered: !!opt, built: qs.length, outside: qs.filter(q => !steps.has(q.id)).length };
+});
+check("an exam can be scoped to a learning path, and stays inside it",
+  examPath.offered && examPath.built === 20 && examPath.outside === 0,
+  `offered ${examPath.offered}, ${examPath.built} built, ${examPath.outside} from outside the path`);
+
 const examDistract = await page.evaluate(() => {
   // With "all domains" selected, distractors still have to come from the
   // question's own domain — otherwise the odd one out is obvious.

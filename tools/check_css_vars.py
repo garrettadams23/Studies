@@ -64,6 +64,36 @@ does thirty times over for the per-domain accents.
 Covers `style.css`, every `style="…"` attribute in `data/*.html`, and the
 `var()` reads in `script.js`.
 
+## And class names, which is the same bug one layer over
+
+A class that no rule defines fails the same way an undeclared variable does:
+silently, and plausibly. `class="c-yellow"` sat on nine table cells in six
+files, meant as the caution tone between green and red, and every one rendered
+as body text — the house tone is `c-amber`, and `.c-yellow` was never written.
+The operating manual in plan.md lists that exact class as failure 6, with the
+guard *grep `style.css` for the utility class before using one*. A habit, and
+it was got past nine times. Beside it, 61 code spans carried `class="m"`, a
+catch-all for literals that colored nothing, and one decorator carried `nd`.
+
+So every class on a real element in `data/*.html` and `index-shell.html` must
+be one a selector in `style.css` names, or sit on `ALLOW_UNRULED` with the
+reason it needs no rule. **Real element** is the point of using a parser here
+rather than a pattern: the first census was a regex, it counted fifteen
+unruled names, and one of them — `link` — was text inside a code sample that
+teaches HTML. A parser finds fourteen, every one on a real element and none in
+the teaching, which is the same scoping argument the attribute check above makes for
+`var()`, arrived at by the opposite route.
+
+The allow list is for names that are not style hooks at all: a label naming
+which layer of a stack a row is, or an SVG `<g>` whose children carry the
+classes that draw them. A class that *names* a style it does not apply is not
+on it — `style-orange` was removed instead, because its element was colored by
+an inline `var(--orange)` and the class only claimed the credit.
+
+Not covered: class strings `script.js` writes into generated markup. Parsing
+template literals reliably is a different tool, and nothing there has drifted
+yet that anyone has seen. Named here so its absence is visible.
+
 Usage:
   python3 tools/check_css_vars.py
   python3 tools/check_css_vars.py --self-test
@@ -71,12 +101,36 @@ Usage:
 
 import re
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CSS = ROOT / "style.css"
 DATA = ROOT / "data"
 SCRIPT = ROOT / "script.js"
+SHELL = ROOT / "index-shell.html"
+
+# Class names that are not style hooks, each with the reason it needs no rule.
+# Read before being listed; a name goes here only if no rule *should* read it.
+ALLOW_UNRULED = {
+    **{f"layer-{n}": "a label naming which OSI or TCP/IP layer this row is; "
+                     "every layer is drawn alike, so no rule reads it"
+       for n in range(1, 8)},
+    "acs-letters": "an SVG <g> grouping the acronym-anatomy letters; its "
+                   "children carry the classes that draw them",
+    "rsv-names": "an SVG <g> grouping the role-scope labels; its children "
+                 "carry the classes that draw them",
+    "rsv-chips": "an SVG <g> grouping the role-scope chips; its children "
+                 "carry the classes that draw them",
+}
+
+# A selector's class, not a decimal: `.5rem` must not define a class `5rem`.
+CLASS_RE = re.compile(r"\.(-?[A-Za-z_][\w-]*)")
+COMMENT_RE = re.compile(r"/\*.*?\*/", re.S)
+# Everything before a `{` is a selector list or an at-rule's prelude; what sits
+# between braces is declarations, which can hold `.`-tokens that are not
+# classes (a `url(…)`, a quoted `content`).
+PRELUDE_RE = re.compile(r"([^{}]*)\{")
 
 # A live declaration in the content. Deliberately only the attribute: prose and
 # code samples are where the teaching examples live, and they are none of this
@@ -111,6 +165,67 @@ def undefined_in_attributes(html, declared):
                 continue
             out.append((html.count("\n", 0, m.start()) + 1, name, m.group(1)[:60]))
     return out
+
+
+def css_classes(css):
+    """Every class name a selector in the stylesheet mentions."""
+    css = COMMENT_RE.sub("", css)
+    return {c for prelude in PRELUDE_RE.findall(css) for c in CLASS_RE.findall(prelude)}
+
+
+class _Classes(HTMLParser):
+    """(line, tag, class) for every class on a real element — never on text."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.found = []
+
+    def handle_starttag(self, tag, attrs):
+        for key, value in attrs:
+            if key == "class" and value:
+                line = self.getpos()[0]
+                self.found.extend((line, tag, name) for name in value.split())
+
+    handle_startendtag = handle_starttag
+
+
+def unruled_classes(html, defined, allowed=ALLOW_UNRULED):
+    """(line, tag, name) for each class on an element that no rule defines."""
+    parser = _Classes()
+    parser.feed(html)
+    parser.close()
+    return [(line, tag, name) for line, tag, name in parser.found
+            if name not in defined and name not in allowed]
+
+
+CLASS_FIXTURES = [
+    (".c-amber{color:var(--amber)}", '<td class="c-amber">x</td>', 0,
+     "a class the stylesheet defines"),
+    (".c-amber{color:var(--amber)}", '<td class="c-yellow">x</td>', 1,
+     "the defect: a class nothing defines, which renders as plain text"),
+    (".code-block .num{color:var(--cyan)}", '<span class="num">0</span>', 0,
+     "a class named inside a descendant selector is defined"),
+    ("@media (max-width:640px){.asl-grid{gap:4px}}", '<div class="asl-grid"></div>', 0,
+     "a class defined only inside an at-rule is defined"),
+    ("/* .ghost { color: red } */", '<p class="ghost">x</p>', 1,
+     "a class that appears only in a comment is not"),
+    (".a{background:url(Img/x.png);content:'.fake'}", '<p class="fake">x</p>', 1,
+     "nor one that appears only inside a declaration"),
+    (".pad{padding:.5rem}", '<p class="5rem">x</p>', 1,
+     "a decimal in a value is not a class"),
+    ("", '<pre class="code-block">&lt;div class="nope"&gt;</pre>', 1,
+     "the code block's own class counts; the escaped sample inside it does not"),
+    (".code-block{}", '<pre class="code-block">&lt;div class="nope"&gt;</pre>', 0,
+     "a teaching sample is text, whatever class it names"),
+    (".x{}", '<p>write <code>class="link"</code> on the anchor</p>', 0,
+     "an unescaped class=\"…\" inside text is still text"),
+    (".layer{}", '<div class="layer layer-7">7</div>', 0,
+     "an allowed label: layer-7 is on the list, with its reason"),
+    (".kc-num{}", '<div class="kc-num style-orange">03</div>', 1,
+     "a class that names a style it does not apply is not on the list"),
+    (".topo-svg{}", '<svg class="topo-svg"><line class="ghost-line"/></svg>', 1,
+     "a self-closing SVG element is still an element"),
+]
 
 
 ATTR_FIXTURES = [
@@ -156,8 +271,13 @@ def self_test():
         if got != want:
             bad += 1
             print(f"FAIL  {why}: found {got}, expected {want}")
-    print(f"check_css_vars self-test: {len(FIXTURES) + len(ATTR_FIXTURES)} fixtures, "
-          f"{bad} failure(s).")
+    for css, html, want, why in CLASS_FIXTURES:
+        got = len(unruled_classes(html, css_classes(css)))
+        if got != want:
+            bad += 1
+            print(f"FAIL  {why}: found {got}, expected {want}")
+    total = len(FIXTURES) + len(ATTR_FIXTURES) + len(CLASS_FIXTURES)
+    print(f"check_css_vars self-test: {total} fixtures, {bad} failure(s).")
     return 1 if bad else 0
 
 
@@ -198,6 +318,34 @@ def main():
                   f"{name}. It is written into generated markup, where the "
                   f"declaration is dropped and the element inherits instead.")
         return 1
+    defined = css_classes(css)
+    class_problems, elements, names, in_use = [], 0, set(), set()
+    for path in sorted(DATA.glob("*.html")) + [SHELL]:
+        html = path.read_text(encoding="utf-8")
+        parser = _Classes()
+        parser.feed(html)
+        parser.close()
+        elements += len({(line, tag) for line, tag, _ in parser.found})
+        names |= {name for _, _, name in parser.found}
+        in_use |= {name for _, _, name in parser.found if name in ALLOW_UNRULED}
+        rel = path.relative_to(ROOT)
+        class_problems += [(rel, line, tag, name)
+                           for line, tag, name in unruled_classes(html, defined)]
+    # Every allowed name must still be in use, or the list is describing markup
+    # that is gone — the staleness any list of exceptions is most exposed to.
+    stale = sorted(set(ALLOW_UNRULED) - in_use)
+    if class_problems or stale:
+        for rel, line, tag, name in class_problems:
+            print(f"::error::{rel}:{line}: <{tag} class=\"{name}\"> — no rule in "
+                  f"style.css defines .{name}, so the element renders as if the "
+                  f"class were not there. Use the house class, add the rule, or "
+                  f"put it on ALLOW_UNRULED with the reason it needs none.")
+        for name in stale:
+            print(f"::error::ALLOW_UNRULED lists {name!r}, which no element uses any "
+                  f"more. Delete the entry; an exception nothing needs is how the "
+                  f"next one gets waved through.")
+        return 1
+
     used = len({m.group(1) for m in USE_RE.finditer(css)})
     js_reads = len(USE_RE.findall(js))
     print(f"style.css: {declared} custom properties declared, {used} read by name, "
@@ -205,6 +353,9 @@ def main():
     print(f"data/*.html: {attr_reads} read inside a style attribute · "
           f"script.js: {js_reads} written into generated markup · "
           f"0 read without being declared.")
+    print(f"classes: {len(names)} names on real elements in data/*.html and "
+          f"index-shell.html, {len(defined)} defined by a selector · 0 without a "
+          f"rule · {len(ALLOW_UNRULED)} allowed, each with its reason.")
     return 0
 
 

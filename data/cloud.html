@@ -1791,7 +1791,7 @@ gcloud compute instances list --project my-prod-project</pre>
                   <table class="ref-table">
                     <tr><th>Log type</th><th>State by default</th><th>Answers</th></tr>
                     <tr><td>Admin Activity</td><td>Always on, free, cannot be disabled</td><td>Who changed the configuration</td></tr>
-                    <tr><td>Data Access — <code>ADMIN_READ</code></td><td class="c-yellow">Off</td><td>Who listed or read metadata</td></tr>
+                    <tr><td>Data Access — <code>ADMIN_READ</code></td><td class="c-amber">Off</td><td>Who listed or read metadata</td></tr>
                     <tr><td>Data Access — <code>DATA_READ</code> / <code>DATA_WRITE</code></td><td class="c-red">Off (except BigQuery)</td><td>Who read or wrote the contents</td></tr>
                     <tr><td>System Event</td><td>Always on, free</td><td>What Google itself did to your resources</td></tr>
                   </table>
@@ -2745,7 +2745,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                     <tr><td>Users can register applications</td><td>Shadow app registrations, and consent phishing that succeeds quietly</td><td>Entra → User settings; plus an admin-consent workflow</td></tr>
                     <tr><td>Anyone can invite guests</td><td>External accounts in the directory with no owner and no review</td><td>External collaboration settings → restrict to admins or a named role</td></tr>
                     <tr><td>Full directory read for all members</td><td>Org-chart-quality reconnaissance from any compromised account</td><td>Restrict access to the <span class="volatile" data-checked="2026-09">Entra admin center</span>; accept that Graph still reads</td></tr>
-                    <tr><td>Security defaults on, Conditional Access unused</td><td class="c-yellow">Good baseline MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, but all-or-nothing — no break-glass exclusion, no risk conditions</td><td>Turn security defaults off <em>only</em> when CA policies are ready to replace them</td></tr>
+                    <tr><td>Security defaults on, Conditional Access unused</td><td class="c-amber">Good baseline MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, but all-or-nothing — no break-glass exclusion, no risk conditions</td><td>Turn security defaults off <em>only</em> when CA policies are ready to replace them</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-red">The last row is where tenants actually get hurt.</strong>
@@ -2814,7 +2814,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                     <tr><th>Assumption</th><th>Reality</th><th>What actually does the job</th></tr>
                     <tr><td>"It isolates access"</td><td>Inherited role assignments still apply</td><td>Scope assignments deliberately; PIM <span class="acro-exp">(Privileged Identity Management)</span> for standing access</td></tr>
                     <tr><td>"It isolates the network"</td><td>The VNet is the boundary, and it is a separate object</td><td>NSGs, subnets, and separate VNets where isolation is real</td></tr>
-                    <tr><td>"We can move things later"</td><td class="c-yellow">Many resource types cannot be moved between groups or subscriptions at all</td><td>Decide the grouping at creation; check the move-support list first</td></tr>
+                    <tr><td>"We can move things later"</td><td class="c-amber">Many resource types cannot be moved between groups or subscriptions at all</td><td>Decide the grouping at creation; check the move-support list first</td></tr>
                     <tr><td>"The group is in a region, so its resources are"</td><td>The group's region only stores its metadata — resources choose their own</td><td>Read each resource's location; a group in West Europe can hold East US machines</td></tr>
                     <tr><td>"Deleting is reversible"</td><td class="c-red">Deleting the group deletes its contents, and most of it does not come back</td><td>Delete locks (<code>CanNotDelete</code>) on anything holding data</td></tr>
                   </table>
@@ -2907,7 +2907,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                ══════════════════════════════════════════════════════════════ -->
 
           <!-- ── TOPIC: AZURE HIERARCHY & GOVERNANCE ──────────────────────── -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">Azure Hierarchy, RBAC <span class="acro-exp">(Role-Based Access Control)</span> Scopes &amp; Policy</span>
@@ -2937,6 +2937,37 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                     <strong class="c-amber">The gotcha:</strong> a resource group is not a security
                     boundary by itself and it is not a network boundary at all — two VMs in different
                     resource groups can sit in the same subnet and talk freely.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The Picture</div>
+                <div class="concept-title">Inheritance Drawn as Boxes: an Assignment Covers What Is Inside Its Box, and Nothing Else</div>
+                <div class="concept-desc">
+                  The four levels nest, so a scope is a box and an assignment made at a scope covers everything
+                  inside that box. The same rule is drawn twice below: a role assigned at one subscription, and a
+                  policy assigned at the management group above both subscriptions.
+                </div>
+                <div class="dw">
+                  <div class="topo-grid">
+                    <div class="topo-card">
+                      <svg class="math-svg" viewBox="0 0 360 300" role="img" aria-label="A management group containing two subscriptions, prod and dev. Each subscription contains two resource groups, and each resource group a VM and a key vault. The prod subscription is shaded: a role assigned there covers everything inside it, and nothing in dev or above it."><rect class="msh-right" x="4" y="4" width="352" height="292" rx="6"/><text class="msv-rad" x="180" y="23">Management group</text><rect class="rsv-prog" x="14" y="34" width="160" height="252" rx="5"/><text class="msv-lbl" x="94" y="53">Subscription: prod</text><rect class="msh-right" x="24" y="64" width="140" height="100" rx="4"/><text class="msv-lbl2" x="94" y="83">Resource group</text><rect class="msv-bar" x="34" y="102" width="56" height="26" rx="3"/><text class="msh-name" x="62" y="119.5">VM</text><rect class="msv-bar" x="98" y="102" width="56" height="26" rx="3"/><text class="msh-name" x="126" y="119.5">Vault</text><rect class="msh-right" x="24" y="176" width="140" height="100" rx="4"/><text class="msv-lbl2" x="94" y="195">Resource group</text><rect class="msv-bar" x="34" y="214" width="56" height="26" rx="3"/><text class="msh-name" x="62" y="231.5">VM</text><rect class="msv-bar" x="98" y="214" width="56" height="26" rx="3"/><text class="msh-name" x="126" y="231.5">Vault</text><rect class="msh-right" x="186" y="34" width="160" height="252" rx="5"/><text class="msv-rad" x="266" y="53">Subscription: dev</text><rect class="msh-right" x="196" y="64" width="140" height="100" rx="4"/><text class="msv-lbl2" x="266" y="83">Resource group</text><rect class="msv-bar" x="206" y="102" width="56" height="26" rx="3"/><text class="msh-name" x="234" y="119.5">VM</text><rect class="msv-bar" x="270" y="102" width="56" height="26" rx="3"/><text class="msh-name" x="298" y="119.5">Vault</text><rect class="msh-right" x="196" y="176" width="140" height="100" rx="4"/><text class="msv-lbl2" x="266" y="195">Resource group</text><rect class="msv-bar" x="206" y="214" width="56" height="26" rx="3"/><text class="msh-name" x="234" y="231.5">VM</text><rect class="msv-bar" x="270" y="214" width="56" height="26" rx="3"/><text class="msh-name" x="298" y="231.5">Vault</text></svg>
+                      <div class="topo-name">A role at the prod subscription</div>
+                      <div class="topo-desc">Its resource groups and resources inherit it. The dev subscription beside it and the management group above it do not</div>
+                    </div>
+                    <div class="topo-card">
+                      <svg class="math-svg" viewBox="0 0 360 300" role="img" aria-label="The same nesting, with the management group shaded: a policy assigned there covers both subscriptions and everything inside them."><rect class="rsv-prog" x="4" y="4" width="352" height="292" rx="6"/><text class="msv-lbl" x="180" y="23">Management group</text><rect class="msh-right" x="14" y="34" width="160" height="252" rx="5"/><text class="msv-rad" x="94" y="53">Subscription: prod</text><rect class="msh-right" x="24" y="64" width="140" height="100" rx="4"/><text class="msv-lbl2" x="94" y="83">Resource group</text><rect class="msv-bar" x="34" y="102" width="56" height="26" rx="3"/><text class="msh-name" x="62" y="119.5">VM</text><rect class="msv-bar" x="98" y="102" width="56" height="26" rx="3"/><text class="msh-name" x="126" y="119.5">Vault</text><rect class="msh-right" x="24" y="176" width="140" height="100" rx="4"/><text class="msv-lbl2" x="94" y="195">Resource group</text><rect class="msv-bar" x="34" y="214" width="56" height="26" rx="3"/><text class="msh-name" x="62" y="231.5">VM</text><rect class="msv-bar" x="98" y="214" width="56" height="26" rx="3"/><text class="msh-name" x="126" y="231.5">Vault</text><rect class="msh-right" x="186" y="34" width="160" height="252" rx="5"/><text class="msv-rad" x="266" y="53">Subscription: dev</text><rect class="msh-right" x="196" y="64" width="140" height="100" rx="4"/><text class="msv-lbl2" x="266" y="83">Resource group</text><rect class="msv-bar" x="206" y="102" width="56" height="26" rx="3"/><text class="msh-name" x="234" y="119.5">VM</text><rect class="msv-bar" x="270" y="102" width="56" height="26" rx="3"/><text class="msh-name" x="298" y="119.5">Vault</text><rect class="msh-right" x="196" y="176" width="140" height="100" rx="4"/><text class="msv-lbl2" x="266" y="195">Resource group</text><rect class="msv-bar" x="206" y="214" width="56" height="26" rx="3"/><text class="msh-name" x="234" y="231.5">VM</text><rect class="msv-bar" x="270" y="214" width="56" height="26" rx="3"/><text class="msh-name" x="298" y="231.5">Vault</text></svg>
+                      <div class="topo-name">A policy at the management group</div>
+                      <div class="topo-desc">Both subscriptions and everything inside them inherit it, which is why rules for the whole organization are assigned at the top</div>
+                    </div>
+                  </div>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Assign at the smallest box that holds everything the assignment is
+                    for.</strong> A box too high reaches too much, which is how a Contributor role meant for one team's
+                    resource group comes to cover every workload in the subscription. A box too low means repeating the
+                    assignment, and missing the resource group created next week. Most "why can't I" questions are
+                    answered the same way: find the box the assignment was made in, and the person is inside it or not.
                   </div>
                 </div>
               </div>

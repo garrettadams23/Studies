@@ -318,6 +318,13 @@ cannot be classified, so the annotated lines will read as freshly reviewed when
 they were not. Keeping `python3 tools/annotate_acronyms.py` in a separate commit
 from the content it annotates keeps the dates honest.
 
+**And put a new topic's marker comment inside it.** The stamper gives every line
+between two `<div class="topic"` openings to the earlier topic, so a
+`<!-- ── TOPIC: … -->` line above a new topic counts as an edit to the topic
+before it, and re-dates it. Write the comment as the first line inside the new
+topic's `div`. Stamp with `--only <domain> --current-only`, then check that the
+only stamps that moved are the topics you edited.
+
 A topic that tracks something changeable — a vendor console, a price, a product
 name — should also carry `data-volatile="true"`. Only volatile topics appear in
 `--report`; stable ones (the OSI model, the TCP handshake) are excluded on

@@ -134,6 +134,15 @@ try {
 
   const domains = Object.keys(after);
   let compared = 0;
+  // Every difference is counted; only the first five per domain are printed.
+  //
+  // It used to stop *counting* at five as well, so the summary below reported
+  // the number it had printed. The first mechanical pass to lean on it changed
+  // 71 elements and was told "25 difference(s)" — an undercount presented as a
+  // total, in the one tool whose job is to say exactly what a change moved.
+  // The tally of properties is what answers the question that pass was asking:
+  // *did anything other than color change?*
+  const moved = new Map();
   for (const d of domains) {
     const a = before[d], b = after[d];
     if (!a || !b) { console.log(`  ${d}: missing in one build — skipped`); continue; }
@@ -144,23 +153,29 @@ try {
       continue;
     }
     let diffs = 0;
-    for (let i = 0; i < a.length && diffs < 5; i++) {
+    for (let i = 0; i < a.length; i++) {
       if (a[i] === b[i]) continue;
       diffs++; bad++;
       const pa = a[i].split("|"), pb = b[i].split("|");
       const changed = PROPS.map((p, n) => [p, pa[n + 1], pb[n + 1]])
-                           .filter(([, x, y]) => x !== y)
-                           .map(([p, x, y]) => `${p}: ${x} -> ${y}`);
-      console.log(`  ${d}: element ${i} <${pa[0].toLowerCase()}>  ${changed.join("; ")}`);
+                           .filter(([, x, y]) => x !== y);
+      changed.forEach(([p]) => moved.set(p, (moved.get(p) || 0) + 1));
+      if (diffs <= 5)
+        console.log(`  ${d}: element ${i} <${pa[0].toLowerCase()}>  `
+                    + changed.map(([p, x, y]) => `${p}: ${x} -> ${y}`).join("; "));
     }
+    if (diffs > 5) console.log(`  ${d}: … and ${diffs - 5} more, ${diffs} in all`);
     compared += a.length;
   }
   console.log(`\n${compared.toLocaleString()} elements compared across `
               + `${domains.length} domain(s), ${PROPS.length} properties each.`);
   console.log(bad === 0
     ? "No computed style changed. The rendering is the same."
-    : `${bad} difference(s) above. Each is a real rendering change, or a property `
+    : `${bad} difference(s). Each is a real rendering change, or a property `
       + `this tool reads that the change deliberately moved.`);
+  if (moved.size)
+    console.log("Properties that moved, by element count: "
+                + [...moved].sort((x, y) => y[1] - x[1]).map(([p, n]) => `${p} ${n}`).join(" · "));
   await ctx.close();
 } finally {
   await browser.close();

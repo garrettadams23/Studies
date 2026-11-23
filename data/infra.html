@@ -1051,7 +1051,7 @@ New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class
 </div>
 
 <!-- ── TOPIC: PROCESSING ORDER ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔢</span>
     <span class="topic-name">Processing Order &amp; Precedence — LSDOU <span class="acro-exp">(Local, Site, Domain, Organizational Unit)</span>, Enforcement &amp; Loopback</span>
@@ -1088,6 +1088,40 @@ New-ADReplicationSubnet <span class="kw">-Name</span> "10.30.7.0/24" <span class
         that make precedence hard to reason about, and they interact — Enforced wins over a
         block. Use them sparingly and document each one, because the person debugging the
         resulting behavior in two years will not guess why they are there.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The Picture</div>
+      <div class="concept-title">The Stack Drawn Twice: the Last Writer Wins, and Enforced Changes Who Writes Last</div>
+      <div class="concept-desc">
+        One setting, the screen lock on a kiosk, followed through every pass. The scopes are applied from the top
+        of the stack to the bottom, and each one that sets a value overwrites the one before, so the value that
+        stays is the lowest one written. Enforced does not break that rule. Microsoft's older documentation
+        describes it as moving the enforced GPO to the end of the processing order, which is the bottom of the
+        stack.
+        <!-- fact: an Enforced link moves its GPO to the end of the processing order, so it is applied last; enforced links take precedence over child containers and over Block Inheritance | source: Microsoft's TechNet page Group Policy Inheritance and the Learn module on GPO scope and inheritance, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="topo-grid">
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 340 252" role="img" aria-label="The processing order as a stack, applied from the top: local sets a screen lock of 30 minutes, site sets nothing, domain sets 15 minutes, the Workstations OU sets nothing, and the Kiosks OU sets 5 minutes. The Kiosks row, the last writer, is marked, and the result is 5 minutes."><rect class="msh-right" x="50" y="10" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="31.5">1</text><text class="msv-rad" x="152" y="31.5">Local</text><text class="msv-rad" x="286" y="31.5">30 min</text><rect class="msh-right" x="50" y="52" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="73.5">2</text><text class="msv-rad" x="152" y="73.5">Site</text><text class="msv-lbl2" x="286" y="73.5">not set</text><rect class="msh-right" x="50" y="94" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="115.5">3</text><text class="msv-rad" x="152" y="115.5">Domain</text><text class="msv-rad" x="286" y="115.5">15 min</text><rect class="msh-right" x="50" y="136" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="157.5">4</text><text class="msv-rad" x="152" y="157.5">OU: Workstations</text><text class="msv-lbl2" x="286" y="157.5">not set</text><rect class="msv-circle msv-secant" x="50" y="178" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="199.5">5</text><text class="msv-lbl" x="152" y="199.5">OU: Kiosks</text><text class="msv-lbl" x="286" y="199.5">5 min</text><line class="msv-axis" x1="18" y1="14" x2="18" y2="202"/><polygon class="msv-lbl2" points="18,210 13.5,201 22.5,201"/><text class="msv-lbl2" x="34" y="111" transform="rotate(90 34 111)">applied in order</text><text class="msv-lbl" x="192" y="242">Result: 5 min</text></svg>
+            <div class="topo-name">By default</div>
+            <div class="topo-desc">The Kiosks OU is applied last, so its 5 minutes overwrite the domain's 15</div>
+          </div>
+          <div class="topo-card">
+            <svg class="math-svg" viewBox="0 0 340 252" role="img" aria-label="The same settings with the domain link Enforced. The domain row has moved to the bottom of the stack, after both OUs, so it is the last writer; it is marked, and the result is 15 minutes."><rect class="msh-right" x="50" y="10" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="31.5">1</text><text class="msv-rad" x="152" y="31.5">Local</text><text class="msv-rad" x="286" y="31.5">30 min</text><rect class="msh-right" x="50" y="52" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="73.5">2</text><text class="msv-rad" x="152" y="73.5">Site</text><text class="msv-lbl2" x="286" y="73.5">not set</text><rect class="msh-right" x="50" y="94" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="115.5">3</text><text class="msv-rad" x="152" y="115.5">OU: Workstations</text><text class="msv-lbl2" x="286" y="115.5">not set</text><rect class="msh-right" x="50" y="136" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="157.5">4</text><text class="msv-rad" x="152" y="157.5">OU: Kiosks</text><text class="msv-rad" x="286" y="157.5">5 min</text><rect class="msv-circle msv-secant" x="50" y="178" width="284" height="34" rx="3"/><text class="msv-lbl2" x="66" y="199.5">5</text><text class="msv-lbl" x="152" y="199.5">Domain, Enforced</text><text class="msv-lbl" x="286" y="199.5">15 min</text><line class="msv-axis" x1="18" y1="14" x2="18" y2="202"/><polygon class="msv-lbl2" points="18,210 13.5,201 22.5,201"/><text class="msv-lbl2" x="34" y="111" transform="rotate(90 34 111)">applied in order</text><text class="msv-lbl" x="192" y="242">Result: 15 min</text></svg>
+            <div class="topo-name">With the domain link Enforced</div>
+            <div class="topo-desc">The domain's pass moves after both OUs, so its 15 minutes are written last and stay</div>
+          </div>
+        </div>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read a precedence problem from the bottom of the stack up: the first value you
+          meet is the one that won.</strong> Then look for an Enforced link higher in the hierarchy, because that
+          link is not where its container sits in this order. It was applied last. The Group Policy Inheritance
+          tab in the management console lists the same order the other way up, with precedence 1, the last
+          writer, at the top.
+        </div>
       </div>
     </div>
 
@@ -1427,7 +1461,7 @@ Get-WinEvent <span class="kw">-LogName</span> "Microsoft-Windows-GroupPolicy/Ope
 <span class="com"># Users closest to the limit, worst first</span>
 Get-ADUser <span class="kw">-Filter</span> * <span class="kw">-Properties</span> TokenGroups |
     Select-Object Name, @{n='Groups';e={$_.TokenGroups.Count}} |
-    Sort-Object Groups <span class="kw">-Descending</span> | Select-Object <span class="kw">-First</span> <span class="m">20</span></pre>
+    Sort-Object Groups <span class="kw">-Descending</span> | Select-Object <span class="kw">-First</span> <span class="num">20</span></pre>
       <div class="concept-desc verdict">
         Keep nesting to two levels — the depth AGDLP implies and no more. Every extra level
         makes membership harder to audit and pushes users toward a limit whose symptom does not
@@ -1622,6 +1656,79 @@ Start-ADSyncSyncCycle <span class="kw">-PolicyType</span> Delta</pre>
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: ONE USER, TWO ACCOUNTS ────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">One User, Two Accounts — How Sync Matches People, and Fixing the Duplicate</span>
+    <span class="topic-badge">Identity • Hybrid</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The mechanism</div>
+      <div class="concept-title">How Sync Decides Two Accounts Are One Person, and What It Does When It Cannot</div>
+      <div class="concept-desc">
+        The ticket says the user has two accounts, with two mailboxes and one person between them. It starts
+        when the on-premises directory syncs a user into a tenant that may already hold them. Sync has to
+        decide whether a cloud user it finds is the same person, and it tries two matches in order. When
+        neither succeeds it does the only other thing it can, and creates a second cloud user. A rehire does
+        this, and so does a cloud-only account made before sync was switched on.
+        <!-- fact: Entra Connect tries a hard match of the on-premises sourceAnchor against the cloud ImmutableId first, then a soft match on userPrincipalName or the primary SMTP proxyAddress, only where the cloud user has no ImmutableId; the documented repair sets mS-DS-ConsistencyGuid to the cloud user's ImmutableId; from 1 July 2026 a hard match is blocked onto an account with onPremisesObjectIdentifier already set or a privileged role assigned or eligible | source: Microsoft Learn's pages on installing Connect against an existing tenant and on sync errors, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Compares</th><th>Succeeds when</th></tr></thead>
+          <tbody>
+            <tr><td>Hard match, first</td><td>The on-premises source anchor with the cloud user's ImmutableId</td><td>The two values are the same</td></tr>
+            <tr><td>Soft match, second</td><td>The user principal name, or the primary SMTP <span class="acro-exp">(Simple Mail Transfer Protocol)</span> address</td><td>The cloud user has no ImmutableId yet, and soft matching has not been turned off</td></tr>
+            <tr><td>Neither</td><td>Nothing left to compare</td><td class="c-amber">A second cloud user is created, or a sync error if an address is already taken</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># A new account's anchor: its object GUID as base64, which sync writes to mS-DS-ConsistencyGuid</span>
+[Convert]::ToBase64String((Get-ADUser jsmith).ObjectGUID.ToByteArray())
+<span class="com"># The anchor the cloud account already carries, if any</span>
+(Get-MgUser <span class="kw">-UserId</span> jsmith@contoso.com <span class="kw">-Property</span> OnPremisesImmutableId).OnPremisesImmutableId</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The third row is the ticket, and the fix is to make the anchors agree, not to
+          merge the accounts.</strong> Decide which account keeps the mailbox and OneDrive, write that cloud
+          user's ImmutableId into the on-premises account's <code>mS-DS-ConsistencyGuid</code>, which is the
+          repair Microsoft documents, and let the next sync hard-match. Since July 2026 a hard match onto an
+          account that holds or is eligible for a privileged role is refused, so an administrator's duplicate
+          means removing the role first and assigning it again afterwards.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Prevention</div>
+      <div class="concept-title">Most Duplicates Are Made Before Sync Runs: Rehires and Accounts Made Early</div>
+      <div class="concept-desc">
+        Sync does what the two match rules say. The duplicates come from the process around it, and three
+        habits make most of them.
+        <!-- fact: restoring a deleted user from the AD Recycle Bin keeps its source anchor, and a recreated user gets a new one; Entra keeps a deleted user soft-deleted for 30 days, after which it cannot be restored | source: Microsoft Learn's pages on enabling the AD recycle bin for Connect Sync and on restoring deleted users, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Habit</th><th>Why it makes two accounts</th><th>Instead</th></tr></thead>
+          <tbody>
+            <tr><td>A rehire gets a new directory account</td><td>A new account has a new object GUID <span class="acro-exp">(Globally Unique Identifier)</span>, so its source anchor matches nothing the tenant holds</td><td>Re-enable the original account. If it was deleted, restore it from the AD <span class="acro-exp">(Active Directory)</span> Recycle Bin, which keeps the anchor</td></tr>
+            <tr><td>A cloud account is made before sync is switched on</td><td>Nothing links it to the directory account except its addresses</td><td>Make the user principal name and primary SMTP address match before the first sync so soft match pairs them, then turn soft matching off, as Microsoft advises</td></tr>
+            <tr><td>The leaver's cloud account was deleted long ago</td><td>Entra keeps a deleted user for 30 days, and after that it cannot be restored</td><td>Treat the rehire as a new account. What survives of the old mailbox is whatever a retention policy kept</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The first row is the one to change, because a rehire is a known event with a
+          date.</strong> A joiner process that searches for a returning person before creating anyone turns most
+          duplicates into a re-enable. The AD Recycle Bin is its precondition: without it a deleted account comes
+          back only as a new object with a new anchor, which is the duplicate again. The sync settings around all
+          of this are in
+          <span class="xref">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: LEGACY CLEANUP ──────────────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
@@ -1646,11 +1753,11 @@ Start-ADSyncSyncCycle <span class="kw">-PolicyType</span> Delta</pre>
         instantly reversible; the delete is not.
       </div>
       <pre class="code-block"><span class="com"># Accounts unused for 90 days, still enabled</span>
-Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="m">90</span>.00:00:00 <span class="kw">-UsersOnly</span> |
+Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="num">90</span>.00:00:00 <span class="kw">-UsersOnly</span> |
     Where-Object Enabled | Select-Object Name, LastLogonDate
 
 <span class="com"># Computers the same, then disable and park them</span>
-Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="m">90</span>.00:00:00 <span class="kw">-ComputersOnly</span> |
+Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-TimeSpan</span> <span class="num">90</span>.00:00:00 <span class="kw">-ComputersOnly</span> |
     Disable-ADAccount <span class="kw">-PassThru</span> |
     Move-ADObject <span class="kw">-TargetPath</span> "OU=Quarantine,DC=corp,DC=example,DC=com"</pre>
       <div class="concept-desc verdict">
@@ -1760,7 +1867,7 @@ Get-DnsServerScavenging <span class="kw">-ComputerName</span> dc01
 
 <span class="com"># Static records must have NO timestamp, or scavenging eats them</span>
 Get-DnsServerResourceRecord <span class="kw">-ZoneName</span> corp.example.com <span class="kw">-RRType</span> A |
-    Where-Object { $_.Timestamp -ne $<span class="m">null</span> -and $_.HostName -match <span class="m">'^(vpn|printer|nas)'</span> }</pre>
+    Where-Object { $_.Timestamp -ne <span class="var">$null</span> -and $_.HostName -match <span class="str">'^(vpn|printer|nas)'</span> }</pre>
       <div class="concept-desc verdict">
         Enable it on one zone, leave it a month, and read what it removed before enabling it
         everywhere. An aggressive interval on a site whose laptops are away for three weeks is
@@ -1836,7 +1943,7 @@ Get-DnsServerResourceRecord <span class="kw">-ZoneName</span> corp.example.com <
         not work" with everything on the Windows side configured correctly.
       </div>
       <pre class="code-block">Add-DhcpServerv4Failover <span class="kw">-ComputerName</span> dhcp01 <span class="kw">-PartnerServer</span> dhcp02 `
-    <span class="kw">-Name</span> "Site-A" <span class="kw">-ScopeId</span> <span class="m">10.10.0.0</span> <span class="kw">-LoadBalancePercent</span> <span class="m">50</span>
+    <span class="kw">-Name</span> "Site-A" <span class="kw">-ScopeId</span> <span class="num">10.10.0.0</span> <span class="kw">-LoadBalancePercent</span> <span class="num">50</span>
 
 Get-DhcpServerv4ScopeStatistics <span class="kw">-ComputerName</span> dhcp01   <span class="com"># pool exhaustion</span>
 Get-DhcpServerInDC                                       <span class="com"># authorised servers</span></pre>
@@ -1906,8 +2013,8 @@ Get-DhcpServerInDC                                       <span class="com"># aut
         useful ones.
       </div>
       <pre class="code-block"><span class="com"># Soft quota — warn at 80%, do not block. Start here.</span>
-New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw">-Size</span> <span class="m">100</span>GB <span class="kw">-SoftLimit</span> `
-    <span class="kw">-Threshold</span> (New-FsrmQuotaThreshold <span class="kw">-Percentage</span> <span class="m">80</span>)
+New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw">-Size</span> <span class="num">100</span>GB <span class="kw">-SoftLimit</span> `
+    <span class="kw">-Threshold</span> (New-FsrmQuotaThreshold <span class="kw">-Percentage</span> <span class="num">80</span>)
 
 <span class="com"># And keep shares off the system volume in the first place</span></pre>
       <div class="concept-desc verdict">
@@ -2080,7 +2187,7 @@ certutil -CRL                       <span class="com"># force a fresh CRL now</s
       </div>
       <pre class="code-block"><span class="com"># Enumerate templates and CA settings, flagging the known ESC patterns.</span>
 <span class="com"># Run this against your own PKI as routine defensive work.</span>
-certipy find -u user@corp.example.com -p <span class="m">'...'</span> -dc-ip <span class="m">10.0.0.10</span> -vulnerable
+certipy find -u user@corp.example.com -p <span class="str">'...'</span> -dc-ip <span class="num">10.0.0.10</span> -vulnerable
 
 <span class="com"># Native equivalents for spot checks</span>
 certutil -TCAInfo
@@ -2130,12 +2237,12 @@ Get-CATemplate</pre>
         certificate was installed during a project, by someone who has moved on.
       </div>
       <pre class="code-block"><span class="com"># Everything the CA issued that expires in the next 60 days</span>
-certutil -view -restrict <span class="m">"NotAfter&lt;=now+60:00:00,Disposition=20"</span> `
-    -out <span class="m">"CommonName,NotAfter,RequesterName"</span>
+certutil -view -restrict <span class="str">"NotAfter&lt;=now+60:00:00,Disposition=20"</span> `
+    -out <span class="str">"CommonName,NotAfter,RequesterName"</span>
 
 <span class="com"># Local store on a server</span>
 Get-ChildItem Cert:\LocalMachine\My |
-    Where-Object NotAfter -lt (Get-Date).AddDays(<span class="m">60</span>) |
+    Where-Object NotAfter -lt (Get-Date).AddDays(<span class="num">60</span>) |
     Select-Object Subject, NotAfter, Thumbprint</pre>
       <div class="concept-desc verdict">
         <strong>Monitor expiry from outside, on the live endpoint.</strong> A CA report misses
@@ -2185,10 +2292,10 @@ Get-ChildItem Cert:\LocalMachine\My |
         and costs nothing.
       </div>
       <pre class="code-block"><span class="com"># Is it on? If not, turn it on — irreversible, and you want it</span>
-Get-ADOptionalFeature <span class="kw">-Filter</span> <span class="m">'name -like "Recycle Bin*"'</span>
+Get-ADOptionalFeature <span class="kw">-Filter</span> <span class="str">'name -like "Recycle Bin*"'</span>
 
 <span class="com"># Restore a deleted user, memberships intact</span>
-Get-ADObject <span class="kw">-Filter</span> <span class="m">'Name -like "*jdoe*"'</span> <span class="kw">-IncludeDeletedObjects</span> |
+Get-ADObject <span class="kw">-Filter</span> <span class="str">'Name -like "*jdoe*"'</span> <span class="kw">-IncludeDeletedObjects</span> |
     Restore-ADObject</pre>
     </div>
     <div class="concept-card">
@@ -2268,12 +2375,12 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'Name -like "*jdoe*
         leave it: replication partners keep attempting it, and the errors mask real faults.
       </div>
       <pre class="code-block"><span class="com"># Graceful, on the DC itself</span>
-Uninstall-ADDSDomainController <span class="kw">-DemoteOperationMasterRole</span> <span class="kw">-ForceRemoval</span>:$<span class="m">false</span>
+Uninstall-ADDSDomainController <span class="kw">-DemoteOperationMasterRole</span> <span class="kw">-ForceRemoval</span>:<span class="var">$false</span>
 
 <span class="com"># The DC is gone for good — remove it from the directory</span>
 ntdsutil "metadata cleanup" "remove selected server DC03" quit quit
-Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "computer"'</span> <span class="kw">-SearchBase</span> `
-    <span class="m">"OU=Domain Controllers,DC=corp,DC=example,DC=com"</span></pre>
+Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq "computer"'</span> <span class="kw">-SearchBase</span> `
+    <span class="str">"OU=Domain Controllers,DC=corp,DC=example,DC=com"</span></pre>
       <div class="concept-desc verdict">
         The same applies to a file server behind a DFS <span class="acro-exp">(Distributed File System)</span> namespace: remove the folder target
         first and let clients move, then decommission. Reversing those two steps is a
@@ -4190,7 +4297,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="m">'objectClass -eq "c
                 </div>
                 <div class="dw">
                   <table class="ref-table">
-                    <tr><th>Moment</th><th>Unlabelled</th><th>Labeled</th></tr>
+                    <tr><th>Moment</th><th>Unlabeled</th><th>Labeled</th></tr>
                     <tr><td>Routine change</td><td>Trace the cable by hand, or unplug and see what breaks</td><td>Read the label</td></tr>
                     <tr><td>Emergency, 3 a.m.</td><td><strong>Someone unplugs the wrong thing.</strong> This is the actual risk</td><td>Read the label</td></tr>
                     <tr><td>New starter's first week</td><td>Weeks of tribal knowledge transfer</td><td>The room documents itself</td></tr>

@@ -398,7 +398,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
 </div>
 
 <!-- ── TOPIC: MOTHERBOARD ANATOMY ────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧩</span>
     <span class="topic-name">Motherboard Anatomy — Chipsets, PCIe <span class="acro-exp">(Peripheral Component Interconnect Express)</span> Lanes &amp; the Block Diagram</span>
@@ -431,6 +431,26 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           installs an NVMe drive and two SATA drives disappear. Nothing is broken — the lanes are
           shared, the board reallocated them, and the manual's block diagram said so. Reading that
           diagram before building is a five-minute step that prevents an afternoon of confusion.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Picture</div>
+      <div class="concept-title">The Block Diagram, Drawn: Everything Under the Chipset Shares One Link</div>
+      <div class="concept-desc">
+        The manual's block diagram is the picture the card above says to read before building, and this is its
+        usual shape. The CPU feeds the memory, the main slot and a fast storage slot or two directly. The
+        chipset feeds everything else, and reaches the CPU over a single link. Lane counts, and which slots and
+        ports share, differ from board to board, and the manual has them. The shape does not differ.
+      </div>
+      <div class="dw">
+        <svg class="math-svg" viewBox="0 0 360 470" role="img" aria-label="A motherboard block diagram. The CPU at the top connects directly to the memory, to the main x16 slot and to one M.2 NVMe slot, drawn in green. A single amber link labeled one shared uplink runs down from the CPU to the chipset. Below the chipset a bus feeds the x4 slots, USB, the network and audio, a second M.2 slot and the SATA ports. A dashed amber bracket under the second M.2 slot and the SATA ports is labeled same lanes."><line class="msv-tangent" x1="100" y1="40" x2="130" y2="40"/><line class="msv-tangent" x1="230" y1="40" x2="250" y2="40"/><polyline class="msv-curve msv-tangent" points="230,52 240,52 240,107 250,107"/><line class="msv-secant" x1="180" y1="60" x2="180" y2="250"/><rect class="msv-bar" x="130" y="20" width="100" height="40" rx="4"/><text class="msh-name" x="180" y="44.5">CPU</text><rect class="msh-right" x="10" y="20" width="90" height="40" rx="4"/><text class="msh-name" x="55" y="44.5">Memory</text><rect class="msh-right" x="250" y="20" width="100" height="40" rx="4"/><text class="msh-name" x="300" y="44.5">x16 slot</text><rect class="msh-right" x="250" y="90" width="100" height="34" rx="4"/><text class="msh-name" x="300" y="111.5">M.2 NVMe</text><rect class="rsv-chip" x="104" y="140" width="152" height="26" rx="4"/><text class="msv-lbl" x="180" y="157.5">one shared uplink</text><rect class="msv-bar" x="130" y="250" width="100" height="40" rx="4"/><text class="msh-name" x="180" y="274.5">Chipset</text><line class="msv-axis" x1="180" y1="290" x2="180" y2="314"/><line class="msv-axis" x1="60" y1="314" x2="300" y2="314"/><line class="msv-axis" x1="60" y1="314" x2="60" y2="340"/><line class="msv-axis" x1="180" y1="314" x2="180" y2="340"/><line class="msv-axis" x1="300" y1="314" x2="300" y2="340"/><line class="msv-axis" x1="120" y1="314" x2="120" y2="400"/><line class="msv-axis" x1="240" y1="314" x2="240" y2="400"/><rect class="msh-right" x="10" y="340" width="100" height="32" rx="4"/><text class="msv-rad" x="60" y="360.5">x4 slots</text><rect class="msh-right" x="130" y="340" width="100" height="32" rx="4"/><text class="msv-rad" x="180" y="360.5">USB</text><rect class="msh-right" x="250" y="340" width="100" height="32" rx="4"/><text class="msv-rad" x="300" y="360.5">LAN, audio</text><rect class="msh-right" x="70" y="400" width="100" height="32" rx="4"/><text class="msv-rad" x="120" y="420.5">M.2 #2</text><rect class="msh-right" x="190" y="400" width="100" height="32" rx="4"/><text class="msv-rad" x="240" y="420.5">SATA</text><line class="msv-secant" x1="120" y1="446" x2="240" y2="446" stroke-dasharray="5 4"/><line class="msv-secant" x1="120" y1="440" x2="120" y2="452"/><line class="msv-secant" x1="240" y1="440" x2="240" y2="452"/><text class="msh-form" x="180" y="464">same lanes</text></svg>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The amber link is the budget, and everything drawn under it shares it.</strong>
+          A second NVMe drive, a network card in an x4 slot and a busy USB device each look independent, and at
+          full load they all queue behind the same link. The dashed bracket is the third row of the card above:
+          on many boards the second M.2 slot and some SATA ports are the same lanes, and fitting the drive turns
+          the ports off.
         </div>
       </div>
     </div>
@@ -492,6 +512,34 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           sold as supporting a processor may have shipped before that processor existed, and unless
           it offers firmware flashing with no CPU installed, the only route is temporarily fitting an
           older chip — which nobody has to hand at the moment they discover this.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Troubleshooting</div>
+      <div class="concept-title">Ports That Stop Together Share Something: Find It Before Blaming the Ports</div>
+      <div class="concept-desc">
+        When several USB ports have stopped working at once, along one side of a laptop, across the front of
+        a case or on a monitor's hub, the ports are rarely the fault. They are the far end of something they
+        share, and the diagnosis is to find what the dead ports have in common that the working ones do not.
+        The block diagram above is where most of those shared things are drawn.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What they share</th><th>Typical sign</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>A front-panel cable and header</td><td>Every front port dead, every rear port fine</td><td>The internal cable from the case to its header on the board, which works loose or bends a pin</td></tr>
+            <tr><td>A side board or hub chip, in a laptop</td><td>Every port on one side dead, the other side fine</td><td>The ribbon cable to that board, from the service manual; usually a repair rather than a setting</td></tr>
+            <tr><td>An external hub: a dock or a monitor</td><td>The hub's ports dead, the computer's own ports fine</td><td>The hub's upstream cable and its power first. A monitor's ports need their own upstream cable to the computer</td></tr>
+            <tr><td>One controller</td><td>A group dead after sleep, and back after a restart</td><td>The root hub's power-saving setting in Device Manager, then the chipset and USB drivers</td></tr>
+            <tr><td>Overcurrent protection</td><td>A group dead right after a faulty device or cable went in</td><td>Unplug everything, shut down, remove power, then test one known-good device at a time</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The pattern of what still works is the diagnosis,</strong> so map it before
+          touching drivers: which ports, which side, which devices. A driver reinstall can only fix the fourth
+          row, and the first three are physical. The last row is worth knowing because the protection that cut
+          the ports did its job, so find the device that tripped it before plugging it back in.
         </div>
       </div>
     </div>
@@ -793,6 +841,158 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           sequential benchmark figures describe a workload almost nobody has. A drive that copies a
           film at 7 GB/s and opens a project in the same time as the old one is behaving normally,
           because opening the project was never bandwidth-bound.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: FILE SYSTEMS ──────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🗂️</span>
+    <span class="topic-name">File Systems — NTFS <span class="acro-exp">(New Technology File System)</span>, exFAT, FAT32 <span class="acro-exp">(File Allocation Table 32)</span>, ReFS, APFS &amp; ext4, and What Each Cannot Do</span>
+    <span class="topic-badge">PC Hardware • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Reference</div>
+      <div class="concept-title">Six File Systems, and the Question Each One Answers Badly</div>
+      <div class="concept-desc">
+        NTFS vs exFAT is the question a USB <span class="acro-exp">(Universal Serial Bus)</span> drive raises, and behind it is a rule worth knowing once: a file
+        system decides which operating systems can read the disk, how large one file can be, and whether the
+        disk can hold permissions at all. Formatting is the moment that decision is made, and it is usually
+        made by accepting a default.
+        <!-- fact: FAT32's largest file is 4 GB minus one byte; macOS reads NTFS but does not write it, and reads and writes exFAT; Linux's ntfs3 driver reads and writes NTFS; APFS is macOS's since High Sierra; Dev Drive is built on ReFS; the EFI system partition is FAT | source: Microsoft Learn's Windows and GPT FAQ, fetched; macOS support from Eclectic Light and Setapp, ntfs3 from kernel.org and Dev Drive from Microsoft Learn, as quoted in search results | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>File system</th><th>Native to</th><th>Others</th><th>Largest file</th><th>Use it for</th></tr></thead>
+          <tbody>
+            <tr><td>NTFS</td><td>Windows</td><td>macOS reads it and cannot write it natively. Linux reads and writes it</td><td>Far beyond any drive</td><td>Windows system and data drives: permissions, encryption, journaling</td></tr>
+            <tr><td>FAT32</td><td>Everything</td><td>Everything reads and writes it</td><td class="c-red">4 GB, less one byte</td><td>Small removable media, firmware updates, and the EFI <span class="acro-exp">(Extensible Firmware Interface)</span> system partition every UEFI <span class="acro-exp">(Unified Extensible Firmware Interface)</span> machine boots from</td></tr>
+            <tr><td>exFAT</td><td>Windows and macOS</td><td>Current Linux reads and writes it</td><td>Far beyond any drive</td><td>Flash drives and memory cards that move between Windows and a Mac</td></tr>
+            <tr><td>ReFS</td><td>Windows Server, and Windows 11's Dev Drive</td><td>Nothing else</td><td>Far beyond any drive</td><td>Server storage pools and developer volumes, not the system drive</td></tr>
+            <tr><td>APFS</td><td>macOS since High Sierra, and iOS</td><td>Windows and Linux need third-party drivers</td><td>Far beyond any drive</td><td>Mac internal drives and Mac backup disks</td></tr>
+            <tr><td>ext4</td><td>Most Linux distributions</td><td>Windows cannot read it natively</td><td>16 TB with the usual block size</td><td>Linux system and data volumes</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The FAT32 row is the one that produces a ticket.</strong> Its file size limit
+          is 4 GB less one byte, so a larger file will not copy to a stick formatted FAT32, and Windows says the
+          file is too large for the destination file system, which names the problem without naming the fix. Reformat the stick as exFAT if it moves
+          between Windows and a Mac, or NTFS if it stays on Windows. Keep FAT32 for the jobs that demand it:
+          firmware and BIOS <span class="acro-exp">(Basic Input/Output System)</span> update sticks, older cameras and cars, and the EFI system partition, which is FAT by
+          specification and stays that way on every machine.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Silently wrong</div>
+      <div class="concept-title">Permissions Live in the File System, So Copying and Moving Treat Them Differently</div>
+      <div class="concept-desc">
+        NTFS stores who may open a file with the file itself. That makes the difference between copying and
+        moving visible in a way users never expect, and it makes FAT32 and exFAT drives quietly strip
+        permissions from anything put on them, because neither can store any.
+        <!-- fact: a copy inherits the destination folder's permissions; a move within one NTFS volume keeps the object's own; a move to another volume inherits the destination's; a move to a volume without permissions loses them | source: Microsoft Support KB 310316 and the Microsoft Learn file-access module, as quoted in search results; not fetched | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Action</th><th>Permissions afterwards</th></tr></thead>
+          <tbody>
+            <tr><td>Copy, to any NTFS folder</td><td>The copy is a new file, and it inherits the destination folder's permissions</td></tr>
+            <tr><td>Move within the same NTFS volume</td><td class="c-amber">It keeps its own permissions, because only the pointer to it changes</td></tr>
+            <tr><td>Move to a different NTFS volume</td><td>It inherits the destination's, as a copy would</td></tr>
+            <tr><td>Copy or move to FAT32 or exFAT</td><td class="c-red">It loses them, because neither file system stores any</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The second row is the surprise.</strong> A file moved out of a shared folder
+          into a private one on the same drive keeps the shared folder's permissions, which is how a private
+          folder ends up holding files the whole department can open. Copying, or moving across drives, picks
+          up the destination's permissions instead. On a file server the same rules meet share permissions,
+          which <span class="xref">File Services — Share vs NTFS Permissions, DFS &amp; Quotas</span> covers.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: A FAILING DRIVE ───────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">💽</span>
+    <span class="topic-name">A Failing Drive — Clicking, SMART Warnings, Missing Disks and What to Do First</span>
+    <span class="topic-badge">PC Hardware • Storage</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Decision</div>
+      <div class="concept-title">Copy the Data Off Before You Diagnose, Because Diagnosis Wears the Drive</div>
+      <div class="concept-desc">
+        A hard drive clicking, a SMART drive failure warning, a drive not showing in the BIOS <span class="acro-exp">(Basic Input/Output System)</span>: each sounds like
+        a question about the drive, and the first answer is about the data. Every test reads the whole surface,
+        and a drive that is failing mechanically may have only hours of reading left. Spend them on a copy.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Usually means</th><th>First</th></tr></thead>
+          <tbody>
+            <tr><td>Clicking, grinding, or spinning up again and again</td><td>The heads or the motor of a hard drive are failing</td><td class="c-red">Stop. Image what can be read, once. Every power cycle risks the rest, and data worth paying for goes to a recovery service</td></tr>
+            <tr><td>A SMART warning at startup or in a tool</td><td>The drive's own counters have crossed a threshold</td><td class="c-amber">Back up now, then replace it</td></tr>
+            <tr><td>Slow reads, long freezes, files that will not open</td><td>Sectors failing to read, and the drive retrying them</td><td>Back up the most important files first, then image the rest</td></tr>
+            <tr><td>Missing from the firmware's list of drives</td><td>Power, cable or port, or a dead drive</td><td>Swap the cable and the port, then try another machine. An M.2 drive may sit in a slot whose lanes the board has given to SATA <span class="acro-exp">(Serial Advanced Technology Attachment)</span> ports</td></tr>
+            <tr><td>In the firmware, missing in Windows</td><td>Never initialized, no volume or drive letter, or no storage controller driver</td><td>Disk Management first. During setup, load the controller's driver</td></tr>
+            <tr><td>No bootable device</td><td>The boot order, a firmware mode that does not match the disk's partition style, or a failed drive</td><td>Check the firmware's boot settings before blaming the drive</td></tr>
+            <tr><td>An array reports degraded</td><td>One member has failed, and the array is running without redundancy</td><td>Replace it and rebuild now. The rebuild is the riskiest hour the array has</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The first row is the one where helping makes it worse.</strong> Repeated
+          restarts, disk checks and recovery tools run against a drive that is failing mechanically all read the
+          surface, and each pass can take what is left. The other rows are mostly cables, settings and
+          configuration, and for those the block diagram in
+          <span class="xref">Motherboard Anatomy — Chipsets, PCIe Lanes &amp; the Block Diagram</span>, the
+          partition styles in
+          <span class="xref">Installing Windows — Boot Media, GPT vs MBR, and Clean Install vs Upgrade</span> and
+          the rebuild window in
+          <span class="xref">RAID &amp; Erasure Coding — What Redundancy Buys, and the Rebuild Window</span> are
+          where to go next.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Honest limits</div>
+      <div class="concept-title">Reading SMART: Five Numbers That Matter, and Why Silence Proves Nothing</div>
+      <div class="concept-desc">
+        SMART is the drive's own record of its health, kept as a list of counters. Most of them vary by maker
+        and mean little on their own. Backblaze, a cloud backup company that publishes the failure statistics
+        of its drives, found five that rise before failure more than the rest.
+        <!-- fact: Backblaze watches SMART 5, 187, 188, 197 and 198; in its published analysis 76.7% of failed drives had at least one above zero and 23.3% had none, against 4.2% of operational drives | source: Backblaze's SMART stats posts and Gleb Budman's SNIA 2016 presentation, as quoted in search results; the figures date from 2016 data | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Attribute</th><th>Counts</th><th>Above zero means</th></tr></thead>
+          <tbody>
+            <tr><td>5, Reallocated Sectors Count</td><td>Sectors the drive retired and replaced from its spares</td><td>The surface is failing. Watch whether it grows</td></tr>
+            <tr><td>187, Reported Uncorrectable Errors</td><td>Reads the drive could not correct</td><td class="c-red">Data has already been lost somewhere</td></tr>
+            <tr><td>188, Command Timeout</td><td>Operations that took too long</td><td>The drive, or its cable and power</td></tr>
+            <tr><td>197, Current Pending Sector Count</td><td>Sectors waiting to be remapped</td><td>Unreadable now. The next write to each decides whether it recovers</td></tr>
+            <tr><td>198, Offline Uncorrectable</td><td>Sectors the drive's own scan could not read</td><td>As 197, found by the drive itself</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># Linux and macOS: every attribute, and the drive's own verdict</span>
+smartctl -a /dev/sda
+<span class="com"># Windows: the counters the storage stack exposes</span>
+Get-PhysicalDisk | Get-StorageReliabilityCounter</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A clean report is not a clean drive.</strong> In Backblaze's analysis, 76.7%
+          of the drives that failed had at least one of these five above zero, and 23.3% failed with all five at
+          zero. A warning means act now. Silence means only that the backups had better be running. NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span> drives
+          report differently, through their own health log, and the lines to read there are percentage used,
+          available spare and media errors.
         </div>
       </div>
     </div>
@@ -1604,7 +1804,7 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
 </div>
 
 <!-- ── TOPIC: DOCKS, USB-C & THUNDERBOLT ─────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔗</span>
     <span class="topic-name">Docks, USB-C &amp; Thunderbolt — Power Delivery, Alt Modes &amp; the Compatibility Mess</span>
@@ -1733,6 +1933,36 @@ target = total ÷ 0.6   ≈ 760 W   <span class="com"># run near 50–60% for be
           a fleet rather than assumed, since the attack requires only plugging something in. The
           wider physical-access picture is in
           <span class="xref">The Hardware Attack Surface — What Physical Access to a Device Buys</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The Fingerprint</div>
+      <div class="concept-title">The Plugs on a Desk, Drawn Face-On: Name Them by Shape</div>
+      <div class="concept-desc">
+        The exam shows a plug and asks for its name, and on a desk the names that matter are six. Each is drawn
+        as you see it looking into the end of the plug, at the same scale, with the metal contacts in amber.
+        Shape names the connector and nothing more: the first card in this topic is about how much a USB-C port
+        can hide behind one shape.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Connector</th><th>Carries</th><th>Tell it by</th></tr></thead>
+          <tbody>
+            <tr><td><div><svg width="112" height="40" viewBox="0 0 170 60" aria-hidden="true" focusable="false"><rect class="msh-fill2" x="25" y="7.5" width="120" height="45" rx="1.5"/><rect class="msv-bar" x="31" y="12" width="108" height="18"/><rect class="msv-dot2" x="39" y="30" width="14" height="4"/><rect class="msv-dot2" x="65" y="30" width="14" height="4"/><rect class="msv-dot2" x="91" y="30" width="14" height="4"/><rect class="msv-dot2" x="117" y="30" width="14" height="4"/></svg></div>USB-A</td><td>Data and power, from a computer or a charger</td><td>A flat rectangle about 12 mm wide, half filled by a plastic tongue, so it fits one way up</td></tr>
+            <tr><td><div><svg width="112" height="40" viewBox="0 0 170 60" aria-hidden="true" focusable="false"><rect class="msh-fill2" x="43" y="17" width="84" height="26" rx="13"/><rect class="msh-right" x="50" y="23" width="70" height="14" rx="7"/><rect class="msv-dot2" x="57.2167" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="62.05" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="66.8833" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="71.7167" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="76.55" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="81.3833" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="86.2167" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="91.05" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="95.8833" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="100.717" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="105.55" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="110.383" y="24.5" width="2.4" height="2.4"/><rect class="msv-dot2" x="57.2167" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="62.05" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="66.8833" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="71.7167" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="76.55" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="81.3833" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="86.2167" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="91.05" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="95.8833" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="100.717" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="105.55" y="33.1" width="2.4" height="2.4"/><rect class="msv-dot2" x="110.383" y="33.1" width="2.4" height="2.4"/></svg></div>USB-C</td><td>Data, power and video, as far as the port supports them</td><td>A small rounded oval about 8.4 mm wide, hollow, the same both ways up</td></tr>
+            <tr><td><div><svg width="112" height="40" viewBox="0 0 170 60" aria-hidden="true" focusable="false"><polygon class="msh-fill2" points="51.75,21 120.25,21 120.25,33 114.25,39 57.75,39 51.75,33"/><rect class="msh-right" x="59" y="25" width="54" height="6"/><rect class="msv-dot2" x="64.5" y="26.5" width="3" height="2.4"/><rect class="msv-dot2" x="74.5" y="26.5" width="3" height="2.4"/><rect class="msv-dot2" x="84.5" y="26.5" width="3" height="2.4"/><rect class="msv-dot2" x="94.5" y="26.5" width="3" height="2.4"/><rect class="msv-dot2" x="104.5" y="26.5" width="3" height="2.4"/></svg></div>Micro-USB</td><td>Data and power on older phones and accessories</td><td>A small trapezoid about 6.9 mm wide, wider on one side, so it fits one way only</td></tr>
+            <tr><td><div><svg width="112" height="40" viewBox="0 0 170 60" aria-hidden="true" focusable="false"><rect class="msv-bar" x="51.5" y="22.5" width="67" height="15" rx="7.5"/></svg></div>Lightning</td><td>Older iPhones and iPads</td><td>A solid blade about 6.7 mm wide with its contacts on the outside: nothing to look into, and it fits either way up</td></tr>
+            <tr><td><div><svg width="112" height="40" viewBox="0 0 170 60" aria-hidden="true" focusable="false"><polygon class="msh-fill2" points="15.5,7.75 154.5,7.75 154.5,40.25 142.5,52.25 27.5,52.25 15.5,40.25"/><rect class="msh-right" x="27" y="17" width="116" height="20"/><rect class="msv-dot2" x="33.1" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="44.3" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="55.5" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="66.7" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="77.9" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="89.1" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="100.3" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="111.5" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="122.7" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="133.9" y="18.5" width="3" height="3"/><rect class="msv-dot2" x="38.7" y="32.5" width="3" height="3"/><rect class="msv-dot2" x="49.9" y="32.5" width="3" height="3"/><rect class="msv-dot2" x="61.1" y="32.5" width="3" height="3"/><rect class="msv-dot2" x="72.3" y="32.5" width="3" height="3"/><rect class="msv-dot2" x="83.5" y="32.5" width="3" height="3"/><rect class="msv-dot2" x="94.7" y="32.5" width="3" height="3"/><rect class="msv-dot2" x="105.9" y="32.5" width="3" height="3"/><rect class="msv-dot2" x="117.1" y="32.5" width="3" height="3"/><rect class="msv-dot2" x="128.3" y="32.5" width="3" height="3"/></svg></div>HDMI <span class="acro-exp">(High-Definition Multimedia Interface)</span></td><td>Video and audio, to TVs and monitors</td><td>About 13.9 mm wide, with both bottom corners cut evenly: a symmetrical trapezoid</td></tr>
+            <tr><td><div><svg width="112" height="40" viewBox="0 0 170 60" aria-hidden="true" focusable="false"><polygon class="msh-fill2" points="4.5,6.2 165.5,6.2 165.5,53.8 18.5,53.8 4.5,39.8"/><rect class="msh-right" x="20" y="16" width="136" height="22"/><rect class="msv-dot2" x="27.1" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="40.3" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="53.5" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="66.7" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="79.9" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="93.1" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="106.3" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="119.5" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="132.7" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="145.9" y="17.5" width="3" height="3"/><rect class="msv-dot2" x="27.1" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="40.3" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="53.5" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="66.7" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="79.9" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="93.1" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="106.3" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="119.5" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="132.7" y="33.5" width="3" height="3"/><rect class="msv-dot2" x="145.9" y="33.5" width="3" height="3"/><rect class="msh-fill2" x="36" y="2" width="9" height="4.2"/><rect class="msh-fill2" x="125" y="2" width="9" height="4.2"/></svg></div>DisplayPort</td><td>Video and audio, to monitors from graphics cards</td><td>Wider again, about 16.1 mm, with one corner cut, and usually a latch with a button to release it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The last two rows are the pair to separate, and the corners do it.</strong>
+          HDMI has two cut corners and is the same on the left as on the right. DisplayPort has one, which is
+          how it keys which way up it goes, and its latch is why the cable will not pull out until the button
+          is pressed. USB-C and Lightning are the other pair, and looking into the end separates them: USB-C is
+          hollow, and Lightning is solid.
         </div>
       </div>
     </div>
