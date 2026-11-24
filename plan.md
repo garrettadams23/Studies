@@ -33,7 +33,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too | ✅ **shipped** — see its §9 to §19 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too. Fourteenth wave conducted: MD-102 and MS-102 paths read from Microsoft's study guides, AZ-800 found retired and its tag corrected, and the gaps both outlines found listed as the next queue | ✅ **shipped** — see its §9 to §20 |
 | **Error codes and packaging** | Three items from the owner, added as written: an error-code lookup in the header's row of buttons, the Intune and MECM codes compared, and MSI, .intunewin and EXE explained. Each checked against the site first, with the owner's guide to MSI against EXE in MECM kept beside them as written | ✅ **shipped** — see its §5 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
@@ -73,7 +73,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **166** · search **59** · resilience **64** · axe 33/33 · mobile 16/16 · visual 2/2 · backup 3/3. The error-code lookup added one check to each of smoke, mobile and axe's two themes. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **24** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **25** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -2214,6 +2214,31 @@ site's SAST and DAST topic does not cover. The domain-header tags with no path, 
 nobody has read: CKA, OSCP, GCIH, AWS, GCP, MD-102, AZ-800, MS-102 and AI+. And the visual
 baseline, unchanged.
 
+## 20. What shipped — the fourteenth wave
+
+Recorded below as *Session — the fourteenth wave, two Microsoft paths and an exam that retired*.
+Three of §19's tags were Microsoft's, and each study guide was fetched from Microsoft Learn and
+read before anything was written.
+
+| § | Item | Where it went |
+|---|---|---|
+| 19 | MD-102 | *Microsoft MD-102 (Endpoint Administrator)*, 38 steps, skills measured as of 27 October 2026, with the twelfth wave's packaging topics under managing applications |
+| 19 | MS-102 | *Microsoft MS-102 (Microsoft 365 Administrator)*, 24 steps, skills measured as of 28 April 2026 |
+| 19 | AZ-800 | **Retired on 30 September 2026**, its study guide says, so no path. The infra header and the README advertised it, and now read *AD DS* |
+
+**The gaps the two outlines found, and the next queue.** MD-102 names seven things the site
+covers in a mention or not at all: deploying Microsoft 365 Apps with the Office Deployment Tool,
+Windows Backup for organizations, Delivery Optimization, App Control for Business, Hotpatch,
+multi-admin approval, and Security Copilot agents in Intune. MS-102's are thicker, and most sit
+in its largest area: Defender XDR incidents and advanced hunting, attack simulation training,
+Defender for Cloud Apps, Defender Vulnerability Management, self-service password reset with
+Entra Password Protection, administrative units, IdFix, and sensitive information types with
+Endpoint DLP. Each path skips them rather than point somewhere close, and each is a candidate
+with a named asker.
+
+**Also left.** The tags no outline has been read for: CKA, OSCP, GCIH, AWS, GCP and AI+. RASP
+and IAST. And the visual baseline, unchanged.
+
 
 # Error codes and packaging — three items from the owner
 
@@ -4262,4 +4287,32 @@ violations and no page overflow.
 checks: smoke 165 -> 166 · axe 31/31 -> 33/33 · mobile 15/15 -> 16/16 · search 59 · resilience 64 · backup 3/3
 visual 0/2 here, as in every wave, and back to exactly 10.335% after the move: font rendering, baseline left alone
 45 gates green · plan.md 4,265 lines, far under 8,000 after the split
+```
+
+## Session — the fourteenth wave, two Microsoft paths and an exam that retired
+
+The request, from the owner's message, was to keep going through the waves once the three items
+were done. §19's list of header tags with no path came next, and three of them were Microsoft's,
+in the domains the twelfth and thirteenth waves had just worked in. *Content ideas* §20 is the
+table.
+
+### A header advertised an exam that no longer exists
+
+Reading the study guide before writing the path is what found it: AZ-800's page says the exam
+retired on 30 September 2026. The infra domain's header had carried the tag since the domain was
+written, and the README's domain table repeated it. Both now name what the domain covers instead.
+**A certification tag is a dated claim like any other, and the outline is where its date is.**
+
+### Two outlines, read against topics that already existed
+
+MD-102 mapped almost entirely onto `endpoint`, including the two packaging topics written two
+waves earlier, which now sit under its application skills. MS-102 did not: its Defender XDR
+area, the largest at 30 to 35%, names incidents, advanced hunting, attack simulation, Defender for
+Cloud Apps and vulnerability management, and the site has topics beside them but none on them.
+Its path points only at topics that answer an objective, and §20 lists the rest.
+
+```
+2 commits · 2 exam paths · 1 retired exam found and its tag corrected · 0 new topics
+paths 112 -> 114 · path steps 2,066 -> 2,128 · topics 1,587, unchanged
+45 gates green · smoke 166, whose learning-path checks read the new paths · mobile 16/16
 ```
