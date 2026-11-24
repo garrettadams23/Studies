@@ -1225,6 +1225,26 @@ const READERS = [
     ["lake formation permissions", "", "cloud/lake-formation-aws-quick-governing-the-data-lake-and-showing"],
     ["column level security data lake", "", "cloud/lake-formation-aws-quick-governing-the-data-lake-and-showing"],
     ["quicksight", "", "cloud/lake-formation-aws-quick-governing-the-data-lake-and-showing"],
+    // ── twenty-fourth wave: the guide's remaining examples and in-scope gaps, added before their topics ──
+    // Opened at 0 of 17: eleven zeros, `rekognition`, `sagemaker` and `appflow` among words the site had never
+    // written, and six that found other cards. `aws config rules` reached 31, none of them about AWS Config.
+    ["rekognition", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["amazon textract", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["polly text to speech", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["sagemaker", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["ai services opt out", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["gateway load balancer", "", "cloud/elastic-load-balancing-alb-nlb-gateway-load-balancer-and-the"],
+    ["cross-zone load balancing", "", "cloud/elastic-load-balancing-alb-nlb-gateway-load-balancer-and-the"],
+    ["classic load balancer migrate", "", "cloud/elastic-load-balancing-alb-nlb-gateway-load-balancer-and-the"],
+    ["amazon mq", "", "cloud/amazon-mq-msk-appflow-when-the-protocol-or-the-partner-is-al"],
+    ["managed kafka", "", "cloud/amazon-mq-msk-appflow-when-the-protocol-or-the-partner-is-al"],
+    ["appflow", "", "cloud/amazon-mq-msk-appflow-when-the-protocol-or-the-partner-is-al"],
+    ["application migration service", "", "cloud/aws-migration-aws-transform-mgn-dms-a-discovery-service-that"],
+    ["aws dms", "", "cloud/aws-migration-aws-transform-mgn-dms-a-discovery-service-that"],
+    ["schema conversion tool", "", "cloud/aws-migration-aws-transform-mgn-dms-a-discovery-service-that"],
+    ["aws config rules", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
+    ["conformance pack", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
+    ["auto remediation noncompliant", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],

@@ -936,6 +936,117 @@ gcloud compute instances list --project my-prod-project</pre>
             </div>
           </div>
 <div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: ELASTIC LOAD BALANCING ────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">⚖️</span>
+    <span class="topic-name">Elastic Load Balancing — ALB <span class="acro-exp">(Application Load Balancer)</span>, NLB &amp; Gateway Load Balancer, and the Cross-Zone Default</span>
+    <span class="topic-badge">AWS • Networking</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Three layers</div>
+      <div class="concept-title">ALB Reads the Request, NLB Reads the Connection, and the Gateway Load Balancer Reads Every Packet</div>
+      <div class="concept-desc">
+        Elastic Load Balancing has three current kinds of load balancer, and the OSI <span class="acro-exp">(Open Systems Interconnection)</span> layer each works at decides
+        what it can do. The <strong class="c-cyan">Application Load Balancer</strong> works at layer 7: it reads
+        each HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> request and can route on its path, its host name or its headers, and it can send requests to
+        Lambda functions. The <strong class="c-cyan">Network Load Balancer</strong> works at layer 4, forwarding
+        TCP <span class="acro-exp">(Transmission Control Protocol)</span>, UDP <span class="acro-exp">(User Datagram Protocol)</span>, TLS <span class="acro-exp">(Transport Layer Security)</span> and QUIC <span class="acro-exp">(Quick UDP Internet Connections)</span> traffic, handles millions of requests a second, and can take one Elastic IP <span class="acro-exp">(Internet Protocol)</span>
+        address per subnet. The <strong class="c-cyan">Gateway Load Balancer</strong> works at layer 3: it takes
+        every IP packet on every port and hands it to a fleet of virtual appliances, such as firewalls and
+        intrusion prevention systems. The Classic Load Balancer is the previous generation, and AWS <span class="acro-exp">(Amazon Web Services)</span> recommends
+        that you migrate to a current one.
+        <!-- fact: An Application Load Balancer functions at the application layer, the seventh layer of the OSI model, with path conditions, host conditions, routing on request fields such as HTTP headers, and Lambda functions as targets | source: AWS documentation, "What is an Application Load Balancer?", fetched and read | checked: 2026-11 -->
+        <!-- fact: A Network Load Balancer functions at the fourth layer of the OSI model and can handle millions of requests per second; its target groups support TCP, UDP, TCP_UDP, TLS, QUIC and TCP_QUIC; it can have one Elastic IP address per enabled subnet | source: AWS documentation, "What is a Network Load Balancer?", fetched and read | checked: 2026-11 -->
+        <!-- fact: A Gateway Load Balancer deploys, scales and manages virtual appliances such as firewalls, intrusion detection and prevention systems and deep packet inspection systems; it operates at layer 3 of the OSI model, listening for all IP packets across all ports; Classic Load Balancers are the previous generation and AWS recommends migrating to a current generation load balancer | source: AWS documentation, "What is a Gateway Load Balancer?" and "What is Elastic Load Balancing?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Application (ALB)</th><th>Network (NLB)</th><th>Gateway (GWLB)</th></tr></thead>
+          <tbody>
+            <tr><td>Layer</td><td>7, the request</td><td>4, the connection</td><td>3, the packet</td></tr>
+            <tr><td>Traffic</td><td>HTTP and HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span></td><td>TCP, UDP, TLS, QUIC</td><td>All IP traffic, all ports</td></tr>
+            <tr><td>Routes by</td><td>Path, host, headers</td><td>Listener port and protocol</td><td>Flow, to keep a session on one appliance</td></tr>
+            <tr><td>Reach for it when</td><td>Web apps and APIs <span class="acro-exp">(Application Programming Interface)</span>, several services behind one name</td><td>Non-HTTP protocols, static addresses, extreme rates</td><td>Every packet must pass a firewall or inspection fleet</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Choose by what the balancer must understand.</strong> An ALB earns its cost
+          when routing depends on what the request asks for; an NLB when the protocol is not HTTP, or the clients
+          need addresses that never change; a Gateway Load Balancer only when the job is inspection rather than
+          serving. A Classic Load Balancer still running is a migration that has not happened yet. The ideas
+          beneath all three, health checks and algorithms, are in
+          <span class="xref">Load Balancers Explained – Spreading the Work Around</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Cross-zone</div>
+      <div class="concept-title">With Cross-Zone Off, Each Zone Gets Half the Traffic However Many Targets It Has</div>
+      <div class="concept-desc">
+        A load balancer has a node in each Availability Zone it is enabled in, and DNS <span class="acro-exp">(Domain Name System)</span> spreads clients across
+        the nodes. With <strong class="c-cyan">cross-zone load balancing</strong> on, each node can send to targets
+        in every zone; off, each node sends only to targets in its own. AWS's own example: two zones, two targets
+        in one and eight in the other. With cross-zone on, each of the ten targets gets 10% of the traffic. Off,
+        each zone still gets half, so the two targets in the first zone get 25% each and the eight in the second
+        get 6.25% each. The defaults differ by type: always on at the load balancer for an ALB, though a target
+        group can turn it off; off by default for NLBs and Gateway Load Balancers, and changeable at any time.
+        <!-- fact: When cross-zone load balancing is enabled each load balancer node distributes traffic across registered targets in all enabled Availability Zones, and when disabled only to targets in its own zone; in AWS's example of two zones with two targets in A and eight in B, enabled gives each of the 10 targets 10%, while disabled gives each target in A 25% and each in B 6.25%, because each node routes its 50% only to its own zone; for Application Load Balancers cross-zone load balancing is always enabled at the load balancer level and can be disabled at the target group level; for Network Load Balancers and Gateway Load Balancers it is disabled by default and can be enabled or disabled at any time | source: AWS documentation, "How Elastic Load Balancing works", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Two zones: 2 targets in A, 8 in B</th><th>Each target in A</th><th>Each target in B</th></tr></thead>
+          <tbody>
+            <tr><td>Cross-zone on</td><td>10%</td><td>10%</td></tr>
+            <tr><td>Cross-zone off</td><td>25%</td><td>6.25%</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Keep the zones even, or turn cross-zone on and know what it costs.</strong>
+          With it off, an uneven fleet means the smaller zone's targets run four times as hot as the larger one's
+          in AWS's example, and one zone losing targets leaves its share of clients on the few that remain. With
+          it on, requests cross between zones, so check what that costs for your load balancer type before
+          relying on it. An Auto Scaling group spread evenly across zones avoids the choice, which is in
+          <span class="xref">AWS Compute — EC2, AMIs &amp; Auto Scaling</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Gateway Load Balancer</div>
+      <div class="concept-title">A Gateway Load Balancer Puts Firewalls in the Path With a Route, Not a Proxy</div>
+      <div class="concept-desc">
+        The appliances sit in their own VPC <span class="acro-exp">(Virtual Private Cloud)</span> behind the Gateway Load Balancer. Each application VPC gets a
+        <strong class="c-cyan">Gateway Load Balancer endpoint</strong>, a VPC endpoint in its own subnet, and the
+        application subnet's route table names that endpoint as the next hop. Traffic leaves the application,
+        crosses the endpoint to the appliances, and comes back the same way, wrapped between load balancer and
+        appliance in the GENEVE protocol on port 6081. Each flow sticks to one appliance, by its five-tuple by
+        default or by three or two of those fields. AWS is clear about one responsibility: you choose and qualify
+        the appliance software, and you must trust it to inspect and change your traffic.
+        <!-- fact: Gateway Load Balancers maintain flow stickiness to a target appliance using a 5-tuple (default), 3-tuple or 2-tuple; the load balancer and its appliances exchange traffic using GENEVE on port 6081; Gateway Load Balancer endpoints are VPC endpoints providing private connectivity between appliances in the service provider VPC and application servers in the service consumer VPC, configured through route tables, with the endpoint and the application servers in different subnets so the endpoint can be the next hop in the application subnet's route table; you are responsible for choosing and qualifying appliance software and must trust it to inspect or modify traffic | source: AWS documentation, "What is a Gateway Load Balancer?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Piece</th><th>Lives in</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td>Gateway Load Balancer and appliances</td><td>The security, or provider, VPC</td><td>Spreads flows across the appliance fleet and scales it</td></tr>
+            <tr><td>Gateway Load Balancer endpoint</td><td>Its own subnet in each application VPC</td><td>Carries traffic privately to and from the appliances</td></tr>
+            <tr><td>Route table entry</td><td>The application subnet</td><td>Names the endpoint as the next hop, which is what puts inspection in the path</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The route table is the control, so guard it like one.</strong> Inspection
+          happens only because a route sends traffic to the endpoint; whoever can edit that route table can take
+          the firewall out of the path without touching the firewall. Watch route table changes as closely as
+          firewall rule changes. The design question of where inspection belongs, in a network split into zones,
+          is in
+          <span class="xref">Network Security Architecture — Segmentation, DMZ &amp; Egress Filtering</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topic" data-reviewed="2026-11">
   <!-- ── TOPIC: AWS SHIELD & GLOBAL ACCELERATOR ───────────────────── -->
   <div class="topic-header">
     <span class="topic-icon">🛡️</span>
@@ -1484,6 +1595,110 @@ gcloud compute instances list --project my-prod-project</pre>
     </div>
   </div>
 </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AMAZON MQ, MSK & APPFLOW ──────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📬</span>
+    <span class="topic-name">Amazon MQ, MSK &amp; AppFlow — When the Protocol or the Partner Is Already Chosen</span>
+    <span class="topic-badge">AWS • Integration</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Amazon MQ</div>
+      <div class="concept-title">Amazon MQ Runs the Broker Your Applications Already Talk To, So the Messaging Code Stays</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Amazon MQ</strong> is a managed message broker for Apache ActiveMQ Classic and
+        RabbitMQ: AWS <span class="acro-exp">(Amazon Web Services)</span> sets up, maintains and upgrades the broker, and the applications keep speaking the
+        standard APIs <span class="acro-exp">(Application Programming Interface)</span> and protocols they were written for, among them JMS, .NET's NMS, AMQP 0.9.1 and 1.0,
+        STOMP, MQTT and WebSocket. AWS presents it as the way to move an existing broker to AWS without rewriting
+        the messaging code. You still choose and size brokers: a broker is a running environment, which is the
+        difference from SQS <span class="acro-exp">(Simple Queue Service)</span> and SNS <span class="acro-exp">(Simple Notification Service)</span>, where there is no broker to see.
+        <!-- fact: Amazon MQ is a managed message broker service for Apache ActiveMQ Classic and RabbitMQ that manages setup, operation and maintenance of brokers; you can create a broker using industry standard messaging protocols or migrate existing brokers without rewriting messaging code; a broker is a message broker environment running on Amazon MQ | source: AWS documentation, "What is Amazon MQ?", fetched and read | checked: 2026-11 -->
+        <!-- fact: Amazon MQ supports industry standard APIs and protocols for messaging including JMS, NMS, AMQP 0.9.1, AMQP 1.0, STOMP, MQTTv3 and WebSocket, so applications can switch from a standards-based broker without rewriting messaging code | source: Amazon MQ FAQs, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The application</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Already speaks JMS, AMQP, STOMP or MQTT to ActiveMQ or RabbitMQ</td><td>Amazon MQ, and keep the code</td></tr>
+            <tr><td>Is new, and needs a queue or a topic with nothing to run</td><td>SQS and SNS</td></tr>
+            <tr><td>Streams events many consumers replay in order</td><td>MSK or Kinesis Data Streams</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Amazon MQ is a migration answer more than a design one.</strong> It exists so
+          that code written against a broker can move without being rewritten; that is worth a great deal when
+          the code is large, and nothing when the code is not written yet. New code with no protocol to honor is
+          simpler on the serverless queues in
+          <span class="xref">AWS Application Integration — SQS, SNS, EventBridge &amp; Step Functions</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">MSK</div>
+      <div class="concept-title">MSK Is Apache Kafka With AWS Running the Cluster, So Kafka's Own Tools Still Work</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Amazon MSK</strong>, Managed Streaming for Apache Kafka, runs open-source Kafka for
+        you. AWS handles the control plane, creating, updating and deleting clusters, while applications use
+        Kafka's own data plane to produce and consume, which is why existing Kafka applications, tools and
+        plugins work unchanged. Provisioned clusters place broker nodes in each Availability Zone, at least one
+        per zone, with Standard or Express brokers; MSK Serverless removes broker sizing altogether. Cluster
+        metadata is coordinated by ZooKeeper nodes or, in KRaft mode, by controllers inside Kafka itself, the
+        replacement the Kafka community built for ZooKeeper. MSK Connect moves data in and out, and MSK Replicator copies between clusters, across Regions or
+        within one.
+        <!-- fact: Amazon MSK is a fully managed service to build and run applications that use Apache Kafka; it provides control-plane operations for creating, updating and deleting clusters and lets you use Apache Kafka data-plane operations for producing and consuming; it runs open-source Apache Kafka, so existing applications, tooling and plugins are supported; you specify broker nodes per Availability Zone, minimum one per zone; MSK Provisioned offers Standard and Express brokers, and in MSK Serverless MSK manages the brokers; ZooKeeper nodes or KRaft controllers manage metadata, KRaft having been developed by the Kafka community to replace ZooKeeper; MSK Connect streams data to and from clusters, and MSK Replicator replicates data across MSK Provisioned clusters in different or the same Regions | source: AWS documentation, "What is Amazon MSK?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>MSK</th><th>Kinesis Data Streams</th></tr></thead>
+          <tbody>
+            <tr><td>Interface</td><td>Kafka's own APIs, clients and tools</td><td>AWS's Kinesis API and SDKs <span class="acro-exp">(Software Development Kit)</span></td></tr>
+            <tr><td>Bring existing code</td><td>Yes, if it speaks Kafka</td><td>Only if it is rewritten</td></tr>
+            <tr><td>Ordering</td><td>Within a Kafka partition</td><td>Within a shard</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pick MSK for Kafka, not for streaming in general.</strong> Its value is that
+          Kafka clients, connectors and operational habits carry over unchanged; a team with none of those gets
+          a similar ordered stream from Kinesis without learning Kafka's partitions, consumer groups and
+          retention settings first. Kafka's model itself, the log that consumers replay, is in
+          <span class="xref">Apache Kafka — The Distributed Event Log</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">AppFlow</div>
+      <div class="concept-title">AppFlow Moves Data Between SaaS Applications and AWS Without Integration Code</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Amazon AppFlow</strong> is a managed integration service for one recurring job:
+        moving records between software-as-a-service applications, such as Salesforce or Zendesk, and AWS
+        services such as S3 <span class="acro-exp">(Simple Storage Service)</span> and Redshift. A flow is configured, not coded; it runs on demand or on a schedule
+        to keep the two sides in step, AppFlow records what moved where and when, and it encrypts the data at
+        rest and in transit. AWS's own examples are contact records from Salesforce into Redshift and support
+        tickets from Zendesk into an S3 bucket.
+        <!-- fact: Amazon AppFlow is a fully managed integration service to securely exchange data between SaaS applications such as Salesforce and AWS services such as Amazon S3 and Amazon Redshift, for example ingesting contact records from Salesforce to Redshift or pulling support tickets from Zendesk to S3; flows are created without code and run on demand or on a schedule; flow management tools show what data moved where and when; data is encrypted at rest and in transit | source: AWS documentation, "What is Amazon AppFlow?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The data</th><th>Comes from</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Records in a SaaS product</td><td>Salesforce, Zendesk and similar</td><td>AppFlow, on a schedule</td></tr>
+            <tr><td>Files a partner sends</td><td>Their SFTP <span class="acro-exp">(SSH File Transfer Protocol)</span> or AS2 client</td><td>Transfer Family</td></tr>
+            <tr><td>Files on your own servers</td><td>NFS <span class="acro-exp">(Network File System)</span>, SMB <span class="acro-exp">(Server Message Block)</span>, HDFS <span class="acro-exp">(Hadoop Distributed File System)</span></td><td>DataSync</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A flow holds a key to someone else's system, so treat it like a service
+          account.</strong> It connects with credentials to the SaaS application and moves its records on a
+          timer, unattended; give it the narrowest access the SaaS side allows, and know who owns the connection
+          when its creator leaves. The other two ways data arrives, by file, are in
+          <span class="xref">AWS Hybrid Storage &amp; Data Transfer — Storage Gateway, DataSync, Transfer Family &amp; the Devices That Closed</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
@@ -1828,6 +2043,114 @@ gcloud compute instances list --project my-prod-project</pre>
           Snow Family existed, and it has not changed; what has changed is the answer for a new account, which is
           now Data Transfer Terminal or a partner. Outposts, where AWS now points edge computing, is one form of
           <span class="xref">Edge Computing — What It Is Once the Marketing Is Removed</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AWS MIGRATION ─────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧳</span>
+    <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Migration — AWS Transform MGN, DMS &amp; a Discovery Service That Closed</span>
+    <span class="topic-badge">AWS • Migration</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Discovery</div>
+      <div class="concept-title">Discovery Comes First, and the Exam's Discovery Service Closed to New Customers in November 2025</div>
+      <div class="concept-desc">
+        A migration starts with an inventory: which servers and databases exist, how busy they are, and which
+        ones talk to which. AWS Application Discovery Service collected that data from on-premises servers and
+        databases, stored it in the AWS Migration Hub home Region, and exported it for cost models and
+        analysis. It stopped accepting new customers on 7 November 2025; existing customers can finish their
+        projects, and AWS now points everyone else to <strong class="c-cyan">AWS Transform</strong>, which it
+        describes as its agentic AI <span class="acro-exp">(Artificial Intelligence)</span> service for discovery and assessment, with agent-based and agentless
+        collectors and deeper analysis of VMware estates. The SAA-C03 guide's in-scope list still names
+        Application Discovery Service.
+        <!-- fact: AWS Application Discovery Service collects usage and configuration data about on-premises servers and databases to plan migrations, integrates with AWS Migration Hub and DMS Fleet Advisor, stores discovered data in the Migration Hub home Region, and exports data for cost models and analysis; it is no longer open to new customers, and AWS recommends AWS Transform, which provides similar capabilities | source: AWS documentation, "What is AWS Application Discovery Service?", fetched and read | checked: 2026-11 -->
+        <!-- fact: AWS closed Application Discovery Service to new customers starting 7 November 2025; existing customers can continue using it to complete ongoing projects, with security updates but no new features; AWS Transform is described as AWS's next-generation agentic AI service with discovery and assessment through agent-based and agentless collectors and enhanced VMware environment analysis, with no data migration required to transition | source: AWS documentation, "AWS Application Discovery Service availability change", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Discovery answers</th><th>Because the migration needs</th></tr></thead>
+          <tbody>
+            <tr><td>What exists, and how busy it is</td><td>Instance sizes from real utilization, and a cost model</td></tr>
+            <tr><td>What talks to what</td><td>Applications grouped so that dependent servers move together</td></tr>
+            <tr><td>Which databases there are, and what engines</td><td>A decision per database: move it as is, or convert it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Group servers by who talks to whom before scheduling anything.</strong> A server
+          moved without the database it calls every second becomes a cross-site dependency on the first day,
+          slower and more fragile than either place alone. Discovery data exists to draw those groups; the
+          inventory habit behind it, outside any one cloud, is in
+          <span class="xref">Asset &amp; Configuration Management — A CMDB That Stays True</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Rehosting servers</div>
+      <div class="concept-title">AWS Transform MGN Replicates Whole Servers Block by Block, So Cutover Takes Minutes</div>
+      <div class="concept-desc">
+        The exam guide calls it AWS Application Migration Service; AWS's documentation now calls it
+        <strong class="c-cyan">AWS Transform MGN</strong>. It moves physical, virtual and cloud servers to AWS by
+        replicating each source server's disks continuously, block by block, and converting the copy to launch
+        on AWS, so the cutover window is typically minutes. It handles Windows Server and many Linux
+        distributions, can migrate into Local Zones and Outposts as well as Regions, and runs at scale by
+        grouping servers into applications and applications into waves, with replication, launch and
+        post-launch templates applied to each server. AWS presents the result as rehosting: a fast first step,
+        after which applications can be replatformed or refactored.
+        <!-- fact: AWS Transform MGN automates the migration of physical, virtual and cloud servers to AWS with minimal downtime, typically cutover windows of minutes, through continuous block-level replication of source servers converted for launch on AWS; it supports Windows Server and various Linux distributions, IPv4 and IPv6, and migration into Availability Zones, Local Zones and Outposts; three configurable templates (replication, launch, post-launch) apply to each server; servers group into applications and applications into waves for bulk actions; after migration applications can be replatformed or refactored, rehosting being a first step toward modernization | source: AWS documentation, "What Is AWS Transform MGN?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>What happens</th></tr></thead>
+          <tbody>
+            <tr><td>Replicate</td><td>Each source server's disks copy to AWS continuously, block by block, while it keeps running</td></tr>
+            <tr><td>Launch</td><td>The replica is converted and launched on AWS, by server, application or wave</td></tr>
+            <tr><td>Cut over</td><td>The AWS copy becomes the server, in a window typically of minutes</td></tr>
+            <tr><td>Afterwards</td><td>Replatform or refactor in AWS, now that the move is done</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Rehost first, improve second, and do not do both in one weekend.</strong>
+          Block-level replication moves the server exactly as it is, faults included, which is what makes it
+          fast and predictable; changing the platform during the same cutover doubles what can go wrong and
+          leaves no clean way back. The strategies to choose between, server by server, are in
+          <span class="xref">P2V &amp; V2V — The Migrations That Still Happen</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DMS</div>
+      <div class="concept-title">DMS Moves the Data and Keeps It in Step; Changing Engines Needs the Schema Converted First</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">AWS Database Migration Service</strong>, AWS DMS, moves relational databases, data warehouses,
+        NoSQL databases and other data stores into AWS or between cloud and on-premises. At heart it is a
+        replication server in AWS: you define a source and a target, and a task copies the data, either once
+        or with ongoing replication of changes so source and target stay in step until cutover. Moving to a
+        different engine needs the schema converted before the data can follow, which DMS Schema Conversion
+        does in the service, or the AWS Schema Conversion Tool does on a local machine. DMS Fleet Advisor builds
+        the inventory of database servers to begin with.
+        <!-- fact: AWS DMS migrates relational databases, data warehouses, NoSQL databases and other data stores into AWS or between combinations of cloud and on-premises; DMS Fleet Advisor collects data from on-premises database and analytic servers to build an inventory; DMS Schema Conversion assesses and converts source schemas to a new target engine, or the AWS Schema Conversion Tool can be downloaded to a local PC; AWS DMS is a server in the AWS Cloud running replication software, with source and target connections and a scheduled task, performing one-time migrations or replicating ongoing changes to keep sources and targets in sync; it creates target tables and primary keys if they do not exist | source: AWS documentation, "What is AWS Database Migration Service?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Migration</th><th>Example</th><th>Needs</th></tr></thead>
+          <tbody>
+            <tr><td>Homogeneous: the same engine</td><td>MySQL on site to RDS <span class="acro-exp">(Relational Database Service)</span> for MySQL</td><td>DMS, with no schema to convert</td></tr>
+            <tr><td>Heterogeneous: a different engine</td><td>Oracle to Aurora PostgreSQL</td><td>Schema conversion first, then DMS for the data</td></tr>
+            <tr><td>Near-zero downtime, either kind</td><td>A database that cannot stop for the copy</td><td>DMS with ongoing replication, then a short cutover</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The data is the easy half of an engine change.</strong> DMS copies rows
+          faithfully; stored procedures, triggers and engine-specific SQL <span class="acro-exp">(Structured Query Language)</span> are what schema conversion has to
+          translate, and whatever it cannot convert lands on a developer's desk. Run the conversion assessment
+          before promising a date. Changing a schema without downtime, once the database has moved, is in
+          <span class="xref">Schema Migrations — Zero-Downtime Change</span>.
         </div>
       </div>
     </div>
@@ -2328,6 +2651,120 @@ gcloud compute instances list --project my-prod-project</pre>
     </div>
   </div>
 </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AWS AI SERVICES ───────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> AI <span class="acro-exp">(Artificial Intelligence)</span> Services — Rekognition, Textract, Comprehend, Polly &amp; When to Train Your Own</span>
+    <span class="topic-badge">AWS • AI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Images and documents</div>
+      <div class="concept-title">Rekognition Reads Images and Video; Textract Reads Documents, Tables and Forms Included</div>
+      <div class="concept-desc">
+        AWS sells a set of trained models behind ordinary API <span class="acro-exp">(Application Programming Interface)</span> calls, and none of them asks for machine
+        learning expertise. <strong class="c-cyan">Amazon Rekognition</strong> analyzes images and video stored
+        in S3 <span class="acro-exp">(Simple Storage Service)</span>: it detects objects, text and unsafe content, and detects, analyzes and compares faces, for uses
+        such as verifying a user or counting people. <strong class="c-cyan">Amazon Textract</strong> analyzes
+        documents: its Core service extracts printed text, handwriting, forms, tables and layout from images
+        and scans, with specialized processing for invoices and receipts, identity documents and mortgage
+        packages, and a generative AI capability, Textract Insights, sits beside it.
+        <!-- fact: Amazon Rekognition is a cloud-based image and video analysis service requiring no machine learning expertise, analyzing image or video files stored in Amazon S3 through an API; it detects objects, text and unsafe content, analyzes images and videos and compares faces, with face recognition APIs for uses including user verification, cataloging, people counting and public safety | source: AWS documentation, "What is Amazon Rekognition?", fetched and read | checked: 2026-11 -->
+        <!-- fact: Amazon Textract is a document analysis service available as Amazon Textract Core and Amazon Textract Insights, a generative AI capability, without ML expertise; Core detects and extracts printed text, handwriting, forms, tables and layout information from images and scans, with specialized processing for invoices and receipts, identity documents and mortgage loan packages | source: AWS documentation, "What is Amazon Textract?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The input</th><th>The question</th><th>Service</th></tr></thead>
+          <tbody>
+            <tr><td>A photo or video in S3</td><td>What is in it, is it unsafe, is this the same face?</td><td>Rekognition</td></tr>
+            <tr><td>A scanned form, invoice or ID</td><td>What does it say, field by field and cell by cell?</td><td>Textract</td></tr>
+            <tr><td>Plain text, already extracted</td><td>What is it about, and how does the writer feel?</td><td>Comprehend</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Text detection in a photo and document analysis are different jobs.</strong>
+          Rekognition finds words on a sign or a label; Textract keeps a form's fields and a table's cells in
+          their structure, which is what an invoice pipeline needs. Face comparison is the use most likely to
+          need a legal review before it is switched on, whatever the API makes easy. How models like these learn,
+          underneath the API, is in
+          <span class="xref">Machine Learning Fundamentals — How Machines "Learn"</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Language and speech</div>
+      <div class="concept-title">Comprehend, Transcribe, Polly, Translate and Lex Each Do One Step of a Conversation</div>
+      <div class="concept-desc">
+        Five more services divide language between them. <strong class="c-cyan">Amazon Comprehend</strong> uses
+        natural language processing to find entities, key phrases, language and sentiment in text, in real time
+        for small workloads or in asynchronous jobs for large ones, and can be trained on your own categories.
+        <strong class="c-cyan">Amazon Transcribe</strong> turns speech into text, streaming or from files in S3,
+        and can tell speakers apart. <strong class="c-cyan">Amazon Polly</strong> turns text into lifelike speech,
+        with generative, long-form, neural and standard voices, and charges only for text synthesized; its
+        speech can be cached and replayed at no extra cost. <strong class="c-cyan">Amazon Translate</strong>
+        translates text. <strong class="c-cyan">Amazon Lex</strong>, now Lex V2, builds chatbots that converse by
+        voice or text, combining speech recognition with language understanding.
+        <!-- fact: Amazon Comprehend uses natural language processing to extract insights such as entities, key phrases, language and sentiment, through real-time analysis for small workloads or asynchronous jobs for large document sets, with pre-trained models or custom classification and entity recognition models; Comprehend may store your content to continuously improve its pre-trained models | source: AWS documentation, "What is Amazon Comprehend?", fetched and read | checked: 2026-11 -->
+        <!-- fact: Amazon Transcribe is an automatic speech recognition service converting audio to text, in real time (streaming) or from media files in Amazon S3 (batch), and can partition the speech of individual speakers; Amazon Polly converts text into lifelike speech with generative, long-form, neural and standard voices, charges only for text synthesized, and its speech can be cached and replayed at no additional cost; Amazon Translate is a text translation service; Amazon Lex V2 builds conversational interfaces using voice and text with natural language understanding and automatic speech recognition | source: AWS documentation, "What is Amazon Transcribe?", "What Is Amazon Polly?", "What is Amazon Translate?" and "What is Amazon Lex V2?", fetched and read | checked: 2026-11 -->
+        <!-- fact: AWS AI services may use and store customer content for service improvement such as debugging or model training, and might store it in an AWS Region outside the one where the service is used; an AWS Organizations AI services opt-out policy opts out of that use, for an individual AI service or all supported services | source: AWS Organizations documentation, "AI services opt-out policies", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Service</th><th>In</th><th>Out</th></tr></thead>
+          <tbody>
+            <tr><td>Transcribe</td><td>Speech</td><td>Text, with speakers told apart</td></tr>
+            <tr><td>Comprehend</td><td>Text</td><td>Entities, key phrases, language, sentiment</td></tr>
+            <tr><td>Translate</td><td>Text in one language</td><td>Text in another</td></tr>
+            <tr><td>Polly</td><td>Text</td><td>Speech</td></tr>
+            <tr><td>Lex</td><td>A user's spoken or typed turn</td><td>The bot's next turn</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read what each service keeps before sending it regulated text.</strong> AWS
+          says its AI services may use and store customer content to improve the service, possibly in another
+          Region, and Comprehend's guide says the same of its models. An AI services opt-out policy in AWS
+          Organizations stops that, for one service or all of them, across every account it covers. Set it
+          before the first call carrying personal data, not after. Where data may lawfully go is in
+          <span class="xref">Data Residency &amp; Sovereignty — Where the Bytes Are, and Who Can Compel Them</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SageMaker AI</div>
+      <div class="concept-title">Use the API When the Question Is Common; Use SageMaker AI When the Model Has to Be Yours</div>
+      <div class="concept-desc">
+        The services above are trained by AWS on general data. When the question is specific to your business,
+        such as which of your parts is defective or which of your customers will leave, the model has to be
+        trained on your data, and <strong class="c-cyan">Amazon SageMaker AI</strong> is the managed service for
+        building, training and deploying it, with managed algorithms for large data, your own algorithms and
+        frameworks if you bring them, and hosted endpoints for the results. The name changed on 3 December
+        2024: what had been Amazon SageMaker became SageMaker AI, and the SageMaker name moved to a wider
+        platform for data, analytics and AI that contains it. The API namespaces did not change.
+        <!-- fact: Amazon SageMaker AI is a fully managed machine learning service for data scientists and developers to build, train and deploy ML models into a production-ready hosted environment, with managed ML algorithms for large data in a distributed environment and support for bring-your-own algorithms and frameworks; on 3 December 2024 Amazon SageMaker was renamed Amazon SageMaker AI, without the change applying to existing features, and the sagemaker API namespaces remain unchanged for backward compatibility; the same day the next generation of Amazon SageMaker was released as a unified platform for data, analytics and AI that includes SageMaker AI | source: AWS documentation, "What is Amazon SageMaker AI?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The problem</th><th>Start with</th></tr></thead>
+          <tbody>
+            <tr><td>Common: faces, printed text, sentiment, speech, translation</td><td>The pre-trained API, with no training at all</td></tr>
+            <tr><td>Common, with your own labels: your product categories, your entity names</td><td>A custom model inside the same service, where it offers one</td></tr>
+            <tr><td>Yours alone: your sensors, your fraud, your churn</td><td>SageMaker AI, with your data and someone who knows ML <span class="acro-exp">(Machine Learning)</span></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Try the cheapest rung first.</strong> A pre-trained API costs a call and no
+          expertise; a custom model inside Comprehend costs labeled examples; SageMaker AI costs a team that can
+          train, evaluate and maintain a model, forever. Most applications that think they need the third rung
+          have not tried the first. The same ladder for language models, from
+          prompting to fine-tuning, is in
+          <span class="xref">Fine-Tuning vs. Prompting vs. RAG – Picking the Right Tool</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">💾</span>
@@ -2580,6 +3017,113 @@ gcloud compute instances list --project my-prod-project</pre>
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AWS CONFIG ────────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📒</span>
+    <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Config — What Every Resource Looked Like, and Whether It Was Allowed To</span>
+    <span class="topic-badge">AWS • Governance</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The recorder</div>
+      <div class="concept-title">AWS Config Records Each Resource's Configuration Over Time, So You Can See It as It Was</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">AWS Config</strong> keeps a record of how your AWS resources are configured, how
+        they relate to each other, and how both have changed, without anyone polling each resource for changes.
+        That history answers questions nothing else does: which IAM <span class="acro-exp">(Identity and Access Management)</span> policy a user had on a given day, which
+        ports a security group allowed at a given time, and what the last known good configuration of a broken
+        resource was. Before you choose which resource types to record, it needs three things: an S3 <span class="acro-exp">(Simple Storage Service)</span> bucket for
+        configuration snapshots and history, an SNS <span class="acro-exp">(Simple Notification Service)</span> topic for change notifications, and an IAM role to read the
+        resources with.
+        <!-- fact: AWS Config provides a detailed view of the configuration of AWS resources, how they relate to one another and how they were configured in the past, notifying you when resources are created, modified or deleted without polling; it needs an S3 bucket for configuration snapshots and history, an SNS topic for change notifications, an IAM role, and a choice of resource types to record; historical configurations show the IAM policy assigned to a user, group or role at any time Config was recording, and EC2 security group rules open at a specific time, and give the last known good configuration of a problem resource | source: AWS documentation, "What Is AWS Config?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The question</th><th>Answered by</th></tr></thead>
+          <tbody>
+            <tr><td>What did this security group allow last Tuesday?</td><td>AWS Config's configuration history</td></tr>
+            <tr><td>Who made the API <span class="acro-exp">(Application Programming Interface)</span> call that changed it?</td><td>CloudTrail's record of that call</td></tr>
+            <tr><td>What else depends on this resource before I change it?</td><td>AWS Config's relationships</td></tr>
+            <tr><td>Does it comply with our rules right now?</td><td>AWS Config rules</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Config shows the state; CloudTrail shows the call.</strong> An investigation
+          usually needs both: Config to see what a resource looked like before and after, CloudTrail to see who
+          or what made the change. Config records only what it was set to record, and only from when it was
+          turned on, so the history an auditor asks for has to have been switched on well before the audit.
+          CloudTrail and the services beside it are in
+          <span class="xref">AWS Security Stack — CloudTrail, GuardDuty &amp; Security Hub</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Rules</div>
+      <div class="concept-title">A Config Rule Is Your Intended Setting, Checked on Every Change or on a Timer</div>
+      <div class="concept-desc">
+        An <strong class="c-cyan">AWS Config rule</strong> states how a resource should be configured, and Config
+        marks every resource that differs as noncompliant and sends a notification. AWS supplies customizable
+        managed rules, and custom rules can run your own logic in Lambda. A rule's trigger is a configuration
+        change to a resource in its scope, a schedule such as every 24 hours, or both. Its evaluation mode is
+        detective, checking resources already deployed, or proactive, checking a resource's properties before
+        it is deployed. Two costs are easy to miss: a custom Lambda rule with too wide a scope can run the
+        function a great many times, and deleting rules that cover many resources records a burst of
+        compliance items, each one billed.
+        <!-- fact: AWS Config rules represent ideal configuration settings; AWS provides customizable predefined managed rules, and custom rules include custom Lambda rules; Config flags resources that do not comply as noncompliant; trigger types are configuration changes, which evaluate when a resource in the rule's scope changes, and periodic, at a chosen frequency such as every 24 hours, and some rules have both; evaluation modes are proactive, evaluating resources before deployment, and detective, evaluating resources already deployed; custom Lambda rules can cause a high number of Lambda invocations if their scope is not set; deleting rules creates configuration items for AWS::Config::ResourceCompliance that can affect costs, and AWS suggests excluding that resource type from recording before deleting rules | source: AWS documentation, "Evaluating Resources with AWS Config Rules" and "Components of an AWS Config Rule", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Choice</th><th>Options</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Rule type</td><td>Managed, or custom</td><td>Managed first; custom only for a check AWS does not ship</td></tr>
+            <tr><td>Trigger</td><td>On configuration change, periodic, or both</td><td>Change for settings that drift; periodic for checks against time</td></tr>
+            <tr><td>Evaluation mode</td><td>Detective, or proactive</td><td>Proactive to catch a bad template before deployment, detective for everything already running</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Use proactive evaluation to stop a misconfiguration, detective to find the ones
+          already out there.</strong> A detective rule reports a public bucket after it exists; a proactive check
+          in the deployment pipeline refuses the template first. Both are worth having, and neither replaces the
+          other. Catching the same mistakes earlier still, in the template's text, is in
+          <span class="xref">IaC Security Scanning — Catching the Misconfiguration Before It Deploys</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Packs and remediation</div>
+      <div class="concept-title">Conformance Packs Ship Rules as One Unit, and Remediation Fixes What They Find</div>
+      <div class="concept-desc">
+        A <strong class="c-cyan">conformance pack</strong> bundles Config rules and their remediation actions so
+        they deploy as a single entity. AWS maintains managed packs you deploy as they are; a custom pack is a
+        YAML <span class="acro-exp">(YAML Ain't Markup Language)</span> template listing managed or custom rules and remediations, which can be deployed to one account and
+        Region or across an organization in AWS Organizations. <strong class="c-cyan">Remediation</strong> acts on
+        noncompliant resources through AWS Systems Manager Automation documents, AWS-supplied or your own, and
+        can be set up to run when someone chooses or automatically when a resource fails its rule.
+        <!-- fact: A conformance pack is a collection of AWS Config rules and remediation actions deployable as a single entity; AWS managed conformance packs are predefined and maintained by AWS; custom conformance packs are YAML templates listing managed or custom rules and remediation actions, deployable to an account and Region or across an organization in AWS Organizations | source: AWS documentation, "Conformance Packs for AWS Config", fetched and read | checked: 2026-11 -->
+        <!-- fact: AWS Config remediates noncompliant resources evaluated by Config rules using AWS Systems Manager Automation documents, AWS-provided managed documents or custom ones, set up as manual remediation or auto remediation | source: AWS documentation, "Remediating Noncompliant Resources with AWS Config", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Remediation</th><th>Runs</th><th>Suits</th></tr></thead>
+          <tbody>
+            <tr><td>Manual</td><td>When someone chooses to, from the noncompliant result</td><td>Fixes that could break a running workload</td></tr>
+            <tr><td>Automatic</td><td>As soon as a resource fails the rule</td><td>Fixes that are always safe, such as turning encryption or logging on</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Automate only the fixes that cannot hurt.</strong> Auto remediation that closes
+          a security group rule will one day close the port a production service needed, at the moment it was
+          opened for a reason nobody recorded. Start remediation manual, automate a fix once it has been right
+          every time, and deploy packs across the organization so that new accounts are covered from their first
+          day. Account structure for doing that is in
+          <span class="xref">Landing Zones &amp; Multi-Account Structure</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔐</span>
