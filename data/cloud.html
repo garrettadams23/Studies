@@ -1350,9 +1350,42 @@ gcloud compute instances list --project my-prod-project</pre>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Client VPN</div>
+                <div class="concept-title">Client VPN Connects People; Site-to-Site VPN Connects Networks</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">AWS Client VPN</strong> is managed remote access for people: each user runs an
+                  OpenVPN-based client and makes an encrypted TLS <span class="acro-exp">(Transport Layer Security)</span> connection to a Client VPN endpoint, from anywhere, to
+                  resources in a VPC or reached through it on premises. The endpoint is associated with VPC subnets or a
+                  Transit Gateway, keeps a route table of the networks it reaches, and authenticates users through Active
+                  Directory, federation with an identity provider, or certificates. Access is denied until authorization rules
+                  grant a directory or identity provider group a network, and it can also depend on the device's health
+                  through device trust providers.
+                  
+                  <!-- fact: AWS Client VPN is a managed client-based VPN service for securely accessing AWS and on-premises resources from any location using an OpenVPN-based client over encrypted TLS connections; authentication includes Active Directory, federated and certificate-based methods; the Client VPN endpoint terminates sessions; target networks are associated VPC subnets or a Transit Gateway; each endpoint has a route table; authorization rules restrict which Active Directory or IdP group can access a network, and by default there are none, so they must be configured; device posture can grant access based on device health through device trust providers such as CrowdStrike, Jamf and JumpCloud | source: AWS documentation, "What is AWS Client VPN?", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Connect</th><th>Use</th></tr></thead>
+                    <tbody>
+                      <tr><td>One person's laptop, from anywhere</td><td>Client VPN</td></tr>
+                      <tr><td>An office network to a VPC</td><td>Site-to-Site VPN</td></tr>
+                      <tr><td>A data center, with steady bandwidth and latency</td><td>Direct Connect</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Write authorization rules per group, not one rule for everyone.</strong>
+                    Client VPN starts with no access at all, which is the right default; the mistake is the first rule that
+                    grants every user every network to get things working. Give each group the networks its work needs. What a
+                    VPN does and does not protect, beyond AWS, is in
+                    <span class="xref">VPNs Explained – Tunnels, Encryption, and What They Don't Do</span>.
+                    
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Compute — EC2 <span class="acro-exp">(Elastic Compute Cloud)</span>, AMIs <span class="acro-exp">(Amazon Machine Image)</span> &amp; Auto Scaling</span>
@@ -1426,9 +1459,44 @@ gcloud compute instances list --project my-prod-project</pre>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Hibernation</div>
+                <div class="concept-title">Hibernation Stops an Instance With Its Memory Saved, So a Slow-Starting Application Resumes Warm</div>
+                <div class="concept-desc">
+                  Stopping an instance loses whatever was in memory. <strong class="c-cyan">Hibernating</strong> it asks the
+                  operating system to suspend to disk: memory is written to the EBS root volume, and on start the root volume
+                  is restored, memory reloaded, the processes that were running resume, data volumes reattach, and the
+                  instance keeps its ID. While hibernated you pay nothing for instance usage, but you pay for the EBS storage,
+                  the saved memory included. AWS's own use for it is pre-warming: launch with hibernation enabled, bring an
+                  application that takes a long time to build its memory up to the state you want, and hibernate it ready to
+                  resume. It cannot be turned on or off after launch.
+                  
+                  <!-- fact: Hibernation saves the contents of instance memory to the EBS root volume; on start the root volume is restored, RAM contents are reloaded, previously running processes resume, data volumes are reattached and the instance retains its ID; an instance can hibernate only if enabled for hibernation and meeting the prerequisites; pre-warming is launching with hibernation enabled, bringing the instance to a desired state and hibernating it; there is no charge for instance usage while hibernated and stopped, or for transferring RAM to the root volume, but EBS storage, including the RAM contents, is charged | source: AWS documentation, "Hibernate your Amazon EC2 instance", fetched and read | checked: 2026-11 -->
+                  <!-- fact: You can't enable or disable hibernation for an instance after you launch it | source: AWS documentation, "Enable hibernation for an Amazon EC2 instance", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Stop</th><th>Hibernate</th></tr></thead>
+                    <tbody>
+                      <tr><td>Memory</td><td>Lost</td><td>Written to the root volume, reloaded on start</td></tr>
+                      <tr><td>On start</td><td>Boots, and the application warms up again</td><td>Processes resume where they were</td></tr>
+                      <tr><td>Billed while off</td><td>EBS storage</td><td>EBS storage, including the saved memory</td></tr>
+                      <tr><td>Must be chosen</td><td>Never</td><td>At launch</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Decide at launch, because it cannot be added later.</strong>
+                    An application that needs minutes to load its caches is the case for hibernation, and the decision has to
+                    be made when the instance is launched, which means in the launch template. Choosing an instance shape at
+                    all, against a container or a function, is in
+                    <span class="xref">Choosing Compute — VM vs Container vs Serverless</span>.
+                    
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Serverless &amp; Containers — Lambda, ECS <span class="acro-exp">(Elastic Container Service)</span>, EKS <span class="acro-exp">(Elastic Kubernetes Service)</span>, Fargate</span>
@@ -1480,6 +1548,37 @@ gcloud compute instances list --project my-prod-project</pre>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-red">The account-level concurrency limit is the one worth knowing before an incident.</strong> It is shared, finite, and a single misbehaving function consuming it will throttle everything else you run &mdash; which presents as unrelated services failing simultaneously with no deployment to blame. Reserve concurrency for anything that matters, and treat the limit as a capacity number to monitor rather than a ceiling you will never reach.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">AWS Batch</div>
+                <div class="concept-title">AWS Batch Takes Queued Jobs and Provisions the Compute to Run Them, Then Gives It Back</div>
+                <div class="concept-desc">
+                  Batch computing is work that can wait its turn: simulations, rendering, data processing, many jobs at once.
+                  <strong class="c-cyan">AWS Batch</strong> runs it without batch software to install or a cluster to keep:
+                  jobs are submitted, and Batch provisions compute in response, spreads the work according to its quantity and
+                  scale, and releases the capacity when the jobs are done. It runs on AWS's own container orchestrators, ECS
+                  and EKS, and scales capacity on EC2 instances, Fargate and ECS Managed Instances, with Spot capacity among
+                  the options.
+                  
+                  <!-- fact: AWS Batch runs batch computing workloads, provisioning resources in response to submitted jobs to remove capacity constraints and reduce compute costs, with no batch computing software to install or manage; it automatically provisions compute and optimizes workload distribution by quantity and scale; it runs on Amazon ECS and Amazon EKS and scales capacity on EC2 instances, Fargate and ECS Managed Instances, with Spot among the compute offerings | source: AWS documentation, "What is AWS Batch?", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>The work</th><th>Fits</th></tr></thead>
+                    <tbody>
+                      <tr><td>Requests that need an answer now</td><td>Lambda, containers behind a load balancer</td></tr>
+                      <tr><td>Many independent jobs that can wait their turn</td><td>AWS Batch</td></tr>
+                      <tr><td>A pipeline of steps with retries and branches</td><td>Step Functions</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Batch is where Spot capacity is easiest to justify.</strong>
+                    A job that can be queued can usually be retried, and work that tolerates both is what cheap, interruptible
+                    capacity suits; make each job safe to run twice before relying on it. The instances underneath are in
+                    <span class="xref">AWS Compute — EC2, AMIs &amp; Auto Scaling</span>.
+                    
                   </div>
                 </div>
               </div>
@@ -1886,7 +1985,7 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">💾</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Storage — S3 <span class="acro-exp">(Simple Storage Service)</span> Classes, EBS <span class="acro-exp">(Elastic Block Store)</span> &amp; EFS <span class="acro-exp">(Elastic File System)</span></span>
@@ -1924,6 +2023,76 @@ gcloud compute instances list --project my-prod-project</pre>
                     Use <strong class="c-green">lifecycle rules</strong> to age objects into colder
                     classes automatically. EBS volumes are AZ-locked — snapshot to S3 for
                     backup/restore across AZs <span class="acro-exp">(Availability Zone)</span>.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">EBS volume types</div>
+                <div class="concept-title">Start on gp3, and Pay for Provisioned IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span> Only When a Measurement Says So</div>
+                <div class="concept-desc">
+                  EBS volumes come in two families. SSD <span class="acro-exp">(Solid State Drive)</span> volumes suit transactional work with small, frequent reads and
+                  writes, where IOPS decide performance; HDD <span class="acro-exp">(Hard Disk Drive)</span> volumes suit large streaming reads and writes, where throughput
+                  does. General Purpose SSD, <strong class="c-cyan">gp3</strong>, now reaches 80,000 IOPS and 2,000 MiB/s on
+                  volumes up to 64 TiB, and covers boot volumes, virtual desktops and most databases.
+                  <strong class="c-cyan">Provisioned IOPS</strong> SSD, io2 Block Express, goes to 256,000 IOPS and 4,000 MiB/s,
+                  keeps average latency under 500 microseconds, is designed for 99.999% durability against 99.8 to 99.9% for
+                  the others, and can be attached to several instances at once. The HDD types cannot be boot volumes:
+                  Throughput Optimized st1 for big data and logs, and Cold HDD sc1, the cheapest, for data read rarely. To
+                  get the IOPS you pay for, use an EBS-optimized instance; only Nitro-based instances use more than 32,000.
+                  
+                  <!-- fact: Amazon EBS SSD volumes suit transactional workloads where IOPS dominate and HDD volumes large streaming workloads where throughput dominates; gp3 supports 1 GiB to 64 TiB, up to 80,000 IOPS and 2,000 MiB/s; gp2 up to 16,000 IOPS and 250 MiB/s; io2 Block Express 4 GiB to 64 TiB, up to 256,000 IOPS and 4,000 MiB/s, 99.999% durability against 99.8% to 99.9% for gp3, gp2 and io1, average latency under 500 microseconds, and Multi-Attach; io1 up to 64,000 IOPS and 1,000 MiB/s; st1 (big data, data warehouses, log processing) 500 MiB/s and sc1 (infrequently accessed, lowest cost) 250 MiB/s, 125 GiB to 16 TiB, neither usable as a boot volume; EBS-optimized instances are needed to fully use provisioned IOPS; Nitro-based instances support volumes provisioned up to 256,000 IOPS, while other instance types achieve up to 32,000 | source: AWS documentation, "Amazon EBS volume types", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Type</th><th>Media</th><th>Max IOPS</th><th>Max throughput</th><th>For</th></tr></thead>
+                    <tbody>
+                      <tr><td>gp3</td><td>SSD</td><td>80,000</td><td>2,000 MiB/s</td><td>Boot volumes and most workloads</td></tr>
+                      <tr><td>io2 Block Express</td><td>SSD</td><td>256,000</td><td>4,000 MiB/s</td><td>More than gp3 gives, sub-millisecond latency, 99.999% durability, Multi-Attach</td></tr>
+                      <tr><td>st1</td><td>HDD</td><td>500</td><td>500 MiB/s</td><td>Big data, data warehouses, logs</td></tr>
+                      <tr><td>sc1</td><td>HDD</td><td>250</td><td>250 MiB/s</td><td>Data read rarely, at the lowest cost</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Check why a volume is on Provisioned IOPS before renewing the reason.</strong>
+                    General Purpose SSD stopped at 16,000 IOPS on gp2, as it still does, and many volumes went to io1 for that
+                    alone; gp3 now reaches 80,000. Provisioned IOPS earns its price for more than that, for latency that must
+                    stay under a millisecond, for five nines of durability or for one volume shared between instances, and a
+                    measurement should say which. What block storage is, outside AWS, is in
+                    <span class="xref">Storage Fundamentals — Block, File &amp; Object in the Datacenter</span>.
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Requester Pays</div>
+                <div class="concept-title">Requester Pays Moves the Download Bill to the Downloader, and Ends Anonymous Access</div>
+                <div class="concept-desc">
+                  Ordinarily a bucket's owner pays for everything: storage, requests and the data sent out. A
+                  <strong class="c-cyan">Requester Pays</strong> bucket keeps storage with the owner and charges each request and
+                  download to whoever makes it, which suits large datasets shared with others, such as reference data,
+                  geospatial data or web crawls. The requester has to be identifiable: anonymous access is refused, every
+                  request must be authenticated, and each must carry the <code>x-amz-request-payer</code> header to accept the
+                  charge. When the requester has assumed an IAM <span class="acro-exp">(Identity and Access Management)</span> role, the account the role belongs to pays.
+                  
+                  <!-- fact: In general bucket owners pay all S3 storage and data transfer costs; with a Requester Pays general purpose bucket the requester pays the cost of the request and the data download and the owner always pays for storage; typical uses are sharing large datasets such as zip code directories, reference data, geospatial information or web crawling data; anonymous access is not allowed and all requests must be authenticated; when the requester assumes an IAM role, the role's account is charged; requesters must include x-amz-request-payer to accept the charges | source: AWS documentation, "Using Requester Pays general purpose buckets for storage transfers and usage", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Ordinary bucket</th><th>Requester Pays bucket</th></tr></thead>
+                    <tbody>
+                      <tr><td>Storage</td><td>Owner pays</td><td>Owner pays</td></tr>
+                      <tr><td>Requests and downloads</td><td>Owner pays</td><td>Requester pays</td></tr>
+                      <tr><td>Anonymous access</td><td>Possible, if allowed</td><td>Refused</td></tr>
+                      <tr><td>Requester uses an IAM role</td><td>Owner pays</td><td>The role's account pays</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">It shares data with other AWS accounts, not with the public.</strong>
+                    Because anonymous requests are refused, a dataset meant for anyone with a browser needs another route;
+                    among accounts that share large data, it stops one owner paying for everyone else's downloads. S3 itself,
+                    beyond AWS's billing options, is in
+                    <span class="xref">Object Storage — S3 &amp; the Cloud Storage Model</span>.
+                    
                   </div>
                 </div>
               </div>
@@ -2427,6 +2596,111 @@ gcloud compute instances list --project my-prod-project</pre>
           mix, and how often the same query repeats, then choose. Replicas in general, beyond RDS, and what a
           reader sees from one that lags, are in
           <span class="xref">Replication &amp; High Availability</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: PURPOSE-BUILT DATABASES ON AWS ────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧩</span>
+    <span class="topic-name">Purpose-Built Databases on AWS <span class="acro-exp">(Amazon Web Services)</span> — DocumentDB, Keyspaces, Neptune &amp; Aurora Serverless</span>
+    <span class="topic-badge">AWS • Databases</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Compatible services</div>
+      <div class="concept-title">DocumentDB and Keyspaces Speak MongoDB and Cassandra, So Existing Code Moves Without a Rewrite</div>
+      <div class="concept-desc">
+        Two of AWS's databases exist so that an application written for an open-source database can keep its
+        code. <strong class="c-cyan">Amazon DocumentDB</strong>, with MongoDB compatibility, is a managed document
+        database: applications use the same code, drivers and tools they use with MongoDB.
+        <strong class="c-cyan">Amazon Keyspaces</strong>, for Apache Cassandra, is a managed service compatible with
+        Cassandra, the open-source wide-column store, and it is serverless: there are no servers to patch or
+        software to run, tables scale up and down with traffic, and you pay for the resources used. AWS presents
+        both as the way to migrate, run and scale those workloads without operating the clusters yourself.
+        <!-- fact: Amazon DocumentDB (with MongoDB compatibility) is a fully managed database service for MongoDB-compatible databases, running the same application code, drivers and tools used with MongoDB | source: AWS documentation, "What is Amazon DocumentDB (with MongoDB compatibility)", fetched and read | checked: 2026-11 -->
+        <!-- fact: Amazon Keyspaces (for Apache Cassandra) is a scalable, highly available, managed Apache Cassandra-compatible database service with no servers to provision, patch or manage and no software to operate; it is serverless, you pay only for resources used, and tables scale up and down with application traffic; Cassandra is an open-source wide-column datastore; Keyspaces makes it easy to migrate, run and scale Cassandra workloads | source: AWS documentation, "What is Amazon Keyspaces (for Apache Cassandra)?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The application speaks</th><th>Run it on</th><th>Data model</th></tr></thead>
+          <tbody>
+            <tr><td>MongoDB's drivers and query language</td><td>Amazon DocumentDB</td><td>Documents: JSON-like records with nested fields</td></tr>
+            <tr><td>Cassandra's drivers and CQL</td><td>Amazon Keyspaces</td><td>Wide columns: rows partitioned by key across many nodes</td></tr>
+            <tr><td>Neither, and needs key-value access at any scale</td><td>DynamoDB</td><td>Items under a partition key</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Compatible means the code runs, not that every feature does.</strong> Test the
+          application's own queries, drivers and administrative tooling against the managed service before
+          committing to a migration, because compatibility is a claim about the common path. The four families
+          these belong to, and what each is for, are in
+          <span class="xref">The NoSQL Landscape — Four Families</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Neptune</div>
+      <div class="concept-title">Neptune Is for Data Whose Connections Are the Question: Fraud Rings, Recommendations, Networks</div>
+      <div class="concept-desc">
+        Some questions are about relationships rather than records: which accounts share a device with a known
+        fraudster, which products are bought by people who bought this one, which hosts can reach a compromised
+        one. <strong class="c-cyan">Amazon Neptune</strong> is a managed graph database with an engine built to
+        store billions of relationships and query them in milliseconds. It speaks the property-graph languages
+        Gremlin and openCypher and the W3C <span class="acro-exp">(World Wide Web Consortium)</span>'s SPARQL for RDF, and AWS lists recommendation engines, fraud
+        detection, knowledge graphs, drug discovery and network security among its uses. It keeps read
+        replicas, point-in-time recovery, continuous backup to S3 <span class="acro-exp">(Simple Storage Service)</span> and replication across Availability Zones.
+        <!-- fact: Amazon Neptune is a fully managed graph database service for highly connected datasets, with a purpose-built engine optimized for billions of relationships queried with milliseconds latency; it supports Apache TinkerPop Gremlin and openCypher property-graph queries and the W3C's SPARQL for RDF; uses include recommendation engines, fraud detection, knowledge graphs, drug discovery and network security; it offers read replicas, point-in-time recovery, continuous backup to Amazon S3, replication across Availability Zones, and encryption at rest and in transit | source: AWS documentation, "What Is Amazon Neptune?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Query language</th><th>Graph model</th></tr></thead>
+          <tbody>
+            <tr><td>Gremlin</td><td>Property graph, traversed step by step</td></tr>
+            <tr><td>openCypher</td><td>Property graph, matched by pattern</td></tr>
+            <tr><td>SPARQL</td><td>RDF: subject, predicate and object triples</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Reach for a graph when the joins are the query.</strong> A relational database
+          answers "which friends of friends" with a join per hop, and each hop multiplies the work; a graph
+          engine follows stored relationships instead. If the questions are mostly about single records, the
+          graph adds a database to run and gains nothing. When that trade is worth making is in
+          <span class="xref">Graph Databases — When Relationships Are the Data</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Aurora Serverless</div>
+      <div class="concept-title">Aurora Serverless Scales Capacity in Half-ACU Steps, and Can Pause at Zero</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Aurora Serverless</strong> is a configuration of Aurora that adjusts capacity to
+        demand by itself, and you are charged only for the capacity the cluster consumes. Capacity is measured in
+        Aurora capacity units, and scaling is fine-grained: where a provisioned cluster grows by adding a whole
+        instance, Aurora Serverless adds or removes capacity in half-ACU steps, usually without pausing the
+        workload. It can also scale to zero ACUs, pausing automatically when idle and resuming when it is needed
+        again. AWS points it at multitenant and distributed databases, development and test systems, and any
+        workload too variable to size in advance.
+        <!-- fact: Aurora serverless is an on-demand, autoscaling configuration for Amazon Aurora that adjusts capacity automatically to application demand, charging only for resources the DB clusters consume; it suits multitenant databases, distributed databases, development and test systems and highly variable, unpredictable workloads; where scaling a provisioned cluster requires adding a whole DB instance, Aurora serverless adds or removes capacity in half-ACU increments (0.5, 1, 1.5, 2 and so on), scaling typically with no pause; it supports scaling to zero ACUs with automatic pause and resume | source: AWS documentation, "Using Aurora serverless", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Workload</th><th>Fits</th></tr></thead>
+          <tbody>
+            <tr><td>Steady load, known size, all day</td><td>Provisioned Aurora, perhaps with reserved capacity</td></tr>
+            <tr><td>Spiky or unpredictable load</td><td>Aurora Serverless, scaling in half-ACU steps</td></tr>
+            <tr><td>Development and test, idle most of the day</td><td>Aurora Serverless, pausing at zero</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pausing at zero saves money and costs the first query.</strong> A paused
+          database has to resume before it answers, so the first request after a quiet spell waits; that suits a
+          test environment and surprises a customer-facing one. Set the minimum capacity from the latency the
+          users will accept. The provisioned engines beside it are in
+          <span class="xref">AWS Databases — RDS, Aurora &amp; DynamoDB</span>.
         </div>
       </div>
     </div>
@@ -3547,6 +3821,73 @@ gcloud compute instances list --project my-prod-project</pre>
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Cost and Usage Report</div>
+                <div class="concept-title">The Cost and Usage Report Is the Bill as Rows, and CUR 2.0 in Data Exports Is Where to Start</div>
+                <div class="concept-desc">
+                  Cost Explorer answers questions about the bill; the <strong class="c-cyan">Cost and Usage Report</strong> is
+                  the bill itself, line by line: each combination of product, usage type and operation, by hour, day or
+                  month, by resource and by the tags you define. AWS delivers it as CSV <span class="acro-exp">(Comma-Separated Values)</span> files with a manifest to an S3 <span class="acro-exp">(Simple Storage Service)</span> bucket
+                  you own, and updates it at least once a day until the month's charges are final; it is built to be queried,
+                  with Athena, Redshift or AWS Quick. AWS now recommends <strong class="c-cyan">CUR 2.0</strong>, created
+                  through AWS Data Exports, where an export can choose columns, filter rows and rename fields with SQL <span class="acro-exp">(Structured Query Language)</span>, and so
+                  leave sensitive cost data out of what it delivers.
+                  
+                  <!-- fact: AWS Cost and Usage Reports contain the most comprehensive set of cost and usage data, published to an S3 bucket you own, broken down by hour, day or month, by product or resource, or by tags you define, with line items for each unique combination of product, usage type and operation; AWS updates the report at least once a day until charges are finalized, as CSV files and a manifest, configurable for integration with Amazon Athena, Amazon Redshift or Quick | source: AWS documentation, "What are AWS Cost and Usage Reports?", fetched and read | checked: 2026-11 -->
+                  <!-- fact: AWS Data Exports creates billing and cost management exports using basic SQL, selecting columns, filtering rows and renaming columns to remove sensitive cost information; Cost and Usage Report 2.0 is the new and recommended way to receive detailed cost and usage data | source: AWS documentation, "What is AWS Data Exports?", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>The question</th><th>Use</th></tr></thead>
+                    <tbody>
+                      <tr><td>Which service grew this month?</td><td>Cost Explorer</td></tr>
+                      <tr><td>Which resource, which tag, which hour?</td><td>CUR 2.0, queried with Athena</td></tr>
+                      <tr><td>Warn me before it happens</td><td>AWS Budgets, with the caveat above</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Treat the export bucket as sensitive data.</strong>
+                    A cost export lists every resource and tag in the organization with what each one costs, which amounts to a
+                    map of the estate; deliver it to an account with narrow access and query it there. Its rows are only as
+                    useful as the tags on them, which is
+                    <span class="xref">Tagging &amp; Cost Allocation — The Policy That Has to Be Enforced at Creation</span>.
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Compute Optimizer</div>
+                <div class="concept-title">Compute Optimizer Rightsizes From the Last 14 Days, and Only After You Opt In</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">AWS Compute Optimizer</strong> compares resources' configuration with their CloudWatch
+                  utilization to recommend rightsizing, and finds idle resources to stop or delete. It does nothing until you
+                  opt in, as a single account or as an organization's management account, which brings every member
+                  account in. It reads the last 14 days of metrics, and covers EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> instances and Auto Scaling groups, EBS <span class="acro-exp">(Elastic Block Store)</span>
+                  volumes, Lambda functions, ECS <span class="acro-exp">(Elastic Container Service)</span> services on Fargate, RDS <span class="acro-exp">(Relational Database Service)</span> and Aurora databases, NAT <span class="acro-exp">(Network Address Translation)</span> gateways, DynamoDB,
+                  ElastiCache and more, showing findings in those services' own consoles as well as its own.
+                  
+                  <!-- fact: AWS Compute Optimizer analyzes configuration and utilization metrics to give rightsizing recommendations and find idle resources; it does not analyze resources until you opt in, as a standalone account or as an organization's management account covering many accounts; it looks at Amazon CloudWatch metrics for the last 14 days; supported resources include EC2 instances, EC2 Auto Scaling groups, EBS volumes, Lambda functions, ECS services on Fargate, commercial software licenses, Aurora and RDS databases, NAT gateways, DynamoDB, ElastiCache, MemoryDB, DocumentDB and WorkSpaces; findings also appear in supported services' consoles | source: AWS documentation, "What is AWS Compute Optimizer?", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>It finds</th><th>Before acting, check</th></tr></thead>
+                    <tbody>
+                      <tr><td>A resource larger than its use</td><td>That the 14 days included its busiest day</td></tr>
+                      <tr><td>A resource smaller than its use</td><td>Little: grow it before it becomes an incident</td></tr>
+                      <tr><td>An idle resource</td><td>Who owns it, then stop it before deleting it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Fourteen days is a sample, not a year.</strong>
+                    A month-end batch or a seasonal peak outside the window is invisible to the recommendation, and shrinking to
+                    fit two quiet weeks is how a cost saving becomes an outage. Rightsize first, then commit to what is left,
+                    which is the order
+                    <span class="xref">Commitment Discounts — Reserved, Savings Plans &amp; the Forecast They Require</span>
+                    depends on.
+                    
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 <div class="topic" data-reviewed="2026-07">
@@ -4061,7 +4402,7 @@ gcloud logging read <span class="str">'severity&gt;=ERROR AND protoPayload.statu
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">Well-Architected &amp; the Architecture Framework</span>
@@ -4124,6 +4465,38 @@ gcloud logging read <span class="str">'severity&gt;=ERROR AND protoPayload.statu
                     we one zone away from an outage we can't afford — and calibrate every pillar to what
                     the workload is actually worth. A uniformly high score usually means you graded a
                     system that did not need grading.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The review tool</div>
+                <div class="concept-title">The Well-Architected Tool Turns a Review Into a Record: Workloads, Lenses, Risks and Milestones</div>
+                <div class="concept-desc">
+                  The framework is a set of questions; the <strong class="c-cyan">AWS Well-Architected Tool</strong> is where
+                  the answers are kept. You define a workload, the components that deliver one piece of business value,
+                  answer the framework's questions about it with a lens, and the tool identifies high and medium risks and
+                  builds an improvement plan; milestones record the state of the review at a point in time, so progress can
+                  be shown later. AWS has added a second, AI-driven service beside it, the Well-Architected Agent, in preview,
+                  which analyzes deployed resources and templates and suggests fixes with scripts.
+                  
+                  <!-- fact: AWS Well-Architected provides the AWS Well-Architected Tool, which gives a consistent process for reviewing and measuring architecture against the Well-Architected Framework using workloads, lenses and milestones, identifying high and medium risks and an improvement plan from review answers, and the AWS Well-Architected Agent, in preview, an AI-powered service analyzing deployed resources and IaC templates and providing prioritized recommendations, automation scripts and remediation steps; the two can be used together | source: AWS documentation, "What is AWS Well-Architected?" (last updated 16 November 2026), fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Well-Architected Tool</th><th>Well-Architected Agent</th></tr></thead>
+                    <tbody>
+                      <tr><td>How</td><td>A guided self-review, answered by people</td><td>Automated analysis of resources and templates</td></tr>
+                      <tr><td>Records</td><td>Workloads, risks, improvement plans, milestones</td><td>Recommendations with trade-offs and scripts</td></tr>
+                      <tr><td>Status</td><td>Generally available</td><td>Preview, subject to change</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Save a milestone before the launch and another after the fixes.</strong>
+                    The review's value is the record: which risks were known, which were accepted and by whom, and what changed
+                    between two milestones. A review kept only in a meeting's memory cannot show any of that a year later. The
+                    same habit for code, where accepted risk becomes debt, is in
+                    <span class="xref">Technical Debt — Recognize &amp; Pay It Down</span>.
+                    
                   </div>
                 </div>
               </div>

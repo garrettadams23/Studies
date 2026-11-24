@@ -1158,8 +1158,13 @@ const READERS = [
     ["the certificate renewed and the site still says expired",
      "still zero after the card was fixed, and deliberately — the renewed-and-not-reloaded row went into the TLS card because its table was missing a failure and its verdict claimed the incomplete chain was the only one; 'site' and 'says' are the reader's filler, and the conjunction cannot drop them because the relaxation stage never runs on a zero",
      "sec/tls-https-how-secure-connections-work"],
-    ["nat gateway is the biggest line on the bill",
-     "kind 3 — cloud states the NAT gateway is billed hourly plus per GB per AZ; the ranking is the reader's framing"],
+    // Was kind 3, a recorded zero: `cloud` stated the NAT gateway's hourly and per-GB charges, and nothing
+    // ranked it. Answered since the twenty-fifth wave, by the cost control topic, whose Compute Optimizer
+    // card names NAT gateways among the resources it rightsizes and finds idle, beside the CUR card that finds
+    // which resource and hour the line comes from. A fair first stop, not a coincidence of unrelated cards; the
+    // per-GB reason the line is large is still in *Hybrid Connectivity*, which the query does not reach.
+    ["nat gateway is the biggest line on the bill", "",
+     "cloud/cloud-cost-control-budgets-tags-rightsizing"],
     // ── batch thirteen ──
     ["s3 access denied"],
     ["the alert fired and nothing was wrong"],
@@ -1245,6 +1250,25 @@ const READERS = [
     ["aws config rules", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
     ["conformance pack", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
     ["auto remediation noncompliant", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
+    // ── twenty-fifth wave: the guide's last task-statement examples, as cards in existing topics, added before them ──
+    // Opened at 3 of 15: nine zeros, `provisioned iops` and `requester pays bucket` among them, three that found
+    // other cards, and three that already reached their topic on ordinary words without it naming the thing
+    // asked for: `cost and usage report` found the cost topic among 24 cards, and it never named the report.
+    ["provisioned iops", "", "cloud/aws-storage-s3-classes-ebs-efs"],
+    ["gp3 vs io2", "", "cloud/aws-storage-s3-classes-ebs-efs"],
+    ["st1 vs sc1", "", "cloud/aws-storage-s3-classes-ebs-efs"],
+    ["requester pays bucket", "", "cloud/aws-storage-s3-classes-ebs-efs"],
+    ["cost and usage report", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    ["cur 2.0", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    ["compute optimizer", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    ["ec2 hibernation", "", "cloud/aws-compute-ec2-amis-auto-scaling"],
+    ["aws batch", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
+    ["aws client vpn", "", "cloud/hybrid-connectivity-vpn-interconnect-peering"],
+    ["well-architected tool", "", "cloud/well-architected-the-architecture-framework"],
+    ["documentdb mongodb", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
+    ["keyspaces cassandra", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
+    ["neptune graph database", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
+    ["aurora serverless", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
