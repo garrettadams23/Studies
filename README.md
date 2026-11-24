@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **479 elements at rest instead of 154,897** — measured at 1,605 topics,
+  costs **479 elements at rest instead of 155,260** — measured at 1,609 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -52,7 +52,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | Domain | Certs | Key Topics |
 |---|---|---|
 | 🌐 Networking | A+, Net+ | OSI, TCP/IP, Subnetting, Routing, VLANs, Wireless, DNS, Cabling, NMAP, TCPDump |
-| 🔐 Security Core | Sec+, SecX | CIA Triad, AAA, PKI, Crypto, Cloud, Zero Trust, Kerberos, Password Attacks |
+| 🔐 Security Core | Sec+, SecX | CIA Triad, AAA, PKI, Crypto, Cloud, Zero Trust, Kerberos, Password Attacks, application security testing from SAST to IAST and RASP |
 | ⚔️ Threat & Attack | Sec+, CySA+, PT+ | Kill Chain, MITRE ATT&CK, Diamond Model, Social Engineering, Malware, DoS |
 | ⚖️ Governance & Risk | Sec+, SecX | NIST CSF 2.0, Risk Matrix, Defense-in-Depth, Legal Frameworks, CISSP 8 Domains |
 | 🔬 Sec Operations | CySA+, SecX | IR PICERL, Vuln Mgmt, Troubleshooting, BCP/DR, Digital Forensics, Splunk SPL |
@@ -71,7 +71,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🌐 Web | WEB, JS | Browser, CSS, JS, Frameworks, Performance, A11y |
 | 📧 Microsoft 365 | M365, MS-102 | Tenant anatomy, licensing, admin roles, **Exchange Online** (mail flow, connectors, EOP/Defender, message trace, outbound spam and restricted senders), **SharePoint & OneDrive** (architecture, sharing sprawl, KFM), **Teams** (architecture, governance, policies, voice, call quality), **Purview** (retention, holds, labels, DLP, eDiscovery, insider risk), **Defender XDR** (incidents, advanced hunting, alert policies, threat intelligence, attack simulation training, Defender for Cloud Apps), **Entra ID** (self-service password reset, Password Protection, administrative units), sensitive information types and Endpoint DLP, admin PowerShell, usage reporting, backup, tenant-to-tenant migration, troubleshooting playbook |
 | 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Windows Backup for Organizations, Co-management, Microsoft 365 Apps and the Office Deployment Tool, Delivery Optimization, Hotpatch, App Control for Business, Defender for Endpoint and Defender Vulnerability Management, multi admin approval, and Security Copilot in Intune |
-| ♾️ DevOps, Platform & Delivery | DevOps, CKA | CI/CD, Terraform & IaC, containers, Kubernetes, GitOps, secrets, supply chain, serverless, caching, queues |
+| ♾️ DevOps, Platform & Delivery | DevOps, CKA | CI/CD, Terraform & IaC, containers, Kubernetes (kubeadm upgrades and etcd backup, scheduling and autoscaling, Ingress and the Gateway API), GitOps, secrets, supply chain, serverless, caching, queues |
 | 🏢 Windows Server & Infrastructure | AD DS, Server | Editions & licensing, Server Core, AD DS boundaries, FSMO, replication, trusts, Group Policy, hybrid identity and preparing a directory for sync, storage, RAID, backup & DR |
 | 🧮 Computer Science Fundamentals | Theory | Big-O in practice, amortized analysis, recursion, P vs NP, cache locality, hash tables, trees, graphs, probabilistic structures, the ASCII chart |
 | 🔧 Hardware, Electronics & Embedded | A+, Hands-On | Ohm's law, power & thermals, motherboards, CPU & cooling, memory & ECC, storage interfaces, test gear, firmware, systematic troubleshooting |

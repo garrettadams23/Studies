@@ -302,7 +302,8 @@ const READERS = [
     // ── batch fourteen ──
     ["the printer is printing garbage", "",
      "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
-    ["i cannot install software"],
+    ["i cannot install software",
+     "wide and inherent — `install` and `software` are ordinary words here, and since the twentieth wave 61 topics hold both, one over the line; the 61st was the Ingress topic, on software that will never be patched again. No single card answers a request this vague: it is a permissions, a policy or a broken-installer ticket, and the reader's next sentence decides which"],
     ["my password expired and i cannot change it"],
     // ── batch sixteen ──
     ["the user cannot sign in on their phone"],
@@ -499,7 +500,9 @@ const READERS = [
     ["what is idempotency", "",
      "script/scheduling-scripts-the-right-way-cron-timers-and-idempotency"],
     ["what is technical debt", "", "eng/technical-debt-recognize-pay-it-down"],
-    ["why do we use containers", "", "linux/docker-containers-package-once-run-anywhere"],
+    ["why do we use containers",
+     "wide and inherent — the wanted card is in the set, among 61. `use` and `containers` are ordinary words in every Kubernetes topic, and the twentieth wave's kubeadm and scheduling topics took the count from 59 over the line. A learner asking why gets the Docker card among the answers, with the Kubernetes topics that build on it",
+     "linux/docker-containers-package-once-run-anywhere"],
     ["why does caching break things", "", "devops/caching-strategies-from-app-to-cdn"],
     ["what is an embedding", "", "ai/embeddings-rag-giving-ai-access-to-your-own-data"],
     // ── batch eight ──
@@ -845,6 +848,12 @@ const READERS = [
     ["business travel security", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
     ["emergency evacuation plan", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
     ["fail-safe vs fail-secure", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
+    // ── twentieth wave: RASP and IAST, which SecurityX names, added before their topic ──
+    // Opened at 0 of 4, all zeros: the site had never written either term outside other words.
+    ["iast", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
+    ["rasp", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
+    ["runtime application self-protection", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
+    ["interactive application security testing", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -914,6 +923,20 @@ const READERS = [
     ["the process is defunct", "",
      "linux/processes-signals-running-programs-in-linux"],
     ["too many redirects"],
+    // ── twentieth wave: the CKA outline's gaps, added before their topics ──
+    // Opened at 0 of 11: seven zeros, `kubeadm`, `tolerations` and `coredns` among words the site had
+    // never written, and four that found other cards. `cpu limit throttling` reached nine.
+    ["kubeadm upgrade", "", "devops/kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"],
+    ["etcd snapshot restore", "", "devops/kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"],
+    ["kubernetes certificates expired", "", "devops/kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"],
+    ["version skew kubelet", "", "devops/kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"],
+    ["taints and tolerations", "", "devops/scheduling-autoscaling-requests-and-limits-taints-toleration"],
+    ["node affinity", "", "devops/scheduling-autoscaling-requests-and-limits-taints-toleration"],
+    ["horizontal pod autoscaler", "", "devops/scheduling-autoscaling-requests-and-limits-taints-toleration"],
+    ["cpu limit throttling", "", "devops/scheduling-autoscaling-requests-and-limits-taints-toleration"],
+    ["gateway api httproute", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
+    ["ingress nginx retired", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
+    ["coredns not resolving", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],

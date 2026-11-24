@@ -4147,6 +4147,115 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
           </div>
 
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: IAST & RASP ───────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🩺</span>
+    <span class="topic-name">IAST &amp; RASP — Testing and Defending an Application From Inside It While It Runs</span>
+    <span class="topic-badge">AppSec</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Inside the running app</div>
+      <div class="concept-title">Both Put Instrumentation Inside the Application: One to Find Flaws, One to Stop Their Exploitation</div>
+      <div class="concept-desc">
+        Static testing reads the code and dynamic testing attacks the running application from outside.
+        <strong class="c-cyan">Interactive application security testing</strong> and <strong
+        class="c-cyan">runtime application self-protection</strong> do something else: they load
+        instrumentation into the running application itself, so it can see what the code actually does with a
+        request, which libraries and frameworks are in play, what it sends to back-end systems and how it is
+        configured. IAST uses that view while the application is being tested, to report flaws. RASP uses the
+        same kind of view in production, to detect an attack and block it as it happens. NIST <span class="acro-exp">(National Institute of Standards and Technology)</span>'s control
+        catalog names both, IAST as a requirement on developers' testing and RASP as an integrity control.
+        <!-- fact: NIST SP 800-53 Rev 5 SA-11(9) Interactive Application Security Testing requires the developer to employ interactive application security testing tools to identify flaws and document the results; its guidance calls IAST instrumentation-based testing that detects vulnerabilities by observing applications as they run during testing, using access to the code, user interaction, libraries, frameworks, backend connections and configurations to directly measure control effectiveness, in real time and continuously through the life cycle; SI-7(17) Runtime Application Self-protection uses runtime instrumentation to detect and block exploitation of software vulnerabilities using information from the software in execution | source: NIST SP 800-53 Rev 5.2.0 catalog in OSCAL JSON (last modified 2026-10-22), from NIST's oscal-content repository, fetched and read | checked: 2026-11 -->
+        <!-- fact: CompTIA SecurityX (CAS-005) names RASP and IAST in its objectives, and the site had no prose on either before this topic | source: this site's plan, Content ideas §19, recording CompTIA's objectives document version 7.0 as read in the eleventh wave | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>IAST</th><th>RASP</th></tr></thead>
+          <tbody>
+            <tr><td>Runs</td><td>While the application is tested, in development, CI or QA <span class="acro-exp">(Quality Assurance)</span></td><td>In production, on live traffic</td></tr>
+            <tr><td>Sees</td><td>The code paths a test exercises, from inside</td><td>The inputs reaching the code, from inside</td></tr>
+            <tr><td>Produces</td><td>Findings, with the code path and the request behind each</td><td>Blocked attacks, alerts, and other responses</td></tr>
+            <tr><td>In NIST SP 800-53</td><td>SA-11(9), a developer testing requirement</td><td>SI-7(17), a software integrity control</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">IAST finds only what the tests reach.</strong> It watches the application while
+          something exercises it, so a code path no test, person or tool touches is never observed, and a clean
+          report from a thin test suite says more about the tests than the code. Pair it with the scans that do
+          not depend on coverage, which are
+          <span class="xref">SAST, DAST &amp; SCA — Automated Security Testing</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">IAST</div>
+      <div class="concept-title">IAST Reports a Flaw With the Code and the Request That Reached It</div>
+      <div class="concept-desc">
+        An IAST tool's core is its sensors, software libraries included with the application, which track its
+        behavior while automated tests, testers or any other activity drive it, and raise an alert when a
+        vulnerability shows. They see the code, the data flow and control flow through it, the configuration,
+        the web components and the back-end connections, and they report in the developer's IDE <span class="acro-exp">(Integrated Development Environment)</span>, in CI or in
+        QA as the tests run. OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> sets it against the other two. Static analysis lacks the runtime view and
+        cannot see the countermeasures around a pattern, so it raises false positives; dynamic scanning sees
+        only the server's responses and nothing of the internals.
+        <!-- fact: IAST tests the application while it is run by an automated test, a human tester or any activity interacting with its functionality; the core is sensor modules, software libraries included in the application code, which track behavior during tests and alert on a detected vulnerability; feedback is real time in the IDE, CI, QA or production; sensors have access to the entire code, data flow and control flow, system configuration data, web components and back-end connection data; example findings are API keys hardcoded in cleartext, unsanitized user input and connections without SSL; SAST lacks runtime visibility and raises false positives because it can't account for other countermeasures; DAST sees only responses from outside with no visibility of internals | source: OWASP DevSecOps Guideline v0.2, "Interactive Application Security Testing", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The sensors see</th><th>So a finding can say</th></tr></thead>
+          <tbody>
+            <tr><td>The request and the path it took through the code</td><td>Which input reached which unsafe use of it, without sanitizing on the way</td></tr>
+            <tr><td>Configuration and back-end connections</td><td>That a connection went out without encryption, or a key sits in the code in clear text</td></tr>
+            <tr><td>The libraries and frameworks loaded</td><td>What the application actually runs, not only what it declares</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Run it where the functional tests already run.</strong> IAST adds no test cases of
+          its own; it rides on the ones a team has, in CI or QA, and its findings arrive with the code path that
+          proves them, which is what makes developers act on them. A test suite written from the threat model
+          gives it the paths that matter, which is the case for
+          <span class="xref">Threat Modeling — Finding Flaws Before You Build Them</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RASP</div>
+      <div class="concept-title">RASP Blocks the Exploit With Context From Inside the App, Which a Firewall Does Not Have</div>
+      <div class="concept-desc">
+        NIST describes runtime application self-protection as instrumentation that detects and blocks the
+        exploitation of software vulnerabilities using information from the software as it runs. It sets that
+        against perimeter protections such as guards and firewalls, which judge by network information without
+        the application's context. RASP monitors the inputs reaching the application and blocks the ones that
+        could allow an attack, and it can protect the runtime itself from unwanted changes and tampering. When
+        it detects a threat it can block the exploit, warn the user, end the user's session, stop the
+        application, or alert staff, and it can run in a monitoring mode or a protecting one.
+        <!-- fact: SI-7(17) guidance: RASP employs runtime instrumentation to detect and block exploitation using information from the software in execution; it differs from perimeter protections such as guards and firewalls, which detect and block using network information without contextual awareness; it monitors inputs and blocks those that could allow attacks, and can protect the runtime environment from unwanted changes and tampering; on detection it can prevent exploitation, send a warning to the user, terminate the user's session, terminate the application or alert organizational personnel; it can be deployed in monitor or protection mode | source: NIST SP 800-53 Rev 5.2.0 catalog in OSCAL JSON (last modified 2026-10-22), control SI-7(17), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Web application firewall</th><th>RASP</th></tr></thead>
+          <tbody>
+            <tr><td>Sits</td><td>In front of the application</td><td>Inside it, with the running code</td></tr>
+            <tr><td>Judges by</td><td>The traffic: what the request looks like</td><td>The software's own state as the input is used</td></tr>
+            <tr><td>Can respond by</td><td>Allowing or blocking the request</td><td>Blocking, warning the user, ending the session, stopping the application, or alerting</td></tr>
+            <tr><td>Also guards</td><td>Nothing past the request</td><td>The runtime itself, against tampering</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Start in monitor mode, and keep the firewall.</strong> One of RASP's documented
+          responses is stopping the application, which turns a false positive into an outage, so watch what it
+          would have blocked before letting it block. And it guards a flaw rather than fixing one: the
+          vulnerability is still in the code, waiting for the day the agent is off. The layer in front of it is
+          <span class="xref">Web Application Firewalls (WAF)</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════════════════════════════════════════════════
      WAVE J1 — APPLICATION SECURITY (the three cards not already here)
      ══════════════════════════════════════════════════════════════ -->
