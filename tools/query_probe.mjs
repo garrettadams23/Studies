@@ -331,6 +331,22 @@ const READERS = [
     ["intune vs mecm error codes", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
     ["error 1603", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
     ["exit code 3010", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
+    // ── sixteenth wave: MS-102's identity and Purview objectives, added before their topics ──
+    // Opened at 0 of 13: nine zeros, `idfix` and `password writeback` among them, and four that
+    // found other cards. `endpoint dlp` reached ten, none of them about Purview's endpoint agent.
+    ["self service password reset", "", "m365/self-service-password-reset-password-protection-who-can-rese"],
+    ["password writeback", "", "m365/self-service-password-reset-password-protection-who-can-rese"],
+    ["banned password list", "", "m365/self-service-password-reset-password-protection-who-can-rese"],
+    ["password does not meet the complexity requirements", "", "m365/self-service-password-reset-password-protection-who-can-rese"],
+    ["administrative units", "", "m365/administrative-units-delegating-part-of-the-tenant-and-fenci"],
+    ["restricted management administrative unit", "", "m365/administrative-units-delegating-part-of-the-tenant-and-fenci"],
+    ["helpdesk admin for one office only", "", "m365/administrative-units-delegating-part-of-the-tenant-and-fenci"],
+    ["idfix", "", "infra/preparing-active-directory-for-sync-duplicate-addresses-bad-"],
+    ["upn suffix is local", "", "infra/preparing-active-directory-for-sync-duplicate-addresses-bad-"],
+    ["duplicate proxyaddresses", "", "infra/preparing-active-directory-for-sync-duplicate-addresses-bad-"],
+    ["sensitive information type regex", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
+    ["endpoint dlp", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
+    ["copy sensitive files to usb", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],

@@ -270,6 +270,223 @@
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: SELF-SERVICE PASSWORD RESET & PASSWORD PROTECTION ─── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔁</span>
+    <span class="topic-name">Self-Service Password Reset &amp; Password Protection — Who Can Reset, and Which Passwords Get Refused</span>
+    <span class="topic-badge">M365 • Entra ID</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Self-service reset</div>
+      <div class="concept-title">A User Can Reset Only With Methods They Registered Before They Were Locked Out</div>
+      <div class="concept-desc">
+        Self-service password reset lets users reset or unlock their own password at aka.ms/sspr, with no
+        call to the service desk. Before it lets anyone in, Entra ID runs a short list of checks, and a user
+        who fails any of them is told to contact their administrator. The methods it accepts are Authenticator
+        notifications, OATH tokens, text messages, voice calls and an emailed one-time code, and a policy can
+        require one or two of them. Authenticator and the OATH tokens count as one method between them, and
+        Authenticator cannot be the only method when one is required.
+        <!-- fact: SSPR checks that the user is enabled, has registered the number of methods the policy requires (one or two), and, where the password is managed on-premises (federated, pass-through or hash sync), that writeback is configured, otherwise the user is told to contact their administrator; users with an administrator role get the two-gate policy; methods are Authenticator notifications, hardware OATH tokens (preview), software OATH tokens, SMS, voice call and email OTP; Authenticator and OATH tokens count as a single method, and Authenticator can't be the only method when one is required; raising the requirement from one method to two leaves users with one registered unable to reset; registration can be required at sign-in, with reconfirmation after 0 to 730 days; Microsoft accounts invited as guests can't use SSPR | source: Microsoft Learn, "How it works: Microsoft Entra self-service password reset" (updated 2026-11-10), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What Entra ID checks</th><th>When it fails</th></tr></thead>
+          <tbody>
+            <tr><td>The user is enabled for self-service reset</td><td>A group-scoped policy left them out</td></tr>
+            <tr><td>The user registered as many methods as the policy requires</td><td>They never registered, or the policy went from one method to two and they had one</td></tr>
+            <tr><td>A password managed on-premises can be written back</td><td>Writeback is off, so a synced or federated user cannot reset in the cloud</td></tr>
+            <tr><td>Administrators meet the stricter two-gate policy</td><td>An admin registered only what the user policy asked for</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Require registration at sign-in, or the first reset is when people find out.</strong>
+          A user who never registered learns it at the moment they are locked out. The policy can prompt for
+          registration at sign-in and ask for reconfirmation every so many days, and a change from one method to
+          two belongs after everyone has two. Guests signed in with a personal Microsoft account cannot use it
+          at all. Who may reset an administrator's password instead is in
+          <span class="xref">Admin Roles &amp; Least Privilege — The Roles Worth Knowing, and PIM for the Rest</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Hybrid</div>
+      <div class="concept-title">A Synced User's Reset Is Written Back, and Active Directory's Policy Still Decides</div>
+      <div class="concept-desc">
+        When a user's password lives in Active Directory, a cloud reset is passed back to it by Entra Connect
+        Sync or Cloud Sync, outbound over port 443 with no inbound firewall rule. Writeback is synchronous: the
+        on-premises agent sets the password through Active Directory's own interface, so the domain's history,
+        complexity, age and password filters are applied, and the user hears straight away if the password is
+        refused. Writeback can be switched off <span class="volatile" data-checked="2026-11">in the Entra admin center</span> without touching Connect,
+        and can be allowed to unlock an account without resetting it.
+        <!-- fact: Password writeback is synchronous, enforcing on-premises history, complexity, age and password filters through the AD DS SetPassword API; it uses an Azure Service Bus relay, outbound on port 443, with no inbound firewall rules; the on-premises service account cannot reset passwords of users in protected groups; where Cloud Sync and Connect Sync coexist for one domain, Cloud Sync processes writeback; writeback can be disabled in the admin center without reconfiguring Connect; users can be allowed to unlock without resetting; SSPR performs the equivalent of an admin-initiated reset in AD DS, so a third-party password filter must apply to admin resets to be checked | source: Microsoft Learn, "How does self-service password reset writeback work in Microsoft Entra ID?" (updated 2026-11-11) and "How it works: Microsoft Entra self-service password reset" (updated 2026-11-10), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Whose password</th><th>What a self-service reset does</th></tr></thead>
+          <tbody>
+            <tr><td>A cloud-only user</td><td>Sets it in Entra ID</td></tr>
+            <tr><td>A synced or federated user, writeback on</td><td>Sets it in Entra ID and Active Directory, under the domain's rules</td></tr>
+            <tr><td>A synced or federated user, writeback off</td><td>Nothing: the user is sent to an administrator</td></tr>
+            <tr><td>A member of a protected group, such as Domain Admins</td><td>Cannot be written back: the sync account is not allowed to reset it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">To Active Directory, a self-service reset is an admin reset.</strong> A
+          third-party password filter configured only for users' own changes is skipped, so it has to be set to
+          apply to admin resets too. And the domain's own policy wins over the cloud's: a password Entra ID would
+          accept can still be refused on the way back. How the synced account came to exist is
+          <span class="xref">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Password Protection</div>
+      <div class="concept-title">Banned Passwords Are Scored, Not Just Matched: Five Points or It Is Refused</div>
+      <div class="concept-desc">
+        Every change and reset is checked against Microsoft's global banned list, which is always on, cannot be
+        turned off and is never published, and against a custom list of up to 1,000 terms of your own. The new
+        password is lowercased and common substitutions are undone: 0 becomes o, 1 becomes l, $ becomes s and @
+        becomes a. Banned terms are then found with fuzzy matching, so a term one edit away still counts, and
+        the user's first and last names and the tenant's name are found anywhere inside it if they are four
+        letters or more. Each banned term found scores one point, each other character one point, and a
+        password under five points is refused.
+        <!-- fact: The global banned list is applied to all users, can't be disabled, and isn't published; the custom list holds up to 1,000 terms and should hold base terms such as brand, product and place names rather than variants; normalization lowercases and substitutes 0 to o, 1 to l, $ to s, @ to a; fuzzy matching at an edit distance of one; substring matching on first name, last name and tenant name for terms of at least four characters, with tenant name not checked on domain controllers; one point per banned term found and one per remaining character, at least five points to be accepted; worked examples C0ntos0Blank12 (4 points, rejected) and ContoS0Bl@nkf9! (5 points, accepted); the global list requires no license for cloud-only users, the custom list Entra ID P1 or P2, and synced users P1 or P2; the global list comes from Entra security telemetry on password spray attacks, not third-party breach lists | source: Microsoft Learn, "Eliminate bad passwords using Microsoft Entra Password Protection" (updated 2025-03-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>New password</th><th>Normalized</th><th>Score</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td><code>C0ntos0Blank12</code></td><td><code>contosoblank12</code></td><td>contoso + blank + 1 + 2 = 4</td><td>Refused</td></tr>
+            <tr><td><code>ContoS0Bl@nkf9!</code></td><td><code>contosoblankf9!</code></td><td>contoso + blank + f + 9 + ! = 5</td><td>Accepted</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Put base terms in the custom list, never variants.</strong> Microsoft's own
+          example is a company called Contoso, in London, that makes Widgets: three entries, not a thousand
+          spellings of them, because normalization and fuzzy matching already catch <code>Contoso!1</code> and
+          <code>C0nt0so</code>. The global list is built from Microsoft's sign-in telemetry rather than from
+          breach dumps, aimed at password spraying, which tries a few of the weakest passwords against every
+          account; the attack is in <span class="xref">Password &amp; Authentication Attack Types</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">On-premises</div>
+      <div class="concept-title">On Domain Controllers, Start in Audit, and Expect Windows' Old Complexity Message</div>
+      <div class="concept-desc">
+        The same lists reach Active Directory through two pieces of software. A proxy service on any
+        domain-joined server fetches the policy from Entra ID, so domain controllers never talk to the
+        internet, and a DC agent on each domain controller, a password filter and a service, checks every change
+        against the policy cached in SYSVOL <span class="acro-exp">(System Volume)</span> and refreshed hourly. Nothing changes in the schema and no ports
+        open on the DCs. A DC without the agent checks nothing, so enforcement is only universal once every DC
+        has it, and a DC that has never downloaded a policy accepts every password and logs a warning.
+        <!-- fact: On-premises Password Protection uses a proxy service on any domain-joined machine and a DC agent (password filter DLL and service) on domain controllers; DCs never communicate with the internet, no new ports are opened, no schema changes are needed; the policy is stored in SYSVOL and refreshed when older than an hour; enforcement applies only where the DC agent is installed; with no local policy a password is accepted and an event logged; it supplements AD DS password policy rather than replacing it; audit mode logs and enforce mode rejects, and a rejection shows the traditional message that the password does not meet the length, complexity, or history requirements of the domain | source: Microsoft Learn, "Enforce on-premises Microsoft Entra Password Protection for Active Directory Domain Services" and "Enable on-premises Microsoft Entra Password Protection" (both updated 2025-03-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Piece</th><th>Runs on</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td>Proxy service</td><td>Any domain-joined server</td><td>Passes policy downloads between the DCs and Entra ID, and keeps nothing</td></tr>
+            <tr><td>DC agent</td><td>Every domain controller</td><td>Its password filter hands each change to its service, which checks it against the cached policy</td></tr>
+            <tr><td>The policy</td><td>SYSVOL, replicated between DCs</td><td>Refreshed when it is more than an hour old</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A refusal looks like an ordinary complexity failure.</strong> In enforced mode a
+          banned password gets Windows' usual message, that it <em>does not meet the length, complexity, or
+          history requirements of the domain</em>, so a user whose password meets every rule they can see is
+          probably meeting this one. Run in audit mode first and read its events before enforcing. The domain's
+          own policy still applies alongside it, as
+          <span class="xref">Group Policy Architecture — Where the Settings Actually Live</span> explains.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: ADMINISTRATIVE UNITS ──────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Administrative Units — Delegating Part of the Tenant, and Fencing Off the Accounts That Matter</span>
+    <span class="topic-badge">M365 • Entra ID</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Scoped roles</div>
+      <div class="concept-title">An Administrative Unit Narrows Where a Role Applies, Not What the Role Can Do</div>
+      <div class="concept-desc">
+        An administrative unit is a container of users, groups or devices in Entra ID. Assign a role with the
+        unit as its scope, Helpdesk Administrator for a region's support staff for instance, and the role works
+        only on the unit's members and none of the tenant's settings. A user can sit in several units, by
+        place and by division, but units cannot be nested. Members are added by hand, or by a dynamic rule for
+        users or devices, never for groups. Each administrator with a unit-scoped role needs Entra ID P1, the
+        members need nothing beyond Free, and a dynamic rule needs P1 for every member it covers.
+        <!-- fact: An administrative unit contains only users, groups or devices; units can't be nested; a user can be in several; dynamic membership rules work for users or devices, not groups; scoped admins need Entra ID P1 (or P2), members Free, and dynamic membership P1 for each member; adding a group scopes the group, not its members; units scope management permissions only and don't stop browsing; the roles assignable at unit scope include Authentication, Groups, Helpdesk, License, Password, Privileged Authentication, SharePoint, Teams and User Administrator and custom roles with user, group or device permissions; unit-scoped admins can reset passwords and change authentication methods of non-administrators only; the scope is written /administrativeUnits/ followed by the unit's ID | source: Microsoft Learn, "Administrative units in Microsoft Entra ID" (updated 2024-10-29) and "Assign Microsoft Entra roles" (updated 2025-06-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>You want</th><th>What does it</th></tr></thead>
+          <tbody>
+            <tr><td>One office's helpdesk to reset passwords there and nowhere else</td><td>A unit of that office's users, and Helpdesk Administrator scoped to it</td></tr>
+            <tr><td>Membership that follows HR data, such as department</td><td>A dynamic rule on users or devices, with P1 for each member</td></tr>
+            <tr><td>A scoped admin who can rename a group and change who is in it</td><td>The group added to the unit</td></tr>
+            <tr><td>The same admin resetting those members' passwords</td><td>The users themselves added to the unit, because a group brings itself in, not its members</td></tr>
+            <tr><td>Other users hidden from a scoped admin</td><td>Nothing: a unit limits what they can manage, not what they can read</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A scoped role still stops at administrators.</strong> Within a unit, password
+          resets, authentication methods and account deletion apply only to members who hold no admin role, so
+          an administrator in Seattle is not reset by the Seattle helpdesk. In PowerShell the scope is the string
+          <code>/administrativeUnits/</code> plus the unit's ID, not the ID alone. The roles worth scoping in the
+          first place are in
+          <span class="xref">Admin Roles &amp; Least Privilege — The Roles Worth Knowing, and PIM for the Rest</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Restricted management</div>
+      <div class="concept-title">A Restricted Management Unit Stops Even Global Administrators Changing What Is Inside</div>
+      <div class="concept-desc">
+        An ordinary unit adds permissions; a <strong class="c-cyan">restricted management</strong> unit takes
+        them away. Once an object is in one, its Entra ID properties can be changed only by administrators
+        assigned at that unit's scope. A tenant-wide Helpdesk, User or even Global Administrator can read the
+        account but cannot reset its password, edit it, delete it or change a protected group's members. It
+        holds users, devices and security groups, but not Microsoft 365 groups, mail-enabled security groups or
+        distribution lists. Global and Privileged Role Administrators can still manage the unit itself,
+        including assigning themselves a role on it, so nobody is locked out for good, and each step is logged.
+        <!-- fact: Restricted management administrative units block administrators not assigned at their scope from modifying Entra properties, deleting, resetting passwords or changing group owners and members, while reading standard properties and adding members to other groups stay allowed; members can be users, devices and security groups, not Microsoft 365, mail-enabled security or distribution groups; Global Administrator and Privileged Role Administrator can't modify objects but can manage the units, including assigning roles to themselves; operations on related objects in Microsoft 365 services aren't affected; Microsoft warns that placing objects there can break existing workflows; changes are recorded in the Entra audit logs | source: Microsoft Learn, "Restricted management administrative units in Microsoft Entra ID" (updated 2026-03-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>A tenant-scoped administrator tries to</th><th>Allowed?</th></tr></thead>
+          <tbody>
+            <tr><td>Read the account's name, UPN <span class="acro-exp">(User Principal Name)</span> and photo</td><td>Yes</td></tr>
+            <tr><td>Reset its password, edit it or delete it</td><td>No</td></tr>
+            <tr><td>Change the members of a protected group</td><td>No</td></tr>
+            <tr><td>Add a protected user to an ordinary group</td><td>Yes</td></tr>
+            <tr><td>Assign themselves a role on the unit, as a Global Administrator</td><td>Yes, and it lands in the audit log</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Fence the accounts whose takeover ends the company, and expect workflows to
+          break.</strong> Microsoft's examples are executives' accounts and their devices, whose BitLocker
+          recovery keys a helpdesk could otherwise read, and the security groups that grant access to sensitive
+          applications. A provisioning tool or script working at tenant scope will now fail on those objects,
+          which Microsoft warns about. And the fence is around the directory object: Microsoft 365 services
+          acting on related objects are not blocked. Group scoping inside Intune is a separate mechanism,
+          <span class="xref">Intune RBAC &amp; Scope Tags — Delegating Without Handing Over the Fleet</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: SERVICE HEALTH ─────────────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
@@ -1237,6 +1454,112 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           Roll DLP out in stages: audit silently, then tip the user, then warn with an override, and
           only then block. A policy that blocks on day one is a policy the business will demand
           exemptions from by day three, and exemptions are permanent.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: SENSITIVE INFORMATION TYPES & ENDPOINT DLP ───────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔍</span>
+    <span class="topic-name">Sensitive Information Types &amp; Endpoint DLP <span class="acro-exp">(Data Loss Prevention)</span> — The Pattern That Finds It, and the Device That Stops It</span>
+    <span class="topic-badge">M365 • Purview</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Sensitive information types</div>
+      <div class="concept-title">A Sensitive Information Type Is a Pattern Plus Evidence, Scored at Three Confidence Levels</div>
+      <div class="concept-desc">
+        A sensitive information type is the pattern Purview looks for in content, and DLP policies, auto-labeling,
+        retention labels and insider risk all use them. Each pattern has a <strong class="c-cyan">primary
+        element</strong>, which is a regular expression, optionally with a checksum, or a keyword list, a
+        keyword dictionary or one of Microsoft's functions. It can add <strong class="c-cyan">supporting
+        elements</strong> found within so many characters of it, 250 in Microsoft's examples, and the more
+        evidence a match carries, the higher its confidence. Microsoft's built-in types cannot be edited but can
+        be copied, the named-entity types for names, addresses and medical terms cannot even be copied, and
+        exact data match types are built from a table of your own values.
+        <!-- fact: SITs are pattern-based classifiers used in DLP, sensitivity labels, retention labels, insider risk, communication compliance, auto-labeling and Priva; a pattern has a primary element (regex with or without checksum, keyword list, keyword dictionary or function), supporting elements, a confidence level and proximity in characters, 250 in the examples; confidence levels are low 65, medium 75 and high 85, high giving the fewest false positives and the most false negatives; Microsoft suggests high confidence with low counts (five to 10) and low confidence with higher counts (20 or more); built-in SITs can't be edited but can be copied, named entity SITs can't be edited or copied, and EDM SITs are built from scratch from your data; Endpoint DLP classifies files against all SITs in the tenant, including custom ones not used in any policy | source: Microsoft Learn, "Learn about sensitive information types" (updated 2026-07-24), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Confidence</th><th>Value</th><th>A rule set to it returns</th><th>Microsoft pairs it with</th></tr></thead>
+          <tbody>
+            <tr><td>Low</td><td>65</td><td>Low, medium and high matches: the fewest misses, the most false positives</td><td>Higher counts, 20 or more</td></tr>
+            <tr><td>Medium</td><td>75</td><td>Medium and high matches</td><td>Between the two</td></tr>
+            <tr><td>High</td><td>85</td><td>High matches only: the fewest false positives, the most misses</td><td>Low counts, five to ten</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Confidence and count trade against each other.</strong> A rule that fires on
+          one low-confidence nine-digit number fires on a great many numbers that are not identity numbers, and a
+          rule that waits for twenty high-confidence matches misses the document that holds three. Pick the pair
+          for the harm you are preventing. What DLP and labels do with a match is
+          <span class="xref">Sensitivity Labels &amp; DLP — Classification That Survives Contact With Users</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Writing one</div>
+      <div class="concept-title">A Custom Pattern's Regex Has One Capturing Group and No Anchors</div>
+      <div class="concept-desc">
+        A custom type is made <span class="volatile" data-checked="2026-11">in the Purview portal under <em>Information Protection &gt; Classifiers &gt;
+        Sensitive info types</em></span>, or copied from a built-in one. Its regular expressions run on the Boost.Regex
+        5.1.3 engine and follow two rules Microsoft enforces when the pattern is saved: no <code>^</code> or
+        <code>$</code>, because nothing guarantees where scanned content starts or ends, and exactly one
+        capturing group, with every variant inside it as alternation. A new type finds nothing in existing
+        SharePoint and OneDrive content until that content is crawled again, and Microsoft's support will
+        troubleshoot a pattern but not write one.
+        <!-- fact: Custom SITs are created under Information Protection, Classifiers, Sensitive info types; regexes use the Boost.RegEx 5.1.3 engine; patterns must not use positional anchors ^ and $, and must have a single primary capturing group with alternation inside it, several top-level capturing groups being blocked at validation; supporting elements have their own character proximity; existing SharePoint and OneDrive content must be recrawled for a new SIT to find it; Microsoft support can't help create custom patterns beyond samples and troubleshooting | source: Microsoft Learn, "Create custom sensitive information types in the Microsoft Purview portal" (updated 2026-06-26), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Refused: three capturing groups at the top level</span>
+(?:[\s,;])([A-Z]{2}[0-9]{3})(?:[\s,;])|(?:[\s,;])([A-Z]{2}[A-Z]{4}[0-9])(?:[\s,;])|(?:[\s,;])([A-Z]{2}[0-9]{5})(?:[\s,;])
+
+<span class="com"># Accepted: one capturing group, the variants alternated inside it</span>
+(?:[\s,;])([A-Z]{2}[0-9]{3}|[A-Z]{2}[A-Z]{4}[0-9]|[A-Z]{2}[0-9]{5})(?:[\s,;])</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Tune a custom type before it exists anywhere, not before a policy uses
+          it.</strong> Endpoint DLP classifies every file against every type in the tenant, custom ones
+          included, whether or not a policy refers to them, so a loose pattern costs classification on every
+          onboarded device from the day it is saved. Why pattern matching over-matches, and what that costs a
+          DLP program, is in <span class="xref">Data Loss Prevention — Classification, Egress &amp; the False-Positive Problem</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Endpoint DLP</div>
+      <div class="concept-title">On the Device, DLP Watches What Is Done With a File, Not Only Where It Is</div>
+      <div class="concept-desc">
+        Endpoint DLP takes the same policies to onboarded Windows 10 and 11 devices, the three latest macOS
+        releases and Windows Server 2019 or later, though not domain controllers or Server Core, and servers
+        only once it is turned on for them. Devices are onboarded with Intune, Group Policy, Configuration
+        Manager, a local script or a VDI <span class="acro-exp">(Virtual Desktop Infrastructure)</span> package. A file is classified each time it is created or changed, and
+        a policy with the devices location applies only when both the user and the device are in its scope.
+        What it adds is the action: copying, printing, uploading or pasting a sensitive file can be audited,
+        blocked, or blocked with an override the user has to justify.
+        <!-- fact: Endpoint DLP supports onboarded Windows 10/11, the three latest macOS versions and Windows Server 2019 and later, not domain controllers or Server Core, and must be enabled for servers; onboarding by Group Policy, Configuration Manager, Intune, local script or VDI packages; files are classified on creation or modification; a policy with the Devices location applies only when both the user and the device are in scope; activities include upload to restricted service domains or from unallowed browsers (redirected to Edge), paste to browsers, copy to clipboard, copy to USB, copy to network share, print, Bluetooth, RDP, create, rename and access by restricted apps; removable USB device groups allow up to 20 groups of up to 50 devices; Office, PDF and CSV file activity is audited by default on onboarded devices even outside a policy; for removable storage device control see Defender for Endpoint | source: Microsoft Learn, "Learn about Endpoint data loss prevention" (updated 2026-08-05), "Get started with Endpoint data loss prevention" (updated 2026-08-20) and "Configure endpoint DLP settings" (updated 2026-06-26), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What the user does</th><th>What a policy can do</th></tr></thead>
+          <tbody>
+            <tr><td>Copies a sensitive file to USB <span class="acro-exp">(Universal Serial Bus)</span></td><td>Audit, block with override, or block, with different actions for named groups of USB devices</td></tr>
+            <tr><td>Uploads it to a cloud service</td><td>Audit or block by service domain; a browser on the unallowed list is blocked and the user sent to Edge</td></tr>
+            <tr><td>Prints it, copies it to a network share, sends it by Bluetooth or into a remote session</td><td>Audit or restrict</td></tr>
+            <tr><td>Copies from it, or pastes into a browser</td><td>Audit or restrict; a paste is judged on what is pasted</td></tr>
+            <tr><td>Opens it in an app on the restricted apps list</td><td>Audit or restrict</td></tr>
+            <tr><td>Creates or renames it</td><td>Audit only</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Start in audit; the activity log will already have data.</strong> Onboarded
+          devices audit Office, PDF <span class="acro-exp">(Portable Document Format)</span> and CSV <span class="acro-exp">(Comma-Separated Values)</span> file activity by default even with no policy, so the activity
+          explorer shows what a block would have stopped before anyone is blocked. And DLP's USB rule is about
+          sensitive content: blocking USB storage outright is device control in Defender for Endpoint, which is
+          <span class="xref">Firewall &amp; Removable Media Policy — The Two Controls Auditors Ask About</span>.
         </div>
       </div>
     </div>
