@@ -73,7 +73,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **167** · search **59** · resilience **64** · axe 33/33 · mobile 16/16 · visual 2/2 · backup 3/3. The error-code lookup added one check to each of smoke, mobile and axe's two themes, and the expand switch one to smoke. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **27** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **28** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -4451,4 +4451,57 @@ switch still checked, which is the report in numbers.
 
 ```
 1 commit · 1 behavior changed · smoke 166 -> 167, and the new check fails on the old script
+```
+
+## Session — the sixteenth wave, MS-102's identity and Purview gaps, and a tool the outline still names
+
+The wave began, and then paused for the owner's expand request, which has its own record above and
+its own commit. §20's list of MS-102 gaps had four left after the fifteenth wave, and this wave is
+those four. *Content ideas* §22 is the table.
+
+### Read first, and one page that was gone
+
+Sixteen Microsoft Learn pages were read before a card was written: self-service password reset and
+its writeback, three on Password Protection, three on administrative units, preparing a directory for
+sync, `.local` domains and sync errors, two on sensitive information types and three on Endpoint DLP.
+A seventeenth, Microsoft's page on installing IdFix, returned 404. IdFix's own repository, read in its
+place, says the tool was deprecated and has been unsupported since 30 June 2026. MS-102's outline,
+skills measured as of 28 April 2026, still names it, so the topic teaches the rules IdFix checked and
+says not to install it. Thirteen queries went into *a service desk engineer* next and opened at 0 of
+13.
+
+### What the pages said that the cards had to carry
+
+Each card has a fact a service desk would otherwise learn from a ticket. Authenticator and the OATH
+tokens count as one reset method between them, so a policy raised from one method to two locks out
+everyone who registered only the app. A self-service reset reaches Active Directory as an admin reset,
+so a third-party password filter set only for users' own changes never sees it. A password refused by
+Password Protection on a domain controller shows Windows' ordinary complexity message, and a DC that
+has never downloaded a policy accepts everything. A group placed in an administrative unit brings the
+group into scope but not its members. A restricted management unit keeps out even Global
+Administrators. And Endpoint DLP classifies every file against every sensitive information type in the
+tenant, used or not, so a loose custom pattern costs something before any policy refers to it.
+
+### A new card took an old answer away
+
+`bitlocker recovery key`, a service desk query from an early batch, stopped finding the BitLocker topic
+when the administrative units card was spliced. Search tries the exact phrase first and widens only when
+that finds at most one topic. The phrase had been in one card, the Windows repair ladder, so search
+used to widen and reach the BitLocker topic. The new card's *BitLocker recovery keys* made two exact
+matches, search stopped there, and the topic about BitLocker recovery keys, which said *recovery key*
+and never Microsoft's full name for it, was not among them. Its table row says *BitLocker recovery
+key* now, and the query finds it first of three. **A card can change the answer to a query it never
+mentions, and only a census that runs every reader catches it.**
+
+### The census
+
+The batch closed at 13 of 13 with one prose fix: `helpdesk admin for one office only` lacked only
+*office*, which was what the card's example of a regional helpdesk meant, and the row says *one
+office's helpdesk* now. The census as a whole is 547 of 571 with nothing unexplained.
+
+```
+2 commits · 4 topics, 12 concept cards · 13 census queries, 0 of 13 -> 13 of 13 · 1 old query restored
+topics 1,591 -> 1,595 · path steps 2,136 -> 2,144 · related links 5,138 -> 5,170 · dated claims 163 -> 178
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
 ```
