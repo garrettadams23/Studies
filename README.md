@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **479 elements at rest instead of 154,566** — measured at 1,602 topics,
+  costs **479 elements at rest instead of 154,897** — measured at 1,605 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -34,7 +34,7 @@ Open `index.html` in any modern web browser — no server or build step required
   across your open tabs. No dependencies.
 - **Acronym Expansions Everywhere** — The first use of an acronym in any topic
   carries what it stands for right beside it, e.g. `ACL (Access Control List)`.
-- **Acronym Dictionary** — A dedicated domain with 1,121 IT acronyms, browsable
+- **Acronym Dictionary** — A dedicated domain with 1,122 IT acronyms, browsable
   A–Z or by subject area, searchable by acronym *or* by what it expands to.
 - **Rotating Snap Quotes** — Philosophical quotes on a fade cycle.
 - **Error Code Lookup** — The header's 🧾 ERRORS button (or `c`) looks up a
@@ -70,7 +70,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 📊 Data | SQL, DATA | SQL, DB Internals, NoSQL, Warehousing, DBA |
 | 🌐 Web | WEB, JS | Browser, CSS, JS, Frameworks, Performance, A11y |
 | 📧 Microsoft 365 | M365, MS-102 | Tenant anatomy, licensing, admin roles, **Exchange Online** (mail flow, connectors, EOP/Defender, message trace, outbound spam and restricted senders), **SharePoint & OneDrive** (architecture, sharing sprawl, KFM), **Teams** (architecture, governance, policies, voice, call quality), **Purview** (retention, holds, labels, DLP, eDiscovery, insider risk), **Defender XDR** (incidents, advanced hunting, alert policies, threat intelligence, attack simulation training, Defender for Cloud Apps), **Entra ID** (self-service password reset, Password Protection, administrative units), sensitive information types and Endpoint DLP, admin PowerShell, usage reporting, backup, tenant-to-tenant migration, troubleshooting playbook |
-| 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Windows Backup for Organizations, Co-management, Microsoft 365 Apps and the Office Deployment Tool, Delivery Optimization, App Control for Business, Defender for Endpoint and Defender Vulnerability Management |
+| 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Windows Backup for Organizations, Co-management, Microsoft 365 Apps and the Office Deployment Tool, Delivery Optimization, Hotpatch, App Control for Business, Defender for Endpoint and Defender Vulnerability Management, multi admin approval, and Security Copilot in Intune |
 | ♾️ DevOps, Platform & Delivery | DevOps, CKA | CI/CD, Terraform & IaC, containers, Kubernetes, GitOps, secrets, supply chain, serverless, caching, queues |
 | 🏢 Windows Server & Infrastructure | AD DS, Server | Editions & licensing, Server Core, AD DS boundaries, FSMO, replication, trusts, Group Policy, hybrid identity and preparing a directory for sync, storage, RAID, backup & DR |
 | 🧮 Computer Science Fundamentals | Theory | Big-O in practice, amortized analysis, recursion, P vs NP, cache locality, hash tables, trees, graphs, probabilistic structures, the ASCII chart |
@@ -80,7 +80,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🧠 Mind & Wellbeing | Inner Game | Imposter syndrome, burnout, resilience, dealing with failure, surviving on-call, communication |
 | 📐 Mathematics — Calculus | Calculus | Limits, derivatives, integrals, series, differential equations, the unit circle, and a one-page cheat sheet |
 | ❝ Quotes — Sourced & Corrected | Sourced | Stoic, Eastern and existentialist quotes with the work cited — plus the famous lines nobody can source |
-| 🔤 Acronym Dictionary | REF | 1,121 IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
+| 🔤 Acronym Dictionary | REF | 1,122 IT acronyms A–Z, plus per-subject indexes (Networking, Security, Cloud, Crypto, Data, AI, …) |
 
 ## Project Structure
 

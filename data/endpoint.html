@@ -2925,6 +2925,115 @@ pnputil /delete-driver oem42.inf /uninstall /force</pre>
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: HOTPATCH ──────────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">♨️</span>
+    <span class="topic-name">Hotpatch — Security Updates Without a Restart, and the Quarterly Baselines That Still Need One</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The calendar</div>
+      <div class="concept-title">Eight Months a Year the Security Update Needs No Restart; the Other Four It Does</div>
+      <div class="concept-desc">
+        A hotpatch is the monthly security release built to install and take effect without restarting the
+        device, and much smaller than the cumulative update it stands in for. It runs on a quarterly cycle.
+        January, April, July and October bring a <strong class="c-cyan">baseline</strong>, an ordinary
+        cumulative update with new features and a restart; the two months after each bring hotpatches. That
+        makes eight hotpatch months and four baseline months a year, the same calendar for every operating
+        system that supports it, with the occasional extra baseline when a security fix needs one. A device
+        that reaches a hotpatch month without the latest baseline gets both, and restarts for the baseline.
+        <!-- fact: Hotpatch updates are Monthly B release security updates that install and take effect without a restart; packages are significantly smaller than standard cumulative updates; baselines (restart required, latest security fixes and cumulative features) are released quarterly in January, April, July and October, with hotpatches in the other two months of each quarter; eight hotpatch and four baseline months a year, the same calendar for all hotpatch-supported operating systems; occasional unplanned baselines for security reasons don't shift the planned cadence; a device in a hotpatch month that isn't on the latest baseline receives both the baseline (restart) and the hotpatch; upgrading to a new Windows version in a baseline month keeps the device on the hotpatch cycle, while upgrading in a hotpatch month switches it to standard updates until the next baseline; hotpatch is also available for Windows Server 2025 Datacenter Azure Edition and Windows 365, managed through Azure Update Manager | source: Microsoft Learn, "Hotpatch updates" (Windows Autopatch, updated 2026-06-02), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Quarter</th><th>Baseline, restart needed</th><th>Hotpatch, no restart</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>January</td><td>February and March</td></tr>
+            <tr><td>2</td><td>April</td><td>May and June</td></tr>
+            <tr><td>3</td><td>July</td><td>August and September</td></tr>
+            <tr><td>4</td><td>October</td><td>November and December</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Upgrade Windows in a baseline month.</strong> A device moved to a new version of
+          Windows 11 in January, April, July or October stays on the hotpatch cycle. Moved in any other month,
+          it drops to ordinary restarting updates until the next baseline, so a feature update scheduled for a
+          hotpatch month costs the rest of that quarter's restart-free months. The service that runs the cycle is
+          <span class="xref">Windows Autopatch — What It Takes Over</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Eligibility</div>
+      <div class="concept-title">A Device That Misses Any Requirement Does Not Fail; It Quietly Restarts Instead</div>
+      <div class="concept-desc">
+        Hotpatch is turned on in Intune, in a Windows quality update policy, by setting <em>When available,
+        apply without restarting the device ("Hotpatch")</em> to Allow, and it reaches only devices that
+        meet every requirement: an eligible license such as Windows 11 Enterprise E3 or E5 or Microsoft 365
+        Business Premium, Windows 11 24H2 or later on the latest baseline, and virtualization-based security
+        running. Arm64 devices also need compiled hybrid binaries, CHPE, switched off, which can break 32-bit
+        programs such as Office macros that call Windows directly and 32-bit add-ins. A device that misses anything simply gets the
+        ordinary cumulative update and its restart. Update rings, deadlines and active hours all still apply.
+        <!-- fact: Hotpatch requires Windows Autopatch's quality update policy in Intune with "When available, apply without restarting the device (Hotpatch)" set to Allow; licenses: Windows 11 Enterprise E3 or E5, Microsoft 365 F3, Windows 11 Education A3 or A5, Microsoft 365 Business Premium or Windows 365 Enterprise; Windows 11 24H2 or later; the latest baseline; VBS turned on (also reported by the Autopatch alert Hotpatch – VBS not running); Arm64 devices must disable CHPE with the DisableCHPE policy or HotPatchRestrictions=1 under HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management and a restart, which can break 32-bit programs such as VBA with Declare statements or 32-bit COM add-ins; security updates for 32-bit Microsoft 365 Apps on Arm end in December 2026; ineligible devices receive the standard latest cumulative update with a restart; turning hotpatch on doesn't change existing deadlines, deferrals or active hours | source: Microsoft Learn, "Hotpatch updates" (Windows Autopatch, updated 2026-06-02), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Requirement</th><th>Check on the device</th></tr></thead>
+          <tbody>
+            <tr><td>Windows 11 24H2 or later, on the latest baseline</td><td>The build against Microsoft's hotpatch release notes</td></tr>
+            <tr><td>Virtualization-based security running</td><td><em>System Information</em>: <em>Virtualization-based security</em> reads <em>Running</em></td></tr>
+            <tr><td>The policy reached it</td><td><span class="volatile" data-checked="2026-11"><em>Settings &gt; Windows Update &gt; Advanced options &gt; Configured update policies</em></span> lists <em>Enable hotpatching when available</em></td></tr>
+            <tr><td>Arm64 only: CHPE off</td><td><code>HotPatchRestrictions</code> set to 1 under <code>HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management</code>, then a restart</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">"Hotpatch did not work" usually means "the device was not eligible".</strong>
+          Nothing fails loudly: a device without virtualization-based security, or a month behind on its
+          baseline, takes the ordinary update and restarts, and the user reports that the no-restart update
+          restarted their PC. Check virtualization-based security first: Autopatch raises an alert for exactly
+          this, named <em>Hotpatch – VBS not running</em>. The rings and deadlines that keep applying underneath are
+          <span class="xref">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">When it goes wrong</div>
+      <div class="concept-title">There Is No Automatic Rollback, and a Critical Error Falls Back to the Full Update</div>
+      <div class="concept-desc">
+        A hotpatch cannot be rolled back automatically. It can be uninstalled, which is quick but needs a
+        restart, and the device then takes the ordinary cumulative update. Windows also watches itself: a
+        built-in monitor checks the health of installed hotpatches, logs any error in the Application log,
+        and on a critical one installs the standard cumulative update so the device is not left unprotected.
+        Microsoft's troubleshooting runs in a fixed order, from eligibility to the event log.
+        <!-- fact: Automatic rollback of a hotpatch isn't supported, but it can be uninstalled, which requires a restart, followed by the LCU; an inbox monitor service checks hotpatch health and logs errors to the Windows Application log, installing the standard LCU on a critical error; Microsoft's troubleshooting steps are eligibility and baseline, VBS running in System Information, the policy and the Enable hotpatching when available entry, CHPE on Arm64, AllowRebootlessUpdates in Event Viewer, and hotpatch errors in Windows Logs | source: Microsoft Learn, "Hotpatch updates" (Windows Autopatch, updated 2026-06-02), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Look at</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Eligibility, and whether the device is on the current baseline</td></tr>
+            <tr><td>2</td><td>Virtualization-based security reads <em>Running</em></td></tr>
+            <tr><td>3</td><td>The quality update policy targets the device with hotpatch set to Allow</td></tr>
+            <tr><td>4</td><td>On Arm64, CHPE switched off</td></tr>
+            <tr><td>5</td><td>Event Viewer shows <code>AllowRebootlessUpdates</code> set to true</td></tr>
+            <tr><td>6</td><td>The Application log, filtered for <em>hotpatch</em>, for the monitor's errors</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A restart you did not expect may be the safety net working.</strong> When the
+          monitor finds a critical hotpatch error it installs the full cumulative update, restart and all, so a
+          device that restarted in a hotpatch month may be one that protected itself. Read the Application log
+          before treating it as a policy fault. A security fix that cannot wait for any cycle is
+          <span class="xref">Emergency Patching — Advisory to Verified</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: UPDATE COMPLIANCE REPORTING ────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
@@ -5153,6 +5262,120 @@ Remove-PSSession $s
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: SECURITY COPILOT IN INTUNE ────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Security Copilot in Intune — Copilot, the Agents, and the Three That Retired in 2026</span>
+    <span class="topic-badge">Intune • AI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Copilot in Intune</div>
+      <div class="concept-title">Copilot in Intune Is Security Copilot With Intune's Data and the Asker's Permissions</div>
+      <div class="concept-desc">
+        Copilot in Intune is Microsoft Security Copilot <span class="volatile" data-checked="2026-11">built into the Intune admin center,
+        behind the <em>Copilot</em> button in its top banner</span>. It answers
+        questions about the tenant's devices, users, apps, policies, updates and compliance in plain language,
+        and can turn an answer into a group or a custom report; it also summarizes devices and policies, helps
+        troubleshoot a device, and reviews Endpoint Privilege Management requests. There is no Intune license
+        for it: it runs on Security Copilot's capacity, paid in security compute units, once Security Copilot
+        is set up and its Intune plug-in is on. By default the Intune Administrator role inherits owner access
+        and every other Intune role contributor access, and Copilot sees only what the asking admin's roles and
+        scope tags allow.
+        <!-- fact: Copilot in Intune is Security Copilot embedded in the Intune admin center, for data exploration in natural language (devices, users, apps, policies, updates, compliance) with results usable to add users or devices to groups and create custom reports, policy and setting management, device details and troubleshooting, EPM request analysis, Surface troubleshooting and Windows 365 Cloud PC insights; it is included with Security Copilot and consumes security compute units, with no Intune-specific license; Security Copilot must be configured with its first-run tour done, and the Intune plug-in enabled in Sources; with Intune enabled as a data source, the Entra Intune Administrator role inherits Security Copilot owner access and other Intune RBAC roles inherit contributor access by default, removable in the Security Copilot portal; Copilot honors Intune RBAC permissions and scope tags | source: Microsoft Learn, "Microsoft Copilot in Intune" (updated 2026-05-28), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask it to</th><th>It works from</th></tr></thead>
+          <tbody>
+            <tr><td>Find the devices matching a description, then make a group of them</td><td>Intune's device, user, app, policy, update and compliance data</td></tr>
+            <tr><td>Summarize a policy or a device</td><td>The same data, for one object</td></tr>
+            <tr><td>Troubleshoot one device</td><td>That device's details and history</td></tr>
+            <tr><td>Weigh an elevation request</td><td>Endpoint Privilege Management's request and file details</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">It sees what the admin sees, and every prompt spends capacity.</strong> Because
+          Copilot honors roles and scope tags, a regional admin's answers cover their region, which is right;
+          because every Intune role inherits contributor access by default, every Intune admin can spend the
+          tenant's security compute units, which may not be. Removing the Intune role groups from Security
+          Copilot's contributor role is the switch. The requests it reviews are those of
+          <span class="xref">Local Admin Rights — Removing Them, and Endpoint Privilege Management</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The agents</div>
+      <div class="concept-title">Of the Four Intune Agents Microsoft Documented, Three Retired in 2026</div>
+      <div class="concept-desc">
+        An agent differs from Copilot's chat: it runs a task on its own, under an identity of its own, and
+        brings its findings back for an administrator to act on. Microsoft documented four for Intune, and its
+        own pages now retire three of them. The Device Offboarding Agent could not be set up after 30 April
+        2026 and was removed on 1 June. The Policy Configuration Agent and the Change Review Agent left the
+        admin center on 31 August. The Vulnerability Remediation Agent remains, in public preview. Microsoft's
+        overview of Copilot in Intune, last updated in May, still lists all four, and MD-102 <span class="acro-exp">(Microsoft Endpoint Administrator Associate)</span>'s outline, skills
+        measured as of 27 October 2026, still asks candidates to use the agents, including to analyze device
+        performance, which none of the four did.
+        <!-- fact: Starting June 1, 2026 the Device Offboarding Agent is no longer available, and from April 30, 2026 it couldn't be set up; starting August 31, 2026 the Policy Configuration Agent and Change Review Agent are no longer available in the Intune admin center; the Vulnerability Remediation Agent is in public preview; the Change Review Agent evaluated Multi Admin Approval requests for Windows PowerShell scripts; the Policy Configuration Agent turned uploaded documents and benchmarks such as STIGs and NIST guidance into settings catalog suggestions; the Device Offboarding Agent found stale or misaligned devices across Intune and Entra ID and needed approval before offboarding | source: Microsoft Learn, "Get started with the Device Offboarding Agent" (updated 2026-04-01), "Policy Configuration Agent in Microsoft Intune" and "Change Review Agent overview" (both updated 2026-08-19), and "Vulnerability Remediation Agent in Microsoft Intune" (updated 2026-05-28), fetched and read | checked: 2026-11 -->
+        <!-- fact: The Copilot in Intune overview (updated 2026-05-28) and the Security Copilot agents in Intune overview (updated 2026-04-01) list Change Review, Device Offboarding, Policy Configuration and Vulnerability Remediation agents; the MD-102 study guide, skills measured as of 27 October 2026, lists investigating threats identified by Security Copilot agents in Intune, analyzing device performance by using them, and reviewing and responding to their recommendations | source: Microsoft Learn, both overviews fetched and read; the MD-102 study guide, read in the fourteenth wave | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Agent</th><th>Did</th><th>In November 2026</th></tr></thead>
+          <tbody>
+            <tr><td>Device Offboarding</td><td>Found stale or misaligned devices across Intune and Entra, and offboarded them on approval</td><td>Removed 1 June 2026</td></tr>
+            <tr><td>Policy Configuration</td><td>Turned documents and benchmarks such as STIGs <span class="acro-exp">(Security Technical Implementation Guide)</span> into settings catalog policies</td><td>Removed 31 August 2026</td></tr>
+            <tr><td>Change Review</td><td>Assessed the risk of Multi Admin Approval requests for PowerShell scripts</td><td>Removed 31 August 2026</td></tr>
+            <tr><td>Vulnerability Remediation</td><td>Ranks Defender's vulnerability findings and gives Intune steps to fix them</td><td>Public preview</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Do not build a process on a preview agent.</strong> Three of the four were
+          withdrawn in 2026, and their retirement pages told customers to plan alternatives or go back to the
+          tools they had used before. Keep the human workflow working and treat an
+          agent as a second opinion inside it. The fourth agent's source data is
+          <span class="xref">Defender Vulnerability Management — Exposure Score, Recommendations &amp; Handing the Fix to Intune</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The agent that remains</div>
+      <div class="concept-title">The Vulnerability Remediation Agent Runs as Its Own Identity, Ignores Scope Tags, and Cannot Be Stopped Once Started</div>
+      <div class="concept-desc">
+        The Vulnerability Remediation Agent reads Defender Vulnerability Management's findings for managed
+        Windows devices, ranks them by severity, exposure and device count, and gives step-by-step fixes in
+        Intune that can be marked as applied and tracked. It needs Intune Plan 1, Security Copilot capacity and
+        Defender Vulnerability Management, in the public cloud only. It runs as an Entra agentic identity, a
+        user account of its own, and does nothing until that identity is given read permissions in Intune and
+        Defender and passes a readiness check. In preview it does not support scope tags, so any admin who can
+        open the Intune admin center can see its findings, and once an admin starts it, it cannot be stopped
+        or paused.
+        <!-- fact: The Vulnerability Remediation Agent uses Defender Vulnerability Management data to identify CVEs on managed devices, prioritizes by CVSS, exposure impact and device count, gives Intune remediation steps, and lets suggestions be marked applied and tracked; requires Intune Plan 1, Security Copilot with SCUs, and Defender Vulnerability Management (Defender for Endpoint P2 or standalone), the Intune and Defender plugins, public cloud only; it runs under a Microsoft Entra agentic identity and agentic user, with runs disabled until permissions (Intune Read Only Operator or equivalent, Defender Security Reader equivalent) are delegated and the Run Readiness Check passes; agents set up under a human identity must move to an agentic identity within 90 days of its release, permanently; an admin must start it manually and it can't be stopped or paused once started; CVE counts exclude Windows Server editions; scope tags aren't supported in preview and admins can see its data outside their assigned roles or scope | source: Microsoft Learn, "Vulnerability Remediation Agent in Microsoft Intune" (updated 2026-05-28), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Before switching it on</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>Decide who may see every device's vulnerabilities</td><td>It ignores scope tags in preview, so a regional admin sees the whole estate's findings</td></tr>
+            <tr><td>Give its agentic user the read roles in Intune and Defender</td><td>Until then every run is disabled</td></tr>
+            <tr><td>Expect Windows clients only</td><td>Windows Server editions are left out of its counts</td></tr>
+            <tr><td>Start it deliberately</td><td>A started run cannot be stopped or paused</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Its output is a ranked to-do list, not a decision.</strong> The ranking is
+          Defender's data reordered with Intune's fix beside each item, which saves the joining-up and changes
+          nothing about who approves the change. The scope-tag gap is the part to raise with whoever owns
+          delegation: it shows every admin the whole estate's vulnerabilities, past the limits set out in
+          <span class="xref">Intune RBAC &amp; Scope Tags — Delegating Without Handing Over the Fleet</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
           <!-- ── TOPIC: WINDOWS 365 & AVD ──────────────────────────────── -->
           <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
@@ -5700,6 +5923,118 @@ echo %ERRORLEVEL%</pre>
           standing exception — and standing exceptions are how a service desk ends up holding an
           administrator role. Grant it, log it, and review the log; that is a smaller risk than the
           workaround it prevents.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: MULTI ADMIN APPROVAL ──────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">Multi Admin Approval — A Second Administrator Before a Wipe, a Script or a Role Change</span>
+    <span class="topic-badge">Intune • Delegation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What it protects</div>
+      <div class="concept-title">An Access Policy Holds a Change Until a Different Administrator Approves It</div>
+      <div class="concept-desc">
+        Multi Admin Approval answers one question: what can a single stolen Intune admin account do? With an
+        access policy in place for a kind of resource, any change to it waits until a different
+        administrator, from the policy's approver group, approves it. Nobody can approve their own request,
+        and that includes Global and Intune Administrators. It covers changes made in the portal and calls
+        that applications make to Microsoft Graph with their own credentials. Changing an access policy
+        always needs a second administrator, with no policy needed, and the tenant must have at least two
+        administrators before any of it works.
+        <!-- fact: Multi Admin Approval access policies require a second administrative account to approve a change before it's applied; only members of the policy's approval group can approve; an admin can't approve their own request, including Global Administrator and Intune Administrator; enforcement covers interactive delegated actions and app-authenticated Microsoft Graph calls, and only in tenants that already have access policies; protected resources are Apps (app deployments, not app protection policies), Compliance policies, Configuration policies (settings catalog), Device actions (wipe, retire, delete), Role-based access control (roles, permissions, admin and member group assignments), Scripts (scripts deployed to Windows devices) and Tenant Configuration (device categories); changes to access policies themselves always need a second administrator's approval; the tenant needs at least two administrator accounts | source: Microsoft Learn, "Use access policies to require multi admin approval" (updated 2026-07-31), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Access policy type</th><th>Holds for approval</th></tr></thead>
+          <tbody>
+            <tr><td>Device actions</td><td>Wipe, retire and delete</td></tr>
+            <tr><td>Scripts</td><td>Scripts deployed to Windows devices</td></tr>
+            <tr><td>Role-based access control</td><td>Changes to roles, their permissions, and who is assigned them</td></tr>
+            <tr><td>Apps</td><td>App deployments, though not app protection policies</td></tr>
+            <tr><td>Compliance and configuration policies</td><td>Compliance policies, and settings catalog policies</td></tr>
+            <tr><td>Tenant configuration</td><td>Device categories</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Protect what an intruder with one admin account would reach for first.</strong>
+          A mass wipe, a script pushed to every Windows device, and a role assignment that makes the intruder
+          harder to remove are the three high-damage moves, and they are the first three rows.
+          The policy does not make an account harder to take; that is the job of
+          <span class="xref">Intune RBAC &amp; Scope Tags — Delegating Without Handing Over the Fleet</span>,
+          which keeps each account's reach small to begin with.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The workflow</div>
+      <div class="concept-title">Request, Approve, Then the Requestor Completes It, Within Three Days</div>
+      <div class="concept-desc">
+        A protected change starts the ordinary way, and on its last page the administrator writes a business
+        justification and submits it. Approvers see it under <span class="volatile" data-checked="2026-11"><em>Tenant administration &gt; Multi
+        Admin Approval</em></span> or in <em>Admin Tasks</em>, read the justification, add notes, and approve or
+        reject. Approval does not apply the change: the original requestor has to open the request and select
+        <em>Complete</em>. A request nobody acts on for three days is marked <em>Expired</em> and has to be submitted again, and
+        only one request can be pending for any one object at a time.
+        <!-- fact: The requestor enters a business justification on the Save and Review surface and tracks it under Tenant administration, Multi Admin Approval, My requests; approvers use All requests or Tenant administration, Admin Tasks, add approver notes and approve or reject; after approval the original requestor must select Complete to apply the change; a request not processed within 3 days expires and must be resubmitted; status changes stay visible 30 days; a new request can't be submitted for an object that already has one pending; creating an access policy also goes through approval and completion | source: Microsoft Learn, "Use access policies to require multi admin approval" (updated 2026-07-31), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Who</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>Submit, with a business justification</td><td>The requestor</td><td>The usual create or edit page, at its end</td></tr>
+            <tr><td>Approve or reject, with notes</td><td>Another member of the approver group</td><td><em>All requests</em>, or <em>Admin Tasks</em></td></tr>
+            <tr><td>Complete</td><td>The original requestor, again</td><td><em>My requests</em></td></tr>
+            <tr><td>Expire</td><td>Nobody, after three days without action</td><td>Submit again</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Approved is not done.</strong> The change sits approved until its requestor comes
+          back and completes it, so an urgent wipe approved at midnight waits for the person who asked. For
+          urgent work Microsoft's advice is to contact the approvers directly; a runbook should also say who
+          completes the change, and how fast. The same two-person shape on the process side is
+          <span class="xref">Change Management – The Process That Prevents Self-Inflicted Outages</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Approvers and automation</div>
+      <div class="concept-title">The Approver Group Has to Be a Security Group Assigned to an Intune Role, or It Quietly Fails</div>
+      <div class="concept-desc">
+        The approver group is where this breaks without saying so. It must be a security group, because a
+        distribution list, a Microsoft 365 group or a mail-enabled security group silently fails to resolve
+        its members. It must be assigned directly to an Intune role as a member group, or Intune removes its
+        members from it from time to time. Its members should be direct members, since nesting is unreliable,
+        and each needs read permission for the kind of resource they approve. Automation is the other edge:
+        an application calling Graph with its own credentials is held like a person, unless the policy
+        excludes it, and an excluded app can change the protected resource with no approval at all.
+        <!-- fact: An approver must be in the approver group assigned to the access policy and have the resource's Read permission; the approver group must be a security group (distribution lists, Microsoft 365 groups and mail-enabled security groups silently fail to resolve membership), must be directly assigned to an Intune RBAC role as a member group or its members are removed periodically, and members should be direct members because nesting may be unreliable; administrators need an Intune license unless Allow access to unlicensed admins is enabled, which is irreversible; requestors need the normal RBAC permission for the action; enterprise applications using app-auth tokens can be excluded per policy, up to 50, with additions and removals needing approval and recorded in the audit log, while delegated calls stay subject to MAA even for an excluded app; the Change Review Agent could add suggestions for Windows PowerShell script requests | source: Microsoft Learn, "Use access policies to require multi admin approval" (updated 2026-07-31), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Get this wrong</th><th>And this happens</th></tr></thead>
+          <tbody>
+            <tr><td>The approver group is a distribution list or a Microsoft 365 group</td><td>Its members are never resolved, without an error</td></tr>
+            <tr><td>The group is not assigned to an Intune role as a member group</td><td>Intune removes its members periodically</td></tr>
+            <tr><td>Approvers are members through a nested group</td><td>Approval rights come and go unreliably</td></tr>
+            <tr><td>An automation app is excluded from the policy</td><td>That app changes protected resources with no second person, so its credentials become the soft spot</td></tr>
+            <tr><td><em>Allow access to unlicensed admins</em> is switched on</td><td>It stays on: Microsoft documents it as irreversible</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Test the approval path before the day it matters.</strong> Submit a harmless
+          change and have a second administrator approve it while nothing is on fire: a group that fails
+          silently is only discovered when a real request waits for approvers who were never there. And
+          review every excluded application as if it held an admin account, because for that resource it
+          does. Scripts that call Graph this way are
+          <span class="xref">Microsoft Graph From PowerShell — The Modern Admin API</span>.
         </div>
       </div>
     </div>

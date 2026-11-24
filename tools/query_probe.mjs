@@ -363,6 +363,22 @@ const READERS = [
     ["windows backup for organizations", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
     ["restore settings on a new pc", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
     ["restore settings during autopilot", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
+    // ── nineteenth wave: MD-102's last three gaps, added before their topics ──
+    // Opened at 0 of 13: seven zeros, `hotpatch` and `copilot in intune` among them words the site had
+    // never written, and six that found other cards. `policy configuration agent` reached 21, none about Intune.
+    ["hotpatch", "", "endpoint/hotpatch-security-updates-without-a-restart-and-the-quarterl"],
+    ["windows updates without restart", "", "endpoint/hotpatch-security-updates-without-a-restart-and-the-quarterl"],
+    ["hotpatch baseline month", "", "endpoint/hotpatch-security-updates-without-a-restart-and-the-quarterl"],
+    ["vbs not running", "", "endpoint/hotpatch-security-updates-without-a-restart-and-the-quarterl"],
+    ["multi admin approval", "", "endpoint/multi-admin-approval-a-second-administrator-before-a-wipe-a-"],
+    ["second admin must approve device wipe", "", "endpoint/multi-admin-approval-a-second-administrator-before-a-wipe-a-"],
+    ["approver group", "", "endpoint/multi-admin-approval-a-second-administrator-before-a-wipe-a-"],
+    ["approval request expired", "", "endpoint/multi-admin-approval-a-second-administrator-before-a-wipe-a-"],
+    ["security copilot agents in intune", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    ["vulnerability remediation agent", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    ["policy configuration agent", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    ["copilot in intune", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    ["security compute units", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
