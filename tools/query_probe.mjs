@@ -408,6 +408,22 @@ const READERS = [
     ["the same alert fires every night at the same time"],
     ["we have no logs from before last week"],
     ["the malware sample is password protected"],
+    // ── fifteenth wave: MS-102's Defender XDR objectives, added before their topics ──
+    // Opened at 0 of 13: five zeros and eight that found other cards. `exposure score` reached ten
+    // and `defender vulnerability management` fifteen, none of them about Microsoft's product.
+    ["advanced hunting kql", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    ["defender xdr incident", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    ["custom detection rule", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    ["automated investigation pending approval", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    ["attack simulation training", "", "m365/attack-simulation-training-phishing-simulations-training-cam"],
+    ["phishing simulation false clicks", "", "m365/attack-simulation-training-phishing-simulations-training-cam"],
+    ["third party phishing simulation", "", "m365/attack-simulation-training-phishing-simulations-training-cam"],
+    ["defender for cloud apps", "", "m365/defender-for-cloud-apps-app-connectors-cloud-discovery-why-u"],
+    ["unsanctioned app not blocked", "", "m365/defender-for-cloud-apps-app-connectors-cloud-discovery-why-u"],
+    ["cloud discovery log collector", "", "m365/defender-for-cloud-apps-app-connectors-cloud-discovery-why-u"],
+    ["defender vulnerability management", "", "endpoint/defender-vulnerability-management-exposure-score-recommendat"],
+    ["exposure score", "", "endpoint/defender-vulnerability-management-exposure-score-recommendat"],
+    ["remediation request intune", "", "endpoint/defender-vulnerability-management-exposure-score-recommendat"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],

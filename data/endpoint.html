@@ -2969,6 +2969,135 @@ Remove-PSSession $s
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DEFENDER VULNERABILITY MANAGEMENT ──────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧯</span>
+    <span class="topic-name">Defender Vulnerability Management — Exposure Score, Recommendations &amp; Handing the Fix to Intune</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Two scores</div>
+      <div class="concept-title">Exposure Score Should Go Down; Secure Score for Devices Should Go Up</div>
+      <div class="concept-desc">
+        Defender Vulnerability Management uses the Defender for Endpoint sensor to inventory software and
+        configuration on every onboarded device and match them against known vulnerabilities. Its dashboard,
+        <span class="volatile" data-checked="2026-11">under <em>Exposure management</em> for tenants in Microsoft's preview and under <em>Endpoints</em> for
+        the rest</span>, leads with two numbers that move in opposite directions. The
+        <strong class="c-cyan">exposure score</strong>, from 0 to 100, is how exposed the devices are, so lower
+        is better. <strong class="c-cyan">Microsoft Secure Score for Devices</strong> is a percentage for how
+        well they are configured, so higher is better. Both count only devices seen in the last 30 days, which
+        is not Defender for Endpoint's rule: it calls a device inactive after seven days of silence.
+        <!-- fact: Vulnerability Management is under Exposure management for customers in the Defender XDR + Defender for Identity preview, and under Endpoints for existing customers; exposure score levels are 0-29 low, 30-69 medium and 70-100 high, a lower score meaning less vulnerable, recalculated daily with up to 24 hours for remediation to show; the updated exposure score model, rolling out during a transition, combines CVSS and EPSS, weighs internet-facing status and asset criticality, and averages asset scores for the organization; devices not active in the last 30 days are not factored in, while Defender for Endpoint marks a device Inactive after seven days without communicating; Secure Score for Devices covers application, operating system, network, accounts and security controls, and currently supports configuration set via Group Policy, with settings made through Intune possibly showing as misconfigured | source: Microsoft Learn, "Defender Vulnerability Management dashboard" (updated 2025-12-01), "Exposure score" (updated 2026-05-26), "Security recommendations" (updated 2026-06-04) and "Microsoft Secure Score for devices" (updated 2025-12-01), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Number</th><th>Direction</th><th>What moves it</th></tr></thead>
+          <tbody>
+            <tr><td>Exposure score</td><td>0 to 100, lower is better: 0–29 low, 30–69 medium, 70–100 high</td><td>The vulnerabilities on devices, weighted by how exploitable they are and what the devices are worth. Recalculated daily</td></tr>
+            <tr><td>Secure Score for Devices</td><td>A percentage, higher is better</td><td>Configuration of the operating system, applications, network, accounts and security controls</td></tr>
+            <tr><td>Exposed devices</td><td>A count on each recommendation</td><td>Devices still missing that fix. Its trend line turns red when the count rises and green when it falls</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read the device secure score with Intune in mind.</strong> Microsoft's page says
+          it currently supports configuration set by Group Policy, and that settings applied through Intune may
+          show as misconfigured. On a fleet configured from Intune, check a configuration finding on the device
+          before believing it. The exposure score is mid-change too: an updated model that adds EPSS <span class="acro-exp">(Exploit Prediction Scoring System)</span> exploit
+          prediction and whether a device faces the internet is rolling out, and Microsoft warns that scores
+          and priorities may move with it while nothing in the environment has.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Recommendations</div>
+      <div class="concept-title">Each Recommendation Is Ranked by Threat, Breach Likelihood and the Device's Value</div>
+      <div class="concept-desc">
+        Weaknesses found on devices become security recommendations, usually <em>update this software</em>,
+        ranked by three things: the threat, meaning exploits that exist and alerts already raised; how likely
+        the device is to be breached; and its business value. Each one shows the CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> behind it, the exposed
+        devices, and how much it would lower the exposure score and raise the secure score. A CVE with no fix
+        anywhere has no recommendation at all: the Weaknesses list shows it tagged <em>No security
+        update</em>, and the software it affects is left off the recommendations page.
+        <!-- fact: Devices are scored on threat, breach likelihood and business value; recommendations show the potential reduction in exposure score and increase in Secure Score for Devices; a CVE with no security update is tagged No security update and its software is excluded from the Security recommendations page, while Some updates available marks a partial fix; EPSS gives a probability between 0 and 1, values under 0.001 count as 0, and over 0.9 the Threats tooltip shows it; threat filters are Associated active alert, Exploit is available, Exploit is verified and Exploit is part of an exploit kit; vulnerabilities without a CVE ID are named in the format TVM-2020-002; 32-bit and 64-bit architectures are not distinguished when correlating CVEs, which can cause false positives; PowerShell Constrained Language Mode, AppLocker or WDAC can restrict Defender for Endpoint's collection scripts and affect accuracy | source: Microsoft Learn, "Security recommendations" (updated 2026-06-04) and "Vulnerabilities in my organization" (updated 2026-09-10), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Signal on a CVE</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>Associated active alert</td><td>Something on your devices is already raising alerts about it</td></tr>
+            <tr><td>Exploit available, verified, or part of an exploit kit</td><td>Attack code exists for it, and the portal also marks when that code is verified and when it ships in an exploit kit</td></tr>
+            <tr><td>EPSS</td><td>The probability, from 0 to 1, that the CVE will be exploited in the wild. Above 0.9 the portal flags it; below 0.001 it counts as 0</td></tr>
+            <tr><td><em>Some updates available</em></td><td>Part of the affected software has a fix, and that part has a recommendation</td></tr>
+            <tr><td><em>No security update</em></td><td>Nothing to deploy: the answer is a mitigation, or an exception</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Two known causes of findings that are not real.</strong> The matching does not
+          tell 32-bit software from 64-bit, so a CVE that affects only one architecture can be flagged on both;
+          and AppLocker, WDAC <span class="acro-exp">(Windows Defender Application Control)</span> or PowerShell's Constrained Language Mode can stop the scripts Defender for
+          Endpoint collects with. Check both before arguing with the finding. How the ranking fits the general
+          process is in <span class="xref">Vulnerability Management — Finding and Fixing Weaknesses</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Handing the fix to IT</div>
+      <div class="concept-title">A Remediation Request Is a Ticket in Intune, Not a Deployment</div>
+      <div class="concept-desc">
+        From a recommendation, <em>Request remediation</em> creates a remediation activity that the security
+        team can track and, if the Microsoft Intune connection is turned on, a security task in Intune.
+        Submitting it changes nothing on any device. An Intune administrator accepts or rejects the task and
+        deploys the fix. The connection is a toggle under <span class="volatile" data-checked="2026-11"><em>Settings &gt; Endpoints &gt; General &gt;
+        Advanced features</em></span>, off by default, and without it there is no option to create the Intune task.
+        One request sends at most 10,000 devices to Intune, the <em>attention required</em> option creates
+        nothing that can be tracked, and completed activities are deleted after 180 days.
+        <!-- fact: Remediation requests need the Microsoft Intune connection toggle under Settings, Endpoints, General, Advanced features, off by default; submitting a request creates a remediation activity and doesn't trigger remediation or change devices, and the IT administrator approves or rejects it in Intune and starts the deployment; at most 10,000 devices are sent to Intune; the attention required option creates no remediation action to track; completed remediation activities are removed after 180 days; the Completed by column shows an email address, System confirmation, or N/A | source: Microsoft Learn, "Remediate vulnerabilities with Microsoft Defender Vulnerability Management" (updated 2026-08-08), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Who</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>Request remediation, with a priority and a due date</td><td>Security</td><td>The Defender portal, from the recommendation</td></tr>
+            <tr><td>Accept or reject the security task</td><td>Endpoint administrator</td><td>Intune</td></tr>
+            <tr><td>Deploy the fix</td><td>Endpoint administrator</td><td>Intune: an update ring, an app update, or a configuration change</td></tr>
+            <tr><td>Track it, and mark it complete</td><td>Either</td><td>The Defender portal's <em>Remediation</em> page</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Exposure falls when Intune ships the fix, not when the request is filed.</strong>
+          The Remediation page shows who closed each activity: an email address for a person, <em>System
+          confirmation</em> when every device was fixed. The deployments that close most requests are
+          <span class="xref">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span> for Windows
+          itself and <span class="xref">Win32 App Packaging — .intunewin End to End</span> for everything else.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Exceptions</div>
+      <div class="concept-title">An Exception Hides a Risk for a Fixed Time, and Cannot Be Extended</div>
+      <div class="concept-desc">
+        When a recommendation cannot be acted on, because there is no fix, a compensating control covers it, or
+        the update breaks an application, an exception takes it out of the work. It covers a whole
+        recommendation or a single CVE, globally or for chosen device groups, and needs a justification and a
+        duration. A duration cannot be extended: when it ends, the item comes back and a new exception is
+        needed. While one is in force, the threat analytics and alerts tied to the item are suppressed, and
+        the exposure score reflects it within an hour. Exceptions are made in the portal only, not through the API <span class="acro-exp">(Application Programming Interface)</span>.
+        <!-- fact: Exceptions are of two types, security recommendation and CVE, scoped globally or by device group, with a justification and duration; durations can't be extended and a new exception is needed after expiry; it can take up to one hour to affect exposed device counts and the exposure score; threat analytics and alerts related to the excluded item are suppressed; exceptions are supported only in the Defender portal, not the public API | source: Microsoft Learn, "Create and view exceptions for security recommendations and CVEs" (updated 2026-07-02), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="concept-desc verdict">
+        <strong class="c-amber">Treat the expiry as the review date.</strong> An exception that cannot be extended
+        forces the decision to be made again, which is what an exception is for. Who may accept the risk, and
+        for how long, is a governance question rather than a console one, and
+        <span class="xref">Exceptions &amp; Risk Acceptance — The Process That Decides Whether Policy Means Anything</span>
+        answers it.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: LOCAL ADMIN RIGHTS & EPM ───────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">

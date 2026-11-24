@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **475 elements at rest instead of 152,766** — measured at 1,587 topics,
+  costs **475 elements at rest instead of 153,352** — measured at 1,591 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -68,8 +68,8 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🏛️ Engineering | ARCH, SWE | System Design, Architecture, Craft, Reliability, Career, IT Job Titles |
 | 📊 Data | SQL, DATA | SQL, DB Internals, NoSQL, Warehousing, DBA |
 | 🌐 Web | WEB, JS | Browser, CSS, JS, Frameworks, Performance, A11y |
-| 📧 Microsoft 365 | M365, MS-102 | Tenant anatomy, licensing, admin roles, **Exchange Online** (mail flow, connectors, EOP/Defender, message trace), **SharePoint & OneDrive** (architecture, sharing sprawl, KFM), **Teams** (architecture, governance, policies, voice, call quality), **Purview** (retention, holds, labels, DLP, eDiscovery, insider risk), admin PowerShell, usage reporting, backup, tenant-to-tenant migration, troubleshooting playbook |
-| 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Co-management |
+| 📧 Microsoft 365 | M365, MS-102 | Tenant anatomy, licensing, admin roles, **Exchange Online** (mail flow, connectors, EOP/Defender, message trace), **SharePoint & OneDrive** (architecture, sharing sprawl, KFM), **Teams** (architecture, governance, policies, voice, call quality), **Purview** (retention, holds, labels, DLP, eDiscovery, insider risk), **Defender XDR** (incidents, advanced hunting, attack simulation training, Defender for Cloud Apps), admin PowerShell, usage reporting, backup, tenant-to-tenant migration, troubleshooting playbook |
+| 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Co-management, Defender for Endpoint and Defender Vulnerability Management |
 | ♾️ DevOps, Platform & Delivery | DevOps, CKA | CI/CD, Terraform & IaC, containers, Kubernetes, GitOps, secrets, supply chain, serverless, caching, queues |
 | 🏢 Windows Server & Infrastructure | AD DS, Server | Editions & licensing, Server Core, AD DS boundaries, FSMO, replication, trusts, Group Policy, storage, RAID, backup & DR |
 | 🧮 Computer Science Fundamentals | Theory | Big-O in practice, amortized analysis, recursion, P vs NP, cache locality, hash tables, trees, graphs, probabilistic structures, the ASCII chart |
