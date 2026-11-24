@@ -1152,6 +1152,116 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AWS APPLICATION INTEGRATION ───────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📨</span>
+    <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Application Integration — SQS <span class="acro-exp">(Simple Queue Service)</span>, SNS <span class="acro-exp">(Simple Notification Service)</span>, EventBridge &amp; Step Functions</span>
+    <span class="topic-badge">AWS • Integration</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">SQS</div>
+      <div class="concept-title">An SQS Message Arrives At Least Once, So Every Consumer Must Survive a Second Copy</div>
+      <div class="concept-desc">
+        Amazon SQS comes in two kinds of queue. A <strong class="c-cyan">standard</strong> queue takes a nearly
+        unlimited rate of calls, delivers every message at least once, and orders them on a best-effort basis
+        only. A <strong class="c-cyan">FIFO <span class="acro-exp">(First In, First Out)</span></strong> queue keeps strict order within a message group and
+        processes each message exactly once, using a deduplication ID or the message's content, at up to 3,000
+        messages a second per API <span class="acro-exp">(Application Programming Interface)</span> action with batching, or 30,000 transactions a second in high-throughput
+        mode. Either way, a message
+        a consumer has received is hidden from the others for the <strong class="c-cyan">visibility
+        timeout</strong>, 30 seconds by default and 12 hours at most; if the consumer has not deleted it by then,
+        it becomes visible and is delivered again.
+        <!-- fact: SQS standard queues support nearly unlimited API calls per second per action, at-least-once delivery and best-effort ordering; FIFO queues process up to 3,000 messages per second per API method with batching (300 calls of 10 messages), up to 30,000 TPS in high throughput mode with relaxed ordering across message groups, strict ordering within a message group, and exactly-once processing using MessageDeduplicationId or content-based deduplication | source: AWS documentation, "Amazon SQS queue types", fetched and read | checked: 2026-11 -->
+        <!-- fact: The default visibility timeout is 30 seconds and the maximum 12 hours from when the message is received; because of at-least-once delivery a message can be received more than once; messages with the same message group ID in a FIFO queue are processed in strict sequence | source: AWS documentation, "Amazon SQS visibility timeout", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Standard queue</th><th>FIFO queue</th></tr></thead>
+          <tbody>
+            <tr><td>Throughput</td><td>Nearly unlimited</td><td>3,000 messages a second per action with batching; 30,000 transactions a second in high-throughput mode</td></tr>
+            <tr><td>Delivery</td><td>At least once</td><td>Exactly-once processing, with deduplication</td></tr>
+            <tr><td>Order</td><td>Best effort</td><td>Strict within a message group</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Set the visibility timeout longer than the work takes, and make the work safe
+          to repeat.</strong> A consumer still busy when the timeout ends sees its message handed to someone else,
+          and a standard queue can deliver a copy anyway. Designing the consumer so that a duplicate does no harm
+          is cheaper than trying to prevent duplicates. Queues as a pattern, before any one product, are
+          <span class="xref">Message Queues &amp; Event-Driven Architecture</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Dead-letter queues</div>
+      <div class="concept-title">A Dead-Letter Queue Catches the Message That Keeps Failing, and Its Clock Is Already Running</div>
+      <div class="concept-desc">
+        A redrive policy names a dead-letter queue and a <code>maxReceiveCount</code>: once a message has been
+        received that many times without being deleted, SQS moves it aside, so one poisoned message stops
+        blocking the rest. Set the count high enough to allow for honest retries. The trap is retention. In a
+        standard queue a message's expiry counts from when it was first enqueued, and moving it does not reset
+        that, so a message that spent a day in the source queue lives only three more days in a dead-letter
+        queue set to keep messages for four. FIFO queues reset the clock on the move.
+        <!-- fact: A redrive policy moves a message to the dead-letter queue after maxReceiveCount receives, which should be high enough to allow sufficient retries; for standard queues expiration is always based on the original enqueue timestamp, unchanged by the move, so a message one day old in the source is deleted from a four-day dead-letter queue after three days, and ApproximateAgeOfOldestMessage shows when it moved; best practice is a dead-letter queue retention longer than the source's; for FIFO queues the enqueue timestamp resets when the message moves | source: AWS documentation, "Using dead-letter queues in Amazon SQS", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Queue type</th><th>After the move, the message expires</th><th>So</th></tr></thead>
+          <tbody>
+            <tr><td>Standard</td><td>By its original enqueue time</td><td>Give the dead-letter queue a longer retention than the source</td></tr>
+            <tr><td>FIFO</td><td>By the time it moved</td><td>Retention starts afresh in the dead-letter queue</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A dead-letter queue nobody reads is a slower way to lose messages.</strong> Its
+          messages expire like any others, sooner than they appear to in a standard queue, so somebody has to be
+          told when it fills and has to decide what to replay. The age metric there measures time since the move,
+          not since the message was sent, which makes it read younger than it is. Getting told is the subject of
+          <span class="xref">AWS Observability — CloudWatch &amp; X-Ray</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SNS, EventBridge, Step Functions</div>
+      <div class="concept-title">SNS Fans Out, EventBridge Routes, Step Functions Orchestrates</div>
+      <div class="concept-desc">
+        Three services answer three different shapes of conversation. Amazon SNS delivers what a publisher
+        sends to a topic to every subscriber, which is the <strong class="c-cyan">fanout</strong> pattern: one
+        order message copied to several SQS queues that each do their own work. Amazon EventBridge routes events
+        from many sources to many targets on an event bus, with Pipes for point-to-point flows that need
+        enrichment; its newer Custom Event Bus keeps events for a period you set and supports ordered delivery
+        and replay, beside the Classic bus of rules and targets, and AWS says to start new applications on the
+        newer one. AWS Step Functions runs a workflow as a state machine: Standard workflows execute each step
+        exactly once and can run for a year; Express workflows run at least once, for up to five minutes, at
+        high event rates.
+        <!-- fact: In SNS publishers send messages to a topic delivered to multiple subscribers across endpoints; fanout replicates a message published to a topic to multiple endpoints such as SQS queues | source: AWS documentation, "What is Amazon SNS?", fetched and read | checked: 2026-11 -->
+        <!-- fact: EventBridge has event buses, routers delivering events from many sources to zero or more targets with optional transformation, and Pipes, for point-to-point integrations with enrichment; it offers two event buses, the Custom Event Bus, which retains events for a period you set and supports ordered delivery, replay and non-JSON payloads, and Custom Event Bus - Classic, which routes with rules and targets; AWS advises starting new applications with the Custom Event Bus | source: AWS documentation, "What Is Amazon EventBridge?", fetched and read | checked: 2026-11 -->
+        <!-- fact: Step Functions workflows are state machines; Standard workflows have exactly-once execution and can run for up to one year; Express workflows have at-least-once execution, run for up to five minutes and suit high-event-rate workloads | source: AWS documentation, "What is Step Functions?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Service</th><th>Shape</th><th>Reach for it when</th></tr></thead>
+          <tbody>
+            <tr><td>SQS</td><td>One queue, competing consumers</td><td>Work must be buffered and taken by whichever consumer is free</td></tr>
+            <tr><td>SNS</td><td>One topic, many subscribers</td><td>Every subscriber needs its own copy of each message</td></tr>
+            <tr><td>EventBridge</td><td>A bus that routes by content</td><td>Events from many sources go to different targets by their contents</td></tr>
+            <tr><td>Step Functions</td><td>A state machine</td><td>Steps must run in order, with retries, branches and a record of each run</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Choose Standard or Express by what a repeat would cost.</strong> A Step Functions
+          Express workflow may run a step more than once, which is fine for idempotent stream processing and wrong for a
+          payment. And for any of the four, the decoupling is the point: the producer no longer needs to know who
+          consumes or whether they are up. The design argument for that is
+          <span class="xref">Event-Driven Architecture</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
@@ -1383,6 +1493,124 @@ gcloud compute instances list --project my-prod-project</pre>
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AWS HYBRID STORAGE & DATA TRANSFER ────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🚚</span>
+    <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Hybrid Storage &amp; Data Transfer — Storage Gateway, DataSync, Transfer Family &amp; the Devices That Closed</span>
+    <span class="topic-badge">AWS • Hybrid</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Storage Gateway</div>
+      <div class="concept-title">Storage Gateway Puts AWS Storage Behind a Protocol Your Servers Already Speak</div>
+      <div class="concept-desc">
+        AWS Storage Gateway is a software appliance that sits in your own site, as a virtual machine on VMware
+        ESXi, KVM <span class="acro-exp">(Kernel-based Virtual Machine)</span>, Microsoft Hyper-V or Nutanix AHV or as a hardware appliance, or in AWS as an EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> instance,
+        and presents cloud storage to local servers in the form they already use. An
+        <strong class="c-cyan">S3 <span class="acro-exp">(Simple Storage Service)</span> File Gateway</strong> offers file shares over NFS <span class="acro-exp">(Network File System)</span> (versions 3 and 4.1) and SMB <span class="acro-exp">(Server Message Block)</span>
+        (versions 2 and 3), stores each file as an object in S3, and caches recent data locally. A
+        <strong class="c-cyan">Volume Gateway</strong> offers iSCSI <span class="acro-exp">(Internet Small Computer Systems Interface)</span> block volumes: cached volumes keep the data in
+        S3 and the busy part on site, while stored volumes keep everything on site and back it up to S3 as
+        point-in-time snapshots. A <strong class="c-cyan">Tape Gateway</strong> looks like a tape library to
+        backup software and archives the virtual tapes to S3 Glacier Flexible Retrieval or Deep Archive. A
+        fourth type, FSx File Gateway, for reaching FSx for Windows File Server shares, is no longer available
+        to new customers; existing customers keep using it.
+        <!-- fact: Storage Gateway can be deployed on premises as a VM on VMware ESXi, KVM, Microsoft Hyper-V or Nutanix AHV, as a hardware appliance, or in AWS as an Amazon EC2 instance; it offers file-based (S3 File Gateway and FSx File Gateway), volume-based (Volume Gateway) and tape-based (Tape Gateway) solutions; Volume Gateway volumes mount as iSCSI devices, as cached volumes (data in Amazon S3, frequently accessed subsets kept locally) or stored volumes (all data local, point-in-time snapshots backed up asynchronously to Amazon S3, recoverable to Amazon EC2); Tape Gateway archives backup data in S3 Glacier Flexible Retrieval or S3 Glacier Deep Archive | source: AWS documentation, "What is Volume Gateway?" and "What is Tape Gateway?", fetched and read | checked: 2026-11 -->
+        <!-- fact: S3 File Gateway stores and retrieves objects in Amazon S3 using NFS version 3 or 4.1 and SMB versions 2 and 3, with S3 lifecycle policies, cross-region replication and versioning applying, and low-latency access through local caching | source: AWS documentation, "What is Amazon S3 File Gateway", fetched and read | checked: 2026-11 -->
+        <!-- fact: Amazon FSx File Gateway is no longer available to new customers; existing customers can continue to use the service normally; it provides on-premises access to FSx for Windows File Server shares and needs a VPN or Direct Connect connection | source: AWS documentation, "What is Amazon FSx File Gateway", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Gateway</th><th>Local servers see</th><th>Data lands in</th></tr></thead>
+          <tbody>
+            <tr><td>S3 File Gateway</td><td>NFS or SMB file shares</td><td>S3, one object per file</td></tr>
+            <tr><td>Volume Gateway, cached</td><td>iSCSI volumes</td><td>S3, with the busy part cached on site</td></tr>
+            <tr><td>Volume Gateway, stored</td><td>iSCSI volumes</td><td>On site, with snapshots backed up to S3</td></tr>
+            <tr><td>Tape Gateway</td><td>A tape library</td><td>S3 Glacier Flexible Retrieval or Deep Archive</td></tr>
+            <tr><td>FSx File Gateway</td><td>SMB shares of FSx for Windows File Server</td><td>Closed to new customers</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pick the gateway by what the old system speaks, not by where you want the data.</strong>
+          Backup software that writes to tape gets a Tape Gateway and keeps its jobs unchanged; a server that
+          mounts disks gets a Volume Gateway; people and applications using shares get a File Gateway. Every type
+          depends on the link to AWS, so size that first. iSCSI itself, and what a volume is to the server, are in
+          <span class="xref">SAN &amp; Fabric — LUNs, Zoning, Multipathing &amp; iSCSI vs Fibre Channel</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DataSync, Transfer Family</div>
+      <div class="concept-title">DataSync Moves Your Data; Transfer Family Lets Other People Send You Theirs</div>
+      <div class="concept-desc">
+        Two services move files over the network, and they answer different questions. AWS DataSync copies data
+        you own between storage systems: from NFS, SMB, HDFS <span class="acro-exp">(Hadoop Distributed File System)</span> or object storage on site, or from other clouds such
+        as Google Cloud Storage and Azure Blob Storage, to S3, EFS <span class="acro-exp">(Elastic File System)</span> or the FSx family, and between AWS services. It
+        validates what arrives, encrypts it in transit, can run over VPC <span class="acro-exp">(Virtual Private Cloud)</span> endpoints instead of the public
+        internet, and suits migrations, archiving cold data straight into S3 Glacier, and recurring copies. AWS
+        Transfer Family runs managed endpoints that speak SFTP <span class="acro-exp">(SSH File Transfer Protocol)</span>, FTPS <span class="acro-exp">(File Transfer Protocol Secure)</span>, FTP <span class="acro-exp">(File Transfer Protocol)</span>, AS2 and browser-based transfer, writing
+        into S3 or EFS, so partners and customers keep the clients and settings they already use.
+        <!-- fact: AWS DataSync is a file transfer service to, from and between AWS storage services; on-premises sources include NFS, SMB, HDFS and object storage; AWS services include Amazon S3, Amazon EFS and Amazon FSx for Windows File Server, Lustre, OpenZFS and NetApp ONTAP; other clouds include Google Cloud Storage, Microsoft Azure Blob Storage and Azure Files; it includes encryption and data integrity validation, supports VPC endpoints to avoid the public internet, and its use cases are migrating data, archiving cold data to S3 Glacier Flexible Retrieval or Deep Archive, replicating data and transferring data for in-cloud processing | source: AWS documentation, "What is AWS DataSync?", fetched and read | checked: 2026-11 -->
+        <!-- fact: AWS Transfer Family offers fully managed transfers over SFTP (version 3), FTPS, FTP, AS2 and web browser-based transfers into and out of Amazon S3 and Amazon EFS, keeping existing client-side configurations for authentication, access and firewalls; FTP and FTPS data connections use ports 8192 to 8200 | source: AWS documentation, "What is AWS Transfer Family?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The job</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Move a file server's contents into S3, EFS or FSx, once or on a schedule</td><td>DataSync</td></tr>
+            <tr><td>Partners upload files by SFTP or AS2, as they always have</td><td>Transfer Family</td></tr>
+            <tr><td>Servers on site keep reading and writing files that live in S3</td><td>S3 File Gateway</td></tr>
+            <tr><td>Copy a bucket's contents in from another cloud</td><td>DataSync</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Ask who starts the transfer.</strong> If your team moves its own data, it is
+          DataSync's job; if outsiders push files to you on their schedule, it is Transfer Family's; if the files
+          must stay usable on site while living in AWS, it is a gateway's. Transfer Family supports plain FTP for
+          old clients, and FTP sends passwords unencrypted, so prefer SFTP or FTPS wherever the other side can
+          use them. The link all three depend on is
+          <span class="xref">Hybrid Connectivity — VPN, Interconnect &amp; Peering</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Snow Family</div>
+      <div class="concept-title">The Exam Still Lists the Snow Family; AWS No Longer Sells Snowball Edge to New Customers</div>
+      <div class="concept-desc">
+        Snowball Edge is a rugged device with storage and compute on board, shipped to you by carrier, loaded
+        locally over network adapters of up to 100 Gbit/s with encryption enforced, and shipped back so its data
+        goes into S3 without crossing the internet. It came as Storage Optimized, at 210 TB, and Compute
+        Optimized. AWS has closed it to new customers and points them elsewhere: DataSync for transfers over the
+        network, AWS Data Transfer Terminal for secure physical transfers, partner solutions, and AWS Outposts
+        for computing at the edge. The SAA-C03 guide's in-scope list still names the AWS Snow Family under
+        Migration and Transfer, beside DataSync, Transfer Family, AWS DMS and AWS Application Migration Service.
+        <!-- fact: AWS Snowball Edge is no longer available to new customers; new customers should explore AWS DataSync for online transfers, AWS Data Transfer Terminal for secure physical transfers, or AWS Partner solutions, and AWS Outposts for edge computing; Snowball Edge is a device with on-board storage and compute that transports data by regional carrier, in Storage Optimized 210 TB and Compute Optimized configurations, with network adapters of up to 100 Gbit/second and enforced encryption, importing and exporting data between local environments and Amazon S3 | source: AWS documentation, "What is Snowball Edge?", fetched and read | checked: 2026-11 -->
+        <!-- fact: The SAA-C03 in-scope services list, under Migration and Transfer, names AWS Application Discovery Service, AWS Application Migration Service, AWS DataSync, AWS DMS, AWS Snow Family and AWS Transfer Family | source: AWS Certified Solutions Architect - Associate (SAA-C03) exam guide, in-scope AWS services and features, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Data</th><th>Link</th><th>Time at full speed, all bandwidth used</th></tr></thead>
+          <tbody>
+            <tr><td>10 TB</td><td>1 Gbit/s</td><td>About 22 hours</td></tr>
+            <tr><td>100 TB</td><td>1 Gbit/s</td><td>About 9 days</td></tr>
+            <tr><td>100 TB</td><td>10 Gbit/s</td><td>About 22 hours</td></tr>
+            <tr><td>1 PB</td><td>1 Gbit/s</td><td>About 93 days</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Do the arithmetic before choosing between a cable and a courier.</strong> Time is
+          data divided by bandwidth: 100 TB is 800,000 gigabits, which a fully used 1 Gbit/s link moves in about
+          nine days, and no real link runs flat out for nine days beside everything else. That sum is why the
+          Snow Family existed, and it has not changed; what has changed is the answer for a new account, which is
+          now Data Transfer Terminal or a partner. Outposts, where AWS now points edge computing, is one form of
+          <span class="xref">Edge Computing — What It Is Once the Marketing Is Removed</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗃️</span>
@@ -1435,6 +1663,112 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AWS DATA INGESTION & ANALYTICS ────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🌊</span>
+    <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Data Ingestion &amp; Analytics — Kinesis, Firehose, Glue, Athena &amp; EMR</span>
+    <span class="topic-badge">AWS • Data</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Kinesis Data Streams</div>
+      <div class="concept-title">A Stream Keeps Order Within a Shard; a Queue Consumer Trades That Order for Parallelism</div>
+      <div class="concept-desc">
+        Kinesis Data Streams collects records in real time for applications that consume them, and it now offers
+        two ways to read. A <strong class="c-cyan">stream consumer</strong> reads each shard in order, one
+        consumer instance per shard at a time, which suits processing where each record depends on the ones
+        before it, such as live analytics or anomaly detection. A <strong class="c-cyan">queue consumer</strong>
+        takes each record independently, at least once and not necessarily in order, so it suits stateless work
+        such as order processing, scales by adding instances, and must be safe to run twice; one failed record
+        does not hold up the rest. Both can read the same stream at once, and the stream can also deliver
+        straight to Apache Iceberg tables or Amazon S3 <span class="acro-exp">(Simple Storage Service)</span> with no consumer at all.
+        <!-- fact: Kinesis Data Streams collects and processes large streams of data records in real time; a consumer is a stream consumer, which reads a shard's records in order with one instance per shard at a time and suits stateful processing such as live analytics, personalization and anomaly detection, or a queue consumer, which receives each record independently, at least once and not necessarily in order, suits stateless processing such as microservice integration, order processing and per-record inference, adds instances to scale and should be idempotent, with one failed record not holding up others; both can process the same data at the same time; the stream can deliver to streaming tables on Apache Iceberg or to Amazon S3 without a consumer; the Kinesis platform includes Firehose, Kinesis Video Streams and Managed Service for Apache Flink | source: AWS documentation, "What is Amazon Kinesis Data Streams?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Stream consumer</th><th>Queue consumer</th></tr></thead>
+          <tbody>
+            <tr><td>Order</td><td>Kept, within each shard</td><td>Not guaranteed</td></tr>
+            <tr><td>Scales by</td><td>Shards: one instance reads one shard at a time</td><td>Adding instances, which lease no shards</td></tr>
+            <tr><td>Suits</td><td>Stateful work: running totals, sessions, anomaly detection</td><td>Stateless work: one record, one action</td></tr>
+            <tr><td>A failing record</td><td>Holds up the shard behind it</td><td>Holds up nothing else</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Decide whether a record needs the ones before it.</strong> If it does, the
+          shard's order is the reason to use a stream consumer, and its cost is that one bad record blocks its
+          shard. If it does not, a queue consumer scales more simply and isolates failures, provided the work is
+          idempotent. The same choice between an ordered log and a queue, outside AWS, is in
+          <span class="xref">Message Queues &amp; Event-Driven Architecture</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Firehose</div>
+      <div class="concept-title">Firehose Delivers a Stream to Storage, Buffering by Size or by Time</div>
+      <div class="concept-desc">
+        Amazon Data Firehose is the delivery half of the platform: a fully managed service that takes streaming
+        data and writes it to a destination, such as Amazon S3, Amazon Redshift, Amazon OpenSearch Service,
+        Splunk, Apache Iceberg tables or an HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> endpoint, with no consumer code to run. It can transform the
+        data on the way. It also buffers: incoming data is held until it reaches a set size in megabytes or a set
+        interval of time, then delivered, which is what turns a flood of small records into fewer, larger
+        objects in storage.
+        <!-- fact: Amazon Data Firehose is a fully managed service for delivering real-time streaming data to destinations such as Amazon S3, Amazon Redshift, Amazon OpenSearch Service, OpenSearch Serverless, Splunk, Apache Iceberg tables and HTTP endpoints; it can transform data before delivery; it buffers incoming data to a buffer size in MB or a buffer interval before delivering | source: AWS documentation, "What is Amazon Data Firehose?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>You need</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Your own code processing records as they arrive</td><td>Kinesis Data Streams, with stream or queue consumers</td></tr>
+            <tr><td>Records landed in S3, a warehouse or a search index, untouched or lightly transformed</td><td>Data Firehose</td></tr>
+            <tr><td>A stream landed in S3 or Iceberg tables directly from Data Streams</td><td>Data Streams' own delivery, with no consumer</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Buffering is a latency setting as well as a cost one.</strong> Larger buffers
+          make fewer, bigger objects, which suits storage and queries, and they also mean data reaches the
+          destination later; small buffers do the reverse. Pick the interval from how fresh the data must be
+          where it lands. Where those objects end up is
+          <span class="xref">AWS Storage — S3 Classes, EBS &amp; EFS</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Glue, Athena, EMR</div>
+      <div class="concept-title">Glue Catalogs and Transforms, Athena Queries in Place, EMR Runs the Clusters</div>
+      <div class="concept-desc">
+        Once data is in S3, three services work on it. AWS Glue is serverless data integration: crawlers infer
+        a dataset's schema and record it in the Glue Data Catalog, and its jobs run extract, transform and load
+        pipelines on a serverless Apache Spark engine. Amazon Athena queries data where it sits in S3 with
+        standard SQL <span class="acro-exp">(Structured Query Language)</span>, or runs Apache Spark, with nothing to provision and payment only for the queries run.
+        Amazon EMR, once Elastic MapReduce, is a managed cluster platform for frameworks such as Apache Hadoop
+        and Apache Spark, for work that needs a cluster you size and control.
+        <!-- fact: AWS Glue is a serverless data integration service with a centralized Data Catalog, crawlers that infer schema information into it, visual ETL pipelines and an Apache Spark-based serverless ETL engine, with pay-as-you-go billing | source: AWS documentation, "What is AWS Glue?", fetched and read | checked: 2026-11 -->
+        <!-- fact: Amazon Athena runs standard SQL ad-hoc queries on data in Amazon S3 and can run Apache Spark; it is serverless and you pay only for the queries you run | source: AWS documentation, "What is Amazon Athena?", fetched and read | checked: 2026-11 -->
+        <!-- fact: Amazon EMR, previously Amazon Elastic MapReduce, is a managed cluster platform that simplifies running big data frameworks such as Apache Hadoop and Apache Spark on AWS | source: AWS documentation, "What is Amazon EMR?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Service</th><th>You manage</th><th>Reach for it when</th></tr></thead>
+          <tbody>
+            <tr><td>Glue</td><td>Jobs and crawlers, no servers</td><td>Data needs cataloging and transforming on a schedule or a trigger</td></tr>
+            <tr><td>Athena</td><td>Queries, no servers</td><td>Someone needs answers from data in S3 now, occasionally</td></tr>
+            <tr><td>EMR</td><td>A cluster: its size, its software, its lifetime</td><td>Heavy, long or tuned workloads need control of the cluster</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Start serverless and move to a cluster when the work proves it needs one.</strong>
+          Glue and Athena cost nothing between jobs and queries, which suits intermittent analysis; EMR earns its
+          management when workloads are constant or need tuning a managed engine will not allow. The data
+          warehouse these feed, on Google's side, is
+          <span class="xref">BigQuery — Serverless Data Warehouse</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">💾</span>

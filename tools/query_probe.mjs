@@ -1190,6 +1190,23 @@ const READERS = [
     // flat across the step.
     ["our reserved instances expired", "",
      "cloud/commitment-discounts-reserved-savings-plans-the-forecast-the"],
+    // ── twenty-second wave: the AWS SAA-C03 outline's gaps, added before their topics ──
+    // Opened at 0 of 14: seven zeros, `eventbridge`, `kinesis` and `datasync` among words the site had
+    // never written, and seven that found other cards. `step functions express` reached 26.
+    ["sqs visibility timeout", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["dead letter queue", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["sqs fifo vs standard", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["sns fanout", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["eventbridge", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["step functions express", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["kinesis data streams", "", "cloud/aws-data-ingestion-analytics-kinesis-firehose-glue-athena-em"],
+    ["amazon data firehose", "", "cloud/aws-data-ingestion-analytics-kinesis-firehose-glue-athena-em"],
+    ["athena query s3", "", "cloud/aws-data-ingestion-analytics-kinesis-firehose-glue-athena-em"],
+    ["aws glue crawler", "", "cloud/aws-data-ingestion-analytics-kinesis-firehose-glue-athena-em"],
+    ["storage gateway", "", "cloud/aws-hybrid-storage-data-transfer-storage-gateway-datasync-tr"],
+    ["datasync", "", "cloud/aws-hybrid-storage-data-transfer-storage-gateway-datasync-tr"],
+    ["snowball", "", "cloud/aws-hybrid-storage-data-transfer-storage-gateway-datasync-tr"],
+    ["sftp to s3", "", "cloud/aws-hybrid-storage-data-transfer-storage-gateway-datasync-tr"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
