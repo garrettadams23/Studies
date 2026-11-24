@@ -562,10 +562,18 @@ function openDomain(section, opts = {}) {
   if (!section) return;
   const header = section.querySelector(".domain-header");
   const body = section.querySelector(".domain-body");
+  // Opened now, as against already on screen: a chip or a link aimed at the
+  // open domain must not reopen topics the reader has closed since.
+  const opening = !isHydrated(section) || !body.classList.contains("open");
   hydrateDomain(section);
   body.classList.add("open");
   header.classList.add("open");
   header.setAttribute("aria-expanded", "true");
+  // EXPAND is a mode, not a one-off. It used to open the topics of the domain
+  // on screen and stop there, so the next domain clicked arrived collapsed with
+  // the switch still showing on. While it is on, every domain opened — by its
+  // header, its chip, a link or a search — arrives with every topic open.
+  if (allExpanded && opening) setDomainTopicsOpen(section, true);
   // A domain opened while a search is running shows that search's result, not
   // its whole self — otherwise the chips and the search disagree about what the
   // page is showing.
@@ -994,9 +1002,17 @@ function filter(domain, chip) {
 }
 
 // ── EXPAND / COLLAPSE ALL ──────────────────────────────────────────────────
-// Scoped to the open domain, because that is the only content there is. The
-// old whole-page version would have to build all 29 domains to expand them —
-// the exact thing a reader pressing "expand" is not asking for.
+// A mode: on, the open domain shows every topic, and so does each domain opened
+// after it (openDomain reads `allExpanded`). Scoped to one domain at a time,
+// because that is the only content there is — the old whole-page version would
+// have to build all 29 domains to expand them, the exact thing a reader
+// pressing "expand" is not asking for.
+
+/** Open or close every topic in one domain. */
+function setDomainTopicsOpen(section, open) {
+  section?.querySelectorAll(".topic-header").forEach(h => setTopicOpen(h, open));
+}
+
 function toggleAll() {
   allExpanded = !allExpanded;
   let section = _liveDomain;
@@ -1006,14 +1022,16 @@ function toggleAll() {
     if (section) openDomain(section);
   }
   if (section) {
-    section.querySelectorAll(".topic-header").forEach(h => setTopicOpen(h, allExpanded));
+    setDomainTopicsOpen(section, allExpanded);
     if (!allExpanded) closeDomain(section);
   } else {
     allExpanded = false;
   }
   const hdrBtn = document.getElementById("hdr-expand-btn");
   if (hdrBtn) {
-    hdrBtn.title = allExpanded ? "Collapse the open domain" : "Expand the open domain";
+    hdrBtn.title = allExpanded
+      ? "Expand is on: every domain you open shows all its topics (press e to turn off)"
+      : "Expand all topics, in this domain and each one you open next (press e)";
     hdrBtn.setAttribute("aria-checked", allExpanded ? "true" : "false");
   }
 }

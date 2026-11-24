@@ -1892,6 +1892,48 @@ check("the error-code lookup answers a code in every form a console prints it",
   `focus ${lookup.focused}; 1603 -> ${lookup.dec[0]}; hex ${lookup.hex[0]}; negative ${lookup.neg[0]}; ` +
   `bare ${lookup.bare[0]}; 0x80070643 -> ${lookup.wrapped[0]}`);
 
+// ── EXPAND is a mode: each domain opened while it is on opens fully ─────────
+// It used to expand the domain on screen and stop there, so the next domain
+// clicked arrived collapsed while the switch still showed on. The owner's
+// example was endpoint's Troubleshooting Toolkit, reached by its chip.
+const expandMode = await step("expand mode follows the reader to the next domain", async () => {
+  await page.goto(PAGE, { waitUntil: "load" });
+  const openCount = id => page.evaluate(d => {
+    const s = document.querySelector(`.domain-section[data-domain="${d}"]`);
+    const bodies = [...(s?.querySelectorAll(".topic > .topic-body") || [])];
+    return { n: bodies.length, open: bodies.filter(b => b.classList.contains("open")).length };
+  }, id);
+  const arrived = id => page.waitForSelector(`.domain-section[data-domain="${id}"] .topic`,
+    { state: "attached", timeout: 5000 });
+  await page.locator('.chip[data-domain="m365"]').click();
+  await arrived("m365");
+  await page.locator("#hdr-expand-btn").click();
+  const first = await openCount("m365");
+  await page.locator('.chip[data-domain="endpoint"]').click();
+  await arrived("endpoint");
+  const byChip = await openCount("endpoint");
+  const example = await page.evaluate(() => !!document.getElementById("troubleshooting-toolkit-log-reference")
+    ?.querySelector(":scope > .topic-body")?.classList.contains("open"));
+  await page.locator('.chip[data-domain="all"]').click();
+  await page.locator('.domain-section[data-domain="net"] .domain-header').click();
+  await arrived("net");
+  const byHeader = await openCount("net");
+  const pressed = await page.locator("#hdr-expand-btn").getAttribute("aria-checked");
+  await page.locator("#hdr-expand-btn").click();
+  await page.locator('.domain-section[data-domain="cs"] .domain-header').click();
+  await arrived("cs");
+  const off = await openCount("cs");
+  return { first, byChip, example, byHeader, pressed, off };
+});
+const full = r => r && r.n > 0 && r.open === r.n;
+check("expand mode opens every topic of each domain opened while it is on",
+  !!expandMode && full(expandMode.first) && full(expandMode.byChip) && expandMode.example &&
+  full(expandMode.byHeader) && expandMode.pressed === "true" && expandMode.off.open === 0,
+  expandMode ? `m365 ${expandMode.first.open}/${expandMode.first.n}; endpoint by chip ` +
+    `${expandMode.byChip.open}/${expandMode.byChip.n}; net by header ${expandMode.byHeader.open}/` +
+    `${expandMode.byHeader.n}; switch ${expandMode.pressed}; switched off, cs opens ${expandMode.off.open} topics`
+    : "");
+
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
 

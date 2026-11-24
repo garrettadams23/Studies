@@ -24,7 +24,8 @@ Open `index.html` in any modern web browser — no server or build step required
 - **Theme Engine** — Dark / Light mode with `localStorage` persistence.
 - **Collapsible Accordions** — Domain and topic-level expand / collapse, fully
   keyboard-operable (`Tab` to a header, `Enter` / `Space` to toggle).
-- **Expand All / Collapse All** — Header button for bulk toggle.
+- **Expand All / Collapse All** — The header's EXPAND switch (or `e`) opens every topic in the
+  open domain, and stays on: each domain opened after it, by header, chip or link, opens fully too.
 - **Per-topic Permalinks** — Copy a `#slug` link to any topic; opening such a
   URL expands and scrolls straight to it.
 - **Study Progress** — Mark topics as reviewed (saved in `localStorage`); each
