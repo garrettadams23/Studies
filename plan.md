@@ -73,7 +73,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **166** · search **59** · resilience **64** · axe 33/33 · mobile 16/16 · visual 2/2 · backup 3/3. The error-code lookup added one check to each of smoke, mobile and axe's two themes. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **25** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **26** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -4344,4 +4344,62 @@ Its path points only at topics that answer an objective, and §20 lists the rest
 2 commits · 2 exam paths · 1 retired exam found and its tag corrected · 0 new topics
 paths 112 -> 114 · path steps 2,066 -> 2,128 · topics 1,587, unchanged
 45 gates green · smoke 166, whose learning-path checks read the new paths · mobile 16/16
+```
+
+## Session — the fifteenth wave, MS-102's Defender XDR area and a stamper that wrote when asked for help
+
+The request was the owner's again: keep going through the waves. §20's queue put MS-102's Defender XDR
+area first, the exam's largest at 30 to 35% and the site's thinnest, and four of its eight gaps make
+this wave. *Content ideas* §21 is the table.
+
+### Read first, then the census, then the cards
+
+Thirty-two pages from Microsoft Learn were fetched and read before a card was written: incidents,
+automated investigation, advanced hunting with its quotas and query resources report, custom
+detections and four table schemas; the attack simulation guides, its FAQ and the advanced delivery
+policy; eight pages on Defender for Cloud Apps and eight on vulnerability management. Thirteen
+queries went into *a SOC analyst or defender* next and opened at 0 of 13. Each of the 21 fact anchors
+names its page and the date Microsoft last updated it, so the next check knows which pages to open
+first.
+
+### What the pages said that the cards had to carry
+
+The cards carry six things that are true this month and dated as such: incident cases are in preview,
+Defender for Cloud Apps moved its anomaly policies to a dynamic model in June 2025, its Microsoft 365
+connector gained default components in January 2026, its file policies retire on 6 January 2027, an
+updated exposure score model is rolling out, and Secure Score for Devices reads Group Policy and can
+call Intune-made settings wrong. One more was a reading that would have been easy to get backwards:
+`UrlClickEvents` is filled by Safe Links, so an empty click query means no click Safe Links saw, not no
+click. Microsoft's simulation FAQ says the same of simulation clicks.
+
+### Two checks that were right about the words and wrong about the product
+
+`check_renames.py` failed `make check` on eight uses of *Office 365*. Seven were inside *Defender for
+Office 365*, the product's current name, which the rename registry itself gives as the successor of
+*Advanced Threat Protection*; the older `m365` cards say *Defender for Office*, a shortening the check
+never sees. One was a real old name, *an activity in Office 365*, copied from a Microsoft table
+description, and now reads Microsoft 365. The allow list was there; it matched only phrases that start
+at the flagged words, and this one ends at them, its first letter one character outside the window.
+Widened to the longest allowed phrase, with a fixture for each side.
+
+`check_volatility.py` does not fail; it counts topics that name a vendor console with no dated span,
+and the count went from three to six. All three new ones were these cards naming the Defender portal.
+Four volatile spans now mark the console paths, and the count is three again.
+
+### A tool that wrote when asked for help
+
+`stamp_freshness.py --help` was meant to print the options. The script never looked for `--help`, so it
+ran its default, the whole-tree write its own docstring warns against, and re-derived stamps until the
+pipe into `head` closed. `git status` showed 25 files changed. Twenty-three held only stamp changes
+and were checked out; in `m365` and `endpoint`, 80 moved stamps on existing topics were restored from
+HEAD by title, two of them by hand where the match missed, until the diff held nothing but this wave's
+additions. The script now prints its docstring for `--help` and refuses, writing nothing, an option it
+does not read or a domain name without `--only`. **A tool whose default is a write has to fail closed
+on an argument it does not recognize.**
+
+```
+3 commits · 4 topics, 16 concept cards · 13 census queries, 0 of 13 -> 13 of 13 · 2 tools fixed
+topics 1,587 -> 1,591 · path steps 2,128 -> 2,136 · related links 5,098 -> 5,138 · dated claims 138 -> 163
+45 gates green · smoke 166 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
 ```
