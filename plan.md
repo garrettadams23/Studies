@@ -34,7 +34,7 @@ What is left here is what a session actually reads.
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
 | **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too | ✅ **shipped** — see its §9 to §19 |
-| **Error codes and packaging** | Three items from the owner, added as written: an error-code lookup in the header's row of buttons, the Intune and MECM codes compared, and MSI, .intunewin and EXE explained. Each checked against the site first | 🔜 **queued** — waves 12 and 13 |
+| **Error codes and packaging** | Three items from the owner, added as written: an error-code lookup in the header's row of buttons, the Intune and MECM codes compared, and MSI, .intunewin and EXE explained. Each checked against the site first, with the owner's guide to MSI against EXE in MECM kept beside them as written | 🔜 **queued** — waves 12 and 13 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -2253,6 +2253,76 @@ button there.
 4. **Every code is read in Microsoft's own reference before it is written** — the Windows
    Installer error list, Intune's app installation error reference and Configuration Manager's
    — and anything that cannot be confirmed there is left out rather than guessed.
+
+## 4. The owner's reference — MSI against EXE in MECM
+
+Added as written, as the reference items 2 and 3 are measured against. It is the owner's account
+of how the Application Model treats the two formats, and it is the shape the `endpoint` topics
+should have: the comparison table, the client's log trail, the pitfalls and a checklist. Its
+specific claims, the error codes above all, are checked against Microsoft's documentation
+before a card repeats them, and the record of the wave that writes the topics says which were
+confirmed and which were not.
+
+```markdown
+# MECM Application Model: MSI vs. EXE Deployment Guide
+
+## Overview
+
+In Microsoft Endpoint Configuration Manager (MECM), **MSI (Windows Installer)** files integrate natively with the Application Model by automatically populating install/uninstall strings, detection methods, and return codes. **EXE (Script Installer)** files are opaque wrappers that require administrators to manually research and configure silent switches, detection logic, and return codes in the console.
+
+> [!IMPORTANT]
+> **Recommended Action:** Always prioritize vendor **MSI** installers for standard enterprise deployments. If a vendor only provides an **EXE** or requires complex pre/post-install tasks (such as closing active processes or copying configuration files), wrap the deployment using a standardized PowerShell script via the **Script Installer** deployment type.
+
+---
+
+## Architectural Comparison: MSI vs. EXE in MECM
+
+When creating a Deployment Type under `Software Library > Overview > Application Management > Applications`, the MECM engine handles MSI and EXE files through two distinct workflows:
+
+| Feature / Mechanism | MSI (`Windows Installer (*.msi file)`) | EXE (`Script Installer`) |
+| --- | --- | --- |
+| **Metadata Parsing** | **Automatic:** MECM reads the MSI database tables directly to extract Product Name, Version, Publisher, and Product Code GUID. | **Manual:** MECM cannot see inside the EXE wrapper. All metadata must be typed manually into the wizard. |
+| **Install / Uninstall Strings** | **Auto-Generated:** Automatically populates `msiexec /i "app.msi" /q` and `msiexec /x {Product-GUID} /q`. | **Manual Research Required:** You must discover the vendor's underlying packager (InstallShield, Inno Setup, NSIS, WiX) and supply exact silent flags (e.g., `/S`, `/silent`, `/verysilent`, `/qn`). |
+| **Detection Method** | **Auto-Created:** Automatically configures detection using the **MSI Product Code GUID** and optionally the `ProductVersion` property. | **Manual Configuration Required:** You must manually build a Detection Clause using **Registry Keys** (`HKLM\...\Uninstall`), **File System** (file path and version), or a custom detection script. |
+| **Customization** | **Standardized:** Handled natively via Windows Installer Properties (`PROPERTY=VALUE`) or Transform files (`TRANSFORMS="custom.mst"`). | **Vendor-Specific:** Requires passing command-line arguments, answer files (`.iss`, `.ini`, `.xml`), or wrapping the EXE in a script. |
+| **Return Codes** | **Standardized:** Adheres strictly to `msiexec` standards (`0` = Success, `3010` = Soft Reboot, `1641` = Hard Reboot, `1603` = Fatal Error). | **Non-Standard:** Varies wildly by vendor. Custom return codes must be manually mapped in the **Return Codes** tab of the Deployment Type properties. |
+
+---
+
+## Client Enforcement & Evaluation Lifecycle
+
+Regardless of whether you deploy an MSI or an EXE, the MECM client agent processes them through the exact same local state machine, tracked in `C:\Windows\CCM\Logs`:
+
+| Execution Phase | Client Log File | How MSI Works vs. How EXE Works |
+| --- | --- | --- |
+| **1. Pre-Install Discovery** | `AppDiscovery.log` | **MSI:** Queries the local Windows Installer database for the `{GUID}`. <br>**EXE:** Checks the specific File Path or Registry Key manually defined. If detected, installation is skipped. |
+| **2. Content Download** | `CAS.log` & `DataTransferService.log` | Identical for both. The client downloads all files in the content source folder from the Distribution Point to `C:\Windows\ccmcache`. |
+| **3. Enforcement** | `AppEnforce.log` | Executes the command line under the `NT AUTHORITY\SYSTEM` context (if set to *Install for system*). Logs the exact command string, Process ID (PID), and waits for the process to exit. |
+| **4. Post-Install Verification** | `AppEnforce.log` | Immediately after the installer exits with a success code (`0` or `3010`), MECM re-runs the **Detection Method**. If a manual EXE detection rule is misconfigured, MECM throws error `0x87D00324` (*The application was not detected after installation completed*). |
+
+---
+
+## Common Pitfalls & Remediation
+
+> [!WARNING]
+> Always test EXE silent switches under the `NT AUTHORITY\SYSTEM` context prior to deploying to production collections to avoid hidden modal dialog prompts hanging the MECM client enforcement thread.
+
+| Pitfall | Root Cause | Remediation |
+| --- | --- | --- |
+| **Error `0x87D00324` on EXE Installs** | The EXE installed successfully, but the manual Detection Method checked the wrong registry hive (e.g., 32-bit vs. 64-bit `WOW6432Node`) or wrong file version. | Verify the exact registry path in `regedit` on a test machine after installing, or select **"This registry key is associated with a 32-bit application on 64-bit systems"** in the Detection Rule window. |
+| **Installation hangs for 120 minutes (`0x87D00664`)** | The EXE silent switch was omitted or incorrect, causing a hidden UI dialog box to prompt for user input under the non-interactive `SYSTEM` account. | Test the exact command line locally using `psexec.exe -i -s cmd.exe` to simulate the MECM `SYSTEM` context and verify zero UI popups appear before deploying. |
+| **EXE spawns child process and exits early** | Bootstrapper EXEs often extract an underlying MSI, launch it, and immediately close the main EXE process. MECM sees the main PID close, runs Detection too early, and fails. | Extract the underlying MSI from `%TEMP%` while the EXE is open, or use a PowerShell wrapper script that waits for child processes to finish before exiting. |
+
+---
+
+## Pre-Deployment Verification Checklist
+
+- [ ] Verify whether an official vendor `.msi` exists or can be extracted from the `.exe` bootstrapper.
+- [ ] Test silent install and uninstall command strings locally under the `SYSTEM` account (`psexec.exe -i -s cmd.exe`).
+- [ ] Validate that the Detection Method accurately reflects the installed state (Registry `Uninstall` key or primary executable `File Version`).
+- [ ] Confirm custom vendor exit codes are mapped in the Deployment Type **Return Codes** tab.
+- [ ] Distribute content to target Distribution Point Groups and validate `AppDiscovery.log` and `AppEnforce.log` on a pilot client.
+```
 
 
 # Domain shape — the connectivity measurement, and what it says
