@@ -319,6 +319,17 @@ const READERS = [
     ["everyone in one office cannot print"],
     ["the new starter is missing from teams",
      "kind 3 — `starter` at 12 is the binding word and it is the reader's noun for a joiner. `m365` covers the fault as a mechanism: group-based licensing, license assignment, and the joiner half of joiner-mover-leaver. The lag between an account existing and Teams showing it is licensing, and the card says so in the site's words"],
+    // ── twelfth wave: the owner's packaging and error-code items, added before their topics ──
+    // Opened at 0 of 8: one zero, `0x87d1041c`, and seven that found other cards. Two of those,
+    // `error 1603` and `exit code 3010`, reach cards that name the code in a list of weekly ones.
+    ["msi vs exe", "", "endpoint/msi-exe-intunewin-what-each-package-is-and-how-it-installs"],
+    ["what is an intunewin file", "", "endpoint/msi-exe-intunewin-what-each-package-is-and-how-it-installs"],
+    ["silent install switches", "", "endpoint/msi-exe-intunewin-what-each-package-is-and-how-it-installs"],
+    ["msiexec silent install", "", "endpoint/msi-exe-intunewin-what-each-package-is-and-how-it-installs"],
+    ["0x87d1041c", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
+    ["intune vs mecm error codes", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
+    ["error 1603", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
+    ["exit code 3010", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
