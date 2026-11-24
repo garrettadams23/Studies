@@ -4624,6 +4624,231 @@ Remove-PSSession $s
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: MSI, EXE & .INTUNEWIN ─────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">MSI <span class="acro-exp">(Microsoft Installer)</span>, EXE &amp; .intunewin — What Each Package Is, and How It Installs</span>
+    <span class="topic-badge">Packaging • Formats</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Three different things</div>
+      <div class="concept-title">MSI vs EXE: a Database Windows Runs, a Program That Runs Itself — and a Box That Carries Either</div>
+      <div class="concept-desc">
+        The three file types an endpoint engineer packages are not three versions of one idea. An MSI is a
+        Windows Installer database: tables that describe the files, registry entries and shortcuts to put in
+        place, which the Windows Installer service applies through <code>msiexec</code>. An EXE is a program,
+        and what it does when run is up to whoever built it: it may be an installer made with Inno Setup, NSIS,
+        InstallShield or WiX, or a bootstrapper that unpacks an MSI and runs that. A .intunewin file is not an
+        installer at all. It is the whole setup folder, compressed by Microsoft's Win32 Content Prep Tool so
+        Intune can carry it, and the install command you give Intune runs whatever is inside.
+        <!-- fact: The Win32 Content Prep Tool (IntuneWinAppUtil.exe, parameters -c setup folder, -s setup file, -o output folder, -q quiet) zips every file and subfolder of the setup folder into the .intunewin file, reads the information Intune needs from an MSI setup file, caps a Windows app at 30 GB, and requires installers that run silently | source: Microsoft Learn, Prepare Win32 app content for upload, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Format</th><th>What runs</th><th>Silent install</th><th>What Windows records</th></tr></thead>
+          <tbody>
+            <tr><td>MSI</td><td>The Windows Installer service, reading the package's tables</td><td><code>msiexec /i "app.msi" /qn /norestart</code> — the same switches for every MSI</td><td>A product code, a GUID <span class="acro-exp">(Globally Unique Identifier)</span>, that identifies the installed product and is how it is repaired or removed: <code>msiexec /x {product-code} /qn</code></td></tr>
+            <tr><td>EXE</td><td>The program itself, with whatever logic its author wrote</td><td>Whatever its author built in: <code>/VERYSILENT</code> for Inno Setup, a case-sensitive <code>/S</code> for NSIS, other forms for others</td><td>Usually an uninstall entry in the registry, but nothing guarantees one</td></tr>
+            <tr><td>.intunewin</td><td>Nothing by itself: Intune unpacks it and runs the install command you configured</td><td>Whatever the installer inside needs</td><td>Nothing. Intune decides an app is installed with the detection rule you give it</td></tr>
+          </tbody>
+        </table>
+        <!-- fact: msiexec /i installs, /x uninstalls, /qn means no UI, /quiet no user interaction, /passive a progress bar only, /norestart suppresses the restart, and /L with flags such as *v writes a log | source: Microsoft Learn, msiexec (Windows commands), fetched and read | checked: 2026-11 -->
+        <!-- fact: Inno Setup's /SILENT and /VERYSILENT, with /SUPPRESSMSGBOXES and /NORESTART; a very silent setup that needs a restart reboots without asking unless /NORESTART is given | source: jrsoftware.org, Setup Command Line Parameters, fetched and read | checked: 2026-11 -->
+        <!-- fact: NSIS installers take /S for a silent install, and the switch is case sensitive, so /s does not work; an installer's author can disable it | source: the NSIS wiki and SilentInstall reference as quoted in search results; the NSIS manual's page refused the request and was not read | checked: 2026-11 -->
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Packaging into .intunewin changes nothing about how the installer behaves.</strong>
+          An EXE that shows a dialog box shows it inside a .intunewin too, and an MSI that needs a restart still
+          needs one. The wrapper decides how the files travel to the device; the command line decides whether
+          the install is silent. The upload steps are in
+          <span class="xref">Win32 App Packaging — .intunewin End to End</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">What the tool can know</div>
+      <div class="concept-title">An MSI Tells the Deployment Tool About Itself; an EXE Makes You Tell It</div>
+      <div class="concept-desc">
+        In MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span>, a Windows Installer deployment type can read an MSI and fill in the application's details
+        and its detection rule from the file. A Script Installer deployment type, which is what an EXE needs,
+        knows only what you type. Intune works the same way: give the Content Prep Tool an MSI and it records
+        what Intune needs, give it an EXE and the commands and detection rule are yours to write.
+        <!-- fact: MECM can automatically detect application information from installation files; a Windows Installer (*.msi) application type imports the folder's files; a Windows Installer detection clause checks an MSI product code; File System and Registry clauses offer "associated with a 32-bit application on 64-bit systems"; Install for system installs once for all users | source: Microsoft Learn, Create applications in Configuration Manager, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What the tool needs</th><th>From an MSI</th><th>From an EXE</th></tr></thead>
+          <tbody>
+            <tr><td>Name, version, publisher</td><td>Read from the package</td><td>Typed in by hand</td></tr>
+            <tr><td>Install and uninstall commands</td><td><code>msiexec</code> with the package and its product code</td><td>The vendor's switches, found by reading its documentation or by testing</td></tr>
+            <tr><td>Detection: is it installed?</td><td>The product code, checked with Windows Installer</td><td>A registry value, a file and its version, or a script, chosen and tested by you</td></tr>
+            <tr><td>Customization</td><td>Properties on the command line, <code>PROPERTY=value</code>, or a transform file, <code>TRANSFORMS=custom.mst</code></td><td>Whatever the vendor offers: arguments, an answer file, or a wrapper script</td></tr>
+            <tr><td>Exit codes</td><td>Windows Installer's own list, the same for every MSI</td><td>The vendor's, which you map to success, restart or failure</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Prefer the vendor's MSI, and when there is only an EXE, find out what built it.</strong>
+          Many EXEs are a known installer framework, with known switches, or a wrapper around an MSI that can be
+          deployed on its own. An EXE nobody can identify is the one that needs a wrapper script around it, so
+          that the deployment tool gets a silent command, a predictable exit code and something to detect.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Testing</div>
+      <div class="concept-title">Test It the Way the Client Runs It: as SYSTEM, With No One to Click</div>
+      <div class="concept-desc">
+        MECM's <em>Install for system</em> and Intune's <em>System</em> install behavior both run the command as
+        the local SYSTEM account, with no user to answer a prompt. A dialog box that appears there waits,
+        unseen, until the tool gives up: by default after 120 minutes in MECM, its maximum allowed run time, and
+        60 minutes in Intune, which allows up to 1,440. Microsoft's own advice is to test the exact command in
+        the system context first.
+        <!-- fact: MECM's Maximum allowed run time defaults to 120 minutes; Intune's Installation time required defaults to 60 minutes with a maximum of 1,440; Microsoft's general tip is to test the command with psexec -accepteula -s -i cmd and confirm with whoami; calling powershell.exe from an Intune Win32 app launches 32-bit PowerShell | source: Microsoft Learn, Create applications in Configuration Manager, Add and assign Win32 apps to Intune, and the Configuration Manager application installation error codes reference, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># A command prompt running as SYSTEM, from an administrator prompt, with Sysinternals PsExec</span>
+psexec -accepteula -s -i cmd
+whoami                     <span class="com"># nt authority\system</span>
+<span class="com"># Run the exact command the deployment will run, with a verbose log, then read the exit code</span>
+msiexec /i "app.msi" /qn /norestart /l*v "%TEMP%\app-install.log"
+echo %ERRORLEVEL%</pre>
+        <table class="ref-table">
+          <thead><tr><th>Trap</th><th>What happens</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>A missing or wrong silent switch</td><td>A prompt nobody can see holds the install until the time limit, and it fails</td><td>Run the command as SYSTEM first and watch for any window</td></tr>
+            <tr><td>A bootstrapper that exits early</td><td>The EXE starts the real installer and exits, the tool checks detection too soon, and reports a failure that was not one</td><td>Deploy the MSI it unpacks, or wrap it in a script that waits for the real installer to finish</td></tr>
+            <tr><td>32-bit and 64-bit locations</td><td>A 32-bit app writes under <code>WOW6432Node</code> and <code>Program Files (x86)</code>, and a detection rule looking in the 64-bit place never finds it</td><td>Tick the rule's 32-bit option in MECM or Intune, or point the rule at the right path</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A command tested only as yourself has not been tested.</strong> Your session
+          has a desktop, your profile, mapped drives and a 64-bit shell, and the client has none of those. When
+          the install works and the tool still reports failure, the fault is usually the detection rule, which
+          is the subject of
+          <span class="xref">App Deployment Error Codes — Intune and MECM Side by Side, by What Raised Them</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: APP DEPLOYMENT ERROR CODES ─────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧾</span>
+    <span class="topic-name">App Deployment Error Codes — Intune and MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Side by Side, by What Raised Them</span>
+    <span class="topic-badge">Deployment • Error Codes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Read the layer first</div>
+      <div class="concept-title">Three Layers Raise Codes, and the Form of the Number Says Which</div>
+      <div class="concept-desc">
+        Comparing Intune with MECM is the wrong place to start for most codes, because most of them belong to
+        neither. A deployment has three layers that can fail, and each reports in its own form. The
+        installer returns a small decimal exit code, and both tools pass it on unchanged. The management agent,
+        MECM's client or Intune's management extension, raises codes that start <code>0x87D</code>. Windows
+        itself raises codes that start <code>0x8007</code> or <code>0x8000</code>. Both consoles may also show
+        the same code as a negative decimal: 0x87D00324 is -2016410844.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Looks like</th><th>Examples</th><th>Where the answer is</th></tr></thead>
+          <tbody>
+            <tr><td>The installer</td><td>Decimal: 0, 1603, 3010</td><td>The same codes from any MSI <span class="acro-exp">(Microsoft Installer)</span>, in either tool</td><td>The installer's own log. For an MSI, a verbose log written with <code>/l*v</code></td></tr>
+            <tr><td>The management agent</td><td><code>0x87D…</code></td><td>0x87D00324 in MECM, 0x87D1041C in Intune</td><td>The agent's logs: <code>AppEnforce.log</code> and <code>AppDiscovery.log</code> for MECM, the IME <span class="acro-exp">(Intune Management Extension)</span> logs for Intune</td></tr>
+            <tr><td>Windows</td><td><code>0x8007…</code>, <code>0x8000…</code></td><td>Access denied, a bad hash, a missing class</td><td>Usually a Windows error number underneath, decoded below</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># 0x8007 followed by four hex digits is a Windows error number in disguise. Drop 0x8007, convert the rest:</span>
+0x80070643   <span class="com"># 0x643 = 1603  the MSI fatal error, as Windows reports it</span>
+0x80070652   <span class="com"># 0x652 = 1618  another installation is already in progress</span>
+0x80070BC2   <span class="com"># 0xBC2 = 3010  success, but a restart is required</span>
+0x80070005   <span class="com"># 0x005 = 5     access denied</span></pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">An installer code and an agent code point at different places.</strong> A
+          1603 means the installer itself failed, so its log has the answer. A 0x87D code often means the
+          installer did its job and the agent disagrees, usually about detection, so the answer is in the
+          agent's logs and the detection rule. Reading the logs is covered in
+          <span class="xref">Application Troubleshooting — Reading the IME Log</span> and
+          <span class="xref">MECM Deployment &amp; Content Troubleshooting</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The common ones</div>
+      <div class="concept-title">Intune vs MECM Error Codes: the Ones Both Consoles Show, and Their Pairs</div>
+      <div class="concept-desc">
+        Error 1603 and exit code 3010 mean the same thing in both tools, because both come from Windows
+        Installer. The agent codes differ by tool, but several are pairs: the same failure, numbered twice.
+        <!-- fact: Windows Installer: 0 success; 1602 user canceled; 1603 fatal error during installation; 1605 only valid for installed products; 1618 another installation in progress; 1619 package could not be opened; 1625 forbidden by system policy; 1633 not supported on this platform; 1638 another version already installed; 1641 the installer has initiated a restart, success; 3010 a restart is required to complete the install, success | source: Microsoft Learn, MsiExec.exe and InstMsi.exe error messages, fetched and read | checked: 2026-11 -->
+        <!-- fact: Configuration Manager: 0x87D00324 the application was not detected after installation completed; 0x87D00325 application was still detected after uninstall completed; 0x87D00327 script is not signed; 0x87D00607 content not found; 0x87D00667 no current or future service window; 0x87D01106 failed to verify the executable file or construct the command line; 0x87D01201 not enough space in cache; 0x87D103E8 error unknown; 0x80091007 the hash value is not correct | source: Microsoft Learn, Application installation common error codes reference (Configuration Manager), fetched and read | checked: 2026-11 -->
+        <!-- fact: Intune: 0x87D1041C (-2016345060) the application was not detected after installation completed successfully; 0x87D103E8 unknown error | source: Microsoft Learn, Intune app installation error reference, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Code</th><th>Raised by</th><th>Means</th><th>First check</th></tr></thead>
+          <tbody>
+            <tr><td>0, 3010, 1641</td><td>Windows Installer</td><td class="c-green">Success. 3010 asks for a restart; 1641 says the installer started one</td><td>Nothing, unless the restart behavior is wrong for the user</td></tr>
+            <tr><td>1603</td><td>Windows Installer</td><td class="c-red">A fatal error during installation</td><td>The verbose log: search for the first <em>Return value 3</em></td></tr>
+            <tr><td>1618</td><td>Windows Installer</td><td class="c-amber">Another installation is already in progress</td><td>Usually clears by itself. Map it as a retry: Intune's Retry and MECM's Fast Retry run on different schedules</td></tr>
+            <tr><td>1638, 1605</td><td>Windows Installer</td><td>Another version is already installed; or the product to remove is not installed</td><td>The upgrade path, and whether detection matches what is really there</td></tr>
+            <tr><td>1625, 1633</td><td>Windows Installer</td><td>Forbidden by system policy; not for this platform</td><td>Policy, and whether a 32-bit or 64-bit package reached the wrong device</td></tr>
+            <tr><td>0x87D00324 · 0x87D1041C</td><td>MECM · Intune</td><td class="c-red">Not detected after installation completed</td><td>The detection rule: the wrong registry view, the wrong version, or a bootstrapper that exited early</td></tr>
+            <tr><td>0x87D00325</td><td>MECM</td><td>Still detected after uninstall completed</td><td>Whether the uninstall command really removes what detection looks for</td></tr>
+            <tr><td>0x87D01106</td><td>MECM</td><td>Could not verify the executable or build the command line</td><td>The program name and path, and that the program exists on the client</td></tr>
+            <tr><td>0x87D00607, 0x87D01201</td><td>MECM</td><td>Content not found; not enough space in the client cache</td><td>Distribution of the content, and the client cache size</td></tr>
+            <tr><td>0x87D00667</td><td>MECM</td><td>No current or future service window, MECM's name for a maintenance window</td><td>The collection's maintenance windows against the maximum run time</td></tr>
+            <tr><td>0x80091007</td><td>Windows</td><td>The hash value is not correct</td><td>Content that changed after it was distributed</td></tr>
+            <tr><td>0x87D103E8</td><td>MECM and Intune</td><td>Unknown error</td><td>The logs, since the code itself says nothing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The pair that costs the most time is "installed but not detected".</strong>
+          0x87D00324 in MECM and 0x87D1041C in Intune both mean the installer finished and the rule that
+          checks for it found nothing: the software installed, but it does not appear. Reinstalling will not help, because the next attempt ends the same way.
+          The fix is the rule, which is why the testing steps in
+          <span class="xref">MSI, EXE &amp; .intunewin — What Each Package Is, and How It Installs</span>
+          end with detection.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Return codes</div>
+      <div class="concept-title">Return Codes Are a Contract You Configure, and the Two Tools Read It Differently</div>
+      <div class="concept-desc">
+        Neither tool knows what an exit code means until it is told. Both keep a table of return codes on each
+        app, with a type for each code, and an exit code nobody mapped is a failure. An MSI's codes are known in
+        advance, and a vendor's EXE may return anything, so its codes have to be found and added before the
+        first deployment.
+        <!-- fact: Intune Win32 return code types are Failed, Hard reboot, Soft reboot, Retry and Success; Retry makes three attempts five minutes apart; Installation time required defaults to 60 minutes, maximum 1,440. MECM return code types are Success (no reboot), Failure (no reboot), Hard Reboot, Soft Reboot and Fast Retry, which retries every two hours for a total of 10 times; Maximum allowed run time defaults to 120 minutes | source: Microsoft Learn, Add and assign Win32 apps to Intune, and Create applications in Configuration Manager, fetched and read | checked: 2026-11 -->
+        <!-- fact: Intune's default return codes on a new Win32 app are 0 and 1707 success, 3010 soft reboot, 1641 hard reboot and 1618 retry | source: AdminStudio and Patch My PC documentation and a PowerShell Gallery module, as quoted in search results; Microsoft's page says defaults are added but was not found listing them | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Behavior</th><th>Intune</th><th>MECM</th></tr></thead>
+          <tbody>
+            <tr><td>Success</td><td>Success</td><td>Success (no reboot)</td></tr>
+            <tr><td>Installed, restart wanted</td><td>Soft reboot: the next app may install first</td><td>Soft Reboot: other installations can run first</td></tr>
+            <tr><td>Installed, restart required</td><td>Hard reboot: no further Win32 app installs until it restarts</td><td>Hard Reboot: nothing else installs until it restarts</td></tr>
+            <tr><td>Try again later</td><td>Retry: three attempts, five minutes apart</td><td>Fast Retry: every two hours, ten times in all</td></tr>
+            <tr><td>Failure</td><td>Failed</td><td>Failure (no reboot)</td></tr>
+            <tr><td>Time limit before it is failed</td><td>Installation time required: 60 minutes by default, 1,440 at most</td><td>Maximum allowed run time: 120 minutes by default</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Map a vendor's codes before the first deployment, not after the first ticket.</strong>
+          Run the EXE's install, its uninstall and a run on a machine that already has it, as SYSTEM, and write
+          down what each returns. An EXE that returns 3010 for success with a restart is a failure to a tool that
+          was never told, and a 1618 that should have been retried is a failure too.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body endpoint -->
 
 <!-- ── TOPIC: CERTIFICATE DELIVERY ─────────────────────────────── -->

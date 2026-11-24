@@ -313,7 +313,8 @@ const READERS = [
      "wide and inherent, and the widest noun this site has: `network` is the only word left after the stop list drops `how do i prove it is not the`, and it is in a fifth of the corpus. The answer is inside the set — `ops` *Troubleshooting Like a Pro* and `net`'s own troubleshooting cards are all in the 83. Ranking would pick between them; this matcher is a filter"],
     ["the user has two accounts", "",
      "infra/one-user-two-accounts-how-sync-matches-people-and-fixing-the"],
-    ["the software installed but does not appear"],
+    ["the software installed but does not appear", "",
+     "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
     // ── batch eighteen ──
     ["the user changed their name"],
     ["everyone in one office cannot print"],
