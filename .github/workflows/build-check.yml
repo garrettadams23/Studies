@@ -239,8 +239,14 @@ jobs:
   # Separate job: it needs Node and a browser, and none of the checks above do.
   # Kept out of verify-build so a markup typo still fails in seconds rather than
   # waiting on a Chromium download.
+  #
+  # Pinned to a release, not ubuntu-latest. When ubuntu-latest moved to 26.04,
+  # `playwright install --with-deps chromium` stopped with "Playwright does not
+  # support chromium on ubuntu26.04-x64": the pinned Playwright below predates
+  # that release. Move this line forward only together with a Playwright
+  # version that lists the new release as supported.
   smoke-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
