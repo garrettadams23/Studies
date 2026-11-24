@@ -515,6 +515,115 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AMAZON COGNITO ────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🪪</span>
+    <span class="topic-name">Amazon Cognito — User Pools, Identity Pools &amp; the Two Questions They Answer</span>
+    <span class="topic-badge">AWS • Identity</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Two components</div>
+      <div class="concept-title">A User Pool Says Who the User Is; an Identity Pool Says What They May Touch in AWS <span class="acro-exp">(Amazon Web Services)</span></div>
+      <div class="concept-desc">
+        Amazon Cognito is the identity service for the people who use your web and mobile apps, and AWS frames
+        its two parts as answers to two questions. <em>Who is this user?</em> is a
+        <strong class="c-cyan">user pool</strong>: a user directory built on OpenID Connect that signs people
+        in, directly, through Google, Apple or Facebook, or through an enterprise SAML <span class="acro-exp">(Security Assertion Markup Language)</span> or OIDC provider, and
+        issues JSON <span class="acro-exp">(JavaScript Object Notation)</span> web tokens to your app or API <span class="acro-exp">(Application Programming Interface)</span>. <em>What AWS resources may this user reach?</em> is an
+        <strong class="c-cyan">identity pool</strong>: it takes a token it trusts and exchanges it for
+        temporary, limited AWS credentials, so the app itself can call S3 <span class="acro-exp">(Simple Storage Service)</span> or DynamoDB for that user. Neither
+        needs the other. Together, a user signs in to the pool, and the app trades the resulting token for
+        credentials.
+        <!-- fact: Amazon Cognito is an identity platform for web and mobile apps; a user pool answers who is this user, a user directory drawing on the OIDC standard that authenticates users and issues JSON web tokens to an app or API, with sign-in directly, through social providers such as Google and Apple, or enterprise SAML and OIDC providers, and most applications needing sign-up and sign-in start there; an identity pool answers what AWS resources may this user reach, exchanging a trusted token for temporary, limited-privilege AWS credentials for services such as Amazon S3 and Amazon DynamoDB, and can issue credentials to guest users; neither component requires the other, and used together the app exchanges the user pool token with the identity pool | source: AWS documentation, "What is Amazon Cognito?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The app needs to</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Let people sign up and sign in, and prove it to its own API</td><td>A user pool alone</td></tr>
+            <tr><td>Let signed-in users upload straight to S3 from the browser or phone</td><td>A user pool, then an identity pool</td></tr>
+            <tr><td>Give AWS credentials to users of an identity provider it already has</td><td>An identity pool alone</td></tr>
+            <tr><td>Let a service or device with no person behind it call an API</td><td>A user pool's client credentials grant</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Most apps need only the user pool.</strong> An identity pool is for code on the
+          user's device calling AWS services directly. When your back end makes those calls instead, it runs with
+          its own IAM <span class="acro-exp">(Identity and Access Management)</span> role and needs nothing from the user but a valid token, which keeps AWS credentials off
+          every phone. How a role is assumed for a short-lived credential, the mechanism underneath, is in
+          <span class="xref">AWS IAM Deep — AssumeRole, STS &amp; Boundaries</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Tokens</div>
+      <div class="concept-title">The ID Token Is for the App, the Access Token Is for the API, and Anyone Can Read Both</div>
+      <div class="concept-desc">
+        A successful sign-in returns three tokens. The <strong class="c-cyan">ID token</strong> carries claims
+        about who the user is, such as username and email address. The <strong class="c-cyan">access
+        token</strong> carries scopes, the claims an API checks before acting. Both list the user's user pool
+        groups. The <strong class="c-cyan">refresh token</strong> gets new ID and access tokens, and revoking it
+        ends what it allowed. The first two are base64url-encoded, so anyone holding one can decode it to plain
+        JSON; only the refresh token is encrypted, readable by nothing but the user pool. AWS's advice follows
+        from that: tokens can hold personal information, so protect them in transit and in storage. A Lambda
+        trigger can add, change or remove claims before a token is issued.
+        <!-- fact: The ID token contains identity claims such as username, family name and email address; the access token contains claims such as scope used to access APIs; both include a cognito:groups claim; refresh tokens retrieve new ID and access tokens, and revoking one revokes the access it allowed; ID and access tokens are base64url-encoded and can be decoded to plaintext JSON, while refresh tokens are encrypted and readable only by the user pool; tokens can contain personally identifying information and should be secured in transit and storage; a pre token generation Lambda trigger can add, modify and suppress claims | source: AWS documentation, "Understanding user pool JSON web tokens (JWTs)", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Token</th><th>Carries</th><th>Goes to</th></tr></thead>
+          <tbody>
+            <tr><td>ID token</td><td>Who the user is: name, email, groups</td><td>Your app, to set up the user's session and profile</td></tr>
+            <tr><td>Access token</td><td>What the user may do: scopes, groups</td><td>Your API, which verifies it before acting</td></tr>
+            <tr><td>Refresh token</td><td>Nothing readable outside the user pool</td><td>Back to Cognito, for new ID and access tokens</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Decoding a token is not verifying it.</strong> Any client can read a token's
+          claims and any attacker can write new ones, so an API must check the signature, the expiry and the
+          scope of the access token it receives, and should not accept an ID token in its place. Never put
+          anything in a claim the user should not see. The same rules for every token-based login, beyond
+          Cognito, are in
+          <span class="xref">API Security – OAuth2, JWT &amp; Token-Based Authentication</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Identity pools</div>
+      <div class="concept-title">Guest Credentials Are Real AWS Credentials Handed to Anyone Who Opens the App</div>
+      <div class="concept-desc">
+        An identity pool hands out short-term AWS credentials through IAM roles. It can give one role to every
+        signed-in user, or choose a role from each user's claims, and it can turn claims into IAM session tags
+        so that one policy can give different users access to different resources. It accepts tokens from a
+        user pool, a social provider's OAuth <span class="acro-exp">(Open Authorization)</span> token or a SAML assertion, and it can also serve users who have
+        not signed in at all: <strong class="c-cyan">guest access</strong> issues credentials with a narrow scope,
+        which a later sign-in can widen.
+        <!-- fact: An identity pool is a directory of federated identities exchanged for temporary AWS credentials, for signed-in users or users not yet identified; permissions come from IAM roles and policies, with a single role for all authenticated users or roles chosen from each user's claims; claims can become IAM session tags for policies granting distinct subsets of users access; guest access generates AWS credentials with a narrow scope for users who have not signed in, and signing in through a provider can elevate access; it accepts ID or access tokens, user pool tokens, SAML assertions and social-provider OAuth tokens, and turns provider claims into an AssumeRoleWithWebIdentity request | source: AWS documentation, "Amazon Cognito identity pools", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Who calls</th><th>Gets</th><th>Scope it as</th></tr></thead>
+          <tbody>
+            <tr><td>A guest who has not signed in</td><td>The unauthenticated role's credentials</td><td>Public: read-only, the few objects every visitor may see</td></tr>
+            <tr><td>A signed-in user</td><td>The authenticated role, or one chosen by their claims</td><td>Their own data, keyed by session tags</td></tr>
+            <tr><td>A user in an elevated group</td><td>A role picked by a rule on that group claim</td><td>Only what that group's job needs</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Write the guest role as if it were posted on a billboard.</strong> Any visitor
+          can obtain those credentials, so anything the unauthenticated role allows, the whole internet is
+          allowed. Grant authenticated users access by session tag rather than one broad role, so that one user's
+          credentials cannot list another's objects. The ways a too-generous role turns into more, and the
+          policies that look narrow and are not, are in
+          <span class="xref">Cloud IAM Pitfalls &amp; Privilege Escalation</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔑</span>
@@ -826,6 +935,119 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AWS SHIELD & GLOBAL ACCELERATOR ───────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🛡️</span>
+    <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Shield &amp; Global Accelerator — DDoS <span class="acro-exp">(Distributed Denial of Service)</span> Protection and Fixed Entry Points at the Edge</span>
+    <span class="topic-badge">AWS • Edge</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Shield Standard</div>
+      <div class="concept-title">Every AWS Customer Has Shield Standard; Where the Traffic First Lands Decides How Much It Helps</div>
+      <div class="concept-desc">
+        All AWS customers get <strong class="c-cyan">Shield Standard</strong> automatically and at no extra
+        charge. It defends against the most common network and transport layer DDoS attacks, such as UDP <span class="acro-exp">(User Datagram Protocol)</span>
+        reflection and TCP <span class="acro-exp">(Transmission Control Protocol)</span> SYN <span class="acro-exp">(Synchronize)</span> floods. AWS's guidance turns on where an application's perimeter is: if users'
+        first contact is in a Region, the perimeter is your VPC <span class="acro-exp">(Virtual Private Cloud)</span>; if Route 53 sends them to CloudFront or Global
+        Accelerator first, the perimeter begins at the edge of AWS's own network. Route 53 hosted zones,
+        CloudFront distributions and Global Accelerator's standard accelerators get the fullest protection,
+        against all known network and transport layer attacks.
+        <!-- fact: All AWS customers benefit from Shield Standard's automatic protection at no additional charge, defending against the most common, frequently occurring network and transport layer DDoS attacks; AWS provides automatic protection against common volumetric vectors such as UDP reflection attacks and TCP SYN floods; if the first point of entry is in an AWS Region the application perimeter is the VPC, and if users are directed by Route 53 to CloudFront or Global Accelerator the perimeter begins at the edge of the AWS network; Route 53 hosted zones, CloudFront distributions and Global Accelerator standard accelerators receive comprehensive availability protection against all known network and transport layer attacks; DDoS resiliency depends on architecture decisions | source: AWS documentation, "AWS Shield" and "AWS Shield Standard overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Users first reach</th><th>The perimeter is</th><th>So an attack is absorbed</th></tr></thead>
+          <tbody>
+            <tr><td>A load balancer or instance in a Region</td><td>Your VPC</td><td>In the Region, beside the application</td></tr>
+            <tr><td>CloudFront or Global Accelerator, through Route 53</td><td>The edge of AWS's network</td><td>At edge locations, before it reaches the Region</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Free protection is a reason to put the edge in front.</strong> Shield Standard is
+          there either way, but a front door at CloudFront or Global Accelerator meets an attack spread across
+          AWS's edge, with the strongest coverage Standard gives, instead of in the Region where the application
+          lives. It covers network and transport attacks; floods of valid-looking HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> requests need rules of
+          the kind described in
+          <span class="xref">Web Application Firewalls (WAF)</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Shield Advanced</div>
+      <div class="concept-title">Shield Advanced Protects Only What You Add to It, and Its Response Team Needs a Support Plan Too</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">AWS Shield Advanced</strong> is a paid subscription, and it protects nothing until
+        you name the resources: CloudFront distributions, Route 53 hosted zones, Global Accelerator standard
+        accelerators, Elastic IP <span class="acro-exp">(Internet Protocol)</span> addresses, and Application and Classic Load Balancers. For those it adds
+        automatic mitigation of application layer attacks through AWS WAF <span class="acro-exp">(Web Application Firewall)</span> rules, detection informed by Route 53
+        health checks, metrics and reports on each event, and some protection against the bill an attack runs
+        up, paid as service credits. It covers the standard AWS WAF charges on protected resources. The Shield
+        Response Team will help during an attack, and with proactive engagement will call you, but only for
+        subscribers who also hold a Business or Enterprise Support plan.
+        <!-- fact: Shield Advanced protections are enabled only for resources explicitly specified or protected through a Firewall Manager Shield Advanced policy, and it does not automatically protect resources; protectable types are CloudFront distributions, Route 53 hosted zones, Global Accelerator standard accelerators, EC2 Elastic IP addresses (and instances and Network Load Balancers through them), Application Load Balancers and Classic Load Balancers | source: AWS documentation, "List of AWS resources that AWS Shield Advanced protects", fetched and read | checked: 2026-11 -->
+        <!-- fact: Shield Advanced includes automatic application layer DDoS mitigation using AWS WAF rate limiting and managed rules, health-based detection with Route 53 health checks, protection groups, enhanced visibility through metrics and reports, Firewall Manager policies at no additional charge, the Shield Response Team, which requires the Business or Enterprise Support plan, proactive engagement for resources with health-based detection, and cost protection in the form of service credits; the subscription covers standard AWS WAF costs for protected resources up to 1,500 WCUs and the default body size, but not Bot Control, CAPTCHA or other non-standard costs; AWS's Shield guide presents Shield Advanced for critical applications, among them those with a guaranteed level of availability to customers and those needing operational support from AWS during DDoS events | source: AWS documentation, "AWS Shield Advanced capabilities and options", "AWS Shield Advanced overview" and "AWS Shield", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Shield Standard</th><th>Shield Advanced</th></tr></thead>
+          <tbody>
+            <tr><td>Cost</td><td>Included</td><td>A subscription, billed to the organization's payer account</td></tr>
+            <tr><td>Covers</td><td>Everything, automatically</td><td>Only the resources you add, or a Firewall Manager policy adds</td></tr>
+            <tr><td>Application layer attacks</td><td>No</td><td>Automatic mitigation through AWS WAF</td></tr>
+            <tr><td>People to call</td><td>No</td><td>The Shield Response Team, with Business or Enterprise Support</td></tr>
+            <tr><td>The attack's bill</td><td>Yours</td><td>Some of it returned as service credits</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Buy it for the applications with promises attached, then check it is on
+          them.</strong> AWS pitches Shield Advanced for applications whose availability you have guaranteed to
+          customers. Because it protects only listed resources, a new load balancer added next quarter is
+          unprotected until someone adds it, which is the job a Firewall Manager policy does automatically. Attack
+          types it answers, from floods to amplification, are in
+          <span class="xref">DoS / DDoS &amp; Network Attack Types</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Global Accelerator</div>
+      <div class="concept-title">CloudFront Is for HTTP, Cached or Not; Global Accelerator Is for Any TCP or UDP That Needs Fixed Addresses</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Global Accelerator</strong> gives an application two static IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> addresses, four
+        with IPv6 <span class="acro-exp">(Internet Protocol version 6)</span> added, announced by anycast from AWS's edge. A client's traffic enters at the nearest edge
+        location and crosses AWS's global network to an endpoint; TCP is terminated at the edge and a fresh
+        connection made onward. A standard accelerator picks the endpoint by the client's location, endpoint
+        health and weights you set, moves new connections off an unhealthy endpoint at once, and has a traffic
+        dial to shift a percentage of traffic between Regions. AWS draws the line from CloudFront this way:
+        CloudFront speeds up web content, cached and dynamic; Global Accelerator suits non-HTTP traffic such as
+        gaming over UDP, MQTT for IoT <span class="acro-exp">(Internet of Things)</span> and voice over IP, and HTTP that needs static IP addresses or fast,
+        deterministic Regional failover.
+        <!-- fact: Global Accelerator provides two static IPv4 addresses, or four with dual-stack (two IPv4 and two IPv6), anycast from the AWS edge network, with bring-your-own IPv4 addresses possible; the addresses stay with the accelerator while it exists, even disabled, and are lost when it is deleted, so IAM policies can limit who may delete accelerators; standard accelerators route to the optimal Regional endpoint by health, client location and configured policies, terminate TCP at edge locations and open a new connection to endpoints, fail new connections over instantly when an endpoint is unhealthy, and have traffic dials and endpoint weights; idle timeouts are 340 seconds for TCP and 30 seconds for UDP | source: AWS documentation, "What is AWS Global Accelerator?" and "How AWS Global Accelerator works", fetched and read | checked: 2026-11 -->
+        <!-- fact: CloudFront improves performance for cacheable and dynamic content; Global Accelerator improves performance for applications over TCP or UDP by proxying packets at the edge to one or more Regions, and suits non-HTTP uses such as gaming (UDP), IoT (MQTT) or voice over IP, and HTTP uses that require static IP addresses or deterministic, fast Regional failover; both integrate with AWS Shield | source: AWS Global Accelerator FAQs, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The application needs</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Web pages, images, video or an API <span class="acro-exp">(Application Programming Interface)</span> served faster, with caching where it helps</td><td>CloudFront</td></tr>
+            <tr><td>A game, VoIP <span class="acro-exp">(Voice over Internet Protocol)</span> or IoT protocol over UDP or TCP, delivered from the nearest Region</td><td>Global Accelerator</td></tr>
+            <tr><td>Addresses a partner can put in a firewall allowlist and never change</td><td>Global Accelerator</td></tr>
+            <tr><td>Regional failover without waiting on DNS <span class="acro-exp">(Domain Name System)</span> caches to expire</td><td>Global Accelerator</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Guard the accelerator against deletion.</strong> The static addresses are the
+          reason to have it, and they stay only while the accelerator exists: delete it and they are gone, along
+          with every partner allowlist and DNS record that named them. AWS suggests IAM <span class="acro-exp">(Identity and Access Management)</span> policies that limit who
+          may delete one. CloudFront and Route 53, the edge services this sits beside, are in
+          <span class="xref">AWS Load Balancing &amp; DNS — ELB, Route 53, CloudFront</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🌐</span>
@@ -1611,6 +1833,117 @@ gcloud compute instances list --project my-prod-project</pre>
     </div>
   </div>
 </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AWS BACKUP ────────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🗄️</span>
+    <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Backup — Plans, Vault Lock &amp; the Air-Gapped Copy an Attacker Cannot Delete</span>
+    <span class="topic-badge">AWS • Backup</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Backup plans</div>
+      <div class="concept-title">A Backup Plan Is a Policy Applied by Tag, So an Untagged Resource Is an Unprotected One</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">AWS Backup</strong> replaces each service's own backup settings with one policy
+        across many services. A <strong class="c-cyan">backup plan</strong> says how often to back up and how
+        long to keep each copy, and resources join a plan by assignment, for example by tag. Lifecycle rules move
+        older backups to a cheaper cold tier. A plan can make a cross-Region copy of each backup and, in an AWS
+        Organizations structure, cross-account copies, fanning backups in to one repository account and out again.
+        Backup policies in Organizations apply plans across every account at once, and Backup Audit Manager
+        checks backup activity and resources against controls you define and reports what falls short. One limit is easy to miss: AWS
+        Backup governs only the backups it makes, not the snapshots someone takes by hand.
+        <!-- fact: AWS Backup centralizes and automates data protection across AWS services; it does not govern backups taken outside AWS Backup; backup plans define backup requirements and are applied to resources, including by tags; lifecycle policies transition backups from warm to cold storage on a schedule; backups can be copied to other Regions on demand or as part of a plan; with AWS Organizations, backup policies apply plans across accounts, and backups can be copied across accounts to fan in to a repository account and fan out for resilience; AWS Backup Audit Manager provides customizable controls, finds activities and resources not yet compliant with them, and generates daily reports | source: AWS documentation, "What is AWS Backup?", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>In the plan</th><th>Decides</th></tr></thead>
+          <tbody>
+            <tr><td>Frequency and backup window</td><td>How much data a restore can lose: the recovery point objective in practice</td></tr>
+            <tr><td>Retention, and the move to cold storage</td><td>How far back you can go, and what keeping it costs</td></tr>
+            <tr><td>Copy to another Region or account</td><td>Whether one Region's outage or one account's compromise takes the backups too</td></tr>
+            <tr><td>Resource assignment, often by tag</td><td>Which resources are protected at all</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Audit the assignment, not just the plan.</strong> A plan assigned by tag protects
+          every resource that has the tag and silently skips every one that does not, so a database created
+          without it has no backups and raises no alarm. Use Audit Manager's controls to find what the plans
+          missed, and enforce the tag when resources are created, as in
+          <span class="xref">Tagging &amp; Cost Allocation — The Policy That Has to Be Enforced at Creation</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Vault Lock</div>
+      <div class="concept-title">In Compliance Mode, After the Grace Time, Not Even AWS Can Delete the Backups</div>
+      <div class="concept-desc">
+        Backups live in vaults, and <strong class="c-cyan">AWS Backup Vault Lock</strong> makes a vault write
+        once, read many. In <strong class="c-cyan">governance mode</strong>, users with enough IAM <span class="acro-exp">(Identity and Access Management)</span> permission can still
+        change or remove the lock, which suits keeping changes to designated people. In
+        <strong class="c-cyan">compliance mode</strong>, a grace time of at least three days follows locking,
+        during which the lock can still be removed; after it, the lock is permanent, and no user, the root user
+        included, nor AWS can delete a backup or shorten its retention until its lifecycle ends. Cohasset
+        Associates assessed it against SEC 17a-4, CFTC and FINRA rules. It costs nothing beyond normal backup
+        storage, and that is the warning AWS gives: a recovery point set to be kept <em>always</em> in a locked
+        vault is kept, and billed, forever.
+        <!-- fact: AWS Backup Vault Lock gives backup vaults a write-once, read-many configuration; in governance mode the lock can be removed by users with sufficient IAM permissions; in compliance mode it has a grace time, which must be at least 3 days (72 hours), during which it can be removed, after which the vault and lock are immutable and cannot be changed or deleted by any user or by AWS while recovery points remain; attempts by any user, including the root user, to delete a backup or change its lifecycle in a locked vault are denied; backups cannot be deleted until their lifecycle completes, so a recovery point retained Always is kept forever; each vault can have one lock; it was assessed by Cohasset Associates for SEC 17a-4, CFTC and FINRA environments; it has no additional charge beyond standard storage | source: AWS documentation, "AWS Backup Vault Lock", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Governance mode</th><th>Compliance mode</th></tr></thead>
+          <tbody>
+            <tr><td>The lock can be removed</td><td>Any time, by users with the IAM permission</td><td>Only during the grace time, at least three days</td></tr>
+            <tr><td>Once the grace time ends</td><td>No grace time applies</td><td>No user, the root user or AWS can delete a backup early</td></tr>
+            <tr><td>Protects against</td><td>Mistakes, and changes by the wrong people</td><td>Anyone, including a stolen root account</td></tr>
+            <tr><td>Use it to</td><td>Try retention settings before committing</td><td>Meet a retention rule, or survive an attacker with admin rights</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Rehearse in governance mode, and read every retention setting before the grace
+          time ends.</strong> Compliance mode is the only setting here that a compromised administrator cannot
+          reverse, which is the point; it also cannot reverse your own mistake. A wrong retention period becomes a
+          bill nobody can cancel. Immutability as a design principle, beyond AWS, is in
+          <span class="xref">Ransomware-Resilient Backup — Immutability, Isolation &amp; Assuming the Domain Is Lost</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Logically air-gapped vault</div>
+      <div class="concept-title">An Air-Gapped Vault Keeps the Backups Outside the Account an Attacker Has Taken</div>
+      <div class="concept-desc">
+        A <strong class="c-cyan">logically air-gapped vault</strong> is a second kind of vault, locked in
+        compliance mode from the start and encrypted with an AWS-owned key by default, or a customer managed KMS <span class="acro-exp">(Key Management Service)</span>
+        key. Its backups are stored in an account that AWS Backup owns, not yours. It can be shared through AWS
+        Resource Access Manager with other accounts, even in other organizations, which can restore from it;
+        and with multi-party approval set up, its backups can still be restored or copied if the account that
+        owns the vault is locked out or closed, until the period after closure runs out. AWS recommends copying
+        into such vaults in another Region as well.
+        <!-- fact: A logically air-gapped vault is a specialized vault with security beyond a standard vault; each is encrypted with an AWS owned key by default or a customer-managed KMS key and is equipped with Vault Lock's compliance mode; it stores backups in an AWS Backup service-owned account; it can be shared with other AWS accounts, including in other organizations, through AWS Resource Access Manager for restores; integrated with multi-party approval (MPA), backups remain restorable or copyable if the vault-owning account is inaccessible or closed, until the post-closure period ends; AWS recommends cross-Region copies into logically air-gapped vaults | source: AWS documentation, "Logically air-gapped vault", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Standard vault</th><th>Logically air-gapped vault</th></tr></thead>
+          <tbody>
+            <tr><td>Vault Lock</td><td>Optional, either mode</td><td>Compliance mode, always</td></tr>
+            <tr><td>Where the backups are stored</td><td>Your account</td><td>An account owned by AWS Backup</td></tr>
+            <tr><td>Restore from another account</td><td>After copying across</td><td>Directly, once shared through Resource Access Manager</td></tr>
+            <tr><td>If your account is lost</td><td>So are its vaults</td><td>Recoverable with multi-party approval, for a limited time</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Plan the restore from an account the attacker never had.</strong> The
+          air-gapped vault's value is that recovery does not depend on the compromised account: a clean account
+          the vault is shared with restores from it, and multi-party approval covers the account being closed
+          under you. Set both up before the incident, because neither can be arranged from an account you no
+          longer control. How such an incident unfolds, and why a backup alone is not the whole answer, is in
+          <span class="xref">Ransomware – How It Spreads, and Why Backups Aren't the Whole Story</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🗃️</span>
@@ -1628,7 +1961,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>RDS</td><td>Managed relational (Postgres, MySQL, SQL Server, Oracle, MariaDB) — patching, backups, replicas handled</td></tr>
                     <tr><td>Aurora</td><td>AWS's cloud-native MySQL/Postgres-compatible engine — faster, auto-scaling storage, Serverless v2</td></tr>
                     <tr><td>DynamoDB</td><td>Managed key-value/document NoSQL — single-digit-ms at any scale, serverless</td></tr>
-                    <tr><td>ElastiCache</td><td>Managed Redis/Memcached (caching, sessions)</td></tr>
+                    <tr><td>ElastiCache</td><td>Managed Valkey, Redis OSS or Memcached (caching, sessions)</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-green">Choosing:</strong> relational data with joins/transactions
@@ -1663,6 +1996,119 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: RDS PROXY & ELASTICACHE ───────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔌</span>
+    <span class="topic-name">RDS <span class="acro-exp">(Relational Database Service)</span> Proxy &amp; ElastiCache — What Sits Between an Application and Its Database</span>
+    <span class="topic-badge">AWS • Databases</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">RDS Proxy</div>
+      <div class="concept-title">RDS Proxy Pools Connections, So a Burst of Lambda Functions Stops Exhausting the Database</div>
+      <div class="concept-desc">
+        Every database connection costs the server memory and CPU <span class="acro-exp">(Central Processing Unit)</span> to open and hold, and a burst of short-lived
+        callers, such as hundreds of Lambda invocations each opening its own connection, can oversubscribe a
+        database before any query is slow. <strong class="c-cyan">RDS Proxy</strong> keeps a pool of
+        connections to the database and lends them out: an application's transactions share the pooled
+        connections, which is called multiplexing. When demand outruns the pool, the proxy queues or throttles
+        new connections, and past the limits you set it rejects them, so latency rises instead of the database
+        falling over. During a failover it connects to the standby while keeping the applications' own
+        connections open. It can require IAM <span class="acro-exp">(Identity and Access Management)</span> authentication from clients and log in to the database with IAM
+        or with credentials kept in Secrets Manager, and most applications need no code change.
+        <!-- fact: RDS Proxy lets applications pool and share database connections; it connects automatically to a standby DB instance during failures while preserving application connections; it can enforce IAM authentication for clients and connect to databases with IAM database authentication or Secrets Manager credentials; it handles surges that would oversubscribe connections or create new ones at a fast rate, reusing pooled connections to avoid the memory and CPU overhead of opening each; it queues or throttles connections that cannot be served immediately, and sheds load by rejecting connections beyond the limits you specify; most applications need no code changes; each account is limited to 20 proxies by default, and each proxy to 200 Secrets Manager secrets | source: AWS documentation, "Amazon RDS Proxy", fetched and read | checked: 2026-11 -->
+        <!-- fact: When a session changes state that is not appropriate for other sessions, such as a session variable or configuration parameter, RDS Proxy pins the client connection to one database connection until the session ends, and no other client can reuse it; any statement larger than 16 KB pins the session on every engine family; for SQL Server, temporary tables, transactions, cursors and prepared statements also pin; pinning reduces connection reuse, and the CloudWatch metric DatabaseConnectionsCurrentlySessionPinned counts it | source: AWS documentation, "Avoiding pinning an RDS Proxy", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Without the proxy</th><th>With it</th></tr></thead>
+          <tbody>
+            <tr><td>Each caller opens its own connection, and a burst exhausts the database's limit</td><td>Callers share a pool sized to what the database can hold</td></tr>
+            <tr><td>Overload shows up as the database failing</td><td>Overload shows up as callers waiting, then being refused</td></tr>
+            <tr><td>A failover drops every application connection</td><td>The proxy reconnects to the standby and the applications' connections stay up</td></tr>
+            <tr><td>Database passwords live in every application's configuration</td><td>The proxy holds them in Secrets Manager; clients can use IAM</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Watch for pinning, or the pool quietly stops pooling.</strong> A session that
+          sets a variable, or sends any statement over 16 KB, is pinned to one database connection until it ends,
+          and nobody else can use that connection meanwhile. If most sessions pin, the proxy is adding a hop and
+          saving nothing; CloudWatch counts pinned connections, and the fix is in the application. The engines
+          behind the proxy are in
+          <span class="xref">AWS Databases — RDS, Aurora &amp; DynamoDB</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">ElastiCache</div>
+      <div class="concept-title">ElastiCache Holds Hot Data in Memory, and the Application Decides How It Gets There</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">ElastiCache</strong> runs an in-memory cache with the Valkey, Memcached or Redis
+        OSS engine, either as a serverless cache, which AWS <span class="acro-exp">(Amazon Web Services)</span> creates in under a minute and scales by itself, or
+        as node-based clusters you size and control. The cache does not fill itself: AWS's guide describes two
+        ways an application puts data there. <strong class="c-cyan">Lazy loading</strong> checks the cache, and
+        on a miss reads the database and writes the answer into the cache; only requested data is cached and a
+        failed node costs only speed, but every miss takes three trips and cached data can go stale.
+        <strong class="c-cyan">Write-through</strong> updates the cache whenever the database is written, so
+        reads are never stale, but every write takes two trips, a new node starts empty, and the cache fills
+        with data nobody reads. A time to live on each key bounds the costs of either.
+        <!-- fact: Amazon ElastiCache is a distributed in-memory data store or cache that works with the Valkey, Memcached and Redis OSS engines; ElastiCache Serverless creates a highly available cache in under a minute without provisioning nodes and scales to the application's memory, compute and network use; node-based clusters give fine-grained control; serverless caches can have VPC or public endpoints, the public ones requiring IAM authentication and TLS 1.3 | source: AWS documentation, "What is Amazon ElastiCache?", fetched and read | checked: 2026-11 -->
+        <!-- fact: Lazy loading loads data into the cache only on a miss, caching only requested data, and a node failure is not fatal; each miss costs three trips and data can become stale; write-through updates the cache whenever the database is written, so cached data is never stale, at the cost of two trips per write, data missing from new nodes until written, and cache churn from data never read; adding a TTL to each write gives the advantages of each and keeps data from getting too stale, an expired key being treated as not found | source: AWS documentation, "Caching strategies for Memcached" (ElastiCache), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Strategy</th><th>Gains</th><th>Costs</th></tr></thead>
+          <tbody>
+            <tr><td>Lazy loading</td><td>Only requested data is cached; losing a node costs only speed</td><td>Three trips on every miss; data stale until it expires</td></tr>
+            <tr><td>Write-through</td><td>Cached data is never stale</td><td>Two trips on every write; a new node is empty; most of what is cached is never read</td></tr>
+            <tr><td>Either, with a TTL <span class="acro-exp">(Time To Live)</span></td><td>Stale data and unread data both age out</td><td>Some reads go back to the database on purpose</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Set a TTL on every key, whichever strategy you choose.</strong> AWS's guide
+          combines them: write-through keeps hot data fresh, lazy loading refills what a new node lacks, and the
+          TTL stops either one from keeping data forever. The cache is a copy the database does not know about,
+          so the TTL is the longest a reader can be wrong. Where caches go wrong, from the application to the
+          CDN <span class="acro-exp">(Content Delivery Network)</span>, is
+          <span class="xref">Caching Strategies — From App to CDN</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Choosing</div>
+      <div class="concept-title">Proxy, Replica or Cache: Three Things in Front of a Database, for Three Different Problems</div>
+      <div class="concept-desc">
+        A struggling database can mean three different things, and each has its own fix. Too many
+        <em>connections</em> is the proxy's problem. Too many <em>reads</em> is a read replica's: an RDS read
+        replica is a read-only copy kept up to date asynchronously, billed as an ordinary instance, to which an
+        application sends queries that do not need the primary, and which can later be promoted to stand alone.
+        The same <em>reads, repeated</em>, are a cache's. Because a replica's copy is asynchronous, a read from
+        it can trail the latest write, and a cached value can trail it by up to its TTL.
+        <!-- fact: A read replica is a read-only copy of a DB instance; routing queries to it reduces load on the primary and scales out for read-heavy workloads; RDS copies updates from the primary asynchronously using the engine's built-in replication; replicas are billed as standard DB instances, with no charge for replication data transfer within a Region; a replica can be promoted to a standalone DB instance, and replicas can be created in another Region | source: AWS documentation, "Working with DB instance read replicas", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The symptom</th><th>Put in front</th><th>What it costs</th></tr></thead>
+          <tbody>
+            <tr><td>Connection errors in bursts, CPU spent opening connections</td><td>RDS Proxy</td><td>A hop, and pinning to watch</td></tr>
+            <tr><td>Reads saturate the primary while writes are fine</td><td>Read replicas</td><td>Another instance each, and replication lag</td></tr>
+            <tr><td>The same queries, answered again and again</td><td>ElastiCache</td><td>Code to fill and expire it, and stale reads</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Measure which problem it is before buying a fix.</strong> A cache in front of a
+          database whose real trouble is connections changes nothing, and a replica added for a workload that
+          rereads twenty rows costs an instance to do a cache's job. Read the connection count, the read and write
+          mix, and how often the same query repeats, then choose. Replicas in general, beyond RDS, and what a
+          reader sees from one that lags, are in
+          <span class="xref">Replication &amp; High Availability</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-11">
   <!-- ── TOPIC: AWS DATA INGESTION & ANALYTICS ────────────────────── -->
   <div class="topic-header">
@@ -1764,6 +2210,119 @@ gcloud compute instances list --project my-prod-project</pre>
           management when workloads are constant or need tuning a managed engine will not allow. The data
           warehouse these feed, on Google's side, is
           <span class="xref">BigQuery — Serverless Data Warehouse</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: LAKE FORMATION & AWS QUICK ────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🏞️</span>
+    <span class="topic-name">Lake Formation &amp; AWS <span class="acro-exp">(Amazon Web Services)</span> Quick — Governing the Data Lake and Showing What Is In It</span>
+    <span class="topic-badge">AWS • Analytics</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Lake Formation</div>
+      <div class="concept-title">Lake Formation Grants Tables and Columns, Where IAM <span class="acro-exp">(Identity and Access Management)</span> and Bucket Policies Can Only Grant Objects</div>
+      <div class="concept-desc">
+        A data lake in S3 <span class="acro-exp">(Simple Storage Service)</span> is files, and IAM and bucket policies grant access to files. Analysts think in
+        databases, tables and columns, which live in the Glue Data Catalog. <strong class="c-cyan">AWS Lake
+        Formation</strong> adds a permissions model on top of IAM that grants and revokes access to catalog
+        objects the way a relational database does, and enforces it in the services that read the lake: Athena,
+        Redshift Spectrum, EMR, Glue and AWS Quick. Lake Formation permissions also reach Redshift warehouses,
+        DynamoDB and third-party sources, and can be shared with other accounts and organizations. A hybrid
+        access mode lets both models apply to the same catalog, so a team can move one use case at a time.
+        <!-- fact: AWS Lake Formation centrally governs, secures and shares data for analytics and machine learning, managing fine-grained access to data lake data in Amazon S3 and its metadata in the AWS Glue Data Catalog; its permissions model augments IAM with a grant and revoke mechanism like a relational database's, reaches external sources such as Amazon Redshift, Amazon DynamoDB and third-party sources, and is enforced at column, row and cell level across Amazon Athena, AWS Quick, Amazon Redshift Spectrum, Amazon EMR and AWS Glue; hybrid access mode allows both Lake Formation permissions and IAM permissions for S3 and Glue actions, onboarding one use case at a time; data can be shared across accounts, organizations or directly with IAM principals in another account | source: AWS documentation, "What is AWS Lake Formation?", fetched and read | checked: 2026-11 -->
+        <!-- fact: When an integrated AWS service requests data in an S3 location registered with Lake Formation, Lake Formation supplies temporary credentials, assuming a role registered with the location; Lake Formation permissions always work in combination with IAM permissions; S3 locations are buckets or prefixes, not individual objects | source: AWS documentation, "Underlying data access control" (Lake Formation), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>IAM and bucket policies alone</th><th>With Lake Formation</th></tr></thead>
+          <tbody>
+            <tr><td>Grants access to</td><td>Buckets, prefixes and objects</td><td>Databases, tables, columns, rows and cells</td></tr>
+            <tr><td>Hiding one column</td><td>Means a second copy of the data without it</td><td>Is a grant that leaves the column out</td></tr>
+            <tr><td>Enforced in</td><td>S3, for anyone reading the files</td><td>The integrated engines, at query time</td></tr>
+            <tr><td>Shared with another account</td><td>By bucket policy, on paths and objects</td><td>By granting catalog objects to the account</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Lake Formation's rules hold where its engines read.</strong> It works by handing
+          temporary credentials to the integrated services that read through it; it does not stand in front of
+          S3 itself, so a role with its own S3 permissions on the bucket can still read whole files, every column
+          included. Moving a lake to Lake Formation means taking those direct grants away, which hybrid mode lets
+          you do one use case at a time. Lakes against
+          warehouses, as architectures, are in
+          <span class="xref">Warehouse vs Lake vs Lakehouse</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Filters and LF-Tags</div>
+      <div class="concept-title">Data Filters Hide Columns, Rows and Cells; LF-Tags Keep Thousands of Grants Manageable</div>
+      <div class="concept-desc">
+        Permissions on a table can carry a <strong class="c-cyan">data filter</strong>, which is how Lake
+        Formation provides column-level, row-level and cell-level security. A column filter hides fields, such as a national ID number from everyone outside HR. A row filter limits records by the values
+        in them, such as each regional HR team seeing only its own region's staff. A cell filter combines the
+        two. Granting table by table stops scaling as a catalog grows, so AWS recommends
+        <strong class="c-cyan">LF-Tags</strong> once there are many objects: key-value pairs such as
+        <code>classification=restricted</code> attached to databases, tables and columns, with permissions granted
+        on tag values, so a new table tagged correctly is covered the moment it is created. LF-Tags are not IAM
+        tags, and one cannot stand in for the other.
+        <!-- fact: Lake Formation data filters on Data Catalog table permissions provide column-level security, such as hiding PII like a social security number or birth date from users outside HR, row-level security filtering on column values, such as regional HR departments seeing only their region's employees, and cell-level security combining the two, including on nested columns | source: AWS documentation, "Data filtering and cell-level security in Lake Formation", fetched and read | checked: 2026-11 -->
+        <!-- fact: Lake Formation tag-based access control defines permissions on LF-Tags, key-value pairs such as department=sales or classification=restricted attached to Data Catalog resources, and allows operations when a principal has been granted a tag value matching the resource's; it is the recommended method when there are many Data Catalog objects; IAM tags and LF-Tags are not interchangeable | source: AWS documentation, "Lake Formation tag-based access control", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Control</th><th>Restricts</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Column filter</td><td>Which fields a user sees</td><td>Everyone sees staff records; only HR sees national ID numbers</td></tr>
+            <tr><td>Row filter</td><td>Which records a user sees</td><td>Each region's HR team sees its own region's staff</td></tr>
+            <tr><td>Cell filter</td><td>Both at once</td><td>A region's managers see their own staff, without salary</td></tr>
+            <tr><td>LF-Tag grant</td><td>Every object carrying a tag value</td><td><code>classification=restricted</code> readable only by one role</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Grant on tags, and make tagging part of creating a table.</strong> A grant per
+          table is correct on the day it is written and wrong on the day someone adds a table it does not name.
+          A tag grant covers every table tagged to match, so the work moves to tagging, where it can be checked.
+          The same idea inside one database, as row-level security, is in
+          <span class="xref">Database Security — Least Privilege &amp; RLS</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">AWS Quick</div>
+      <div class="concept-title">QuickSight Is Now Quick Sight, Inside AWS Quick, and the Exam Calls It Amazon Quick</div>
+      <div class="concept-desc">
+        AWS's business intelligence service has changed name. Amazon QuickSight was renamed in October 2025,
+        becoming part of a wider analytics and AI <span class="acro-exp">(Artificial Intelligence)</span> product that AWS's documentation now calls
+        <strong class="c-cyan">AWS Quick</strong>; the dashboards continue inside it as
+        <strong class="c-cyan">Quick Sight</strong>, with QuickSight's interactive visualization, its SPICE
+        in-memory engine, embedded analytics and dashboard sharing, and its existing APIs <span class="acro-exp">(Application Programming Interface)</span> unchanged. Around it,
+        Quick adds Flows and Automate for workflow automation, Index to ground answers in an organization's
+        documents, Research for cited reports, and apps built from a plain-language description. The SAA-C03
+        exam guide lists the service as Amazon Quick, under data analytics and visualization.
+        <!-- fact: The AWS Quick User Guide's document history records, on 9 October 2025, that Amazon QuickSight was rebranded, expanding from a standalone business intelligence service to an analytics and AI platform, with QuickSight continuing as AWS Quick Sight, which retains interactive data visualization, SPICE in-memory analytics, embedded analytics and dashboard sharing, and with existing QuickSight APIs, SDKs and integrations working unchanged; the documentation names the product AWS Quick, whose features include Quick Sight, Quick Flows, Quick Automate, Quick Index, Quick Research and apps built from natural language | source: AWS documentation, "What is AWS Quick?" and "Document history for the AWS Quick User Guide", fetched and read | checked: 2026-11 -->
+        <!-- fact: The SAA-C03 exam guide's task 3.5 names data analytics and visualization services including Amazon Athena, AWS Lake Formation and Amazon Quick, and its in-scope list names Amazon Quick under Analytics | source: AWS Certified Solutions Architect - Associate (SAA-C03) exam guide, domain 3 and in-scope services pages, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Where you see it</th><th>It is called</th></tr></thead>
+          <tbody>
+            <tr><td>Documentation and courses from before the rename, and the APIs</td><td>Amazon QuickSight</td></tr>
+            <tr><td>The SAA-C03 exam guide</td><td>Amazon Quick</td></tr>
+            <tr><td>AWS's documentation today</td><td>AWS Quick, with Quick Sight for dashboards</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Search under every name, and expect the same service.</strong> Three names now
+          circulate for one dashboarding service that has had AI features built around it; the APIs did not
+          change, so scripts written against QuickSight still run. For the exam, it is the visualization answer
+          beside Athena and Lake Formation in a data lake design. Where it reads data from, in that design, is
+          <span class="xref">AWS Data Ingestion &amp; Analytics — Kinesis, Firehose, Glue, Athena &amp; EMR</span>.
         </div>
       </div>
     </div>

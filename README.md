@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **479 elements at rest instead of 155,671** — measured at 1,613 topics,
+  costs **479 elements at rest instead of 156,197** — measured at 1,618 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -65,7 +65,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🎖️ Military Codes | MIL | NATO Phonetic, Military Time, US Army Ranks, CMMC, DISA STIGs, Staff Codes J/G/S/N/A/C |
 | 🔴 Red Team | PT+, OSCP | Recon, Exploitation, AD Attacks, C2, Password & Wireless |
 | 🔵 Blue Team | CySA+, GCIH | NSM, SIEM, EDR, Detection, DFIR, Threat Intel |
-| ☁️ Cloud | AWS, GCP, SAA-C03 | AWS (application integration from SQS to Step Functions, data ingestion and analytics, hybrid storage and data transfer), GCP, **Azure** (hierarchy, networking, compute/storage, Monitor & KQL, **troubleshooting playbook**, Entra ID sign-in), IAM, IaC, Cost |
+| ☁️ Cloud | AWS, GCP, SAA-C03 | AWS (Cognito, Shield and Global Accelerator, application integration from SQS to Step Functions, RDS Proxy and ElastiCache, data ingestion and analytics, Lake Formation and AWS Quick, hybrid storage and data transfer, AWS Backup and Vault Lock), GCP, **Azure** (hierarchy, networking, compute/storage, Monitor & KQL, **troubleshooting playbook**, Entra ID sign-in), IAM, IaC, Cost |
 | 🏛️ Engineering | ARCH, SWE | System Design, Architecture, Craft, Reliability, Career, IT Job Titles |
 | 📊 Data | SQL, DATA | SQL, DB Internals, NoSQL, Warehousing, DBA |
 | 🌐 Web | WEB, JS | Browser, CSS, JS, Frameworks, Performance, A11y |
