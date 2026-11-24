@@ -298,7 +298,7 @@ const READERS = [
     ["onedrive is not syncing"],
     ["teams keeps signing me out"],
     ["the user says the file is gone",
-     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want. Since the third wave it scores answered, by coincidence: the Windows built-in tools topic holds all four words, `user` only inside the expansion of UDP, and relaxation widens that one match to 31 cards. One is the retention card; the rest are not about a lost file. In the eighth wave search stopped matching inside acronym expansions, and this query went back to zero, which is what a reader gets"],
+     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want. Since the third wave it scores answered, by coincidence: the Windows built-in tools topic holds all four words, `user` only inside the expansion of UDP, and relaxation widens that one match to 31 cards. One is the retention card; the rest are not about a lost file. In the eighth wave search stopped matching inside acronym expansions, and this query went back to zero, which is what a reader gets. Its four words are common enough that a new topic can hold all of them by chance: the seventeenth wave's threat intelligence topic and the eighteenth's Microsoft 365 Apps topic each did, in unrelated sentences, and each time relaxation widened that one topic to 33 cards. Both times the topic's phrase was reworded and this note kept, because 33 wrong cards serve the reader worse than none"],
     // ── batch fourteen ──
     ["the printer is printing garbage", "",
      "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
@@ -347,6 +347,22 @@ const READERS = [
     ["sensitive information type regex", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
     ["endpoint dlp", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
     ["copy sensitive files to usb", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
+    // ── eighteenth wave: four of MD-102's seven gaps, added before their topics ──
+    // Opened at 0 of 13: four zeros, `semi-annual` and `click-to-run` among them words the site had
+    // never written, and nine that found other cards. `app control for business` reached 34, none about it.
+    ["office deployment tool", "", "endpoint/microsoft-365-apps-deployment-the-office-deployment-tool-int"],
+    ["setup.exe /configure", "", "endpoint/microsoft-365-apps-deployment-the-office-deployment-tool-int"],
+    ["semi-annual enterprise channel", "", "endpoint/microsoft-365-apps-deployment-the-office-deployment-tool-int"],
+    ["office click-to-run", "", "endpoint/microsoft-365-apps-deployment-the-office-deployment-tool-int"],
+    ["delivery optimization", "", "endpoint/delivery-optimization-download-modes-peer-groups-where-windo"],
+    ["port 7680", "", "endpoint/delivery-optimization-download-modes-peer-groups-where-windo"],
+    ["peer to peer windows updates", "", "endpoint/delivery-optimization-download-modes-peer-groups-where-windo"],
+    ["app control for business", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
+    ["managed installer", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
+    ["wdac audit mode", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
+    ["windows backup for organizations", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
+    ["restore settings on a new pc", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
+    ["restore settings during autopilot", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -441,6 +457,8 @@ const READERS = [
     ["exposure score", "", "endpoint/defender-vulnerability-management-exposure-score-recommendat"],
     ["remediation request intune", "", "endpoint/defender-vulnerability-management-exposure-score-recommendat"],
     // ── seventeenth wave: MS-102's last three Defender objectives, added before their topics ──
+    // Opened at 0 of 13: eight zeros and five that found other cards. `alert policy email
+    // notifications` and `threat analytics report` reached fourteen each, none about Microsoft's products.
     ["restricted entities", "", "m365/restricted-entities-outbound-spam-why-a-mailbox-stops-sendin"],
     ["user restricted from sending email", "", "m365/restricted-entities-outbound-spam-why-a-mailbox-stops-sendin"],
     ["550 5.1.8 bad outbound sender", "", "m365/restricted-entities-outbound-spam-why-a-mailbox-stops-sendin"],

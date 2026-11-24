@@ -725,6 +725,113 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: WINDOWS BACKUP FOR ORGANIZATIONS ──────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧳</span>
+    <span class="topic-name">Windows Backup for Organizations — Settings Restore on a New PC, and What It Leaves Behind</span>
+    <span class="topic-badge">Intune • Provisioning</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What it carries</div>
+      <div class="concept-title">It Brings Back Settings and the Store App List, Under a New Name</div>
+      <div class="concept-desc">
+        Windows Backup for Organizations, which Microsoft is renaming <em>Windows settings backup and
+        restore</em>, saves a user's Windows settings and preferences and the list of their Microsoft Store
+        apps to their Entra account, and offers them back on a new or reset device. Once a policy turns backup
+        on, a scheduled task runs it every eight days, and users can run it themselves from the Windows Backup
+        app. It needs an Entra joined or hybrid joined device on a recent build of Windows 10 22H2 or Windows
+        11. From Windows 11 version 26H2, backup is on by default, in most regions, wherever its policy is left
+        not configured,
+        and since July 2026 the same feature manages Enterprise State Roaming.
+        <!-- fact: Windows Backup for Organizations is now Windows settings backup and restore; it preserves user settings and Microsoft Store app configurations; the backup scheduled task runs every eight days after policy enables it, and users can back up manually from the Windows Backup app; backup needs Entra joined or hybrid joined devices on Windows 10 22H2 build 19045.6216 or later or Windows 11 22H2 22621.5768, 23H2 22631.5768 or 24H2 26100.4946 or later; starting with Windows 11 26H2, backup is enabled by default for eligible devices whose backup policy is Not Configured, outside privacy-sensitive regions and sovereign clouds, and explicit policies are honored; from July 2026 Enterprise State Roaming management is part of the feature; it isn't available in GCC High, sovereign clouds or China; the Intune setting is Administrative Templates, Windows Components, Sync your settings, Enable Windows Backup | source: Microsoft Learn, "Windows settings backup and restore overview" (updated 2026-10-29), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>On the new device</th><th>Comes back from</th></tr></thead>
+          <tbody>
+            <tr><td>Windows settings and preferences</td><td>This backup</td></tr>
+            <tr><td>Microsoft Store apps</td><td>This backup's list of them</td></tr>
+            <tr><td>Files in Desktop, Documents and Pictures</td><td>Not this backup: OneDrive, if Known Folder Move was on</td></tr>
+            <tr><td>Win32 and line-of-business apps</td><td>Not this backup: the Intune assignments, or whatever installed them the first time</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pair it with Known Folder Move, or the user gets their wallpaper back and not
+          their documents.</strong> Microsoft describes what the backup holds as settings, preferences and the
+          Store app list, so a device swap that relies on it alone restores how Windows looked and loses
+          what the user was working on. Moving the known folders into OneDrive is
+          <span class="xref">OneDrive — Known Folder Move, Files On-Demand &amp; Sync Triage</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Restore</div>
+      <div class="concept-title">Restore Is Off Until You Turn It On, and the Tenant Switch Reaches Only New Enrollments</div>
+      <div class="concept-desc">
+        Backup and restore are separate policies, and restore is off by default. It is offered at two points.
+        During setup, the out-of-box experience, it needs an Entra joined device, and an Autopilot profile in
+        user-driven mode rather than self-deploying. At the user's first sign-in after enrollment, on Windows 11
+        24H2 or 25H2 with March 2026's builds, it also works on hybrid joined devices. Either way the user signs
+        in with the same work account that made the backup, picks a backup profile from a previous device or
+        chooses to start fresh, and a restore summary appears about an hour later, visible for seven days.
+        <!-- fact: Restore is disabled by default; restore during OOBE needs Windows 11 22H2 22621.3958, 23H2 22631.3958 or 24H2 26100.4770 or later, at least one backup profile, an Autopilot profile in user-driven not self-deploying mode, and an Entra joined device; restore at first sign-in after enrollment needs Windows 11 24H2 or 25H2 build 7922 or later, and an Entra or hybrid joined device; the user signs in with the same Entra account used for the backup and selects a backup profile or sets up as new; the Intune enrollment setting (Devices, Enrollment, Windows Backup and Restore, Show restore page) is tenant-wide, applies only at device enrollment, takes effect before standard MDM policy, doesn't apply to devices already enrolled, and needs Intune Service administrator or Global administrator; the settings catalog setting Enable Windows Restore applies after enrollment at the regular policy refresh; the restore summary appears about an hour after restore and is viewable for seven days | source: Microsoft Learn, "Windows settings backup and restore overview" (updated 2026-10-29) and "Windows Backup for Organizations in Microsoft Intune" (updated 2026-05-05), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Turned on by</th><th>Reaches</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>The tenant-wide enrollment setting, <span class="volatile" data-checked="2026-11"><em>Devices &gt; Enrollment &gt; Windows Backup and Restore</em></span></td><td>Every device that enrolls from then on</td><td>At enrollment, ahead of other policy, in time for setup. Devices already enrolled never see a change to it</td></tr>
+            <tr><td>A settings catalog policy, <em>Enable Windows Restore</em></td><td>The groups you assign</td><td>After enrollment, at the next policy refresh</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A self-deploying device never shows the restore page.</strong> Restore during
+          setup needs a person signing in, so kiosks and shared devices provisioned in self-deploying mode skip
+          it by design, and the ticket that says the restore page never appeared on one is answered by the
+          profile, not by the backup. The profile types are in
+          <span class="xref">Windows Autopilot — Zero-Touch Provisioning</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">When it does not work</div>
+      <div class="concept-title">A Policy That Turns Off the Activity Feed Turns Off Backup Too</div>
+      <div class="concept-desc">
+        Microsoft lists five policies that must not be set to Disabled, or backup does not apply: the three
+        activity history settings, <code>EnableActivityFeed</code>, <code>PublishUserActivities</code> and
+        <code>UploadUserActivities</code>, plus <code>EnableCDP</code> for the Connected Devices Platform and
+        <code>AllowConnectedDevices</code>. Each looks like a privacy setting with nothing to do with backup.
+        Configure the feature through Group Policy or through MDM <span class="acro-exp">(Mobile Device Management)</span>, never both. And Conditional Access can stop
+        the restore itself: a user who sees <em>You can't get there from here</em> during setup is being
+        refused a token, which a policy allowing the restore service's app ID fixes.
+        <!-- fact: Windows Backup doesn't apply if EnableActivityFeed, PublishUserActivities or UploadUserActivities (System, OS Policies), EnableCDP or AllowConnectedDevices is set to Disabled; mixing GPO and CSP settings for the feature can give unexpected results; Conditional Access for cloud apps can stop the user obtaining a token, with errors such as You can't get there from here, fixed by a custom policy allowing the Microsoft service with app ID d32c68ad-72d2-4acb-a0c7-46bb2cf93873; a phishing-resistant MFA prompt for the restore app (74d197dc-b84d-4d43-a1b2-b5bf3bb91c11) appears during OOBE when an authentication strength policy excludes the Intune apps and the user enrolls without a strong method, and in Hyper-V VMs a Temporary Access Pass is suggested | source: Microsoft Learn, "Windows settings backup and restore overview" (updated 2026-10-29), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Backup never runs on the hardened devices</td><td>One of the five activity or connected-devices policies set to Disabled</td></tr>
+            <tr><td>The restore page never appears</td><td>Restore not turned on, a self-deploying profile, a device that is not Entra joined, or a build too old</td></tr>
+            <tr><td>Setup stops at <em>You can't get there from here</em></td><td>Conditional Access refusing the restore service, app ID <code>d32c68ad-72d2-4acb-a0c7-46bb2cf93873</code></td></tr>
+            <tr><td>A phishing-resistant MFA <span class="acro-exp">(Multi-Factor Authentication)</span> prompt in the middle of setup</td><td>An authentication strength policy that exempts Intune's apps but not the restore app. In a virtual machine, use a Temporary Access Pass</td></tr>
+            <tr><td>Settings behave differently on identical devices</td><td>Group Policy and MDM both configuring the feature</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read the baseline before blaming the feature.</strong> Activity history and
+          the Connected Devices Platform are the kind of thing a privacy-minded hardening baseline switches off,
+          and nothing in either setting's name says backup depends on it. Find which baseline sets them, and
+          decide which matters more, as
+          <span class="xref">Security Baselines Without Breaking the Fleet</span> describes.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
@@ -2080,6 +2187,160 @@ PsExec64.exe -s -i cmd.exe</pre>
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: MICROSOFT 365 APPS DEPLOYMENT ─────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🗃️</span>
+    <span class="topic-name">Microsoft 365 Apps Deployment — The Office Deployment Tool, Intune's App Type &amp; Update Channels</span>
+    <span class="topic-badge">Intune • Apps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Office Deployment Tool</div>
+      <div class="concept-title">Office Installs From a Configuration File, Not an MSI <span class="acro-exp">(Microsoft Installer)</span></div>
+      <div class="concept-desc">
+        Microsoft 365 Apps is a Click-to-Run product: it installs and updates by streaming from Microsoft's
+        content delivery network, and it is not supported beside MSI-installed Office on the same device. The Office
+        Deployment Tool is two files, <code>setup.exe</code> and a <code>configuration.xml</code> naming the
+        products, languages, architecture and update channel, and whether the user sees anything.
+        <code>/download</code> copies the source files to a share, fetching only what the share lacks;
+        <code>/configure</code> installs, changes or removes, and needs local admin rights;
+        <code>/customize</code> applies application preferences to an existing install and changes nothing
+        else. Microsoft recommends building the file in the web-based Office Customization Tool, and the
+        logs are in <code>%temp%</code>.
+        <!-- fact: The ODT is setup.exe plus configuration.xml; download mode (setup.exe /download) fetches only files missing from the target folder; configure mode installs, removes and updates and needs local administrator permissions; customize mode applies only application preferences; Microsoft recommends the Office Customization Tool for building the file; logs are in %temp%; ExcludeApp removes an app from an install, or from an existing install; OneDrive installs with Microsoft 365 Apps unless excluded | source: Microsoft Learn, "Overview of the Office Deployment Tool" (updated 2026-07-19), fetched and read | checked: 2026-11 -->
+        <!-- fact: If Microsoft 365 Apps isn't installed, the Channel attribute defaults to Current; if it is installed and Channel isn't specified, the ODT matches the existing installation's channel; channel values are BetaChannel, CurrentPreview, Current, MonthlyEnterprise, SemiAnnualPreview and SemiAnnual; ExcludeApp IDs include Access, Excel, Groove, Lync, OneDrive, OneNote, Outlook, OutlookForWindows, PowerPoint, Publisher, Teams and Word; the 32-bit version isn't supported on Arm devices | source: Microsoft Learn, "Configuration options for the Office Deployment Tool" (updated 2026-09-28), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com">&lt;!-- install.xml: 64-bit, Monthly Enterprise Channel, no Access, silent --&gt;</span>
+&lt;Configuration&gt;
+  &lt;Add OfficeClientEdition=<span class="str">"64"</span> Channel=<span class="str">"MonthlyEnterprise"</span>&gt;
+    &lt;Product ID=<span class="str">"O365ProPlusRetail"</span>&gt;
+      &lt;Language ID=<span class="str">"en-us"</span> /&gt;
+      &lt;ExcludeApp ID=<span class="str">"Access"</span> /&gt;
+    &lt;/Product&gt;
+  &lt;/Add&gt;
+  &lt;Display Level=<span class="str">"None"</span> AcceptEULA=<span class="str">"TRUE"</span> /&gt;
+&lt;/Configuration&gt;
+
+<span class="com">REM To a share first, or skip this and install from the CDN</span>
+<span class="fn">setup.exe</span> /download install.xml
+<span class="com">REM On the client, as an administrator</span>
+<span class="fn">setup.exe</span> /configure install.xml</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Always name the channel.</strong> Leave <code>Channel</code> out and a new
+          install lands on Current Channel, Microsoft's fastest; on a device that already has Office the tool
+          keeps whatever channel is there. Nothing in the file says which one you got, so a pilot group and the
+          fleet drift apart without anyone choosing it. How a Click-to-Run install differs from the MSI and EXE
+          packages beside it is in
+          <span class="xref">MSI, EXE &amp; .intunewin — What Each Package Is, and How It Installs</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Through Intune</div>
+      <div class="concept-title">Intune's Microsoft 365 Apps Type Is the Simple Route, Except During Autopilot</div>
+      <div class="concept-desc">
+        Intune has an app type for Microsoft 365 Apps: choose the apps, the architecture, the channel and the
+        version in a designer, or paste ODT XML <span class="acro-exp">(eXtensible Markup Language)</span>, and the device downloads from Microsoft's network through the
+        Office CSP <span class="acro-exp">(Configuration Service Provider)</span>. Its limits are worth knowing before the first ticket. MSI Office already on the device
+        makes it fail, unless <em>Remove other versions</em> is on, and that removes every MSI Office app, not
+        only the ones you chose. A device takes one Microsoft 365 Apps deployment, not two. Office apps left
+        open during the install can make it fail and lose unsaved work. And for a custom XML install the
+        status shows whether the install attempt worked, not whether Office is still there.
+        <!-- fact: Intune's Microsoft 365 Apps app type: preexisting MSI Office must be removed with Remove MSI or the install fails, and it removes all Office MSI apps; Windows Creators Update or later; not supported on Windows Home, Team or Holographic; open Office apps can make the install fail and lose unsaved data; multiple Microsoft 365 deployments aren't supported; for Autopilot with ESP tracking, Microsoft recommends deploying Microsoft 365 Apps as a Win32 app because the app type isn't installed by the IME and can start while a tracked Win32 app installs, failing the ESP; settings catalog settings for Office must not conflict with the deployment's channel and version or the app can reinstall; the device downloads from officecdn.microsoft.com via the Office CSP; for custom ODT XML installs the status reflects only the installation attempt; verbose Click-to-Run logging is enabled by the LogLevel value under HKLM\SOFTWARE\Microsoft\ClickToRun\OverRide | source: Microsoft Learn, "Add Microsoft 365 Apps to Windows devices with Microsoft Intune" (updated 2026-04-23), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Deploy Office as</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Intune's Microsoft 365 Apps app type</td><td>Devices already in use, assigned as Required or offered in the Company Portal</td></tr>
+            <tr><td>A Win32 app wrapping <code>setup.exe</code> and its XML</td><td>Autopilot, where the Enrollment Status Page tracks Office alongside other Win32 apps</td></tr>
+            <tr><td><code>setup.exe /configure</code> from a share</td><td>Configuration Manager, a script, or a machine nothing manages</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">For Autopilot, wrap it as Win32.</strong> The Microsoft 365 Apps type is not
+          installed by the Intune Management Extension, so during the Enrollment Status Page it can start while a
+          tracked Win32 app is still installing, and Microsoft says that collision fails the ESP. Packaged as a
+          Win32 app it waits its turn like the rest. Keep Office's channel and version out of settings catalog
+          profiles too: a conflict with the app's own settings can make Office reinstall. Wrapping is in
+          <span class="xref">Win32 App Packaging — .intunewin End to End</span>, and what the ESP waits for is in
+          <span class="xref">Enrollment Status Page (ESP)</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Update channels</div>
+      <div class="concept-title">The Semi-Annual Enterprise Channel Became Monthly in July 2026</div>
+      <div class="concept-desc">
+        A channel decides how often Office gets new features. Current Channel takes them as soon as they are
+        ready, Monthly Enterprise once a month on the second Tuesday, and Semi-Annual Enterprise took them
+        twice a year, for devices that needed long testing first. That last one ended with Version 2606 in
+        July 2026, when Microsoft unified it into Monthly Enterprise. Devices still configured for
+        Semi-Annual now get the same monthly features and security updates, and show <em>Monthly Enterprise
+        Channel</em> under <em>File &gt; Account</em>, though some management reports keep saying Semi-Annual;
+        a build above 20131.20000 has the change. The first update after the switch is larger than usual: from
+        version 2508 to 2606, about 1.6 GB.
+        <!-- fact: Beginning with Version 2606 in July 2026, Semi-Annual Enterprise Channel and Monthly Enterprise Channel are unified; devices configured for Semi-Annual receive the same feature and security updates as Monthly Enterprise and show as Monthly Enterprise in File, Account; some management tools and reports may still show Semi-Annual; builds higher than 20131.20000 have installed Version 2606; updating from 2508 to 2606 is roughly 1.6 GB; no admin action is required; Cloud Update takes precedence over other management tools and automatically onboards eligible devices after 2606; devices with Copilot-eligible users become eligible for Copilot; organizations can keep using other channels | source: Microsoft Learn, "Upcoming channel unification: Semi-Annual Enterprise Channel to Monthly Enterprise Channel" (updated 2026-07-15), fetched and read | checked: 2026-11 -->
+        <!-- fact: Current Channel gets features at least monthly on no set schedule and each version is supported until the next, about a month; Monthly Enterprise Channel gets features, security and non-security updates on the second Tuesday, versions supported three months, rollback three months; Semi-Annual Enterprise Channel took features in January and July, versions supported eight months from July 2025 (previously fourteen) | source: Microsoft Learn, "Overview of update channels for Microsoft 365 Apps" (updated 2026-05-27), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Channel</th><th>New features</th><th>A version is supported for</th></tr></thead>
+          <tbody>
+            <tr><td>Current</td><td>As soon as ready, on no set schedule</td><td>Until the next one, about a month</td></tr>
+            <tr><td>Monthly Enterprise</td><td>The second Tuesday of each month</td><td>Three months, with three months of rollback</td></tr>
+            <tr><td>Semi-Annual Enterprise</td><td>January and July, until Version 2606; monthly since, as Monthly Enterprise</td><td>Eight months, before the unification</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A test plan built on two feature releases a year needs rewriting.</strong>
+          The slow lane closed without anyone changing a policy, and dashboards or compliance checks that
+          count devices on Semi-Annual will report numbers that no longer mean that. One more thing changed
+          quietly: in a tenant that already uses Cloud Update in the Microsoft 365 Apps admin center for
+          Monthly Enterprise, Cloud Update takes precedence over Intune, Configuration Manager and Group Policy,
+          and onboards the converted devices itself unless an exclusion says otherwise. Rings for Windows itself, the model to copy, are in
+          <span class="xref">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Settings</div>
+      <div class="concept-title">Cloud Policy Follows the User to Any Device, and Outranks Group Policy</div>
+      <div class="concept-desc">
+        Office settings can come from Group Policy or Intune, which configure a device, or from the Cloud
+        Policy service in the <span class="volatile" data-checked="2026-11">Microsoft 365 Apps admin center</span>,
+        which configures a user. When someone signs into Microsoft 365 Apps on Windows, macOS, iOS or Android,
+        the settings for their Entra groups follow them, managed device or not. Office checks in at the first
+        sign-in and then on an interval, 90 minutes when a policy applies, and a setting takes effect when the
+        app restarts. Where groups conflict, the configuration with the higher priority wins, 0 being highest,
+        and Cloud Policy wins over Group Policy. It does not apply to volume-licensed Office such as LTSC <span class="acro-exp">(Long Term Servicing Channel)</span> 2021.
+        <!-- fact: Cloud Policy enforces settings for Microsoft 365 Apps for enterprise for the signed-in user even on unmanaged devices, on Windows, macOS, iOS and Android; scope is all users, specific groups or anonymous Office for the web users; check-in at first sign-in and then when the interval lapses, 90 minutes when the user has a policy, and on the next Office launch after an error; settings apply when the Office app restarts; only the primary account's policies apply; conflicting group configurations are resolved by priority, 0 the highest; Cloud Policy takes precedence over Group Policy and over preferences and local policy; volume licensed Click-to-Run Office (LTSC 2021, Standard 2019) can't receive a policy configuration, and Apps for business only privacy settings; retrieved settings are under HKCU\Software\Policies\Microsoft\Cloud\Office\16.0, check-in state under HKCU\Software\Microsoft\Office\16.0\Common\CloudPolicy, and deleting that key and restarting Office forces a check-in; Office Apps Administrator is the recommended role | source: Microsoft Learn, "Overview of Cloud Policy service for Microsoft 365" (updated 2026-07-16) and "Overview of the Microsoft 365 Apps admin center" (updated 2026-10-05), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The ticket says</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>The setting never arrived</td><td>The user's group membership, and a configuration with higher priority overriding it</td></tr>
+            <tr><td>It works on one PC and not another</td><td>Which account is Office's primary one: only its policies apply</td></tr>
+            <tr><td>Changed an hour ago, still not showing</td><td>The check-in interval and an Office restart; deleting the <code>CloudPolicy</code> key under <code>HKCU\Software\Microsoft\Office\16.0\Common</code> and reopening Office forces one</td></tr>
+            <tr><td>Nothing applies at all</td><td>Volume-licensed Office, which Cloud Policy cannot configure</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pick one home for each Office setting.</strong> A setting configured in Cloud
+          Policy and in a GPO <span class="acro-exp">(Group Policy Object)</span> is settled by Cloud Policy, so a GPO edit that seems to do nothing may be losing,
+          not failing. Cloud Policy also reaches devices nobody manages, where someone has simply signed into
+          Office with a work account, which neither a GPO nor a device configuration profile can. Proving which source won is
+          <span class="xref">Policy Conflicts — Proving Which One Won</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: APP PROTECTION POLICIES ────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
@@ -2355,6 +2616,123 @@ Restart-Service IntuneManagementExtension</pre>
           attached, and considerably cheaper to act on than the same problem discovered by
           rolling forward into it. Overriding is legitimate for a validation ring and
           should carry an expiry date the same way any exception does.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DELIVERY OPTIMIZATION ─────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📡</span>
+    <span class="topic-name">Delivery Optimization — Download Modes, Peer Groups &amp; Where Windows Gets Its Updates</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What it is</div>
+      <div class="concept-title">Delivery Optimization Is Windows' Downloader, and Peers Are Only One of Its Sources</div>
+      <div class="concept-desc">
+        Delivery Optimization is the downloader Windows uses for its updates, Store apps, Defender
+        definitions, Intune Win32 apps, Microsoft 365 Apps, Edge and Teams. Besides the original servers it
+        can take pieces of a file from other devices on the network and from a Microsoft Connected Cache
+        server, all at once, and it falls back to the internet for whatever neither has. Peering needs the
+        Delivery Optimization cloud service, which tells each device who has what, and it is for large
+        files: under 50 MB, by default, nothing is shared. Where BranchCache is also turned on, Delivery
+        Optimization is used instead of it, and Windows Server 2019 and later default to no peering at all.
+        <!-- fact: Delivery Optimization is a cloud-managed HTTP downloader that can also download from peers and Microsoft Connected Cache, in parallel, falling back to the original HTTP source; peering and Connected Cache need internet access and the DO cloud services; it works with Windows Update, WSUS, Intune and Windows Update client policies, and Configuration Manager express updates; where BranchCache is enabled, DO is used instead; minimum Windows 10 1511 and Windows Server 2019, where the default download mode is 0 rather than the client default of 1; content types include Windows updates, Store apps, Defender definitions, Intune Win32 apps (peers and Connected Cache in public cloud), Microsoft 365 apps and updates, Edge, Configuration Manager express updates, dynamic updates and Teams updates (peering from version 25122.1415.3698.6812, Connected Cache over HTTPS only), while Windows 11 Win32 Store apps, Windows Package Manager and MSIX use the HTTP downloader only | source: Microsoft Learn, "What is Delivery Optimization?" (updated 2026-05-12), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Content</th><th>From peers</th><th>From Connected Cache</th></tr></thead>
+          <tbody>
+            <tr><td>Windows updates and drivers, Defender definitions</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Microsoft 365 Apps and their updates, Edge updates</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Intune Win32 apps</td><td>Yes, in the public cloud</td><td>Yes, in the public cloud</td></tr>
+            <tr><td>Teams updates</td><td>Yes, from version 25122.1415.3698.6812</td><td>Over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> only</td></tr>
+            <tr><td>Win32 Store apps on Windows 11, Windows Package Manager, MSIX <span class="acro-exp">(Microsoft Installer for Windows Apps)</span></td><td>No</td><td>No</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A feature update to a whole office is where it pays.</strong> Every device
+          downloading the same several gigabytes over the same link is the case it was built for, and a
+          monthly quality update or a large Win32 app is the same shape. A small app is not: below the size
+          threshold each device fetches its own copy. What a feature update weighs against the others is in
+          <span class="xref">Feature vs Quality vs Driver Updates</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Download mode</div>
+      <div class="concept-title">The Download Mode Decides Who Counts as a Peer, and the Default Is the Same Public IP <span class="acro-exp">(Internet Protocol)</span></div>
+      <div class="concept-desc">
+        One setting, the download mode, decides where peers may come from. The default, LAN <span class="acro-exp">(Local Area Network)</span>, offers as peers
+        the devices that reach the internet through the same public IP address, which then connect to each
+        other over their private addresses. Group mode draws the line by group instead, across subnets and out
+        to remote offices: by default the device's Active Directory site, then its domain, then the Entra
+        tenant, unless a Group ID you set overrides it. HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> only turns peering off and keeps everything else.
+        In Intune the settings live in a configuration profile, in the settings catalog's format since April
+        2025, beside the cache's limits: by default, files kept three days in up to 20% of the drive's free space.
+        <!-- fact: Download Mode values: HTTP only (0) disables peer-to-peer but still downloads over HTTP from the source or Connected Cache, using the cloud service's metadata; LAN (1), the default, finds clients using the same public IP, which connect to peers on the same network by private subnet IP; Group (2) peers across internal subnets within a group, selected by AD DS site or authenticated domain, or a custom GroupID, and GroupIDSource from Windows 10 1803; when neither is set the group is the AD site, then the domain SID, then the Entra tenant ID; Internet (3) adds internet peers; Simple (99) disables the cloud services entirely, and DO switches to it automatically when the services are unreachable or the file is under 50 MB; Bypass (100) is deprecated from Windows 11 and can make content fail, use 0 to disable peering; group membership by tenant, site or domain isn't an authentication of device identity; max cache age defaults to 259,200 seconds (three days), max cache size to 20%, minimum peer caching file size to 50 MB; peering requires 4 GB of RAM and 32 GB of disk by default, isn't allowed on VPN by default, and uploads aren't allowed on battery by default | source: Microsoft Learn, "Delivery Optimization reference" (updated 2026-11-04), fetched and read | checked: 2026-11 -->
+        <!-- fact: In April 2025 the Intune Delivery Optimization template moved to the settings catalog's format, and new versions of the old profile can no longer be created | source: Microsoft Learn, "Delivery Optimization settings in Microsoft Intune" (updated 2026-04-14), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mode</th><th>Peers are</th></tr></thead>
+          <tbody>
+            <tr><td>0, HTTP only</td><td>None. The original source or Connected Cache, still guided by the cloud service</td></tr>
+            <tr><td>1, LAN (the default)</td><td>Devices behind the same public IP address, reached on their private addresses</td></tr>
+            <tr><td>2, Group</td><td>Devices in the same group: AD <span class="acro-exp">(Active Directory)</span> site, then domain, then Entra tenant, unless you set a Group ID</td></tr>
+            <tr><td>3, Internet</td><td>Internet peers as well</td></tr>
+            <tr><td>99, Simple</td><td>None, and no cloud service. Also where a device lands by itself when the service is out of reach</td></tr>
+            <tr><td>100, Bypass</td><td>Deprecated in Windows 11, and some content fails under it. Use 0 to stop peering</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A device reporting 99 was probably not set to 99.</strong> Simple mode is also
+          what Delivery Optimization falls back to when it cannot reach its cloud service, so a fleet that
+          should be peering and reports 99 has a firewall or proxy question, not a policy one. Microsoft names
+          the host that matters most, <code>*.do.dsp.mp.microsoft.com</code>. And a group is a boundary for
+          sharing, not proof of anything: Microsoft says not to treat membership by site or tenant as
+          authenticating a device. The on-premises answer to the same bandwidth problem is
+          <span class="xref">MECM at Scale — Site Design, Boundary Groups &amp; Collections That Don't Melt the Server</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">No bytes from peers</div>
+      <div class="concept-title">Zero Bytes From Peers Has Four Causes, and Each Has a Test</div>
+      <div class="concept-desc">
+        Microsoft's troubleshooting page splits the failure four ways. The device cannot reach the cloud
+        service. The service sees no other peers. The peers it offers cannot be reached. Or nobody nearby has
+        the file yet. <code>Get-DeliveryOptimizationStatus</code>, run elevated, shows the download mode;
+        <code>Get-DeliveryOptimizationPerfSnap</code> on a second device shows how many peers it found; and
+        on Windows 10 2004 and later <code>Get-DeliveryOptimizationStatus -PeerInfo</code> lists each file's
+        peers and what each sent. Microsoft's <em>DeliveryOptimizationTroubleshooter</em> script, from the
+        PowerShell Gallery, runs the same checks with <code>-HealthCheck</code>, <code>-P2P</code> and
+        <code>-MCC</code>.
+        <!-- fact: With no bytes from peers the cause can be: clients can't reach the DO cloud services (download mode 99; allow *.do.dsp.mp.microsoft.com), the service sees no other peers (NumberOfPeers zero in Get-DeliveryOptimizationPerfSnap; in LAN mode devices must share a public IP, otherwise use Group mode with a custom GroupID), clients can't connect to the peers offered (test port 7680), or no computer is yet getting content from peers; Microsoft's test downloads a Store app over 50 MB on two devices 10 to 15 minutes apart; Get-DeliveryOptimizationStatus -PeerInfo exists from Windows 10 2004; the DeliveryOptimizationTroubleshooter script has -HealthCheck, -P2P, -MCC, -GenerateSupportBundle and -AsObjects switches and should be updated from the PowerShell Gallery with the BurntToast module removed | source: Microsoft Learn, "Troubleshoot Delivery Optimization" (updated 2026-11-07), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What you see</th><th>Why</th><th>What fixes it</th></tr></thead>
+          <tbody>
+            <tr><td>Download mode reads 99</td><td>The device cannot reach the Delivery Optimization service</td><td>Allow <code>*.do.dsp.mp.microsoft.com</code> through the proxy and firewall</td></tr>
+            <tr><td>The peer count is 0 in LAN mode</td><td>The devices reach the internet through different public IPs</td><td>Group mode, with a Group ID they share</td></tr>
+            <tr><td>Peers are offered, nothing arrives</td><td>The devices cannot connect to each other</td><td>TCP <span class="acro-exp">(Transmission Control Protocol)</span> port 7680 open between them</td></tr>
+            <tr><td>One device never peers</td><td>Under 4 GB of RAM <span class="acro-exp">(Random Access Memory)</span> or 32 GB of disk, or on VPN <span class="acro-exp">(Virtual Private Network)</span>, which the defaults exclude</td><td>Expected, unless you change those settings</td></tr>
+            <tr><td>A 30 MB app never peers</td><td>Under the 50 MB minimum</td><td>Expected</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Test with something big, on two devices, minutes apart.</strong> Microsoft's
+          own test is a Store app over 50 MB downloaded on one device and then on another 10 to 15 minutes
+          later, because peering needs a device that already has the file and a file large enough to share.
+          Testing with a small app, or on both devices at once, shows zero from peers on a network that works.
+          Where these downloads sit in a Windows update deployment is
+          <span class="xref">Windows Autopatch — What It Takes Over</span>.
         </div>
       </div>
     </div>
@@ -3171,6 +3549,117 @@ Remove-PSSession $s
     </div>
   </div>
 </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: APP CONTROL FOR BUSINESS ──────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🛂</span>
+    <span class="topic-name">App Control for Business — Managed Installers, Audit Mode &amp; the AppLocker Policy That Can Stop Sign-In</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What it is</div>
+      <div class="concept-title">App Control Runs Only What a Policy Trusts; AppLocker Is the Older Tool Beside It</div>
+      <div class="concept-desc">
+        App Control for Business, which Microsoft called Windows Defender Application Control until its
+        rename, turns Windows from a place where anything runs unless antivirus objects into one where code
+        runs only if a policy trusts it. That covers executables and DLLs <span class="acro-exp">(Dynamic Link Library)</span>, drivers, scripts and MSI
+        installers, and interactive PowerShell, which drops into Constrained Language Mode. A rule can trust
+        a signing certificate, a file's attributes or hash, Microsoft's reputation service, the installer that
+        put the app there, or a path. AppLocker, from Windows 7, does a narrower version of the same job; it
+        still gets security fixes and no new features. Neither replaces antivirus.
+        <!-- fact: App Control for Business was previously called Windows Defender Application Control; with application control, code runs only if policy allows it; it covers scripts, MSI installers, batch files and interactive PowerShell in Constrained Language Mode; it isn't a replacement for antivirus; Smart App Control turns off within 48 hours on enterprise-managed devices unless the user turned it on; with Smart App Control or App Control using the ISG, Defender Antivirus runs in passive or hybrid mode where a non-Microsoft antivirus provides real-time protection, which is expected | source: Microsoft Learn, "Application Control for Windows" (updated 2026-11-17), fetched and read | checked: 2026-11 -->
+        <!-- fact: App Control policies apply to the whole device and can trust signing certificate attributes, file metadata or hash, Intelligent Security Graph reputation, the managed installer that installed the app, the path (from Windows 10 1903) and the launching process; it is a security feature under MSRC servicing criteria; it is deployed by MDM such as Intune, Configuration Manager or PowerShell, with Group Policy limited to single-policy format on Windows Server 2016 and 2019; AppLocker, from Windows 7, applies to all users or to individual users and groups, by certificate, file attributes, hash or path, doesn't meet the servicing criteria for a security feature, gets security fixes but no new features, and suits mixed older OS estates and per-user rules on shared computers, or complements App Control | source: Microsoft Learn, "App Control and AppLocker Overview" (updated 2026-03-29), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>App Control for Business</th><th>AppLocker</th></tr></thead>
+          <tbody>
+            <tr><td>Applies to</td><td>The whole device, every user</td><td>Every user, or chosen users and groups</td></tr>
+            <tr><td>Can trust by</td><td>Signer, file attributes or hash, reputation, managed installer, path, launching process</td><td>Signer, file attributes or hash, path</td></tr>
+            <tr><td>Microsoft treats it as</td><td>A security feature, serviced as one</td><td>Not a security feature by those criteria: fixes, but no new features</td></tr>
+            <tr><td>Deployed by</td><td>Intune, Configuration Manager or PowerShell; Group Policy only in a limited form</td><td>Group Policy or MDM <span class="acro-exp">(Mobile Device Management)</span></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Use App Control unless you need rules per user.</strong> Microsoft's advice is
+          to enforce App Control as tightly as the organization can bear and add AppLocker only where shared
+          machines need different rules for different people. Allowlisting and removing local admin rights
+          close the same door from two sides, and the second is
+          <span class="xref">Local Admin Rights — Removing Them, and Endpoint Privilege Management</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Managed installer</div>
+      <div class="concept-title">Make Intune a Managed Installer, but Read the AppLocker Policies Already There First</div>
+      <div class="concept-desc">
+        Intune can make its management extension a managed installer: every app it installs from then on is
+        tagged as coming from a known source, and an App Control policy that trusts managed installers lets
+        those apps run without a rule each. The tag does nothing on its own, and it is not retroactive, so
+        apps installed before it was switched on carry no tag and need rules of their own. Turning the policy
+        off, or excluding a group, stops new tagging but removes nothing from devices that already have it.
+        Underneath, the managed installer is an AppLocker policy with a placeholder rule, merged into
+        whatever AppLocker policy the device already has, and that merge is where it can go badly wrong.
+        <!-- fact: The Intune Management Extension can be added as a managed installer through Endpoint security, App Control for Business; apps then deployed through Intune are tagged; the tag has no effect unless App Control policies use it; tagging isn't retroactive, so earlier apps need explicit rules; excluding groups or deleting the policy doesn't remove the managed installer from devices that added it; on 18 August 2025 the single tenant-wide policy was replaced by policies assignable to groups, existing ones converted to all devices; the policy applies to devices only, can take 10 minutes to appear and 30 to reach devices; enabling it deploys an AppLocker policy with a dummy rule merged with the existing AppLocker policy, and a RuleCollection defined as NotConfigured with an empty rule set becomes enforced with only the dummy rule, which can stop applications, boot or sign-in, so Microsoft recommends removing such collections first; managed installers can enable stopped or disabled AppLocker policies enforced from GPO; Log Analytics collecting AppLocker events will see more of them; CatCleanIMEOnly.ps1 removes the IME as a managed installer and CatCleanAll.ps1 removes all AppLocker policies | source: Microsoft Learn, "Manage approved apps for Windows devices with App Control for Business policy and Managed Installers for Microsoft Intune" (updated 2026-11-16), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Before switching it on, look for</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>An AppLocker rule collection set to <em>Not configured</em> with no rules in it</td><td>Merged with the placeholder rule it becomes enforced with one rule, and Windows can fail to run apps, to start, or to sign anyone in</td></tr>
+            <tr><td>AppLocker policies from Group Policy that are stopped or disabled</td><td>A managed installer can turn them back on</td></tr>
+            <tr><td>Apps already installed</td><td>They are not tagged, so an enforced policy blocks them unless a rule allows them</td></tr>
+            <tr><td>A Log Analytics workspace collecting AppLocker events</td><td>The event volume rises, and Microsoft suggests trimming what is collected</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">This is the setting that can lock a fleet out of Windows.</strong> Microsoft's
+          own warning is that an empty <em>Not configured</em> rule collection merged with the placeholder rule
+          blocks everything else, up to boot and sign-in. Export and read the AppLocker policy a sample of
+          devices already has before assigning the managed installer to anything, and pilot it on a group, which
+          it has been possible to do since August 2025. Apps reach devices through the extension by the route in
+          <span class="xref">Win32 App Packaging — .intunewin End to End</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Policies</div>
+      <div class="concept-title">Start With the Built-In Controls in Audit Mode, and Enforce Once the Log Is Quiet</div>
+      <div class="concept-desc">
+        An App Control policy in Intune is built from custom XML <span class="acro-exp">(eXtensible Markup Language)</span> or from built-in controls. The built-in
+        controls trust Windows components and Store apps, on by default, and optionally apps with a good
+        reputation and apps from managed installers. Everything else is blocked, or, in <em>Audit only</em>,
+        allowed and logged on the device. A supplemental policy, always XML, adds rules to one base policy and
+        must name that base's policy ID; a policy built from the built-in controls has one of four fixed IDs,
+        set by which options it uses. Policies apply to devices, not users. Trusting reputation brings a side
+        effect worth knowing in advance: on devices running another vendor's antivirus, Microsoft Defender
+        Antivirus moves to passive or hybrid mode to check reputation, which is expected and not a fault.
+        <!-- fact: App Control policies in Intune use the ApplicationControl CSP, which replaces the AppLocker CSP used by attack surface reduction application control profiles; a policy uses custom XML or built-in controls; built-in controls trust Windows components and Store apps (Enabled by default, or Audit only, which logs locally without blocking), and optionally apps with good reputation (ISG) and apps from managed installers; other apps are blocked when enabled; supplemental policies are XML, extend exactly one base policy and must reference its PolicyID; built-in base policies have one of four PolicyIDs set by their option combination; WDAC policies apply to the device scope only | source: Microsoft Learn, "Manage approved apps for Windows devices with App Control for Business policy and Managed Installers for Microsoft Intune" (updated 2026-11-16), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Built-in option</th><th>Lets run</th></tr></thead>
+          <tbody>
+            <tr><td>Trust Windows components and Store apps</td><td>Windows itself and Store apps. The rest is blocked, or only logged under <em>Audit only</em></td></tr>
+            <tr><td>Trust apps with a good reputation</td><td>What Microsoft's Intelligent Security Graph rates as reputable</td></tr>
+            <tr><td>Trust apps from managed installers</td><td>What Intune installed after the managed installer was switched on</td></tr>
+            <tr><td>A supplemental policy, in XML</td><td>Whatever its rules add, to the one base policy it names</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Audit until the log has nothing in it you need.</strong> In audit mode every app
+          still runs and each one the policy would have blocked is logged on the device, so the list of what
+          enforcement would break exists before anything breaks. It is usually the software installed before the
+          managed installer, and the old line-of-business app nobody packaged, which is
+          <span class="xref">Application Compatibility &amp; the Legacy App</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: THE INTUNE SUITE ─────────────────────────────────── -->
 <div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
