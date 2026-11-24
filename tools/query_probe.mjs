@@ -489,6 +489,14 @@ const READERS = [
     ["threat analytics report", "", "m365/defender-threat-intelligence-threat-analytics-intel-explorer"],
     ["intel explorer", "", "m365/defender-threat-intelligence-threat-analytics-intel-explorer"],
     ["reputation score suspicious", "", "m365/defender-threat-intelligence-threat-analytics-intel-explorer"],
+    // ── twenty-first wave: DAIR, which GCIH's outline names beside PICERL, added before its topic ──
+    // Opened at 0 of 5: two zeros, `dair` a word the site had never written, and three that found other
+    // cards. The fifth asks for NIST's 2025 revision, which no topic mentioned; DAIR's third card is about it.
+    ["dair incident response", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    ["dynamic approach to incident response", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    ["response actions loop", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    ["verify and triage", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    ["nist 800-61 rev 3", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],

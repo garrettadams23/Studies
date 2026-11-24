@@ -128,8 +128,12 @@
                   Recovery · Lessons Learned
                 </div>
                 <div class="concept-desc">
-                  NIST SP 800-61 defines 4 phases. CompTIA <span class="acro-exp">(Computing Technology Industry Association)</span> expands to 6
-                  (PICERL). Containment is split into
+                  NIST SP 800-61 Revision 2 defined 4 phases, and SANS <span class="acro-exp">(SysAdmin, Audit, Network and Security)</span>'s original six-step process gives the
+                  name PICERL. Both have since been replaced as models: NIST's Revision 3, in April 2025, recast
+                  incident response around the six functions of the Cybersecurity Framework 2.0, and SANS's DAIR,
+                  in 2026, turned the middle steps into a loop. The six steps remain the vocabulary, and GIAC <span class="acro-exp">(Global Information Assurance Certification)</span>'s GCIH <span class="acro-exp">(GIAC Certified Incident Handler)</span>
+                  still asks for PICERL by name. Containment is split into
+                  <!-- fact: NIST SP 800-61 Rev. 3 (April 2025) supersedes Rev. 2 (2012) and is a CSF 2.0 Community Profile; SANS's original incident handling process, from Schultz in 1990 and Northcutt and Paller's Step-by-Step, ran prepare, identify, contain, eradicate, recover, lessons learned, and was succeeded in September 2026 by DAIR; GIAC's GCIH incident response objective names PICERL and DAIR | source: NIST CSRC publication page for SP 800-61 Rev. 3; SANS press announcement of 15 September 2026; GIAC GCIH page, all fetched and read | checked: 2026-11 -->
                   <strong class="c-amber">short-term</strong>
                   (isolate now) and
                   <strong class="c-cyan">long-term</strong>
@@ -275,7 +279,7 @@
                 <div class="concept-label">The Inversion</div>
                 <div class="concept-title">Malware Removal Is This Lifecycle for One Machine, and the Order Is the Content</div>
                 <div class="concept-desc">
-                  CompTIA A+ teaches malware removal as seven steps for one infected PC, and they are the phases above
+                  CompTIA <span class="acro-exp">(Computing Technology Industry Association)</span> A+ teaches malware removal as seven steps for one infected PC, and they are the phases above
                   at the scale of a single machine. The exam asks for them in order, and the order is not arbitrary:
                   each step protects the one after it, so a step done early or late undoes work instead of adding it.
                 </div>
@@ -349,6 +353,117 @@
               </div>
             </div>
           </div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DAIR ──────────────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔁</span>
+    <span class="topic-name">DAIR — SANS <span class="acro-exp">(SysAdmin, Audit, Network and Security)</span>'s Dynamic Approach to Incident Response, and the Loop That Replaced the Line</span>
+    <span class="topic-badge">Ops • Incident Response</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Why a new model</div>
+      <div class="concept-title">PICERL <span class="acro-exp">(Preparation, Identification, Containment, Eradication, Recovery, Lessons learned)</span> Is a Line; DAIR Is a Loop You Re-Enter When the Evidence Changes</div>
+      <div class="concept-desc">
+        For about two decades SANS taught incident handling as six steps in a row: prepare, identify, contain,
+        eradicate, recover and learn lessons, the sequence known as PICERL. In September 2026 SANS published
+        its successor, Joshua Wright's <em>Dynamic Incident Response</em>, free under a Creative Commons
+        license, and the <strong class="c-cyan">Dynamic Approach to Incident Response</strong> it introduces is
+        now what SANS's flagship incident handling course teaches. Its complaint about the old line is that it
+        says what to achieve at each stage but not how to adapt when, mid-containment, one compromised host
+        turns out to be a dozen. DAIR's answer is a set of waypoints: Prepare, Detect, Verify &amp; Triage, a
+        Response Actions Loop of Scope, Contain, Eradicate and Recover, and Debrief.
+        <!-- fact: SANS published Dynamic Incident Response: A Framework for Security Teams by Joshua Wright on 15 September 2026, free in every digital format under a Creative Commons license, as the first rebuild of the SANS incident response framework in two decades; the original process was Eugene Schultz's of 1990, made usable outside government by Stephen Northcutt and Alan Paller's Computer Security Incident Handling: Step-by-Step; its steps were prepare, identify, contain, eradicate, recover and lessons learned; DAIR aligns to NIST guidance and the Cybersecurity Framework and is the version taught in SEC504; the book has twenty chapters in three parts, announced at RSAC 2026 in March | source: SANS Institute press announcement, 15 September 2026, fetched and read | checked: 2026-11 -->
+        <!-- fact: DAIR consists of eight waypoints: Prepare, Detect, Verify and Triage, the Response Actions Loop (Scope, Contain, Eradicate, Recover) and Debrief; the book's page counts five waypoints with the loop as one; DAIR adds explicit Verify and Triage and Scope waypoints missing from PICERL and NIST SP 800-61 and replaces their linear progression with an iterative loop | source: SANS poster "Dynamic Incident Response: Detect. Verify. Respond. Iterate." (published 13 October 2026) and the book's page on sans.org, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>PICERL step</th><th>DAIR waypoint</th></tr></thead>
+          <tbody>
+            <tr><td>Preparation</td><td>Prepare</td></tr>
+            <tr><td>Identification</td><td>Detect, then Verify &amp; Triage, as two waypoints</td></tr>
+            <tr><td>No equivalent</td><td>Scope, the first stop on the Response Actions Loop</td></tr>
+            <tr><td>Containment, Eradication, Recovery</td><td>Contain, Eradicate, Recover, the rest of the loop, repeated as often as needed</td></tr>
+            <tr><td>Lessons learned</td><td>Debrief</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The two new waypoints are where incidents go wrong.</strong> SANS calls them the
+          steps most frameworks skip: confirming an event is real before committing people to it, and learning
+          how far a compromise reaches before declaring it contained. A team that contains the one host it found
+          and reports success has done PICERL correctly and missed the eleven others. The older model, step by
+          step, is
+          <span class="xref">Incident Response Lifecycle — PICERL</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The loop</div>
+      <div class="concept-title">Scope, Contain, Eradicate, Recover, and Round Again When Something New Turns Up</div>
+      <div class="concept-desc">
+        The Response Actions Loop is run as many times as the incident needs, not once. SANS names what sends a
+        team round again: new indicators of compromise, a wider scope than thought, eradication that turns out
+        incomplete, something new in the evidence, or a change in business priorities. Going round is meant as
+        progress, since each pass is expected to turn up something the last one missed, and detection carries
+        on throughout instead of ending as a phase. Verify &amp; Triage is the one waypoint where two things
+        happen together: checking the event is real, and deciding how much it matters.
+        <!-- fact: The Response Actions Loop cycles through Scope, Contain, Eradicate and Recover as many times as necessary; iteration triggers include new IOCs, scope expansion, incomplete eradication, evidence analysis revelations and changing business priorities; iteration is treated as expected progress rather than failure; DAIR describes waypoints in a journey, and detection is an ongoing activity, not a phase that ends; Verify and Triage is the only waypoint where two actions, verification and prioritization, happen concurrently; a loop exit is a named decision recording the decision-maker, supporting indicators, residual risks accepted and the date and time; decision-makers surround every waypoint | source: SANS poster "Dynamic Incident Response: Detect. Verify. Respond. Iterate." (published 13 October 2026), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Go round the loop again when</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>New indicators of compromise turn up</td><td>Each one may lead to systems nobody has scoped</td></tr>
+            <tr><td>The scope grows</td><td>What was contained was only part of it</td></tr>
+            <tr><td>Eradication proves incomplete</td><td>A foothold survived, and the attacker can return through it</td></tr>
+            <tr><td>The evidence says something new</td><td>Analysis has caught up with what happened</td></tr>
+            <tr><td>Business priorities change</td><td>What must be recovered first has moved</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Leaving the loop is a decision somebody signs.</strong> DAIR treats the exit as a
+          named decision that records who made it, the indicators behind it, the residual risk accepted, and when.
+          That turns "we think it's over" into something an auditor, a regulator or the next responder can read.
+          The loop's containment step for cloud estates is
+          <span class="xref">Cloud Incident Response — Snapshot, Revoke &amp; Contain the Blast Radius</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Where it fits</div>
+      <div class="concept-title">NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> Replaced 800-61's Lifecycle in 2025, and DAIR Fills the Steps It Left</div>
+      <div class="concept-desc">
+        NIST's incident response guide changed shape in April 2025. SP 800-61 Revision 3 superseded the 2012
+        Revision 2 and its four-phase lifecycle, and recast incident response as a profile of the Cybersecurity Framework 2.0, organized by its six functions: Govern,
+        Identify, Protect, Detect, Respond and Recover. SANS presents DAIR as mapping onto those functions and
+        filling the technical, step-by-step gap the revision left, rather than competing with it. GIAC <span class="acro-exp">(Global Information Assurance Certification)</span>'s GCIH <span class="acro-exp">(GIAC Certified Incident Handler)</span>
+        certification names both models: its incident response objective asks for PICERL and DAIR.
+        <!-- fact: NIST SP 800-61 Rev. 3, Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile, was published in April 2025 and supersedes SP 800-61 Rev. 2 of 6 August 2012 | source: NIST CSRC publication page, fetched and read | checked: 2026-11 -->
+        <!-- fact: DAIR maps its waypoints to the NIST CSF 2.0 functions (Govern, Identify, Protect, Detect, Respond, Recover), generating compliance artifacts at each waypoint, and fills the technical, step-by-step gap left when NIST SP 800-61r3 adopted CSF 2.0 rather than replacing it; the model extends to ransomware, cloud, OT/ICS and AI-accelerated response | source: SANS poster page "Dynamic Incident Response: Detect. Verify. Respond. Iterate." (published 13 October 2026), fetched and read | checked: 2026-11 -->
+        <!-- fact: GIAC's GCIH objective Incident Response and Cyber Investigation asks for an understanding of the PICERL and DAIR incident handling processes; the exam is proctored, 106 questions in 4 hours, with a 69% passing score for versions released on or after 10 May 2025 | source: GIAC, GCIH certification page, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Source</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>NIST SP 800-61 Rev. 3, 2025</td><td>What incident response should achieve across the organization, function by function</td></tr>
+            <tr><td>DAIR, SANS, 2026</td><td>How responders work an incident, waypoint by waypoint, as it changes under them</td></tr>
+            <tr><td>PICERL and Rev. 2's lifecycle</td><td>The linear vocabulary both replaced, still worth knowing: GCIH asks for PICERL by name</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Use NIST for the what and DAIR for the how.</strong> Revision 3 tells leadership
+          what the organization's incident response capability must cover; DAIR tells the people at the keyboard
+          what to do next and when to go back round. Neither discards the old words, and GCIH still asks for
+          both. Who tells whom what, at every waypoint, is
+          <span class="xref">Incident Communications — Who Hears What, When, and From Whom</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
           <!-- ── TOPIC: VULNERABILITY MANAGEMENT ──────────────────── -->
           <div class="topic" data-reviewed="2026-09">
@@ -1259,7 +1374,7 @@ last | head -20</pre>
     <div class="concept-card">
       <div class="concept-label">NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> IR PHASES</div>
       <div class="concept-title">Preparation → Detection → Containment → Eradication → Recovery → Lessons Learned</div>
-      <div class="concept-desc">The NIST SP 800-61 Incident Response lifecycle is the industry standard. Each phase has specific goals and outputs.</div>
+      <div class="concept-desc">This is the NIST SP 800-61 Revision 2 lifecycle, from 2012, and each phase has specific goals and outputs. NIST superseded it in April 2025 with Revision 3, which organizes incident response around the Cybersecurity Framework 2.0's functions instead; the phases remain useful vocabulary, and exams such as GIAC <span class="acro-exp">(Global Information Assurance Certification)</span>'s GCIH <span class="acro-exp">(GIAC Certified Incident Handler)</span> still ask for them.</div>
       <table class="ai-table">
         <thead><tr><th>Phase</th><th>Goal</th><th>Key Actions</th></tr></thead>
         <tbody>

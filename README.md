@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **479 elements at rest instead of 155,260** — measured at 1,609 topics,
+  costs **479 elements at rest instead of 155,361** — measured at 1,610 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -55,7 +55,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🔐 Security Core | Sec+, SecX | CIA Triad, AAA, PKI, Crypto, Cloud, Zero Trust, Kerberos, Password Attacks, application security testing from SAST to IAST and RASP |
 | ⚔️ Threat & Attack | Sec+, CySA+, PT+ | Kill Chain, MITRE ATT&CK, Diamond Model, Social Engineering, Malware, DoS |
 | ⚖️ Governance & Risk | Sec+, SecX | NIST CSF 2.0, Risk Matrix, Defense-in-Depth, Legal Frameworks, CISSP 8 Domains |
-| 🔬 Sec Operations | CySA+, SecX | IR PICERL, Vuln Mgmt, Troubleshooting, BCP/DR, Digital Forensics, Splunk SPL |
+| 🔬 Sec Operations | CySA+, SecX | IR PICERL and SANS's DAIR, Vuln Mgmt, Troubleshooting, BCP/DR, Digital Forensics, Splunk SPL |
 | 🎯 PenTest | PT+ | 5-Phase Methodology, OWASP Top 10, SQLmap |
 | 🐧 Linux & Systems | Linux+, A+ | FHS, Permissions, Boot Process, SSH, Tmux, Unix Commands, RAID, A+ Hardware |
 | 🤖 AI & ML | AI+ | ML Pipeline, Learning Paradigms, Agentic AI (MCP, Skills, Sub-agents), Ethics |
