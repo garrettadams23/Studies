@@ -512,7 +512,35 @@ def parse_only(argv):
     return names
 
 
+KNOWN_FLAGS = {"--verify", "--report", "--candidates", "--check", "--only", "--current-only"}
+
+
+def refuse_unknown(argv):
+    """Exit before anything is written when an argument is not one this script reads.
+
+    Every mode above is chosen by looking for its flag, so a flag nobody looks
+    for is not an error: the run falls through to the default, which is the
+    whole-tree write the docstring warns against. `--help` did exactly that
+    once, and moved the stamps of topics nobody had edited in 25 files before
+    its output was read. A bare domain name without `--only` would do the same.
+    """
+    args = argv[1:]
+    if any(a in ("-h", "--help") for a in args):
+        print(__doc__)
+        raise SystemExit(0)
+    unknown = [a for a in args if a.startswith("-") and a not in KNOWN_FLAGS]
+    if unknown:
+        raise SystemExit(f"error: unknown option {unknown[0]!r}; nothing was written. "
+                         f"The options are {', '.join(sorted(KNOWN_FLAGS))}.")
+    if "--only" not in args:
+        stray = [a for a in args if not a.startswith("-")]
+        if stray:
+            raise SystemExit(f"error: {stray[0]!r} needs --only in front of it, "
+                             "as in --only m365; nothing was written.")
+
+
 if __name__ == "__main__":
+    refuse_unknown(sys.argv)
     if "--verify" in sys.argv:
         sys.exit(verify())
     if "--report" in sys.argv:
