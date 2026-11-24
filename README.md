@@ -71,7 +71,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 📧 Microsoft 365 | M365, MS-102 | Tenant anatomy, licensing, admin roles, **Exchange Online** (mail flow, connectors, EOP/Defender, message trace), **SharePoint & OneDrive** (architecture, sharing sprawl, KFM), **Teams** (architecture, governance, policies, voice, call quality), **Purview** (retention, holds, labels, DLP, eDiscovery, insider risk), admin PowerShell, usage reporting, backup, tenant-to-tenant migration, troubleshooting playbook |
 | 🖥️ Endpoint | MD-102, MEM | **MECM** (client health, deployment & content, OSD/task sequences, site & server logs, CMPivot), Intune, Autopilot, ESP, Co-management |
 | ♾️ DevOps, Platform & Delivery | DevOps, CKA | CI/CD, Terraform & IaC, containers, Kubernetes, GitOps, secrets, supply chain, serverless, caching, queues |
-| 🏢 Windows Server & Infrastructure | AZ-800, Server | Editions & licensing, Server Core, AD DS boundaries, FSMO, replication, trusts, Group Policy, storage, RAID, backup & DR |
+| 🏢 Windows Server & Infrastructure | AD DS, Server | Editions & licensing, Server Core, AD DS boundaries, FSMO, replication, trusts, Group Policy, storage, RAID, backup & DR |
 | 🧮 Computer Science Fundamentals | Theory | Big-O in practice, amortized analysis, recursion, P vs NP, cache locality, hash tables, trees, graphs, probabilistic structures, the ASCII chart |
 | 🔧 Hardware, Electronics & Embedded | A+, Hands-On | Ohm's law, power & thermals, motherboards, CPU & cooling, memory & ECC, storage interfaces, test gear, firmware, systematic troubleshooting |
 | 🚀 IT Career & Craft | Career | Career paths, CVs and the ATS, interviews, certifications, home labs, mentorship, technical writing, money, remote work |
