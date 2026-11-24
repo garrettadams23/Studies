@@ -3662,6 +3662,247 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           </div>
 
 <div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: RESTRICTED ENTITIES & OUTBOUND SPAM ───────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">⛔</span>
+    <span class="topic-name">Restricted Entities &amp; Outbound Spam — Why a Mailbox Stops Sending, and Unblocking It Safely</span>
+    <span class="topic-badge">Exchange Online • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Blocked from sending</div>
+      <div class="concept-title">A Mailbox Over Its Sending Limit Still Receives, and Everything It Sends Bounces With 5.1.8</div>
+      <div class="concept-desc">
+        Every Exchange Online mailbox may send to 10,000 recipients in any 24 hours, a hard limit of the
+        service, and an outbound spam policy can set lower hourly and daily ones. Sending faster than 30
+        messages a minute is only slowed down. A sender who goes over a recipient limit, or who sends more
+        spam than thresholds Microsoft does not publish, is restricted. They can still receive mail, but every message they send comes back in a bounce with
+        <code>550 5.1.8 Access denied, bad outbound sender</code>, and the user is listed on the
+        <span class="volatile" data-checked="2026-11"><strong class="c-cyan">Restricted entities</strong> page in the Defender portal, under
+        <em>Email &amp; collaboration &gt; Review</em></span>, which is where an administrator unblocks them. Microsoft does not publish the spam thresholds so that spammers cannot
+        work just under them.
+        <!-- fact: A user who exceeds the service's sending limits or an outbound spam policy's limits is restricted from sending but can still receive, is added to the Restricted entities page, and gets an NDR with 550 5.1.8 Access denied, bad outbound sender; a restricted entity is a user account or connector blocked from sending due to indications of compromise; Microsoft says a sender exceeding the outbound limits is an indicator of a compromised account; the spam and volume thresholds are undisclosed so spammers can't game them; outbound spam policy limits for external recipients per hour, internal per hour and recipients per day take 0 to 10,000, 0 meaning the service defaults; the action when a limit is reached is restrict until the following day by UTC (the default), restrict until an admin removes the user, or alert only; the automatic forwarding setting Automatic - System-controlled became equivalent to Off in 2021 for new organizations and those not actively using it, and Microsoft advises setting On or Off explicitly | source: Microsoft Learn, "Remove blocked users from the Restricted entities page" (updated 2026-10-30), "Outbound spam protection for cloud mailboxes" (updated 2026-05-21) and "Configure outbound spam policies" (updated 2026-08-10), fetched and read | checked: 2026-11 -->
+        <!-- fact: The recipient rate limit is 10,000 recipients per day on a 24-hour sliding window and the message rate limit 30 messages per minute, both hard limits that can't be increased, with excess submissions throttled into following minutes; the recipient limit per message is 500 by default, customizable from 1 to 1,000 | source: Microsoft Learn, "Troubleshoot outbound sending limits in Exchange Online" (updated 2026-05-27) and "Exchange Online limits" (updated 2026-11-11), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Outbound spam policy setting</th><th>Default</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>External, internal and daily recipient limits</td><td>0, meaning the service's own limits</td><td>Lower caps, up to 10,000, per hour for external and internal recipients and per day for all</td></tr>
+            <tr><td>Restriction when a limit is reached</td><td>Restrict the user until the next day, by UTC <span class="acro-exp">(Coordinated Universal Time)</span></td><td>Or restrict until an administrator removes them, or raise an alert and restrict nobody</td></tr>
+            <tr><td>Automatic forwarding rules</td><td><em>Automatic - System-controlled</em></td><td>Off for tenants created since 2021, but it can still mean On in older ones, so set On or Off explicitly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A sending limit is a compromise detector that happens to be a quota.</strong>
+          Microsoft calls a sender over the limits an indicator of a compromised account, and the limits are
+          set high enough that an ordinary business user never reaches them. A user who suddenly has is far
+          more often an attacker sending from a real mailbox than a salesperson with a big list, which is the
+          case <span class="xref">Business Email Compromise — The Attack With No Malware</span> makes from the
+          other side.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Unblocking</div>
+      <div class="concept-title">Unblock Last: Microsoft's Order Secures the Account Before It Can Send Again</div>
+      <div class="concept-desc">
+        Microsoft's steps for a restricted user assume the account is compromised, and they run in an order.
+        Disable the account, or at least reset its password, and revoke its sessions. Remove sign-in methods
+        and consented apps the user did not add, and admin roles they should not hold. Then remove the
+        forwarding and inbox rules the attacker made, hidden rules included. Only then unblock the user, in
+        the portal or with <code>Remove-BlockedSenderAddress</code>; the restriction lifts within an hour as
+        a rule and within 24 at most. A password reset does not revoke app passwords, and for an account
+        synced from Active Directory Microsoft says to reset it there, twice.
+        <!-- fact: Microsoft's steps for a compromised mailbox: disable the account (or reset the password if that's not possible), revoke sessions with Revoke-MgUserSignInSession, review MFA registered devices, review consented applications, review admin roles, review forwarding with Get-Mailbox Forwarding*Address and DeliverTo*, and inbox rules with Get-InboxRule -IncludeHidden; app passwords aren't revoked by a password reset; a synced account's password is reset in AD twice to mitigate pass-the-hash; afterwards remove the user from Restricted entities; Get-BlockedSenderAddress lists restricted senders and Remove-BlockedSenderAddress removes one; restrictions are removed within one hour under most circumstances and no longer than 24 hours; the Blocked Sender History diagnostic shows listing history and MFA status | source: Microsoft Learn, "Respond to a compromised cloud email account" (updated 2026-07-17) and "Remove blocked users from the Restricted entities page" (updated 2026-10-30), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Who is restricted (Exchange Online PowerShell)</span>
+<span class="fn">Get-BlockedSenderAddress</span>
+
+<span class="com"># Forwarding set on the mailbox, then every inbox rule, hidden ones included</span>
+<span class="fn">Get-Mailbox</span> -Identity user@contoso.com | <span class="fn">Format-List</span> Forwarding*Address,DeliverTo*
+<span class="fn">Get-InboxRule</span> -Mailbox user@contoso.com -IncludeHidden |
+  <span class="fn">Format-List</span> Name,Enabled,RedirectTo,Forward*,Identity
+
+<span class="com"># Signed-in sessions and refresh tokens (Microsoft Graph PowerShell)</span>
+<span class="fn">Revoke-MgUserSignInSession</span> -UserId user@contoso.com
+
+<span class="com"># Last, once the account is yours again</span>
+<span class="fn">Remove-BlockedSenderAddress</span> -SenderAddress user@contoso.com</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Unblocking first gives the attacker back a mailbox that can send.</strong>
+          The portal's unblock wizard says the same thing in its own steps, offering MFA <span class="acro-exp">(Multi-Factor Authentication)</span> and a password reset
+          before it lets the user go. A user who cannot send calls the service desk, and the pressure is to
+          unblock them on the call, when the restriction may be the only thing that has stopped the attacker
+          so far. Why a reset alone leaves a stolen session signed in is
+          <span class="xref">Token Lifetime &amp; Revocation — The Logout That Does Not, and How to Fix It</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Connectors and the tenant</div>
+      <div class="concept-title">A Connector, or the Whole Tenant, Can Be Restricted Too, and the Bounce Code Says Which</div>
+      <div class="concept-desc">
+        The Restricted entities page lists connectors as well as users. An inbound connector from an
+        on-premises server that an attacker created or changed to relay spam is blocked, and its mail bounces
+        with <code>550 5.7.711</code>. Above both sits the tenant. A daily cap on external recipients, the
+        <strong class="c-cyan">tenant external recipient rate limit</strong>, scales with the number of
+        licenses, and mail from the tenant's <code>onmicrosoft.com</code> domain may reach only 100 external
+        recipients a day. When a tenant sends too much spam, often through a compromised on-premises server or
+        a connector made with a stolen admin account, Exchange Online blocks its outgoing mail altogether, and
+        only Microsoft Support lifts that.
+        <!-- fact: A potentially compromised inbound connector is prevented from sending or relaying and added to the Restricted entities page, with NDR 550;5.7.711 Access denied, bad inbound connector; an inbound connector of type OnPremises is considered compromised when an attacker creates or modifies one to send spam or phish; symptoms include a spike in outbound volume, a 5321.MailFrom and 5322.From mismatch, mail from unprovisioned domains, a connector no admin created, and a recently compromised admin account; unblocking a connector can take up to 1 hour; the Suspicious connector activity alert notifies admins | source: Microsoft Learn, "Remove blocked connectors from the Restricted entities page" and "Respond to a compromised connector" (both updated 2026-07-03), fetched and read | checked: 2026-11 -->
+        <!-- fact: The tenant external recipient rate limit is the maximum number of external recipients per day on a 24-hour sliding window, scaling with the tenant's licenses, 5,000 for trial tenants, counting distribution group members individually, shown in the Tenant Outbound External Recipients report, with NDR 550 5.7.233; mail from the default onmicrosoft.com domains is limited to 100 external recipients per organization in a 24-hour rolling window, with NDR 550 5.7.236; 550 5.7.705 Access denied, tenant has exceeded threshold is generated when an organization sends too much spam or bulk mail, commonly from a compromised on-premises server or a compromised admin account used to create connectors, and Microsoft Support removes the block after the cause is addressed; 550 5.7.750 is sending from an unregistered domain | source: Microsoft Learn, "Exchange Online limits" (updated 2026-11-11), "Troubleshoot outbound sending limits in Exchange Online" (updated 2026-05-27) and "Fix email delivery issues for error codes 5.7.700 through 5.7.750" (updated 2026-10-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The bounce says</th><th>What is restricted</th><th>What lifts it</th></tr></thead>
+          <tbody>
+            <tr><td><code>5.1.8</code> bad outbound sender</td><td>One user</td><td>An administrator, from Restricted entities, after the account is secured</td></tr>
+            <tr><td><code>5.7.711</code> bad inbound connector</td><td>One inbound connector</td><td>An administrator, from Restricted entities, after finding who created or changed it</td></tr>
+            <tr><td><code>5.7.233</code></td><td>External mail, tenant-wide, for the rest of the 24 hours</td><td>Time: the window slides. The Tenant Outbound External Recipients report shows how close you are</td></tr>
+            <tr><td><code>5.7.236</code></td><td>External mail from the <code>onmicrosoft.com</code> domain, past 100 recipients a day</td><td>Time, and sending from a custom domain instead</td></tr>
+            <tr><td><code>5.7.705</code> tenant has exceeded threshold</td><td>All outgoing mail from the tenant</td><td>Microsoft Support, once the compromised accounts, servers or connectors are dealt with</td></tr>
+            <tr><td><code>5.7.750</code></td><td>Mail from a domain the tenant has not added</td><td>Adding and verifying the domain, then Microsoft Support</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Bulk mail belongs somewhere else.</strong> Microsoft calls sending bulk email
+          through Microsoft 365 unsupported and best-effort, and recommends a separate subdomain with its own
+          SPF, DKIM <span class="acro-exp">(DomainKeys Identified Mail)</span> and DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span> and a provider built for volume. The tenant's external limit is shared, so a
+          newsletter that uses it up stops everyone's external mail until the window moves on. A connector from your own servers is configured in
+          <span class="xref">Mail Flow — Connectors, Transport Rules &amp; the Path a Message Takes</span>, and
+          the records a sending subdomain needs are in
+          <span class="xref">Email Security — SPF, DKIM &amp; DMARC</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: ALERT POLICIES ────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔔</span>
+    <span class="topic-name">Alert Policies in Defender for Office 365 — The Default Alerts, Who Gets Them &amp; Writing Your Own</span>
+    <span class="topic-badge">M365 • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">How a policy works</div>
+      <div class="concept-title">An Alert Policy Watches Audited Activity, and Fires Every Time, Past a Threshold, or When It Is Unusual</div>
+      <div class="concept-desc">
+        An alert policy names an activity from the audit log, conditions on it such as who did it or from
+        which IP <span class="acro-exp">(Internet Protocol)</span> address, and when to fire: every time it happens, when it passes a count within a time
+        window, or when it is unusual against a baseline Microsoft builds over up to seven days. Each policy
+        carries a category and a severity, Low, Medium, High or Informational, and can email a list of
+        recipients up to a daily limit. Thresholds and unusual-activity alerts need E5, or E3 with an add-on
+        such as Defender for Office 365 Plan 2; on E3 alone a policy can only fire every time. A new or
+        changed policy takes up to 24 hours to start firing, and none of it works with audit logging off.
+        <!-- fact: An alert policy defines the activity tracked, activity conditions (IP address, users, file name or URL, user tags), when the alert is triggered (every time, a threshold, or unusual activity against a baseline that takes up to seven days to establish, during which no alerts are generated), a category (data loss prevention, information governance, mail flow, permissions, threat management, others), a severity (Low, Medium, High or Informational), automated investigation, and email notifications with a daily notification limit; threshold and unusual-activity alerts need E5/G5 or E1/E3 with Defender for Office 365 P2, Microsoft 365 E5 Compliance or eDiscovery and Audit add-on, and E1/E3 alone can only alert every time; a created or updated policy takes up to 24 hours to sync to the detection engine; events within the aggregation interval are added to the existing alert, 1 minute for E5/G5, Defender for Office 365 Plan 2 and the E5 Compliance or eDiscovery and Audit add-ons, 15 minutes for E1/E3 and for the built-in protection or Defender for Office 365 Plan 1 | source: Microsoft Learn, "Alert policies in the Microsoft Defender portal" (updated 2026-08-03), fetched and read | checked: 2026-11 -->
+        <!-- fact: For alerts to work, audit logging must be turned on, which it is by default | source: Microsoft Learn, "Remove blocked users from the Restricted entities page" (updated 2026-10-30), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Fires</th><th>Meaning</th><th>License</th></tr></thead>
+          <tbody>
+            <tr><td>Every time</td><td>An alert for each matching activity, with repeats inside the aggregation window added to it</td><td>Any plan with alert policies</td></tr>
+            <tr><td>Past a threshold</td><td>A set number of matches within a time window</td><td>E5, or E3 with an add-on</td></tr>
+            <tr><td>When unusual</td><td>Activity greatly above a baseline, which takes up to seven days to build and raises nothing meanwhile</td><td>E5, or E3 with an add-on</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A silent new policy is not broken for a day, or for a week if it watches for
+          the unusual.</strong> The policy takes up to 24 hours to reach the detection engine and its baseline
+          up to seven days, so test it after both. And one alert can hold several events: matching activity
+          inside the aggregation window, a minute on E5 and fifteen on E3, is added to the open alert rather
+          than raising another, so read its activity list before deciding it happened once. Working the alert
+          once it arrives is
+          <span class="xref">Alert Triage — Working the Queue From Alert to Verdict</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The defaults</div>
+      <div class="concept-title">The Built-In Policies Email the Global Administrators, Who Are Not the People Watching</div>
+      <div class="concept-desc">
+        Microsoft ships default policies, shown in bold with the type <em>System</em>, and they are on until
+        someone turns them off. Three things about each can change: whether it is on, who is emailed, and the
+        daily notification limit. Their recipients default to the TenantAdmins group, which is the Global
+        Administrators, a role Microsoft itself says to keep for emergencies. Some defaults also carry filters
+        the portal does not show, which <code>Get-ProtectionAlert</code> displays. These are the ones that
+        say a mailbox may be in an attacker's hands:
+        <!-- fact: Default alert policies are shown in bold with policy type System and are turned on by default; you can turn them off or on, set email recipients and a daily notification limit, and the other settings can't be edited; some include filters not visible in the portal, shown by Get-ProtectionAlert, with IncludeRuleXml for the rule definition; default rows and severities: User restricted from sending email (High, automated investigation), Suspicious email sending patterns detected (Medium, an early warning before restriction), Email sending limit exceeded (Medium), Suspicious email forwarding activity (High, autoforwarding to a suspicious external account), Creation of forwarding/redirect rule (Informational, only rules created in Outlook on the web or Exchange Online PowerShell), Suspicious connector activity (High, an inbound connector blocked), Tenant restricted from sending email (High), Elevation of Exchange admin privilege (Low), Messages have been delayed (High, 2,000 or more messages queued for more than an hour); the default recipients of the outbound alerts are the TenantAdmins group, Global Administrator members | source: Microsoft Learn, "Alert policies in the Microsoft Defender portal" (updated 2026-08-03) and "Configure outbound spam policies" (updated 2026-08-10), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Default policy</th><th>Severity</th><th>Fires when</th></tr></thead>
+          <tbody>
+            <tr><td>User restricted from sending email</td><td>High</td><td>A user has been blocked for outbound spam and is on the Restricted entities page</td></tr>
+            <tr><td>Suspicious email sending patterns detected</td><td>Medium</td><td>A user's sending looks like compromise but has not yet earned a restriction</td></tr>
+            <tr><td>Email sending limit exceeded</td><td>Medium</td><td>A user went over an outbound spam policy's limit</td></tr>
+            <tr><td>Suspicious email forwarding activity</td><td>High</td><td>A user's mail is being forwarded automatically to a suspicious external address</td></tr>
+            <tr><td>Creation of forwarding/redirect rule</td><td>Informational</td><td>An inbox rule forwards or redirects mail, if it was made in Outlook on the web or PowerShell</td></tr>
+            <tr><td>Suspicious connector activity</td><td>High</td><td>An inbound connector was blocked for suspicious activity</td></tr>
+            <tr><td>Tenant restricted from sending email</td><td>High</td><td>Microsoft blocked the tenant's outbound mail</td></tr>
+            <tr><td>Elevation of Exchange admin privilege</td><td>Low</td><td>Someone was given Exchange admin permissions, such as Organization Management</td></tr>
+            <tr><td>Messages have been delayed</td><td>High</td><td>2,000 or more messages have queued for over an hour for an on-premises or partner server</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Send these to whoever works the queue.</strong> Add the security team's
+          address to the recipients of at least the outbound and forwarding policies, in the portal: the
+          <code>NotifyUser</code> parameter of <code>Set-ProtectionAlert</code> is documented as reserved for
+          Microsoft's internal use. Note the severities as well. The forwarding-rule alert, the classic sign of
+          a mailbox taken over for invoice fraud, is Informational. What the restricted-user alert means, and
+          what to do before unblocking, is
+          <span class="xref">Restricted Entities &amp; Outbound Spam — Why a Mailbox Stops Sending, and Unblocking It Safely</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Writing your own</div>
+      <div class="concept-title">The Forwarding-Rule Alert Misses Rules Made in Outlook Itself, and a Custom Policy Fills the Gap</div>
+      <div class="concept-desc">
+        The default forwarding-rule alert watches only rules created in Outlook on the web or Exchange Online
+        PowerShell. A rule made in the Outlook desktop client is audited as a different operation,
+        <code>UpdateInboxRules</code>, which covers creating, changing or removing any rule from the client. A
+        custom policy on that operation closes the gap, at the price of firing on every rule change and not
+        only on forwarding. Custom policies are created in the portal or with
+        <code>New-ProtectionAlert</code>, which needs two things said explicitly: its aggregation defaults to
+        a threshold, so set it to <code>None</code> to fire every time, as E3 requires; and its
+        <code>Operation</code> parameter accepts a list but works with only one value, so one policy watches
+        one operation.
+        <!-- fact: New-InboxRule is audited for an inbox rule created in Outlook on the web, and UpdateInboxRules when a mailbox owner or other user with access created, modified or removed an inbox rule using the Outlook client | source: Microsoft Learn, "Audit log activities" (updated 2026-11-03), fetched and read | checked: 2026-11 -->
+        <!-- fact: New-ProtectionAlert's AggregationType takes None (every occurrence), SimpleAggregation (the default, threshold and time window) or AnomalousAggregation (unusual levels, baseline up to 7 days); Operation takes activities from the audited activities list and, although it technically accepts several values, multiple values don't work, and it requires ThreatType Activity; Category takes values including ThreatManagement and MailFlow; Severity Low (default), Medium or High; NotifyUser is the SMTP address that receives notifications; in Set-ProtectionAlert the NotifyUser parameter is reserved for internal Microsoft use | source: Microsoft Learn, New-ProtectionAlert and Set-ProtectionAlert cmdlet references, fetched and read | checked: 2026-11 -->
+        <!-- fact: Built-in alert tuning rules suppress alerts from common benign activity without affecting AIR investigations or email notifications, are listed on the Alert tuning page, don't apply to custom detection rules and Custom TI, and the Security Copilot Phishing Triage Agent doesn't classify alerts they suppress | source: Microsoft Learn, "Alert policies in the Microsoft Defender portal" (Defender for Office 365, updated 2026-08-24), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># What a default policy matches, including filters the portal does not show</span>
+<span class="fn">Get-ProtectionAlert</span> -Identity <span class="str">"Creation of forwarding/redirect rule"</span> | <span class="fn">Format-List</span>
+
+<span class="com"># Rules changed from the Outlook desktop client, which that policy does not see</span>
+<span class="fn">New-ProtectionAlert</span> -Name <span class="str">"Inbox rule changed in Outlook desktop"</span> -Category ThreatManagement `
+  -ThreatType Activity -Operation UpdateInboxRules -Severity Medium `
+  -NotifyUser soc@contoso.com -AggregationType None</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">An alert in your inbox but missing from the queue was probably tuned
+          out.</strong> Defender's built-in alert tuning rules hide some alerts as benign while still sending
+          their email and running their investigations, so check the
+          <span class="volatile" data-checked="2026-11"><em>Alert tuning</em> page, under the Defender portal's
+          <em>System &gt; Settings &gt; Microsoft Defender XDR <span class="acro-exp">(Extended Detection and Response)</span></em>, in its <em>Rules</em> section</span>, before deciding a policy is broken. Tuning does not touch custom detection rules, which are the other way to write
+          your own, from a hunting query, in
+          <span class="xref">Defender XDR Incidents &amp; Advanced Hunting — One Queue for Mail, Devices, Identities &amp; Apps</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
   <!-- ── TOPIC: DEFENDER XDR INCIDENTS & ADVANCED HUNTING ────────── -->
   <div class="topic-header">
     <span class="topic-icon">🚨</span>
@@ -3809,6 +4050,125 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           <span class="xref">Writing a Good Rule — Specificity, False-Positive Analysis &amp; the Tuning Fields</span>,
           and what a rule needs once it exists, from review to retirement, is
           <span class="xref">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DEFENDER THREAT INTELLIGENCE ──────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔭</span>
+    <span class="topic-name">Defender Threat Intelligence — Threat Analytics, Intel Explorer &amp; What a Reputation Score Means</span>
+    <span class="topic-badge">M365 • Defender XDR</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Where it went</div>
+      <div class="concept-title">The Standalone Portal Retired in August 2026; Threat Intelligence Is Now a Page in Defender</div>
+      <div class="concept-desc">
+        Defender Threat Intelligence was a portal of its own, with its own Intel Explorer. Microsoft retired
+        the standalone portal and that Intel Explorer on 1 August 2026, and its page for Defender Threat
+        Intelligence now describes what replaced them: <span class="volatile" data-checked="2026-11"><em>Threat intelligence</em> in
+        the Defender portal's navigation</span>.
+        It has two pages. <strong class="c-cyan">Overview</strong> shows the threats most relevant to the
+        tenant, the most recent, the highest impact and the highest exposure, and
+        <strong class="c-cyan">Intel explorer</strong> searches Microsoft's intelligence and your own by
+        threat actor, campaign, indicator, tool, vulnerability and more. Microsoft's publicly available threat
+        intelligence comes with Defender XDR <span class="acro-exp">(Extended Detection and Response)</span> at no extra cost. Threat analytics reports moved in as well, and
+        several of their types were renamed on the way.
+        <!-- fact: The legacy standalone Microsoft Threat Intelligence portal and legacy Intel Explorer experience were retired on August 1, 2026; threat intelligence is integrated into the Defender portal as Overview (executive summary from the Threat Intelligence Briefing Agent, latest threats, high-impact threats, highest exposure threats, threat articles) and Intel explorer (campaigns, indicators, attack patterns, identities, threat actors, tools, vulnerabilities, reports, with keyword search and filters by targeted industry, geography and source); threat analytics reports are available in Intel explorer; publicly available Microsoft Threat Intelligence data is available to Defender XDR customers at no additional cost; Intel explorer can also create STIX objects, run ingestion rules and export to TAXII 2.1 servers for Microsoft Sentinel threat intelligence; the Defender Threat Intelligence documentation URL now resolves to the page "Threat intelligence in Microsoft Defender" | source: Microsoft Learn, "Use Intel explorer in Microsoft Defender", "Threat intelligence in Microsoft Defender" and "Transition to the new Threat intelligence experience in Microsoft Defender" (all updated 2026-09-23), fetched and read | checked: 2026-11 -->
+        <!-- fact: The MS-102 study guide, skills measured as of 28 April 2026, lists "Review and respond to threats identified by Microsoft Defender Threat Intelligence" | source: Microsoft Learn, MS-102 study guide, fetched and read in the fourteenth wave | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Threat analytics called it</th><th>Intel explorer calls it</th></tr></thead>
+          <tbody>
+            <tr><td>Technique</td><td>Attack pattern</td></tr>
+            <tr><td>Actor</td><td>Threat actor</td></tr>
+            <tr><td>Activity</td><td>Campaign</td></tr>
+            <tr><td>OSINT <span class="acro-exp">(Open Source Intelligence)</span>, Core threat</td><td>Report</td></tr>
+            <tr><td>Tool, Vulnerability</td><td>Unchanged</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Look for the page, not the product.</strong> A guide written before August
+          2026 sends you to a portal that no longer exists, under type names that changed. MS-102's outline, with
+          skills measured as of April 2026, still asks for Defender Threat Intelligence by that name, the
+          third outline in four waves found trailing its product. The questions intelligence is meant to
+          answer come before any tool, and they are in
+          <span class="xref">Threat Intelligence — Turning Data Into Decisions</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Threat analytics</div>
+      <div class="concept-title">A Threat Analytics Report Answers Two Questions: What Is This Threat, and Is It Here</div>
+      <div class="concept-desc">
+        A threat analytics report is a write-up by Microsoft's researchers of an actor, campaign, technique or
+        vulnerability, joined to the tenant's own data. The dashboard ranks reports three ways: the latest,
+        the highest impact, by how many of your alerts they account for, and the highest exposure, from how
+        severe the threat's vulnerabilities are and how many of your devices have them. Any one Defender
+        product's license opens it, except Defender for Endpoint Plan 1 on its own, but each product's part
+        of a report, its incidents, assets and exposure, appears only with that product and a role that can
+        read it.
+        <!-- fact: Threat analytics reports cover threat actors and campaigns, attack techniques, vulnerabilities, attack surfaces and malware, plus OSINT articles; the dashboard has latest threats, high-impact threats (most active and resolved alerts first) and highest exposure threats (vulnerability severity and the number of exploitable devices); access needs a license for at least one Defender product, Defender for Endpoint P1 being an exception; all reports are visible with one product, but each product and role is needed to see its incidents, assets, exposure and recommended actions; report sections are Overview, Analyst report, Related incidents, Impacted assets, Endpoints exposure, Recommended actions and Indicators (preview); impacted assets counts distinct assets with at least one active alert, and alerts are triggered for mailboxes that receive threat emails; Recommended actions only displays recommendations tracked in Secure Score, the analyst report having more; the Indicators tab lists IOCs, keeps expired ones, and needs a verified tenant | source: Microsoft Learn, "Threat analytics in Microsoft Defender" (updated 2026-11-08), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Tab</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>Overview</td><td>What the threat is, its aliases and targets, with charts of its impact on you and your exposure</td></tr>
+            <tr><td>Analyst report</td><td>How the attack works, mapped to MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span>, with hunting guidance</td></tr>
+            <tr><td>Related incidents, Impacted assets</td><td>Whether it is in your tenant: its incidents, and the devices, users, mailboxes and apps with alerts</td></tr>
+            <tr><td>Endpoints exposure</td><td>How many of your devices have the vulnerabilities it uses, and whether their updates are deployed</td></tr>
+            <tr><td>Recommended actions</td><td>Mitigations and your status on each, but only those Secure Score tracks</td></tr>
+            <tr><td>Indicators (preview)</td><td>Its indicators of compromise, kept after they expire, for verified tenants only</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Impacted does not mean compromised, and the checklist is not the whole
+          list.</strong> A mailbox that received the campaign's mail has an alert, so it counts as an impacted
+          asset whether or not anyone opened the message. And Recommended actions lists only what Secure Score
+          tracks; Microsoft points to the analyst report for the rest. Which of those Secure Score items are
+          worth the effort is
+          <span class="xref">Secure Score &amp; the Tenant Baseline — Which Recommendations Are Worth Doing</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reputation</div>
+      <div class="concept-title">A Reputation Score Counts Rule Matches; Unknown Means Little Matched, Not Clean</div>
+      <div class="concept-desc">
+        Entity pages for IP <span class="acro-exp">(Internet Protocol)</span> addresses, domains, URLs <span class="acro-exp">(Uniform Resource Locator)</span> and files carry a <em>Threat Intelligence Insights</em>
+        tab, in preview, opened from an incident's evidence, the portal's search or a value in advanced
+        hunting results. Its reputation is a score from 0 to 100, from Microsoft's blocklist and from
+        machine-learning rules that weigh things such as the top-level domain, hosting provider, name server,
+        registrar and TLS <span class="acro-exp">(Transport Layer Security)</span> certificate. IP addresses and domains add infrastructure Microsoft has collected by
+        passive DNS <span class="acro-exp">(Domain Name System)</span>, port scans and web crawling: past resolutions, WHOIS, host pairs, subdomains,
+        certificates and services. URLs and files get sandbox detonation results instead.
+        <!-- fact: Entity pages for IP addresses, domains, URLs and files are enriched through the Threat Intelligence Insights tab (preview), at no extra cost for Defender XDR customers, reached from incident evidence, global search, advanced hunting results or direct links; reputation is a 0 to 100 score from proprietary data and machine learning rules of High, Medium or Low severity assessing the top-level domain, hosting provider, name server, registrar and TLS certificate characteristics, to be assessed holistically; 75 to 100 Malicious (confirmed associations to known malicious infrastructure on Microsoft's blocklist with machine learning rule matches), 50 to 74 Suspicious (three or more rules), 25 to 49 Neutral (at least two rules), 0 to 24 Unknown (one or zero rule matches); IP addresses and domains add DNS records, WHOIS, host pairs, subdomains, TLS/SSL certificates, services, components, trackers and cookies from passive DNS, port scans and web crawling; URLs and files add sandbox analysis | source: Microsoft Learn, "View threat intelligence in entity pages in Microsoft Defender (Preview)" (updated 2026-08-02), fetched and read | checked: 2026-11 -->
+        <!-- fact: Intel explorer can be used to search suspicious indicators safely, a defanged indicator such as contoso[.]com has its brackets removed before searching, and malicious indicators should not be entered in a web browser | source: Microsoft Learn, "Use Intel explorer in Microsoft Defender" (updated 2026-09-23), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Score</th><th>Category</th><th>Means</th></tr></thead>
+          <tbody>
+            <tr><td>75–100</td><td>Malicious</td><td>Linked to known malicious infrastructure on Microsoft's blocklist, with rule matches besides</td></tr>
+            <tr><td>50–74</td><td>Suspicious</td><td>Three or more rules matched</td></tr>
+            <tr><td>25–49</td><td>Neutral</td><td>At least two rules matched</td></tr>
+            <tr><td>0–24</td><td>Unknown</td><td>One rule matched, or none</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Unknown is an absence of evidence, not a clean bill.</strong> It means the
+          rules found little either way, and a domain stood up yesterday for a single campaign may not have
+          matched anything yet; Microsoft says to read the factors together rather than trust any one. Look a
+          suspicious address up in Intel explorer, with the brackets of a defanged one taken out, and never by
+          browsing to it. Why a bare indicator is worth so little on its own is
+          <span class="xref">Threat-Feed Reality — Why Most Indicators Are Worthless to You</span>.
         </div>
       </div>
     </div>
