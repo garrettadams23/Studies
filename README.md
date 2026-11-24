@@ -36,6 +36,11 @@ Open `index.html` in any modern web browser — no server or build step required
 - **Acronym Dictionary** — A dedicated domain with 1,121 IT acronyms, browsable
   A–Z or by subject area, searchable by acronym *or* by what it expands to.
 - **Rotating Snap Quotes** — Philosophical quotes on a fade cycle.
+- **Error Code Lookup** — The header's 🧾 ERRORS button (or `c`) looks up a
+  Windows Installer, Configuration Manager or Intune code in whatever form a
+  console printed it — `1603`, `0x87D00324`, `-2016410844` — and decodes
+  `0x8007xxxx` to the Windows error inside it. 156 codes, each copied from
+  Microsoft's own reference, in `data/error-codes.json`.
 - **URL Encode / Decode Widget** — Interactive tool in the Scripting domain.
 - **Cloud Responsibility Matrix** — Visual IaaS / PaaS / SaaS / On-Prem breakdown.
 - **Offline-first** — Self-hosted fonts and zero third-party requests; works
@@ -94,6 +99,9 @@ data/
   acronyms.json       Every acronym and what it stands for — the single source
                       of truth for both the dictionary and the inline expansions
   acronym.html        Generated from acronyms.json; do not hand-edit
+  error-codes.json    The error-code lookup's rows, each copied from a Microsoft
+                      reference named under `sources`; build.py inlines it and
+                      refuses a malformed row
   net.html … military.html   One file per domain — the .domain-body inner content
 Img/
   diagrams/           Standalone copies of the two SVG diagrams (role scope,

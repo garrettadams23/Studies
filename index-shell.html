@@ -63,6 +63,11 @@
               CompTIA, Tech, &amp; Life Reference · 2026 Edition
             </div>
             <div class="header-controls" id="header-controls">
+              <!-- The link and the error-code lookup share a column. The switch column
+                   beside it is what sets the header's height, and a fifth row there
+                   pushed the sticky filter bar down 28px, enough to fail the visual
+                   gate's 0.05% on its blurred background. Here it costs no height. -->
+              <div class="hdr-link-stack">
               <a
                 class="hdr-link-btn"
                 href="https://garrettstudies4chemicalengineer.netlify.app/"
@@ -74,6 +79,11 @@
                 <span class="hdr-link-label">Chemical Engineer<br />Knowledge Base</span>
                 <span class="hdr-link-ext" aria-hidden="true">↗</span>
               </a>
+                <button class="hdr-random-btn" id="hdr-codes-btn" aria-haspopup="dialog" aria-label="Look up an error code" title="Error code lookup (press c)">
+                  <span class="hdr-random-icon" aria-hidden="true">🧾</span>
+                  <span class="sw-text">ERRORS</span>
+                </button>
+              </div>
               <div class="sw-stack">
                 <button class="sw-btn" id="hdr-theme-btn" role="switch" aria-checked="false" aria-label="Toggle light / dark" title="Toggle light / dark (press t)">
                   <span class="sw-sun">☀</span>
@@ -271,5 +281,11 @@ Acronyms work both ways: UEM also finds Unified Endpoint Management."
        landing card, because "is anyone still maintaining this?" is a question a
        reference site should answer without being asked. -->
   <script type="application/json" id="changelog"><!-- CHANGELOG --></script>
+
+  <!-- Error codes for the lookup behind the header's ERRORS button, inlined from
+       data/error-codes.json. Every row was copied from a Microsoft page that was
+       read, and names it; the lookup decodes 0x8007xxxx and the negative decimal
+       form itself, so the page answers whichever form a console showed. -->
+  <script type="application/json" id="error-codes"><!-- ERROR_CODES --></script>
 </body>
 </html>

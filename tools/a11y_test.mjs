@@ -125,6 +125,18 @@ for (const theme of ["dark", "light"]) {
   await page.waitForTimeout(300);
   record(`a study dialog (${theme})`, await scan());
 
+  // The error-code lookup: the same modal shell, but a table of results built
+  // per keystroke, with a decoding note in a live region. Scanned with a code
+  // typed, because the empty state renders different rows from a match.
+  await page.evaluate(() => { stClose(); stOpenErrorCodes(); });
+  await page.waitForTimeout(200);
+  await page.evaluate(() => {
+    const i = document.getElementById("ec-input");
+    i.value = "0x80070643"; i.dispatchEvent(new Event("input"));
+  });
+  await page.waitForTimeout(100);
+  record(`the error-code lookup (${theme})`, await scan());
+
   // The searching state, which nothing here entered until a phone-width bug
   // was found in it. Searching is not a filtered version of the browsing
   // page — it builds elements that exist in no other state: `mark.sh`

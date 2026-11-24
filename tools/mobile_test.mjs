@@ -180,6 +180,23 @@ for (const [q, why] of QUERIES) {
 }
 await page.evaluate(() => runSearch(""));
 
+// ── the error-code lookup ───────────────────────────────────────────────────
+// A three-column table inside the modal, with codes kept on one line; at this
+// width the table scrolls inside the dialog, and the page must not.
+{
+  await page.evaluate(() => {
+    stOpenErrorCodes();
+    const i = document.getElementById("ec-input");
+    i.value = "1603"; i.dispatchEvent(new Event("input"));
+  });
+  await page.waitForTimeout(200);
+  const px = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  const ok = px <= SLACK;
+  results.push({ dom: "error-code lookup", px, ok });
+  console.log(`${ok ? "ok  " : "FAIL"} : the error-code lookup with a result  (page ${px}px past ${WIDTH}px viewport)`);
+  await page.evaluate(() => stClose());
+}
+
 await browser.close();
 
 const failed = results.filter((r) => r.ok === false);

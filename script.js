@@ -1179,6 +1179,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("hdr-expand-btn")?.addEventListener("click", toggleAll);
   document.getElementById("hdr-random-btn")?.addEventListener("click", jumpToRandomTopic);
   document.getElementById("hdr-acro-btn")?.addEventListener("click", cycleAcroMode);
+  document.getElementById("hdr-codes-btn")?.addEventListener("click", stOpenErrorCodes);
   applyAcroMode(acroMode());
 
   // Search + notepad + URL codec — wired here (not inline) so the CSP can stay
@@ -1283,6 +1284,7 @@ function handleGlobalKeys(e) {
     case "e": case "E": e.preventDefault(); toggleAll(); break;
     case "t": case "T": e.preventDefault(); toggleTheme(); break;
     case "r": case "R": e.preventDefault(); jumpToRandomTopic(); break;
+    case "c": case "C": e.preventDefault(); stOpenErrorCodes(); break;
     default: break;
   }
 }
@@ -3602,6 +3604,131 @@ function stOpenJump() {
       active = +li.dataset.i; choose();
     });
     render("");
+    setTimeout(() => input.focus(), 30);
+  });
+}
+
+// ── ERROR-CODE LOOKUP ───────────────────────────────────────────────────────
+// The header's ERRORS button, which the owner asked for as a search in the
+// tray answering "error code | system type | use of it". One box over
+// data/error-codes.json, inlined by build.py, answering in whichever form a
+// console showed the code: the decimal an installer returned (1603), the
+// hexadecimal an agent raised (0x87D00324), the negative decimal both consoles
+// print beside it (-2016410844), or a Windows error wrapped as 0x8007xxxx,
+// decoded to the number inside it. Words search the meanings instead. Every row
+// names the Microsoft page it was copied from, because an answer with no source
+// is a rumor with a search box.
+let _ecData = null;
+function ecData() {
+  if (_ecData) return _ecData;
+  let doc = {};
+  try { doc = JSON.parse(document.getElementById("error-codes")?.textContent || "{}"); } catch { doc = {}; }
+  const codes = (doc.codes || []).map(r => ({
+    ...r,
+    value: /^0x/i.test(r.code) ? parseInt(r.code.slice(2), 16) >>> 0 : Number(r.code),
+  }));
+  _ecData = { codes, sources: doc.sources || {} };
+  return _ecData;
+}
+
+/** A 32-bit value as a console prints it: 0x87D00324, and as a signed decimal. */
+function ecHex(v) { return "0x" + (v >>> 0).toString(16).toUpperCase().padStart(8, "0"); }
+function ecSigned(v) { return (v | 0).toString(); }
+
+/**
+ * What a query asks for. A number can be read more than one way — "80070643"
+ * is a decimal and, with its 0x dropped, the hexadecimal a reader most likely
+ * copied — so every reading is tried and the rows are the union.
+ */
+function ecReadings(q) {
+  const s = q.trim().replace(/\s+/g, "");
+  if (!s) return null;
+  const vals = new Set();
+  if (/^0x[0-9a-f]{1,8}$/i.test(s)) vals.add(parseInt(s.slice(2), 16) >>> 0);
+  else if (/^-\d{1,10}$/.test(s) && Number(s) >= -2147483648) vals.add(Number(s) >>> 0);
+  else {
+    if (/^\d{1,10}$/.test(s) && Number(s) <= 0xFFFFFFFF) vals.add(Number(s));
+    if (/^[0-9a-f]{8}$/i.test(s)) vals.add(parseInt(s, 16) >>> 0);
+  }
+  return vals.size ? vals : null;
+}
+
+/** Rows for a query, and a sentence explaining any decoding that was done. */
+function ecSearch(q) {
+  const { codes } = ecData();
+  const vals = ecReadings(q);
+  if (!q.trim()) return { rows: codes.filter(r => r.topic), note: "", empty: true };
+  if (!vals) {
+    const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+    const rows = codes.filter(r => {
+      const hay = `${r.code} ${r.system} ${r.name || ""} ${r.meaning} ${r.use || ""}`.toLowerCase();
+      return words.every(w => hay.includes(w));
+    });
+    return { rows, note: "" };
+  }
+  const want = new Set(vals);
+  let note = "";
+  for (const v of vals) {
+    // 0x8007xxxx is a Windows error number wrapped as an HRESULT: the low
+    // sixteen bits are the number itself, so 0x80070643 is 1603.
+    if (v >>> 16 === 0x8007) {
+      const inner = v & 0xFFFF;
+      want.add(inner);
+      note = `${ecHex(v)} is Windows error ${inner} wrapped as an HRESULT, so the rows for ${inner} apply.`;
+    }
+  }
+  return { rows: codes.filter(r => want.has(r.value)), note };
+}
+
+function stOpenErrorCodes() {
+  stOpen(body => {
+    body.innerHTML =
+      '<h2 class="st-h">Error code lookup</h2>' +
+      '<label class="ec-label" for="ec-input">A code in any form a console shows it — 1603, 0x87D00324, -2016410844 — or a word</label>' +
+      '<input id="ec-input" class="st-input" type="search" autocomplete="off" spellcheck="false" />' +
+      '<p id="ec-status" class="st-hint" role="status" aria-live="polite"></p>' +
+      '<div class="ec-wrap"><table class="ref-table ec-table">' +
+      '<thead><tr><th scope="col">Error code</th><th scope="col">System type</th><th scope="col">Use of it</th></tr></thead>' +
+      '<tbody id="ec-rows"></tbody></table></div>' +
+      '<p class="st-hint">Windows Installer, Configuration Manager and Intune codes, copied from Microsoft\'s own references. Esc to close.</p>';
+    const input = body.querySelector("#ec-input");
+    const tbody = body.querySelector("#ec-rows");
+    const status = body.querySelector("#ec-status");
+    const { sources } = ecData();
+
+    function cell(r) {
+      const forms = /^0x/i.test(r.code)
+        ? `<span class="ec-alt">${esc(ecSigned(r.value))}</span>`
+        : r.value > 0 && r.value <= 0xFFFF ? `<span class="ec-alt">${esc(ecHex((0x80070000 | r.value) >>> 0))}</span>` : "";
+      const src = sources[r.src];
+      const topic = r.topic ? topicName(r.topic) : null;
+      return `<tr><td class="ec-code"><code>${esc(r.code)}</code>${forms}</td>` +
+        // A constant name may break after an underscore, never mid-word.
+        `<td>${esc(r.system)}${r.name ? `<span class="ec-alt">${esc(r.name).replace(/_/g, "_<wbr>")}</span>` : ""}</td>` +
+        `<td><span class="ec-meaning">${esc(r.meaning)}</span>` +
+        (r.use ? `<span class="ec-use">${esc(r.use)}</span>` : "") +
+        (topic ? `<button type="button" class="st-list-link ec-topic" data-id="${esc(r.topic)}">Read: ${esc(topic)}</button>` : "") +
+        (src ? `<span class="ec-src">${esc(src.site)} · ${esc(src.title)}</span>` : "") +
+        `</td></tr>`;
+    }
+    function render() {
+      const q = input.value;
+      const { rows, note, empty } = ecSearch(q);
+      const shown = rows.slice(0, 60);
+      tbody.innerHTML = shown.map(cell).join("") ||
+        '<tr><td colspan="3" class="ec-none">No code or meaning matches. Try the code as the console printed it.</td></tr>';
+      status.textContent = empty
+        ? `The ${rows.length} codes the deployment error-codes topic explains. Type any code, in any form, or a word.`
+        : (note ? note + " " : "") +
+          `${rows.length} ${rows.length === 1 ? "match" : "matches"}` +
+          (rows.length > shown.length ? `, the first ${shown.length} shown.` : ".");
+    }
+    input.addEventListener("input", render);
+    tbody.addEventListener("click", e => {
+      const b = e.target.closest(".ec-topic"); if (!b) return;
+      const id = b.dataset.id; stClose(); stGoToTopic(id);
+    });
+    render();
     setTimeout(() => input.focus(), 30);
   });
 }

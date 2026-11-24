@@ -1863,6 +1863,35 @@ check("reduced motion turns off smooth scrolling", motion.scroll !== "smooth",
   `scroll-behavior: ${motion.scroll}`);
 await page.emulateMedia({ reducedMotion: "no-preference" });
 
+// The header's error-code lookup answers a code in whichever form a console
+// printed it — and 0x80070643 has to land on 1603, because the HRESULT form is
+// the one Windows Update and some consoles show for an installer's own code.
+const lookup = await page.evaluate(async () => {
+  document.getElementById("hdr-codes-btn").click();
+  await new Promise(r => setTimeout(r, 150));
+  const input = document.getElementById("ec-input");
+  const focused = document.activeElement === input;
+  const rowsFor = async q => {
+    input.value = q; input.dispatchEvent(new Event("input"));
+    await new Promise(r => setTimeout(r, 30));
+    return [...document.querySelectorAll("#ec-rows tr")].map(tr => tr.querySelector("code")?.textContent || "");
+  };
+  const out = { focused, dec: await rowsFor("1603"), hex: await rowsFor("0x87d00324"),
+                neg: await rowsFor("-2016410844"), bare: await rowsFor("87D00324"),
+                wrapped: await rowsFor("0x80070643") };
+  out.note = document.getElementById("ec-status").textContent;
+  out.none = await rowsFor("zzzz");
+  stClose();
+  return out;
+});
+check("the error-code lookup answers a code in every form a console prints it",
+  lookup.focused && lookup.dec[0] === "1603" && lookup.hex[0] === "0x87D00324" &&
+  lookup.neg[0] === "0x87D00324" && lookup.bare[0] === "0x87D00324" &&
+  lookup.wrapped[0] === "1603" && /HRESULT/.test(lookup.note) &&
+  lookup.none.length === 1 && lookup.none[0] === "",
+  `focus ${lookup.focused}; 1603 -> ${lookup.dec[0]}; hex ${lookup.hex[0]}; negative ${lookup.neg[0]}; ` +
+  `bare ${lookup.bare[0]}; 0x80070643 -> ${lookup.wrapped[0]}`);
+
 check("no console errors", consoleErrors.length === 0, consoleErrors.slice(0, 2).join(" | "));
 check("no off-site requests", offsite.length === 0, offsite.slice(0, 2).join(" | "));
 
