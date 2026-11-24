@@ -30,6 +30,7 @@ What is left here is what a session actually reads.
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
 | **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too | ✅ **shipped** — see its §9 to §19 |
+| **Error codes and packaging** | Three items from the owner, added as written: an error-code lookup in the header's row of buttons, the Intune and MECM codes compared, and MSI, .intunewin and EXE explained. Each checked against the site first | 🔜 **queued** — waves 12 and 13 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -2208,6 +2209,46 @@ COBIT, which the policy topic now explains, and RASP and IAST, which nothing doe
 site's SAST and DAST topic does not cover. The domain-header tags with no path, whose outlines
 nobody has read: CKA, OSCP, GCIH, AWS, GCP, MD-102, AZ-800, MS-102 and AI+. And the visual
 baseline, unchanged.
+
+
+# Error codes and packaging — three items from the owner
+
+## 1. The request
+
+Added as written:
+
+```
+* Add to system tray an error checker search which will be Error code | system type | use of it
+* Compare error code from Intune and MECM that are common involing packaging and deploying of software
+* MSI, Intunewin, Exe explain in how they work
+```
+
+The page has no system tray, so the first item is read as the nearest thing it has: the row of
+icon buttons at the right of the header — theme, expand all, random topic and acronym
+expansions — which sits where a tray sits and does what one does. The lookup becomes a fifth
+button there.
+
+## 2. What exists, measured
+
+| Item | What the site has | What is missing |
+|---|---|---|
+| 1. An error-code search in the tray | Site search, which finds a code only when some card's prose contains it, and then returns the card rather than the code's meaning | A lookup that takes a code and returns one row: the code, the system it comes from, and what it means and what to do about it |
+| 2. Intune and MECM codes, compared | Two cards of codes *you will see weekly*: five in *Application Troubleshooting — Reading the IME Log* and nine in *MECM Deployment &amp; Content Troubleshooting*. Three are in both: 0x87D00324, 1603 and 1618. No card puts the two systems side by side, and 1641 appears nowhere | One table that sorts the codes by what raised them — the installer, the management agent or the platform — so the same code reads the same way in either console |
+| 3. MSI, .intunewin and EXE | *Win32 App Packaging — .intunewin End to End*: one card, 3,436 characters, on the seven steps of the workflow. Nothing says what is inside an MSI, why an EXE has no standard switches, or that a .intunewin file wraps an installer rather than being one | A topic on the three by what actually installs, what Windows records afterward, and what a deployment tool can detect |
+
+## 3. The order to do them in
+
+1. **The readers first.** A batch in *a service desk engineer*, which already asks about
+   BitLocker and Autopilot, with each want named before its topic exists.
+2. **Items 3 and 2 as `endpoint` topics, 3 first.** The comparison rests on what each format
+   reports when it fails, so the formats come first.
+3. **Item 1 last, because it is code and its rows come from item 2.** A header button, a dialog
+   with one search box, and a table of *Error code · System type · What it means*. The rows
+   ship inside the page, so it works offline, and the smoke test covers it. It never says more
+   than a sourced topic says: every row is a code item 2 verified.
+4. **Every code is read in Microsoft's own reference before it is written** — the Windows
+   Installer error list, Intune's app installation error reference and Configuration Manager's
+   — and anything that cannot be confirmed there is left out rather than guessed.
 
 
 # Domain shape — the connectivity measurement, and what it says
