@@ -922,6 +922,10 @@ const READERS = [
     ["post-quantum migration deadline", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
     ["hqc", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
     ["is aes-128 quantum safe", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
+    // ── forty-third wave: what each certification costs to keep, read from each body's pages ──
+    ["security+ renewal ceus", "", "eng/cert-roadmaps-choosing-a-path"],
+    ["cissp cpe requirements", "", "eng/cert-roadmaps-choosing-a-path"],
+    ["microsoft certification renewal", "", "eng/cert-roadmaps-choosing-a-path"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -1167,6 +1171,10 @@ const READERS = [
     ["i changed one line and fifty tests failed",
      "kind 3, and the thinnest of the five — `eng` has *Over-mocking* and *Test Doubles*, which is the cause, but the site names it from the writer's side (a test coupled to the implementation) and never from the reader's (fifty red tests after a one-line change). The nearby gap is narrower than a card: the symptom sentence is missing from a subject that is otherwise covered"],
     ["the log says success and the data is wrong"],
+    // ── forty-third wave: which layer sent the error, read from RFC 9110 and RFC 6585 ──
+    ["502 vs 504", "", "web/the-full-stack-picture-how-it-all-connects"],
+    ["gateway timeout", "", "web/the-full-stack-picture-how-it-all-connects"],
+    ["401 vs 403", "", "web/the-full-stack-picture-how-it-all-connects"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -1462,6 +1470,10 @@ const READERS = [
      "mind/layoffs-job-loss-the-first-week-and-the-ones-after"],
     ["the job ad wants ten years of a five year old tool",
      "kind 3 — every word is in the corpus, `job description` and `years of experience` both appear, and `career` covers reading an advert as a wish list rather than a specification. The query is a joke with a real question inside it, and the joke is what carries it: no card has a reason to contain `ten` and `five` about the same tool"],
+    // ── forty-third wave: the puzzle The Data Interview names, run on PostgreSQL 16 ──
+    ["second highest salary", "", "data/the-data-interview"],
+    ["nth highest salary", "", "data/the-data-interview"],
+    ["postgres nulls first", "", "data/the-data-interview"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
