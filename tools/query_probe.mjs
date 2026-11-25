@@ -497,6 +497,10 @@ const READERS = [
     ["response actions loop", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
     ["verify and triage", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
     ["nist 800-61 rev 3", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    // ── thirty-sixth wave: ATT&CK v19's fifteen tactics, read from attack.mitre.org, added before the cards ──
+    ["defense impairment", "", "threat/mitre-attck-framework"],
+    ["stealth tactic", "", "threat/mitre-attck-framework"],
+    ["defense evasion", "", "threat/mitre-attck-framework"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
