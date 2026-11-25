@@ -1746,32 +1746,32 @@ sudo certbot renew --dry-run</pre>
 
 <!-- BEGINNER12-SEC v1 -->
 <!-- ── TOPIC: OWASP TOP 10 WEB VULNERABILITIES ───────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🕸️</span>
-    <span class="topic-name">OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> Top 10 — The Most Critical Web Security Risks</span>
+    <span class="topic-name">OWASP Top 10 — The Most Critical Web Security Risks</span>
     <span class="topic-badge">SEC • Essential</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
     <div class="concept-card">
       <div class="concept-label">WHAT IS OWASP</div>
-      <div class="concept-title">Open Web Application Security Project</div>
-      <div class="concept-desc">OWASP is a nonprofit foundation that publishes the Top 10 — a consensus list of the most critical web application security risks, updated every few years based on real-world data. Every web developer and security professional should know these by heart.</div>
+      <div class="concept-title">Open Worldwide Application Security Project</div>
+      <div class="concept-desc">OWASP is a nonprofit foundation that publishes the Top 10 — a consensus list of the most critical web application security risks, updated every few years based on real-world data. Every web developer and security professional should know these by heart. The current edition is the 2025 one, OWASP's eighth, and the table follows it.<!-- fact: The Open Worldwide Application Security Project (OWASP) is a 501(c)(3) nonprofit foundation; the OWASP project launched on 1 December 2001 | source: OWASP Foundation, About page, fetched and read | checked: 2026-11 --><!-- fact: OWASP Top 10:2025, the eighth installment: A01 Broken Access Control, A02 Security Misconfiguration, A03 Software Supply Chain Failures, A04 Cryptographic Failures, A05 Injection, A06 Insecure Design, A07 Authentication Failures, A08 Software or Data Integrity Failures, A09 Security Logging and Alerting Failures, A10 Mishandling of Exceptional Conditions; OWASP's project page calls 2025 the most current released version, with 2021 and 2017 as previous versions | source: OWASP Top 10:2025 site (top10.owasp.org/2025) and the OWASP Top 10 project page, fetched and read | checked: 2026-11 --></div>
     </div>
     <table class="ai-table">
       <thead><tr><th>#</th><th>Risk</th><th>Example Attack</th><th>Prevention</th></tr></thead>
       <tbody>
-        <tr><td>A01</td><td>Broken Access Control</td><td>Changing URL <span class="acro-exp">(Uniform Resource Locator)</span> param to access another user's data</td><td>Enforce authorization server-side for every request</td></tr>
-        <tr><td>A02</td><td>Cryptographic Failures</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> instead of HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; MD5 <span class="acro-exp">(Message Digest 5)</span> password hashes</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> everywhere; bcrypt for passwords; AES-256 for data</td></tr>
-        <tr><td>A03</td><td>Injection (SQLi, XSS, etc.)</td><td><code>' OR '1'='1</code> in login field</td><td>Parameterized queries; input validation; output encoding</td></tr>
-        <tr><td>A04</td><td>Insecure Design</td><td>No rate limiting; predictable reset tokens</td><td>Threat modeling; security requirements from day 1</td></tr>
-        <tr><td>A05</td><td>Security Misconfiguration</td><td>Default creds; debug mode in prod; open S3 <span class="acro-exp">(Simple Storage Service)</span> buckets</td><td>Hardening guides; IaC <span class="acro-exp">(Infrastructure as Code)</span> with security checks; scan configs</td></tr>
-        <tr><td>A06</td><td>Vulnerable Components</td><td>Log4Shell (the Log4j logging library); Heartbleed; npm package with malware</td><td>Inventory dependencies; Dependabot; SCA <span class="acro-exp">(Software Composition Analysis)</span> scanning</td></tr>
-        <tr><td>A07</td><td>Auth Failures</td><td>Brute force; credential stuffing; weak passwords</td><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span>; account lockout; breached password checks</td></tr>
-        <tr><td>A08</td><td>Software Integrity Failures</td><td>CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> pipeline compromise; insecure deserialization</td><td>Code signing; trusted registries; verify checksums</td></tr>
-        <tr><td>A09</td><td>Logging &amp; Monitoring Failures</td><td>Attack goes undetected for months</td><td>Centralized logging; SIEM <span class="acro-exp">(Security Information and Event Management)</span> alerts; test detection</td></tr>
-        <tr><td>A10</td><td>SSRF <span class="acro-exp">(Server-Side Request Forgery)</span></td><td>User-supplied URL fetched by server → internal services exposed</td><td>Allowlist URLs; block RFC-1918 addresses</td></tr>
+        <tr><td>A01</td><td>Broken Access Control</td><td>Changing a URL <span class="acro-exp">(Uniform Resource Locator)</span> param to reach another user's data; making the server fetch an internal URL (SSRF, part of A01 since 2025)</td><td>Enforce authorization server-side for every request; allowlist the URLs a server may fetch</td></tr>
+        <tr><td>A02</td><td>Security Misconfiguration</td><td>Default creds; debug mode in prod; open S3 <span class="acro-exp">(Simple Storage Service)</span> buckets</td><td>Hardening guides; IaC <span class="acro-exp">(Infrastructure as Code)</span> with security checks; scan configs</td></tr>
+        <tr><td>A03</td><td>Software Supply Chain Failures</td><td>Log4Shell (the Log4j logging library); npm package with malware; a build pipeline weaker than what it deploys</td><td>Inventory dependencies; Dependabot; SCA <span class="acro-exp">(Software Composition Analysis)</span> scanning; no one person can push code to production alone</td></tr>
+        <tr><td>A04</td><td>Cryptographic Failures</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> instead of HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; MD5 <span class="acro-exp">(Message Digest 5)</span> password hashes</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> everywhere; bcrypt for passwords; AES-256 for data</td></tr>
+        <tr><td>A05</td><td>Injection (SQLi, XSS, etc.)</td><td><code>' OR '1'='1</code> in login field</td><td>Parameterized queries; input validation; output encoding</td></tr>
+        <tr><td>A06</td><td>Insecure Design</td><td>No rate limiting; predictable reset tokens</td><td>Threat modeling; security requirements from day 1</td></tr>
+        <tr><td>A07</td><td>Authentication Failures</td><td>Brute force; credential stuffing; weak passwords</td><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span>; account lockout; breached password checks</td></tr>
+        <tr><td>A08</td><td>Software or Data Integrity Failures</td><td>Unsigned updates; insecure deserialization</td><td>Code signing; trusted registries; verify checksums</td></tr>
+        <tr><td>A09</td><td>Security Logging and Alerting Failures</td><td>Attack goes undetected for months; a scanner runs and nothing alerts</td><td>Centralized logging; SIEM <span class="acro-exp">(Security Information and Event Management)</span> alerts; check that a scan raises one</td></tr>
+        <tr><td>A10</td><td>Mishandling of Exceptional Conditions</td><td>An error that leaves a transaction half done, or a check that fails open</td><td>Catch errors where they occur; roll back and fail closed; one global handler</td></tr>
       </tbody>
     </table>
     <div class="concept-desc verdict">
@@ -1781,7 +1781,7 @@ sudo certbot renew --dry-run</pre>
       particular thing to this particular object" — and it can only be caught by checking
       authorization server-side on every request, including the ones that only the front
       end was supposed to be able to make. Treat the list as a design checklist rather
-      than a test plan.
+      than a test plan.<!-- fact: A01:2025 lists CORS misconfiguration among access control failures and counts CWE-918, SSRF, among its CWEs; A03:2025 includes a CI/CD pipeline weaker than the systems it builds and the absence of separation of duty; A09:2025 lists DAST scans such as Burp or ZAP that trigger no alerts; A10:2025 recommends catching errors where they occur, a global exception handler, and rolling back a partial transaction, failing closed, and gives resources left locked after exceptions as a denial-of-service scenario | source: OWASP Top 10:2025 category pages A01, A03, A09 and A10, fetched and read | checked: 2026-11 -->
     </div>
     <div class="concept-card">
       <div class="concept-label">SQL <span class="acro-exp">(Structured Query Language)</span> INJECTION DEEP DIVE</div>
@@ -3049,7 +3049,7 @@ dig _dmarc.example.com TXT
 
 <!-- BEGINNER36-SEC v1 -->
 <!-- ── TOPIC: OWASP Top 10 Web App Security ──────────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🕸️</span>
     <span class="topic-badge">Beginner</span>
@@ -3080,60 +3080,64 @@ dig _dmarc.example.com TXT
 
     <div class="concept-card">
       <div class="concept-label">The List</div>
-      <div class="concept-title">OWASP Top 10 (2021 Edition) Explained Simply</div>
+      <div class="concept-title">OWASP Top 10 (2025 Edition) Explained Simply</div>
       <div class="concept-desc">
         Each entry below: what it is, in plain language, with an
-        everyday analogy.
+        everyday analogy. Material written before 2025 numbers some of these
+        differently; the mapping is in <span class="xref">OWASP Top 10 (2025)</span>.<!-- fact: OWASP Top 10:2025, the eighth installment: A01 Broken Access Control, A02 Security Misconfiguration, A03 Software Supply Chain Failures, A04 Cryptographic Failures, A05 Injection, A06 Insecure Design, A07 Authentication Failures, A08 Software or Data Integrity Failures, A09 Security Logging and Alerting Failures, A10 Mishandling of Exceptional Conditions; OWASP's project page calls 2025 the most current released version, with 2021 and 2017 as previous versions | source: OWASP Top 10:2025 site (top10.owasp.org/2025) and the OWASP Top 10 project page, fetched and read | checked: 2026-11 -->
       </div>
       <pre class="code-block">
 <span class="com">A01: Broken Access Control</span>
-  Users can do things they shouldn't (view others' data, admin pages).
+  Users can do things they shouldn't (view others' data, admin pages),
+  or make the server fetch things for them (SSRF, folded in for 2025).
   Analogy: A hotel keycard that opens every room, not just yours.
 
-<span class="com">A02: Cryptographic Failures</span>
+<span class="com">A02: Security Misconfiguration</span>
+  Default passwords, verbose error messages, unnecessary features enabled.
+  Analogy: Leaving the factory-set "admin/admin" login on a new router.
+
+<span class="com">A03: Software Supply Chain Failures</span>
+  Libraries with known holes, or ones tampered with somewhere between
+  their authors and you: dependencies, build systems, distribution.
+  Analogy: A car with a brake recall you never fixed, or with parts
+  swapped somewhere between the factory and your driveway.
+
+<span class="com">A04: Cryptographic Failures</span>
   Sensitive data stored or transmitted without proper encryption.
   Analogy: Writing your PIN on the back of your bank card.
 
-<span class="com">A03: Injection (SQL, NoSQL, Command, LDAP)</span>
+<span class="com">A05: Injection (SQL, NoSQL, Command, LDAP, XSS)</span>
   Untrusted input is executed as code/commands by the backend.
   Analogy: Writing "ignore my rent and give me $1,000,000" on a check
   — and the bank's system actually processing it as written.
 
-<span class="com">A04: Insecure Design</span>
+<span class="com">A06: Insecure Design</span>
   The flaw is in the blueprint, not the code — security wasn't designed in.
   Analogy: A bank vault with a sturdy door but no walls.
 
-<span class="com">A05: Security Misconfiguration</span>
-  Default passwords, verbose error messages, unnecessary features enabled.
-  Analogy: Leaving the factory-set "admin/admin" login on a new router.
-
-<span class="com">A06: Vulnerable and Outdated Components</span>
-  Using libraries/frameworks with known, unpatched vulnerabilities.
-  Analogy: Driving a car with a known faulty brake recall you never fixed.
-
-<span class="com">A07: Identification and Authentication Failures</span>
+<span class="com">A07: Authentication Failures</span>
   Weak password rules, no MFA, predictable session tokens.
   Analogy: A door that locks, but the key is "1234" for every customer.
 
-<span class="com">A08: Software and Data Integrity Failures</span>
-  Trusting code/updates from sources without verifying their integrity.
+<span class="com">A08: Software or Data Integrity Failures</span>
+  Trusting code, updates or data without verifying their integrity.
   Analogy: Accepting a "replacement" car part from a stranger in a parking lot.
 
-<span class="com">A09: Security Logging and Monitoring Failures</span>
-  Attacks go undetected because no one is watching the logs.
-  Analogy: A security camera that's recording but nobody ever reviews the tape.
+<span class="com">A09: Security Logging and Alerting Failures</span>
+  Attacks go unnoticed because nothing raises an alarm in time.
+  Analogy: A security camera that records, with no alarm wired to it
+  and nobody watching the tape.
 
-<span class="com">A10: Server-Side Request Forgery (SSRF)</span>
-  Attacker tricks the server into making requests on their behalf,
-  often reaching internal systems the attacker couldn't reach directly.
-  Analogy: Convincing the receptionist to walk into the vault and
-  read you what's inside, since you're not allowed in yourself.
+<span class="com">A10: Mishandling of Exceptional Conditions</span>
+  When something unexpected happens, the app fails unsafely: errors that
+  leak details, half-finished transactions, checks that "fail open".
+  Analogy: A door lock that springs open when the power cuts out.
       </pre>
     </div>
 
     <div class="concept-card">
       <div class="concept-label">Hands-On Example</div>
-      <div class="concept-title">SQL <span class="acro-exp">(Structured Query Language)</span> Injection — The Classic A03 Example</div>
+      <div class="concept-title">SQL <span class="acro-exp">(Structured Query Language)</span> Injection — The Classic A05 Example</div>
       <div class="concept-desc">
         This is the canonical example every security professional learns.
         <em>Only test against systems you own or have authorization to
@@ -3153,13 +3157,13 @@ admin' --
 <span class="com">SELECT * FROM users WHERE username='admin' -- ' AND password='whatever'</span>
 <span class="com"># The "--" comments out the password check entirely. Instant login bypass.</span>
 
-<span class="com">─── THE FIX: parameterised queries (always do this) ──────────</span>
+<span class="com">─── THE FIX: parameterized queries (always do this) ──────────</span>
 query = <span class="str">"SELECT * FROM users WHERE username = %s AND password = %s"</span>
 cursor.execute(query, (username, password))
 <span class="com"># The database driver treats username/password as DATA, never as CODE —</span>
 <span class="com"># no matter what characters the attacker includes.</span>
 
-<span class="com"># SQLAlchemy ORM (also safe — handles parameterisation for you)</span>
+<span class="com"># SQLAlchemy ORM (also safe — handles parameterization for you)</span>
 user = User.query.filter_by(username=username, password=password).first()
       </pre>
     </div>
@@ -6758,7 +6762,7 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
 </div>
 
 <!-- ── TOPIC: OWASP API SECURITY TOP 10 ──────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔌</span>
     <span class="topic-name">The OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> API <span class="acro-exp">(Application Programming Interface)</span> Security Top 10 — Where the Web List Stops Being Enough</span>
@@ -6782,8 +6786,8 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
           The practical consequence: a scanner tuned for web applications finds very little in an
           API, and finding nothing is routinely misread as the API being sound. Most real API
           findings require knowing what the caller is <em>supposed</em> to be able to see, which is
-          business context a scanner does not have. The web list is in
-          <span class="xref">OWASP Top 10 (2021)</span> and remains correct for what it covers.
+          business context a scanner does not have. The web list, in its 2025 edition, is in
+          <span class="xref">OWASP Top 10 (2025)</span>.
         </div>
       </div>
     </div>

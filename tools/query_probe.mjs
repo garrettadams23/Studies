@@ -889,6 +889,12 @@ const READERS = [
     ["nist ai 600-1", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
     ["generative ai profile", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
     ["confabulation", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    // ── thirty-third wave: OWASP Top 10:2025, read from OWASP's pages, added before the cards ──
+    ["owasp top 10 2025", "", "pentest/owasp-top-10-2025"],
+    ["what changed in owasp top 10 2025", "", "pentest/owasp-top-10-2025"],
+    ["software supply chain failures", "", "sec/owasp-top-10-the-most-critical-web-security-risks"],
+    ["security logging and alerting failures", "", "sec/owasp-top-10-the-most-critical-web-security-risks"],
+    ["mishandling of exceptional conditions", "", "sec/owasp-top-10-the-web-vulnerabilities-everyone-must-know"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
