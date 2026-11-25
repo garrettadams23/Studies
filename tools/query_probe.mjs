@@ -385,6 +385,10 @@ const READERS = [
     ["message trace 90 days", "", "m365/message-trace-header-analysis-proving-where-a-message-died"],
     ["litigation hold business premium", "", "m365/retention-litigation-hold-archiving-legals-requirements-in-m"],
     ["gmsa password length", "", "infra/service-accounts-gmsa-and-retiring-the-shared-password"],
+    // ── forty-fifth wave: the m365 claims from September, re-checked against Microsoft's pages ──
+    ["quarantine retention period", "", "m365/eop-defender-for-office-anti-spam-anti-phish-safe-links-quar"],
+    ["group expiration auto renew", "", "m365/teams-governance-sprawl-naming-expiry-the-guest-question"],
+    ["admin.cloud.microsoft", "", "m365/m365-tenant-anatomy-the-tenant-its-domains-the-admin-centers"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],

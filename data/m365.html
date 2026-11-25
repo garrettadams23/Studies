@@ -1,5 +1,5 @@
 <!-- ── TOPIC: M365 TENANT ANATOMY ────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🏢</span>
     <span class="topic-name">M365 Tenant Anatomy — The Tenant, Its Domains &amp; the Admin Centers</span>
@@ -22,10 +22,10 @@
         <table class="ref-table">
           <thead><tr><th>Layer</th><th>What lives there</th><th>Changed from</th></tr></thead>
           <tbody>
-            <tr><td>Directory</td><td>Users, groups, devices, app registrations, roles</td><td><span class="volatile" data-checked="2026-09">Entra admin center</span></td></tr>
-            <tr><td>Subscription</td><td>Licenses, service plans, billing</td><td><span class="volatile" data-checked="2026-09">M365 admin center</span></td></tr>
+            <tr><td>Directory</td><td>Users, groups, devices, app registrations, roles</td><td><span class="volatile" data-checked="2026-11">Entra admin center</span></td></tr>
+            <tr><td>Subscription</td><td>Licenses, service plans, billing</td><td><span class="volatile" data-checked="2026-11">M365 admin center</span></td></tr>
             <tr><td>Workload</td><td>Mailboxes, sites, teams, policies</td><td>That workload's own console</td></tr>
-            <tr><td>Compliance</td><td>Retention, labels, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-09">Purview portal</span></td></tr>
+            <tr><td>Compliance</td><td>Retention, labels, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-11">Purview portal</span></td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -49,21 +49,26 @@
         <table class="ref-table">
           <thead><tr><th>Console</th><th>Owns</th><th>Address</th></tr></thead>
           <tbody>
-            <tr><td>Microsoft 365 admin</td><td>Users, licenses, billing, service health</td><td><span class="volatile" data-checked="2026-09">admin.microsoft.com</span></td></tr>
-            <tr><td>Entra admin</td><td>Groups, roles, Conditional Access, app registrations</td><td><span class="volatile" data-checked="2026-09">entra.microsoft.com</span></td></tr>
-            <tr><td>Exchange admin</td><td>Mailboxes, mail flow, connectors, transport rules</td><td><span class="volatile" data-checked="2026-09">admin.exchange.microsoft.com</span></td></tr>
-            <tr><td>SharePoint admin</td><td>Sites, storage, sharing policy</td><td><span class="volatile" data-checked="2026-09">the tenant's -admin.sharepoint.com host</span></td></tr>
-            <tr><td>Teams admin</td><td>Teams policies, voice, meeting settings</td><td><span class="volatile" data-checked="2026-09">admin.teams.microsoft.com</span></td></tr>
-            <tr><td>Purview</td><td>Retention, labels, DLP <span class="acro-exp">(Data Loss Prevention)</span>, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-09">purview.microsoft.com</span></td></tr>
-            <tr><td>Intune</td><td>Devices, compliance, app deployment</td><td><span class="volatile" data-checked="2026-09">intune.microsoft.com</span></td></tr>
+            <tr><td>Microsoft 365 admin</td><td>Users, licenses, billing, service health</td><td><span class="volatile" data-checked="2026-11">admin.cloud.microsoft; admin.microsoft.com redirects there</span></td></tr>
+            <tr><td>Entra admin</td><td>Groups, roles, Conditional Access, app registrations</td><td><span class="volatile" data-checked="2026-11">entra.microsoft.com</span></td></tr>
+            <tr><td>Exchange admin</td><td>Mailboxes, mail flow, connectors, transport rules</td><td><span class="volatile" data-checked="2026-11">admin.exchange.microsoft.com</span></td></tr>
+            <tr><td>SharePoint admin</td><td>Sites, storage, sharing policy</td><td><span class="volatile" data-checked="2026-11">the tenant's -admin.sharepoint.com host, which Microsoft's own link enters through admin.microsoft.com/sharepoint</span></td></tr>
+            <tr><td>Teams admin</td><td>Teams policies, voice, meeting settings</td><td><span class="volatile" data-checked="2026-11">admin.teams.microsoft.com</span></td></tr>
+            <tr><td>Purview</td><td>Retention, labels, DLP <span class="acro-exp">(Data Loss Prevention)</span>, eDiscovery, audit</td><td><span class="volatile" data-checked="2026-11">purview.microsoft.com</span></td></tr>
+            <tr><td>Intune</td><td>Devices, compliance, app deployment</td><td><span class="volatile" data-checked="2026-11">intune.microsoft.com</span></td></tr>
           </tbody>
         </table>
         <div class="concept-desc">
           <strong class="c-amber">And they are changing now.</strong> Microsoft is moving these
           consoles onto the <code>cloud.microsoft</code> domain, one service at a time —
-          <span class="volatile" data-checked="2026-09">the Exchange center already answers at
-          <code>admin.cloud.microsoft/exchange</code>, and Teams is mid-migration with
-          <code>teams.microsoft.com</code> redirecting to <code>teams.cloud.microsoft</code></span>.
+          <span class="volatile" data-checked="2026-11">the Microsoft 365 admin center now lives at
+          <code>admin.cloud.microsoft</code> and the old address redirects there, the Exchange center also
+          answers at <code>admin.cloud.microsoft/exchange</code>, and Teams answers at both
+          <code>teams.microsoft.com</code> and <code>teams.cloud.microsoft</code></span>. Microsoft's own advice is
+          to allow <code>*.cloud.microsoft</code> as a whole rather than host by host, and to leave its TLS <span class="acro-exp">(Transport Layer Security)</span>
+          undecrypted.
+          <!-- fact: checked by requesting each address from this container on 25 November 2026: admin.microsoft.com redirected to admin.cloud.microsoft, admin.cloud.microsoft/exchange answered, and admin.exchange.microsoft.com, admin.teams.microsoft.com and purview.microsoft.com redirected to Microsoft's sign-in; entra.microsoft.com is the address Microsoft's group-restore page links as the Entra admin center; Microsoft's own links for the Intune admin center and the SharePoint admin center go to intune.microsoft.com and admin.microsoft.com/sharepoint; teams.microsoft.com and teams.cloud.microsoft both served the Teams web app | source: the requests themselves, and Microsoft Learn's group-restore, Intune and SharePoint admin center pages, fetched and read | checked: 2026-11 -->
+          <!-- fact: cloud.microsoft is Microsoft's unified domain for Microsoft 365 and Copilot experiences, with more moving to it over time; Microsoft's guidance is to allow *.cloud.microsoft through firewalls and proxies, not to block individual hostnames in it, and to bypass TLS decryption and inspection for it | source: Microsoft Learn, "Unified cloud.microsoft domain" (updated 4 November 2026), fetched and read | checked: 2026-11 -->
           The operational half does not wait for the rename: anything that filters by domain — a
           proxy, a secure web gateway, a Conditional Access named location, a firewall rule — needs
           <code>cloud.microsoft</code> allowed <em>before</em> the redirect reaches your tenant.
@@ -775,7 +780,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: EOP AND DEFENDER FOR OFFICE ────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🛡️</span>
     <span class="topic-name">EOP &amp; Defender for Office — Anti-Spam, Anti-Phish, Safe Links &amp; Quarantine</span>
@@ -845,9 +850,11 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          Held mail is kept for a bounded window —
-          <span class="volatile" data-checked="2026-09">30 days by default, and configurable
-          downward</span> — after which it is gone rather than delivered. A user who "will get to it
+          Held mail is kept for a bounded window, the quarantine retention period —
+          <span class="volatile" data-checked="2026-11">15 days by default for spam and phishing in the
+          default and custom anti-spam policies, 30 in the Standard and Strict presets, and settable from 1 to
+          30</span> — after which it is gone rather than delivered.
+          <!-- fact: quarantine retention for messages quarantined by anti-spam policies as spam, high confidence spam, phishing, high confidence phishing or bulk: 15 days in the default anti-spam policy and in policies created in PowerShell or the Defender portal, 30 days in the Standard and Strict preset security policies, configurable from 1 to 30 days in the default and custom anti-spam policies (QuarantineRetentionPeriod) | source: Microsoft Learn, "Quarantined email messages in EOP and Defender for Office 365" (updated 17 July 2026), fetched and read | checked: 2026-11 --> A user who "will get to it
           next month" will not. The human side of why these messages work at all is covered by
           <span class="xref">Phishing Beyond Email – Smishing, Vishing, and QR Code Scams</span>
           in the Security domain.
@@ -923,7 +930,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: SHAREPOINT ARCHITECTURE ────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🗂️</span>
     <span class="topic-name">SharePoint Online Architecture — Sites, Libraries &amp; the Limits That Bite</span>
@@ -972,10 +979,10 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
         <table class="ref-table">
           <thead><tr><th>Limit</th><th>Surfaces as</th><th>Fix</th></tr></thead>
           <tbody>
-            <tr><td>URL <span class="acro-exp">(Uniform Resource Locator)</span> path length, <span class="volatile" data-checked="2026-09">around 400 characters</span></td><td>Sync failures and unopenable files deep in a tree</td><td>Shorter site and folder names; flatten the nesting</td></tr>
-            <tr><td>List view threshold, <span class="volatile" data-checked="2026-09">5,000 items</span></td><td>Views break while the data is fine</td><td>Index the column, filter the view — not "split the list"</td></tr>
+            <tr><td>URL <span class="acro-exp">(Uniform Resource Locator)</span> path length, <span class="volatile" data-checked="2026-11">400 characters for the decoded path and file name</span></td><td>Sync failures and unopenable files deep in a tree</td><td>Shorter site and folder names; flatten the nesting</td></tr>
+            <tr><td>List view threshold, <span class="volatile" data-checked="2026-11">5,000 items</span><!-- fact: the entire decoded file path, including the file name, can't contain more than 400 characters in SharePoint and OneDrive (SharePoint limits, updated 6 October 2026); the list view threshold is configured at 5,000 items by default (Microsoft Learn troubleshooting article on the list view threshold); deleted SharePoint items are retained for 93 days, beginning at deletion and continuing in the site collection recycle bin for the remainder (Microsoft Support, restore items in the recycle bin, updated 23 February 2026) | source: the three pages named, fetched and read | checked: 2026-11 --></td><td>Views break while the data is fine</td><td>Index the column, filter the view — not "split the list"</td></tr>
             <tr><td>Unique permissions per list</td><td>Slow lists and inconsistent access</td><td>Stop breaking inheritance per item</td></tr>
-            <tr><td>Recycle bin retention, <span class="volatile" data-checked="2026-09">93 days across both stages</span></td><td>"Deleted last quarter" being genuinely gone</td><td>Retention policy, not the recycle bin, is the safety net</td></tr>
+            <tr><td>Recycle bin retention, <span class="volatile" data-checked="2026-11">93 days across both stages</span></td><td>"Deleted last quarter" being genuinely gone</td><td>Retention policy, not the recycle bin, is the safety net</td></tr>
           </tbody>
         </table>
         <div class="concept-desc verdict">
@@ -1237,7 +1244,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: TEAMS GOVERNANCE ───────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🌱</span>
     <span class="topic-name">Teams Governance &amp; Sprawl — Naming, Expiry &amp; the Guest Question</span>
@@ -1266,13 +1273,16 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          The policy offers
-          <span class="volatile" data-checked="2026-09">a lifetime of 180 or 365 days, or a custom
-          value of at least 30</span>, and a group deleted at the end of it stays recoverable for
-          <span class="volatile" data-checked="2026-09">30 days</span> before the site and mailbox
-          go with it. Owners are chased at 30, 15 and 1 day before expiry, which is the whole
-          mechanism: <strong>a policy with no reachable owner deletes the team on schedule and
-          nobody reads the warning.</strong>
+          The expiration policy offers
+          <span class="volatile" data-checked="2026-11">a preset lifetime or a custom value of at least
+          30 days</span>, and a group deleted at the end of it stays recoverable for
+          <span class="volatile" data-checked="2026-11">30 days</span> before the site and mailbox
+          go with it. Owners are emailed at 30, 15 and 1 day before expiry, but most teams never see one:
+          any use, a channel visit, an upload, an email to the group, auto-renews the group about
+          35 days ahead. <strong>So the policy deletes what nobody uses, which is the point, and the team
+          at risk is a quiet one that still matters, such as an archive or a yearly project, whose owners
+          have left and whose warnings go only to the fallback address in the policy.</strong>
+          <!-- fact: Microsoft 365 group expiration: the lifetime is a preset value or a custom value of 30 days or more; owners are emailed 30 days, 15 days and 1 day before expiration; groups in use, an email to the group, an upload to SharePoint, a Teams channel visit or a Viva Engage post, renew automatically around 35 days before expiry with no notification; a group with no owner sends its notices to the policy's alternate address; an expired group is deleted one day after expiry and can be restored within 30 days, a period that isn't customizable | source: Microsoft Learn, "Configure the expiration policy for Microsoft 365 groups" and "Restore a deleted Microsoft 365 group" (updated 11 March 2026), fetched and read | checked: 2026-11 -->
         </div>
       </div>
     </div>
@@ -1304,7 +1314,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: RETENTION POLICIES VS LABELS ───────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🏷️</span>
     <span class="topic-name">Retention Policies vs Retention Labels — The Distinction That Trips Everyone</span>
@@ -1379,7 +1389,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           <thead><tr><th>Workload</th><th>Stages after a user deletes</th></tr></thead>
           <tbody>
             <tr><td>Exchange</td><td>Deleted Items → Recoverable Items (user-visible) → Purges (admin-only, held if on hold)</td></tr>
-            <tr><td>SharePoint / OneDrive</td><td>Site recycle bin → second-stage recycle bin → gone, <span class="volatile" data-checked="2026-09">93 days across both</span></td></tr>
+            <tr><td>SharePoint / OneDrive</td><td>Site recycle bin → second-stage recycle bin → gone, <span class="volatile" data-checked="2026-11">93 days across both</span><!-- fact: the entire decoded file path, including the file name, can't contain more than 400 characters in SharePoint and OneDrive (SharePoint limits, updated 6 October 2026); the list view threshold is configured at 5,000 items by default (Microsoft Learn troubleshooting article on the list view threshold); deleted SharePoint items are retained for 93 days, beginning at deletion and continuing in the site collection recycle bin for the remainder (Microsoft Support, restore items in the recycle bin, updated 23 February 2026) | source: the three pages named, fetched and read | checked: 2026-11 --></td></tr>
             <tr><td>Teams chat</td><td>Follows the mailbox copy the compliance system keeps</td></tr>
           </tbody>
         </table>
@@ -1902,7 +1912,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: TEAMS CALL QUALITY ─────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📉</span>
     <span class="topic-name">Teams Call Quality — CQD, the Network Requirements &amp; the Real Culprits</span>
@@ -1916,7 +1926,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
       <div class="concept-desc">
         "The audio was bad in that meeting" is two different investigations, and how many people
         said it decides which one you have. One user on one call is a per-call
-        problem, answered by the call analytics on that user in the <span class="volatile" data-checked="2026-09">Teams admin center</span>. "Calls are
+        problem, answered by the call analytics on that user in the <span class="volatile" data-checked="2026-11">Teams admin center</span><!-- fact: per-call troubleshooting for an individual user is done in the Teams admin center, whose experience Microsoft has updated and documents as monitoring and troubleshooting meetings and calls from the Teams admin center | source: Microsoft Learn, call analytics article (updated 15 September 2025), fetched and read | checked: 2026-11 -->. "Calls are
         bad in the Manchester office" is a trend, answered by the Call Quality Dashboard, which
         aggregates across the tenant and can group by building and subnet — but only if someone
         uploaded a building map first.
@@ -2286,7 +2296,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: THE ADMIN MODULES ──────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔌</span>
     <span class="topic-name">The Admin Modules — Exchange Online, Teams &amp; Graph From One Console</span>
@@ -2362,7 +2372,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           <thead><tr><th>Symptom</th><th>Handling</th></tr></thead>
           <tbody>
             <tr><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> 429 from Graph</td><td>Sleep for the interval the response names, then retry — do not back off blindly</td></tr>
-            <tr><td>A loop of thousands of single reads</td><td>Batch them; Graph accepts <span class="volatile" data-checked="2026-09">up to 20 requests per batch</span></td></tr>
+            <tr><td>A loop of thousands of single reads</td><td>Batch them; Graph accepts <span class="volatile" data-checked="2026-11">up to 20 requests per batch</span><!-- fact: Microsoft Graph supports batching up to 20 requests into one JSON batch | source: Microsoft Learn, "Combine multiple HTTP requests using JSON batching", fetched and read | checked: 2026-11 --></td></tr>
             <tr><td>Re-reading data that has not changed</td><td>Use delta queries and ask only for the properties you use</td></tr>
             <tr><td>Exchange cmdlets slowing over a long session</td><td>Reconnect; long-lived sessions accumulate their own limits</td></tr>
           </tbody>
@@ -2546,7 +2556,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
 </div>
 
 <!-- ── TOPIC: M365 GROUPS ────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">👥</span>
     <span class="topic-name">Microsoft 365 Groups — The Object Underneath Teams, SharePoint &amp; Planner</span>
@@ -2622,8 +2632,8 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
           <tbody>
             <tr><td>Deleting a team removed a SharePoint site nobody expected</td><td>The site belonged to the group; deletion cascades</td></tr>
-            <!-- fact: Microsoft 365 Group soft delete 30 days | source: Entra ID deleted group retention | checked: 2026-09 -->
-            <tr><td>A deleted group came back</td><td>Soft delete: recoverable for 30 days by default</td></tr>
+            <!-- fact: Microsoft 365 group expiration: the lifetime is a preset value or a custom value of 30 days or more; owners are emailed 30 days, 15 days and 1 day before expiration; groups in use, an email to the group, an upload to SharePoint, a Teams channel visit or a Viva Engage post, renew automatically around 35 days before expiry with no notification; a group with no owner sends its notices to the policy's alternate address; an expired group is deleted one day after expiry and can be restored within 30 days, a period that isn't customizable | source: Microsoft Learn, "Configure the expiration policy for Microsoft 365 groups" and "Restore a deleted Microsoft 365 group" (updated 11 March 2026), fetched and read | checked: 2026-11 -->
+            <tr><td>A deleted group came back</td><td>Soft delete: recoverable for 30 days, a window that can't be changed</td></tr>
             <tr><td>Renaming the team did not rename the site URL <span class="acro-exp">(Uniform Resource Locator)</span></td><td>The display name changes; the site address does not</td></tr>
             <tr><td>Owners left the company and nobody can manage the team</td><td>Ownerless groups are a governance gap — set an ownerless policy</td></tr>
             <tr><td>Group email arrives that nobody wanted</td><td>The group has a mailbox whether the team uses it or not</td></tr>
@@ -2940,7 +2950,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
 </div>
 
 <!-- ── TOPIC: EXTERNAL COLLABORATION ─────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🤝</span>
     <span class="topic-name">External Collaboration — Guests, B2B <span class="acro-exp">(Business to Business)</span> &amp; the Lifecycle Nobody Owns</span>
@@ -2994,7 +3004,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             <tr><td>Guest permissions in the directory</td><td>Entra</td><td>Whether guests can read other users and groups</td></tr>
             <tr><td>External sharing level</td><td>SharePoint, per site</td><td>The tenant setting is a ceiling; each site can be stricter</td></tr>
             <tr><td>Default link type</td><td>SharePoint</td><td>"Anyone" versus "specific people" — the single highest-impact default</td></tr>
-            <tr><td>Guest access in Teams</td><td><span class="volatile" data-checked="2026-09">Teams admin</span></td><td>A separate switch that can silently contradict the others</td></tr>
+            <tr><td>Guest access in Teams</td><td><span class="volatile" data-checked="2026-11">Teams admin</span><!-- fact: Teams administrators can add guests in the Teams admin center, and guest access in Teams is its own setting beside Entra B2B and SharePoint | source: Microsoft Learn, "Guest access in Microsoft Teams" (updated 16 July 2026), fetched and read | checked: 2026-11 --></td><td>A separate switch that can silently contradict the others</td></tr>
             <tr><td>Group-level guest policy</td><td>Entra group settings</td><td>Blocks guests on sensitive teams without blocking the tenant</td></tr>
           </tbody>
         </table>
