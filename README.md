@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **479 elements at rest instead of 157,755** — measured at 1,629 topics,
+  costs **479 elements at rest instead of 157,760** — measured at 1,629 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -58,7 +58,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🔬 Sec Operations | CySA+, SecX | IR PICERL and SANS's DAIR, Vuln Mgmt, Troubleshooting, BCP/DR, Digital Forensics, Splunk SPL |
 | 🎯 PenTest | PT+ | 5-Phase Methodology, OWASP Top 10, SQLmap |
 | 🐧 Linux & Systems | Linux+, A+ | FHS, Permissions, Boot Process, SSH, Tmux, Unix Commands, RAID, A+ Hardware |
-| 🤖 AI & ML | AI+ | ML Pipeline, Learning Paradigms, Agentic AI (MCP, Skills, Sub-agents), Ethics |
+| 🤖 AI & ML | SecAI+ | ML Pipeline, Learning Paradigms, Agentic AI (MCP, Skills, Sub-agents), Ethics, securing AI systems and adversarial machine learning |
 | 💻 Scripting & Web | Linux+, SecX | Regex, PowerShell, Bash, ZSH, Go, HTML, CSS, JS ES2022–ES2025, JSON, SQL, URL Encoding |
 | ⌨️ Shortcuts | General | Windows, Linux Terminal, Excel, Word, Spotify, Google Chrome, DoD |
 | 🧘 Lifestyle & Philosophy | Life | Stoicism, Buddhism, Taoism, Existentialism, Minimalism, Wicca, Paganism, Druidism |

@@ -862,6 +862,17 @@ const READERS = [
     ["rasp", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
     ["runtime application self-protection", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
     ["interactive application security testing", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
+    // ── thirtieth wave: CompTIA SecAI+, read from CompTIA's exam page, added before its path ──
+    // Opened at 5 of 7, the first batch written mostly to test coverage rather than to open gaps: the site had
+    // the subjects already. The two misses were words: CompTIA's own domain name, `securing ai systems`, and
+    // the field's standard term, `adversarial machine learning`, which the topics called by other names.
+    ["securing ai systems", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["nist ai rmf", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["owasp top 10 llm", "", "ai/ai-governance-frameworks"],
+    ["eu ai act", "", "ai/ai-governance-frameworks"],
+    ["adversarial machine learning", "", "ai/adversarial-ai-ai-threats-red-team"],
+    ["data poisoning attack", "", "ai/adversarial-ai-ai-threats-red-team"],
+    ["ai for threat detection", "", "ai/ai-for-defense-blue-team"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
