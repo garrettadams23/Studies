@@ -3,7 +3,7 @@
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: EDITIONS & LICENSING ────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧾</span>
     <span class="topic-name">Windows Server Editions &amp; Licensing — What You Are Actually Buying</span>
@@ -111,7 +111,7 @@
       <div class="concept-label">Failure mode</div>
       <div class="concept-title">Evaluation Media That Quietly Expires</div>
       <div class="concept-desc">
-        <!-- fact: Windows Server evaluation runs 180 days | source: Windows Server evaluation licensing terms | checked: 2026-09 -->
+        <!-- fact: the Windows Server 2025 evaluation edition expires in 180 days, and evaluation versions must be activated over the internet within the first 10 days | source: Microsoft Evaluation Center, Windows Server 2025 page, fetched and read | checked: 2026-11 -->
         Evaluation installs run for 180 days and then begin shutting down hourly. It is a
         reliable source of a mystifying outage roughly six months after someone stood up a
         "temporary" server. Check what you are running before it tells you:
@@ -240,10 +240,10 @@ Invoke-Command <span class="kw">-ComputerName</span> DC01,DC02,DC03 <span class=
 </div>
 
 <!-- ── TOPIC: THE THREE CONSOLES ──────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🛠️</span>
-    <span class="topic-name">Server Manager, RSAT <span class="acro-exp">(Remote Server Administration Tools)</span> &amp; <span class="volatile" data-checked="2026-09">Windows Admin Center</span> — Which Console Wins</span>
+    <span class="topic-name">Server Manager, RSAT <span class="acro-exp">(Remote Server Administration Tools)</span> &amp; <span class="volatile" data-checked="2026-11">Windows Admin Center</span> — Which Console Wins</span>
     <span class="topic-badge">Server • Tooling</span>
     <span class="topic-chev">▶</span>
   </div>
@@ -260,7 +260,7 @@ Invoke-Command <span class="kw">-ComputerName</span> DC01,DC02,DC03 <span class=
       <div class="dw">
         <table class="ref-table">
           <thead>
-            <tr><th></th><th>Server Manager</th><th>RSAT</th><th><span class="volatile" data-checked="2026-09">Windows Admin Center</span></th></tr>
+            <tr><th></th><th>Server Manager</th><th>RSAT</th><th><span class="volatile" data-checked="2026-11">Windows Admin Center</span></th></tr><!-- fact: Windows Admin Center is a browser-based management product for Windows Server infrastructure, for a single server or cluster, complementing RSAT and System Center; each non-preview version is supported until 30 days after the next is released | source: Microsoft Learn, "Windows Admin Center overview", fetched and read | checked: 2026-11 -->
           </thead>
           <tbody>
             <tr>
@@ -293,7 +293,7 @@ Invoke-Command <span class="kw">-ComputerName</span> DC01,DC02,DC03 <span class=
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> install RSAT on your admin workstation and use it for AD,
         DNS and Group Policy work — the snap-ins remain the most complete tools for those
-        objects. Use <span class="volatile" data-checked="2026-09">Windows Admin Center</span> for everything fleet-shaped: patching status,
+        objects. Use <span class="volatile" data-checked="2026-11">Windows Admin Center</span> for everything fleet-shaped: patching status,
         certificates, event logs, remote PowerShell, and anything on Server Core. Use Server
         Manager to install a role and then close it.
       </div>
@@ -724,7 +724,7 @@ dcdiag /test:ridmanager /v | Select-String "Available RID Pool"</pre>
 </div>
 
 <!-- ── TOPIC: REPLICATION ─────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔄</span>
     <span class="topic-name">AD <span class="acro-exp">(Active Directory)</span> Replication — How Changes Travel, and Triage When They Stop</span>
@@ -747,9 +747,7 @@ dcdiag /test:ridmanager /v | Select-String "Available RID Pool"</pre>
             <tr><th>Where</th><th>Normal delay</th><th>Planned by</th></tr>
           </thead>
           <tbody>
-            <!-- fact: site link replication interval defaults to 180 minutes, with 15 minutes
-                 the lowest value a site link accepts | source: Active Directory site link
-                 replInterval default and minimum | checked: 2026-09 -->
+            <!-- fact: the default site link replication interval is 180 minutes and the minimum is 15 | source: Microsoft Learn, "Determining the interval" (updated 12 May 2025), fetched and read | checked: 2026-11 -->
             <tr><td>Within a site</td><td>Seconds — change notification, no schedule</td><td>The KCC <span class="acro-exp">(Knowledge Consistency Checker)</span>, automatically</td></tr>
             <tr><td>Between sites</td><td>Up to 3 hours out of the box — 180 minutes is the site-link default, and compressed</td><td>Site links you configure</td></tr>
             <tr><td>Urgent changes</td><td>Immediate, regardless of schedule</td><td>Account lockout, password changes to the PDC <span class="acro-exp">(Primary Domain Controller)</span></td></tr>
@@ -797,9 +795,11 @@ repadmin /syncall /AdeP</pre>
       <div class="concept-label">Failure mode</div>
       <div class="concept-title">The Tombstone Lifetime, and the DC You Left Switched Off</div>
       <div class="concept-desc">
-        <!-- fact: tombstone lifetime 180 days | source: Active Directory forest functional level defaults since Server 2003 SP1 | checked: 2026-09 -->
+        <!-- fact: the default tombstone lifetime depends on the operating system of the first domain controller installed in the forest; for all currently supported versions of Windows Server it is 180 days; the existing value does not change when a domain controller is upgraded; forests begun on Windows 2000, or on Windows Server 2003 before SP1, have no value set and use 60 days | source: Microsoft Learn, "Lingering objects in an AD DS forest" (updated 12 February 2026), fetched and read, and the AD Administrative Center advanced management article as quoted in search results | checked: 2026-11 -->
         Deletions replicate as tombstones — markers that persist for a fixed lifetime, 180 days
-        on any modern domain. A DC that is offline longer than that has missed the window in
+        by default in a forest built on any supported Windows Server. An older forest keeps the value
+        it began with, as few as 60 days, because upgrading the domain controllers never changes it;
+        read <code>tombstoneLifetime</code> rather than assuming. A DC that is offline longer than that has missed the window in
         which it could learn about those deletions, and Active Directory will
         <strong>refuse to replicate with it</strong> rather than resurrect deleted objects.
       </div>
@@ -1602,7 +1602,7 @@ w32tm /stripchart /computer:dc01 /samples:5 /dataonly</pre>
 </div>
 
 <!-- ── TOPIC: HYBRID IDENTITY ─────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">☁️</span>
     <span class="topic-name">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>
@@ -1648,7 +1648,7 @@ w32tm /stripchart /computer:dc01 /samples:5 /dataonly</pre>
       <div class="concept-desc">
         The related operational risk is an accidental mass deletion — someone moves an OU out of
         sync scope and the objects are deleted in the cloud. Accidental deletion prevention stops
-        this by default at <span class="volatile" data-checked="2026-09">500 objects</span> per run; know the threshold exists before you meet it.
+        this by default at <span class="volatile" data-checked="2026-11">500 objects</span><!-- fact: Entra Connect's accidental-delete prevention is enabled by default and stops an export with more than 500 deletes; the threshold is changed with Enable-ADSyncExportDeletionThreshold | source: Microsoft Learn, "Prevent accidental deletes" (updated 9 April 2025), fetched and read | checked: 2026-11 --> per run; know the threshold exists before you meet it.
       </div>
       <pre class="code-block">Get-ADSyncExportDeletionThreshold
 Get-ADSyncScheduler                 <span class="com"># is sync even running?</span>

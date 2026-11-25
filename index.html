@@ -91828,9 +91828,7 @@ more than leaving it on Standard.
 <div class="dw">
 <table class="ref-table">
 <tr><th>What is metered</th><th>The trap</th></tr>
-<!-- fact: Cloud Storage minimum storage duration is 30 days Nearline,
-90 Coldline, 365 Archive | source: Google Cloud Storage storage class
-minimum durations | checked: 2026-09 -->
+<!-- fact: Cloud Storage minimum storage duration is 30 days for Nearline, 90 for Coldline and 365 for Archive, with none for Standard | source: Google Cloud, "Storage classes", fetched and read | checked: 2026-11 -->
 <tr><td>Minimum storage duration per class</td><td>Nearline 30 days, Coldline 90, Archive 365. Delete on day 2 and you still pay the rest</td></tr>
 <tr><td>Retrieval charges on cold classes</td><td>Per GB read. A cold archive that gets queried monthly is the wrong class</td></tr>
 <tr><td>Class transitions</td><td>Each object moved is an operation, and there can be a great many objects</td></tr>
@@ -93553,7 +93551,7 @@ same habit for code, where accepted risk becomes debt, is in
 </div>
 </div>
 </div>
-<div class="topic" id="azure-getting-started-entra-id" data-reviewed="2026-09" data-read="4" data-level="core">
+<div class="topic" id="azure-getting-started-entra-id" data-reviewed="2026-11" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔷</span>
 <span class="topic-name">Azure — Getting Started &amp; Entra ID</span>
@@ -93605,7 +93603,7 @@ which is the enumeration step of most identity attacks, done with a normal login
 <tr><th>Default</th><th>What it enables</th><th>Where it changes</th></tr>
 <tr><td>Users can register applications</td><td>Shadow app registrations, and consent phishing that succeeds quietly</td><td>Entra → User settings; plus an admin-consent workflow</td></tr>
 <tr><td>Anyone can invite guests</td><td>External accounts in the directory with no owner and no review</td><td>External collaboration settings → restrict to admins or a named role</td></tr>
-<tr><td>Full directory read for all members</td><td>Org-chart-quality reconnaissance from any compromised account</td><td>Restrict access to the <span class="volatile" data-checked="2026-09">Entra admin center</span>; accept that Graph still reads</td></tr>
+<tr><td>Full directory read for all members</td><td>Org-chart-quality reconnaissance from any compromised account</td><td>Restrict access to the <span class="volatile" data-checked="2026-11">Entra admin center</span>; accept that Graph still reads</td></tr>
 <tr><td>Security defaults on, Conditional Access unused</td><td class="c-amber">Good baseline MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, but all-or-nothing — no break-glass exclusion, no risk conditions</td><td>Turn security defaults off <em>only</em> when CA policies are ready to replace them</td></tr>
 </table>
 <div class="concept-desc verdict">
@@ -94230,7 +94228,7 @@ rule is buying a cluster to solve a configuration problem.
 </div>
 </div>
 <!-- ── TOPIC: AZURE MONITOR & KQL ───────────────────────────────── -->
-<div class="topic" id="azure-monitor-log-analytics-kql" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="azure-monitor-log-analytics-kql" data-reviewed="2026-11" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📈</span>
 <span class="topic-name">Azure Monitor, Log Analytics &amp; KQL <span class="acro-exp">(Kusto Query Language)</span></span>
@@ -94243,7 +94241,7 @@ rule is buying a cluster to solve a configuration problem.
 <div class="concept-label">Observability</div>
 <div class="concept-title">Metrics Are Free, Logs Are Opt-In</div>
 <div class="concept-desc">
-<!-- fact: platform metrics retained 93 days | source: Azure Monitor data platform retention | checked: 2026-09 -->
+<!-- fact: platform and custom metrics are stored for 93 days, with exceptions for classic guest OS metrics | source: Microsoft Learn, Azure Monitor Metrics overview (updated 21 August 2026), fetched and read | checked: 2026-11 -->
 Platform <strong>metrics</strong> are collected automatically and kept for 93 days.
 Resource <strong>logs</strong> are not collected at all until you add a
 <strong>diagnostic setting</strong> pointing the resource at a Log Analytics
@@ -117005,7 +117003,7 @@ E3/E5). No license = "your device can't be enrolled" errors.
 </div>
 </div>
 </div>
-<div class="topic" id="microsoft-intune-cloud-mdm-mam" data-reviewed="2026-08" data-read="6" data-level="core">
+<div class="topic" id="microsoft-intune-cloud-mdm-mam" data-reviewed="2026-11" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">☁️</span>
 <span class="topic-name">Microsoft Intune — Cloud MDM <span class="acro-exp">(Mobile Device Management)</span> &amp; MAM <span class="acro-exp">(Mobile Application Management)</span></span>
@@ -117019,7 +117017,7 @@ E3/E5). No license = "your device can't be enrolled" errors.
 <div class="concept-title">The Cloud Endpoint-Management Service</div>
 <div class="concept-desc">
 <strong class="c-cyan">Microsoft Intune</strong> (admin center
-<span class="volatile" data-checked="2026-09"><code>intune.microsoft.com</code></span>) manages devices (<strong>MDM</strong>) and apps
+<span class="volatile" data-checked="2026-11"><code>intune.microsoft.com</code></span><!-- fact: the link Microsoft Learn uses for the Microsoft Intune admin center, go.microsoft.com/fwlink/?linkid=2109431, redirects to intune.microsoft.com | source: Microsoft Learn Intune walkthrough, fetched, and the link followed one hop | checked: 2026-11 -->) manages devices (<strong>MDM</strong>) and apps
 (<strong>MAM</strong>) across Windows, macOS, iOS/iPadOS, Android, and Linux — no
 on-prem infrastructure. Admin scoping uses
 <strong class="c-cyan">RBAC <span class="acro-exp">(Role-Based Access Control)</span> roles</strong> + <strong>scope tags</strong> (limit which
@@ -117542,7 +117540,7 @@ decide which matters more, as
 </div>
 </div>
 </div>
-<div class="topic" id="co-management-cloud-attach" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="co-management-cloud-attach" data-reviewed="2026-11" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔗</span>
 <span class="topic-name">Co-management &amp; Cloud Attach</span>
@@ -117581,7 +117579,7 @@ Each slider can point to <strong>Pilot</strong> (a chosen collection) or
 <div class="dw">
 <table class="ref-table">
 <tr><th>Feature</th><th>What it gives you</th></tr>
-<tr><td>Tenant attach</td><td>Surface ConfigMgr devices in the <span class="volatile" data-checked="2026-09">Intune admin center</span>; run actions/scripts from the cloud (low effort, no client change)</td></tr>
+<tr><td>Tenant attach</td><td>Surface ConfigMgr devices in the <span class="volatile" data-checked="2026-11">Intune admin center</span>; run actions/scripts from the cloud (low effort, no client change)</td></tr>
 <tr><td>Co-management</td><td>Full dual management + workload migration (client must be Entra-joined/registered + enrolled)</td></tr>
 <tr><td>Cloud Management Gateway (CMG)</td><td>Manage internet-based ConfigMgr clients through Azure — no VPN <span class="acro-exp">(Virtual Private Network)</span>, no inbound firewall</td></tr>
 <tr><td>Cloud DP (in CMG)</td><td>Serve content to remote clients from Azure</td></tr>
@@ -117653,7 +117651,7 @@ This is the concrete implementation of Zero Trust for endpoints.
 </div>
 </div>
 </div>
-<div class="topic" id="troubleshooting-toolkit-log-reference" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="troubleshooting-toolkit-log-reference" data-reviewed="2026-11" data-read="2" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧰</span>
 <span class="topic-name">Troubleshooting Toolkit &amp; Log Reference</span>
@@ -117685,7 +117683,7 @@ MdmDiagnosticsTool.exe <span class="var">-area</span> <span class="str">"Autopil
 <tr><td>Registry <code>HKLM\SOFTWARE\Microsoft\Provisioning</code></td><td>Autopilot profile &amp; ESP <span class="acro-exp">(Enrollment Status Page)</span> state</td></tr>
 <tr><td><code>%ProgramData%\Microsoft\IntuneManagementExtension\Logs</code></td><td>Win32 app &amp; PowerShell-script (IME) logs</td></tr>
 <tr><td>ConfigMgr <code>C:\Windows\CCM\Logs</code> + CMTrace</td><td>Co-managed/ConfigMgr client</td></tr>
-<tr><td><span class="volatile" data-checked="2026-09">Intune admin center</span> → Troubleshooting + Reports</td><td>Per-user/device view, policy &amp; app status, device diagnostics upload</td></tr>
+<tr><td><span class="volatile" data-checked="2026-11">Intune admin center</span> → Troubleshooting + Reports</td><td>Per-user/device view, policy &amp; app status, device diagnostics upload</td></tr>
 </table>
 <div class="concept-desc verdict">
 <strong class="c-amber">Common errors:</strong> <code>0x80180018</code> (MDM
@@ -119235,7 +119233,7 @@ move rather than in one weekend. The full seam between the two consoles is in
 </div>
 </div>
 <!-- ── TOPIC: THREE UPDATE PIPELINES ─────────────────────────── -->
-<div class="topic" id="feature-vs-quality-vs-driver-updates" data-reviewed="2026-09" data-read="3" data-level="core">
+<div class="topic" id="feature-vs-quality-vs-driver-updates" data-reviewed="2026-11" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧩</span>
 <span class="topic-name">Feature vs Quality vs Driver Updates</span>
@@ -119254,7 +119252,7 @@ move rather than in one weekend. The full seam between the two consoles is in
 <tr><td>What it is</td><td>A new Windows version</td><td>Monthly cumulative fixes</td><td>Hardware and firmware from vendors</td></tr>
 <tr><td>Cadence</td><td>Annual</td><td>Second Tuesday, plus out-of-band</td><td>Continuous, vendor-driven</td></tr>
 <tr><td>Risk</td><td>High — app compatibility</td><td>Moderate — regressions happen</td><td class="c-red">Underrated — a bad driver is a brick</td></tr>
-<tr><td>Rollback</td><td><span class="volatile" data-checked="2026-09">10 days by default</span> &mdash; and disk cleanup ends it early</td><td>Uninstall the LCU <span class="acro-exp">(Latest Cumulative Update)</span>, not the SSU <span class="acro-exp">(Servicing Stack Update)</span></td><td>Roll back in Device Manager, or block the update</td></tr>
+<tr><td>Rollback</td><td><span class="volatile" data-checked="2026-11">10 days by default</span><!-- fact: DISM /Online /Set-OSUninstallWindow sets how many days after an upgrade an uninstall can be started; a value under two or over 60 makes the system use the default of 10 | source: Microsoft Learn, "DISM operating system uninstall command-line options", fetched and read | checked: 2026-11 --> &mdash; and disk cleanup ends it early</td><td>Uninstall the LCU <span class="acro-exp">(Latest Cumulative Update)</span>, not the SSU <span class="acro-exp">(Servicing Stack Update)</span></td><td>Roll back in Device Manager, or block the update</td></tr>
 <tr><td>Controlled by</td><td>Target version, deferral</td><td>Deferral, deadline, pause</td><td>Separate driver policy — or Autopatch</td></tr>
 </tbody>
 </table>
@@ -120062,7 +120060,7 @@ investigation, not another key lookup.
 </div>
 </div>
 <!-- ── TOPIC: DEFENDER FOR ENDPOINT & INTUNE ───────────────────────── -->
-<div class="topic" id="defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro" data-reviewed="2026-11" data-read="3" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛡️</span>
 <span class="topic-name">Defender for Endpoint &amp; Intune — Onboarding, ASR <span class="acro-exp">(Attack Surface Reduction)</span> Rules &amp; Tamper Protection</span>
@@ -120091,7 +120089,7 @@ connector being off or the onboarding blob never landing.
 <tbody>
 <tr><td>1 Connect</td><td>Enable the Intune ↔ Defender connector in both consoles</td></tr>
 <tr><td>2 Onboard</td><td>EDR policy pushes the onboarding package; device registers with the service</td></tr>
-<tr><td>3 Verify</td><td>Device appears in the <span class="volatile" data-checked="2026-09">Defender portal</span> and the detection test script alerts</td></tr>
+<tr><td>3 Verify</td><td>Device appears in the <span class="volatile" data-checked="2026-11">Defender portal</span> and the detection test script alerts</td></tr>
 <tr><td>4 Risk flows</td><td>Device risk level becomes a Conditional Access signal</td></tr>
 </tbody>
 </table>
@@ -120451,7 +120449,7 @@ managed installer, and the old line-of-business app nobody packaged, which is
 </div>
 </div>
 <!-- ── TOPIC: THE INTUNE SUITE ─────────────────────────────────── -->
-<div class="topic" id="the-intune-suite-what-it-adds-and-what-changed-in-2026" data-reviewed="2026-09" data-read="5" data-level="core">
+<div class="topic" id="the-intune-suite-what-it-adds-and-what-changed-in-2026" data-reviewed="2026-11" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧰</span>
 <span class="topic-name">The Intune Suite — What It Adds, and What Changed in 2026</span>
@@ -120467,15 +120465,14 @@ managed installer, and the old line-of-business app nobody packaged, which is
 For several years the answer to &ldquo;can Intune do this?&rdquo; was often &ldquo;yes, for
 more money&rdquo; — a set of premium capabilities sold as a separate per-user add-on. That
 changed:
-<span class="volatile" data-checked="2026-09">from mid-2026 the Suite capabilities are folded
-into Microsoft 365 E3 and E5 rather than sold separately, with a list-price rise attached and
-the capabilities split unevenly between the two tiers</span>. So the useful question inverted.
+<span class="volatile" data-checked="2026-11">from 2026 Remote Help, Advanced Analytics and Intune
+Plan 2 are included in Microsoft 365 E3, and E5 adds Endpoint Privilege Management, Enterprise
+Application Management and Cloud PKI <span class="acro-exp">(Public Key Infrastructure)</span>, rolled out by 1 August, with a list-price rise at each
+customer's first renewal after 1 July 2026</span>. So the useful question inverted.
 It is no longer &ldquo;is this worth buying?&rdquo; but <strong>&ldquo;what are we already
 entitled to and not using?&rdquo;</strong>
 </div>
-<!-- fact: Intune Suite capabilities move into M365 E3/E5 from mid-2026, split across tiers |
-source: vendor licensing announcements, corroborated across several independent write-ups |
-checked: 2026-09 -->
+<!-- fact: Microsoft 365 E3 and E5 gain Intune Remote Help, Intune Advanced Analytics and Intune Plan 2, and E5 also Intune Endpoint Privilege Management, Enterprise Application Management and Microsoft Cloud PKI; new commercial pricing for the suites is effective 1 July 2026, at existing customers' next renewal after that date; rollout of these features completes by 1 August 2026 | source: the Microsoft 365 blog, "Advancing Microsoft 365: New capabilities and pricing update" (4 December 2025), and Microsoft's 2026 Microsoft 365 packaging and pricing FAQ, fetched and read | checked: 2026-11 -->
 <div class="dw">
 <table class="ref-table mb-14">
 <tr><th>What people do</th><th>What it costs them</th></tr>
@@ -120508,7 +120505,7 @@ relevant to you.
 <tr><td>Microsoft Tunnel</td><td>A VPN <span class="acro-exp">(Virtual Private Network)</span> gateway for mobile, run as a container on a Linux host you provide</td><td>A mobile VPN appliance, though not the network work behind it</td></tr>
 <tr><td>Advanced Analytics</td><td>Deeper endpoint analytics: device timelines, anomaly detection, richer device query</td><td>The scripts people write to answer &ldquo;what happened to this device on Tuesday&rdquo;</td></tr>
 <tr><td>Enterprise App Management</td><td>A catalog of pre-packaged third-party applications, with updates handled for you</td><td>Most of a third-party patching product, and the packaging effort behind it</td></tr>
-<tr><td>Cloud PKI <span class="acro-exp">(Public Key Infrastructure)</span></td><td>A hosted certificate authority issuing directly to enrolled devices</td><td>Running your own issuing authority and connector servers for device certificates</td></tr>
+<tr><td>Cloud PKI</td><td>A hosted certificate authority issuing directly to enrolled devices</td><td>Running your own issuing authority and connector servers for device certificates</td></tr>
 <tr><td>Endpoint Privilege Management</td><td>Elevation of approved actions for standard users</td><td>Standing local administrator rights. Covered in its own topic here</td></tr>
 </table>
 <div class="concept-desc verdict">
@@ -122736,7 +122733,7 @@ does. Scripts that call Graph this way are
 WAVE V1 — WINDOWS SERVER FOUNDATIONS
 ══════════════════════════════════════════════════════════════ -->
 <!-- ── TOPIC: EDITIONS & LICENSING ────────────────────────────── -->
-<div class="topic" id="windows-server-editions-licensing-what-you-are-actually-buyi" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="windows-server-editions-licensing-what-you-are-actually-buyi" data-reviewed="2026-11" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧾</span>
 <span class="topic-name">Windows Server Editions &amp; Licensing — What You Are Actually Buying</span>
@@ -122841,7 +122838,7 @@ the Windows Server CAL. Two separate purchases for one session.
 <div class="concept-label">Failure mode</div>
 <div class="concept-title">Evaluation Media That Quietly Expires</div>
 <div class="concept-desc">
-<!-- fact: Windows Server evaluation runs 180 days | source: Windows Server evaluation licensing terms | checked: 2026-09 -->
+<!-- fact: the Windows Server 2025 evaluation edition expires in 180 days, and evaluation versions must be activated over the internet within the first 10 days | source: Microsoft Evaluation Center, Windows Server 2025 page, fetched and read | checked: 2026-11 -->
 Evaluation installs run for 180 days and then begin shutting down hourly. It is a
 reliable source of a mystifying outage roughly six months after someone stood up a
 "temporary" server. Check what you are running before it tells you:
@@ -122963,10 +122960,10 @@ it reads as difficult only to teams still signing in at the console.
 </div>
 </div>
 <!-- ── TOPIC: THE THREE CONSOLES ──────────────────────────────── -->
-<div class="topic" id="server-manager-rsat-windows-admin-center" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="server-manager-rsat-windows-admin-center" data-reviewed="2026-11" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛠️</span>
-<span class="topic-name">Server Manager, RSAT <span class="acro-exp">(Remote Server Administration Tools)</span> &amp; <span class="volatile" data-checked="2026-09">Windows Admin Center</span> — Which Console Wins</span>
+<span class="topic-name">Server Manager, RSAT <span class="acro-exp">(Remote Server Administration Tools)</span> &amp; <span class="volatile" data-checked="2026-11">Windows Admin Center</span> — Which Console Wins</span>
 <span class="topic-badge">Server • Tooling</span>
 <span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
@@ -122983,7 +122980,7 @@ knowing any one of them deeply.
 <div class="dw">
 <table class="ref-table">
 <thead>
-<tr><th></th><th>Server Manager</th><th>RSAT</th><th><span class="volatile" data-checked="2026-09">Windows Admin Center</span></th></tr>
+<tr><th></th><th>Server Manager</th><th>RSAT</th><th><span class="volatile" data-checked="2026-11">Windows Admin Center</span></th></tr><!-- fact: Windows Admin Center is a browser-based management product for Windows Server infrastructure, for a single server or cluster, complementing RSAT and System Center; each non-preview version is supported until 30 days after the next is released | source: Microsoft Learn, "Windows Admin Center overview", fetched and read | checked: 2026-11 -->
 </thead>
 <tbody>
 <tr>
@@ -123016,7 +123013,7 @@ knowing any one of them deeply.
 <div class="concept-desc verdict">
 <strong>The verdict:</strong> install RSAT on your admin workstation and use it for AD,
 DNS and Group Policy work — the snap-ins remain the most complete tools for those
-objects. Use <span class="volatile" data-checked="2026-09">Windows Admin Center</span> for everything fleet-shaped: patching status,
+objects. Use <span class="volatile" data-checked="2026-11">Windows Admin Center</span> for everything fleet-shaped: patching status,
 certificates, event logs, remote PowerShell, and anything on Server Core. Use Server
 Manager to install a role and then close it.
 </div>
@@ -123425,7 +123422,7 @@ dcdiag /test:ridmanager /v | Select-String "Available RID Pool"</pre>
 </div>
 </div>
 <!-- ── TOPIC: REPLICATION ─────────────────────────────────────── -->
-<div class="topic" id="ad-replication-how-changes-travel-and-triage-when-they-stop" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="ad-replication-how-changes-travel-and-triage-when-they-stop" data-reviewed="2026-11" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔄</span>
 <span class="topic-name">AD <span class="acro-exp">(Active Directory)</span> Replication — How Changes Travel, and Triage When They Stop</span>
@@ -123448,9 +123445,7 @@ makes replication cheap, and it means <strong>a change is never instantly everyw
 <tr><th>Where</th><th>Normal delay</th><th>Planned by</th></tr>
 </thead>
 <tbody>
-<!-- fact: site link replication interval defaults to 180 minutes, with 15 minutes
-the lowest value a site link accepts | source: Active Directory site link
-replInterval default and minimum | checked: 2026-09 -->
+<!-- fact: the default site link replication interval is 180 minutes and the minimum is 15 | source: Microsoft Learn, "Determining the interval" (updated 12 May 2025), fetched and read | checked: 2026-11 -->
 <tr><td>Within a site</td><td>Seconds — change notification, no schedule</td><td>The KCC <span class="acro-exp">(Knowledge Consistency Checker)</span>, automatically</td></tr>
 <tr><td>Between sites</td><td>Up to 3 hours out of the box — 180 minutes is the site-link default, and compressed</td><td>Site links you configure</td></tr>
 <tr><td>Urgent changes</td><td>Immediate, regardless of schedule</td><td>Account lockout, password changes to the PDC <span class="acro-exp">(Primary Domain Controller)</span></td></tr>
@@ -123496,9 +123491,11 @@ them, and the error it reports describes the symptom rather than the cause.
 <div class="concept-label">Failure mode</div>
 <div class="concept-title">The Tombstone Lifetime, and the DC You Left Switched Off</div>
 <div class="concept-desc">
-<!-- fact: tombstone lifetime 180 days | source: Active Directory forest functional level defaults since Server 2003 SP1 | checked: 2026-09 -->
+<!-- fact: the default tombstone lifetime depends on the operating system of the first domain controller installed in the forest; for all currently supported versions of Windows Server it is 180 days; the existing value does not change when a domain controller is upgraded; forests begun on Windows 2000, or on Windows Server 2003 before SP1, have no value set and use 60 days | source: Microsoft Learn, "Lingering objects in an AD DS forest" (updated 12 February 2026), fetched and read, and the AD Administrative Center advanced management article as quoted in search results | checked: 2026-11 -->
 Deletions replicate as tombstones — markers that persist for a fixed lifetime, 180 days
-on any modern domain. A DC that is offline longer than that has missed the window in
+by default in a forest built on any supported Windows Server. An older forest keeps the value
+it began with, as few as 60 days, because upgrading the domain controllers never changes it;
+read <code>tombstoneLifetime</code> rather than assuming. A DC that is offline longer than that has missed the window in
 which it could learn about those deletions, and Active Directory will
 <strong>refuse to replicate with it</strong> rather than resurrect deleted objects.
 </div>
@@ -124269,7 +124266,7 @@ for data, and it fails more visibly.
 </div>
 </div>
 <!-- ── TOPIC: HYBRID IDENTITY ─────────────────────────────────── -->
-<div class="topic" id="entra-connect-hybrid-identity-choosing-how-passwords-are-che" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="entra-connect-hybrid-identity-choosing-how-passwords-are-che" data-reviewed="2026-11" data-read="2" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">☁️</span>
 <span class="topic-name">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>
@@ -124316,7 +124313,7 @@ tier 0.
 <div class="concept-desc">
 The related operational risk is an accidental mass deletion — someone moves an OU out of
 sync scope and the objects are deleted in the cloud. Accidental deletion prevention stops
-this by default at <span class="volatile" data-checked="2026-09">500 objects</span> per run; know the threshold exists before you meet it.
+this by default at <span class="volatile" data-checked="2026-11">500 objects</span><!-- fact: Entra Connect's accidental-delete prevention is enabled by default and stops an export with more than 500 deletes; the threshold is changed with Enable-ADSyncExportDeletionThreshold | source: Microsoft Learn, "Prevent accidental deletes" (updated 9 April 2025), fetched and read | checked: 2026-11 --> per run; know the threshold exists before you meet it.
 </div>
 <pre class="code-block">Get-ADSyncExportDeletionThreshold
 Get-ADSyncScheduler                 <span class="com"># is sync even running?</span>
@@ -141448,7 +141445,7 @@ progress in localStorage — no content of its own, just an order. -->
 taken from the data-reviewed stamps at build time. Shown on the domain's
 landing card, because "is anyone still maintaining this?" is a question a
 reference site should answer without being asked. -->
-<script type="application/json" id="changelog">{"net":{"month":"2026-11","topics":["tcp-vs-udp-transport-layer","cabling-connectors-ethernet-standards","routing-protocols-how-routers-find-the-best-path"]},"sec":{"month":"2026-11","topics":["access-control-models","pki-certificate-lifecycle","cryptography-algorithm-reference"]},"threat":{"month":"2026-11","topics":["mitre-attck-framework","process-injection-hollowing-dll-side-loading-hiding-inside-a","diamond-model-of-intrusion-analysis"]},"grc":{"month":"2026-11","topics":["nist-cybersecurity-framework-20","frameworks-without-the-jargon","third-party-risk-your-security-is-only-as-strong-as-your-ven"]},"ops":{"month":"2026-11","topics":["incident-response-lifecycle-picerl","dair-sanss-dynamic-approach-to-incident-response-and-the-loo","bcp-dr-key-metrics-recovery-strategies"]},"devops":{"month":"2026-11","topics":["cicd-pipeline-design-stages-gates-artifacts","software-supply-chain-security-sbom-slsa-sigstore","kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"]},"pentest":{"month":"2026-11","topics":["owasp-top-10-2025","methodology-phases","cleanup-restoration-leaving-a-clients-network-as-you-found-i"]},"linux":{"month":"2026-11","topics":["package-management","linux-device-management-kernel-modules-udev-the-hardware-the","virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"]},"ai":{"month":"2026-11","topics":["ai-ethics-responsible-ai-nist-ai-rmf","adversarial-ai-ai-threats-red-team","ai-governance-frameworks"]},"script":{"month":"2026-11","topics":["testing-strategy-why-and-how-to-test","choosing-the-right-data-structure","regular-expressions-pattern-matching-that-pays-off-forever"]},"shortcut":{"month":"2026-11","topics":["windows-built-in-tools-the-run-box-names-and-the-commands-wo","microsoft-office-excelword","vs-code-editing-superpowers"]},"philosophy":{"month":"2026-11","topics":["epicureanism-pleasure-meant-the-absence-of-pain","confucianism-roles-ritual-and-the-exemplary-person-and-where","philosophy-schools-of-thought"]},"productivity":{"month":"2026-11","topics":["sleep-where-the-studying-actually-sticks","exam-technique-the-marks-you-lose-without-knowing-less","asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"]},"mind":{"month":"2026-11","topics":["communication-relationships","low-mood-a-bad-patch-or-something-to-take-to-a-doctor","imposter-syndrome-you-belong-here"]},"career":{"month":"2026-11","topics":["home-lab-practicing-it-skills-without-breaking-production","diagrams-that-explain-the-small-number-of-shapes-worth-using","mentorship-the-fastest-way-to-grow"]},"military":{"month":"2026-11","topics":["staff-functions-19","common-codes-decoded","military-communication-standards-clear-concise-correct"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-11","topics":["detection-tuning-the-pyramid-of-pain","cis-benchmarks-cis-cat-hardening-baselines","user-entity-behavior-analytics-what-baselining-can-and-canno"]},"cloud":{"month":"2026-11","topics":["amazon-cognito-user-pools-identity-pools-the-two-questions-t","google-cloud-organization-setup-organization-policies-cloud-","aws-vpc-subnets-security-groups-nacls"]},"cs":{"month":"2026-11","topics":["p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists","trees-bst-balanced-heap-trie-and-what-each-is-actually-for"]},"eng":{"month":"2026-11","topics":["uml-class-object-sequence-diagrams-and-the-diamond-everybody","cert-roadmaps-choosing-a-path","sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"]},"data":{"month":"2026-11","topics":["the-data-interview","how-a-database-actually-works","the-relational-model-keys-integrity"]},"web":{"month":"2026-11","topics":["flexbox-one-dimensional-layout","the-full-stack-picture-how-it-all-connects","devtools-mastery"]},"endpoint":{"month":"2026-11","topics":["windows-backup-for-organizations-settings-restore-on-a-new-p","microsoft-365-apps-deployment-the-office-deployment-tool-int","delivery-optimization-download-modes-peer-groups-where-windo"]},"infra":{"month":"2026-11","topics":["processing-order-precedence-lsdou-enforcement-loopback","service-accounts-gmsa-and-retiring-the-shared-password","one-user-two-accounts-how-sync-matches-people-and-fixing-the"]},"hw":{"month":"2026-11","topics":["motherboard-anatomy-chipsets-pcie-lanes-the-block-diagram","file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c","a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"]},"m365":{"month":"2026-11","topics":["m365-tenant-anatomy-the-tenant-its-domains-the-admin-centers","self-service-password-reset-password-protection-who-can-rese","administrative-units-delegating-part-of-the-tenant-and-fenci"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-11","topics":["computing-quotes-the-lines-engineers-repeat-and-where-each-w","the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte","strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"]}}</script>
+<script type="application/json" id="changelog">{"net":{"month":"2026-11","topics":["tcp-vs-udp-transport-layer","cabling-connectors-ethernet-standards","routing-protocols-how-routers-find-the-best-path"]},"sec":{"month":"2026-11","topics":["access-control-models","pki-certificate-lifecycle","cryptography-algorithm-reference"]},"threat":{"month":"2026-11","topics":["mitre-attck-framework","process-injection-hollowing-dll-side-loading-hiding-inside-a","diamond-model-of-intrusion-analysis"]},"grc":{"month":"2026-11","topics":["nist-cybersecurity-framework-20","frameworks-without-the-jargon","third-party-risk-your-security-is-only-as-strong-as-your-ven"]},"ops":{"month":"2026-11","topics":["incident-response-lifecycle-picerl","dair-sanss-dynamic-approach-to-incident-response-and-the-loo","bcp-dr-key-metrics-recovery-strategies"]},"devops":{"month":"2026-11","topics":["cicd-pipeline-design-stages-gates-artifacts","software-supply-chain-security-sbom-slsa-sigstore","kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"]},"pentest":{"month":"2026-11","topics":["owasp-top-10-2025","methodology-phases","cleanup-restoration-leaving-a-clients-network-as-you-found-i"]},"linux":{"month":"2026-11","topics":["package-management","linux-device-management-kernel-modules-udev-the-hardware-the","virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"]},"ai":{"month":"2026-11","topics":["ai-ethics-responsible-ai-nist-ai-rmf","adversarial-ai-ai-threats-red-team","ai-governance-frameworks"]},"script":{"month":"2026-11","topics":["testing-strategy-why-and-how-to-test","choosing-the-right-data-structure","regular-expressions-pattern-matching-that-pays-off-forever"]},"shortcut":{"month":"2026-11","topics":["windows-built-in-tools-the-run-box-names-and-the-commands-wo","microsoft-office-excelword","vs-code-editing-superpowers"]},"philosophy":{"month":"2026-11","topics":["epicureanism-pleasure-meant-the-absence-of-pain","confucianism-roles-ritual-and-the-exemplary-person-and-where","philosophy-schools-of-thought"]},"productivity":{"month":"2026-11","topics":["sleep-where-the-studying-actually-sticks","exam-technique-the-marks-you-lose-without-knowing-less","asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"]},"mind":{"month":"2026-11","topics":["communication-relationships","low-mood-a-bad-patch-or-something-to-take-to-a-doctor","imposter-syndrome-you-belong-here"]},"career":{"month":"2026-11","topics":["home-lab-practicing-it-skills-without-breaking-production","diagrams-that-explain-the-small-number-of-shapes-worth-using","mentorship-the-fastest-way-to-grow"]},"military":{"month":"2026-11","topics":["staff-functions-19","common-codes-decoded","military-communication-standards-clear-concise-correct"]},"redteam":{"month":"2026-09","topics":["theharvester-recon-ng-osint-frameworks","burp-suite-the-web-pentest-workbench","owasp-zap-the-open-source-web-scanner"]},"blueteam":{"month":"2026-11","topics":["detection-tuning-the-pyramid-of-pain","cis-benchmarks-cis-cat-hardening-baselines","user-entity-behavior-analytics-what-baselining-can-and-canno"]},"cloud":{"month":"2026-11","topics":["amazon-cognito-user-pools-identity-pools-the-two-questions-t","google-cloud-organization-setup-organization-policies-cloud-","aws-vpc-subnets-security-groups-nacls"]},"cs":{"month":"2026-11","topics":["p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists","trees-bst-balanced-heap-trie-and-what-each-is-actually-for"]},"eng":{"month":"2026-11","topics":["uml-class-object-sequence-diagrams-and-the-diamond-everybody","cert-roadmaps-choosing-a-path","sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"]},"data":{"month":"2026-11","topics":["the-data-interview","how-a-database-actually-works","the-relational-model-keys-integrity"]},"web":{"month":"2026-11","topics":["flexbox-one-dimensional-layout","the-full-stack-picture-how-it-all-connects","devtools-mastery"]},"endpoint":{"month":"2026-11","topics":["microsoft-intune-cloud-mdm-mam","windows-backup-for-organizations-settings-restore-on-a-new-p","co-management-cloud-attach"]},"infra":{"month":"2026-11","topics":["windows-server-editions-licensing-what-you-are-actually-buyi","server-manager-rsat-windows-admin-center","ad-replication-how-changes-travel-and-triage-when-they-stop"]},"hw":{"month":"2026-11","topics":["motherboard-anatomy-chipsets-pcie-lanes-the-block-diagram","file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c","a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"]},"m365":{"month":"2026-11","topics":["m365-tenant-anatomy-the-tenant-its-domains-the-admin-centers","self-service-password-reset-password-protection-who-can-rese","administrative-units-delegating-part-of-the-tenant-and-fenci"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-11","topics":["computing-quotes-the-lines-engineers-repeat-and-where-each-w","the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte","strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"]}}</script>
 <!-- Error codes for the lookup behind the header's ERRORS button, inlined from
 data/error-codes.json. Every row was copied from a Microsoft page that was
 read, and names it; the lookup decodes 0x8007xxxx and the negative decimal

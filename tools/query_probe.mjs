@@ -389,6 +389,9 @@ const READERS = [
     ["quarantine retention period", "", "m365/eop-defender-for-office-anti-spam-anti-phish-safe-links-quar"],
     ["group expiration auto renew", "", "m365/teams-governance-sprawl-naming-expiry-the-guest-question"],
     ["admin.cloud.microsoft", "", "m365/m365-tenant-anatomy-the-tenant-its-domains-the-admin-centers"],
+    // ── forty-sixth wave: the endpoint and infra claims from September, re-checked ──
+    ["tombstone lifetime 60 days", "", "infra/ad-replication-how-changes-travel-and-triage-when-they-stop"],
+    ["intune suite included in e3", "", "endpoint/the-intune-suite-what-it-adds-and-what-changed-in-2026"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
