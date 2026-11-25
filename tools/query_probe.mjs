@@ -1002,6 +1002,10 @@ const READERS = [
     ["certificate validity 200 days", "", "sec/pki-certificate-lifecycle"],
     ["maximum ssl certificate lifetime", "", "sec/pki-certificate-lifecycle"],
     ["ocsp turned off", "", "sec/pki-certificate-lifecycle"],
+    // ── forty-first wave: how a package repository is trusted, read from Debian and DNF's manuals ──
+    ["apt-key deprecated", "", "linux/package-management"],
+    ["signed-by keyring", "", "linux/package-management"],
+    ["gpgcheck", "", "linux/package-management"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
