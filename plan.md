@@ -3169,6 +3169,8 @@ console names, the three candidates recorded as false positives, is the only too
 
 **The queue.** None from the re-checks. The next dated claims to fall due are this month's own, in about three months.
 
+**And the function is live.** The owner merged [garrettadams23/Studies#70](https://github.com/garrettadams23/Studies/pull/70) at 22:20 UTC on 25 November, after its CI passed. Netlify's production deploy of that merge lists one function, `health`, and the endpoint answered with status 200, `no-store` and the deploy's own id, which is the first invocation its metrics will show. The waves since, forty-four to forty-eight, are on the branch, which merged `main` back in rather than rewriting history, and wait for the next pull request.
+
 # Error codes and packaging — three items from the owner
 
 ## 1. The request
