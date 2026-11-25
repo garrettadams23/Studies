@@ -990,7 +990,7 @@
 <!-- ═══════════════════════════════════════════════════
      TOPIC: Active Directory
 ═══════════════════════════════════════════════════ -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🏢</span>
     <span class="topic-name">Active Directory — Structure, Objects &amp; Attacks</span>
@@ -1141,9 +1141,9 @@
           <tr><th>Attack</th><th>What happens</th><th>Requires</th><th>Defense</th></tr>
           <tr>
             <td style="color:var(--red)">Kerberoasting</td>
-            <td>Request TGS <span class="acro-exp">(Ticket Granting Service)</span> for any SPN-registered account. Crack the RC4-encrypted ticket offline.</td>
+            <td>Request TGS <span class="acro-exp">(Ticket Granting Service)</span> for any SPN-registered account. Crack the ticket offline. RC4 <span class="acro-exp">(Rivest Cipher 4)</span> tickets were the easy case, and since Microsoft's April 2026 updates for CVE-2026-20833 a domain controller issues them only where RC4 is explicitly configured.</td>
             <td>Any domain user</td>
-            <td>Strong passwords on service accounts; use gMSA <span class="acro-exp">(group Managed Service Account)</span>; AES-only encryption</td>
+            <td>Strong passwords on service accounts; use gMSA <span class="acro-exp">(group Managed Service Account)</span>; AES-only encryption; find explicit RC4 settings, including a DefaultDomainSupportedEncTypes value that allows it, through the KDCSVC audit events<!-- fact: Microsoft KB5073381 (CVE-2026-20833): Windows updates from January 13, 2026 add protections and KDCSVC audit events 201 to 209 for Kerberos service tickets that might be issued with weak or legacy encryption such as RC4; updates from April 14, 2026 change the KDC default for DefaultDomainSupportedEncTypes so updated domain controllers in Enforcement mode assume only AES support when no explicit configuration exists; updates from July 2026 remove Audit mode; an explicit DefaultDomainSupportedEncTypes value is not changed, and an insecure one, such as one allowing RC4, logs KDCSVC event 205; Microsoft's Kerberos guidance notes RC4's default status enabled Kerberoasting | source: Microsoft Support, KB5073381, and Microsoft Learn, "Detect and remediate RC4 usage in Kerberos", fetched and read | checked: 2026-11 --></td>
           </tr>
           <tr>
             <td style="color:var(--red)">AS-REP Roasting</td>

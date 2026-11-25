@@ -501,6 +501,9 @@ const READERS = [
     ["defense impairment", "", "threat/mitre-attck-framework"],
     ["stealth tactic", "", "threat/mitre-attck-framework"],
     ["defense evasion", "", "threat/mitre-attck-framework"],
+    // ── fortieth wave: Kerberos RC4 after CVE-2026-20833, read from Microsoft, added before the fix ──
+    ["cve-2026-20833", "", "sec/active-directory-structure-objects-attacks"],
+    ["defaultdomainsupportedenctypes", "", "sec/active-directory-structure-objects-attacks"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -1494,6 +1497,9 @@ const READERS = [
     ["cyber resilience act", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
     ["actively exploited vulnerability reporting", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
     ["eu single reporting platform", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
+    // ── fortieth wave: the CIS Controls' version and parts, read from CIS, added before the fix ──
+    ["cis controls v8.1", "", "blueteam/cis-benchmarks-cis-cat-hardening-baselines"],
+    ["cis safeguards implementation groups", "", "blueteam/cis-benchmarks-cis-cat-hardening-baselines"],
   ]],
 ];
 
