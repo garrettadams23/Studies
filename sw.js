@@ -60,6 +60,10 @@ self.addEventListener("message", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
+  // Netlify Functions answer live: a cached copy of /.netlify/functions/health
+  // would keep reporting the first deploy it saw, and would never reach the
+  // function again to be counted in its metrics.
+  if (new URL(req.url).pathname.startsWith("/.netlify/")) return;
 
   event.respondWith(
     caches.match(req).then((cached) => {
