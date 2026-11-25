@@ -994,6 +994,11 @@ const READERS = [
     ["gateway api httproute", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
     ["ingress nginx retired", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
     ["coredns not resolving", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
+    // ── thirty-eighth wave: TLS certificate lifetimes and OCSP's end, read from the CA/B Forum and Let's Encrypt ──
+    ["47 day certificates", "", "sec/pki-certificate-lifecycle"],
+    ["certificate validity 200 days", "", "sec/pki-certificate-lifecycle"],
+    ["maximum ssl certificate lifetime", "", "sec/pki-certificate-lifecycle"],
+    ["ocsp turned off", "", "sec/pki-certificate-lifecycle"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],

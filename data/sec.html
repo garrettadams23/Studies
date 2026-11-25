@@ -265,7 +265,7 @@
           </div>
 
           <!-- ── TOPIC: PKI ─────────────────────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">PKI <span class="acro-exp">(Public Key Infrastructure)</span> &amp; Certificate Lifecycle</span>
@@ -282,7 +282,10 @@
                 <div class="concept-desc">
                   PKI enables digital trust through digitally signed
                   certificates. Root CAs are kept offline to protect the trust
-                  anchor. CRL <span class="acro-exp">(Certificate Revocation List)</span> and OCSP <span class="acro-exp">(Online Certificate Status Protocol)</span> enable real-time revocation checking.
+                  anchor. CRL <span class="acro-exp">(Certificate Revocation List)</span> and OCSP <span class="acro-exp">(Online Certificate Status Protocol)</span> publish which certificates are revoked, but clients check them
+                  unreliably, and Let's Encrypt turned its OCSP service off in August 2025 and publishes
+                  CRLs only. Short certificate lifetimes, in the next card, do the work revocation
+                  was meant to.<!-- fact: Let's Encrypt stopped including OCSP URLs in its certificates on 7 May 2025, turned off its OCSP responders on 6 August 2025, and publishes revocation exclusively through CRLs, citing OCSP's privacy cost: the responder learns which site is visited from which IP address | source: Let's Encrypt blog, "Ending OCSP Support in 2025" (5 December 2024) and "OCSP Service Has Reached End of Life" (6 August 2025), fetched and read | checked: 2026-11 -->
                 </div>
                 <div class="dw">
                   <div
@@ -408,6 +411,39 @@
                       ">
                       ❌ Revocation (CRL/OCSP)
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Lifetimes</div>
+                <div class="concept-title">Public TLS Certificates Are Shrinking From 398 Days to 47</div>
+                <div class="concept-desc">
+                  The CA/Browser Forum's Baseline Requirements, which every publicly trusted certificate authority follows, cap
+                  how long a TLS certificate, still often called an SSL <span class="acro-exp">(Secure Sockets Layer)</span> certificate, may be valid. The maximum lifetime was 398
+                  days until <strong class="c-cyan">15 March 2026</strong>,
+                  when it fell to 200; it falls to 100 on 15 March 2027 and to <strong class="c-cyan">47 days</strong> on 15 March
+                  2029. How long a CA may reuse a check that you control the domain falls with it, to 10 days by 2029, so
+                  renewing will mean proving control again almost every time. The browser makers proposed and backed the
+                  change, and no certificate authority voted against it.
+                  <!-- fact: CA/Browser Forum TLS Baseline Requirements version 2.3.1 (adopted by Ballot SC104), section 6.3.2: Subscriber Certificates issued before 2026-03-15 must not exceed 398 days of validity; from 2026-03-15, 200 days; from 2027-03-15, 100 days; from 2029-03-15, 47 days, and should not be issued for the maximum by default; domain name and IP address validation data may be reused for at most 200 days from 2026-03-15, 100 days from 2027-03-15 and 10 days from 2029-03-15; the schedule came from Ballot SC081v3 of April 2025, which all four browser makers voting (Apple, Google, Microsoft, Mozilla) supported and no certificate issuer opposed | source: CA/Browser Forum, TLS BR 2.3.1 PDF and the Ballot SC081v3 page, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Issued from</th><th>Longest validity</th><th>Domain validation reusable for</th></tr></thead>
+                    <tbody>
+                      <tr><td>Before 15 March 2026</td><td>398 days</td><td>398 days</td></tr>
+                      <tr><td>15 March 2026</td><td>200 days</td><td>200 days</td></tr>
+                      <tr><td>15 March 2027</td><td>100 days</td><td>100 days</td></tr>
+                      <tr><td>15 March 2029</td><td>47 days</td><td>10 days</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Automate renewal before 2027, because a calendar reminder will not survive 47 days.</strong>
+                    At 398 days a manual renewal was an annual chore; at 47 it is eight a year per certificate, each with a fresh
+                    domain check, and the failure mode is an outage on the morning one is missed. ACME <span class="acro-exp">(Automatic Certificate Management Environment)</span> clients renew on their own;
+                    the work is finding every certificate that is not yet issued that way. Internal certificate authorities are
+                    not bound by these rules, which is covered in
+                    <span class="xref">Certificate Lifecycle — Auto-Enrollment and the Expiry Nobody Scheduled</span>.
                   </div>
                 </div>
               </div>
