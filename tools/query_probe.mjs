@@ -882,6 +882,13 @@ const READERS = [
     ["owasp top 10 for llm 2026", "", "ai/ai-governance-frameworks"],
     ["agent goal hijack", "", "ai/agent-safety-sandboxing-permissions-blast-radius-human-in-th"],
     ["owasp agentic top 10", "", "ai/agent-safety-sandboxing-permissions-blast-radius-human-in-th"],
+    // ── thirty-second wave: NIST AI RMF 1.0 and its Generative AI Profile, read from NIST, added before the cards ──
+    ["valid and reliable", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["trustworthiness characteristics", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["harmful bias managed", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["nist ai 600-1", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["generative ai profile", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["confabulation", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
