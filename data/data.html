@@ -1681,7 +1681,7 @@ psql <span class="var">-h</span> localhost <span class="var">-U</span> app <span
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🍃</span>
               <span class="topic-name">MongoDB — Documents &amp; the Aggregation Pipeline</span>
@@ -1732,7 +1732,7 @@ db.orders.<span class="fn">aggregate</span>([
                     <tr><th>Signal</th><th>What it means</th></tr>
                     <tr><td><code>$lookup</code> appearing in your pipelines</td><td>You are doing joins in the application tier's database. Consider whether the model is relational</td></tr>
                     <tr><td>The same fact duplicated in many documents</td><td>Denormalization is the design; the cost is updating every copy, correctly, forever</td></tr>
-                    <tr><td>A document growing without bound</td><td>Arrays that append per event hit the <span class="volatile" data-checked="2026-09">16 MB</span> document limit. Model as a separate collection</td></tr>
+                    <tr><td>A document growing without bound</td><td>Arrays that append per event hit the <span class="volatile" data-checked="2026-11">16 MB</span><!-- fact: the maximum BSON document size is 16 mebibytes | source: MongoDB manual, "MongoDB Limits and Thresholds", fetched and read | checked: 2026-11 --> document limit. Model as a separate collection</td></tr>
                     <tr><td>Transactions across collections</td><td>Supported since 4.0, and slower than the single-document case. Frequent use is a modeling signal</td></tr>
                     <tr><td>Aggregations that scan everything</td><td>Indexes must match the pipeline's first stages, or <code>$match</code> reads the collection</td></tr>
                   </table>

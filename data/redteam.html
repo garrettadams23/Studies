@@ -2585,7 +2585,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🎭</span>
               <span class="topic-name">Cloud Credential Attacks &amp; the Purple-Team Bridge</span>
@@ -2602,9 +2602,11 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   as nobody rotates it, and the work after stealing it is keeping your grip on the
                   machine you stole it from. A cloud credential is the opposite object. It is a token
                   with <strong class="c-amber">an expiry stamped inside it</strong> —
-                  <span class="volatile" data-checked="2026-09">an hour by default for an instance
-                  role, up to twelve for an assumed session</span> — and it is not bound to the host at
-                  all. Two instincts carried over from the on-prem chain are therefore backwards:
+                  <span class="volatile" data-checked="2026-11">an hour by default for an assumed role
+                  session and up to twelve if the role allows it, while an instance role's credentials are
+                  rotated automatically, the next set issued at least five minutes before the last
+                  expires</span> — and it is not bound to the host at all.
+                  <!-- fact: role sessions from AssumeRole default to 1 hour, from 15 minutes up to the role's maximum session duration setting, which can be 1 to 12 hours; role chaining is limited to one hour; Amazon EC2 IAM role credentials are not subject to the role's maximum session duration; instance role credentials are temporary and rotated automatically, with new credentials available at least five minutes before the old expire | source: AWS IAM User Guide, "Methods to assume a role", and the Amazon EC2 User Guide's page on instance metadata security credentials, fetched and read | checked: 2026-11 --> Two instincts carried over from the on-prem chain are therefore backwards:
                   there is nothing worth persisting <em>on the box</em>, because the box was never the
                   asset; and the operator is not settling in, they are <strong class="c-red">racing a
                   clock</strong>.

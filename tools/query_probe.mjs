@@ -557,6 +557,8 @@ const READERS = [
     ["running estimate", "", "military/staff-functions-19"],
     ["chief of staff", "", "military/common-codes-decoded"],
     ["what does the s-3 do", "", "military/common-codes-decoded"],
+    // ── forty-seventh wave: the DSM's next edition, from the APA's January 2026 papers as NPR reported them ──
+    ["dsm-6", "", "philosophy/psychology-mind-behavior-biases"],
     // ── sixth wave: Content ideas §4 rows 32 to 34, the quotes, before their topics.
     // Each want names a topic that does not exist yet. Left out: `conway's law`
     // and `goodhart's law` already reach the eng cards that use them, and `no
@@ -1414,6 +1416,8 @@ const READERS = [
     ["netapp volumes", "", "cloud/gcp-storage-cloud-storage-persistent-disk-filestore"],
     ["managed lustre", "", "cloud/gcp-storage-cloud-storage-persistent-disk-filestore"],
     ["managed kafka google cloud", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    // ── forty-seventh wave: September's last claims, re-checked ──
+    ["how long do instance role credentials last", "", "redteam/cloud-credential-attacks-the-purple-team-bridge"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
