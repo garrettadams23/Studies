@@ -12,7 +12,7 @@ Open `index.html` in any modern web browser — no server or build step required
 
 - **One Domain at a Time** — Every domain is listed; the one you open is the
   only one the browser builds. Opening another releases the last, so the page
-  costs **479 elements at rest instead of 157,603** — measured at 1,629 topics,
+  costs **479 elements at rest instead of 157,755** — measured at 1,629 topics,
   and the gap widens with every card added — and loads in a third of the time.
   Nothing is fetched — the content is all in the page, held as inert text until
   it is asked for, so this works offline and over `file://` exactly as before.
@@ -65,7 +65,7 @@ Open `index.html` in any modern web browser — no server or build step required
 | 🎖️ Military Codes | MIL | NATO Phonetic, Military Time, US Army Ranks, CMMC, DISA STIGs, Staff Codes J/G/S/N/A/C |
 | 🔴 Red Team | PT+, OSCP | Recon, Exploitation, AD Attacks, C2, Password & Wireless |
 | 🔵 Blue Team | CySA+, GCIH | NSM, SIEM, EDR, Detection, DFIR, Threat Intel |
-| ☁️ Cloud | AWS, GCP, SAA-C03, ACE | AWS (Cognito, Config, Elastic Load Balancing and the Gateway Load Balancer, Shield and Global Accelerator, application integration from SQS to Step Functions, Amazon MQ, MSK and AppFlow, RDS Proxy and ElastiCache, DocumentDB, Keyspaces, Neptune and Aurora Serverless, EBS volume types and Requester Pays, CUR 2.0 and Compute Optimizer, migration with AWS Transform MGN and DMS, the AI services and SageMaker AI, data ingestion and analytics, Lake Formation and AWS Quick, hybrid storage and data transfer, AWS Backup and Vault Lock), GCP (organization policies, Workforce Identity Federation and billing export, Shared VPC and Cloud NGFW, Compute Engine operations, AlloyDB, Bigtable, Memorystore, Pub/Sub and Dataflow, Cloud Run operations and Cloud Run functions, Infrastructure Manager and Deployment Manager's retirement), **Azure** (hierarchy, networking, compute/storage, Monitor & KQL, **troubleshooting playbook**, Entra ID sign-in), IAM, IaC, Cost |
+| ☁️ Cloud | AWS, GCP, SAA-C03, ACE | AWS (Cognito, Config, Elastic Load Balancing and the Gateway Load Balancer, Shield and Global Accelerator, application integration from SQS to Step Functions, Amazon MQ, MSK and AppFlow, RDS Proxy and ElastiCache, DocumentDB, Keyspaces, Neptune and Aurora Serverless, EBS volume types and Requester Pays, CUR 2.0 and Compute Optimizer, migration with AWS Transform MGN and DMS, the AI services and SageMaker AI, data ingestion and analytics, Lake Formation and AWS Quick, hybrid storage and data transfer, AWS Backup and Vault Lock), GCP (organization policies, Workforce Identity Federation and billing export, Shared VPC and Cloud NGFW, Compute Engine operations, AlloyDB, Bigtable, Memorystore, Pub/Sub and Dataflow, Cloud Run operations and Cloud Run functions, Infrastructure Manager and Deployment Manager's retirement, log routing and retention, the Ops Agent and Managed Service for Prometheus, Storage Transfer Service, NetApp Volumes and Managed Lustre), **Azure** (hierarchy, networking, compute/storage, Monitor & KQL, **troubleshooting playbook**, Entra ID sign-in), IAM, IaC, Cost |
 | 🏛️ Engineering | ARCH, SWE | System Design, Architecture, Craft, Reliability, Career, IT Job Titles |
 | 📊 Data | SQL, DATA | SQL, DB Internals, NoSQL, Warehousing, DBA |
 | 🌐 Web | WEB, JS | Browser, CSS, JS, Frameworks, Performance, A11y |

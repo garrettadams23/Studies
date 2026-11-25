@@ -1307,6 +1307,19 @@ const READERS = [
     ["memorystore valkey", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
     ["dataflow exactly once", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
     ["pub/sub topic", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    // ── twenty-ninth wave: the ACE guide's operations and storage items, as cards in existing topics, added before them ──
+    // Opened at 1 of 10: four zeros, `netapp volumes` and `personalized service health` among them, five that found
+    // other cards, `storage transfer service` among 26, and one that reached its topic on ordinary words.
+    ["log sink to bigquery", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["log bucket retention", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["ops agent", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["managed service for prometheus", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["personalized service health", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["active assist recommendations", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["storage transfer service", "", "cloud/gcp-storage-cloud-storage-persistent-disk-filestore"],
+    ["netapp volumes", "", "cloud/gcp-storage-cloud-storage-persistent-disk-filestore"],
+    ["managed lustre", "", "cloud/gcp-storage-cloud-storage-persistent-disk-filestore"],
+    ["managed kafka google cloud", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],

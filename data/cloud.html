@@ -3512,7 +3512,7 @@ gcloud compute instances list --project my-prod-project</pre>
     </div>
   </div>
 </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">💾</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Storage — Cloud Storage, Persistent Disk &amp; Filestore</span>
@@ -3566,6 +3566,43 @@ gcloud compute instances list --project my-prod-project</pre>
                   backups you might restore, Archive only for data with a legal retention period that exceeds the
                   minimum anyway. And the cheapest habit of all is a <strong>lifecycle rule that deletes</strong>
                   &mdash; the least expensive byte is the one you are not storing.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Moving data and file systems</div>
+                <div class="concept-title">Storage Transfer Service Moves Data In; NetApp Volumes and Managed Lustre Give Applications the File Systems They Expect</div>
+                <div class="concept-desc">
+                  <strong class="c-cyan">Storage Transfer Service</strong> moves data between object and file storage: from
+                  Amazon S3, Azure Blob Storage or another bucket into Cloud Storage, between on-premises systems and Cloud
+                  Storage either way, from public URLs <span class="acro-exp">(Uniform Resource Locator)</span> and from HDFS <span class="acro-exp">(Hadoop Distributed File System)</span>, with transfers Google manages or agents you host where you
+                  need control of routing and bandwidth; Google built it for transfers of more than 1 TiB.
+                  <strong class="c-cyan">NetApp Volumes</strong> is a managed file and block service speaking NFS <span class="acro-exp">(Network File System)</span> (versions 3, 4.1
+                  and 4.2), SMB <span class="acro-exp">(Server Message Block)</span>, iSCSI <span class="acro-exp">(Internet Small Computer Systems Interface)</span> and NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span> over TCP <span class="acro-exp">(Transmission Control Protocol)</span>, so applications move without being rebuilt. <strong
+                  class="c-cyan">Managed Lustre</strong> is a managed parallel file system for AI <span class="acro-exp">(Artificial Intelligence)</span> and high-performance computing,
+                  built with DDN, scaling to petabytes and up to 10 TB/s, POSIX-compliant, and mountable from Compute Engine and
+                  GKE <span class="acro-exp">(Google Kubernetes Engine)</span>, with transfers to and from Cloud Storage.
+                  
+                  <!-- fact: Storage Transfer Service moves data across object and file storage: Amazon S3, Azure Blob Storage or Cloud Storage to Cloud Storage, on-premises to and from Cloud Storage, between on-premises systems, from public URLs and from HDFS; it is optimized for transfers of more than 1 TiB, with Google-managed transfers or self-hosted agents for control of routing and bandwidth | source: Google Cloud documentation, "Storage Transfer Service overview", fetched and read | checked: 2026-11 -->
+                  <!-- fact: Google Cloud NetApp Volumes is a fully managed file and block storage service supporting NFSv3, NFSv4.1, NFSv4.2, SMB, iSCSI and NVMe/TCP, so applications need not be re-architected, with several service levels | source: Google Cloud documentation, "NetApp Volumes overview", fetched and read | checked: 2026-11 -->
+                  <!-- fact: Google Cloud Managed Lustre is a fully managed parallel file system for AI and HPC, with multi-petabyte capacity and up to 10 TBps throughput, developed with DDN, POSIX-compliant, integrated with Compute Engine and GKE, with data transfers to and from Cloud Storage | source: Google Cloud documentation, "Managed Lustre overview", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Need</th><th>Google Cloud</th><th>AWS counterpart</th></tr></thead>
+                    <tbody>
+                      <tr><td>Copy a large dataset in from another cloud or a data center</td><td>Storage Transfer Service</td><td>DataSync</td></tr>
+                      <tr><td>NFS or SMB shares, or iSCSI volumes, for applications that expect them</td><td>NetApp Volumes, or Filestore for NFS</td><td>FSx for NetApp ONTAP</td></tr>
+                      <tr><td>A parallel file system for training or simulation</td><td>Managed Lustre</td><td>FSx for Lustre</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Choose the file service by the protocol the application already speaks.</strong>
+                    An application written for NFS, SMB or a block device moves fastest onto a service that speaks that
+                    protocol; rewriting it for object storage is a project of its own. AWS's equivalents, and the transfer
+                    services beside them, are in
+                    <span class="xref">AWS Hybrid Storage &amp; Data Transfer — Storage Gateway, DataSync, Transfer Family &amp; the Devices That Closed</span>.
+                    
                   </div>
                 </div>
               </div>
@@ -3729,6 +3766,37 @@ gcloud compute instances list --project my-prod-project</pre>
           call twice. Choose at-least-once where duplicates are harmless and the saving matters. Why delivery
           guarantees are harder than they sound is in
           <span class="xref">Streaming &amp; Event Pipelines — Delivery Guarantees and the Lies About Time</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Managed Kafka</div>
+      <div class="concept-title">Managed Service for Apache Kafka Is Sized in vCPUs, Stores on Tiers, and Leaves Retention to You</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Managed Service for Apache Kafka</strong> runs open-source Kafka clusters for you. You
+        size a cluster by total vCPUs and memory and the service provisions brokers to match, adding brokers and
+        rebalancing partitions when a cluster grows. Storage is tiered: a little fast local disk on the brokers, and
+        effectively unlimited, cheaper remote storage behind it, which lowers the risk of a broker running out of disk.
+        Clusters are reached privately from the subnets you list, across VPCs <span class="acro-exp">(Virtual Private Cloud)</span>, projects and regions, through one
+        bootstrap address per cluster. Retention on each topic is yours to set.
+        
+        <!-- fact: Managed Service for Apache Kafka runs open-source Apache Kafka clusters; a cluster is sized by total vCPU count and memory, the service provisions brokers accordingly, and scaling up can add brokers with automatic partition rebalancing; it uses tiered storage, a limited amount of local disk on brokers plus effectively unlimited, less expensive remote storage; you set retention on individual topics; clusters are accessible privately from listed subnets across VPCs, projects and regions, with a single load-balanced bootstrap URL per cluster | source: Google Cloud documentation, "Managed Service for Apache Kafka overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Pub/Sub</th><th>Managed Service for Apache Kafka</th></tr></thead>
+          <tbody>
+            <tr><td>Interface</td><td>Google's API</td><td>Kafka's own clients and tools</td></tr>
+            <tr><td>Sizing</td><td>None to do</td><td>vCPUs and memory, brokers provisioned for you</td></tr>
+            <tr><td>Reach for it when</td><td>New services need messaging</td><td>Existing Kafka applications move to Google Cloud</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Set every topic's retention when you create it.</strong>
+          Tiered storage makes running out of disk unlikely, which also means nothing stops a topic keeping data, and
+          cost, for longer than anyone meant. Kafka's model of a log that consumers replay is in
+          <span class="xref">Apache Kafka — The Distributed Event Log</span>.
+          
         </div>
       </div>
     </div>
@@ -4853,7 +4921,7 @@ aws ec2 get-console-output --instance-id i-0abc --output text</pre>
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">📈</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Observability — Cloud Monitoring, Logging &amp; Trace</span>
@@ -4910,6 +4978,107 @@ aws ec2 get-console-output --instance-id i-0abc --output text</pre>
                   nobody queries, then set retention, then sink anything with a compliance requirement to
                   storage</strong> &mdash; and note the same structure applies on the other providers, with
                   different product names.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Log routing</div>
+                <div class="concept-title">Sinks Decide Where Logs Go, and Buckets Decide How Long They Stay</div>
+                <div class="concept-desc">
+                  Every project, folder, organization and billing account starts with two log sinks. <strong class="c-cyan">_Required</strong>
+                  routes the admin activity, system event and access transparency audit logs to the _Required bucket, and can
+                  be neither changed nor deleted, nor can that bucket's retention. <strong class="c-cyan">_Default</strong> routes
+                  everything else to the _Default bucket and can be edited, redirected or switched off. Further sinks route to
+                  your own log buckets, Cloud Storage, BigQuery or Pub/Sub, and through those to other tools. A log bucket keeps
+                  entries for 30 days unless you set between 1 and 3,650 days, and keeping them longer than the default costs
+                  extra. Logging's own analysis tools read only what is in log buckets.
+                  
+                  <!-- fact: Cloud Logging routes all log entries by default to log buckets where they originate, and log sinks can route them to custom buckets, Cloud Storage, BigQuery or Pub/Sub, with Cloud Storage and Pub/Sub supporting export to third-party tools; each project, billing account, folder and organization has two system sinks, _Required, which routes admin activity, system event and access transparency audit logs to the _Required bucket and cannot be modified or deleted, and _Default, which routes the rest and can be modified or disabled; Logging's visualization and analysis tools need entries in log buckets | source: Google Cloud documentation, "Routing and storage overview", fetched and read | checked: 2026-11 -->
+                  <!-- fact: A log bucket's retention can be set between 1 and 3,650 days and defaults to 30 days; since 1 April 2023 retention beyond the default period of the _Default and user-defined buckets is charged; the _Required bucket's retention cannot be changed, and buckets in folders or organizations cannot have retention extended, so logs are routed to a bucket in a project instead | source: Google Cloud documentation, "Configure log buckets", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Sink</th><th>Routes</th><th>Can you change it?</th></tr></thead>
+                    <tbody>
+                      <tr><td>_Required</td><td>Admin activity, system event and access transparency audit logs</td><td>No, and its bucket's retention neither</td></tr>
+                      <tr><td>_Default</td><td>Everything else</td><td>Yes: filters, destination, or off</td></tr>
+                      <tr><td>Your own sinks</td><td>What their filters match, to buckets, BigQuery, Cloud Storage or Pub/Sub</td><td>Yes</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Set retention for the incident you have not had yet.</strong>
+                    At the default of 30 days, an intrusion found on day forty has no _Default logs left to read. Decide how far
+                    back an investigation must reach, then route those logs to a bucket with that retention or to BigQuery,
+                    knowing the extra time is billed. The audit logs themselves, and what each records, are in
+                    <span class="xref">GCP Security — Cloud Audit Logs &amp; Security Command Center</span>.
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Agents and Prometheus</div>
+                <div class="concept-title">The Ops Agent Collects a VM <span class="acro-exp">(Virtual Machine)</span>'s Logs and Metrics; Managed Service for Prometheus Keeps the PromQL <span class="acro-exp">(Prometheus Query Language)</span> You Already Use</div>
+                <div class="concept-desc">
+                  The <strong class="c-cyan">Ops Agent</strong> is Google's primary agent for collecting telemetry from Compute
+                  Engine instances: one process, using Fluent Bit for logs and the OpenTelemetry Collector for metrics and traces,
+                  configured in YAML <span class="acro-exp">(YAML Ain't Markup Language)</span>, on standard Linux and Windows systems, collecting system logs with no configuration at all.
+                  <strong class="c-cyan">Google Cloud Managed Service for Prometheus</strong> runs Prometheus for you, across
+                  projects and clouds, for Kubernetes, VMs and Cloud Run: it collects from Prometheus exporters, answers PromQL,
+                  so existing Grafana dashboards and PromQL alerts keep working, and keeps data for 24 months. It sits on the same
+                  backend as Cloud Monitoring, so more than 6,500 free Cloud Monitoring metrics can be queried with PromQL too.
+                  
+                  <!-- fact: The Ops Agent is the primary agent for collecting telemetry from Compute Engine instances, combining logs, metrics and traces in a single process using Fluent Bit for logs and the OpenTelemetry Collector for metrics and traces, with unified YAML configuration, support for standard Linux and Windows distributions, and standard system logs collected with no configuration | source: Google Cloud documentation, "Ops Agent overview", fetched and read | checked: 2026-11 -->
+                  <!-- fact: Google Cloud Managed Service for Prometheus is a fully managed, multi-cloud, cross-project solution for Prometheus and OpenTelemetry metrics; it collects from Prometheus exporters, is queried with PromQL so existing Grafana dashboards and PromQL alerts keep working, monitors Kubernetes, VMs and Cloud Run, retains data for 24 months, stays compatible with upstream Prometheus, is built on Monarch with the same backend as Cloud Monitoring, and lets over 6,500 free Cloud Monitoring metrics be queried with PromQL | source: Google Cloud documentation, "Google Cloud Managed Service for Prometheus", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>You have</th><th>Use</th></tr></thead>
+                    <tbody>
+                      <tr><td>Compute Engine VMs whose logs and metrics you need</td><td>The Ops Agent, installed through the instance template</td></tr>
+                      <tr><td>Prometheus exporters, PromQL alerts and Grafana dashboards</td><td>Managed Service for Prometheus</td></tr>
+                      <tr><td>Neither, and a new service</td><td>Cloud Monitoring's own metrics first, then the agent</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Install the agent where VMs are made, not on each VM.</strong>
+                    An agent added by hand to the VMs that exist today is missing from every VM an instance group creates
+                    tomorrow; put it in the template or the image. Prometheus itself, and the dashboards on top of it, are in
+                    <span class="xref">Prometheus &amp; Grafana — Metrics &amp; Dashboards</span>.
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Service Health and Active Assist</div>
+                <div class="concept-title">Personalized Service Health Reports Google's Incidents That Touch Your Projects; Active Assist Recommends Changes</div>
+                <div class="concept-desc">
+                  Two services tell you about things you did not cause. <strong class="c-cyan">Personalized Service Health</strong>
+                  picks out the Google Cloud incidents relevant to your projects and organization, with affected products and
+                  locations on a dashboard, through an API <span class="acro-exp">(Application Programming Interface)</span>, and as alerts built on logs in Cloud Logging; Google calls it the
+                  primary channel for incident information. <strong class="c-cyan">Active Assist</strong> is Google's set of
+                  recommenders, which generate recommendations and insights in six value categories, such as the IAM <span class="acro-exp">(Identity and Access Management)</span>
+                  recommender's suggestions for roles. Each recommender has its own roles and permissions, and because
+                  recommendations carry some metadata about resources, granting them shows people part of those resources.
+                  
+                  <!-- fact: Personalized Service Health identifies Google Cloud Service Health events relevant to your projects, available through a Service Health dashboard showing affected products, locations and impacted resources, a Service Health API per project or organization, alerts based on logs in Cloud Logging, and exportable logs; it is the primary channel for incident information | source: Google Cloud documentation, "Personalized Service Health overview", fetched and read | checked: 2026-11 -->
+                  <!-- fact: Active Assist is the portfolio of tools generating recommendations and insights to optimize Google Cloud projects; recommenders generate recommendations in six value categories; each recommender and insight type has specific roles and permissions, and recommendations include some resource metadata, giving users a partial view of it | source: Google Cloud documentation, "What is Active Assist", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Question</th><th>Ask</th></tr></thead>
+                    <tbody>
+                      <tr><td>Is Google having an incident that affects us?</td><td>Personalized Service Health, before debugging your own change</td></tr>
+                      <tr><td>What should we resize, remove or tighten?</td><td>Active Assist's recommenders</td></tr>
+                      <tr><td>Who changed what, when?</td><td>The audit logs, not either of these</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Wire Service Health into the alerting you already watch.</strong>
+                    An incident page is read only by someone who thinks to open it; an alert on Service Health events in the
+                    same channel as your own alerts saves the hour spent debugging a deployment that did nothing wrong. Treat
+                    recommendations as a queue to review, not changes to apply blind. Finding the cause when it is yours is in
+                    <span class="xref">GCP Troubleshooting Playbook</span>.
+                    
                   </div>
                 </div>
               </div>
