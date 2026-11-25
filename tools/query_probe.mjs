@@ -873,6 +873,15 @@ const READERS = [
     ["adversarial machine learning", "", "ai/adversarial-ai-ai-threats-red-team"],
     ["data poisoning attack", "", "ai/adversarial-ai-ai-threats-red-team"],
     ["ai for threat detection", "", "ai/ai-for-defense-blue-team"],
+    // ── thirty-first wave: OWASP's 2026 lists, read from OWASP's pages, added before the cards ──
+    ["unbounded consumption", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["improper output handling", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["hidden context exposure", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["denial of wallet", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["vector and embedding weaknesses", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["owasp top 10 for llm 2026", "", "ai/ai-governance-frameworks"],
+    ["agent goal hijack", "", "ai/agent-safety-sandboxing-permissions-blast-radius-human-in-th"],
+    ["owasp agentic top 10", "", "ai/agent-safety-sandboxing-permissions-blast-radius-human-in-th"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -1438,6 +1447,11 @@ const READERS = [
     ["who signed off on this exception"],
     ["the vendor will not fill in the questionnaire",
      "kind 3, checked at fault level — `grc` has the whole answer and files it under the phase where the leverage is created rather than the phase where it is missed: *bake security requirements into the contract — SLAs, breach notification, right to audit*. It also ranks the alternative evidence a refusing vendor can still be held to, with what each one is worth. `questionnaire` at 13 is the reader's word for the artefact; the site's word is the clause"],
+    // ── thirty-first wave: the EU AI Act's dates after the AI Omnibus, read from the Commission's page ──
+    ["eu ai act high risk deadline", "", "ai/ai-governance-frameworks"],
+    ["ai omnibus", "", "ai/ai-governance-frameworks"],
+    ["ai act prohibited practices", "", "ai/ai-governance-frameworks"],
+    ["general purpose ai obligations", "", "ai/ai-governance-frameworks"],
   ]],
 ];
 
