@@ -537,6 +537,14 @@ const READERS = [
     ["frago", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
     ["mett-tc", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
     ["ccir", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
+    // ── forty-second wave: the two thin military lookup topics, deepened from
+    // FM 6-0 (May 2022). Added before the cards, with the wants they should reach.
+    ["coordinating staff", "", "military/staff-functions-19"],
+    ["personal staff", "", "military/staff-functions-19"],
+    ["staff judge advocate", "", "military/staff-functions-19"],
+    ["running estimate", "", "military/staff-functions-19"],
+    ["chief of staff", "", "military/common-codes-decoded"],
+    ["what does the s-3 do", "", "military/common-codes-decoded"],
     // ── sixth wave: Content ideas §4 rows 32 to 34, the quotes, before their topics.
     // Each want names a topic that does not exist yet. Left out: `conway's law`
     // and `goodhart's law` already reach the eng cards that use them, and `no
@@ -1006,6 +1014,11 @@ const READERS = [
     ["apt-key deprecated", "", "linux/package-management"],
     ["signed-by keyring", "", "linux/package-management"],
     ["gpgcheck", "", "linux/package-management"],
+    // ── forty-second wave: the pipeline's own dependencies, read from GitHub's docs and NVD ──
+    ["pin github actions to commit sha", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
+    ["tj-actions changed-files", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
+    ["github actions lockfile", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
+    ["cve-2025-30066", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
