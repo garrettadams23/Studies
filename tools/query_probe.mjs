@@ -895,6 +895,13 @@ const READERS = [
     ["software supply chain failures", "", "sec/owasp-top-10-the-most-critical-web-security-risks"],
     ["security logging and alerting failures", "", "sec/owasp-top-10-the-most-critical-web-security-risks"],
     ["mishandling of exceptional conditions", "", "sec/owasp-top-10-the-web-vulnerabilities-everyone-must-know"],
+    // ── thirty-fifth wave: the rest of SecAI+'s summary terms, read from CompTIA's exam page ──
+    ["alert correlation", "", "blueteam/correlation-sequencing-when-one-event-genuinely-is-not-enoug"],
+    ["behavior analysis", "", "blueteam/user-entity-behavior-analytics-what-baselining-can-and-canno"],
+    ["automated phishing", "", "ai/adversarial-ai-ai-threats-red-team"],
+    ["response orchestration", "", "ops/soar-security-orchestration-automation-response"],
+    ["polymorphic malware", "", "threat/malware-types-reference"],
+    ["ai lifecycle", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
