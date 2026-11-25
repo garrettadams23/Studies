@@ -822,7 +822,7 @@ gcloud compute instances list --project my-prod-project</pre>
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🌐</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> VPC <span class="acro-exp">(Virtual Private Cloud)</span> — Subnets, Security Groups &amp; NACLs <span class="acro-exp">(Network Access Control List)</span></span>
@@ -869,7 +869,7 @@ gcloud compute instances list --project my-prod-project</pre>
                   <table class="ref-table">
                     <tr><th>Question</th><th>Answer</th></tr>
                     <tr><td>How do I make this subnet public?</td><td>Attach a route table with a default route to the IGW. That <em>is</em> the definition</td></tr>
-                    <tr><td>Why can my private instance reach the internet?</td><td>A NAT gateway in a public subnet &mdash; and it is billed hourly plus per GB, per AZ</td></tr>
+                    <tr><td>Why can my private instance reach the internet?</td><td>A NAT gateway, in a public subnet unless it is the newer regional kind &mdash; and it is billed hourly plus per GB processed</td></tr>
                     <tr><td>Security group vs NACL</td><td>SGs are stateful, instance-attached, allow-only. <strong>NACLs are stateless</strong> and need a rule in both directions</td></tr>
                     <tr><td>Why did my return traffic drop?</td><td>Almost always a stateless NACL with no ephemeral-port return rule</td></tr>
                     <tr><td>Do I need one subnet or three?</td><td>Three, one per AZ, for anything that must survive an AZ failure &mdash; and the same for NAT</td></tr>
@@ -879,6 +879,49 @@ gcloud compute instances list --project my-prod-project</pre>
                   everything, and leave NACLs at their default allow-all unless you have a specific reason</strong>
                   &mdash; a stateless layer that silently drops returning packets is a debugging cost you pay
                   repeatedly for a control the security group already gave you statefully.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">NAT</div>
+                <div class="concept-title">A NAT Gateway Beats a NAT Instance, and a Regional NAT Gateway Ends the Shared-or-Per-Zone Choice</div>
+                <div class="concept-desc">
+                  Instances in a private subnet reach the internet through NAT, which lets them open connections outward and
+                  refuses connections started from outside. A <strong class="c-cyan">NAT instance</strong> is an EC2 <span class="acro-exp">(Elastic Compute Cloud)</span> instance
+                  you run as the translator: you patch it, size it, and script its failover. AWS recommends a
+                  <strong class="c-cyan">NAT gateway</strong> instead, managed and redundant within its zone, starting at 5 Gbps
+                  and scaling to 100; the NAT AMI <span class="acro-exp">(Amazon Machine Image)</span> AWS once supplied is built on an Amazon Linux release whose maintenance ended
+                  on 31 December 2023. A standard NAT gateway is zonal: share one across zones and its zone's outage cuts the
+                  others off, so AWS advises one per zone, with each zone's routes pointing to its own. A newer
+                  <strong class="c-cyan">regional NAT gateway</strong> expands into each zone where workloads appear, within up
+                  to 60 minutes, needs no public subnet, and is one route target everywhere; private NAT, to other VPCs or
+                  on premises, still needs zonal gateways.
+                  
+                  <!-- fact: AWS recommends NAT gateways over NAT instances for availability, bandwidth and administration; NAT gateways are highly available within each Availability Zone and AWS advises one per zone for zone-independent architecture, while NAT instances need a script to manage failover; NAT gateways scale up to 100 Gbps, NAT instances depend on the instance type; NAT gateways are maintained by AWS, NAT instances by you; NAT gateways are charged by number, duration and data processed, NAT instances by number, duration, type and size; security groups cannot be associated with NAT gateways | source: AWS documentation, "Compare NAT gateways and NAT instances", fetched and read | checked: 2026-11 -->
+                  <!-- fact: Each NAT gateway is created in a specific Availability Zone with redundancy in that zone; if resources in several zones share one and its zone is down, resources in the other zones lose internet access, so AWS advises a NAT gateway in each zone with routing to the same-zone gateway; a NAT gateway supports 5 Gbps and scales automatically to 100 Gbps | source: AWS documentation, "NAT gateway basics", fetched and read | checked: 2026-11 -->
+                  <!-- fact: The NAT AMI is built on the Amazon Linux AMI 2018.03, which reached end of standard support on 31 December 2020 and end of maintenance support on 31 December 2023, and AWS recommends migrating to a NAT gateway; a NAT instance lets private-subnet resources reach the internet or an on-premises network, and must be in a public subnet to have internet access | source: AWS documentation, "NAT instances" and "NAT instance basics", fetched and read | checked: 2026-11 -->
+                  <!-- fact: A regional NAT gateway automatically expands across Availability Zones based on workload presence, taking up to 60 minutes to expand to a new zone, needs no public subnet, uses a single NAT ID and route entry across zones, and supports up to 32 IP addresses per zone against 8 for zonal gateways; regional NAT gateways do not support private NAT, for which zonal gateways are recommended | source: AWS documentation, "Regional NAT gateways for automatic multi-AZ expansion", fetched and read | checked: 2026-11 -->
+                  <!-- fact: NAT gateways are charged for each hour available and each gigabyte processed; to reduce data transfer charges, keep resources that send heavy traffic in the same zone as the NAT gateway or create one per zone, and use interface or gateway endpoints for AWS services that support them | source: AWS documentation, "Pricing for NAT gateways", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>NAT instance</th><th>Zonal NAT gateway</th><th>Regional NAT gateway</th></tr></thead>
+                    <tbody>
+                      <tr><td>Run by</td><td>You: patches, size, failover script</td><td>AWS</td><td>AWS</td></tr>
+                      <tr><td>If one zone fails</td><td>Whatever the script does</td><td>Zones sharing it lose the internet; one per zone avoids that</td><td>It is in every zone with workloads</td></tr>
+                      <tr><td>Routes</td><td>To the instance</td><td>One per zone, to that zone's gateway</td><td>One target in every zone</td></tr>
+                      <tr><td>Public subnet</td><td>Needed</td><td>Needed, for the public kind</td><td>Not needed</td></tr>
+                      <tr><td>Private NAT, to other VPCs or on premises</td><td>Can reach on premises as well as the internet</td><td>Supported</td><td>Not supported</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Keep traffic off the NAT path when it does not need to be there.</strong>
+                    A NAT gateway bills by the hour and by every gigabyte it processes, which is how it becomes a large line on
+                    the bill. AWS's own advice is to keep heavy senders in the same zone as their gateway, and to reach AWS
+                    services such as S3 <span class="acro-exp">(Simple Storage Service)</span> through VPC endpoints, which never touch the NAT gateway at all. NAT itself, the address
+                    translation underneath every one of these, is in
+                    <span class="xref">NAT &amp; Port Forwarding — How Private Networks Reach the Internet</span>.
+                    
                   </div>
                 </div>
               </div>

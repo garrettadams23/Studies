@@ -1269,6 +1269,12 @@ const READERS = [
     ["keyspaces cassandra", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
     ["neptune graph database", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
     ["aurora serverless", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
+    // ── twenty-sixth wave: task 4.4's NAT instance and per-zone gateways, a card in AWS VPC, added before it ──
+    // Opened at 2 of 3: two reached the VPC topic on ordinary words, which priced NAT gateways and never named
+    // the NAT instance, and `regional nat gateway` found one other card. AWS had added the regional kind since.
+    ["nat instance vs nat gateway", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
+    ["regional nat gateway", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
+    ["nat gateway in each availability zone", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
